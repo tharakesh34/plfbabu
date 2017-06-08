@@ -173,7 +173,6 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -1599,13 +1598,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					if (errorDetails != null) {
 						String errMsgs[] = errorDetails.getError().split("%");
 						final String msg = errMsgs[0] + "% \n" + errMsgs[1];
-						final String title = Labels.getLabel("message.Information");
 						proceed = true;
-						MultiLineMessageBox.doSetTemplate();
-						int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-								| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
-						if (conf == MultiLineMessageBox.NO) {
+						if (MessageUtil.confirm(msg) == MessageUtil.NO) {
 							proceed = false;
 						}
 					}

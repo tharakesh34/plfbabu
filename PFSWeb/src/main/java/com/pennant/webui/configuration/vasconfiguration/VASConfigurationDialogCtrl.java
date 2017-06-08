@@ -112,7 +112,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -294,8 +293,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		
-		int conf = MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"));
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeDialog();
 			Events.postEvent("onClick$button_VASConfigurationList_NewVASConfiguration",
 					vASConfigurationListCtrl.window_VASConfigurationList, this.vASConfiguration);
@@ -1469,18 +1467,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 			// Show a confirm box
 			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doClose: Yes");
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				doSave();
 				close = false;
-			} else {
-				logger.debug("doClose: No");
 			}
 		} else {
 			logger.debug("isDataChanged : false");
