@@ -470,4 +470,25 @@ alter table finpftdetails drop constraint FK_FINPFTDETAIL_BMTCUSTSTSCODE;
 update ERRORDETAILS set ERRORSEVERITY='E' where ERRORCODE='60311';
 </sql>
 </changeSet>
+
+	<changeSet id="57" author="satish">
+			<insert tableName="ErrorDetails">
+			<column name="ErrorCode">65020</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage"> Mandate start date {0} should be before first repayment date {1}.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
+
 </databaseChangeLog>
