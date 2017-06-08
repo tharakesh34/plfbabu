@@ -311,6 +311,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		this.detailSearchObject.addTabelName("FinODCRecovery_View");
 		this.detailSearchObject.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
 		this.detailSearchObject.addFilter(new Filter("FinODFor", FinanceConstants.SCH_TYPE_SCHEDULE, Filter.OP_EQUAL));
+		
+		Filter[] filter = new Filter[2];
+		filter[0] = new Filter("PenaltyPaid", 0, Filter.OP_NOT_EQUAL);
+		filter[1] = new Filter("WaivedAmt", 0, Filter.OP_NOT_EQUAL);
+		this.detailSearchObject.addFilter(Filter.or(filter));
 
 		// Defualt Sort on the table
 		this.detailSearchObject.addSort("FinReference", false);
