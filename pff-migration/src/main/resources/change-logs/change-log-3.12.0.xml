@@ -179,4 +179,18 @@
 				FROM    	BMTBankDetail
 	</createView>
 	</changeSet>
+	
+	<changeSet id="11" author="Vinay">
+		<sql>
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'BankDetailDialog_bankShortCode', 'BankDetailDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BANKDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'BankDetailDialog_bankShortCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+		</changeSet>	
+			
 </databaseChangeLog>
