@@ -156,4 +156,27 @@
 			<column name="BankShortCode" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="9" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_VIEW" replaceIfExists="true">
+		SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail_TEMP
+				UNION ALL
+				SELECT	BankCode, BankName, BankShortCode, Active				
+							, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+							RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+				WHERE     NOT EXISTS (SELECT 1 FROM BMTBankDetail_TEMP WHERE BankCode = BMTBankDetail.BankCode)
+	</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_AVIEW" replaceIfExists="true">
+				SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+	</createView>
+	</changeSet>
 </databaseChangeLog>
