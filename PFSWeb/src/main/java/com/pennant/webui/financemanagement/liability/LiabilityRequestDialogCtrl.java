@@ -1771,7 +1771,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(),
 					liabilityRequest.getNextTaskId());
 		} else {
-			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(), null, roleCode);
+			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(), liabilityRequest.getNextTaskId());
 		}
 		logger.debug("Entering");
 	}
