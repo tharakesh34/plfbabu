@@ -144,4 +144,16 @@
 			INSERT INTO ErrorDetails VALUES('65019','EN','E','Receipt Fee Details should me mandatory for Fee Type : {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>		
 	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+		<addColumn tableName="BMTBankDetail">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
