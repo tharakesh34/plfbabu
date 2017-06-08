@@ -1075,7 +1075,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.totalCapitalize.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCpz(),formatter));
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(),formatter));
 			this.totalSchdProfit.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPftSchd(),formatter));
-			this.totalFees.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFeeChargeAmt(),formatter));
+			this.totalFees.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalFees(),formatter));
 			this.totalCharges.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCharges(),formatter));
 			this.totalWaivers.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
 			this.schdPriTillNextDue.setValue(PennantAppUtil.formateAmount(financeSummary.getPrincipalSchd(),formatter));

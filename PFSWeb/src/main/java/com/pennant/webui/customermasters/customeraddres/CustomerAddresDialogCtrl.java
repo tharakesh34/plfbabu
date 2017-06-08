@@ -1124,8 +1124,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerAddressDetailList().size(); i++) {
 				CustomerAddres customerAddres = getCustomerDialogCtrl().getCustomerAddressDetailList().get(i);
 				if (isNewRecord()) {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType())
-							&& customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType()) &&
+						!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerAddres.getRecordType()) && 
+						customerAddres.getCustAddrPriority() == aCustomerAddres.getCustAddrPriority()) {
 						valueParm[1]=this.custAddrPriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_CustAddrPriority") + ":"+valueParm[1];
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(

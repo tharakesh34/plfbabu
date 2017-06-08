@@ -852,7 +852,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder(
-				" SELECT FPD.FinReference, FinAmount TotalDisbursement, TotalPriSchd, ");
+				" SELECT FPD.FinReference, FinAmount TotalDisbursement, TotalPriSchd,TotalFees,");
 		selectSql
 				.append(" TotalPftSchd, PrincipalSchd, ProfitSchd, SchdPftPaid, SchdPriPaid, Downpayment TotalDownPayment , ");
 		selectSql
@@ -861,6 +861,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" FROM FinScheduleDetails WHERE FinReference = :FinReference ");
 		selectSql.append(" AND SchDate <= :NextSchDate GROUP BY FinReference) T ");
 		selectSql.append(" INNER JOIN FinPftDetails FPD ON FPD.FinReference=T.FinReference ");
+		selectSql.append(" INNER JOIN (SELECT FinReference,Sum(ActualAmount) TotalFees from finfeedetail group by FinReference) FFD ON FFD.FinReference=T.FinReference");
 		selectSql.append(" LEFT JOIN (SELECT FinReference,COUNT(*)UtilizedDefCnt FROM FinScheduleDetails t1 WHERE FinReference = :FinReference");
 		selectSql.append(" GROUP BY FinReference)T2 on T2.FinReference = T.FinReference");
 
