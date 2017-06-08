@@ -1472,7 +1472,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					return APIErrorHandlerService.getFailedStatus("90330");
 				}
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
+				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) <= 0) {
 					return APIErrorHandlerService.getFailedStatus("90332");
 				}
 			}
