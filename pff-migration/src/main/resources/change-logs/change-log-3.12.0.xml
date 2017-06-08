@@ -20,7 +20,128 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
+	<changeSet id="1" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      UNION ALL
+		      
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="3" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust');
+			Delete from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'FinFeeDetailListCtrl_Adjust', 'FinFeeDetailListCtrl', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave');
+			Delete from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinFeeReceiptDialog_btnSave', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount');
+			Delete from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinFeeReceiptDialog_paidAmount', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65018';
+			INSERT INTO ErrorDetails VALUES('65018','EN','E','Fee Type {0} paid amount should be equal to receipt fee type {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 
-	
-	
+			Delete from ErrorDetails where errorCode = '65019';
+			INSERT INTO ErrorDetails VALUES('65019','EN','E','Receipt Fee Details should me mandatory for Fee Type : {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>		
+	</changeSet>
 </databaseChangeLog>
