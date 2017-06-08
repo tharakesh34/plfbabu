@@ -72,7 +72,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -499,7 +498,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> "+ 
 				Labels.getLabel("label_SecurityRoleDialog_RoleCd.value")+" : "+aSecurityRole.getRoleCd();
 
-		if (MessageUtil.confirm(msg) == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSecurityRole.getRecordType())){
 				aSecurityRole.setVersion(aSecurityRole.getVersion()+1);
 				aSecurityRole.setRecordType(PennantConstants.RECORD_TYPE_DEL);

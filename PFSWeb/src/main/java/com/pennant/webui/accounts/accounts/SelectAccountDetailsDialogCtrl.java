@@ -30,7 +30,6 @@ import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.InterfaceException;
 
@@ -311,8 +310,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			}
 		} catch (InterfaceException e1) {
 			logger.error("Exception: ", e1);
-			MultiLineMessageBox.show("Account Number Not Created", 
-					Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
+			MessageUtil.showError("Account Number Not Created");
 		}
 		logger.debug("Leaving " + event.toString());
 	}

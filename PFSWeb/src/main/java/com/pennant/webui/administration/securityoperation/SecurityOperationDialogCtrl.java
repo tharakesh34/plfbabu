@@ -70,7 +70,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the
@@ -447,7 +446,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") 
 		+ "\n\n --> "+Labels.getLabel("label_SecurityOperationDialog_OprCode.value")+ " : " + aSecurityOperation.getOprCode();
 
-		if (MessageUtil.confirm(msg) == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSecurityOperation.getRecordType())){
 				aSecurityOperation.setVersion(aSecurityOperation.getVersion()+1);
 				aSecurityOperation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
