@@ -1543,7 +1543,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							ErrorDetails errorDetail = new ErrorDetails();
 							String[] valueParm = new String[1];
 							valueParm[0] = "employment startDate";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90332", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90334", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}

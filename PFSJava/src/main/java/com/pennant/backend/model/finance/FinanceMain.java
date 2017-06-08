@@ -73,7 +73,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 
 
-@XmlType(propOrder = { "lovDescCustCIF", "finType", "finCcy", "finBranch", "profitDaysBasis", "finAmount",
+@XmlType(propOrder = { "applicationNo","lovDescCustCIF", "finType", "finCcy", "finBranch", "profitDaysBasis", "finAmount",
 		"finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate", "allowGrcPeriod",
 		"tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance", "alwManualSteps", "stepPolicy", "stepType",
 		"graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate", "graceBaseRate", "graceSpecialRate",
@@ -208,6 +208,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finPreApprovedRef;
 	private boolean preApprovalFinance;
 	private boolean preApprovalExpired;
+	@XmlElement
 	private String	applicationNo;
 	private String 	swiftBranchCode;
 

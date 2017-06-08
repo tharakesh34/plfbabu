@@ -250,7 +250,7 @@ public class ExtendedFieldDetailsValidation {
 			}
 			
 			if (values.length > 0) {
-				for (int i = 0; i <= values.length; i++) {
+				for (int i = 0; i <= values.length-1; i++) {
 					if (StringUtils.equals(fieldValue, values[i])) {
 						isValid = true;
 					}
