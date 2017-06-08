@@ -45,6 +45,7 @@ package com.pennant.backend.service.mandate.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -269,15 +270,24 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 		if (checkRepayMethod(financeMain) && !financeDetail.isActionSave() && mandate != null) {
 
-			if (mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal exposure = BigDecimal.ZERO;
+			BigDecimal exposure = BigDecimal.ZERO;
 
-				for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
-					if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
-						exposure = schedule.getRepayAmount();
+			Date firstRepayDate = null;
+
+			for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+				
+				if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
+					exposure = schedule.getRepayAmount();
+				}
+				
+				if (schedule.isRepayOnSchDate() || schedule.isPftOnSchDate()) {
+					if (schedule.getSchDate().compareTo(financeMain.getFinStartDate()) > 0 && firstRepayDate == null) {
+						firstRepayDate = schedule.getSchDate();
 					}
 				}
+			}
 
+			if (mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
 				if (mandate.isUseExisting()) {
 					exposure = exposure.add(getFinanceMainDAO().getTotalMaxRepayAmount(mandate.getMandateID(),
 							financeMain.getFinReference()));
@@ -285,8 +295,19 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 				if (mandate.getMaxLimit().compareTo(exposure) < 0) {
 					auditDetail.setErrorDetail(90320);
-				}
+				}	
 
+			}
+			
+			//Mandate start date {0} should be before first repayments date {1}.
+			if (mandate.getStartDate()!=null && firstRepayDate!=null && firstRepayDate.compareTo(mandate.getStartDate())<0) {
+				String[] errParmFrq = new String[2];
+				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
+				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
+
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "65020", errParmFrq, null), ""));
+				
 			}
 
 			if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
@@ -315,16 +336,18 @@ public class FinMandateServiceImpl implements FinMandateService {
 					}
 				}
 			}
-			
-			 //If mandate expiry date before fin maturity date--vaidate 
-			if (mandate.getExpiryDate()!=null && mandate.getExpiryDate()
+
+			//If mandate expiry date before fin maturity date--vaidate 
+			if (mandate.getExpiryDate() != null && mandate.getExpiryDate()
 					.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
-				
+
 				String[] errParmFrq = new String[2];
-				errParmFrq[0] = PennantJavaUtil.getLabel("tab_label_MANDATE")+" "+PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
+				errParmFrq[0] = PennantJavaUtil.getLabel("tab_label_MANDATE") + " "
+						+ PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
 				errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
-				
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
+
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
 			}
 
 		}
