@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.webui.applicationmaster.InsurancePolicy;
 
 import java.io.Serializable;
@@ -82,13 +81,11 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/applicationmaster/InsurancePolicy/insurancePolicyDialog.zul file. <br>
  */
 public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> implements Serializable {
-
 	private static final long					serialVersionUID		= 1L;
 	private final static Logger					logger					= Logger.getLogger(InsurancePolicyDialogCtrl.class);
 
@@ -618,18 +615,10 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 
 			// Show a confirm box
 			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doClose: Yes");
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				doSave();
 				close = false;
-			} else {
-				logger.debug("doClose: No");
 			}
 		} else {
 			logger.debug("isDataChanged : false");

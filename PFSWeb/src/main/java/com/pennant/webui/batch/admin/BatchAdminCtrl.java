@@ -49,7 +49,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -255,8 +254,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	public void onClick$btnStartJob(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		MultiLineMessageBox.doSetTemplate();
-		int conf = 0;
 
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
@@ -266,10 +263,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_reStart_job");
 		}
 
-		conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			closeOtherTabs();
 			PFSBatchAdmin.getInstance();
 			timer.start();
@@ -312,11 +306,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Entering" + event.toString());
 		PFSBatchAdmin.getInstance();
 		String msg = Labels.getLabel("labe_terminate_job");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			try {
 				args[0] = this.jobExecution.getJobParameters().getString("Date");
 				resetPanels();

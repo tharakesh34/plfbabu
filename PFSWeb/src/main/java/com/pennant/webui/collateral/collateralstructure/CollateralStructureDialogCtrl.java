@@ -107,7 +107,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ************************************************************<br>
@@ -673,8 +672,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		
-		int conf = MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"));
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeDialog();
 			Events.postEvent("onClick$button_CollateralStructureList_NewCollateralStructure",
 					collateralStructureListCtrl.window_CollateralStructureList, this.collateralStructure);

@@ -57,7 +57,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -81,10 +80,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
@@ -225,8 +223,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		//Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData();
 		if (customerDetails == null) {
-			MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), 
-					MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 			return;
 		}
 

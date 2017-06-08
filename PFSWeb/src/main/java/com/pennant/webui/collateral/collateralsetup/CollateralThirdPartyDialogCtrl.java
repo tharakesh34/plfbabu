@@ -18,7 +18,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -39,7 +38,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 
 public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdParty> implements Serializable {
@@ -297,8 +295,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
 			Customer customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
 			if(customer == null){
-				MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), 
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 				return;
 			}
 		}
@@ -641,7 +638,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
 			 customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
 				if (customer == null) {
-					MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 					return;
 				}
 		}
