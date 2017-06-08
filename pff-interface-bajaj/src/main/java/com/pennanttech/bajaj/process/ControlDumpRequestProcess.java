@@ -80,23 +80,18 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 						save(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
 						successCount++;
 					} catch (Exception e) {
-						logger.error(Literal.ENTERING);
+						logger.error(Literal.EXCEPTION, e);
+						logger.debug("Control dump record: " + map.toString());
 						failedCount++;
 
 						String keyId = rs.getString("AGREEMENTNO");
+						String  error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e.getMessage().length());
+						
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
-						String error = null;
-						if (e.getMessage().length() > 1999) {
-							logger.debug("Control dump record: "+map.toString());
-						} else {
-							error = e.getMessage();
-						}
-
+						
 						saveBatchLog(keyId, "F", error);
-						error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e
-								.getMessage().length());
 					} finally {
 						map = null;
 					}
