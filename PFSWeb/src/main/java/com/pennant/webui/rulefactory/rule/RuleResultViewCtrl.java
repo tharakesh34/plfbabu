@@ -27,7 +27,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.customermasters.fincreditrevsubcategory.FinCreditRevSubCategoryDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResult.zul file.
@@ -197,8 +197,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			throw e;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MultiLineMessageBox.show(e.getMessage(), Labels.getLabel("message.Error"), MultiLineMessageBox.OK,
-					MultiLineMessageBox.ERROR, true);
+			MessageUtil.showError(e.getMessage());
 		}
 
 		logger.debug("Leaving" + event.toString());

@@ -77,7 +77,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -127,7 +126,6 @@ import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -1502,9 +1500,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				String actualApprval=getFacilityService().getActualLevelAprroval(aFacility);
 				if ( !actualApprval.equals(aFacility.getLevelOfApproval())) {
 					String msg =  Labels.getLabel("Override_LevelOfApproval",new String[]{PennantStaticListUtil.getlabelDesc(actualApprval, approvalList)});
-					final String title = Labels.getLabel("title.LevelOfApproval");
-					int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf == MultiLineMessageBox.YES) {
+					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						aFacility.setOverriddeCirculation(true);
 					}else{
 						return;

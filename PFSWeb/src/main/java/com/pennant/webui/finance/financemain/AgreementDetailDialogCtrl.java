@@ -59,7 +59,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -83,7 +82,6 @@ import com.pennant.util.TemplateEngine;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -470,11 +468,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 			} catch (Exception e) {
 				final String msg = e.getMessage() +"\n" + Labels.getLabel("message.error.agreementNotFound");
-				final String title = Labels.getLabel("message.Information");
-				MultiLineMessageBox.doSetTemplate();
 
-				MultiLineMessageBox.show(msg, title, MultiLineMessageBox.ABORT,
-						Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
