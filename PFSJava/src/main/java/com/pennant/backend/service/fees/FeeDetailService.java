@@ -532,7 +532,9 @@ public class FeeDetailService {
 		}
 		if(isOriginationFee) {
 			for(FinFeeDetail finFeeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				finFeeDetail.setFinEvent(finEvent);
+				if(!StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					finFeeDetail.setFinEvent(finEvent);
+				}
 			}
 		}
 		executeFeeCharges(financeDetail, isOriginationFee);

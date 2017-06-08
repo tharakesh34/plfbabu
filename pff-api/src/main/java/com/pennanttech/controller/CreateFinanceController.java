@@ -15,6 +15,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -480,6 +481,14 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setVersion(1);
 		}
 
+		// Set VAS reference as feeCode for VAS related fees
+		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
+			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
+				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
+				}
+			}
+		}
 		// execute fee charges
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);

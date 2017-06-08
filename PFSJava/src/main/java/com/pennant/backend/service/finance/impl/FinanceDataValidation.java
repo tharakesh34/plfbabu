@@ -356,6 +356,15 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 
+					// validate vas fee amount
+					if(feeDetail.getActualAmount().compareTo(vasRecording.getFee()) != 0) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Fee amount";
+						valueParm[1] = "VAS recording fee:" + String.valueOf(vasRecording.getFee());
+						valueParm[2] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+						return errorDetails;
+					}
 					// validate actual fee amount with waiver+paid amount
 					BigDecimal remainingFee = feeDetail.getActualAmount().subtract(
 							feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
@@ -3590,8 +3599,12 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = finSchdData.getErrorDetails();
 		String finEvent = eventCode;
 		boolean isOrigination = false;
+		int vasFeeCount = 0;
 		if(!StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
+				if(StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					vasFeeCount++;
+				}
 				if (StringUtils.isBlank(finFeeDetail.getFeeScheduleMethod())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "feeMethod";
@@ -3666,12 +3679,13 @@ public class FinanceDataValidation {
 					finEvent, isOrigination, FinanceConstants.MODULEID_PROMOTION);
 		}
 		if (finTypeFeeDetail != null) {
-			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()) {
+			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()-vasFeeCount) {
 				for (FinFeeDetail feeDetail : finSchdData.getFinFeeDetailList()) {
 					BigDecimal finWaiverAmount = BigDecimal.ZERO;
 					boolean isFeeCodeFound = false;
 					for (FinTypeFees finTypeFee : finTypeFeeDetail) {
-						if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())) {
+						if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())
+								|| StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
 							isFeeCodeFound = true;
 
 							// validate negative values
