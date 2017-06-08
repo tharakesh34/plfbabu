@@ -490,5 +490,19 @@ update ERRORDETAILS set ERRORSEVERITY='E' where ERRORCODE='60311';
 			<column name="Version">0</column>
 		</insert>
 	</changeSet>
+	
+<changeSet id="58" author="satish">
+<sql>
+update RMTFINANCETYPES set FinSchCalCodeOnRvw='TILLMDT' where FinSchCalCodeOnRvw='CURPRD';
+update FINANCEMAIN set SchCalOnRvw='TILLMDT' where SchCalOnRvw='CURPRD';
+
+update RMTFINANCETYPES_TEMP set FinSchCalCodeOnRvw='TILLMDT' where FinSchCalCodeOnRvw='CURPRD';
+update FINANCEMAIN_TEMP set SchCalOnRvw='TILLMDT' where SchCalOnRvw='CURPRD';
+
+</sql>
+
+</changeSet>	
+	
+	
 
 </databaseChangeLog>
