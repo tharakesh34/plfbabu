@@ -225,5 +225,14 @@
 		update FinanceMain set DueBucket=0 where DueBucket is null;
 	</sql>
 	</changeSet>
-			
+		<changeSet id="15" author="Srikanth">
+	<sql>
+			Delete from ErrorDetails Where ErrorCode in('90330','90331','90332','90334','90333');
+ 			INSERT INTO ErrorDetails VALUES('90330','EN','E','The amount is not sufficient to foreclose the loan.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90331','EN','E','Insufficient Receipt amounts. Not allowed to calculate the payment schedules.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90332','EN','E','Not allowed to do Partial Settlement due to not having additional Balance after allocations.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90334','EN','E','{0} should not be before on customer date of birth.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+ 			INSERT INTO ErrorDetails VALUES('90333','EN','E','Mandate type: {0} not allowed for this bankcode/IfscCode.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>	
 </databaseChangeLog>
