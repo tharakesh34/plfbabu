@@ -241,8 +241,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Method for recall Enquiries
 			doFillDialogWindow();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinEnqHeaderDialog.onClose();
 		}
 		logger.debug("Leavinging" + event.toString());

@@ -3,7 +3,7 @@ package com.pennant.corebanking.process.impl;
 import com.pennant.coreinterface.model.HostEnquiry;
 import com.pennant.coreinterface.process.HostStatusEnquiryProcess;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 
@@ -12,7 +12,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 	}
 	
 	@Override
-	public HostEnquiry getHostStatus() throws PFFInterfaceException {
+	public HostEnquiry getHostStatus() throws InterfaceException {
 
 		// Response Data
 		HostEnquiry hostEnquiry = new HostEnquiry();

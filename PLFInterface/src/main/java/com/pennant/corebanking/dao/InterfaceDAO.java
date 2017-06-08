@@ -10,7 +10,7 @@ import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.CoreDocumentDetails;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface InterfaceDAO {
 
@@ -42,7 +42,7 @@ public interface InterfaceDAO {
 
 	String executeAccountForFin(int reqRefId, String createNow);
 
-	InterfaceCustomerDetail getCustDetails(String custCIF, String custLoc) throws PFFInterfaceException;
+	InterfaceCustomerDetail getCustDetails(String custCIF, String custLoc) throws InterfaceException;
 	
 	List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup);
 	

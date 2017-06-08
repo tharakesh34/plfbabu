@@ -242,8 +242,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			this.window_DisbursementDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -287,7 +286,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public void onClick$btnAddContractAdv(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		if(this.listBoxContributorDetails.getSelectedItem() == null) {
-			MessageUtil.showErrorMessage("Please select Contractor");
+			MessageUtil.showError("Please select Contractor");
 		} else {
 			FinanceDisbursement disbursement = new FinanceDisbursement();
 			disbursement.setDisbType("A");
@@ -303,7 +302,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		FinanceDisbursement disbursement = new FinanceDisbursement();
 		disbursement.setDisbType("C");
 		if(this.listBoxContributorDetails.getSelectedItem() == null) {
-			MessageUtil.showErrorMessage("Please select Contractor");
+			MessageUtil.showError("Please select Contractor");
 		} else {     
 			createNewDisbursement(disbursement, (ContractorAssetDetail) this.listBoxContributorDetails.getSelectedItem().getAttribute("data"));
 		}
@@ -314,7 +313,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	public void onClick$btnAddBilling(Event event) throws Exception{
 		logger.debug("Entering" + event.toString());
 		if(this.listBoxContributorDetails.getSelectedItem() == null) {
-			MessageUtil.showErrorMessage("Please select Contractor");
+			MessageUtil.showError("Please select Contractor");
 		} else {
 			FinanceDisbursement disbursement = new FinanceDisbursement();
 			disbursement.setDisbType("B");
@@ -372,8 +371,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		try {
 			Executions.createComponents(getZULPath(disbursement.getDisbType()), window_DisbursementDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -517,7 +515,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			final FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
 
 			if (StringUtils.trimToEmpty(disbursement.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 
 				if(getFinanceMainDialogCtrl() != null){
@@ -562,8 +560,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				try {
 					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_DisbursementDetailDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -613,8 +610,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 					if(e.getCause().getClass().equals(WrongValuesException.class)){
 						throw e;	
 					}
-					logger.error("Exception: ", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 
@@ -636,8 +632,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			try {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul", window_DisbursementDetailDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");
 		}
@@ -649,7 +644,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			
 			final ContractorAssetDetail contractorAssetDetail = (ContractorAssetDetail) listitem.getAttribute("data");
 			if (StringUtils.trimToEmpty(contractorAssetDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -664,8 +659,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				try {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul", window_DisbursementDetailDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -767,7 +761,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			if(tab != null){
 				tab.setSelected(true);
 			}
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ContractorList_Empty"));
+			MessageUtil.showError(Labels.getLabel("label_ContractorList_Empty"));
 			return false;
 		}
 		
@@ -791,7 +785,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			if(tab != null){
 				tab.setSelected(true);
 			}
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ContractorBilling_NotComplete"));
+			MessageUtil.showError(Labels.getLabel("label_ContractorBilling_NotComplete"));
 			return false;
 		}
 		logger.debug("Leaving");

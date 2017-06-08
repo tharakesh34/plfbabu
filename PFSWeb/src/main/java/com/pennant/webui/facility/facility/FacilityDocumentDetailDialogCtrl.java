@@ -148,8 +148,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_documentDetailDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -292,8 +291,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -328,7 +326,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			// CAST AND STORE THE SELECTED OBJECT
 			 DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
 			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				boolean viewProcess = false;
 				if (!StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RCD_ADD)) {
@@ -421,8 +419,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

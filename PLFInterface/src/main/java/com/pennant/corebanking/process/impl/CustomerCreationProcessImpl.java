@@ -10,7 +10,7 @@ import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerCreationProcessImpl extends GenericProcess implements CustomerCreationProcess {
 	
@@ -22,7 +22,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public String generateNewCIF(CoreBankNewCustomer customer) throws PFFInterfaceException {	
+	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {	
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -43,12 +43,12 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	 * 
 	 */
 	@Override
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws PFFInterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws InterfaceException {
 		return "0000";
 	}
 
 	@Override
-	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws PFFInterfaceException {
+	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws InterfaceException {
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws PFFInterfaceException {
+	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws InterfaceException {
 		return "0000";
 	}
 	

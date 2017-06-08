@@ -65,8 +65,8 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.externalinput.ExtFinanceData;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ExtFinanceUploadService {
 	private final static Logger		logger				= Logger.getLogger(ExtFinanceUploadService.class);
@@ -165,7 +165,7 @@ public class ExtFinanceUploadService {
 	}
 
 	private void processFinanceData(LoggedInUser userDetails, ExtFinanceData extFinData) throws IOException,
-			PFFInterfaceException, JaxenException {
+			InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		finScheduleData.getDisbursementDetails().clear();
@@ -798,7 +798,7 @@ public class ExtFinanceUploadService {
 	}
 
 	public void processExtFinanceData(LoggedInUser userDetails, ExtFinanceData extFinData) throws IOException,
-			PFFInterfaceException, JaxenException {
+			InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		finScheduleData.getDisbursementDetails().clear();

@@ -64,7 +64,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -88,7 +87,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -216,8 +214,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			doShowDialog(getPFSParameter());
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PFSParameterDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -726,15 +723,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				Labels.getLabel("label_PFSParameterDialog_SysParmCode.value")+" : "+aPFSParameter.getSysParmCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPFSParameter.getRecordType())) {
 				aPFSParameter.setVersion(aPFSParameter.getVersion() + 1);
 				aPFSParameter.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -754,7 +743,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 				}
 
 			} catch (DataAccessException e) {
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -913,8 +902,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

@@ -310,7 +310,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		logger.debug("Entering");
 
 		if (StringUtils.isEmpty(this.messageBox.getValue())) {
-			MessageUtil.showErrorMessage("Please enter the Message.");
+			MessageUtil.showError("Please enter the Message.");
 
 			logger.debug("Leaving");
 			return;
@@ -331,7 +331,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		Set<Listitem> items = listbox.getSelectedItems();
 
 		if (items.isEmpty()) {
-			MessageUtil.showErrorMessage("Please select the Recipients.");
+			MessageUtil.showError("Please select the Recipients.");
 
 			logger.debug("Leaving");
 			return;

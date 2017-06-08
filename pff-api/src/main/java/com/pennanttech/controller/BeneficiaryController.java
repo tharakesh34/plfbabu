@@ -25,7 +25,6 @@ import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
@@ -43,7 +42,6 @@ public class BeneficiaryController {
 	 * 
 	 * @param beneficiary
 	 * @return Beneficiary
-	 * @throws PFFInterfaceException
 	 */
 	public Beneficiary createBeneficiary(Beneficiary beneficiary){
 		logger.debug("Entering");

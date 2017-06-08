@@ -261,7 +261,7 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 				ErrorDetails errorDetails;
 				errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,
 						valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			} else {
 				List<FinanceDetail> financeDetails = null;
 				financeDetails = getTreasuaryFinanceService().getFinanceDetails(treasuaryFinHeader);

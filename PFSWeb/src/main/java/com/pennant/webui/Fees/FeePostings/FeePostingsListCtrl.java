@@ -265,8 +265,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 			arg.put("feePostings", aFeePostings);
 			Executions.createComponents(zulPage, null, arg);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -154,8 +154,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			doSetFieldProperties();
 			doShowDialog(getWorkFlowDetails());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_workFlowDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -238,11 +237,10 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 				 this.btnSave.setVisible(true);
 			} catch (Exception e) {
 				logger.error("Exception", e);
-				MessageUtil.showErrorMessage("Unable to parse the File");
+				MessageUtil.showError("Unable to parse the File");
 			}
 		} else{
-			MessageUtil
-					.showErrorMessage("The file must be an .xml file. Please select another file");
+			MessageUtil.showError("The file must be an .xml file. Please select another file");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -369,8 +367,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			}
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

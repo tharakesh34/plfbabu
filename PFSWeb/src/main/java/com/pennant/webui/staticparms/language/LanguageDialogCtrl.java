@@ -55,7 +55,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -72,7 +71,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -173,8 +171,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 			doSetFieldProperties();
 			doShowDialog(getLanguage());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_LanguageDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -486,15 +483,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_LanguageDialog_LngCode.value")+" : "+aLanguage.getLngCode();
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aLanguage.getRecordType())) {
 				aLanguage.setVersion(aLanguage.getVersion() + 1);
 				aLanguage.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -514,8 +503,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -644,8 +632,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

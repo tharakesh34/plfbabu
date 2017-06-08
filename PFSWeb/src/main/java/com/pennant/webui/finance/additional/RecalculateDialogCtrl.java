@@ -170,8 +170,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doShowDialog(getFinScheduleData());
 			this.window_RecalculateDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RecalculateDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -465,7 +464,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
 		} else {
 			getFinScheduleData().setSchduleGenerated(true);
@@ -510,7 +509,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isDataChanged()) {
 				doSave();
 			} else {
-				MessageUtil.showErrorMessage("No Data has been changed.");
+				MessageUtil.showError("No Data has been changed.");
 			}
 		} else {
 			doSave();

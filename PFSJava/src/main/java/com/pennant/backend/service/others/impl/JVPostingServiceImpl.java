@@ -59,7 +59,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>
@@ -237,7 +237,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
 				jVPostingEntry.setValidationStatus(PennantConstants.POSTSTS_FAILED
 						+ " : "
-						+ (e instanceof PFFInterfaceException ? ((PFFInterfaceException) e).getErrorMessage() : e
+						+ (e instanceof InterfaceException ? ((InterfaceException) e).getErrorMessage() : e
 								.getMessage()));
 			}
 			return false;
@@ -421,7 +421,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
-			} catch (PFFInterfaceException e) {
+			} catch (InterfaceException e) {
 				postingSuccess = false;
 				logger.error("Exception: ", e);
 			}

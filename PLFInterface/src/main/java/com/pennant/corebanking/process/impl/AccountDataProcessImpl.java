@@ -6,7 +6,7 @@ import com.pennant.coreinterface.model.AccountBalance;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess{
 
@@ -15,13 +15,13 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	}
 	
 	@Override
-	public int removeAccountHolds() throws PFFInterfaceException {
+	public int removeAccountHolds() throws InterfaceException {
 		return 0;
 	}
 
 	@Override
 	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst, String holdType)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		return null;
 	}
 	
@@ -30,13 +30,13 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	 * 
 	 */
 	@Override
-	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws PFFInterfaceException {
+	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws InterfaceException {
 		InterfaceAccount interfaceAccount = new InterfaceAccount();
 		interfaceAccount.setAccountNumber("123456789789");
 		return interfaceAccount;
 	}
 	@Override
-	public CollateralMark collateralMarking(CollateralMark collateralMark) throws PFFInterfaceException {
+	public CollateralMark collateralMarking(CollateralMark collateralMark) throws InterfaceException {
 		CollateralMark collateralMarkRes = new CollateralMark();
 		collateralMarkRes.setReferenceNum("12365478");
 		collateralMarkRes.setReturnCode("0000");
@@ -44,7 +44,7 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	}
 
 	@Override
-	public CollateralMark collateralDeMarking(CollateralMark collateralMark) throws PFFInterfaceException {
+	public CollateralMark collateralDeMarking(CollateralMark collateralMark) throws InterfaceException {
 		CollateralMark collateralMarkRes = new CollateralMark();
 		collateralMarkRes.setReferenceNum("12365478");
 		collateralMarkRes.setReturnCode("0000");

@@ -62,7 +62,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -89,7 +88,6 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerPhoneNumber
@@ -241,8 +239,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				onload();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerPhoneNumberDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -634,15 +631,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				+ Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
 				+ aCustomerPhoneNumber.getPhoneTypeCode();
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomerPhoneNumber.getRecordType())) {
 				aCustomerPhoneNumber.setVersion(aCustomerPhoneNumber.getVersion() + 1);
 				aCustomerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -656,6 +645,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			}else if(StringUtils.equals(aCustomerPhoneNumber.getRecordType(), PennantConstants.RCD_UPD)){
+				aCustomerPhoneNumber.setNewRecord(true);	
 			}
 
 			try {
@@ -678,8 +669,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -874,8 +864,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -906,7 +895,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 				if (isNewRecord()) {
 					
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())&&
+							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) 
 							&& customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
 						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":"+valueParm[1];
@@ -927,7 +917,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if (aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+						if (aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RCD_UPD)) {
 							aCustomerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
 							customerPhoneNumbers.add(aCustomerPhoneNumber);

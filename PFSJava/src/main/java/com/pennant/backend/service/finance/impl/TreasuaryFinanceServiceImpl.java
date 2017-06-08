@@ -77,7 +77,7 @@ import com.pennant.backend.service.finance.TreasuaryFinanceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -373,7 +373,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 */
-	public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException{
+	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException{
 		logger.debug("Entering");
 		String tranType="";
 		auditHeader = dealBusinessValidation(auditHeader, "doApprove");

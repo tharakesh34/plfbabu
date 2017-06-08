@@ -16,7 +16,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.model.collateral.DepositDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CollateralMarkProcess {
 
@@ -34,9 +34,9 @@ public class CollateralMarkProcess {
 	 * Method for process collateral data and send Mark request to interface
 	 * 
 	 * @param finCollateralDetailsList
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public CollateralMark markCollateral(List<FinCollaterals> finCollateralDetailsList) throws PFFInterfaceException {
+	public CollateralMark markCollateral(List<FinCollaterals> finCollateralDetailsList) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(finCollateralDetailsList != null && !finCollateralDetailsList.isEmpty()) {
@@ -62,9 +62,9 @@ public class CollateralMarkProcess {
 	 * Method for process collateral data and send De-Mark request to interface
 	 * 
 	 * @param finCollateralList
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void deMarkCollateral(List<FinCollaterals> finCollateralList) throws PFFInterfaceException {
+	public void deMarkCollateral(List<FinCollaterals> finCollateralList) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(finCollateralList != null && !finCollateralList.isEmpty()) {
@@ -182,7 +182,7 @@ public class CollateralMarkProcess {
 		logger.debug("Leaving");
 	}
 
-	public void deMarkCollateral(FinCollaterals finCollaterals) throws PFFInterfaceException {
+	public void deMarkCollateral(FinCollaterals finCollaterals) throws InterfaceException {
 		logger.debug("Enetering");
 		
 		List<FinCollaterals> finCollatList = null;
@@ -214,7 +214,7 @@ public class CollateralMarkProcess {
 		return deMarkSts;
 	}
 
-	public void doCollateralDemark(List<FinCollateralMark> collatDeMarkList) throws PFFInterfaceException {
+	public void doCollateralDemark(List<FinCollateralMark> collatDeMarkList) throws InterfaceException {
 		logger.debug("Entering");
 		
 		if(collatDeMarkList != null && collatDeMarkList.isEmpty()) {

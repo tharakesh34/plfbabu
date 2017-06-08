@@ -5,9 +5,9 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.processutil.HandlingInstructionProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 
@@ -24,11 +24,11 @@ public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess 
 	 * 
 	 * @param handlingInstruction
 	 * @return HandlingInstruction
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
 	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		HandlingInstruction handlInstResponse = null;
@@ -37,7 +37,7 @@ public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess 
 					InterfaceMasterConfigUtil.FINANCE_MAINTENANCE);
 		} catch (JaxenException jax) {
 			logger.error("Exception: ", jax);
-			throw new PFFInterfaceException("PTI7001", jax.getMessage());
+			throw new InterfaceException("PTI7001", jax.getMessage());
 		}
 
 		logger.debug("Leaving");

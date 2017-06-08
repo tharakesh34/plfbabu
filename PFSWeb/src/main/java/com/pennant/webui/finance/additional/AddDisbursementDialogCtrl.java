@@ -220,8 +220,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AddDisbursementDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -689,7 +688,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		// Show Error Details in Schedule Maintenance
 		if (aFinScheduleData.getErrorDetails() != null && !aFinScheduleData.getErrorDetails().isEmpty()) {
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			aFinScheduleData.getErrorDetails().clear();
 		} else {
 			aFinScheduleData.setSchduleGenerated(true);
@@ -731,7 +730,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isDataChanged()) {
 				doSave();
 			} else {
-				MessageUtil.showErrorMessage("No Data has been changed.");
+				MessageUtil.showError("No Data has been changed.");
 			}
 		} else {
 			doSave();

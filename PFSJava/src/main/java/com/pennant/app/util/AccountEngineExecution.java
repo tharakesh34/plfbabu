@@ -82,7 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 public class AccountEngineExecution implements Serializable {
@@ -119,10 +119,10 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public AEEvent getAccEngineExecResults(AEEvent aeEvent)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent);
@@ -169,10 +169,10 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<FeeRule> getFeeChargesExecResults(int formatter, boolean isWIF, HashMap<String, Object> dataMap)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		//Prepare AmountCode Details
@@ -257,11 +257,11 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<FeeRule> getReExecFeeResults(int formatter, boolean isWIF, List<FeeRule> existFeeList,
 			HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException,
-			PFFInterfaceException {
+			InterfaceException {
 		logger.debug("Entering");
 
 		//Prepare AmountCode Details
@@ -342,10 +342,10 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public BigDecimal getProvisionExecResults(HashMap<String, Object> dataMap) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 
 		doFilldataMap(dataMap);
 		setAmountCodes(dataMap, false);
@@ -367,10 +367,10 @@ public class AccountEngineExecution implements Serializable {
 	 * 
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 		//Accounting Set Details
@@ -412,7 +412,7 @@ public class AccountEngineExecution implements Serializable {
 	}
 
 	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		String acSetEvent = (String) dataMap.get("ae_finEvent");
@@ -470,12 +470,12 @@ public class AccountEngineExecution implements Serializable {
 	 * @param dataMap
 	 * @param aeCommitment
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
 		

@@ -1125,4 +1125,245 @@
         <column name="BATCH_ID" type="NUMBER" />
  </createTable>
 </changeSet>
+
+<changeSet id="37" author="Manoj.P">
+	<dropTable tableName="DM_DISB_DETAILS_DAILY"/>
+</changeSet>
+
+<changeSet id="38" author="Manoj.P">
+	<createTable tableName="DM_DISB_DETAILS_DAILY">
+		<column name="AGREEMENTDATE" type="datetime" />
+		<column name="APPLID" type="NUMBER(8)" />
+		<column name="AGREEMENTNO" type="VARCHAR2(20)" />
+		<column name="DISBURSEMENTNO" type="NUMBER(8)" />
+		<column name="DISBURSEMENTDATE" type="datetime" />
+		<column name="PARENT_AGREEMENTNO" type="VARCHAR2(20)" />
+		<column name="AMTFIN" type="NUMBER(16,2)" />
+		<column name="NET_AMTFIN" type="NUMBER(16,2)" />
+		<column name="DISBURSEDAMT" type="NUMBER(16,2)" />
+		<column name="DISB_STATUS" type="VARCHAR2(20)" />
+		<column name="FIRST_DUE_DATE" type="datetime" />
+		<column name="GROSS_TENURE" type="NUMBER(3)" />
+		<column name="NET_TENURE" type="NUMBER(3)" />
+		<column name="MATURITYDATE" type="datetime" />
+		<column name="EXPIRYDATE" type="datetime" />
+		<column name="NO_OF_ADV_INSTL" type="NUMBER(3)" />
+		<column name="ADV_EMI_AMT" type="NUMBER(16,2)" />
+		<column name="EMI" type="NUMBER(16,2)" />
+		<column name="REPAYMENT_MODE" type="VARCHAR2(20)" />
+		<column name="PRODUCTFLAG" type="VARCHAR2(8)" />
+		<column name="PROMOTIONID" type="NUMBER(8)" />
+		<column name="ICICI_LOMBARD" type="NUMBER(16,2)" />
+		<column name="BAGIC" type="NUMBER(16,2)" />
+		<column name="BALIC_CHARGES" type="NUMBER(16,2)" />
+		<column name="BUSINESSDATE" type="datetime" />
+		<column name="PROCESSED_FLAG" type="CHAR(1)" />
+		<column name="PROCESS_DATE" type="datetime" />
+		<column name="SEGMENTS" type="VARCHAR2(10)" />
+		<column name="FEE" type="NUMBER(16,2)" />
+		<column name="DEALER_SUBV" type="NUMBER(16,2)" />
+		<column name="MANU_SUBV_DED" type="NUMBER(16,2)" />
+		<column name="MANU_SUBV_NDED" type="NUMBER(16,2)" />
+		<column name="PREEMI" type="NUMBER(16,2)" />
+		<column name="EXISTING_LANNO" type="VARCHAR2(20)" />
+		<column name="MORTGAGE_FEE" type="NUMBER" />
+		<column name="COMMITMENT_FEE" type="NUMBER" />
+		<column name="PROCESSING_FEE" type="NUMBER" />
+		<column name="PRE_EMI_RECEIVABLE" type="NUMBER" />
+		<column name="INSURANCE" type="NUMBER" />
+		<column name="PAYMENTMODE" type="VARCHAR2(13)" />
+		<column name="FREQ" type="VARCHAR2(2)" />
+		<column name="CHEQUENUM" type="VARCHAR2(15)" />
+		<column name="CUST_ACCT_NO" type="VARCHAR2(16)" />
+		<column name="BANKNAME" type="VARCHAR2(200)" />
+		<column name="MICRCODE" type="VARCHAR2(20)" />
+		<column name="BUSINESS_YEAR" type="NUMBER" />
+		<column name="EMI_CHARGE" type="NUMBER(16,2)" />
+		<column name="PDC_CHARGE" type="NUMBER(16,2)" />
+		<column name="IRR_PER" type="NUMBER(16,5)" />
+		<column name="FEE_WL" type="NUMBER(16,5)" />
+		<column name="ELC_CHARGE" type="NUMBER(16,2)" />
+		<column name="CREDIT_VIDYA_FEES" type="NUMBER(16,2)" />
+		<column name="BATCH_ID" type="NUMBER" />
+	</createTable>
+</changeSet>
+
+<changeSet author="Manoj.P" id="39">
+	<addPrimaryKey columnNames="AGREEMENTNO, DISBURSEMENTNO" constraintName="PK_DM_AGN_DBN"
+		tableName="DM_DISB_DETAILS_DAILY" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="40">
+	<addPrimaryKey columnNames="CUSTOMERID" constraintName="PK_DM_APP_CUSTID"
+		tableName="DM_APPLICANT_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="41">
+	<addPrimaryKey columnNames="ADDRESSID,CUSTOMERID" constraintName="PK_DM_ADD_CUSTID"
+		tableName="DM_ADDRESS_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="42">
+	<addPrimaryKey columnNames="APPLID" constraintName="PK_DM_COAPP_APPID"
+		tableName="DM_COAPPLICANT_DETAILS" />
+</changeSet>
+
+
+
+<changeSet author="Manoj.P" id="43">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_LD_AGGNO"
+		tableName="DM_LOAN_DETAILS_DAILY" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="44">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_ID_AGGNO"
+		tableName="DM_INSURANCE_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="45">
+	<addPrimaryKey columnNames="APPLICATIONID" constraintName="PK_DM_PD_APPID"
+		tableName="DM_PROPERTY_DTL" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="46">
+	<addPrimaryKey columnNames="APPLID" constraintName="PK_DM_APD_APPID"
+		tableName="DM_APPLICATION_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="47">
+	<dropTable tableName="DM_APPLICATION_DETAILS"/>
+</changeSet>
+
+<changeSet author="Manoj.P" id="48">
+    <createTable tableName="DM_APPLICATION_DETAILS">
+        <column name="APPLID" type="NUMBER(8)" />
+        <column name="CRM_DEALID" type="VARCHAR2(20)" />
+        <column name="CRSCOREDATE" type="datetime" />
+        <column name="CIBILSCORE" type="VARCHAR2(10)" />
+        <column name="APPSCORE" type="NUMBER(8)" />
+        <column name="BEHSCORE" type="NUMBER(8)"/>
+        <column name="DEVIATION_TYPE" type="VARCHAR2(100)" />
+        <column name="DEVIATION_FLAG" type="CHAR(1)" />
+        <column name="DEVIATION_CODE" type="VARCHAR2(100)" />
+        <column name="DEVIATION_NAME" type="VARCHAR2(100)" />
+        <column name="REQ_TENURE" type="NUMBER(3)" />
+        <column name="REQ_LOAN_AMT" type="NUMBER(18,4)" />
+        <column name="LOAN_LIMIT" type="NUMBER(18,4)" />
+        <column name="APPROVE_LOAN_AMT" type="NUMBER(18,4)" />
+        <column name="LOAN_PURPOSE" type="VARCHAR2(100)" />
+        <column name="LOAN_TYPE" type="VARCHAR2(100)" />
+        <column name="CANCELLATIONDATE" type="datetime" />
+        <column name="CANCEL_REASON" type="VARCHAR2(300)" />
+        <column name="FREQUENCY" type="VARCHAR2(15)" />
+        <column name="LOAN_APPROVAL_DATE" type="datetime" />
+        <column name="AGREEMENTDATE" type="datetime" />
+        <column name="INTRATE" type="NUMBER(10,7)" />
+        <column name="FLAT_RATE" type="NUMBER(10,7)" />
+        <column name="IRR" type="NUMBER(10,7)" />
+        <column name="GROSS_LTV" type="NUMBER(10,7)" />
+		<column name="NET_LTV" type="NUMBER(10,7)" />
+		<column name="COF" type="NUMBER(18,4)" />
+		<column name="DEBT_BURDEN_RATIO" type="NUMBER(10,7)" />
+		<column name="FOIR_DB" type="NUMBER(10,7)" />
+		<column name="SCHEMEID" type="NUMBER(8)" />
+		<column name="SCHEMEDESC" type="VARCHAR2(200)" />
+		<column name="SCHEMEGROUPID" type="NUMBER(8)" />
+		<column name="SCHEME_GROUPG_DESC" type="VARCHAR2(35)" />
+		<column name="PRODUCT_CATEGORY" type="VARCHAR2(20)" />
+		<column name="PROD_TYPE" type="VARCHAR2(100)" />
+		<column name="PROMOTIONID" type="NUMBER(8)" />
+		<column name="PROGRAMID" type="NUMBER(8)" />
+		<column name="SURROGATE_FLAG" type="CHAR(1)" />
+		<column name="SOURCING_CHANNEL_TYPE" type="VARCHAR2(100)" />
+		<column name="SOURCING_CHANNEL_NAME" type="VARCHAR2(200)" />
+		<column name="REFERAL_GROUP" type="VARCHAR2(200)" />
+		<column name="REFERAL_NAME" type="VARCHAR2(200)" />
+		<column name="COUNTRYID" type="NUMBER(8)" />
+		<column name="COUNTRY" type="VARCHAR2(200)" />
+		<column name="REGIONID" type="NUMBER(8)" />
+		<column name="REGION" type="VARCHAR2(200)" />
+		<column name="STATEID" type="NUMBER(8)" />
+		<column name="STATE" type="VARCHAR2(200)" />
+		<column name="CITYID" type="VARCHAR2(20)" />
+		<column name="CITY" type="VARCHAR2(200)" />
+		<column name="BRANCHID" type="NUMBER(8)" />
+		<column name="BRANCHDESC" type="VARCHAR2(200)" />
+		<column name="BROKER_NAME" type="VARCHAR2(200)" />
+		<column name="DME_NAME" type="VARCHAR2(200)" />
+		<column name="ASM_NAME" type="VARCHAR2(200)" />
+		<column name="RSM_NAME" type="VARCHAR2(200)" />
+		<column name="CRDT_MGR_NAME" type="VARCHAR2(200)" />
+		<column name="ROID_NAME" type="VARCHAR2(200)" />
+		<column name="TLID_NAME" type="VARCHAR2(200)" />
+		<column name="BMID_NAME" type="VARCHAR2(200)" />
+		<column name="COID_NAME" type="VARCHAR2(200)" />
+		<column name="SUPPLIERID" type="NUMBER(8)" />
+		<column name="DLR_PARTICIPATION_RATE" type="NUMBER(10,7)" />
+		<column name="LOCAL_OUTSTATION_FLG" type="VARCHAR2(2)" />
+		<column name="CUSTOMERID" type="NUMBER(8)" />
+		<column name="BUSINESSDATE" type="datetime" />
+		<column name="PROCESSED_FLAG" type="CHAR(1)" />
+		<column name="PROCESS_DATE" type="datetime" />
+		<column name="PRODUCT" type="VARCHAR2(8)" />
+		<column name="SEGMENTS" type="VARCHAR2(10)" />
+		<column name="CRM_STATUS" type="VARCHAR2(10)" />
+		<column name="LOGINDATE" type="datetime" />
+		<column name="APPR_REJ_DATE" type="datetime" />
+		<column name="CANCEL_DATE" type="datetime" />
+		<column name="FILE_STATUS" type="VARCHAR2(50)" />
+		<column name="FILE_HOLD_REASON" type="VARCHAR2(200)" />
+		<column name="QDPDONE" type="VARCHAR2(1)" />
+		<column name="ISHOLD" type="VARCHAR2(1)" />
+		<column name="BRANCH_INW_DATE" type="datetime" />
+		<column name="BRANCH_HOLD_DATE" type="datetime" />
+		<column name="CPU_INW_DATE" type="datetime" />
+		<column name="CPU_HOLD_DATE" type="datetime" />
+		<column name="SYSTEM_HOLD" type="VARCHAR2(1)" />
+		<column name="PSL_FLAG" type="VARCHAR2(1)" />
+		<column name="DOC_WAVE_FLAG" type="VARCHAR2(4)" />
+		<column name="CUSTOMER_SWIPE" type="VARCHAR2(1)" />
+		<column name="CUSTOMER_ACCEPTANCE" type="VARCHAR2(1)" />
+		<column name="KYC_DOC_TYPE" type="VARCHAR2(100)" />
+		<column name="KYC_DOC_ID" type="VARCHAR2(20)" />
+		<column name="BUSINESS_IRR" type="NUMBER(5,2)" />
+		<column name="INSPECTORNAME" type="VARCHAR2(32)" />
+		<column name="REGNUMBER" type="VARCHAR2(15)" />
+		<column name="BUSINESS_YEAR" type="NUMBER" />
+		<column name="DEALID" type="NUMBER(10)" />
+		<column name="PRETAXIRR" type="NUMBER(10,7)" />
+		<column name="ODM_FLAG" type="VARCHAR2(1)" />
+		<column name="DI_DATE" type="datetime" />
+		<column name="LAA_QDP_FLAG" type="VARCHAR2(1)" />
+		<column name="PREFERRED_CARD_ACCEPTANCE" type="VARCHAR2(1)" />
+		<column name="ORIG_AMTFIN" type="NUMBER(16,2)" />
+		<column name="ELC_FLAG" type="VARCHAR2(1)" />
+		<column name="ELC_LIMIT" type="NUMBER(14,2)" />
+		<column name="QDP_DONE_DATE" type="datetime" />
+		<column name="LAA_DECENTRALIZED_FLAG" type="VARCHAR2(1)" />
+		<column name="FCU_FLAG" type="VARCHAR2(4)" />
+		<column name="MKTGID" type="NUMBER(8)" />
+		<column name="DM_MPID" type="NUMBER(8)" />
+		<column name="SWIPE_CARD_CODE" type="NUMBER(2)" />
+		<column name="SOURCE_CARD_CODE" type="NUMBER(2)" />
+		<column name="DII_USER_ID" type="VARCHAR2(8)" />
+		<column name="QDP_CHEQUE_ISSUE" type="datetime" />
+		<column name="INTEREST_TYPE" type="VARCHAR2(1)" />
+		<column name="DII_DONE_DATE" type="datetime" />
+		<column name="FINISH_DATE" type="datetime" />
+		<column name="BATCH_ID" type="NUMBER" />
+    </createTable>
+</changeSet>
+
+<changeSet author="Manoj.P" id="49">
+	<addPrimaryKey columnNames="APPLID" constraintName="PK_DM_APD_APPID"
+		tableName="DM_APPLICATION_DETAILS" />
+</changeSet>
+
+
+<changeSet author="Manoj.P" id="50">
+	<addPrimaryKey columnNames="AGREEMENTNO,DISBURSEMENTNO" constraintName="PK_DM_AGG_DID"
+		tableName="DM_SUBQ_DISB_DETAILS" />
+</changeSet>
+
+
 </databaseChangeLog>

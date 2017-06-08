@@ -11,8 +11,8 @@ import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.model.deposits.InvestmentContract;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 	
@@ -23,7 +23,7 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 	}
 	
 	@Override
-	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws PFFInterfaceException {
+	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		
 		FetchDeposit deposits = new FetchDeposit();
@@ -73,7 +73,7 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 	}
 
 	@Override
-	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws PFFInterfaceException {
+	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws InterfaceException {
 		logger.debug("Entering");
 		
 		FetchDepositDetail depositDetail = new FetchDepositDetail();

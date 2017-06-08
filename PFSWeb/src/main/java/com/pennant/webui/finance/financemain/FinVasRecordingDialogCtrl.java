@@ -156,8 +156,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			doShowDialog();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinVasRecordingDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -322,7 +321,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN,StringUtils.trimToEmpty(recording.getRecordType()))
 					|| StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL,StringUtils.trimToEmpty(recording.getRecordType()))) {
 
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
 				
@@ -348,8 +347,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					Executions.createComponents(
 							"/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

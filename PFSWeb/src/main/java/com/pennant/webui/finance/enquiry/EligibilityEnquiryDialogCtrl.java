@@ -180,8 +180,7 @@ public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibility
 
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

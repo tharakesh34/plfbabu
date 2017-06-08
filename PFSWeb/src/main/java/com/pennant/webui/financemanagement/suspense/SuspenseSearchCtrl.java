@@ -265,8 +265,7 @@ public class SuspenseSearchCtrl extends GFCBaseCtrl<FinanceSuspHead>  {
 			// open the dialog in modal mode
 			this.window_SuspenseSearch.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

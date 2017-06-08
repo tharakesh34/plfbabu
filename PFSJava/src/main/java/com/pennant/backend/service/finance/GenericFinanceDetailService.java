@@ -129,7 +129,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private final static Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
@@ -1165,7 +1165,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws AccountNotFoundException
 	 */
 	protected void suspenseCheckProcess(FinanceMain financeMain, String processType, Date dateValueDate,
-			String curFinsts, int maxODDays) throws PFFInterfaceException {
+			String curFinsts, int maxODDays) throws InterfaceException {
 
 		boolean chkSuspProcess = false;
 
@@ -1265,11 +1265,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		BigDecimal totalPriSchdOld = BigDecimal.ZERO;
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		if (profitDetail != null) {//FIXME
 			BeanUtils.copyProperties(profitDetail, newProfitDetail);
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
+			totalPriSchdOld = profitDetail.getTotalpriSchd();
 		}
 		
 		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
@@ -1289,8 +1291,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner()) ?  FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
+		if(StringUtils.isEmpty(financeDetail.getModuleDefiner())){
+			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+		}else{
+			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
+		}
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
 			aeEvent.setNewRecord(true);
@@ -1305,7 +1311,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList, boolean doPostings) {
 
@@ -1326,7 +1332,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}else{
 						aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 					}
-				} catch (IllegalAccessException | InvocationTargetException | PFFInterfaceException e) {
+				} catch (IllegalAccessException | InvocationTargetException | InterfaceException e) {
 					e.printStackTrace();
 				}
 				datasetList.addAll(aeEvent.getReturnDataSet());
@@ -1337,7 +1343,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	protected long getAccountingResults(AuditHeader auditHeader, FinanceDetail financeDetail,
 			List<ReturnDataSet> accountingSetEntries, Date curBDay, AEEvent aeEvent)
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+					throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		long linkedTranId = 0;
 
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -1508,7 +1514,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			e.printStackTrace();
 		}
 
@@ -1566,7 +1572,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws AccountNotFoundException
 	 */
 	protected AuditHeader executeStageAccounting(AuditHeader auditHeader, List<ReturnDataSet> list)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = null;
@@ -1746,7 +1752,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws AccountNotFoundException
 	 */
 	protected boolean prvStageAccountingCheck(List<ReturnDataSet> curStageAccEntries, String finReference,
-			String finEvent, String roleCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			String finEvent, String roleCode) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// Check Previously Executed Stage Accounting Entries
@@ -1833,11 +1839,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Method for Processing Reversal/Cancel of All Transaction Entries in Case of record Rejection
 	 * 
 	 * @param finReference
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	protected void cancelStageAccounting(String finReference, String finEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	protected void cancelStageAccounting(String finReference, String finEvent) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		List<Long> excdTranIdList = getFinStageAccountingLogDAO().getLinkedTranIdList(finReference, finEvent);
 		if (excdTranIdList != null && !excdTranIdList.isEmpty()) {

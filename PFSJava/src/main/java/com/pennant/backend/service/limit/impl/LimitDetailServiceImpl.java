@@ -47,6 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,6 +67,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
@@ -1262,10 +1264,33 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Review date("+DateUtility.formatToShortDate(limitHeader.getLimitRvwDate())+")";
 				valueParm[1] = "Limit expiry date("+DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+")";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), "EN"));
 			}
 		}
-
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, 1); // to get previous year add -1
+		Date nextYear = cal.getTime();
+		if(limitHeader.getLimitRvwDate() != null){
+			if (limitHeader.getLimitRvwDate().before(DateUtility.getAppDate())
+					|| limitHeader.getLimitRvwDate().after(nextYear)) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Review date";
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				valueParm[2] = DateUtility.formatToLongDate(nextYear);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}	
+		}
+		
+		if(limitHeader.getLimitExpiryDate() != null){
+			if (limitHeader.getLimitExpiryDate().before(DateUtility.getAppDate())
+					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Limit expiry date";
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}	
+		}
 		// validate Customer and customer group
 		String custCIF = limitHeader.getCustCIF();
 
@@ -1352,7 +1377,24 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					valueParm[0] = String.valueOf(structureId);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90803", "", valueParm), "EN"));
 				}
-
+				if(detail.getExpiryDate() != null){
+					if (detail.getExpiryDate().before(DateUtility.getAppDate())
+							|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Limit expiry date";
+						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						return auditDetail;
+					}	
+				}
+				if(detail.getLimitSanctioned().compareTo(BigDecimal.ZERO)<0){
+					String[] valueParm = new String[2];
+					valueParm[0] = "limitSanctioned";
+					valueParm[1] = "Zero";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+					return auditDetail;
+				}
 				// validate limit check method
 				if(!StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_ACTUAL)
 						&& !StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_RESERVED)) {

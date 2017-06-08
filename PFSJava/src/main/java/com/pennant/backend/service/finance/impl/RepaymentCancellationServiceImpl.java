@@ -52,7 +52,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -124,7 +124,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -154,7 +154,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		if (!financeMain.isWorkflow()) {
 			String errorCode = processRepayCancellation(financeMain);
 			if (StringUtils.isNotBlank(errorCode)) {
-				throw new PFFInterfaceException("9999", errorCode);
+				throw new InterfaceException("9999", errorCode);
 			}
 		} else {
 
@@ -236,7 +236,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -258,7 +258,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		//=====================================
 		String errorCode = processRepayCancellation(financeMain);
 		if (StringUtils.isNotBlank(errorCode)) {
-			throw new PFFInterfaceException("9999", errorCode);
+			throw new InterfaceException("9999", errorCode);
 		}
 
 		tranType = PennantConstants.TRAN_UPD;
@@ -430,7 +430,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String processRepayCancellation(FinanceMain financeMain) throws PFFInterfaceException,
+	private String processRepayCancellation(FinanceMain financeMain) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -633,7 +633,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//============================================
 			List<FinanceScheduleDetail> finSchedeuleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 					finReference);
-			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
 			profitDetail = accrualService.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
 			String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(profitDetail.getFinReference(), false);
 			profitDetail.setFinWorstStatus(worstSts);

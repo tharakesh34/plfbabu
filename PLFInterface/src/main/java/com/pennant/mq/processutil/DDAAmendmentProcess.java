@@ -11,11 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.dda.DDAAmendment;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAAmendmentProcess extends MQProcess {
 
@@ -31,13 +31,13 @@ public class DDAAmendmentProcess extends MQProcess {
 	 * @param ddaAmendmentReq
 	 * @param msgFormat
 	 * @return DDAAmendmentReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq, String msgFormat) throws PFFInterfaceException {
+	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (ddaAmendmentReq == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"UAEDDSRequest"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "UAEDDSRequest Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
@@ -53,7 +53,7 @@ public class DDAAmendmentProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(ddaAmendmentReq, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -68,10 +68,10 @@ public class DDAAmendmentProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private DDAAmendment setDDAAmendmentReplyInfo(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -86,12 +86,12 @@ public class DDAAmendmentProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			ddaAmendmentReply = new DDAAmendment();
 			ddaAmendmentReply = (DDAAmendment) doUnMarshalling(detailElement, ddaAmendmentReply);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -108,10 +108,10 @@ public class DDAAmendmentProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(DDAAmendment ddaAmendmentReq, String referenceNum, OMFactory factory) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = null;

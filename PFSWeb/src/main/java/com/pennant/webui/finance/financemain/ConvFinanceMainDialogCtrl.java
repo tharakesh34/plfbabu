@@ -60,9 +60,9 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -195,7 +195,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	
 	@Override
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-	InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 	}
 	
@@ -281,8 +281,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_ConvFinanceMainDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

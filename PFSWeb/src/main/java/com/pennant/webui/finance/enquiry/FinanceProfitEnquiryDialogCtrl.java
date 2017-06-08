@@ -247,8 +247,7 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 			}
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

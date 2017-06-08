@@ -168,8 +168,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PostponementDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -601,21 +600,21 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedDefRpyChange()+adjTerms > getFinScheduleData().getFinanceMain().getDefferments()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxPostponement.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxPostponement.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getDefferments())}));
 				return;
 			}
 		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi()+adjTerms > getFinScheduleData().getFinanceMain().getMaxUnplannedEmi()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxUnplannedEmi())}));
 				return;
 			}
 		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH()+adjTerms > getFinScheduleData().getFinanceMain().getMaxReAgeHolidays()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxReAgeHolidays())}));
 				return;
 			}
@@ -647,7 +646,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
 			
 		}else{
@@ -737,7 +736,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (curretnDefCount == perYear) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_AllowedPerYear.value",new String[]{String.valueOf(perYear)}));
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_AllowedPerYear.value",
+						new String[] { String.valueOf(perYear) }));
 				return false;
 			}
 		}

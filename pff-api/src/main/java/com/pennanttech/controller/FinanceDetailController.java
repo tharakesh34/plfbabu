@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -46,6 +47,9 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.model.staticparms.ExtendedField;
+import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -55,7 +59,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -82,12 +85,11 @@ public class FinanceDetailController extends SummaryDetailService {
 	 * @param finCalculatorRequest
 	 * @return
 	 * @throws JaxenException
-	 * @throws PFFInterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	public FinScheduleData doCreateFinanceSchedule(FinScheduleData finScheduleData)throws JaxenException,
-			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Enteing");
 
 		if (finScheduleData != null) {
@@ -225,6 +227,7 @@ public class FinanceDetailController extends SummaryDetailService {
 	private void doSetRequiredData(FinScheduleData finScheduleData) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
@@ -232,11 +235,37 @@ public class FinanceDetailController extends SummaryDetailService {
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
+			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
+			if (extendedFields != null) {
+				int seqNo = 0;
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(vasRecording.getVasReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setSeqNo(++seqNo);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				for (ExtendedField extendedField : extendedFields) {
+
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						exdFieldRender.setMapValues(mapValues);
+					}
+
+				}
+
+				vasRecording.setExtendedFieldRender(exdFieldRender);
+			}else {
+				vasRecording.setExtendedFieldRender(null);
+			}
 		}
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		
 		// user details
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		
 		financeMain.setUserDetails(userDetails);
 		financeMain.setFinIsActive(true);
 		financeMain.setVersion(1);

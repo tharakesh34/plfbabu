@@ -178,8 +178,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 			}
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceCheckListReferenceDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -875,7 +874,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 							finDocumentDetail.setDocIsCustDoc(checkListDetail.isDocIsCustDOC());
 							docDialogCtrl.updateExistingDocument(finDocumentDetail, true, true);
 						} else {
-							MessageUtil.showErrorMessage("Document not Yet uploaded.");
+							MessageUtil.showError("Document not Yet uploaded.");
 						}
 					}
 				}

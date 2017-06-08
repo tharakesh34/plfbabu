@@ -89,10 +89,10 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
@@ -225,8 +225,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -365,7 +364,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void doSetStageAccounting() throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doSetStageAccounting() throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		if (StringUtils.trimToEmpty(getFinanceMain().getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 			getFinanceMain().setCurDisbursementAmt(getFinanceMain().getFinAmount());
@@ -452,7 +451,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 			ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, true, 1, usrName, window);
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
+			MessageUtil.showError(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}

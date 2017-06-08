@@ -58,14 +58,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
@@ -290,19 +286,6 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String finType, String insurance, String userLanguage) {
-		String[][] parms = new String[2][3];
-
-		parms[1][0] = finType;
-		parms[1][1] = insurance;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0] + " "
-				+ PennantJavaUtil.getLabel("label_Reference") + ":" + parms[1][1];
-		parms[0][1] = PennantJavaUtil.getLabel("label_Event") + ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 	/**

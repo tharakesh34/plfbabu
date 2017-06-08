@@ -9,12 +9,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -58,6 +60,9 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.model.staticparms.ExtendedField;
+import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
@@ -364,6 +369,33 @@ public class CreateFinanceController extends SummaryDetailService {
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
+			// process Extended field details
+			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
+			if (extendedFields != null) {
+				int seqNo = 0;
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(vasRecording.getVasReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setSeqNo(++seqNo);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				for (ExtendedField extendedField : extendedFields) {
+
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						exdFieldRender.setMapValues(mapValues);
+					}
+
+				}
+
+				vasRecording.setExtendedFieldRender(exdFieldRender);
+			}else {
+				vasRecording.setExtendedFieldRender(null);
+			}
 		}
 		// process finance flags
 		List<FinFlagsDetail> finFlagsDetails = financeDetail.getFinFlagsDetails();
@@ -480,6 +512,14 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setVersion(1);
 		}
 
+		// Set VAS reference as feeCode for VAS related fees
+		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
+			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
+				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
+				}
+			}
+		}
 		// execute fee charges
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);

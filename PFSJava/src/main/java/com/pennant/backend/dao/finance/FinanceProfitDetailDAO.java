@@ -57,23 +57,40 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 public interface FinanceProfitDetailDAO {
 
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
+
 	void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
+
 	void update(List<FinanceProfitDetail> finProfitDetails, String type);
+
 	void save(FinanceProfitDetail finProfitDetails);
+
 	BigDecimal getAccrueAmount(String finReference);
+
 	void updateLBDAccruals(FinanceProfitDetail finProfitDetails, boolean isMonthEnd);
+
 	FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
-	FinanceProfitDetail getFinPftDetailForBatch(String finReference);
+
 	void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);
+
 	void refreshTemp();
+
 	FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
+
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+
 	void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
+
 	void updateRpyAccount(String finReference, String repayAccountId);
+
 	void saveAccumulates(Date valueDate);
+
 	void resetAcrTsfdInSusp();
+
 	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
+
 	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
+
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
+
 	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
 }

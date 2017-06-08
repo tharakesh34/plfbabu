@@ -18,7 +18,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -39,7 +38,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 
 public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdParty> implements Serializable {
@@ -227,8 +225,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 					getNotes("CollateralThirdParty", String.valueOf(getCollateralThirdParty().getCustomerId()),
 							getCollateralThirdParty().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -298,8 +295,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
 			Customer customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
 			if(customer == null){
-				MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), 
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 				return;
 			}
 		}
@@ -351,8 +347,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			}
 			this.window_CollateralThirdPartyDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -571,12 +566,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ (collateralThirdParty.getCustCIF());
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(collateralThirdParty.getRecordType())) {
 				collateralThirdParty.setVersion(collateralThirdParty.getVersion() + 1);
 				collateralThirdParty.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -648,7 +638,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		if(StringUtils.isNotEmpty(this.customerCif.getValue())){
 			 customer = getCustomerDetailsService().getCheckCustomerByCIF(this.customerCif.getValue());
 				if (customer == null) {
-					MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 					return;
 				}
 		}

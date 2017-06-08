@@ -13,7 +13,7 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.reports.AvailPastDue;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface CustomerDetailsService {
 	CustomerDetails getCustomerById(long id);
@@ -22,17 +22,17 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getNewCustomer(boolean createNew);
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException; 
+	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException; 
 
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	Customer fetchCustomerDetails(Customer customer);
 
-	Customer fetchCoreCustomerDetails(Customer customer) throws PFFInterfaceException;
+	Customer fetchCoreCustomerDetails(Customer customer) throws InterfaceException;
 
 	Customer getCustomerForPostings(long custId);
 
@@ -61,7 +61,7 @@ public interface CustomerDetailsService {
 	List<CustomerRating> getCustomerRatingByCustId(long id, String type);
 
 	//Finance Customer Details
-	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws PFFInterfaceException;
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws InterfaceException;
 
 	CustomerDetails getCustomerDetailsById(long id, boolean reqChildDetails, String type);
 

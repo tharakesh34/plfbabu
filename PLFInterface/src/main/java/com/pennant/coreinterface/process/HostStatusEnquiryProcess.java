@@ -1,10 +1,10 @@
 package com.pennant.coreinterface.process;
 
 import com.pennant.coreinterface.model.HostEnquiry;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface HostStatusEnquiryProcess {
 
-	HostEnquiry getHostStatus() throws PFFInterfaceException;
+	HostEnquiry getHostStatus() throws InterfaceException;
 
 }

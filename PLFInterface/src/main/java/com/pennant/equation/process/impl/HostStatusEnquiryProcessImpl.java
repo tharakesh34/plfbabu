@@ -8,7 +8,7 @@ import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.model.HostEnquiry;
 import com.pennant.coreinterface.process.HostStatusEnquiryProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 
@@ -23,7 +23,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 	 * Method For getting AS400 Connection Status
 	 */
 	@Override
-	public HostEnquiry getHostStatus() throws PFFInterfaceException {
+	public HostEnquiry getHostStatus() throws InterfaceException {
 
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
@@ -57,7 +57,7 @@ public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}

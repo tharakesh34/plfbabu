@@ -67,7 +67,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -85,12 +84,11 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the
@@ -204,8 +202,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			doSetFieldProperties();
 			doShowDialog(getCustomer());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustSuspenseDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -514,11 +511,11 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		doDelete();
 		logger.debug("Leaving" + event.toString());
@@ -549,11 +546,11 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * Deletes a Customer Suspense details from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void doDelete() throws InterruptedException, IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	private void doDelete() throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		final Customer aCustomer = new Customer();
@@ -564,15 +561,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		final String msg = Labels.getLabel(
 				"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				Labels.getLabel("label_TargetDetailDialog_TargetCode.value")+" : "+aCustomer.getCustID();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomer.getRecordType())) {
 				aCustomer.setVersion(aCustomer.getVersion() + 1);
 				aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -665,8 +654,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			} 
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		// Update the Customer table
 		//getCustomerService().updateCustSuspenseDetails(aCustomer);
@@ -707,7 +695,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException 
 	 */
-	private boolean doProcess(Customer aCustomer, String tranType) throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(Customer aCustomer, String tranType) throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -868,7 +856,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -996,8 +984,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -2,10 +2,10 @@ package com.pennant.coreinterface.process;
 
 import java.util.Map;
 
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface DateRollOverProcess {
 
-	Map<String, String> getCalendarWorkingDays() throws PFFInterfaceException;
+	Map<String, String> getCalendarWorkingDays() throws InterfaceException;
 
 }

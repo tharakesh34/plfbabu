@@ -65,7 +65,6 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -87,7 +86,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.productAsset.model.ProductAssetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -256,8 +254,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			doShowDialog(getProduct());
 			this.btnDelete.setVisible(false);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProductDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -582,15 +579,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				+ "\n\n --> "
 				+ Labels.getLabel("label_ProductDialog_ProductCode.value")
 				+ " : " + aProduct.getProductCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			doWriteBeanToComponents(aProduct);
 
 			if (StringUtils.isBlank(aProduct.getRecordType())) {
@@ -612,8 +601,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -747,8 +735,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 						new String[] { Labels.getLabel("ProductAsset"), Labels.getLabel("Product") }));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -955,8 +942,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 								"/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
 								window_ProductDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 

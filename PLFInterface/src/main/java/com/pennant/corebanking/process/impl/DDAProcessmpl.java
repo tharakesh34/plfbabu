@@ -7,8 +7,8 @@ import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAProcessmpl implements DDAProcess {
 
@@ -19,7 +19,7 @@ public class DDAProcessmpl implements DDAProcess {
 	}
 	
 	@Override
-	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws PFFInterfaceException {
+	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDARegistration ddaRegistration = new DDARegistration();
@@ -34,7 +34,7 @@ public class DDAProcessmpl implements DDAProcess {
 	}
 
 	@Override
-	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws PFFInterfaceException {
+	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDAAmendment ddaAmendment = new DDAAmendment();
@@ -49,7 +49,7 @@ public class DDAProcessmpl implements DDAProcess {
 	}
 
 	@Override
-	public DDAUpdate sendDDAUpdate(DDAUpdate ddaUpdateReq) throws PFFInterfaceException {
+	public DDAUpdate sendDDAUpdate(DDAUpdate ddaUpdateReq) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDAUpdate ddaUpdate = new DDAUpdate();
@@ -64,7 +64,7 @@ public class DDAProcessmpl implements DDAProcess {
 	}
 
 	@Override
-	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws PFFInterfaceException {
+	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDACancellation ddaCancelReply = new DDACancellation();

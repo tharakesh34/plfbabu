@@ -102,10 +102,10 @@ import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -293,7 +293,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	public void onClick$btnPrintFromFinance(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onClick$btnPrintFromFinance(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		printTicket();
 		logger.debug("Leaving" + event.toString());
@@ -307,16 +307,16 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws CustomerNotFoundException 
 	 * @throws CustomerLimitProcessException 
 	 */
-	public void onClick$btnPrint(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onClick$btnPrint(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		printTicket();
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	private void printTicket() throws PFFInterfaceException, InterruptedException{
+	private void printTicket() throws InterfaceException, InterruptedException{
 		logger.debug("Entering");
 		if(this.custID.longValue() == 0){
-			MessageUtil.showErrorMessage("Customer must be selected.");
+			MessageUtil.showError("Customer must be selected.");
 			return;
 		}
 		AvailCustomer availCustomer = new AvailCustomer();
@@ -370,9 +370,9 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 						PennantApplicationUtil.amountFormate(curExposure,  detail.getAvailLimit().getLimitCcyEdit()));
 			}
 			
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+			MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			return;
 		}
 		

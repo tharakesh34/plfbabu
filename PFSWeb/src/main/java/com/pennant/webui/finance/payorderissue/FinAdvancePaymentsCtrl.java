@@ -383,8 +383,7 @@ public class FinAdvancePaymentsCtrl {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 	}
@@ -475,6 +474,10 @@ public class FinAdvancePaymentsCtrl {
 					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType())) {
 				return true;
 			}
+			return false;
+		}
+		
+		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
 			return false;
 		}
 

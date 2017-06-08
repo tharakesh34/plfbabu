@@ -164,8 +164,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 			doCheckRights();
 			doShowDialog();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypePartnerBankList.onClose();
 		}
 

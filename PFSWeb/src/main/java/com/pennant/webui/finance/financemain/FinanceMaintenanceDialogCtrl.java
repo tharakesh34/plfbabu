@@ -130,7 +130,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -141,6 +140,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -627,7 +627,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
@@ -1237,7 +1237,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Executing Accounting tab Rules
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 * 
 	 */
@@ -1904,15 +1904,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ afinanceMain.getFinReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(afinanceMain.getRecordType())) {
 				afinanceMain.setVersion(afinanceMain.getVersion() + 1);
 				afinanceMain.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -2421,9 +2413,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return;
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -2582,9 +2573,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						// =====================
 						try {
 							processCompleted = doDDAProcess(aFinanceDetail);
-						} catch (PFFInterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showErrorMessage(pfe.getErrorMessage());
+						} catch (InterfaceException pfe) {
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {
@@ -2597,9 +2587,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						// ========================================
 						try {
 							processCompleted = doCollateralProcess(aFinanceDetail);
-						} catch (PFFInterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showErrorMessage(pfe.getErrorMessage());
+						} catch (InterfaceException pfe) {
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {
@@ -2676,9 +2665,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for process collateral data and send Mark , De-Mark request to midlleware
 	 * 
 	 * @param financeDetail
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private boolean doCollateralProcess(FinanceDetail financeDetail) throws PFFInterfaceException {
+	private boolean doCollateralProcess(FinanceDetail financeDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2742,10 +2731,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * 5. DDA-->DDA(DDA Re-Registartion)
 	 * 
 	 * @param financeDetail
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private boolean doDDAProcess(FinanceDetail financeDetail) throws PFFInterfaceException, InterruptedException {
+	private boolean doDDAProcess(FinanceDetail financeDetail) throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2900,7 +2889,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 		}
 
@@ -3632,6 +3621,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append("')))");
 		if (!MandateConstants.skipRegistration().contains(repaymethod)) {
 			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
+		}else{
+			whereCaluse.append(" AND STATUS != '");
+			whereCaluse.append(MandateConstants.STATUS_REJECTED);
+			whereCaluse.append("'");
 		}
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());

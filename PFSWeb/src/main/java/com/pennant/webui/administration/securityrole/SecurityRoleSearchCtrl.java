@@ -270,8 +270,7 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl<SecurityRole>  {
 			// open the dialog in modal mode
 			this.window_SecurityRoleSearch.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

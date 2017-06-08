@@ -183,8 +183,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReScheduleDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -677,7 +676,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);
@@ -715,7 +714,9 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(rateDetail.getErrorDetails() == null){
 						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 					} else {
-							MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.rate.setBaseValue("");
 					}
 				}
@@ -734,7 +735,9 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(rateDetail.getErrorDetails() == null){
 						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.rate.setSpecialValue("");
 					}
 				}
@@ -756,7 +759,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if(rateDetail.getErrorDetails() == null){
 			this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.rate.setSpecialValue("");
 		}
 	}
@@ -768,7 +772,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.row_grcNextRepayDate.setVisible(false);
 		
 		this.cbSchdMthd.setDisabled(true);
-		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
+		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
 		
 		if(this.cbFrqFromDate.getSelectedIndex() != 0){
 			Date fromDate = (Date)this.cbFrqFromDate.getSelectedItem().getValue();

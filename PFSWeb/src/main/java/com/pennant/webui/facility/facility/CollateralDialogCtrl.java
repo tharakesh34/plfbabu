@@ -54,7 +54,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -76,7 +75,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -180,8 +178,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			doSetFieldProperties();
 			doShowDialog(getCollateral());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_CollateralDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -488,8 +485,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			
 			this.window_CollateralDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -560,11 +556,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aCollateral.getCAFReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCollateral.getRecordType())) {
 				aCollateral.setVersion(aCollateral.getVersion() + 1);
 				aCollateral.setRecordType(PennantConstants.RECORD_TYPE_DEL);

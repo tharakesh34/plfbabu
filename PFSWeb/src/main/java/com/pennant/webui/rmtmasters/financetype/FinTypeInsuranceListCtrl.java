@@ -164,8 +164,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeInsuranceList.onClose();
 		}
 
@@ -312,8 +311,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving");

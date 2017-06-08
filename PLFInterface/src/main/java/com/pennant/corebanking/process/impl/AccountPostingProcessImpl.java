@@ -13,7 +13,7 @@ import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.process.AccountPostingProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountPostingProcessImpl extends GenericProcess implements AccountPostingProcess {
 
@@ -33,7 +33,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 */
 	@Override
 	public List<CoreBankAccountPosting> doPostings(List<CoreBankAccountPosting> bankAccountPostings,String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		logger.debug("Entering");
 			
 		List<AccountPostingTemp> accPostingTempList = new ArrayList<AccountPostingTemp>();
@@ -55,7 +55,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 		
 		logger.debug("Leaving");
@@ -99,7 +99,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 */
 	@Override
 	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  
-			Date valueDate, String postBranch, String isDummy)  throws PFFInterfaceException{
+			Date valueDate, String postBranch, String isDummy)  throws InterfaceException{
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
@@ -108,7 +108,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	
 	@Override
 	public List<CoreBankAccountPosting> doReversalPostings(List<CoreBankAccountPosting> accountPostings, String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		return new ArrayList<CoreBankAccountPosting>();
 	}
 	

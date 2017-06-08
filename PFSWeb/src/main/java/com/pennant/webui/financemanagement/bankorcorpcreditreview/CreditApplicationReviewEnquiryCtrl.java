@@ -325,9 +325,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.toYear.setVisible(false);
 				this.auditedYear.setVisible(true);
 			}
-		}catch(Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 			this.window_CreditApplicationReviewDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -545,8 +544,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						creditApplicationReviewListCtrl.doReset();
 					} 
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			} 
 		}

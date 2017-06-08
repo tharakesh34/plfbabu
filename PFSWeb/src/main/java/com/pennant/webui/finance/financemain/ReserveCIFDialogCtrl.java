@@ -22,11 +22,11 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
@@ -134,8 +134,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 			this.window_ReserveCIFDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReserveCIFDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -165,8 +164,8 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// create new customer Account in T24
 		try {
 			createAccount();
-		} catch(PFFInterfaceException pfe) {
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch(InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return;
 		}
 		logger.debug("Leaving" + event.toString());
@@ -199,7 +198,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// create CIF process
 			boolean isCreateCIF = doCreateCIFProcess(newCustCIF);
 			if(isCreateCIF) {
-				MessageUtil.showInfoMessage(Labels.getLabel("CUSTOMER_CREATE"));
+				MessageUtil.showMessage(Labels.getLabel("CUSTOMER_CREATE"));
 				
 				// check whether customer account created or not
 				validateCreateAccount();
@@ -207,8 +206,8 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			} else {
 				return;
 			}
-		} catch(PFFInterfaceException pfe) {
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch(InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return;
 		}
 		logger.debug("Leaving" + event.toString());
@@ -238,10 +237,10 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Method for send Create Account request to MDM interface and update in FinanceMainExt table
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private void createAccount() throws PFFInterfaceException, InterruptedException {
+	private void createAccount() throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 		
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
@@ -249,7 +248,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if(!StringUtils.isBlank(interfaceAccount.getAccountNumber())) {
 			updateExtensionDetail(interfaceAccount);
-			MessageUtil.showInfoMessage(Labels.getLabel("ACCOUNT_CREATED"));
+			MessageUtil.showMessage(Labels.getLabel("ACCOUNT_CREATED"));
 			try {
 				this.window_ReserveCIFDialog.detach();
 				getFinanceMainListCtrl().showDetailView(getFinanceDetail());
@@ -332,9 +331,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Send Release CIF request to MDM interface
 	 * 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private void doReleaseCIF() throws PFFInterfaceException {
+	private void doReleaseCIF() throws InterfaceException {
 		logger.debug("Entering");
 		
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
@@ -342,8 +341,8 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		
 		try {
 			getCustomerInterfaceService().releaseCIF(customer, RESERVE_REFNUM);
-		} catch(PFFInterfaceException pfe) {
-			throw new PFFInterfaceException("PTI3001", Labels.getLabel("FAILED_RELEASE_CIF"));
+		} catch(InterfaceException pfe) {
+			throw new InterfaceException("PTI3001", Labels.getLabel("FAILED_RELEASE_CIF"));
 		}
 		logger.debug("Leaving");
 	}
@@ -352,9 +351,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Send Create CIF request to MDM interface
 	 * 
 	 * @param resReturnCode 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private String doCreateCIF(String resReturnCode) throws PFFInterfaceException {
+	private String doCreateCIF(String resReturnCode) throws InterfaceException {
 		logger.debug("Entering");
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
 		customerDetails.setCoreReferenceNum(resReturnCode);
@@ -363,12 +362,12 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		String returnCode = null;
 		try {
 			returnCode = getCustomerInterfaceService().createNewCustomer(customerDetails);
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			String createCIFErrMsg = pfe.getErrorMessage() == null?"":pfe.getErrorMessage();
 			try {
 				doReleaseCIF();
-			} catch(PFFInterfaceException pfe2) {
-				throw new PFFInterfaceException(pfe.getErrorCode(), createCIFErrMsg+":"+pfe2.getErrorMessage());
+			} catch(InterfaceException pfe2) {
+				throw new InterfaceException(pfe.getErrorCode(), createCIFErrMsg+":"+pfe2.getErrorMessage());
 			}
 			throw pfe;
 		}
@@ -380,9 +379,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Send Reserve CIF request to MDM interface
 	 * @param newCustCIF 
 	 * 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private String doReserveCIF(String newCustCIF) throws PFFInterfaceException {
+	private String doReserveCIF(String newCustCIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(!isCustomerExists(newCustCIF)) {

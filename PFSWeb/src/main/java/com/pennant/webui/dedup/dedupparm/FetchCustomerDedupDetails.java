@@ -17,7 +17,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchCustomerDedupDetails {
 
@@ -33,7 +33,7 @@ public class FetchCustomerDedupDetails {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails customerDetails, Window parentWindow, String curLoginUser) throws PFFInterfaceException {
+	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails customerDetails, Window parentWindow, String curLoginUser) throws InterfaceException {
 		List<CustomerDedup> customerDedupList = null;
 
 
@@ -75,7 +75,7 @@ public class FetchCustomerDedupDetails {
 
 	}
 
-	public static List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup, String curLoginUser) throws PFFInterfaceException {
+	public static List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup, String curLoginUser) throws InterfaceException {
 
 		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();

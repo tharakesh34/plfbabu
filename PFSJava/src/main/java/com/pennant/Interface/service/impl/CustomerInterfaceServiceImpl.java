@@ -55,8 +55,8 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerRating;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
 import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.equation.dao.CoreInterfaceDAO;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl implements CustomerInterfaceService{
@@ -75,7 +75,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 		super();
 	}
 	
-	public Customer fetchCustomerDetails(Customer customer) throws PFFInterfaceException {
+	public Customer fetchCustomerDetails(Customer customer) throws InterfaceException {
 		logger.debug("Entering");
 
 		CoreBankingCustomer coreCust = new CoreBankingCustomer();
@@ -134,7 +134,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 			
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 		logger.debug("Leaving");
 		return customer;
@@ -144,7 +144,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * Method for Creating Customer CIF in Core Banking System
 	 */
 	@Override
-	public String generateNewCIF(String operation, Customer customer, String finReference) throws PFFInterfaceException {
+	public String generateNewCIF(String operation, Customer customer, String finReference) throws InterfaceException {
 		logger.debug("Entering");
 
 		String custCIF = "";
@@ -164,12 +164,12 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 		
 		try {
 			custCIF = getCustomerCreationProcess().generateNewCIF(coreCust);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 		logger.debug("Leaving");
 		return custCIF;
@@ -180,7 +180,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * @throws CustomerNotFoundException 
 	 */
 	@Override
-    public AvailCustomerDetail fetchAvailCustDetails(AvailCustomerDetail detail, BigDecimal newExposure, String ccy) throws PFFInterfaceException {
+    public AvailCustomerDetail fetchAvailCustDetails(AvailCustomerDetail detail, BigDecimal newExposure, String ccy) throws InterfaceException {
 		logger.debug("Entering");
 
 		CoreBankAvailCustomer coreCust = new CoreBankAvailCustomer();
@@ -264,12 +264,12 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 				detail.setAvailLimit(availLimit);
 			}
 			
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 		logger.debug("Leaving");
 		return detail;
@@ -378,7 +378,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * Method for Fetching Customer Details information
 	 */
 	@Override
-	public CustomerDetails getCustomerInfoByInterface(String custCIF, String custLoc) throws PFFInterfaceException {
+	public CustomerDetails getCustomerInfoByInterface(String custCIF, String custLoc) throws InterfaceException {
 		logger.debug("Entering");
 		CustomerDetails customerDetails = null;
 		try {
@@ -392,11 +392,11 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 				}
 			}
 
-		} catch(PFFInterfaceException pfe) {  
+		} catch(InterfaceException pfe) {  
 			throw pfe;
 		} catch (Exception e) {
 			logger.debug(e);
-			throw new PFFInterfaceException("PTI2001", e.getMessage());
+			throw new InterfaceException("PTI2001", e.getMessage());
 		}
 		logger.debug("Leaving");
 		return customerDetails;
@@ -925,10 +925,10 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	
 	/**
 	 * get the duplicate customers from Interface DB based on the rule executed
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-    public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup customerDedup) throws PFFInterfaceException {
+    public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup customerDedup) throws InterfaceException {
 		
 		CoreCustomerDedup coreCustomerDedup = new CoreCustomerDedup();
 		BeanUtils.copyProperties(customerDedup, coreCustomerDedup);
@@ -961,7 +961,7 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * Method for create new Customer by sending request through MQ
 	 * */
 	@Override
-	public String createNewCustomer(CustomerDetails customerDetail) throws PFFInterfaceException {
+	public String createNewCustomer(CustomerDetails customerDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		InterfaceCustomerDetail interfaceCustomerDetail = processCustInterfaceData(customerDetail);
@@ -975,11 +975,11 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	
 	/**
 	 * Method for update core customer details
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * 
 	 */
 	@Override
-    public void updateCoreCustomer(CustomerDetails customerDetails) throws PFFInterfaceException {
+    public void updateCoreCustomer(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
 		
 		InterfaceCustomerDetail interfaceCustomerDetail = processCustInterfaceData(customerDetails);
@@ -1079,10 +1079,10 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * Method for send ReserveCIF request to MDM Interface
 	 * 
 	 * @param customer
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-    public String reserveCIF(Customer customer) throws PFFInterfaceException {
+    public String reserveCIF(Customer customer) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Entering");
 		
@@ -1096,10 +1096,10 @@ public class CustomerInterfaceServiceImpl extends NextIdViewSQLServerDaoImpl imp
 	 * 
 	 * @param customer
 	 * @param reserveRefNum
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-    public String releaseCIF(Customer customer, String reserveRefNum) throws PFFInterfaceException {
+    public String releaseCIF(Customer customer, String reserveRefNum) throws InterfaceException {
 		logger.debug("Entering");
 	
 		InterfaceCustomer coreCustomer = new InterfaceCustomer();

@@ -13,7 +13,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -40,7 +39,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -150,8 +148,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			doSetFieldProperties();
 			doShowDialog(getReturnedCheque());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReturnedChequeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -564,16 +561,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value")+" : "+aReturnedCheque.getCustCIF()+","+
 				Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value")+" : "+aReturnedCheque.getChequeNo();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aReturnedCheque.getRecordType())) {
 				aReturnedCheque.setVersion(aReturnedCheque.getVersion() + 1);
 				aReturnedCheque.setRecordType(PennantConstants.RECORD_TYPE_DEL);

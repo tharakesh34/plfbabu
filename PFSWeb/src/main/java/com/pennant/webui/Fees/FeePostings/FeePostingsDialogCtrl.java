@@ -108,7 +108,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -118,6 +117,7 @@ import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -245,8 +245,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			//this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
 			doShowDialog(getFeePostings());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_feePostingsDialog.onClose();
 		}
 
@@ -329,8 +328,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 					this);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -1077,11 +1075,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * 
 	 */
 
-	private boolean doProcess(FeePostings aFeePostings, String tranType) throws PFFInterfaceException {
+	private boolean doProcess(FeePostings aFeePostings, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1170,11 +1168,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * 
 	 */
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

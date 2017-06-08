@@ -67,11 +67,11 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 /**
@@ -141,8 +141,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			// Hegiht Setting
 			doShowDialog(this.customer);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProspectCustomerDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -219,9 +218,9 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage("Customer Not Found...");
+			MessageUtil.showError("Customer Not Found.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -278,7 +277,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws CustomerNotFoundException
 	 */
 	public void doWriteComponentsToBean(Customer aCustomer)
-			throws ParseException, PFFInterfaceException {
+			throws ParseException, InterfaceException {
 		logger.debug("Entering");
 		doSetValidation();
 
@@ -438,7 +437,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException
 	 */
 	public void doSave() throws InterruptedException, ParseException,
-	PFFInterfaceException, IllegalAccessException,
+	InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 

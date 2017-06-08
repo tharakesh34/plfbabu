@@ -55,7 +55,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -71,7 +70,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -93,6 +91,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	protected Textbox 		bankName; 						// autoWired
 	protected Checkbox 		active; 					// autoWired
 	protected Intbox 		accNoLength;
+	protected Textbox 		bankShortCode;
 	// not autoWired variables
 	private BankDetail bankDetail; // overHanded per parameter
 	private transient BankDetailListCtrl bankDetailListCtrl; // overHanded per parameter
@@ -174,8 +173,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			doSetFieldProperties();
 			doShowDialog(getBankDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BankDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -191,6 +189,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankCode.setMaxlength(8);
 		this.bankName.setMaxlength(50);
 		this.accNoLength.setMaxlength(2);
+		this.bankShortCode.setMaxlength(20);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -314,6 +313,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setValue(aBankDetail.getBankName());
 		this.active.setChecked(aBankDetail.isActive());
 		this.accNoLength.setValue(aBankDetail.getAccNoLength());
+		this.bankShortCode.setValue(aBankDetail.getBankShortCode());
 		this.recordStatus.setValue(aBankDetail.getRecordStatus());
 		
 		if(aBankDetail.isNew() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
@@ -352,6 +352,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		}
 		try {
 			aBankDetail.setAccNoLength(this.accNoLength.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aBankDetail.setBankShortCode(this.bankShortCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -438,6 +443,10 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 			this.accNoLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),true,false,PennantConstants.accNo_maxValue));
 		}
 
+		if (!this.bankShortCode.isReadonly()){
+			this.bankShortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankShortCode.value"), 
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -493,15 +502,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		final String msg = Labels.getLabel(
 				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_BankDetailDialog_BankCode.value")+" : "+aBankDetail.getBankCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aBankDetail.getRecordType())) {
 				aBankDetail.setVersion(aBankDetail.getVersion() + 1);
 				aBankDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -543,6 +544,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setReadonly(isReadOnly("BankDetailDialog_bankName"));
 		this.active.setDisabled(isReadOnly("BankDetailDialog_active"));
 		this.accNoLength.setReadonly(isReadOnly("BankDetailDialog_accNoLength"));
+		this.bankShortCode.setReadonly(isReadOnly("BankDetailDialog_bankShortCode"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -571,6 +573,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setReadonly(true);
 		this.active.setDisabled(true);
 		this.accNoLength.setReadonly(true);
+		this.bankShortCode.setReadonly(true);
 		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -594,6 +597,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankName.setValue("");
 		this.active.setChecked(false);
 		this.accNoLength.setValue(0);
+		this.bankShortCode.setValue("");
 		logger.debug("Leaving");
 	}
 

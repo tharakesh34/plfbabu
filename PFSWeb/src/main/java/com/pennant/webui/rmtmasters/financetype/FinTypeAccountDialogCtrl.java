@@ -65,7 +65,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -92,7 +91,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 
 /**
@@ -201,8 +199,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 			doSetFieldProperties();
 			doShowDialog(getFinTypeAccount());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeAccountDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -485,8 +482,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 			
 			this.window_FinTypeAccountDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -537,11 +533,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 				Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value")+" : "+aFinTypeAccount.getFinCcy()+","+
 				Labels.getLabel("label_FinTypeAccountDialog_Event.value")+" : "+ 
 				PennantAppUtil.getlabelDesc(aFinTypeAccount.getEvent(), eventList);
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinTypeAccount.getRecordType())) {
 				aFinTypeAccount.setVersion(aFinTypeAccount.getVersion() + 1);
 				aFinTypeAccount.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -666,8 +658,10 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		// fill the FinTypeAccount object with the components data
 		doWriteComponentsToBean(aFinTypeAccount);
 		if(!this.alwManualEntry.isChecked() && StringUtils.isEmpty(getAccountNumberDetails(getAccounts())) && StringUtils.isEmpty(this.custAccountTypes.getValue())){
-        	MessageUtil.showErrorMessage("Please Enter Either Of The Fields   :  "+Labels.getLabel("label_FinTypeAccountDialog_AlwManualEntry.value")+" , "
-        			+Labels.getLabel("label_FinTypeAccountDialog_CustAccountTypes.value")+" , "+Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value"));
+			MessageUtil.showError("Please Enter Either Of The Fields   :  "
+					+ Labels.getLabel("label_FinTypeAccountDialog_AlwManualEntry.value") + " , "
+					+ Labels.getLabel("label_FinTypeAccountDialog_CustAccountTypes.value") + " , "
+					+ Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value"));
         	return;
         }
 		// Write the additional validations as per below example
@@ -880,16 +874,18 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		} else {
 			CoreBankAccountDetail accountDetail = validateAccountInEquation(accno);
 			if (accountDetail == null) {
-				MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_INVALID",new String[]{accno}));
+				MessageUtil.showError(Labels.getLabel("ACCOUNT_INVALID", new String[] { accno }));
 			} else {
 				if (!accountDetail.getAcCcy().equals(ccy)) {
-					MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_CCY_MISMATCH",new String[]{accountDetail.getAcCcy(),Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),ccy }));
+					MessageUtil
+							.showError(Labels.getLabel("ACCOUNT_CCY_MISMATCH", new String[] { accountDetail.getAcCcy(),
+									Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"), ccy }));
 					return;
 				}
 				if (!isAccAlreadyInList(accno)) {
 					accounts.add(accountDetail);
 				}else{
-					MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_EXISTS",new String[]{accno}));
+					MessageUtil.showError(Labels.getLabel("ACCOUNT_EXISTS", new String[] { accno }));
 				}
 				doFillAccountReceivables(accounts, getFinTypeAccount().getDefaultAccNum());
 			}

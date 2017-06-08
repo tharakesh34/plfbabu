@@ -110,12 +110,12 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.
@@ -273,8 +273,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProvisionDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1080,8 +1079,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1098,7 +1096,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws AccountNotFoundException
 	 */
 	private boolean doProcess(Provision aProvision, String tranType) throws InterruptedException,
-			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -1268,7 +1266,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException,
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;

@@ -141,8 +141,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 				this.dftBranch.setValue(String.valueOf(arguments.get("dftBranch")));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerAccountDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -235,8 +234,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 				tab.setSelected(true);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

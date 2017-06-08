@@ -742,7 +742,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		if("ODENQ".equalsIgnoreCase(enquiryType.getValue())){
 			this.searchObj.addTabelName("FinOverdueEnquiry_View");
 		}else if("ODCENQ".equalsIgnoreCase(enquiryType.getValue())){
-			this.searchObj.addTabelName("FinODCRecoveryEnquiry_View");
+			this.searchObj.addTabelName("FinOverdueEnquiry_View");
 		}else{
 			if(approvedList){
 				this.searchObj.addTabelName("FinanceEnquiry_View");
@@ -1067,8 +1067,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 							null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			} else {
 				ReinstateFinance aReinstateFinance = reinstateFinanceService.getFinanceDetailsById(aFinanceEnquiry

@@ -1,10 +1,10 @@
 package com.pennant.coreinterface.process;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface FinanceMaintenanceProcess {
 
-	HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction) throws PFFInterfaceException;
+	HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction) throws InterfaceException;
 	
 }

@@ -526,8 +526,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceEnquiryDialog.onClose();
 		}
 
@@ -590,6 +589,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Summaries
 			this.totalDisb.setMaxlength(18);
 			this.totalDisb.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+			this.finCurrentAssetValue.setProperties(true, formatter);
 			this.totalDownPayment.setMaxlength(18);
 			this.totalDownPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.totalCapitalize.setMaxlength(18);
@@ -1068,12 +1068,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
 
-			this.totalDisb.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDisbursement(),formatter));
+			this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(),formatter));
+			this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
+					aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
 			this.totalDownPayment.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(),formatter));
 			this.totalCapitalize.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCpz(),formatter));
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(),formatter));
 			this.totalSchdProfit.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPftSchd(),formatter));
-			this.totalFees.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFeeChargeAmt(),formatter));
+			this.totalFees.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalFees(),formatter));
 			this.totalCharges.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCharges(),formatter));
 			this.totalWaivers.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
 			this.schdPriTillNextDue.setValue(PennantAppUtil.formateAmount(financeSummary.getPrincipalSchd(),formatter));
@@ -1532,7 +1534,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinContributorDetail finContributorDetail = (FinContributorDetail) item.getAttribute("data");
 			if (finContributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 				
@@ -1549,8 +1551,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceContributor/FinContributorDetailDialog.zul",
 							window_FinanceEnquiryDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1886,7 +1887,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			final FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
 
 			if (disbursement.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 
 				ContractorAssetDetail aContractorAssetDetail = null;
@@ -1908,8 +1909,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_FinanceEnquiryDialog,
 							map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1930,8 +1930,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul",
 						window_FinanceEnquiryDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 	}

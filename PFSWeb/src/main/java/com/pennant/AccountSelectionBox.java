@@ -67,10 +67,10 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
@@ -238,7 +238,8 @@ public class AccountSelectionBox extends Hbox {
 			Events.postEvent("onFulfill", this, null);
 		}else{
 			if(StringUtils.isNotEmpty(this.textbox.getValue())){
-				MessageUtil.showErrorMessage(errormesage1+PennantApplicationUtil.formatAccountNumber(this.textbox.getValue()));
+				MessageUtil
+						.showError(errormesage1 + PennantApplicationUtil.formatAccountNumber(this.textbox.getValue()));
 			}
 			this.setValue("");
 		}
@@ -302,9 +303,8 @@ public class AccountSelectionBox extends Hbox {
 
 		try {
 			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-		}catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+		}catch (InterfaceException e) {
+			MessageUtil.showError(e);
 			return false;
 		}	
 
@@ -327,10 +327,9 @@ public class AccountSelectionBox extends Hbox {
 	private List<IAccounts> getCoreBankAccountDetails(List<IAccounts> returnAccList) throws InterruptedException {
 		try {
 			return getAccountInterfaceService().getAccountsAvailableBalList(returnAccList);
-		} catch (PFFInterfaceException  e) {
-			logger.debug(e);
+		} catch (InterfaceException  e) {
 			returnAccList.clear();
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 		return returnAccList;
 	}
@@ -355,46 +354,7 @@ public class AccountSelectionBox extends Hbox {
 	 * @throws WrongValueException 
 	 */
 	public void validateValue() throws InterruptedException {
-		/*logger.trace(Literal.ENTERING);
-
-		String accountNo = textbox.getValue().replace("-", "");
-
-		if (StringUtils.isEmpty(accountNo)) {
-			return;
-		}
-
-		boolean valid = true;
-		selectedAccount = null;
-
-		try {
-			Pattern pattern = Pattern
-					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
-			Matcher matcher = pattern.matcher(accountNo);
-			valid = matcher.matches();
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-
-		if (!valid) {
-			throw new WrongValueException(this.textbox, Labels.getLabel(PennantRegularExpressions.REGEX_ACCOUNT,
-					new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
-		} else {
-			IAccounts accountDetail = null;
-			try {
-				accountDetail = getAccountInterfaceService().fetchAccountAvailableBal(accountNo);
-			} catch (PFFInterfaceException e) {
-				logger.error("Exception: ", e);
-				this.textbox.setFocus(true);
-				this.decimalbox.setValue(BigDecimal.ZERO);
-				Events.postEvent("onFulfill", this, null);
-				throw new WrongValueException(this.button,
-						e.getErrorMessage() + " Please select/enter different account");
-			}
-			this.selectedAccount = accountDetail;
-			doWrite();
-		}
-
-		logger.trace(Literal.LEAVING);*/
+		//
 	}
 	
 	/**

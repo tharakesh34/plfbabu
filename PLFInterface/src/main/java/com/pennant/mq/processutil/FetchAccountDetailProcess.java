@@ -13,11 +13,11 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchAccountDetailProcess extends MQProcess {
 
@@ -33,14 +33,14 @@ public class FetchAccountDetailProcess extends MQProcess {
 	 * @param accountDetail
 	 * @param msgFormat
 	 * @throws JaxenException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail, String msgFormat) 
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 		
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getAccountNumber())) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Account Number"}," Cannot be Blank");	
+			throw new InterfaceException("PTI3001", "Account Number Cannot be Blank");
 		}
 
 		//set MQ Message configuration details
@@ -56,7 +56,7 @@ public class FetchAccountDetailProcess extends MQProcess {
 			OMElement fetchAccountReq = getRequestElement(accountDetail, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory, fetchAccountReq);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -73,10 +73,10 @@ public class FetchAccountDetailProcess extends MQProcess {
 	 * @param header
 	 * @return
 	 * @throws JaxenException 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private List<CoreBankAccountDetail> prepareAccountDetails(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -95,7 +95,6 @@ public class FetchAccountDetailProcess extends MQProcess {
 				header.setReturnText("Unable to fetch Account details");
 			}
 			accountDetail.setErrorMessage(header.getReturnText());
-			//throw new PFFInterfaceException(header.getReturnCode(), header.getReturnText());
 		}
 		
 		accountDetail.setErrorCode(header.getReturnCode());

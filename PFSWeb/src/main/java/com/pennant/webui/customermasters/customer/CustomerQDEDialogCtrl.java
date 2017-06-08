@@ -82,15 +82,14 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -268,9 +267,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage("Customer Not Created...");
+			MessageUtil.showError("Customer Not Created.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -366,7 +365,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws ParseException
 	 * @throws CustomerNotFoundException 
 	 */
-	public void doSave() throws InterruptedException, ParseException, PFFInterfaceException {
+	public void doSave() throws InterruptedException, ParseException, InterfaceException {
 		logger.debug("Entering");
 		
 		final CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -394,11 +393,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		// Show a confirm box
 		final String msg = "Generated Customer CIF "+aCustomer.getCustCIF();
-		final String title = Labels.getLabel("message.Information");
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(msg, title,MultiLineMessageBox.OK,
-				MultiLineMessageBox.INFORMATION, true);
+		MessageUtil.showMessage(msg);
 
 		isNew = aCustomerDetails.isNewRecord();
 
@@ -519,7 +515,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @return boolean
 	 * @throws CustomerNotFoundException 
 	 * */
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws PFFInterfaceException {
+	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -612,7 +608,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @return boolean
 	 * @throws CustomerNotFoundException 
 	 * */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -1607,7 +1607,7 @@ public class QueryBuilder extends Groupbox {
 			return true;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getLocalizedMessage());
+			MessageUtil.showError(e.getLocalizedMessage());
 			return false;
 		}
 	}

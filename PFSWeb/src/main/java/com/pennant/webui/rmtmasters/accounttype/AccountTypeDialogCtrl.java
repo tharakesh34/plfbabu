@@ -58,7 +58,6 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -211,8 +210,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			doSetFieldProperties();
 			doShowDialog(getAccountType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AccountTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -852,16 +850,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				Labels.getLabel("label_AccountTypeDialog_AcType.value")+" : "+aAccountType.getAcType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAccountType.getRecordType())) {
 				aAccountType.setVersion(aAccountType.getVersion() + 1);
 				aAccountType.setRecordType(PennantConstants.RECORD_TYPE_DEL);

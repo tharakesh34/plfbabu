@@ -44,7 +44,6 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,11 +57,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
@@ -127,14 +125,21 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		// finReference
+		// Query for faetching the finreferences only avalable in FinExcessAmount and ManualAdvise.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
+		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
+		sql.append(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		sql.append(" And BalanceAmt > 0)");
+		
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setModuleName("FinanceManagement");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
+		this.finReference.setWhereClause(sql.toString());
+		
 		logger.debug("Leaving");
 	}
 
@@ -151,15 +156,6 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			return;
 		}
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
-		 
-		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(financeMain.getFinReference());
-		List<ManualAdvise> manualAdviseList = this.paymentHeaderService.getManualAdvise(financeMain.getFinReference());
-		
-		if (!((finExcessAmountList != null && !finExcessAmountList.isEmpty()) || (manualAdviseList != null && !manualAdviseList.isEmpty()))) {
-			MessageUtil.showError(" No details are available for the selected loan reference...");
-			this.finReference.setValue("");
-			return;
-		}
 		
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);

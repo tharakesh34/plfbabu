@@ -88,7 +88,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.rits.cloning.Cloner;
 
@@ -284,7 +284,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -360,7 +360,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws PFFInterfaceException {
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException {
 		logger.debug("Entering");
 
 		long linkedTranId = Long.MIN_VALUE;

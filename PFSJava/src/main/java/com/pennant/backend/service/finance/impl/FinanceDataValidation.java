@@ -32,6 +32,7 @@ import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -87,6 +88,7 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -134,6 +136,10 @@ public class FinanceDataValidation {
 	private CityDAO						cityDAO;
 	private FinanceDetail 				financeDetail;
 	private CustomerDocumentService 	customerDocumentService;
+	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+
+
 	public FinanceDataValidation() {
 		super();
 	}
@@ -194,6 +200,20 @@ public class FinanceDataValidation {
 			return finScheduleData;
 		}
 
+		// Vas Recording validations
+		errorDetails = vasRecordingValidations(vldGroup, finScheduleData, isAPICall, "");
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}
+		
+		// Vas Fee validations
+/*		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}*/
+		
 		// Fee validations
 		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall, "");
 		if (!errorDetails.isEmpty()) {
@@ -201,12 +221,6 @@ public class FinanceDataValidation {
 			return finScheduleData;
 		}
 
-		// Vas Recording validations
-		errorDetails = vasRecordingValidations(vldGroup, finScheduleData, isAPICall, "");
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
-		}
 		// Insurance validations
 		if (finScheduleData.getInsuranceList() != null && !finScheduleData.getInsuranceList().isEmpty()) {
 			errorDetails = insuranceValidations(vldGroup, finScheduleData, isAPICall);
@@ -259,6 +273,115 @@ public class FinanceDataValidation {
 		return finScheduleData;
 	}
 
+	private List<ErrorDetails> vasFeeValidations(String vldGroup, FinScheduleData finScheduleData) {
+		List<ErrorDetails> errorDetails = finScheduleData.getErrorDetails();
+		int vasFeeCount = 0;
+		if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
+			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+				if (StringUtils.contains(feeDetail.getFeeTypeCode(), "{")) {
+					feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+					vasFeeCount++;
+				}
+			}
+			if (finScheduleData.getVasRecordingList().size() > 0 && vasFeeCount <= 0) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90326", null)));
+			} else if (finScheduleData.getVasRecordingList().size() <= 0 && vasFeeCount > 0) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90327", null)));
+			} else if (finScheduleData.getVasRecordingList().size() != vasFeeCount) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90328", null)));
+			}
+
+			if (errorDetails.size() > 0) {
+				return errorDetails;
+			}
+		}
+
+		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
+			// validate feeMethod
+			if (!StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), FinanceConstants.BPI_NO)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_DISBURSE)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_SALE_PRICE)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PAID_BY_CUSTOMER)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = finFeeDetail.getFeeScheduleMethod();
+				valueParm[1] = CalculationConstants.REMFEE_PART_OF_DISBURSE + ","
+						+ CalculationConstants.REMFEE_PART_OF_SALE_PRICE + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ","
+						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
+						+ CalculationConstants.REMFEE_WAIVED_BY_BANK;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90243", valueParm)));
+			}
+
+			// validate scheduleTerms
+			if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+					finFeeDetail.getFeeScheduleMethod())
+					&& finFeeDetail.getTerms() <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "ScheduleTerms";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90221", valueParm)));
+			}
+
+			if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+					finFeeDetail.getFeeScheduleMethod())
+					&& finFeeDetail.getTerms() > finScheduleData.getFinanceMain().getNumberOfTerms()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Schedule Terms";
+				valueParm[1] = "Number of terms:" + finScheduleData.getFinanceMain().getNumberOfTerms();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+			}
+		}
+		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+				if (StringUtils.equals(feeDetail.getFeeTypeCode(), "{" + vasRecording.getProductCode() + "}")) {
+					// validate negative values
+					if (feeDetail.getActualAmount().compareTo(BigDecimal.ZERO) < 0
+							|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
+							|| feeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90259", valueParm)));
+						return errorDetails;
+					}
+
+					// validate vas fee amount
+					if(feeDetail.getActualAmount().compareTo(vasRecording.getFee()) != 0) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Fee amount";
+						valueParm[1] = "VAS recording fee:" + String.valueOf(vasRecording.getFee());
+						valueParm[2] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+						return errorDetails;
+					}
+					// validate actual fee amount with waiver+paid amount
+					BigDecimal remainingFee = feeDetail.getActualAmount().subtract(
+							feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
+					if (remainingFee.compareTo(BigDecimal.ZERO) < 0) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Sum of waiver and paid amounts";
+						valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
+						valueParm[2] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+						return errorDetails;
+					}
+				}
+			}
+		}
+		return errorDetails;
+	}
+
 	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall, String string) {
 		
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
@@ -303,7 +426,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 			
-
+			if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
 			for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 				if (StringUtils.isBlank(detail.getProductCode())) {
 					String[] valueParm = new String[1];
@@ -454,7 +577,7 @@ public class FinanceDataValidation {
 					if (relationshipOfficer == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDsaId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -469,7 +592,7 @@ public class FinanceDataValidation {
 					if (dmaCode == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDmaId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -499,7 +622,7 @@ public class FinanceDataValidation {
 					if (referralId == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getReferralId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -523,6 +646,7 @@ public class FinanceDataValidation {
 								return errorDetails;
 							}
 						}
+						int exdMandConfigCount = 0;
 						for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 							if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 								String[] valueParm = new String[1];
@@ -542,16 +666,25 @@ public class FinanceDataValidation {
 										.getExtendedFieldDetails()) {
 									if (StringUtils.equals(extendedDetail.getFieldName(),
 											extendedFieldData.getFieldName())) {
+										if(extendedDetail.isFieldMandatory()) {
+											exdMandConfigCount++;
+										}
+										List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(extendedDetail, extendedFieldData);
+										errorDetails.addAll(errList);
 										isFeild = true;
 									}
 								}
 								if (!isFeild) {
 									String[] valueParm = new String[1];
 									valueParm[0] = "vas setup";
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", valueParm)));
 									return errorDetails;
 								}
 							}
+						}
+						if (extendedDetailsCount != exdMandConfigCount) {
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+							return errorDetails;
 						}
 					}
 
@@ -579,9 +712,11 @@ public class FinanceDataValidation {
 				}
 			}
 		}
+	}
 		return errorDetails;
 
 	}
+
 
 	/**
 	 * 
@@ -608,10 +743,9 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90315", valueParm)));
 				}
 			} else {
-				if (!finODPenaltyRate.isODIncGrcDays() || StringUtils.isBlank(finODPenaltyRate.getODChargeType())
+				if (StringUtils.isBlank(finODPenaltyRate.getODChargeType())
 						|| StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn())
-						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0
-						|| !finODPenaltyRate.isODAllowWaiver()) {
+						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90314", valueParm)));
 				}
@@ -630,14 +764,14 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 				}
 			}
-			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
+			/*if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
 				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(99)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
 					valueParm[1] = "99";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-			}
+			}*/
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
 				List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
 				boolean finODChargeTypeSts = false;
@@ -1309,6 +1443,7 @@ public class FinanceDataValidation {
 					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
+				boolean isValidBranch = true;
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
 					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
 					if (bankBranch == null) {
@@ -1316,6 +1451,7 @@ public class FinanceDataValidation {
 						valueParm[0] = mandate.getIFSC();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
 					}else{
+						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
 						if(StringUtils.isBlank(mandate.getMICR())){
 							mandate.setMICR(bankBranch.getMICR());
@@ -1338,6 +1474,7 @@ public class FinanceDataValidation {
 						valueParm[1] = mandate.getBranchCode();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90302", valueParm)));
 					} else {
+						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
 						if(StringUtils.isBlank(mandate.getMICR())){
 							mandate.setMICR(bankBranch.getMICR());
@@ -1346,13 +1483,19 @@ public class FinanceDataValidation {
 								String[] valueParm = new String[2];
 								valueParm[0] = "MICR";
 								valueParm[1] = mandate.getMICR();
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+								 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+								 return errorDetails;
 							}
 						}
 					
 					}
 				}
-
+				if(!isValidBranch){
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getMandateType();
+					 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90333", valueParm)));
+					 return errorDetails;
+				}
 				//validate AccNumber length
 				if(StringUtils.isNotBlank(mandate.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
@@ -1465,6 +1608,23 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
+	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
+		if(StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())){
+			if(!bankBranch.isEcs()){
+				isValidBranch = false;
+			}
+		} else if(StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())){
+			if(!bankBranch.isDda()){
+				isValidBranch = false;
+			}
+		}else if(StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())){
+			if(!bankBranch.isNach()){
+				isValidBranch = false;
+			}
+		}
+		return isValidBranch;
+	}
+
 	public List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 
@@ -1547,6 +1707,16 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "valueDate";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
+					} else {
+						Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
+						if (advPayment.getValueDate().compareTo(DateUtility.getAppDate()) < 0
+								|| advPayment.getValueDate().after(todate)) {
+							String[] valueParm = new String[3];
+							valueParm[0] = "disbursement ValueDate";
+							valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+							valueParm[2] = DateUtility.formatToLongDate(todate);
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						}
 					}
 				} else if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)
@@ -1815,7 +1985,14 @@ public class FinanceDataValidation {
 			valueParm[2] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
 		}
-
+		if(finMain.isTDSApplicable()){
+			if(!financeType.isTDSApplicable()){
+				String[] valueParm = new String[3];
+				valueParm[0] = "tds";
+				valueParm[1] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+			}
+		}
 		//RETURN IF ANY ERROR AFTER VERY BASIC VALIDATION
 		if (!errorDetails.isEmpty()) {
 			return errorDetails;
@@ -3422,8 +3599,12 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = finSchdData.getErrorDetails();
 		String finEvent = eventCode;
 		boolean isOrigination = false;
+		int vasFeeCount = 0;
 		if(!StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
+				if(StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					vasFeeCount++;
+				}
 				if (StringUtils.isBlank(finFeeDetail.getFeeScheduleMethod())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "feeMethod";
@@ -3498,12 +3679,13 @@ public class FinanceDataValidation {
 					finEvent, isOrigination, FinanceConstants.MODULEID_PROMOTION);
 		}
 		if (finTypeFeeDetail != null) {
-			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()) {
+			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()-vasFeeCount) {
 				for (FinFeeDetail feeDetail : finSchdData.getFinFeeDetailList()) {
 					BigDecimal finWaiverAmount = BigDecimal.ZERO;
 					boolean isFeeCodeFound = false;
 					for (FinTypeFees finTypeFee : finTypeFeeDetail) {
-						if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())) {
+						if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())
+								|| StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
 							isFeeCodeFound = true;
 
 							// validate negative values
@@ -3525,18 +3707,6 @@ public class FinanceDataValidation {
 								return errorDetails;
 							}
 
-							// validate actual fee amount with waiver+paid amount
-							BigDecimal remainingFee = feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
-							if(StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
-								if (remainingFee.compareTo(BigDecimal.ZERO) != 0) {
-									String[] valueParm = new String[3];
-									valueParm[0] = "Sum of waiver and paid amounts";
-									valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
-									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
-									return errorDetails;
-								}
-							}
 							// validate paid by Customer method
 							if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 								if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) != 0) {
@@ -3941,5 +4111,20 @@ public class FinanceDataValidation {
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
+	public void setExtendedFieldDetailsValidation(ExtendedFieldDetailsValidation extendedFieldDetailsValidation) {
+		this.extendedFieldDetailsValidation = extendedFieldDetailsValidation;
+	}
+	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
+		if (extendedFieldDetailsValidation == null) {
+			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
+		}
+		return extendedFieldDetailsValidation;
+	}
+	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
+		return extendedFieldRenderDAO;
+	}
 
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
 }

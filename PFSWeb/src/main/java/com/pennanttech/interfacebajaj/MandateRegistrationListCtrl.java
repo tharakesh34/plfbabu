@@ -56,7 +56,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
@@ -103,7 +102,6 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.bajaj.services.MandateRequestService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
@@ -665,10 +663,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		// Show a confirm box
 		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of "
 				+ this.pagingMandateList.getTotalSize() + ".\nDo you want to continue?";
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.NO) {
+		int conf = MessageUtil.confirm(msg);
+		if (conf == MessageUtil.NO) {
 			return;
 		}
 		try {

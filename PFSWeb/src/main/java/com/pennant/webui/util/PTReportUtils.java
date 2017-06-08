@@ -68,7 +68,7 @@ public class PTReportUtils implements Serializable {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, map);
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}	

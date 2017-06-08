@@ -20,7 +20,7 @@ import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceImpl.class);
@@ -37,10 +37,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * Method for Fetch Account detail depends on Parameter key fields
 	 * @param coreAcct
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails,
-			String createNow ) throws PFFInterfaceException {
+			String createNow ) throws InterfaceException {
 		logger.debug("Entering");
 				
 		IAccounts iAccount = null;
@@ -93,9 +93,9 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<IAccounts> fetchExistAccountList(IAccounts processAccount) throws PFFInterfaceException {
+	public List<IAccounts> fetchExistAccountList(IAccounts processAccount) throws InterfaceException {
 		logger.debug("Entering");
 				
 		List<IAccounts> accountList = new ArrayList<IAccounts>();
@@ -136,9 +136,9 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public IAccounts fetchAccountAvailableBal(String processAccount) throws PFFInterfaceException {
+	public IAccounts fetchAccountAvailableBal(String processAccount) throws InterfaceException {
 		logger.debug("Entering");
 		
 		IAccounts iAccount = null;
@@ -174,7 +174,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public BigDecimal getAccountAvailableBal(String accountId) {
 		logger.debug("Entering");
@@ -185,7 +185,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 		//Connecting to CoreBanking Interface
 		try {
 			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 		}
 		if (coreBankAccountDetail!=null && coreBankAccountDetail.getAcBal()!=null) {
@@ -204,10 +204,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws PFFInterfaceException {
+	public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws InterfaceException {
 		return getAccountDetailProcess().fetchAccountsListAvailableBal(coreAcctList, false);
 
 	}
@@ -217,7 +217,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public Map<String, IAccounts> getAccountsAvailableBalMap(List<String> accountsList) {
 		logger.debug("Entering");
@@ -233,7 +233,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 		//Connecting to CoreBanking Interface
 		try {
 			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList , false);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			//TODO ADD ERROR TO ERROR DETAILS
 		}
@@ -259,9 +259,9 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws PFFInterfaceException {
+	public List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws InterfaceException {
 		logger.debug("Entering");
 		
 		IAccounts account = null;
@@ -276,7 +276,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 		//Connecting to CoreBanking Interface
 		try {
 			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
  		}
 		
@@ -307,10 +307,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param processAccount
 	 * @return {@link List} of {@link IAccounts}
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public Map<String,String> getAccountCurrencyMap(Map<String,String> accountCcyMap) throws PFFInterfaceException {
+	public Map<String,String> getAccountCurrencyMap(Map<String,String> accountCcyMap) throws InterfaceException {
 		logger.debug("Entering");
 		
 		List<CoreBankAccountDetail> coreBankAccountDetailList = new ArrayList<CoreBankAccountDetail>();
@@ -326,7 +326,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 		//Connecting to CoreBanking Interface
 		try {
 			coreBankAccountDetailList = getAccountDetailProcess().fetchAccountsListAvailableBal(coreBankAccountDetailList, true);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
  		}
 		
@@ -360,7 +360,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 */
 	@Override
     public List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate, String holdType) 
-    		throws PFFInterfaceException {
+    		throws InterfaceException {
 		logger.debug("Entering");
 		
 		//Preparing List Of account Balance Details
@@ -397,7 +397,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * Method for creating customer Account in T24
 	 */
 	@Override
-    public InterfaceAccount createAccount(Customer customer) throws PFFInterfaceException {
+    public InterfaceAccount createAccount(Customer customer) throws InterfaceException {
 		logger.debug("Entering");
 		
 		InterfaceAccount interfaceAccount = new InterfaceAccount();
@@ -422,10 +422,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param coltralMarkReq
 	 * @return CollateralMark
 	 * 
-	 *@throws PFFInterfaceException
+	 *@throws InterfaceException
 	 */
 	@Override
-	public CollateralMark collateralMarking(CollateralMark coltralMarkReq) throws PFFInterfaceException {
+	public CollateralMark collateralMarking(CollateralMark coltralMarkReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getAccountDataProcess().collateralMarking(coltralMarkReq);
@@ -437,10 +437,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	 * @param coltralMarkReq
 	 * @return CollateralMark
 	 * 
-	 *@throws PFFInterfaceException
+	 *@throws InterfaceException
 	 */
 	@Override
-	public CollateralMark collateralDeMarking(CollateralMark coltralMarkReq) throws PFFInterfaceException {
+	public CollateralMark collateralDeMarking(CollateralMark coltralMarkReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getAccountDataProcess().collateralDeMarking(coltralMarkReq);

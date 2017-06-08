@@ -5,10 +5,10 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.processutil.FetchDepositDetailProcess;
 import com.pennant.mq.processutil.FetchDepositsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositDetailServiceImpl implements DepositDetailProcess {
 
@@ -27,10 +27,10 @@ public class DepositDetailServiceImpl implements DepositDetailProcess {
 	 * 
 	 * @param fetchDeposit
 	 * @return FetchDeposit
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws PFFInterfaceException {
+	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getFetchDepositsProcess().fetchCustomerDeposits(fetchDeposit, InterfaceMasterConfigUtil.DEPOSITS);
@@ -41,10 +41,10 @@ public class DepositDetailServiceImpl implements DepositDetailProcess {
 	 * 
 	 * @param fetchDepositDetail
 	 * @return FetchDepositDetail
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws PFFInterfaceException {
+	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getFetchDepositDetailProcess().fetchDepositDetails(fetchDepositDetail, InterfaceMasterConfigUtil.DEPOSITS_DETAILS);

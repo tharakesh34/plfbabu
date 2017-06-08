@@ -16,8 +16,8 @@ import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitSummary;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
 import com.pennant.coreinterface.process.CustomerLimitProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitProcessImpl extends GenericProcess implements CustomerLimitProcess {
 
@@ -37,7 +37,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws CustomerLimitProcessException 
 	 */
 	@Override
-	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws PFFInterfaceException {
+	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
@@ -51,7 +51,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws 	CustomerLimitProcessException
 	 * */
 	@Override
-	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
@@ -65,7 +65,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws 	CustomerLimitProcessException
 	 * */
 	@Override
-	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws PFFInterfaceException {
+	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException {
 		logger.debug("Entering");
 		
 		CustomerLimitPosition custLimitPosition = new CustomerLimitPosition();
@@ -106,7 +106,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws 	CustomerLimitProcessException
 	 * */
 	@Override
-	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
@@ -118,14 +118,14 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * 
 	 */
 	@Override
-	public CustomerLimitDetail getLimitDetails(String limitRef,	String branchCode) throws PFFInterfaceException {
+	public CustomerLimitDetail getLimitDetails(String limitRef,	String branchCode) throws InterfaceException {
 		
 		return getInterfaceDAO().getLimitDetails(limitRef,branchCode);
 		
 	}
 
 	@Override
-	public CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -139,7 +139,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 
 	@Override
-	public CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -153,7 +153,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 
 	@Override
-	public CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -167,7 +167,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 
 	@Override
-	public CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -189,7 +189,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 
 	@Override
-	public CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -203,7 +203,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 
 	@Override
-	public CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());
@@ -217,7 +217,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 	
 	@Override
-	public CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		CustomerLimitUtilization coreLimitUtilReply=new CustomerLimitUtilization();
 		coreLimitUtilReply.setReferenceNum(PFFXmlUtil.getReferenceNumber());
 		coreLimitUtilReply.setDealID(limitUtilReq.getDealID());

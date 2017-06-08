@@ -56,7 +56,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -77,7 +76,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.bmtmasters.product.ProductDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -202,8 +200,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			doSetFieldProperties();
 			doShowDialog(getProductAsset());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProductAssetDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -534,14 +531,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_ProductAssetDialog_AssetCode.value")+" : "+aProductAsset.getAssetCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aProductAsset.getRecordType())){
 				aProductAsset.setVersion(aProductAsset.getVersion()+1);
 				aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -566,9 +556,8 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 					getProductDialogCtrl().doFillProductAsset(this.productAssets);
 					closeDialog();
 				}	
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -733,8 +722,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -25,7 +25,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class LimitCheckDetails {
 
@@ -51,7 +51,7 @@ public class LimitCheckDetails {
 	 * 2. NOGO-- send "doOverrideAndReserveUtil" Request to ACP interface
 	 * 
 	 */
-	public boolean limitServiceProcess(FinanceDetail aFinanceDetail) throws PFFInterfaceException, InterruptedException{
+	public boolean limitServiceProcess(FinanceDetail aFinanceDetail) throws InterfaceException, InterruptedException{
 
 		LimitUtilization limitUtilReply = null;
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -69,7 +69,7 @@ public class LimitCheckDetails {
 			} else {
 				return false;
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
 		}
 
@@ -105,9 +105,9 @@ public class LimitCheckDetails {
 	 * 
 	 * @param limitRef
 	 * @param branchCode
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public LimitDetail getLimitDetails(String limitRef, String branchCode) throws PFFInterfaceException {
+	public LimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().getLimitDetail(limitRef, branchCode);
@@ -118,12 +118,12 @@ public class LimitCheckDetails {
 	 * @param aFinanceDetail 
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InterruptedException
 	 * @throws JaxenException 
 	 */
 	public LimitUtilization doPredealCheck(FinanceDetail aFinanceDetail, LimitUtilization limitUtilReq) 
-			throws PFFInterfaceException, InterruptedException {
+			throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
 		// checking for whether Predeal check Request already sent or not 
@@ -155,9 +155,9 @@ public class LimitCheckDetails {
 	 * 
 	 * @param limitUtilReq
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private LimitUtilization doReserveProcess(FinanceMain financeMain, LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	private LimitUtilization doReserveProcess(FinanceMain financeMain, LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(financeMain == null) {
@@ -188,10 +188,8 @@ public class LimitCheckDetails {
 				
 				// Sent mail to RM
 				sendMailNotification(limitUtilReq);
-				
-				//throw new PFFInterfaceException(limitUtilReq.getReturnCode(), limitUtilReq.getMsgBreach());
 			}
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			throw pfe;
 		}
 		logger.debug("Leaving");
@@ -238,9 +236,9 @@ public class LimitCheckDetails {
 	 * @param financeMain
 	 * @param lmtActionType
 	 * @param intLimitType(Interface limit process constant)
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public void doProcessLimits(FinanceMain financeMain, String intLimitType) throws PFFInterfaceException {
+	public void doProcessLimits(FinanceMain financeMain, String intLimitType) throws InterfaceException {
 		logger.debug("Entering");
 		if(!StringUtils.isBlank(financeMain.getFinLimitRef())) {
 			doLimitProcess(financeMain, intLimitType);
@@ -253,9 +251,9 @@ public class LimitCheckDetails {
 	 * 
 	 * @param financeMain
 	 * @param intLimitType
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private LimitUtilization doLimitProcess(FinanceMain financeMain, String intLimitType) throws PFFInterfaceException {
+	private LimitUtilization doLimitProcess(FinanceMain financeMain, String intLimitType) throws InterfaceException {
 		logger.debug("Entering");
 
 		LimitUtilization limitUtilRply = null;
@@ -332,7 +330,7 @@ public class LimitCheckDetails {
 
 				}
 			}
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			throw pfe;
 		}
 		logger.debug("Leaving");
@@ -343,10 +341,10 @@ public class LimitCheckDetails {
 	 * Method for sending Reserve Utilization Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		LimitUtilization limitUtilization = doValidation(limitUtilReq);
 
@@ -362,7 +360,7 @@ public class LimitCheckDetails {
 				sendMailNotification(limitUtilization);
 			}
 			
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			throw pfe;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -377,9 +375,9 @@ public class LimitCheckDetails {
 	 * Method for send mail notification when customer limit processing is failed
 	 * 
 	 * @param limitUtilization
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private void sendMailNotification(LimitUtilization limitUtilization) throws PFFInterfaceException {
+	private void sendMailNotification(LimitUtilization limitUtilization) throws InterfaceException {
 		logger.debug("Entering");
 
 		for(String code: errorCodes) {
@@ -398,12 +396,12 @@ public class LimitCheckDetails {
 					isMailSent = getMailUtil().sendMail(notificationIdlist, financeMain);
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
-					throw new PFFInterfaceException("PTILMT1", e.getMessage());
+					throw new InterfaceException("PTILMT1", e.getMessage());
 				}
 
 				if(isMailSent) {
 					String errorMsg = Labels.getLabel("MESSAGE_MAIL_NOTIFICATION");
-					throw new PFFInterfaceException(limitUtilization.getReturnCode(), errorMsg);
+					throw new InterfaceException(limitUtilization.getReturnCode(), errorMsg);
 				}
 			}
 		}
@@ -412,7 +410,7 @@ public class LimitCheckDetails {
 	}
 
 	
-	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doPredealCheck(limitUtilReq);
@@ -422,10 +420,10 @@ public class LimitCheckDetails {
 	 * Method for sending Override AND Reserve Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		LimitUtilization limitUtilization = doValidation(limitUtilReq);
@@ -443,10 +441,10 @@ public class LimitCheckDetails {
 	 * Method for sending Confirm Reservation Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doConfirmReservation(limitUtilReq);
@@ -456,10 +454,10 @@ public class LimitCheckDetails {
 	 * Method for sending Cancel Reservation Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doCancelReservation(limitUtilReq);
@@ -469,10 +467,10 @@ public class LimitCheckDetails {
 	 * Method for sending Cancel Utilization Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doCancelUtilization(limitUtilReq);
@@ -482,10 +480,10 @@ public class LimitCheckDetails {
 	 * Method for sending Limit Amendment Request to ACP Interface
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws JaxenException 
 	 */
-	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getCustomerLimitIntefaceService().doLimitAmendment(limitUtilReq);

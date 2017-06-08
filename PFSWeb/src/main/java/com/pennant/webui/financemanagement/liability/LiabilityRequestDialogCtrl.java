@@ -101,11 +101,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 /**
@@ -344,8 +344,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			setDialog(DialogType.EMBEDDED);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -620,7 +619,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(getMainWindow(), e);
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			showErrorMessage(getMainWindow(), pfe);
 			pfe = null;
 		}
@@ -641,7 +640,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, PFFInterfaceException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -759,7 +758,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					String nextFinEvent = getLiabilityRequestService().getProceedingWorkflow(this.finType.getValue(),
 							this.moduleDefiner);
 					if (StringUtils.isNotBlank(nextFinEvent)) {
-						MessageUtil.showInfoMessage(Labels.getLabel("menu_Item_" + nextFinEvent));
+						MessageUtil.showMessage(Labels.getLabel("menu_Item_" + nextFinEvent));
 					}
 
 
@@ -1013,7 +1012,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1772,7 +1771,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(),
 					liabilityRequest.getNextTaskId());
 		} else {
-			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(), null, roleCode);
+			doLoadWorkFlow(liabilityRequest.isWorkflow(), liabilityRequest.getWorkflowId(), liabilityRequest.getNextTaskId());
 		}
 		logger.debug("Entering");
 	}

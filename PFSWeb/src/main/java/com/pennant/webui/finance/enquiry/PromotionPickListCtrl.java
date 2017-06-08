@@ -113,7 +113,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the 
@@ -327,7 +326,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		Rule rule = getRuleService().getApprovedRuleById(promotionElgRule,RuleConstants.MODULE_ELGRULE, RuleConstants.EVENT_ELGRULE);
 		
 		if(rule == null){
-			MessageUtil.showErrorMessage(Labels.getLabel("PromotionPick_ELGRULE_NotDefined"));
+			MessageUtil.showError(Labels.getLabel("PromotionPick_ELGRULE_NotDefined"));
 			return;
 		}
 		
@@ -340,8 +339,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			List<FinanceType> promotionDetailList = getPromotionDetails();
 		
 			if(promotionDetailList == null || promotionDetailList.isEmpty()){
-				MultiLineMessageBox.doSetTemplate();
-				MultiLineMessageBox.show(Labels.getLabel("PromotionPick_Promotions_NotDefined"),Labels.getLabel("PromotionPick_Confirmation"), MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+				MessageUtil.showMessage(Labels.getLabel("PromotionPick_Promotions_NotDefined"));
 			}else{
 				List<FinanceEligibility> finElgRuleDetailList = new ArrayList<FinanceEligibility>();
 				FinanceEligibility financeEligibility = null;

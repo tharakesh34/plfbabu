@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class PoliceAcceptanceUtilProcess extends MQProcess {
 
@@ -23,7 +23,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		super();
 	}
 
-	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail, String msgFormat) throws PFFInterfaceException {
+	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail, String msgFormat) throws InterfaceException {
 		// Set MQ Message configuration details
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
@@ -41,7 +41,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 			// Fetch Response element from Client using MQ call
 			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -74,7 +74,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 	}
 	
 	private InterfaceMortgageDetail setMortgageDetails(OMElement responseElement, AHBMQHeader header)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -90,7 +90,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		header = getReturnStatus(detailElement, header,responseElement);
 		
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 		
 		interfaceMortgageDetail.setTransactionId(PFFXmlUtil.getStringValue(detailElement, "TransactionId"));
@@ -107,9 +107,9 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 	 * @param transactionId
 	 * @param msgFormat
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public InterfaceMortgageDetail cancelMortage(String transactionId, String msgFormat) throws PFFInterfaceException {
+	public InterfaceMortgageDetail cancelMortage(String transactionId, String msgFormat) throws InterfaceException {
 		// Set MQ Message configuration details
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
@@ -127,7 +127,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 			// Fetch Response element from Client using MQ call
 			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -159,7 +159,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 	}
 	
 	private InterfaceMortgageDetail cancelMortgageResponse(OMElement responseElement, AHBMQHeader header)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -178,7 +178,7 @@ public class PoliceAcceptanceUtilProcess extends MQProcess {
 		interfaceMortgageDetail.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 		
 		if (!interfaceMortgageDetail.getReturncode().equals(InterfaceMasterConfigUtil.SUCCESS_RETURN_CODE)) {
-			throw new PFFInterfaceException(interfaceMortgageDetail.getReturncode(), interfaceMortgageDetail.getReturnText());
+			throw new InterfaceException(interfaceMortgageDetail.getReturncode(), interfaceMortgageDetail.getReturnText());
 		}
 		
 		logger.debug("Leaving");

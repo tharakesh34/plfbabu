@@ -1,8 +1,8 @@
 package com.pennant.Interface.service;
 
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface CalendarInterfaceService {
 
-	boolean calendarUpdate() throws PFFInterfaceException;
+	boolean calendarUpdate() throws InterfaceException;
 }

@@ -7,7 +7,7 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 
@@ -24,7 +24,7 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 	 * 
 	 */
 	@Override
-    public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws PFFInterfaceException {
+    public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getDepositDetailProcess().fetchDeposits(fetchDeposit);
@@ -35,7 +35,7 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 	 * 
 	 */
 	@Override
-    public FinCollaterals fetchDepositDetails(String depositReference) throws PFFInterfaceException {
+    public FinCollaterals fetchDepositDetails(String depositReference) throws InterfaceException {
 		logger.debug("Entering");
 		
 		FetchDepositDetail fetchDepositDetail = new FetchDepositDetail();

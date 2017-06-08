@@ -100,13 +100,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = 3257569537441008225L;
@@ -727,7 +727,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 				incomeDetailMap = getCustomerIncomeService().getCustomerIncomeByCustomer(wifcustomer.getCustID(), false);
 				try {
 					wifcustomer = fetchCustomerData();
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception: ", e);
 				}
 			}
@@ -788,8 +788,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 				}
 				Executions.createComponents("/WEB-INF/pages/Finance/WIFFinanceMain/"+productType+"WIFFinanceMainDialog.zul",null,map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		
@@ -802,10 +801,10 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public WIFCustomer fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public WIFCustomer fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 		
 		// Get the data of Customer from Core Banking Customer

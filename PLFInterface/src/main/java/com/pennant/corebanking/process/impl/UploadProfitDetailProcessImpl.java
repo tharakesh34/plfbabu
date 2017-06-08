@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.EodFinProfitDetail;
 import com.pennant.coreinterface.process.UploadProfitDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class UploadProfitDetailProcessImpl extends GenericProcess implements UploadProfitDetailProcess{
 
@@ -20,7 +20,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 	}
 	
 	@Override
-	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws PFFInterfaceException {
+	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");

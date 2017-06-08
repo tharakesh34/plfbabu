@@ -60,7 +60,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -83,7 +82,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 /**
@@ -426,8 +424,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 			this.window_ScoringMetricsDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -629,16 +626,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 								+ Labels.getLabel("listheader_ScoringMetricsCode.label")+":"+ aScoringMetrics.getLovDescScoringCode();
 	
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, 
-				MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
- 			if (StringUtils.isBlank(aScoringMetrics.getRecordType())){
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.isBlank(aScoringMetrics.getRecordType())){
 				aScoringMetrics.setVersion(aScoringMetrics.getVersion()+1);
 				aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				if (isWorkFlowEnabled()){
@@ -1003,8 +992,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

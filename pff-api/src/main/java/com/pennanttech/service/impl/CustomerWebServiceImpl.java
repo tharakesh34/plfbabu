@@ -37,7 +37,6 @@ import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.PersionalInfoGroup;
 import com.pennant.validation.SaveValidationGroup;
@@ -85,7 +84,6 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	 * Method for create customer in PLF system.
 	 * 
 	 * @param customerDetails
-	 * @throws PFFInterfaceException
 	 */
 	@Override
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
@@ -123,7 +121,6 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	 * Method for update customer in PLF system.
 	 * 
 	 * @param customerDetails
-	 * @throws PFFInterfaceException
 	 */
 	@Override
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {

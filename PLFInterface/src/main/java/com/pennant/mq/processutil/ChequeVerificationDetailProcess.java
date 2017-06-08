@@ -15,11 +15,11 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ChequeVerificationDetailProcess extends MQProcess {
 
@@ -35,15 +35,15 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @param chequeVerification
 	 * @param msgFormat
 	 * @return ChequeVerification
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification, String msgFormat) 
-			throws PFFInterfaceException, JaxenException  {
+	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (chequeVerification == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Cheque Verification"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Cheque Verification Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
@@ -58,7 +58,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(chequeVerification, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -73,11 +73,11 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	private ChequeVerification processChequeVerificationResponse(OMElement responseElement, AHBMQHeader header)
-			throws PFFInterfaceException, JaxenException {
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -93,7 +93,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			chequeVerificationRes = new ChequeVerification();
@@ -104,7 +104,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 
 			chequeVerificationRes.setChequeStsList(getChequeStsList(detailElement, absPath+"/ChequeStatus"));
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -152,7 +152,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @return OMElement
 	 */
 	private OMElement getRequestElement(ChequeVerification chequeVerification, OMFactory factory)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

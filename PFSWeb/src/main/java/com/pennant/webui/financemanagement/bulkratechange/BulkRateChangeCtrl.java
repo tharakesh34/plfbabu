@@ -147,8 +147,7 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 			doShowDialog(getBulkRateChangeHeader());
 			this.window_RateChangeDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RateChangeDialog.onClose();
 		}
 		logger.debug("Leaving");

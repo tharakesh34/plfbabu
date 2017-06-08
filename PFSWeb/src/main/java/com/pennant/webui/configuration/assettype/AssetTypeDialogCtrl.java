@@ -95,7 +95,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -362,8 +361,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -502,8 +500,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		
-		int conf = MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"));
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeAssetWindow();
 			Events.postEvent("onClick$button_AssetTypeList_NewAssetType",
 					assetTypeListCtrl.window_AssetTypeList, this.assetConfigurationType);
@@ -1008,18 +1005,10 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 			// Show a confirm box
 			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doClose: Yes");
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				doSave();
 				close = false;
-			} else {
-				logger.debug("doClose: No");
 			}
 		} else {
 			logger.debug("isDataChanged : false");
@@ -1055,15 +1044,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aAssetType.getAssetType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true));
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aAssetType.getRecordType()).equals("")) {
 				aAssetType.setVersion(aAssetType.getVersion() + 1);
 				aAssetType.setRecordType(PennantConstants.RECORD_TYPE_DEL);

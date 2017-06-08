@@ -77,7 +77,6 @@ import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -122,7 +121,6 @@ import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicat
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -386,8 +384,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				btnDelete.setVisible(false);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerDocumentDialog.onClose();
 		}
 		logger.debug("Leaving" +event.toString());
@@ -1046,13 +1043,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value")+" : "+aCustomerDocument.getCustDocCategory();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
 
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+		int conf = MessageUtil.confirm(msg);
 
-		if (conf == MultiLineMessageBox.YES && this.creditApplicationReviewDialogCtrl == null) {
+			if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl == null) {
 			logger.debug("doDelete: Yes");
 
 			if (StringUtils.isBlank(aCustomerDocument.getRecordType())) {
@@ -1090,10 +1084,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
-		}  else if(conf == MultiLineMessageBox.YES && this.creditApplicationReviewDialogCtrl != null){
+			} else if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl != null) {
 			this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);
 			this.creditApplicationReviewDialogCtrl.customerDocumentList.remove(aCustomerDocument);
 			getCreditApplicationRevDialog();
@@ -1568,8 +1561,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		if(getCustomerDialogCtrl() != null){
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {

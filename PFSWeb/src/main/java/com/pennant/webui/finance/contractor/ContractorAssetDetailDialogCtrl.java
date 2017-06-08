@@ -61,7 +61,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -88,7 +87,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DisbursementDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -232,8 +230,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			doSetFieldProperties();
 			doShowDialog(getContractorAssetDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ContractorAssetDetailDialog.onClose();
 		}
 		logger.debug("Leaving" +event.toString());
@@ -374,8 +371,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 					getFinReference(),getContractorAssetDetail().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 
@@ -783,21 +779,15 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
 				Labels.getLabel("label_ContractorAssetDetailDialog_ContractorName.value")+" : "+aContractorAssetDetail.getContractorName();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-			
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if(getDisbursementDetailDialogCtrl() != null){
 				List<FinanceDisbursement> list = getDisbursementDetailDialogCtrl().getDisbursementDetails();
 				if(list != null && !list.isEmpty()){
 					for (FinanceDisbursement disbursement : list) {
 						if(disbursement.getContractorId() == aContractorAssetDetail.getContractorId() && 
 								!StringUtils.trimToEmpty(disbursement.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
-							MessageUtil.showErrorMessage("Not Allowed to Delete This Record. Disbursement Details Exist on this Contractor.");
+							MessageUtil.showError(
+									"Not Allowed to Delete This Record. Disbursement Details Exist on this Contractor.");
 							return;
 						}
 					}
@@ -830,9 +820,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 					}	
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -938,8 +927,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

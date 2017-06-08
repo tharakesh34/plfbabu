@@ -100,7 +100,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
@@ -109,6 +108,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the
@@ -524,7 +524,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 		
 		//Validating Rollover Date finances List
 		if(rolloverDateList.isEmpty()){
-			MessageUtil.showErrorMessage(Labels.getLabel("NO_PROCEED_ROLLOVER"));
+			MessageUtil.showError(Labels.getLabel("NO_PROCEED_ROLLOVER"));
 			return;
 		}
 		
@@ -669,12 +669,11 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				Executions.createComponents(fileLocaation.toString(),null,map);
 				this.window_SelectRolloverFinanceDialog.onClose();
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		} else {
-			logger.fatal("work flow not found");
-			MessageUtil.showErrorMessage(Labels.getLabel("Workflow_Not_Found")+financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+			MessageUtil.showError(Labels.getLabel("Workflow_Not_Found")
+					+ financeDetail.getFinScheduleData().getFinanceMain().getFinType());
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -693,11 +692,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				this.window_SelectRolloverFinanceDialog.doModal();
 			}else{
 				this.window_SelectRolloverFinanceDialog.onClose();
-				MessageUtil.showErrorMessage(Labels.getLabel("NO_PROCEED_ROLLOVER"));
+				MessageUtil.showError(Labels.getLabel("NO_PROCEED_ROLLOVER"));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -796,10 +794,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 	 * 
 	 * @param event
 	 * @throws InterruptedException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -824,7 +822,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				customerDetails.setNewRecord(true);
 				customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 				if (customerDetails == null) {
-					throw new PFFInterfaceException("9999", "Customer Not found.");
+					throw new InterfaceException("9999", "Customer Not found.");
 				}
 			}
 
@@ -832,7 +830,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_View" );
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			if(StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
 				int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
 						MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
@@ -842,7 +840,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 					return null;
 				}
 			} else {
-				MessageUtil.showErrorMessage(pfe.getErrorMessage());
+				MessageUtil.showError(pfe);
 				return null;
 			}
 		} catch (Exception e) {

@@ -220,8 +220,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			this.listBoxFinElgRef.setHeight(this.borderLayoutHeight- 210 - 52+"px");
 			this.window_EligibilityDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -369,7 +368,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		} else {
 			finElgDet.setEligibleWithDevaition(false);
 			String ruleResult = StringUtils.trimToEmpty(finElgDet.getRuleResult());
-			if (StringUtils.isEmpty(ruleResult) || "0.0".equals(ruleResult) || "0.00".equals(ruleResult)) {
+			if (StringUtils.isEmpty(ruleResult) || "0".equals(ruleResult) || "0.0".equals(ruleResult) || "0.00".equals(ruleResult)) {
 				finElgDet.setEligible(false);
 			} else {
 				finElgDet.setEligible(true);

@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.webui.feetype.feetype;
 
 import java.sql.Timestamp;
@@ -59,7 +58,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -86,7 +84,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -716,18 +713,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			// Show a confirm box
 			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doClose: Yes");
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				doSave();
 				close = false;
-			} else {
-				logger.debug("doClose: No");
 			}
 		} else {
 			logger.debug("isDataChanged : false");
@@ -754,15 +743,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value") + " : " + aFeeType.getFeeTypeCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true));
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aFeeType.getRecordType()).equals("")) {
 				aFeeType.setVersion(aFeeType.getVersion() + 1);
 				aFeeType.setRecordType(PennantConstants.RECORD_TYPE_DEL);

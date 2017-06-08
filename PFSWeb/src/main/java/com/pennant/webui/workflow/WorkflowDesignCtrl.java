@@ -161,8 +161,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			doSetFieldProperties();
 			doShowDialog(getWorkFlowDetails());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_workflowDesign.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -242,11 +241,10 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 
 				this.btnSave.setVisible(true);
 			} catch (Exception e) {
-				MessageUtil.showErrorMessage("Unable to parse the File");
+				MessageUtil.showError("Unable to parse the File");
 			}
 		} else {
-			MessageUtil
-					.showErrorMessage("The file must be an .xml file. Please select another file");
+			MessageUtil.showError("The file must be an .xml file. Please select another file");
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -361,8 +359,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		logger.debug("Entering ");
 
 		if (!WorkflowEngine.bpmnSaved(this.workFlowType.getValue())) {
-			MessageUtil
-					.showErrorMessage("Please save the process diagram before submitting.");
+			MessageUtil.showError("Please save the process diagram before submitting.");
 			return;
 		}
 
@@ -376,8 +373,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		try {
 			workflow = new WorkflowEngine(builder);
 		} catch (Exception ex) {
-			MessageUtil
-					.showErrorMessage("Please validate the process diagram before submitting.");
+			MessageUtil.showError("Please validate the process diagram before submitting.");
 			return;
 		}
 		this.workFlowDetails.setFirstTaskOwner(workflow.allFirstTaskOwners());
@@ -426,8 +422,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

@@ -100,7 +100,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -316,8 +315,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 			doShowDialog(getFinCreditRevSubCategory());
 			
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinCreditRevSubCategoryDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -706,8 +704,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 			
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -897,14 +894,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinCreditRevSubCategory.getSubCategoryCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinCreditRevSubCategory.getRecordType())){
 				aFinCreditRevSubCategory.setVersion(aFinCreditRevSubCategory.getVersion()+1);
 				aFinCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1349,8 +1339,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/JavaScriptBuilder/RuleResultView.zul",null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1424,12 +1413,9 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		}else{
 
 			if(errors.size() != 0){
-				conf =  MultiLineMessageBox.show(errors.size()+ 
-						PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror"),
-						PennantJavaUtil.getLabel("Validate_Title"),
-						MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+				conf = MessageUtil.confirm(errors.size() + PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror"));
 
-				if (conf==MultiLineMessageBox.YES){
+				if (conf == MessageUtil.YES) {
 					Events.postEvent("onUser$errors", window_RuleResultDialog,errors);
 				}else{
 					//do Nothing
@@ -1438,8 +1424,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				if(isSaveRecord){
 					doSave();
 				}else{
-					conf =  MultiLineMessageBox.show(PennantJavaUtil.getLabel("message_NoError_CodeMirror"),
-							" Error Details",MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+					MessageUtil.showMessage(PennantJavaUtil.getLabel("message_NoError_CodeMirror"));
 				}
 			}
 		}
@@ -1470,27 +1455,22 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 
 				if(jsonObject != null){
 					
-					String errorMsg =  (String) jsonObject.get("reason") ;
-					String title = " Error : Line-"+jsonObject.get("line") + ",Character-" + 
-											jsonObject.get("character");
+					String errorMsg = "Error : Line-" + jsonObject.get("line") + ",Character-"
+							+ jsonObject.get("character") + "\n\n" + (String) jsonObject.get("reason");
 					
 					int conf;
 					if(message.size()-1 != i+1){
 						errorMsg = errorMsg +"\n\n"+
 									PennantJavaUtil.getLabel("message_ErrorProcess_Conformation");
 
-						conf = MultiLineMessageBox.show(errorMsg,title,
-								MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.ERROR, true);
+						conf = MessageUtil.confirm(errorMsg);
+						if (conf == MessageUtil.NO) {
+							break;
+						}
 					}else{
-						conf = MultiLineMessageBox.show(errorMsg,title,
-								MultiLineMessageBox.OK, Messagebox.ERROR, true);
-					}
-
-					if (conf==MultiLineMessageBox.NO || conf==MultiLineMessageBox.OK){
+						MessageUtil.showError(errorMsg);
 						break;
-					}else{
-						//do Nothing
-					}			
+					}
 				}
 			}
 		}

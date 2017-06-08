@@ -4,7 +4,7 @@ import com.pennant.Interface.service.NorkamCheckService;
 import com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.coreinterface.process.NorkamCheckProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NorkamCheckServiceImpl extends NextIdViewSQLServerDaoImpl implements NorkamCheckService {
 	
@@ -15,7 +15,7 @@ public class NorkamCheckServiceImpl extends NextIdViewSQLServerDaoImpl implement
 	}
 
 	@Override
-    public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck interfaceNorkamCheck) throws PFFInterfaceException {
+    public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck interfaceNorkamCheck) throws InterfaceException {
 	    return getNorkamCheckProcess().doNorkamProcess(interfaceNorkamCheck);
     }
 

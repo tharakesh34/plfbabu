@@ -2493,7 +2493,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference,FM.FinAmount, FM.FinType, FM.FinCcy,");
 		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,");
-		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct ");
+		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus");
 		selectSql.append(" From FinanceMain FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
 		selectSql.append(" Where CustID =:CustID");
 
@@ -2524,9 +2524,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.FinAmount, FM.FinType, FM.FinCcy,");
-		selectSql.append(
-				" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,FM.FinStartDate, FM.FirstRepay,");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.FinAmount, FM.FinType, FM.FinCcy,FM.ClosingStatus,");
+		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,FM.FinStartDate, FM.FirstRepay,");
 		selectSql.append(" FT.FinCategory lovDescFinProduct, CA.CollateralRef From FinanceMain FM INNER JOIN ");
 		selectSql.append(" CollateralAssignment CA On FM.FinReference = CA.Reference INNER JOIN ");
 		selectSql.append(" RMTFinanceTypes FT ON FM.FinType = FT.FinType");

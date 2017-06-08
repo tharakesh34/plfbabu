@@ -115,7 +115,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -125,6 +124,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -271,8 +271,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// Setting tile Name based on Service Action
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FeeReceiptDialog.onClose();
 		}
 
@@ -672,7 +671,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			
 			// If Fee Details not exists against Reference , not allowed to proceed further
 			if(!feesExists){
-				MessageUtil.showErrorMessage(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
+				MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
 				return;
 			}
 
@@ -723,9 +722,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			//If Schedule Re-modified Save into DB or else only add Repayments Details
 			doProcessReceipt();
 
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return;
 		} catch (WrongValuesException we) {
 			throw we;
@@ -1487,14 +1485,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-		} catch (InvocationTargetException e) {
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
 

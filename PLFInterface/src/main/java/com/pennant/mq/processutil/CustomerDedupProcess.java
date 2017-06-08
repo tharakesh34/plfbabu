@@ -15,11 +15,11 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDedupProcess extends MQProcess  {
 
@@ -31,12 +31,12 @@ public class CustomerDedupProcess extends MQProcess  {
 	
 	private String CUST_CTG_CODE = null;
 	
-	public List<CoreCustomerDedup> customerDedupCheck(CoreCustomerDedup dedupCustomer, String msgFormat) 
-			throws PFFInterfaceException, JaxenException {
+	public List<CoreCustomerDedup> customerDedupCheck(CoreCustomerDedup dedupCustomer, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (dedupCustomer == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Customer"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Customer Cannot Be Blank");
 		}
 
 		CUST_CTG_CODE = dedupCustomer.getCustCtgCode();
@@ -54,7 +54,7 @@ public class CustomerDedupProcess extends MQProcess  {
 		try {
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,getRequestElement(dedupCustomer, referenceNum, factory));
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -69,11 +69,11 @@ public class CustomerDedupProcess extends MQProcess  {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private List<CoreCustomerDedup> setCustomerDedupResponse(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException, JaxenException {
+	private List<CoreCustomerDedup> setCustomerDedupResponse(OMElement responseElement, AHBMQHeader header)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -97,7 +97,7 @@ public class CustomerDedupProcess extends MQProcess  {
 		} else if(StringUtils.equals(PFFXmlUtil.DEDUP_FOUND, header.getReturnCode())){
 			return getCustDedupRecords(detailElement, path+"/DuplicateCustomer");
 		} else {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 	}
 

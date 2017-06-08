@@ -100,7 +100,7 @@ public class DealWiseIncomeReportCtrl extends  GFCBaseCtrl<ReportConfiguration> 
 			child_Window.onClose();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReportConfiguredError.error"));
+			MessageUtil.showError(Labels.getLabel("label_ReportConfiguredError.error"));
 			closeDialog();
 		}
 

@@ -18,11 +18,11 @@ import com.pennant.coreinterface.model.nbc.BondPurchaseDetail;
 import com.pennant.coreinterface.model.nbc.BondTransferDetail;
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class BondDetailProcess extends MQProcess {
 
@@ -38,15 +38,15 @@ public class BondDetailProcess extends MQProcess {
 	 * @param nationalBondDetail
 	 * @param msgFormat
 	 * @return NationalBondDetail
-	 * @throws PFFInterfaceException
-	 * @throws JaxenException 
+	 * @throws InterfaceException
+	 * @throws JaxenException
 	 */
-	public NationalBondDetail doNationalBondProcess(NationalBondDetail nationalBondDetail, String msgFormat) 
-			throws PFFInterfaceException, JaxenException  {
+	public NationalBondDetail doNationalBondProcess(NationalBondDetail nationalBondDetail, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (nationalBondDetail == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"NationalBondDetail"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "NationalBondDetail Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
@@ -61,7 +61,7 @@ public class BondDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(nationalBondDetail, factory, msgFormat);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -76,11 +76,11 @@ public class BondDetailProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private NationalBondDetail processBondDetailResponse(OMElement responseElement, AHBMQHeader header, String msgFormat)
-			throws PFFInterfaceException, JaxenException {
+	private NationalBondDetail processBondDetailResponse(OMElement responseElement, AHBMQHeader header,
+			String msgFormat) throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -113,7 +113,7 @@ public class BondDetailProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			nationalBondDetail = new NationalBondDetail();
@@ -137,7 +137,7 @@ public class BondDetailProcess extends MQProcess {
 				
 			}
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -224,7 +224,7 @@ public class BondDetailProcess extends MQProcess {
 	 * @return OMElement
 	 */
 	private OMElement getRequestElement(NationalBondDetail nationalBondDetail, OMFactory factory, String msgFormat)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		String requestType = "";

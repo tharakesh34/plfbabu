@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.webui.financemanagement.managercheque;
 
 import java.io.ByteArrayInputStream;
@@ -69,7 +68,6 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -90,7 +88,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -98,7 +95,6 @@ import com.pennant.webui.util.MultiLineMessageBox;
  * /WEB-INF/pages/Finance/Contributor/DocumentDetailsDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
-
 public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private static final long serialVersionUID = -6959194080451993569L;
@@ -585,8 +581,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -676,15 +671,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		final String msg = Labels
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
 				+ "\n\n --> " + aDocumentDetails.getDocName();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
 				aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
 				aDocumentDetails
@@ -1141,8 +1128,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			} else {
 				isSupported = false;
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
 			if (isSupported) {
 				String fileName = media.getName();

@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
 import com.pennant.coreinterface.process.PoliceAcceptanceProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class PoliceAcceptanceProcessImpl implements PoliceAcceptanceProcess {
 
@@ -13,21 +13,21 @@ public class PoliceAcceptanceProcessImpl implements PoliceAcceptanceProcess {
 	}
 
 	@Override
-	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws PFFInterfaceException {
+	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws InterfaceException {
 		InterfaceMortgageDetail mortDetail = new InterfaceMortgageDetail();
 		if(StringUtils.equals("7894588855", mortgageDetail.getChassisNo())) {
-			throw new PFFInterfaceException("PTI3001", "Failed");
+			throw new InterfaceException("PTI3001", "Failed");
 		}
 		mortDetail.setTransactionId("998877");
 		return mortDetail;
 	}
 
 	@Override
-	public InterfaceMortgageDetail cancelMortage(String transactionId) throws PFFInterfaceException {
+	public InterfaceMortgageDetail cancelMortage(String transactionId) throws InterfaceException {
 		
 		InterfaceMortgageDetail mortDetail = new InterfaceMortgageDetail();
 		if(StringUtils.isBlank(transactionId)) {
-			throw new PFFInterfaceException("PTI3001", "Mortgage Cancellation Failed.");
+			throw new InterfaceException("PTI3001", "Mortgage Cancellation Failed.");
 		}
 		mortDetail.setReturncode("0000");
 		mortDetail.setReturnText("Success");

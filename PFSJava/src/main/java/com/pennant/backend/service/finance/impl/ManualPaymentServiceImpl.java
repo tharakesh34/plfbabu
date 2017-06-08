@@ -83,7 +83,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -309,7 +309,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -369,7 +369,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (!financeMain.isWorkflow()) {
 			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 
-			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
@@ -378,7 +378,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
-				throw new PFFInterfaceException("9999", errParm);
+				throw new InterfaceException("9999", errParm);
 			}
 
 			linkedTranId = (Long) returnList.get(1);
@@ -531,12 +531,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -619,7 +619,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -681,7 +681,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//Repayments Posting Process Execution
 		//=====================================
 		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 		List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
@@ -690,7 +690,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		if (!(Boolean) returnList.get(0)) {
 			String errParm = (String) returnList.get(1);
-			throw new PFFInterfaceException("9999", errParm);
+			throw new InterfaceException("9999", errParm);
 		}
 
 		linkedTranId = (Long) returnList.get(1);
@@ -888,10 +888,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * Method for process Finance Maintenance and sending handling instruction request to ICCS interface
 	 * 
 	 * @param finScheduleData
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * 
 	 */
-	private void doHandlingInstructionProcess(RepayData repayData) throws PFFInterfaceException {
+	private void doHandlingInstructionProcess(RepayData repayData) throws InterfaceException {
 		logger.debug("Entering");
 
 		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
@@ -951,7 +951,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal insRefund,
 			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -1040,7 +1040,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				returnList.add(finRepayQueues);
 			}
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (IllegalAccessException e) {

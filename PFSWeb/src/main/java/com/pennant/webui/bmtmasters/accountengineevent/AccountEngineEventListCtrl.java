@@ -295,8 +295,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 			Executions.createComponents(
 					"/WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -353,8 +352,7 @@ public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEve
 			Executions.createComponents(
 					"/WEB-INF/pages/BMTMasters/AccountEngineEvent/AccountEngineEventSearchDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

@@ -57,7 +57,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -84,12 +83,11 @@ import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the
@@ -280,7 +278,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 					if (customerDetails == null) {
-						throw new PFFInterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+						throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
 					}
 				}//If  prospect customer  is checked
 			} else  if (this.prospect.isChecked()) {
@@ -358,12 +356,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					custCIF = getCustomerDetailsService().getEIDNumberById(eidNumbr, "_View");
 				}
 				if(StringUtils.isNotBlank(custCIF)){
-					MultiLineMessageBox.doSetTemplate();
 					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",new String[]{
 							isCustCatIndividual ? Labels.getLabel("label_CustCRCPR") : Labels.getLabel("label_CustTradeLicenseNumber"),
 									custCIF + ". \n"});
-					int conf = MultiLineMessageBox.show(msg, Labels.getLabel("title_ProspectExist"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf != MultiLineMessageBox.YES) {
+					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 						return;
 					}
 					this.exsiting.setSelected(true);
@@ -374,7 +370,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						newRecord = true;
 						customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(custCIF, "");
 						if (customerDetails == null) {
-							throw new PFFInterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+							throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
 						}
 					}
 				}else{
@@ -429,14 +425,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.window_CoreCustomer.onClose();
 		} catch (WrongValuesException wve) {
 			throw wve;
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(pfe.getErrorMessage(), Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(e.getMessage(), Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

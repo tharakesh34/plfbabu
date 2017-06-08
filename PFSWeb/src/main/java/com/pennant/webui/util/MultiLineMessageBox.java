@@ -44,7 +44,6 @@ package com.pennant.webui.util;
 
 import java.io.Serializable;
 
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Messagebox;
 
 /**
@@ -53,13 +52,14 @@ import org.zkoss.zul.Messagebox;
  * <br>
  */
 public class MultiLineMessageBox extends Messagebox implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long		serialVersionUID	= 1L;
 
 	// path of the messagebox zul-template
-	private transient static String _templ = "/WEB-INF/pages/util/multiLineMessageBox.zul";
-	private transient static String _temp2 = "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
-	
+	private transient static String	_templ				= "/WEB-INF/pages/util/multiLineMessageBox.zul";
+	private transient static String	_temp2				= "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
+
 	public MultiLineMessageBox() {
+		super();
 	}
 
 	public static void doSetTemplate() {
@@ -71,8 +71,7 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 	}
 
 	/**
-	 * Shows a message box and returns what button is pressed. A shortcut to
-	 * show(message, null, OK, INFORMATION). <br>
+	 * Shows a message box and returns what button is pressed. A shortcut to show(message, null, OK, INFORMATION). <br>
 	 * <br>
 	 * Simple MessageBox with customizable message and title. <br>
 	 * 
@@ -119,56 +118,4 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 
 		return show(msg, title, buttons, icon, 0, null);
 	}
-
-	/**
-	 * Shows a message box and returns what button is pressed. A shortcut to
-	 * show(message, null, OK, INFORMATION). <br>
-	 * <br>
-	 * Simple MessageBox with customizable message and title. <br>
-	 * 
-	 * @param message
-	 *            The message to display.
-	 * @param title
-	 *            The title to display.
-	 * @param icon
-	 *            The icon to display. <br>
-	 *            QUESTION = "z-msgbox z-msgbox-question"; <br>
-	 *            EXCLAMATION = "z-msgbox z-msgbox-exclamation"; <br>
-	 *            INFORMATION = "z-msgbox z-msgbox-imformation"; <br>
-	 *            ERROR = "z-msgbox z-msgbox-error"; <br>
-	 * @param buttons
-	 *            MultiLineMessageBox.CANCEL<br>
-	 *            MultiLineMessageBox.YES<br>
-	 *            MultiLineMessageBox.NO<br>
-	 *            MultiLineMessageBox.ABORT<br>
-	 *            MultiLineMessageBox.RETRY<br>
-	 *            MultiLineMessageBox.IGNORE<br>
-	 * @param padding
-	 *            true = Added an empty line before and after the message.<br>
-	 * 
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static final int show(String message, String title, int buttons, String icon, boolean padding, EventListener listener) {
-
-		String msg = message;
-
-		if (padding) {
-			msg = "\n" + message + "\n\n";
-		}
-
-		if ("QUESTION".equals(icon)) {
-			icon = "z-msgbox z-msgbox-question";
-		} else if ("EXCLAMATION".equals(icon)) {
-			icon = "z-msgbox z-msgbox-exclamation";
-		} else if ("INFORMATION".equals(icon)) {
-			icon = "z-msgbox z-msgbox-imformation";
-		} else if ("ERROR".equals(icon)) {
-			icon = "z-msgbox z-msgbox-error";
-		}
-
-		return show(msg, title, buttons, icon, 0, listener);
-	}
-
 }

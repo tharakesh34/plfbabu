@@ -48,7 +48,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.NorkamCheckService;
@@ -59,9 +58,8 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * Used to specify Date type selection in <b>DedupValidation</b> class.
@@ -119,9 +117,8 @@ public class DedupValidation implements Serializable {
 
 			return true;
 
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return false;
 		}
 	}
@@ -134,7 +131,7 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * @return
 	 */
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws PFFInterfaceException {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
@@ -226,9 +223,9 @@ public class DedupValidation implements Serializable {
 	 * @param role
 	 * @param window
 	 * @param curLoginUser
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws PFFInterfaceException {
+	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
 
 		boolean isProcessCompleted;
 
@@ -258,9 +255,9 @@ public class DedupValidation implements Serializable {
 	 * @param customerDetails 
 	 * 
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private boolean doNorkomCheck(CustomerDetails customerDetails) throws PFFInterfaceException {
+	private boolean doNorkomCheck(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean isProcessCompleted = false;
@@ -280,14 +277,8 @@ public class DedupValidation implements Serializable {
 		if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 			isProcessCompleted = true;
 		} else if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.BLACKLIST_HIT)) {
-			MultiLineMessageBox.doSetTemplate();
-			int conf;
 			try {
-				conf = MultiLineMessageBox.show(Labels.getLabel("NORKOM_BLACKLIST"), Labels.getLabel("NORKOM_BLACKLIST_TITLE"),
-						MultiLineMessageBox.YES
-						| MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(Labels.getLabel("NORKOM_BLACKLIST")) == MessageUtil.YES) {
 					isProcessCompleted = true;
 				} else {
 					isProcessCompleted = false;

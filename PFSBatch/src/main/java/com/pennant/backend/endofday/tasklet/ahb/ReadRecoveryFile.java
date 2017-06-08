@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ReadRecoveryFile implements Tasklet {
 	private Logger						logger	= Logger.getLogger(ReadRecoveryFile.class);
@@ -118,7 +118,7 @@ public class ReadRecoveryFile implements Tasklet {
 
 				if (!valid) {
 					BatchUtil.setExecution(context, "WAIT", "File Not Valid");
-					throw new PFFInterfaceException("50001", "Invalid File");
+					throw new InterfaceException("50001", "Invalid File");
 				} else {
 					fileRecieved = true;
 				}

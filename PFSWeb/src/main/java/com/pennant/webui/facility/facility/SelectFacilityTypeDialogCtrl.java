@@ -147,8 +147,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 			}
 			showSelectFinanceTypeDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SelectFacilityTypeDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -237,11 +236,10 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}else{
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -292,8 +290,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 			// open the dialog in modal mode
 			this.window_SelectFacilityTypeDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

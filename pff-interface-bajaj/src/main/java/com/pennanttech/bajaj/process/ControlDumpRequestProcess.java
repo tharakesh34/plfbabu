@@ -17,14 +17,13 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
 public class ControlDumpRequestProcess extends DatabaseDataEngine {
-
 	private static final Logger	logger			= Logger.getLogger(ControlDumpRequestProcess.class);
 
-	Date						appDate		= null;
+	Date						appDate			= null;
 	Date						monthStartDate	= null;
 	Date						monthEndDate	= null;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId,Date valueDate,Date appDate, Date monthStartDate, Date monthEndDate) {
+	public ControlDumpRequestProcess(DataSource dataSource, long userId,Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
@@ -45,10 +44,9 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 		execute();
 		
-		
-		deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
 		} catch(Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		} finally {
 			deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
 		}
@@ -82,26 +80,17 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 						save(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
 						successCount++;
 					} catch (Exception e) {
-						logger.error(Literal.ENTERING);
+						logger.error(Literal.EXCEPTION, e);
+						logger.debug("Control dump record: " + map.toString());
 						failedCount++;
 
 						String keyId = rs.getString("AGREEMENTNO");
+						String  error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e.getMessage().length());
+						
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
-						String error = null;
-						if (e.getMessage().length() > 1999) {
-							
-							if(e.getMessage().contains("invalid number")) {
-								System.out.println(map.toString());
-							}
-							
-							error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e
-									.getMessage().length());
-						} else {
-							error = e.getMessage();
-						}
-
+						
 						saveBatchLog(keyId, "F", error);
 					} finally {
 						map = null;
@@ -278,10 +267,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 		MapSqlParameterSource logMap = new MapSqlParameterSource();
 		logMap.addValue(columnName, appDate);
-
-		final String[] filterFields = new String[1];
-		filterFields[0] = columnName;
-		delete(logMap, tableName, destinationJdbcTemplate, " where CREATED_ON !=:CREATED_ON");
+		
+		destinationJdbcTemplate.update("delete from "+tableName+" where CREATED_ON !=:CREATED_ON", logMap);
 
 		logger.debug(Literal.LEAVING);
 	}

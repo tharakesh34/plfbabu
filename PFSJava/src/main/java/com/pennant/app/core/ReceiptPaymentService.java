@@ -119,7 +119,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			}
 
 			header.setReceiptDetails(receiptDetails);
-			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custEODEvent.getCustomer(), scheduleDetails,
+			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custEODEvent.getCustomer(), scheduleDetails,null,
 					profitDetail, header, repayHeirarchy, businessDate);
 			getPresentmentHeaderDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 

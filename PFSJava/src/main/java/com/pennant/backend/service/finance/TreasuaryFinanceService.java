@@ -49,7 +49,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface TreasuaryFinanceService {
 
@@ -59,7 +59,7 @@ public interface TreasuaryFinanceService {
 	InvestmentFinHeader getTreasuaryFinanceById(String id);
 	InvestmentFinHeader getApprovedTreasuaryFinanceById(String id);
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException;
 	AuditHeader doConfirm(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<FinanceDetail> getFinanceDetails(InvestmentFinHeader investmentFinHeader);

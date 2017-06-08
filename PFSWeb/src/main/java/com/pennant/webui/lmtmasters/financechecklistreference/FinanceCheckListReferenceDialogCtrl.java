@@ -734,7 +734,10 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					if (panel != null) {
 						((Tab) panel.getParent().getParent().getParent().getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_CHECKLIST))).setSelected(true);
 					}
-					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30701", errParm, valueParm), usrLanguage).getError());
+					MessageUtil.showError(ErrorUtil
+							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30701", errParm, valueParm),
+									usrLanguage)
+							.getError());
 					return false;
 				}
 
@@ -1047,7 +1050,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 						if (docDetailMap != null && docDetailMap.containsKey(checkListDetail.getDocType())) {
 							DocumentDetails detail = docDetailMap.get(checkListDetail.getDocType());
 							if (StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-								MessageUtil.showErrorMessage(Labels.getLabel("label_DocumentDeleteStatus"));
+								MessageUtil.showError(Labels.getLabel("label_DocumentDeleteStatus"));
 							} else {
 								docDialogCtrl.updateExistingDocument(docDetailMap.get(checkListDetail.getDocType()), checkListDetail.getCheckListId(), false);
 							}
@@ -1094,13 +1097,13 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 							DocumentDetails finDocumentDetail = docDetailMap.get(docType);
 
 							if (StringUtils.equals(finDocumentDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-								MessageUtil.showErrorMessage(Labels.getLabel("label_DocumentDeleteStatus"));
+								MessageUtil.showError(Labels.getLabel("label_DocumentDeleteStatus"));
 							} else {
 								finDocumentDetail.setDocIsCustDoc(checkListDetail.isDocIsCustDOC());
 								docDialogCtrl.updateExistingDocument(finDocumentDetail, checkListDetail.getCheckListId(), true);
 							}
 						} else {
-							MessageUtil.showErrorMessage(Labels.getLabel("label_NoDocumentFound"));
+							MessageUtil.showError(Labels.getLabel("label_NoDocumentFound"));
 						}
 					}
 				}

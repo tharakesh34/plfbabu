@@ -72,7 +72,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -96,7 +95,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -231,8 +229,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			doSetFieldProperties();
 			doShowDialog(getCheckList());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CheckListDialog.onClose();
 		}
 
@@ -626,14 +623,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_CheckListDialog_CheckListDesc.value")+" : "+aCheckList.getCheckListDesc();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCheckList.getRecordType())){
 				aCheckList.setVersion(aCheckList.getVersion()+1);
 				aCheckList.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -650,9 +640,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 					refreshList();
 					closeDialog(); 
 				}
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -827,8 +816,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1067,8 +1055,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListDetailDialog.zul",null,map);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -1105,8 +1092,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 					Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListDetailDialog.zul",null,map);
 
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

@@ -220,8 +220,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			this.formula.setValue(returnValue);
 			this.window_RuleResultDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RuleResultDialog.onClose();
 		}
 
@@ -315,8 +314,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultView.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -336,8 +334,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.isBlank(this.formula.getValue())) {
-			MessageUtil.showErrorMessage(Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_Formula") }));
+			MessageUtil.showError(Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_Formula") }));
 		} else {
 			while (event.getData() == null) {
 				event = ((ForwardEvent) event).getOrigin();
@@ -371,8 +368,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 						}
 						values = values + fieldValue;
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("FIELD_NOT_AVAILBLE",
-								new String[] { fieldValue }));
+						MessageUtil.showError(Labels.getLabel("FIELD_NOT_AVAILBLE", new String[] { fieldValue }));
 						return;
 					}
 				}
@@ -417,7 +413,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 		logger.debug("Entering" + event.toString());
 
 		if (StringUtils.isEmpty(formula.getValue())) {
-			MessageUtil.showErrorMessage(Labels.getLabel("Code_NotEmpty"));
+			MessageUtil.showError(Labels.getLabel("Code_NotEmpty"));
 		} else {
 			JSONArray message = (JSONArray) event.getData();
 			for (int i = 0; i < message.size(); i++) {

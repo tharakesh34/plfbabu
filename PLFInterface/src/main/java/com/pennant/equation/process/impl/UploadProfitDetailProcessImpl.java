@@ -14,7 +14,7 @@ import com.pennant.coreinterface.process.UploadProfitDetailProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class UploadProfitDetailProcessImpl extends GenericProcess implements UploadProfitDetailProcess{
 
@@ -27,7 +27,7 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 	}
 	
 	@Override
-	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws PFFInterfaceException {
+	public void doUploadPftDetails(List<EodFinProfitDetail> profitDetails, boolean isItFirstCall) throws InterfaceException {
 
 		logger.debug("Entering");
 
@@ -164,11 +164,11 @@ public class UploadProfitDetailProcessImpl extends GenericProcess implements Upl
 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		}catch (Exception e) {
 			logger.debug("FinReference :"+ pftDetails.getFinReference());
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}  finally {			
 			getHostConnection().closeConnection(as400);
 		}

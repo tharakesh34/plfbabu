@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -104,7 +103,6 @@ import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -139,6 +137,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected CurrencyBox						custContribution;
 	protected CurrencyBox						sellerContribution;
 	protected Textbox							remarks;
+	protected Textbox							transactionRef;
 	protected ExtendedCombobox					bankCode;
 	protected Textbox							payableLoc;
 	protected Textbox							printingLoc;
@@ -484,15 +483,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
-			this.window_FinAdvancePaymentsDialog.setHeight("55%");
-			this.window_FinAdvancePaymentsDialog.setWidth("75%");
+			this.window_FinAdvancePaymentsDialog.setHeight("65%");
+			this.window_FinAdvancePaymentsDialog.setWidth("85%");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			this.window_FinAdvancePaymentsDialog.onClose();
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -512,6 +510,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llDate.setDisabled(isReadOnly("FinAdvancePaymentsDialog_llDate"));
 		this.paymentType.setDisabled(isReadOnly("FinAdvancePaymentsDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("FinAdvancePaymentsDialog_remarks"));
+		this.transactionRef.setReadonly(true);
 		//2
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
 		this.beneficiaryAccNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryAccNo"));
@@ -566,6 +565,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.valueDate.setDisabled(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
+		this.transactionRef.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -615,8 +615,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.liabilityHoldName.setMaxlength(100);
 		this.beneficiaryName.setMaxlength(100);
 		this.description.setMaxlength(500);
-		this.llReferenceNo.setMaxlength(50);
+		this.llReferenceNo.setMaxlength(6);
 		this.remarks.setMaxlength(500);
+		this.transactionRef.setReadonly(true);;
 
 		this.amtToBeReleased.setMandatory(true);
 		this.amtToBeReleased.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -755,6 +756,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.city.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getCity()));
 		this.beneficiaryAccNo.setValue(aFinAdvnancePayments.getBeneficiaryAccNo());
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
+		this.transactionRef.setValue(aFinAdvnancePayments.getTransactionRef());
 
 		this.phoneNumber.setValue(aFinAdvnancePayments.getPhoneNumber());
 		//other 
@@ -1078,6 +1080,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			wve.add(we);
 		}
 		
+		try {
+			aFinAdvancePayments.setTransactionRef(this.transactionRef.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
 		doClearMessage();
@@ -1240,6 +1248,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.valueDate.setConstraint("");
 		this.bankBranchID.setConstraint("");
 		this.phoneNumber.setConstraint("");
+		this.transactionRef.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1268,6 +1277,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.remarks.setErrorMessage("");
+		this.transactionRef.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1287,15 +1297,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
 				+ aFinAdvancePayments.getPaymentSeq();
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
 				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
 				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1362,6 +1364,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bank.setValue("");
 		this.branch.setValue("");
 		this.city.setValue("");
+		this.transactionRef.setValue("");
 		this.valueDate.setText("");
 		logger.debug("Leaving");
 	}

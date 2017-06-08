@@ -69,11 +69,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.web.components.ButtonControl;
-import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
 
 /**
@@ -1205,9 +1205,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	protected void doShowErrorMessage(String message, boolean closeWindow) {
-		final String title = Labels.getLabel("message.Error");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, MultiLineMessageBox.ERROR, true);
+		MessageUtil.showError(message);
 
 		if (closeWindow) {
 			this.window.onClose();

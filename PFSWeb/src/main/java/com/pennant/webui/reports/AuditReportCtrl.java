@@ -164,12 +164,12 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				this.fromDate.setText("");
 				this.toDate.setText("");
 			}else{
-				MessageUtil.showErrorMessage(Labels.getLabel("message.error.reportNotImpl"));
+				MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("message.error.reportNotFound"));
+			MessageUtil.showError(Labels.getLabel("message.error.reportNotFound"));
 		} finally{
 			map = null;
 			where = null;

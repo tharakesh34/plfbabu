@@ -15,6 +15,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.core.LatePayPenaltyService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RepayCalculator;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -68,6 +69,8 @@ public class FinStatementController extends SummaryDetailService {
 	private ManualAdviseDAO				manualAdviseDAO;
 	private FinExcessAmountDAO			finExcessAmountDAO;
 	private LatePayPenaltyService		latePayPenaltyService;
+	private FinanceProfitDetailDAO		profitDetailsDAO;
+
 
 	/**
 	 * get the FinStatement Details by the given FinReferences.
@@ -178,8 +181,7 @@ public class FinStatementController extends SummaryDetailService {
 					}
 
 					// calculate advPaymentAmount, outstandingPri, overduePft and tdPftAccured
-					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO()
-							.getFinProfitDetailsForSummary(finReference);
+					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsForSummary(finReference);
 					if (finPftDetail == null) {
 						finPftDetail = new FinanceProfitDetail();
 						finPftDetail.setFinStartDate(finScheduleData.getFinanceMain().getFinStartDate());
@@ -244,7 +246,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinODDetails> finOdDetaiList = new ArrayList<FinODDetails>();
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
 		try {
-			for (int i = 1; i <= days; i++) {
+			for (int i = 0; i < days; i++) {
 				Cloner cloner = new Cloner();
 				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
@@ -259,8 +261,6 @@ public class FinStatementController extends SummaryDetailService {
 
 			// process fees and charges
 			processFeesAndCharges(financeDetail, scheduleData, finFeeDetails);
-
-			// setting penalty amount
 
 			finStmtDetail.setForeClosureDetails(foreClosureList);
 			finStmtDetail.setFinScheduleData(scheduleData);
@@ -452,8 +452,7 @@ public class FinStatementController extends SummaryDetailService {
 		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 		Date valuedate = finServiceInst.getFromDate();
 
-		FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-		tempPftDetail.setFinStartDate(financeMain.getFinStartDate());
+		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
 		getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail,
 				valuedate);
 
@@ -539,5 +538,9 @@ public class FinStatementController extends SummaryDetailService {
 
 	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
 		this.latePayPenaltyService = latePayPenaltyService;
+	}
+
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
 	}
 }

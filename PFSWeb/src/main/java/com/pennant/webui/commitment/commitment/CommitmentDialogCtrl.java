@@ -158,7 +158,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -174,10 +173,10 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -492,8 +491,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			doSetFieldProperties();
 			doShowDialog(getCommitment());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CommitmentDialog.onClose();
 		}
 
@@ -589,8 +587,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			ScreenCTL.displayNotes(getNotes("Commitment", getCommitment().getCmtReference(), getCommitment().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -613,9 +610,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public void onChange$custCIF(Event event) throws InterruptedException, PFFInterfaceException{
+	public void onChange$custCIF(Event event) throws InterruptedException, InterfaceException{
 		logger.debug("Entering" + event.toString());
 
 		List<Filter> filterList = new ArrayList<>();
@@ -692,9 +689,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * @param nCustomer
 	 * @param newSearchObject
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException, PFFInterfaceException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -720,9 +717,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param details
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private void doChangeCustomer(Customer details) throws InterruptedException, PFFInterfaceException {
+	private void doChangeCustomer(Customer details) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CaluculateSummary();
@@ -807,10 +804,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData(String cif) throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData(String cif) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = null;
@@ -1601,13 +1598,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					if (errorDetails != null) {
 						String errMsgs[] = errorDetails.getError().split("%");
 						final String msg = errMsgs[0] + "% \n" + errMsgs[1];
-						final String title = Labels.getLabel("message.Information");
 						proceed = true;
-						MultiLineMessageBox.doSetTemplate();
-						int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-								| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
 
-						if (conf == MultiLineMessageBox.NO) {
+						if (MessageUtil.confirm(msg) == MessageUtil.NO) {
 							proceed = false;
 						}
 					}
@@ -2473,15 +2466,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : " + aCommitment.getCmtReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCommitment.getRecordType())) {
 				aCommitment.setVersion(aCommitment.getVersion() + 1);
 				aCommitment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -2508,8 +2493,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -2765,8 +2749,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -3781,8 +3764,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -3822,8 +3804,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

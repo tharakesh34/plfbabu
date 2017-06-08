@@ -241,7 +241,6 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -264,6 +263,7 @@ import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -2661,7 +2661,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -5927,9 +5927,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-			} catch (PFFInterfaceException pfe) {
-				logger.error("Exception: ", pfe);
-				MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			} catch (InterfaceException pfe) {
+				MessageUtil.showError(pfe);
 				return;
 			}
 		}
@@ -6121,13 +6120,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} catch (EmptyResultDataAccessException e) {
 			showErrorMessage(getMainWindow(), e);
-			e = null;
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(getMainWindow(), e);
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 		}
 
 		if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
@@ -6331,10 +6328,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param role
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private boolean doLimitCheckProcess(String role, FinanceDetail aFinanceDetail) throws PFFInterfaceException,
+	private boolean doLimitCheckProcess(String role, FinanceDetail aFinanceDetail) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 
@@ -6461,7 +6458,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, PFFInterfaceException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -6594,9 +6591,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (ddaStatus && ddaDpSpStatus) {
 								processCompleted = true;
 							}
-						} catch (PFFInterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showInfoMessage(pfe.getErrorMessage());
+						} catch (InterfaceException pfe) {
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {
@@ -6664,9 +6660,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							this.repayAcctId.setMandatoryStyle(false);
 							processCompleted = true;
 						}
-					} catch (PFFInterfaceException pfe) {
-						logger.error("Exception: ", pfe);
-						MessageUtil.showErrorMessage(pfe.getErrorMessage());
+					} catch (InterfaceException pfe) {
+						MessageUtil.showError(pfe);
 						processCompleted = false;
 					}
 
@@ -6726,11 +6721,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							String linkedRef = afinanceMain.getFinReference() + "_DP";
 							getDdaControllerService().validateDDAStatus(linkedRef);
 						}
-					} catch (PFFInterfaceException pfe) {
+					} catch (InterfaceException pfe) {
 						logger.error("Exception: ", pfe);
 						if (StringUtils.equals(pfe.getErrorCode(), PennantConstants.DDA_PENDING_CODE)) {
-							MessageUtil.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING",
-									new String[] { finReference }));
+							MessageUtil.showMessage(
+									Labels.getLabel("DDA_APPROVAL_PENDING", new String[] { finReference }));
 							processCompleted = false;
 						}
 					}
@@ -6777,10 +6772,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param list
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private boolean doCollateralMark(List<FinCollaterals> list) throws PFFInterfaceException, InterruptedException {
+	private boolean doCollateralMark(List<FinCollaterals> list) throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -6922,11 +6917,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getFinanceMain().getNextUserId());
 		} catch (AppException e) {
 			MessageUtil.showError(e);
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (DataAccessException e) {
 			throw e;
 		} catch (Exception e) {
@@ -11383,12 +11373,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		BigDecimal totalPriSchdOld = BigDecimal.ZERO;
 		//For New Records Profit Details will be set inside the AEAmounts 
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		if (profitDetail != null) {//FIXME
 			BeanUtils.copyProperties(profitDetail, newProfitDetail);
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
+			totalPriSchdOld = profitDetail.getTotalpriSchd();
 		}
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
@@ -11408,8 +11400,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+		aeEvent.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+		if(StringUtils.isEmpty(moduleDefiner)){
+			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+		}else{
+			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
+		}
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
 			aeEvent.setNewRecord(true);
@@ -13245,9 +13241,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$finLimitRef(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$finLimitRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 		this.mMAReference.setValue("");
 		if (!StringUtils.isBlank(getFinanceDetail().getCustomerDetails().getCustomer().getCustCoreBank())) {
@@ -13266,9 +13262,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.facilityNotes.setValue("");
 					this.mMAReference.setValue("", "");
 				}
-			} catch (PFFInterfaceException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+			} catch (InterfaceException e) {
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -13281,9 +13276,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$commitmentRef(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$commitmentRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[1];
@@ -13310,9 +13305,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$mMAReference(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$mMAReference(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
 		Object dataObject = mMAReference.getObject();
@@ -13348,9 +13343,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Filling Commitment data using Interface call or Existing Data
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	protected void processLimitData() throws PFFInterfaceException {
+	protected void processLimitData() throws InterfaceException {
 		logger.debug("Entering");
 		LimitDetail limitDetail = getLimitCheckDetails().getLimitDetails(this.finLimitRef.getValue(),
 				this.finBranch.getValue());
@@ -14890,7 +14885,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					// Show Error Details in Schedule Calculation
 					if (getFinanceDetail().getFinScheduleData().getErrorDetails() != null
 							&& !getFinanceDetail().getFinScheduleData().getErrorDetails().isEmpty()) {
-						MessageUtil.showErrorMessage(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0));
+						MessageUtil.showError(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0));
 						getFinanceDetail().getFinScheduleData().getErrorDetails().clear();
 						return;
 					}

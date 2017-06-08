@@ -13,7 +13,6 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -41,7 +40,6 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	 * 
 	 * @param beneficiary
 	 * @throws ServiceException
-	 * @throws PFFInterfaceException 
 	 */
 	@Override
 	public Beneficiary createBeneficiary(Beneficiary beneficiary) {

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="1" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      UNION ALL
+		      
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		      
+		      WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="2" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="3" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	
+	<changeSet id="4" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust');
+			Delete from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'FinFeeDetailListCtrl_Adjust', 'FinFeeDetailListCtrl', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeDetailListCtrl_Adjust'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave');
+			Delete from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_FinFeeReceiptDialog_btnSave', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'button_FinFeeReceiptDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount');
+			Delete from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'FinFeeReceiptDialog_paidAmount', 'FinFeeReceiptDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FIN_UNPLANEMIH_MAKER'), (Select RightID from SecRights where RightName = 'FinFeeReceiptDialog_paidAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="6" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65018';
+			INSERT INTO ErrorDetails VALUES('65018','EN','E','Fee Type {0} paid amount should be equal to receipt fee type {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+
+			Delete from ErrorDetails where errorCode = '65019';
+			INSERT INTO ErrorDetails VALUES('65019','EN','E','Receipt Fee Details should me mandatory for Fee Type : {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>		
+	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+		<addColumn tableName="BMTBankDetail">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="BankShortCode" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="9" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_VIEW" replaceIfExists="true">
+		SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail_TEMP
+				UNION ALL
+				SELECT	BankCode, BankName, BankShortCode, Active				
+							, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+							RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+				WHERE     NOT EXISTS (SELECT 1 FROM BMTBankDetail_TEMP WHERE BankCode = BMTBankDetail.BankCode)
+	</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Vinay">
+	<createView viewName="BMTBANKDETAIL_AVIEW" replaceIfExists="true">
+				SELECT BankCode, BankName, BankShortCode, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+	</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="Vinay">
+		<sql>
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'BankDetailDialog_bankShortCode', 'BankDetailDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BANKDETAIL_MAKER'), (Select RightID from SecRights where RightName = 'BankDetailDialog_bankShortCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+		</changeSet>	
+		
+	<changeSet id="12" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+		      SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+		                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+		                  T4.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+			
+	<changeSet id="13" author="Kesav">
+		<createView viewName="FinFeeReceipts_AView" replaceIfExists="true">
+		      		SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+			                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF ReceiptReference,
+			                  T3.FeeTypeCode, T3.FeeTypeDesc FeeType, T3.FEETYPEID,
+			                  T4.RECEIPTMODE ReceiptType
+			      FROM    	  FinFeeReceipts  T1 
+			      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			      Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+			      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
+		</createView>	
+	</changeSet>
+	<changeSet id="14" author="Irfan">
+	<sql>
+		update FinanceMain set DueBucket=0 where DueBucket is null;
+	</sql>
+	</changeSet>
+		<changeSet id="15" author="Srikanth">
+	<sql>
+			Delete from ErrorDetails Where ErrorCode in('90330','90331','90332','90334','90333');
+ 			INSERT INTO ErrorDetails VALUES('90330','EN','E','The amount is not sufficient to foreclose the loan.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90331','EN','E','Insufficient Receipt amounts. Not allowed to calculate the payment schedules.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90332','EN','E','Not allowed to do Partial Settlement due to not having additional Balance after allocations.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90334','EN','E','{0} should not be before on customer date of birth.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+ 			INSERT INTO ErrorDetails VALUES('90333','EN','E','Mandate type: {0} not allowed for this bankcode/IfscCode.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="16" author="murthy.y">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+			 	SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTR(FM.FINREFERENCE, 7, LENGTH(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				CASE WHEN FM.EFFECTIVERATEOFRETURN > 999 THEN 999 ELSE FM.EFFECTIVERATEOFRETURN END FLAT_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				CASE WHEN FM.REPAYPROFITRATE > 999 THEN 999 ELSE  FM.REPAYPROFITRATE END EFFECTIVE_RATE ,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				SUBSTR(AP.PAYMENTTYPE,0,1) INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(MONTHS_BETWEEN (FM.MATURITYDATE, FM.FINSTARTDATE)) SANCTIONED_TENURE,
+				COALESCE(PR.PROMOTIONCODE, '0') SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        		FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN PROMOTIONS PR ON  PR.FINTYPE = FT.FINTYPE
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT COUNT(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN FINADVANCEPAYMENTS AP ON AP.FINREFERENCE = FM.FINREFERENCE AND AP.DISBSEQ = DD.DISBSEQ 
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, MIN(FINODSCHDDATE) FINODSCHDDATE FROM FINODDETAILS group by FINREFERENCE) OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS PR ON PR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
+		</createView>
+	</changeSet>
+</databaseChangeLog>

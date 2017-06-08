@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -198,7 +198,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -257,10 +257,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -303,7 +303,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -326,7 +326,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			errorCode = procReceiptCancellation(receiptHeader);
 		}
 		if (StringUtils.isNotBlank(errorCode)) {
-			throw new PFFInterfaceException("9999", errorCode);
+			throw new InterfaceException("9999", errorCode);
 		}
 
 		// Receipt Header Updation
@@ -622,11 +622,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * 
 	 * @param receiptHeader
 	 * @return String(Error Description)
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws PFFInterfaceException,
+	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
@@ -962,7 +962,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				updateInsList = null;
 
 				// Deletion of Finance Schedule Related Details From Main Table
-				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
 				if(alwSchdReversalByLog){
 					listDeletion(finReference, "", false, 0);
 
@@ -1016,6 +1016,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 								.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
+					
+					// Receipt Reversal for Excess or Payable
+					if (!isBounceProcess) {
+						
+						if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+							
+							// Excess utilize Reversals
+							getFinExcessAmountDAO().updateExcessAmount(receiptDetail.getPayAgainstID(), "U", receiptDetail.getAmount().negate());
+							
+						}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+							
+							// Payable Utilize reversals
+							getManualAdviseDAO().reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+						}
+					}
 				}
 			}
 		}
@@ -1027,11 +1043,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * Method for Processing Fee Payments Cancellation Based on Event and Reference
 	 * 
 	 * @param receiptHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
 		long linkedTranId = 0;
@@ -1077,7 +1093,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 */
 	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts) {
 
-		if (receipts != null && receipts.size() > 0) {
+		if (receipts != null && receipts.size() > 1) {
 			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
 				@Override
 				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {

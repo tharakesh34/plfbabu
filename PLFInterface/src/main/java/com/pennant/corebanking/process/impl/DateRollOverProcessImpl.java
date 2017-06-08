@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.process.DateRollOverProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DateRollOverProcessImpl implements DateRollOverProcess{
 	
@@ -25,7 +25,7 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-	public Map<String, String> getCalendarWorkingDays() throws PFFInterfaceException{
+	public Map<String, String> getCalendarWorkingDays() throws InterfaceException{
 		logger.debug("Entering");
 		
 		Map<String, String> calendarDaysMap = new HashMap<String, String>() ;
@@ -33,7 +33,7 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 			calendarDaysMap = getInterfaceDAO().getCalendarWorkingDays();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} 
 	
 		logger.debug("Leaving");

@@ -157,8 +157,7 @@ public class FinanceRejectCtrl extends GFCBaseCtrl<FinanceMain> {
 					- 150 + "px");
 			this.window_FinanceRejectDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

@@ -24,7 +24,7 @@ import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
 
@@ -36,7 +36,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	}
 	
 	@Override
-	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF,String custLoc) throws PFFInterfaceException {
+	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF,String custLoc) throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -201,10 +201,10 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
@@ -214,7 +214,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 
 
 	@Override
-	public List<CustomerCollateral> getCustomerCollateral(String custCIF) throws PFFInterfaceException {
+	public List<CustomerCollateral> getCustomerCollateral(String custCIF) throws InterfaceException {
 
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
@@ -264,7 +264,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}
@@ -279,7 +279,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	 * @Return Customer-- unused
 	 */
 	@Override
-	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws PFFInterfaceException{	
+	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws InterfaceException{	
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -385,15 +385,15 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 
 			} else {
 				logger.info("Customer Details Not found");	
-				throw new PFFInterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
+				throw new InterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
 			}
 
-		}catch(PFFInterfaceException e)	{			
+		}catch(InterfaceException e)	{			
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getErrorMessage());
+			throw new InterfaceException("9999",e.getErrorMessage());
 		}catch(Exception e)	{			
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}finally{
 			this.hostConnection.closeConnection(as400);
 		}
@@ -409,7 +409,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	 * @Return Customer-- unused
 	 */
 	@Override
-	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws PFFInterfaceException{	
+	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust) throws InterfaceException{	
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -480,15 +480,15 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 				 */				
 			} else {
 				logger.info("Customer Details Not found");	
-				throw new PFFInterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
+				throw new InterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
 			}
 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		}catch(Exception e)	{			
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}finally{
 			this.hostConnection.closeConnection(as400);
 		}
@@ -499,7 +499,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 
 	@Override
 	public FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		return null;
 	}
 

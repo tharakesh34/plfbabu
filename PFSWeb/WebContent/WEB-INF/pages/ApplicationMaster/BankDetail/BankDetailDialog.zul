@@ -105,6 +105,15 @@
 								</hbox>
 							
 								<label
+									id="label_BankDetailDialog_BankShortCode"
+									value="${c:l('label_BankDetailDialog_BankShortCode.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<textbox id="bankShortCode" maxlength="20" width="200px"/>
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
 									id="label_BankDetailDialog_Active"
 									value="${c:l('label_BankDetailDialog_Active.value')}" />
 								<hbox>

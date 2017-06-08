@@ -14,7 +14,7 @@ import com.pennant.coreinterface.model.nbc.BondPurchaseDetail;
 import com.pennant.coreinterface.model.nbc.BondTransferDetail;
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	
@@ -27,7 +27,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 	
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws PFFInterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -57,7 +57,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 
 	@Override
-	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail) throws PFFInterfaceException {
+	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail bondDetail = new NationalBondDetail();
@@ -67,13 +67,13 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 		transDetail.setUnitEnd("65412");
 		if(StringUtils.equals(nationalBondDetail.getTransferLevel(), "TRANS_MAKER")) {
 			if(!StringUtils.equals("966201248", nationalBondDetail.getRefNumProvider())) {
-				throw new PFFInterfaceException("PTI9001", "Inavlid Provider Reference number");
+				throw new InterfaceException("PTI9001", "Inavlid Provider Reference number");
 			}
 			transDetail.setSukukNo(96662012);
 			transDetail.setPurchaseReceiptNo("8125780");
 		} else {
 			if(!StringUtils.equals("8125780", nationalBondDetail.getRefNumProvider())) {
-				throw new PFFInterfaceException("PTI9002", "Inavlid Provider Reference number");
+				throw new InterfaceException("PTI9002", "Inavlid Provider Reference number");
 			}
 			transDetail.setSukukNo(8985957);
 			transDetail.setPurchaseReceiptNo("8985957");
@@ -100,7 +100,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 
 	@Override
 	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -113,7 +113,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 
 	@Override
 	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();

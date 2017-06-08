@@ -24,7 +24,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DisbursementPostings {
 	private Logger logger = Logger.getLogger(DisbursementPostings.class);
@@ -40,7 +40,7 @@ public class DisbursementPostings {
 	}
 
 	public List<ReturnDataSet> getDisbPosting(List<FinAdvancePayments> advPaymentsList,  FinanceMain finMain ) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 		Map<Long, List<ReturnDataSet>> map = prepareDisbPosting(advPaymentsList, finMain, null);
 		List<ReturnDataSet> datasetList = new ArrayList<ReturnDataSet>();
 		for (Entry<Long, List<ReturnDataSet>> entry : map.entrySet()) {
@@ -51,7 +51,7 @@ public class DisbursementPostings {
 	}
 
 	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(List<FinAdvancePayments> advPaymentsList,  FinanceMain finMain, String usrBranch)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();
@@ -126,7 +126,7 @@ public class DisbursementPostings {
 	
 	
 	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch) 
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
+			throws IllegalAccessException, InvocationTargetException, InterfaceException{
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();

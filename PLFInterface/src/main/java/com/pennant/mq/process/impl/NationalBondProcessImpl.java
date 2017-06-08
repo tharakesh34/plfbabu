@@ -8,9 +8,9 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.processutil.BondDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	private final static Logger logger = Logger.getLogger(NationalBondProcessImpl.class);
@@ -28,10 +28,10 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @param amount
 	 * @return NationalBondDetail
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws PFFInterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -43,7 +43,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 			bondDetail = getBondDetailProcess().doNationalBondProcess(detail, InterfaceMasterConfigUtil.BOND_PURCHASE_INSTANT);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9009", e.getMessage());
+			throw new InterfaceException("PTI9009", e.getMessage());
 		}
 		
 		logger.debug("Leaving");
@@ -59,10 +59,10 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @param type
 	 * @return NationalBondDetail
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail)	throws PFFInterfaceException {
+	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail)	throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail response;
@@ -74,7 +74,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 			response = getBondDetailProcess().doNationalBondProcess(nationalBondDetail, transType);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9009", e.getMessage());
+			throw new InterfaceException("PTI9009", e.getMessage());
 		}
 		logger.debug("Leaving");
 		return response;
@@ -87,11 +87,11 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @param refNumConsumer
 	 * @return NationalBondDetail
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
 	public NationalBondDetail cancelBondTransfer(String refNumProvider,	String refNumConsumer) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -103,7 +103,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 					InterfaceMasterConfigUtil.BOND_CANCEL_TRANSFER);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9009", e.getMessage());
+			throw new InterfaceException("PTI9009", e.getMessage());
 		}
 		logger.debug("Leaving");
 		return response;
@@ -116,11 +116,11 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	 * @param refNumConsumer
 	 * @return NationalBondDetail
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
 	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -131,7 +131,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 			response = getBondDetailProcess().doNationalBondProcess(detail, InterfaceMasterConfigUtil.BOND_CANCEL_PURCHASE);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9009", e.getMessage());
+			throw new InterfaceException("PTI9009", e.getMessage());
 		}
 		logger.debug("Leaving");
 		return response;

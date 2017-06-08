@@ -70,5 +70,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	void deletePayableReserve(long receiptID, long payAgainstID);
 	void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt);
 	void updateUtilise(long adviseID, BigDecimal amount);
+	void reverseUtilise(long adviseID, BigDecimal amount);
 	
 }

@@ -65,7 +65,7 @@ import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.DailyDownloadProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	
@@ -81,7 +81,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Currency Details
 	 */
 	@Override
-	public List<EquationCurrency>  importCurrencyDetails() throws PFFInterfaceException{
+	public List<EquationCurrency>  importCurrencyDetails() throws InterfaceException{
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -92,7 +92,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Relation Ship Officer Details
 	 */
 	@Override
-	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws PFFInterfaceException {
+	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -103,7 +103,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Type Details
 	 */
 	@Override
-	public List<EquationCustomerType> importCustomerTypeDetails() throws PFFInterfaceException {
+	public List<EquationCustomerType> importCustomerTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -114,7 +114,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Department Details
 	 */
 	@Override
-	public List<EquationDepartment> importDepartmentDetails() throws PFFInterfaceException {
+	public List<EquationDepartment> importDepartmentDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -125,7 +125,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Group Details
 	 */
 	@Override
-	public List<EquationCustomerGroup> importCustomerGroupDetails() throws PFFInterfaceException {
+	public List<EquationCustomerGroup> importCustomerGroupDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -136,7 +136,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Account Type Details
 	 */
 	@Override
-	public List<EquationAccountType> importAccountTypeDetails() throws PFFInterfaceException {
+	public List<EquationAccountType> importAccountTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -148,7 +148,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	 * Method for Importing Customer Rating Details
 	 */
 	@Override
-	public List<EquationCustomerRating> importCustomerRatingDetails() throws PFFInterfaceException {
+	public List<EquationCustomerRating> importCustomerRatingDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -156,7 +156,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	}
 	
 	@Override
-	public List<EquationCountry> importCountryDetails() throws PFFInterfaceException {
+	public List<EquationCountry> importCountryDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -165,7 +165,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 
 	@Override
 	public List<EquationCustStatusCode> importCustStausCodeDetails()
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -173,7 +173,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	}
 
 	@Override
-	public List<EquationIndustry> importIndustryDetails() throws PFFInterfaceException {
+	public List<EquationIndustry> importIndustryDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -181,7 +181,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	}
 
 	@Override
-	public List<EquationBranch> importBranchDetails() throws PFFInterfaceException {
+	public List<EquationBranch> importBranchDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -190,7 +190,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 
 	@Override
 	public List<EquationInternalAccount> importInternalAccDetails()
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -198,7 +198,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	}
 
 	@Override
-	public List<EquationAbuser> importAbuserDetails() throws PFFInterfaceException {
+	public List<EquationAbuser> importAbuserDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -206,7 +206,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	}
 
 	@Override
-	public List<InterfaceCustomerDetail> importCustomerDetails() throws PFFInterfaceException {
+	public List<InterfaceCustomerDetail> importCustomerDetails() throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -215,7 +215,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 
 	@Override
 	public List<EquationTransactionCode> importTransactionCodeDetails()
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -224,7 +224,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 
 	@Override
 	public List<EquationIdentityType> importIdentityTypeDetails()
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -233,7 +233,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 
 	@Override
 	public List<IncomeAccountTransaction> importIncomeAccTransactions(
-			List<IncomeAccountTransaction> finIncomeAccounts) throws PFFInterfaceException {
+			List<IncomeAccountTransaction> finIncomeAccounts) throws InterfaceException {
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -242,7 +242,7 @@ public class DailyDownloadProcessImpl implements DailyDownloadProcess{
 	
 	@Override
 	public void processCustomerNumbers(List<String> existingCustomers)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 	}
 
 	

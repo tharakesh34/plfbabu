@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.dda.DDACancellation;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDACancelProcess extends MQProcess {
 
@@ -29,13 +29,13 @@ public class DDACancelProcess extends MQProcess {
 	 * @param ddaCancelReq
 	 * @param msgFormat
 	 * @return DDARequestReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public DDACancellation cancelDDARegistration(DDACancellation ddaCancelReq, String msgFormat) throws PFFInterfaceException  {
+	public DDACancellation cancelDDARegistration(DDACancellation ddaCancelReq, String msgFormat) throws InterfaceException  {
 		logger.debug("Entering");
 
 		if (ddaCancelReq == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"DDACancellation"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "DDACancellation Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
@@ -51,7 +51,7 @@ public class DDACancelProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(ddaCancelReq, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -67,7 +67,7 @@ public class DDACancelProcess extends MQProcess {
 	 * @param header
 	 * @return
 	 */
-	private DDACancellation setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException {
+	private DDACancellation setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -82,12 +82,12 @@ public class DDACancelProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			ddaCancelReply = new DDACancellation();
 			ddaCancelReply = (DDACancellation) doUnMarshalling(detailElement, ddaCancelReply);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -105,7 +105,7 @@ public class DDACancelProcess extends MQProcess {
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(DDACancellation ddaCancelReq, String referenceNum, OMFactory factory) throws PFFInterfaceException {
+	private OMElement getRequestElement(DDACancellation ddaCancelReq, String referenceNum, OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

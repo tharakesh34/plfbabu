@@ -282,7 +282,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 			try {
 				doLoadWorkflow(suspHead.getFinType(), moduleDefiner);
 			} catch (Exception e) {
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 				return;
 			}
 			if (StringUtils.isBlank(userRole)) {

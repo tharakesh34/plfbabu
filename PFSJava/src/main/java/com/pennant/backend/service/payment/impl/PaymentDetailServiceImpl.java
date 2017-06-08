@@ -473,6 +473,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			if (updateRecord) {
 				getPaymentDetailDAO().update(paymentDetail, tableType);
+				saveOrUpdate(paymentDetail);
 			}
 			if (deleteRecord) {
 				getPaymentDetailDAO().delete(paymentDetail, tableType);
@@ -496,21 +497,23 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType,
-			long paymentId) {
+	public List<AuditDetail> delete(List<PaymentDetail> paymentDetailList, TableType tableType, String auditTranType, long paymentId) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		
 		PaymentDetail paymentDetail = null;
 		if (paymentDetailList != null && !paymentDetailList.isEmpty()) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentDetail(),
-					new PaymentDetail().getExcludeFields());
+			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentDetail(), 	new PaymentDetail().getExcludeFields());
 			for (int i = 0; i < paymentDetailList.size(); i++) {
 				paymentDetail = paymentDetailList.get(i);
 				if (StringUtils.isNotEmpty(paymentDetail.getRecordType()) || StringUtils.isEmpty(tableType.toString())) {
-					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], paymentDetail
-							.getBefImage(), paymentDetail));
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], paymentDetail .getBefImage(), paymentDetail));
 				}
 			}
 			getPaymentDetailDAO().deleteList(paymentDetail, tableType);
+			
+			for (PaymentDetail detail : paymentDetailList) {
+				doReject(detail);
+			}
 		}
 		return auditDetails;
 	}

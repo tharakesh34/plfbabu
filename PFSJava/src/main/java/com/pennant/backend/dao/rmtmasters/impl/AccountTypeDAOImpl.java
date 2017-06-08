@@ -58,14 +58,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
@@ -284,16 +280,6 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), params, typeRowMapper);
-	}
-
-	
-	private ErrorDetails  getError(String errorId,String accountType, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		
-		parms[1][0] = accountType;
-		parms[0][0] = PennantJavaUtil.getLabel("label_AcType")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	@Override

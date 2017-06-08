@@ -133,8 +133,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 			// set Field Properties
 			doShowDialog(getCustomerCollateral());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_CollateralEnquiryDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -206,8 +205,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 			doWriteBeanToComponents(aCustomerCollateral);
 			this.window_CollateralEnquiryDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

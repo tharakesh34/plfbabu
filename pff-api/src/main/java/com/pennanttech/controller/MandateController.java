@@ -28,7 +28,6 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
@@ -47,7 +46,6 @@ public class MandateController {
 	 * 
 	 * @param mandate
 	 * @return Mandate
-	 * @throws PFFInterfaceException
 	 */
 	public Mandate createMandate(Mandate mandate) {
 		logger.debug("Entering");

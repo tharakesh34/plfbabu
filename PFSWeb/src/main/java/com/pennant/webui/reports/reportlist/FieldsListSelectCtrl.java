@@ -177,8 +177,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			this.configureMode = arguments.get("btnConfigure").toString();
 			doShowDialog(this.reportList);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FieldsListSelect.onClose();
 		}
 		logger.debug("Leaving" +event.toString());
@@ -355,8 +354,8 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		if(!error){
 			
 			if (selectedCount != reportColCount){
-				MessageUtil.showErrorMessage(Labels.getLabel(
-						"SELECTED_COUNT",new String[] {String.valueOf(this.sequenceList.size())}));
+				MessageUtil.showError(
+						Labels.getLabel("SELECTED_COUNT", new String[] { String.valueOf(this.sequenceList.size()) }));
 				return;
 			}
 		}

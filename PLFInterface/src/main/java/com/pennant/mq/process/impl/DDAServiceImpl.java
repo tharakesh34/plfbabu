@@ -8,12 +8,12 @@ import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.processutil.DDAAmendmentProcess;
 import com.pennant.mq.processutil.DDACancelProcess;
 import com.pennant.mq.processutil.DDARequestProcess;
 import com.pennant.mq.processutil.DDAUpdateProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAServiceImpl implements DDAProcess {
 	private final static Logger logger = Logger.getLogger(DDAServiceImpl.class);
@@ -37,7 +37,7 @@ public class DDAServiceImpl implements DDAProcess {
 	 *  @return DDARequestDetail
 	 */
 	@Override
-	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws PFFInterfaceException {
+	public DDARegistration sendDDARequest(DDARegistration ddsRequest) throws InterfaceException {
 		logger.debug("Entering");
 
 		DDARegistration ddsReply = null;
@@ -45,7 +45,7 @@ public class DDAServiceImpl implements DDAProcess {
 			ddsReply = getDdaRequestProcess().sendDDARequest(ddsRequest, InterfaceMasterConfigUtil.DDA_REQ);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -62,7 +62,7 @@ public class DDAServiceImpl implements DDAProcess {
 	 *  @return DDAAmendmentDetail
 	 */
 	@Override
-	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws PFFInterfaceException {
+	public DDAAmendment sendDDAAmendment(DDAAmendment ddaAmendmentReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		DDAAmendment ddaAmendmentReply = getDdaAmendmentProcess().sendDDAAmendment(ddaAmendmentReq, 
@@ -83,7 +83,7 @@ public class DDAServiceImpl implements DDAProcess {
 	 *  @return DDAUpdateDetail
 	 */
 	@Override
-	public DDAUpdate sendDDAUpdate(DDAUpdate ddaUpdateReq) throws PFFInterfaceException {
+	public DDAUpdate sendDDAUpdate(DDAUpdate ddaUpdateReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		DDAUpdate ddaUpdateReply = getDdaUpdateProcess().sendDDAUpdate(ddaUpdateReq, InterfaceMasterConfigUtil.DDA_UPDATE);
@@ -103,7 +103,7 @@ public class DDAServiceImpl implements DDAProcess {
 	 *  @return DDACancellation
 	 */
 	@Override
-	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws PFFInterfaceException {
+	public DDACancellation cancelDDARegistration(DDACancellation ddaCancellationReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		DDACancellation ddaCancellationRply = getDdaCancelProcess().cancelDDARegistration(ddaCancellationReq, 

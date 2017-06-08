@@ -67,7 +67,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class SuspensePostingUtil implements Serializable {
 	private static final long			serialVersionUID	= -7469564513544156223L;
@@ -92,10 +92,10 @@ public class SuspensePostingUtil implements Serializable {
 	 * @param isEODProcess
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<Object> suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate,
-			boolean isPastDeferment) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			boolean isPastDeferment) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>(3);
@@ -216,10 +216,10 @@ public class SuspensePostingUtil implements Serializable {
 	 * @param isEODProcess
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount,
-			FinRepayQueue finRepayQueue, Date valueDate, boolean isEODProcess) throws PFFInterfaceException,
+			FinRepayQueue finRepayQueue, Date valueDate, boolean isEODProcess) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 

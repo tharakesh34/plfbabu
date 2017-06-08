@@ -39,8 +39,8 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerIdentity;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerRating;
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class InterfaceDAOImpl implements InterfaceDAO {
 
@@ -531,7 +531,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 	}
 
 	@Override
-	public InterfaceCustomerDetail getCustDetails(String custCIF, String custLoc) throws PFFInterfaceException {
+	public InterfaceCustomerDetail getCustDetails(String custCIF, String custLoc) throws InterfaceException {
 		logger.debug("Entering");
 		InterfaceCustomerDetail customerInterfaceData = new InterfaceCustomerDetail();
 		InterfaceCustomer customer = new InterfaceCustomer();

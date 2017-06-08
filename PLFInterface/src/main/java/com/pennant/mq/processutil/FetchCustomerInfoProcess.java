@@ -23,12 +23,12 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerDocument;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerEMail;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerPhoneNumber;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.dao.MQInterfaceDAO;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 enum ADDRESSTYPES {
 	RETAILRESIDENCE,RETAILOFFICE, RETAILHOMECOUNTRY, SMEESTMAIN, SMEESTOTHER, PHONECODES
@@ -52,11 +52,11 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @throws JaxenException 
 	 * @throws Exception
 	 */
-	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String msgFormat) throws PFFInterfaceException, JaxenException {
+	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String msgFormat) throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (custCIF == null || "".equals(custCIF)) {
-			throw new PFFInterfaceException("PTI3001", new String[] { "Customer" }, "&1 Cannot Be Blank");
+			throw new InterfaceException("PTI3001", "Customer Cannot Be Blank");
 		}
 
 		// Set MQ Message configuration details
@@ -76,7 +76,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 			// Fetch Response element from Client using MQ call
 			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}		
@@ -119,7 +119,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @throws Exception
 	 */
 	private InterfaceCustomerDetail setCustomerDetails(OMElement responseElement, AHBMQHeader header)
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -141,7 +141,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		header = getReturnStatus(detailElement, header,responseElement);
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 
 		custDataElement = detailElement.getFirstChildWithName(new QName("Retail"));
@@ -968,7 +968,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @throws Exception
 	 */
 	private List<InterfaceCustomerEMail> setCustomerEmailByType(OMElement element, String path, String tagname, String[] type, String custCIF)
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (element == null) {
@@ -1002,7 +1002,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @throws Exception
 	 */
 	private List<InterfaceCustomerAddress> setCustomerAddress(
-			OMElement addrElement, int custType, String custCIF) throws PFFInterfaceException {
+			OMElement addrElement, int custType, String custCIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (addrElement == null) {
@@ -1042,7 +1042,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @throws Exception
 	 */
 	private List<InterfaceCustomerAddress> setCustomerAddressByType(OMElement element, String[] addressTypes, ADDRESSTYPES type,
-			List<InterfaceCustomerAddress> list, String custCIF)throws PFFInterfaceException {
+			List<InterfaceCustomerAddress> list, String custCIF)throws InterfaceException {
 		logger.debug("Entering");
 
 		String[] keyTags = getkeyTags(type);

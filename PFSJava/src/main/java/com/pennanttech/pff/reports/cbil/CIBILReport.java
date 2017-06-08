@@ -17,12 +17,21 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class CIBILReport {
 	protected final static Logger	logger	= LoggerFactory.getLogger(CIBILReport.class);
+	private String					CBIL_REPORT_PATH;
+	private String					CBIL_REPORT_MEMBER_ID;
+	private String					ADDRESS_TYPE_PERMANENT;
+	private String					ADDRESS_TYPE_RESIDENCE;
+	private String					ADDRESS_TYPE_OFFICE;
+	private String					PHONE_TYPE_MOBILE;
+	private String					PHONE_TYPE_HOME;
+	private String					PHONE_TYPE_OFFICE;
 
 	public CIBILReport() {
 		super();
@@ -30,15 +39,25 @@ public class CIBILReport {
 
 	public void generateReport() throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		initlize();
+
 		File reportName = createFile();
 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
 
 		try {
 			new CBILHeader(writer).write();
+			
+			
+			
+			
 			new NameSegment(writer, new Customer()).write();
 			new IdentificationSegment(writer, new ArrayList<CustomerDocument>());
-			new IdentificationSegment(writer, new ArrayList<CustomerDocument>());
+			new TelephoneSegment(writer, new ArrayList<CustomerPhoneNumber>());
+			new EmailContactSegment(writer, new ArrayList<CustomerEMail>());
+			new AddressSegment(writer, new ArrayList<CustomerAddres>());
+			new AccountSegment(writer, new ArrayList<FinanceMain>());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -46,7 +65,6 @@ public class CIBILReport {
 				writer.flush();
 				writer.close();
 			}
-
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -55,8 +73,8 @@ public class CIBILReport {
 	private File createFile() throws Exception {
 		logger.debug("Creating the ");
 		File reportName = null;
-		String reportLocation = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
-		String memberId = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
+		String reportLocation = CBIL_REPORT_PATH;
+		String memberId = CBIL_REPORT_MEMBER_ID;
 
 		File directory = new File(reportLocation);
 
@@ -183,13 +201,13 @@ public class CIBILReport {
 				}
 				writeValue(writer, "PT", "T" + StringUtils.leftPad(String.valueOf(i), 2, "0"));
 
-				if (PennantConstants.PHONETYPE_MOBILE.equals(phoneNumber.getPhoneTypeCode())) {
+				if (PHONE_TYPE_MOBILE.equals(phoneNumber.getPhoneTypeCode())) {
 					writeValue(writer, "01", phoneNumber.getPhoneNumber());
 					writeValue(writer, "03", "01");
-				} else if (PennantConstants.PHONE_TYPE_HOME.equals(phoneNumber.getPhoneTypeCode())) {
+				} else if (PHONE_TYPE_HOME.equals(phoneNumber.getPhoneTypeCode())) {
 					writeValue(writer, "01", phoneNumber.getPhoneNumber());
 					writeValue(writer, "03", "02");
-				} else if (PennantConstants.PHONE_TYPE_OFFICE.equals(phoneNumber.getPhoneTypeCode())) {
+				} else if (PHONE_TYPE_OFFICE.equals(phoneNumber.getPhoneTypeCode())) {
 					writeValue(writer, "01", phoneNumber.getPhoneNumber());
 					writeValue(writer, "03", "03");
 				} else {
@@ -251,8 +269,35 @@ public class CIBILReport {
 				writeValue(writer, "06", address.getCustAddrProvince());
 				writeValue(writer, "07", address.getCustAddrZIP());
 
-				writeValue(writer, "08", address.getCustAddrZIP());
+				if (ADDRESS_TYPE_PERMANENT.equals(address.getCustAddrType())) {
+					writeValue(writer, "08", "01");
+				} else if (ADDRESS_TYPE_RESIDENCE.equals(address.getCustAddrType())) {
+					writeValue(writer, "08", "02");
+				} else if (ADDRESS_TYPE_OFFICE.equals(address.getCustAddrType())) {
+					writeValue(writer, "08", "03");
+				} else {
+					writeValue(writer, "08", "04");
+				}
 
+				//Residence Code FIXME
+			}
+		}
+	}
+
+	public class AccountSegment {
+		private BufferedWriter		writer;
+		private List<FinanceMain>	loans;
+
+		public AccountSegment(BufferedWriter writer, List<FinanceMain> loans) {
+			this.writer = writer;
+			this.loans = loans;
+		}
+
+		public void write() throws IOException {
+			int i = 0;
+
+			for (FinanceMain loan : loans) {
+				writeValue(writer, "PA", "T" + StringUtils.leftPad(String.valueOf(i++), 2, "0"));
 			}
 		}
 	}
@@ -266,6 +311,17 @@ public class CIBILReport {
 		length = value.length();
 
 		writer.write(fieldTag + String.valueOf(length) + value);
+	}
+
+	private void initlize() {
+		this.CBIL_REPORT_PATH = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
+		this.CBIL_REPORT_MEMBER_ID = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
+		this.ADDRESS_TYPE_PERMANENT = SysParamUtil.getValueAsString("ADDRESS_TYPE_PERMANENT");
+		this.ADDRESS_TYPE_RESIDENCE = SysParamUtil.getValueAsString("ADDRESS_TYPE_RESIDENCE");
+		this.ADDRESS_TYPE_OFFICE = SysParamUtil.getValueAsString("ADDRESS_TYPE_OFFICE");
+		this.PHONE_TYPE_MOBILE = SysParamUtil.getValueAsString("PHONE_TYPE_MOBILE");
+		this.PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
+		this.PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
 
 }

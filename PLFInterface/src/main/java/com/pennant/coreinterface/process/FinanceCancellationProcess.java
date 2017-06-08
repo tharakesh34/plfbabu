@@ -3,11 +3,11 @@ package com.pennant.coreinterface.process;
 import java.util.List;
 
 import com.pennant.coreinterface.model.FinanceCancellation;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface FinanceCancellationProcess {
 
 	List<FinanceCancellation> fetchCancelledFinancePostings(
-			String finReference, String linkedTranId) throws PFFInterfaceException;
+			String finReference, String linkedTranId) throws InterfaceException;
 
 }

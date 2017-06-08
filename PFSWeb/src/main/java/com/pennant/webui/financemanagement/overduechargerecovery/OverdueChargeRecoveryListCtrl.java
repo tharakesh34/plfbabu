@@ -311,6 +311,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		this.detailSearchObject.addTabelName("FinODCRecovery_View");
 		this.detailSearchObject.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
 		this.detailSearchObject.addFilter(new Filter("FinODFor", FinanceConstants.SCH_TYPE_SCHEDULE, Filter.OP_EQUAL));
+		
+		Filter[] filter = new Filter[2];
+		filter[0] = new Filter("PenaltyPaid", 0, Filter.OP_NOT_EQUAL);
+		filter[1] = new Filter("WaivedAmt", 0, Filter.OP_NOT_EQUAL);
+		this.detailSearchObject.addFilter(Filter.or(filter));
 
 		// Defualt Sort on the table
 		this.detailSearchObject.addSort("FinReference", false);
@@ -376,7 +381,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FinReference='"+ overdueChargeRecovery.getFinReference()+"' AND version=" + overdueChargeRecovery.getVersion()+" ";
@@ -385,7 +390,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 					if (userAcces){
 						showDetailView(overdueChargeRecovery);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(overdueChargeRecovery);
@@ -443,8 +448,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

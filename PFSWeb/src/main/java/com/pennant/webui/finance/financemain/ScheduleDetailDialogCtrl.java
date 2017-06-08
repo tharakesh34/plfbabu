@@ -660,8 +660,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1682,8 +1681,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Executions.createComponents("/WEB-INF/pages/Finance/Additional/RateChangeDialog.zul",
 						window_ScheduleDetailDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -1718,8 +1716,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDisbursementDialog.zul",
 						window_ScheduleDetailDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1752,8 +1749,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRepaymentDialog.zul",
 						window_ScheduleDetailDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1778,8 +1774,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RateChangeDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1803,8 +1798,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AdvPftRateChangeDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1829,8 +1823,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRepaymentDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1853,8 +1846,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeProfitDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1876,8 +1868,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeFrequencyDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1900,8 +1891,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ReScheduleDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1927,8 +1917,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDisbursementDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1953,8 +1942,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/CancelDisbursementDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1979,8 +1967,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/PostponementDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2005,8 +1992,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/PostponementDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2031,8 +2017,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/PostponementDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2057,8 +2042,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRmvTermsDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2083,8 +2067,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRmvTermsDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2108,8 +2091,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/SubScheduleDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2134,8 +2116,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RecalculateDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2158,8 +2139,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/SuplRentIncrCostDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2184,8 +2164,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/HoldEMIDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2309,8 +2288,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DPScheduleDetailDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2456,7 +2434,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (financeMainDialogCtrl.getClass().getMethod("isSchdlRegenerate") != null) {
 				boolean schdRegenReq = (boolean) financeMainDialogCtrl.getClass().getMethod("isSchdlRegenerate").invoke(financeMainDialogCtrl);
 				if(schdRegenReq){
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 					isValid = false;
 				}
 			}
@@ -2466,7 +2444,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (this.grid_monthDetails.isVisible()) {
 			int planEMiHCount = getPlanEMIHMonths().size();
 			if(planEMiHCount == 0 || planEMiHCount > getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()){
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Invalid_PlanEMIHMonths", 
+				MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHMonths", 
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear())}));
 				isValid = false;
 			}
@@ -2476,7 +2454,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if(this.listHeader_planEMIHDates.isVisible()){
 			
 			if(getPlanEMIHDateList() == null || getPlanEMIHDateList().isEmpty()){
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates", 
+				MessageUtil.showError(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMax())}));
 				isValid = false;
 			}
@@ -2488,7 +2466,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				
 				// Per Year Validation
 				if(getPlanEMIHDateList().size() > getFinScheduleData().getFinanceMain().getPlanEMIHMax()){
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates", 
+					MessageUtil.showError(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates",
 							new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMax())}));
 					isValid = false;
 				}
@@ -2504,7 +2482,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						// EMI Holiday Lock Period validation
 						if(DateUtility.compare(planEMIHDate, planEMIHStart) <= 0){
 
-							MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Invalid_PlanEMIHLockPeriod", 
+							MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHLockPeriod",
 									new String[]{DateUtil.format(planEMIHStart, DateFormat.LONG_DATE)}));
 							isValid = false;
 							break;
@@ -2519,7 +2497,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						// Yearly Validation as per Max Allowed
 						markedEMIHMaxPerYear = markedEMIHMaxPerYear +1;
 						if(markedEMIHMaxPerYear > getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()){
-							MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Invalid_PlanEMIHDatesPerYear", 
+							MessageUtil.showError(
+									Labels.getLabel("label_Finance_Invalid_PlanEMIHDatesPerYear", 
 									new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear())}));
 							isValid = false;
 							break;

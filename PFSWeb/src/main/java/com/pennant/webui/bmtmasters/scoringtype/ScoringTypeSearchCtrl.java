@@ -230,8 +230,7 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 			// open the dialog in modal mode
 			this.window_ScoringTypeSearch.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

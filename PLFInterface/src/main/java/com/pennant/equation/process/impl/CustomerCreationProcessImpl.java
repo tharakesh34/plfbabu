@@ -15,7 +15,7 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerCreationProcessImpl extends GenericProcess implements CustomerCreationProcess {
 
@@ -27,7 +27,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public String generateNewCIF(CoreBankNewCustomer customer) throws PFFInterfaceException {	
+	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {	
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -63,14 +63,14 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 			if ("0000".equals(pcmlDoc.getValue(pcml + ".@ERCOD").toString())) {	
 				custCIF = getString(pcmlDoc, pcml, ".@RSPDTA.CustCIF"); 					//Customer mnemonic
 				if(StringUtils.isEmpty(custCIF)){
-					throw new PFFInterfaceException("9999","Customer Not Created.");
+					throw new InterfaceException("9999","Customer Not Created.");
 				}
 			} else {
 				logger.info("Customer Not Created.");	
-				throw new PFFInterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
+				throw new InterfaceException("9999",getString(pcmlDoc, pcml, ".@ERPRM"));
 			}
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);	
 			throw e;
 		} catch (PcmlException e) {
@@ -96,12 +96,12 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	 * Method to create new customer in Equation
 	 */
 	@Override
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail) throws PFFInterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException {
 		return null;
 	}
 
 	@Override
-	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws PFFInterfaceException {
+	public void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail)	throws InterfaceException {
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class CustomerCreationProcessImpl extends GenericProcess implements Custo
 	}
 
 	@Override
-	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws PFFInterfaceException {
+	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}

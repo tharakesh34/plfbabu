@@ -1,11 +1,11 @@
 package com.pennant.coreinterface.process;
 
 import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 
 public interface PoliceAcceptanceProcess {
 
-	InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws PFFInterfaceException;
-	InterfaceMortgageDetail cancelMortage(String transactionId) throws PFFInterfaceException;
+	InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws InterfaceException;
+	InterfaceMortgageDetail cancelMortage(String transactionId) throws InterfaceException;
 }

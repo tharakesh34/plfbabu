@@ -16,14 +16,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.BulkProcessDetailsDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
@@ -428,19 +424,5 @@ public class BulkProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetail
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
-	}
-
-	/**
-	 * 
-	 * @param errorId
-	 * @param bulkRateChangeRef
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails  getError(String errorId, String bulkRateChangeRef, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = bulkRateChangeRef;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BulkRateChangeRef")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 }

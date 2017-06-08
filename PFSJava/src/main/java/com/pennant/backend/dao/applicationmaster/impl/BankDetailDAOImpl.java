@@ -96,7 +96,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder(" SELECT BankCode, BankName, Active,  AccNoLength," );
+		StringBuilder selectSql = new StringBuilder(" SELECT BankCode, BankName, BankShortCode, Active,  AccNoLength," );
 		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" FROM  BMTBankDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -160,9 +160,9 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, Active,  AccNoLength,");
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BankCode, :BankName, :Active, :AccNoLength,");
+		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -186,7 +186,7 @@ public class BankDetailDAOImpl extends BasisCodeDAO<BankDetail> implements BankD
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" set BankName = :BankName, Active = :Active, AccNoLength = :AccNoLength,");
+		sql.append(" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

@@ -383,8 +383,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 			this.window_ContributorDetailsDialog.setHeight(borderLayoutHeight - 5 +"px");
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -890,8 +889,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceContributor/FinContributorDetailDialog.zul",
 					window_ContributorDetailsDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -981,7 +979,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 			final FinContributorDetail finContributorDetail = (FinContributorDetail) item.getAttribute("data");
 
 			if (finContributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("finContributorDetail", finContributorDetail);
@@ -1000,8 +998,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceContributor/FinContributorDetailDialog.zul",
 							window_ContributorDetailsDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}

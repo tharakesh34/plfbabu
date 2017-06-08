@@ -11,10 +11,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.util.AXIOMUtil;
 import org.apache.log4j.Logger;
 
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.InterfacePropertiesUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class MQProcess {
 	private final static Logger logger = Logger.getLogger(MQProcess.class);
@@ -24,20 +24,20 @@ public abstract class MQProcess {
 		super();
 	}
 	
-	public String getRequestQueue() throws PFFInterfaceException{
+	public String getRequestQueue() throws InterfaceException{
 		return InterfacePropertiesUtil.getProperty(getServiceConfigKey()+"_"+configDetails[1]+"_"+ "QUEUE");
 	}
 
-	public String getResponseQueue() throws PFFInterfaceException{
+	public String getResponseQueue() throws InterfaceException{
 		return InterfacePropertiesUtil.getProperty(getServiceConfigKey()+"_"+configDetails[2]+"_"+ "QUEUE");
 	}
 
-	public int getWaitTime() throws PFFInterfaceException{
+	public int getWaitTime() throws InterfaceException{
 		return InterfacePropertiesUtil.getIntProperty(getServiceConfigKey()+"_"+configDetails[2]+"_"+ "QUEUEWTIME");
 	}
 
 	@Deprecated
-	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header) throws PFFInterfaceException{
+	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header) throws InterfaceException{
 		try {
 			OMElement returnText = detailElement.getFirstChildWithName(new QName("ReturnText"));
 			OMElement timeStamp = detailElement.getFirstChildWithName(new QName("TimeStamp"));
@@ -52,14 +52,14 @@ public abstract class MQProcess {
 			}
 		} catch(Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI3003", "Header: mandatory fields are Empty");
+			throw new InterfaceException("PTI3003", "Header: mandatory fields are Empty");
 		}
 
 		return header;
 
 	}
 	
-	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header, OMElement responseElement) throws PFFInterfaceException{
+	public AHBMQHeader getReturnStatus(OMElement detailElement,AHBMQHeader header, OMElement responseElement) throws InterfaceException{
 		try {
 			if (detailElement == null) {
 				OMElement returnText = PFFXmlUtil.getOMElement("/HB_EAI_REPLY/Reply/ErrorReply/Detail/Text", responseElement);
@@ -86,7 +86,7 @@ public abstract class MQProcess {
 			}
 		} catch(Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI3003", "Header: mandatory fields are Empty");
+			throw new InterfaceException("PTI3003", "Header: mandatory fields are Empty");
 		}
 
 		return header;
@@ -98,12 +98,12 @@ public abstract class MQProcess {
 	 * 
 	 * @param request
 	 * @return OMElement
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public OMElement doMarshalling(Object request) throws PFFInterfaceException {
+	public OMElement doMarshalling(Object request) throws InterfaceException {
 
 		if(request == null) {
-			throw new PFFInterfaceException("PTI5002", "Request Element is Empty");
+			throw new InterfaceException("PTI5002", "Request Element is Empty");
 		}
 		StringWriter writer = new StringWriter();
 		OMElement element = null;
@@ -115,7 +115,7 @@ public abstract class MQProcess {
 			element = AXIOMUtil.stringToOM(writer.toString());
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI5001", e.getMessage());
+			throw new InterfaceException("PTI5001", e.getMessage());
 		}
 		return element;
 	}
@@ -126,12 +126,12 @@ public abstract class MQProcess {
 	 * @param request
 	 * @param classType
 	 * @return Object
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public Object doUnMarshalling(OMElement request, Object classType) throws PFFInterfaceException {
+	public Object doUnMarshalling(OMElement request, Object classType) throws InterfaceException {
 
 		if(request == null) {
-			throw new PFFInterfaceException("PTI5002", "Response Element is Empty");
+			throw new InterfaceException("PTI5002", "Response Element is Empty");
 		}
 		Object resObject = null;
 		try {
@@ -140,7 +140,7 @@ public abstract class MQProcess {
 			resObject = unmarshaller.unmarshal(request.getXMLStreamReader());
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI5001", e.getMessage());
+			throw new InterfaceException("PTI5001", e.getMessage());
 		}
 		return resObject;
 	}
@@ -153,7 +153,7 @@ public abstract class MQProcess {
 		return configDetails;
 	}
 
-	public void setConfigDetails(String seriviceKey) throws PFFInterfaceException {
+	public void setConfigDetails(String seriviceKey) throws InterfaceException {
 		this.configDetails = InterfacePropertiesUtil.getProperty(seriviceKey).split(",");
 	}
 }

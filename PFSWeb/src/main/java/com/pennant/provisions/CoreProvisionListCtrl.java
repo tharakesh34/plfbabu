@@ -286,8 +286,8 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 			}
 
 			search();
-			MessageUtil.showInfoMessage("Total Processed  :" + count + "," + "Successfully processed :" + successCount
-					+ "," + "failed :" + failCount);
+			MessageUtil.showMessage("Total Processed  :" + count + "," + "Successfully processed :" + successCount + ","
+					+ "failed :" + failCount);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

@@ -220,8 +220,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			doShowDialog();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CollateralAssignmentDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -483,7 +482,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			
 			final ExtendedFieldRender fieldRender = (ExtendedFieldRender) item.getAttribute("data");
 			if (StringUtils.equalsIgnoreCase(fieldRender.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("collateralHeaderDialogCtrl", this);
@@ -495,8 +494,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				try {
 					Executions.createComponents("/WEB-INF/pages/AssetType/AssetTypeAssignmentDialog.zul",window_CollateralAssignmentDialog,map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -653,7 +651,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN,StringUtils.trimToEmpty(assignment.getRecordType()))
 					|| StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL,StringUtils.trimToEmpty(assignment.getRecordType()))) {
 
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -669,8 +667,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 					Executions.createComponents(
 							"/WEB-INF/pages/Collateral/CollateralAssignment/CollateralAssignmentDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

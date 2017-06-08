@@ -275,6 +275,9 @@ public class ReceiptCalculator implements Serializable {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
 			}
 		}
+		
+		// Fee Amount
+		BigDecimal eventFeeBal = receiptData.getReceiptHeader().getTotFeeAmount();
 
 		// Start Receipt Details Rendering Process using allocation Details
 		for (int i = 0; i < receiptDetailList.size(); i++) {
@@ -287,13 +290,24 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
-			repayHeaderList = new ArrayList<>();
+			BigDecimal actualReceiptAmt = receiptDetail.getAmount();
+			if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
+				if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
+					eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
+					totalReceiptAmt = BigDecimal.ZERO;
+				}else{
+					totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
+					actualReceiptAmt = actualReceiptAmt.subtract(eventFeeBal);
+					eventFeeBal = BigDecimal.ZERO;
+				}
+			}
 
 			// If no balance for repayment then return with out calculation
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 				continue;
 			}
 			
+			repayHeaderList = new ArrayList<>();
 			// Making Waived amount to total Receipts to set payment on Schedule cleared
 			if(i == receiptDetailList.size() -1){
 				totalReceiptAmt = totalReceiptAmt.add(totalWaivedAmt);
@@ -711,14 +725,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			FinRepayHeader repayHeader = null;
-			BigDecimal balAmount = receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount);
-			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0 && 
-					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
+			BigDecimal balAmount = actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount);
+			if(actualReceiptAmt.compareTo(totalReceiptAmt) > 0 && 
+					actualReceiptAmt.compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
-				repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount));
+				repayHeader.setRepayAmount(actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount));
 				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 				}else{

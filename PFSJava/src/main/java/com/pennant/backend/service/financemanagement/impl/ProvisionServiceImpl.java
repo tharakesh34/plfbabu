@@ -74,7 +74,7 @@ import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>Provision</b>.<br>
@@ -151,7 +151,7 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 	 * @throws AccountNotFoundException 
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -290,7 +290,7 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 	 * @throws AccountNotFoundException 
 	 */
 
-	public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		String tranType="";
 		auditHeader = businessValidation(auditHeader,"doApprove");
@@ -366,12 +366,12 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 	 * 3)	Audit the record in to AuditHeader and AdtFinProvisions by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader  doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"doReject");
 		if (!auditHeader.isNextProcess()) {

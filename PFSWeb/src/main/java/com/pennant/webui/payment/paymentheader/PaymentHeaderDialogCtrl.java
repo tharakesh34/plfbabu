@@ -59,6 +59,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
@@ -67,7 +68,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -86,14 +86,16 @@ import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -115,9 +117,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab tabDisbInstructions;
+	protected Tab payTypeInstructions;
 	protected Tabpanel tabDisbInstructionsTabPanel;
 	protected Listbox listBoxPaymentTypeInstructions;
 	protected Decimalbox paymentAmount = null;
+	protected Decimalbox totAmount = null;
 
 	protected Label lbl_LoanReference;
 	protected Label lbl_LoanType;
@@ -135,6 +139,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	private transient PaymentHeaderListCtrl paymentHeaderListCtrl;
 	private transient PaymentHeaderService paymentHeaderService;
+	private EventManager eventManager;
 	private transient DisbursementInstructionsDialogCtrl disbursementInstructionsDialogCtrl;
 	private int ccyFormatter = 0;
 	private List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
@@ -204,6 +209,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		} catch (Exception e) {
 			closeDialog();
+			if (getDisbursementInstructionsDialogCtrl() != null) {
+				getDisbursementInstructionsDialogCtrl().closeDialog();
+			}
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -401,6 +409,45 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	}
 
 	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug("Entering ");
+		
+		if (this.listBoxPaymentTypeInstructions != null && this.listBoxPaymentTypeInstructions.getItems().size() > 0) {
+			
+			for (int i = 0; i < listBoxPaymentTypeInstructions.getItems().size()-1; i++) {
+				List<Listcell> listCells = listBoxPaymentTypeInstructions.getItems().get(i).getChildren();
+				Listcell avaibleAmtCell = listCells.get(1);
+				Listcell payAmtCell = listCells.get(2);
+				Decimalbox avaibleAmt = (Decimalbox) avaibleAmtCell.getChildren().get(0);
+				Decimalbox payAmt = (Decimalbox) payAmtCell.getChildren().get(0);
+				Clients.clearWrongValue(payAmt);
+				if ((avaibleAmt.getValue().compareTo(payAmt.getValue())) == -1) {
+					throw new WrongValueException(payAmt, Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
+				}
+			}
+		}
+		
+		if (this.totAmount != null) {
+			this.totAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_PaymentHeaderDialog_totalpaymentAmount.value"), ccyFormatter, true));
+		}
+		 
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+		if (this.totAmount != null) {
+			this.totAmount.setConstraint("");
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aPaymentHeader
@@ -426,10 +473,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		// Payment Amount
 		try {
-			if (this.paymentAmount.getValue() != null) {
-				aPaymentHeader.setPaymentAmount(PennantApplicationUtil.unFormateAmount(this.paymentAmount.getValue(),
-						ccyFormatter));
-			}
+			aPaymentHeader.setPaymentAmount(PennantApplicationUtil.unFormateAmount(this.totAmount.getValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -444,7 +488,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			wve.add(we);
 		}
 
+		doRemoveValidation();
+		
 		if (!wve.isEmpty()) {
+			this.payTypeInstructions.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
@@ -456,7 +503,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			PaymentInstruction paymentInstruction = getDisbursementInstructionsDialogCtrl().doSave();
 			aPaymentHeader.setPaymentInstruction(paymentInstruction);
 		}
-
 		// Save PaymentDetails
 		savePaymentDetails(aPaymentHeader);
 
@@ -514,15 +560,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aPaymentHeader.getPaymentId();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true));
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aPaymentHeader.getRecordType()).equals("")) {
 				aPaymentHeader.setVersion(aPaymentHeader.getVersion() + 1);
 				aPaymentHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -541,6 +579,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (doProcess(aPaymentHeader, tranType)) {
 					refreshList();
 					closeDialog();
+					if (getDisbursementInstructionsDialogCtrl() != null) {
+						getDisbursementInstructionsDialogCtrl().closeDialog();
+					}
 				}
 			} catch (DataAccessException e) {
 				logger.error("Exception", e);
@@ -616,7 +657,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		BeanUtils.copyProperties(this.paymentHeader, aPaymentHeader);
 		boolean isNew = false;
 
+		doSetValidation();
+		
 		doWriteComponentsToBean(aPaymentHeader);
+		
 		isNew = aPaymentHeader.isNew();
 		String tranType = "";
 
@@ -643,6 +687,40 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			if (doProcess(aPaymentHeader, tranType)) {
 				refreshList();
 				closeDialog();
+				if (getDisbursementInstructionsDialogCtrl() != null) {
+					getDisbursementInstructionsDialogCtrl().closeDialog();
+				}
+				
+				// User Notifications Message/Alert
+				try {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+
+						if (StringUtils.isNotEmpty(aPaymentHeader.getNextRoleCode())) {
+							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aPaymentHeader.getRecordStatus())) {
+								String[] to = aPaymentHeader.getNextRoleCode().split(",");
+								String message;
+
+								if (StringUtils.isBlank(aPaymentHeader.getNextTaskId())) {
+									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
+								} else {
+									message = Labels.getLabel("REC_PENDING_MESSAGE");
+								}
+								message += " with Reference" + ":" + aPaymentHeader.getFinReference();
+								getEventManager().publish(message, to, financeMain.getFinPurpose(), financeMain.getFinBranch());
+							}
+						}
+					}
+					
+					String msg = PennantApplicationUtil.getSavingStatus(aPaymentHeader.getRoleCode(),
+							aPaymentHeader.getNextRoleCode(), aPaymentHeader.getFinReference(),
+							" Payment Instructions ", aPaymentHeader.getRecordStatus(), aPaymentHeader.getNextRoleCode());
+					Clients.showNotification(msg, "info", null, null, -1);
+					
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -897,15 +975,17 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug("Entering");
 
 		Decimalbox paymentAmt = (Decimalbox) event.getOrigin().getTarget();
+		Clients.clearWrongValue(paymentAmt);
+		Clients.clearWrongValue(this.totAmount);
+		
 		BigDecimal amount = PennantAppUtil.unFormateAmount(paymentAmt.getValue(), ccyFormatter);
 		PaymentDetail paymentDetail = (PaymentDetail) paymentAmt.getAttribute("object");
-
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
-				if ((detail.getAvailableAmount().compareTo(amount)) >= 0) {
-					detail.setAmount(amount);
+				if ((detail.getAvailableAmount().compareTo(amount)) == -1) {
+					throw new WrongValueException(paymentAmt, Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
 				} else {
-					detail.setAmount(detail.getAvailableAmount());
+					detail.setAmount(amount);
 				}
 			}
 		}
@@ -974,7 +1054,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				item = new Listitem();
 				Listcell lc;
 
-				if ("2".equals(paymentDetail.getAmountType())) {
+				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 					amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
 				} else if ("E".equals(paymentDetail.getAmountType())) {
 					amountType = Labels.getLabel("label_PaymentHeaderDialog_ExcessAmount.value");
@@ -1035,7 +1115,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			item.appendChild(lc);
 
 			lc = new Listcell();
-			Decimalbox totAmount = new Decimalbox();
+			totAmount = new Decimalbox();
 			totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			totAmount.setStyle("text-align:right; ");
 			totAmount.setReadonly(true);
@@ -1043,7 +1123,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			totAmount.setValue(totalPayAmt);
 			lc.appendChild(totAmount);
 			lc.setParent(item);
-
 			lc = new Listcell();
 			lc.setParent(item);
 			
@@ -1075,6 +1154,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	public void setDisbursementInstructionsDialogCtrl(
 			DisbursementInstructionsDialogCtrl disbursementInstructionsDialogCtrl) {
 		this.disbursementInstructionsDialogCtrl = disbursementInstructionsDialogCtrl;
+	}
+
+	public EventManager getEventManager() {
+		return eventManager;
+	}
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
 	}
 
 }

@@ -73,7 +73,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -104,14 +103,13 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -319,8 +317,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
 			doShowDialog(getJVPosting());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_JVPostingDialog.onClose();
 		}
 
@@ -415,8 +412,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 							getJVPosting().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -499,8 +495,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 			Executions.createComponents(fileName, window_JVPostingDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -568,7 +563,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				this.tab_JVSummary.setSelected(true);
 			} 
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1271,13 +1266,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		final String msg = Labels
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
 				+ "\n\n --> " + aJVPosting.getBatchReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aJVPosting.getRecordType())) {
 				aJVPosting.setVersion(aJVPosting.getVersion() + 1);
 				aJVPosting.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1298,8 +1287,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1411,8 +1399,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_JVPostingDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -1896,7 +1883,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception,PFFInterfaceException {
+	public void onClick$btnValidate(Event event) throws Exception,InterfaceException {
 		logger.debug("Entering" + event.toString());
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);

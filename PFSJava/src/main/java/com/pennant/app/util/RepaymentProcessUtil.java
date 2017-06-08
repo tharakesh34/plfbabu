@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
@@ -56,12 +57,14 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
@@ -97,14 +100,14 @@ public class RepaymentProcessUtil {
 	 * @param receiptData
 	 * @param scheduleData
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
 	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
+			List<FinanceScheduleDetail> scheduleDetails, List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail,
 			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
 		String finrefer = financeMain.getFinReference();
@@ -309,7 +312,7 @@ public class RepaymentProcessUtil {
 			receiptDetail.setRepayHeaders(repayHeaderList);
 		}
 
-		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData,
+		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate);
 		doSaveReceipts(receiptHeader, null);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
@@ -323,8 +326,8 @@ public class RepaymentProcessUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, FinScheduleData logScheduleData, Date valueDate)
-					throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetailList,
+			FinScheduleData logScheduleData, Date valueDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -366,6 +369,7 @@ public class RepaymentProcessUtil {
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
 
+		boolean feesExecuted = false;
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			
 			FinReceiptDetail receiptDetail = receiptDetailList.get(i);
@@ -423,10 +427,17 @@ public class RepaymentProcessUtil {
 							aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
 						}
 
-						aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+						HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+						if(!feesExecuted){
+							feesExecuted = true;
+							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList);
+						}
+						aeEvent.setDataMap(dataMap);
 
 						// Accounting Entry Execution
-						getPostingsPreparationUtil().postAccounting(aeEvent);
+						aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+						repayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
+						repayHeader.setValueDate(postDate);
 						
 						if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
 							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
@@ -445,6 +456,15 @@ public class RepaymentProcessUtil {
 								excess.setReservedAmt(BigDecimal.ZERO);
 								getFinExcessAmountDAO().saveExcess(excess);
 							}
+							
+							// Excess Movement Creation
+							/*FinExcessMovement movement = new FinExcessMovement();
+							movement.setExcessID(payAgainstID);
+							movement.setReceiptID(receiptSeqID);
+							movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+							movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+							movement.setAmount(repayHeader.getRepayAmount());
+							getFinExcessAmountDAO().saveExcessMovement(movement);*/
 						}
 					}
 					
@@ -484,15 +504,19 @@ public class RepaymentProcessUtil {
 					logScheduleData.setFinanceScheduleDetails(scheduleDetails);
 					listSave(logScheduleData, "_Log", logKey);
 				}
+				if(feesExecuted){
+					finFeeDetailList = null;
+				}
 
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList,
+				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, finFeeDetailList, profitDetail, repaySchdList,
 						getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetail, receiptHeader.getPostBranch());
-
+				
+				feesExecuted = true;
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
-					throw new PFFInterfaceException("9999", errParm);
+					throw new InterfaceException("9999", errParm);
 				}
 
 				//Update Linked Transaction ID
@@ -509,6 +533,69 @@ public class RepaymentProcessUtil {
 		logger.debug("Leaving");
 		return scheduleDetails;
 
+	}
+	
+	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList) {
+		logger.debug("Entering");
+
+		if (finFeeDetailList != null) {
+			FeeRule feeRule;
+
+			BigDecimal deductFeeDisb = BigDecimal.ZERO;
+			BigDecimal addFeeToFinance = BigDecimal.ZERO;
+			BigDecimal paidFee = BigDecimal.ZERO;
+			BigDecimal feeWaived = BigDecimal.ZERO;
+
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				if(!finFeeDetail.isRcdVisible()){
+					continue;
+				}
+				feeRule = new FeeRule();
+
+				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
+				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
+				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
+				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
+				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
+				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
+
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+
+				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
+				} else {
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", BigDecimal.ZERO);
+				}
+
+				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
+				} else {
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", BigDecimal.ZERO);
+				}
+
+				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
+				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
+				}
+
+				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
+				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
+			}
+
+			amountCodes.setDeductFeeDisb(deductFeeDisb);
+			amountCodes.setAddFeeToFinance(addFeeToFinance);
+			amountCodes.setFeeWaived(feeWaived);
+			amountCodes.setPaidFee(paidFee);
+
+		}
+
+		logger.debug("Leaving");
+		return dataMap;
 	}
 
 	/**
@@ -871,9 +958,9 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
+			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
 			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
-			PFFInterfaceException, InvocationTargetException {
+			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -944,10 +1031,10 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 
-			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
+			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
 					rpyQueueHeader, eventCode, valuedate);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (IllegalAccessException e) {

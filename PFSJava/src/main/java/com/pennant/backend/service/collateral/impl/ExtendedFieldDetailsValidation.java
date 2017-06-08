@@ -249,9 +249,9 @@ public class ExtendedFieldDetailsValidation {
 				values = staticList.split(PennantConstants.DELIMITER_COMMA);
 			}
 			
-			if(values.length > 0) {
-				for(int i = 0; i<=values.length; i++) {
-					if(StringUtils.equals(fieldValue, values[i])) {
+			if (values.length > 0) {
+				for (int i = 0; i <= values.length-1; i++) {
+					if (StringUtils.equals(fieldValue, values[i])) {
 						isValid = true;
 					}
 				}

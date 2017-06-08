@@ -225,7 +225,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 
 			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 					errorParm, null), getUserWorkspace().getUserLanguage());
-			MessageUtil.showErrorMessage(errorDetails.getError());
+			MessageUtil.showError(errorDetails.getError());
 		}
 
 		// Check whether the user has authority to change/view the record.

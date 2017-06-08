@@ -56,6 +56,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 
 	private String bankCode;
 	private String bankName;
+	private String bankShortCode;
 	private boolean active;
 	private int accNoLength;
 	private boolean newRecord;
@@ -146,4 +147,13 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public String getBankShortCode() {
+		return bankShortCode;
+	}
+
+	public void setBankShortCode(String bankShortCode) {
+		this.bankShortCode = bankShortCode;
+	}
+	
 }

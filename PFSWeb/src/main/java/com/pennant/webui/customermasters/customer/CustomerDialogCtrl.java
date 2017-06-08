@@ -80,7 +80,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.South;
@@ -141,7 +140,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -157,7 +155,7 @@ import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -885,9 +883,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -926,9 +923,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doDelete();
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Entering" + event.toString());
 	}
@@ -2367,7 +2363,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws InterruptedException
 	 * @throws CustomerNotFoundException
 	 */
-	private void doDelete() throws InterruptedException, PFFInterfaceException {
+	private void doDelete() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 		Cloner cloner = new Cloner();
 		CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -2379,12 +2375,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : " + aCustomer.getCustCIF();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomer.getRecordType())) {
 				aCustomer.setVersion(aCustomer.getVersion() + 1);
 				aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -2701,7 +2692,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws ParseException
 	 * @throws CustomerNotFoundException
 	 */
-	public void doSave() throws InterruptedException, ParseException, PFFInterfaceException {
+	public void doSave() throws InterruptedException, ParseException, InterfaceException {
 		logger.debug("Entering");
 		Cloner cloner = new Cloner();
 		CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -2788,7 +2779,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws PFFInterfaceException {
+	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (!customerDetails.getCustomer().isSkipDedup()) {
@@ -2866,7 +2857,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setNextRoleCode(nextRoleCode);
 	}
 
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws PFFInterfaceException,
+	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
@@ -2961,7 +2952,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException,
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -3012,11 +3003,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorCode() + ":" + pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
@@ -3121,8 +3109,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							this.tabkYCDetails.setSelected(true);
 						}
 
-						MultiLineMessageBox.doSetTemplate();
-						MultiLineMessageBox.show(msg, "Phone Details", MultiLineMessageBox.OK, Messagebox.ERROR, true);
+						MessageUtil.showError(msg);
 
 						return false;
 					}
@@ -3160,8 +3147,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				this.tabkYCDetails.setSelected(true);
 				String msg = Labels.getLabel("CustomerEmail_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerEmail_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			}
 		}
 
@@ -3207,16 +3193,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custTab.setSelected(true);
 			}
 			this.tabkYCDetails.setSelected(true);
-			MultiLineMessageBox.doSetTemplate();
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				String msg = isRetailCustomer ? Labels.getLabel("CustomerResidenceAddress_NoEmpty") : Labels
 						.getLabel("CustomerOfficeAddress_NoEmpty");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			} else {
 				String msg = Labels.getLabel("CustomerResidenceAddress_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			}
 		}
 		logger.debug("Leaving");
@@ -3247,11 +3230,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					custTab.setSelected(true);
 				}
 				this.tabkYCDetails.setSelected(true);
-				MultiLineMessageBox.doSetTemplate();
 
 				String msg = Labels.getLabel("CustomerPhoneNumber_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			MessageUtil.showError(msg);
 
 			}
 			logger.debug("Leaving");
@@ -3370,7 +3351,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			tab.setSelected(true);
 		}
 		this.tabkYCDetails.setSelected(true);
-		MultiLineMessageBox.doSetTemplate();
 		switch (validationNo) {
 		case 1:
 			String field = isRetailCustomer ? Labels.getLabel("label_CustomerDialog_CustDOB.value") : Labels
@@ -3411,8 +3391,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			break;
 		}
 
-		MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerDocuments_Confirmation"), MultiLineMessageBox.OK,
-				Messagebox.ERROR, true);
+		MessageUtil.showError(msg);
 
 	}
 
@@ -3929,11 +3908,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		if (StringUtils.isNotEmpty(this.custBaseCcy.getValue())
 				&& !StringUtils.equals(this.custBaseCcy.getValue(), custBaseCcy_Temp)) {
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(
-					Labels.getLabel("label_CurrencyChange", new String[] { getCurrencyAlertMessage() }),
-					Labels.getLabel("label_CurrencyChange_Confirmation"), MultiLineMessageBox.OK,
-					Messagebox.INFORMATION, true);
+			MessageUtil
+					.showMessage(Labels.getLabel("label_CurrencyChange", new String[] { getCurrencyAlertMessage() }));
 			doSetCurrencyFieldProperties();
 		}
 		custBaseCcy_Temp = this.custBaseCcy.getValue();
@@ -5432,9 +5408,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Labels.getLabel("label_Salaried") });
 			custTab.setSelected(true);
 			this.tabkYCDetails.setSelected(true);
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(msg, Labels.getLabel("message.Error"), MultiLineMessageBox.OK, Messagebox.ERROR,
-					true);
+			MessageUtil.showError(msg);
 			return false;
 		}
 		return true;

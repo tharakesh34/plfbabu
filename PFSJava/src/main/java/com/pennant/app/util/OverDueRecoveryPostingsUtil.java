@@ -63,7 +63,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long			serialVersionUID	= 6161809223570900644L;
@@ -95,11 +95,11 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @param curSchDate
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
-			long linkedTranId, boolean fullyPaidSchd, String postBranch) throws PFFInterfaceException, IllegalAccessException,
+			long linkedTranId, boolean fullyPaidSchd, String postBranch) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
 		logger.debug("Entering");
@@ -187,10 +187,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @param dateValueDate
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public FinODDetails overDueDetailPreparation(FinRepayQueue finRepayQueue, String profitDayBasis,
-			Date dateValueDate, boolean isAfterRecovery, boolean isEnqPurpose) throws PFFInterfaceException,
+			Date dateValueDate, boolean isAfterRecovery, boolean isEnqPurpose) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -225,12 +225,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @param isAfterRecovery
 	 * @param isEnqPurpose
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> recoveryCalculation(FinRepayQueue finRepayQueue, String pftDaysBasis, Date dateValueDate,
-			boolean isAfterRecovery, boolean isEnqPurpose) throws PFFInterfaceException, IllegalAccessException,
+			boolean isAfterRecovery, boolean isEnqPurpose) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -637,7 +637,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> oDRPostingProcess(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
-			long linkedTranId, String finDivision) throws PFFInterfaceException, IllegalAccessException,
+			long linkedTranId, String finDivision) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
 		logger.debug("Entering" + "', financeMain='" + financeMain + "', dateValueDate='" + dateValueDate
@@ -665,7 +665,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			IAccounts iAccount = null;
 			try {
 				iAccount = getAccountInterfaceService().fetchAccountAvailableBal(financeMain.getRepayAccountId());
-			} catch (PFFInterfaceException e) {
+			} catch (InterfaceException e) {
 				logger.error("Exception: ", e);
 				List<Object> returnList = new ArrayList<Object>(2);
 				returnList.add(isPostingSuccess);

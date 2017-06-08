@@ -60,7 +60,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -94,7 +93,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -240,8 +238,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			doSetFieldProperties();
 			doShowDialog(getFacilityDetail());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FacilityDetailDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -782,8 +779,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			doWriteBeanToComponents(aFacilityDetail);
 			setDialog(DialogType.OVERLAPPED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -956,11 +952,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFacilityDetail.getCAFReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFacilityDetail.getRecordType())) {
 				aFacilityDetail.setVersion(aFacilityDetail.getVersion() + 1);
 				aFacilityDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1210,7 +1202,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		try {
 			if (aFacilityDetail.isNewRecord()) {
 				if (getFacilityDetailByRef(aFacilityDetail.getFacilityRef()) != null) {
-					MessageUtil.showErrorMessage(Labels.getLabel("DATA_ALREADY_EXISTS",new String[]{Labels.getLabel("label_FacilityRef")+":"+aFacilityDetail.getFacilityRef()}));
+					MessageUtil.showError(Labels.getLabel("DATA_ALREADY_EXISTS", new String[] {
+							Labels.getLabel("label_FacilityRef") + ":" + aFacilityDetail.getFacilityRef() }));
 					return;
 				}
 			}

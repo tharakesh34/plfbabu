@@ -202,7 +202,7 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 			}
 		}
 
-		MessageUtil.showErrorMessage(status);
+		MessageUtil.showError(status);
 
 		logger.debug("Leaving" + event.toString());
 	}

@@ -286,8 +286,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 			Executions.createComponents(
 					"/WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -343,8 +342,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 			Executions.createComponents(
 					"/WEB-INF/pages/RulesFactory/ScoringType/ScoringTypeSearchDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

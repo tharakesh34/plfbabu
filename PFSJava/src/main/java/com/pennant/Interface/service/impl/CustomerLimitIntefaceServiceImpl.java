@@ -24,7 +24,7 @@ import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitSummary;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
 import com.pennant.coreinterface.process.CustomerLimitProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceService {
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceImpl.class);
@@ -38,7 +38,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	@Override
-	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws PFFInterfaceException {
+	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		logger.debug("Entering");
 
 		Map<String, Object> customerLimitMap = null;
@@ -71,7 +71,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 			} else {
 				customerLimitMap.put("CustLimitList", null);
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
 		}
 
@@ -80,13 +80,13 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	@Override
-	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CustomerLimit> customerLimits = null;
 		try {
 			customerLimits = getCustomerLimitProcess().fetchLimitDetails(custLimit);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
 		}
 
@@ -106,7 +106,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	@Override
-	public List<CustomerLimit> fetchLimitEnquiryDetails(CustomerLimit customerLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchLimitEnquiryDetails(CustomerLimit customerLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CustomerLimit> customerLimits = null;
@@ -144,7 +144,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	}
 
 	@Override
-	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit customerLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit customerLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CustomerLimit> customerLimits = null;
@@ -152,7 +152,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 
 			customerLimits = getCustomerLimitProcess().fetchGroupLimitDetails(customerLimit);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			throw e;
 		}
 
@@ -165,10 +165,10 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * 
 	 * @param limitRef
 	 * @param branchCode
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public LimitDetail getLimitDetail(String limitRef, String branchCode) throws PFFInterfaceException {
+	public LimitDetail getLimitDetail(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitDetail coreLimitDetail = getCustomerLimitProcess().getLimitDetails(limitRef, branchCode);
@@ -186,11 +186,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * Method for sending Deal Online Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doPredealCheck(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -214,11 +214,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doReserveUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -242,11 +242,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * through MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doOverrideAndReserveUtil(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -271,11 +271,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doConfirmReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -298,11 +298,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * Method for sending Cancel Reservation Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doCancelReservation(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -325,11 +325,11 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * Method for sending Cancel Utilization Request to ACP interface through MQ
 	 * 
 	 * @param limitUtilReq
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
-	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doCancelUtilization(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {
@@ -354,7 +354,7 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 	 * @param limitUtilReq
 	 */
 	@Override
-	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws PFFInterfaceException {
+	public LimitUtilization doLimitAmendment(LimitUtilization limitUtilReq) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitUtilReq == null) {

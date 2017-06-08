@@ -177,8 +177,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinApprovalStsInquiryDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

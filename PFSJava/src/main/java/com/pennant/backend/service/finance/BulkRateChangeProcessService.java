@@ -24,11 +24,9 @@ public interface BulkRateChangeProcessService {
 	String getBulkRateChangeReference();
 
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF);
-	//boolean bulkRateChangeFinances(List<BulkRateChangeDetails> bulkRateChangeFinances, String recalType) throws PFFInterfaceException;
 	FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData);
 	BigDecimal getAccrueAmount(String finReference);
 
-	//boolean bulkDefermentChanges(List<BulkRateChangeDetails> defermentChangeFinances,String recalType, boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate, String cbRecalType) throws PFFInterfaceException, Exception;
 	List<ScheduleMapDetails> getDeferedDates(List<BulkRateChangeDetails> bulkRateChangeDetails, String cbRecalType, Date reCalFromDate, Date reCalToDate);
 
 	boolean processBulkRateChangeDetail(BulkRateChangeHeader bulkRateChangeHeader, BulkRateChangeDetails bulkRateChangeDetail) throws Exception;

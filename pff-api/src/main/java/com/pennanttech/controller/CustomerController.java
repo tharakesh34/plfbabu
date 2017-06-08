@@ -38,7 +38,6 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -62,7 +61,6 @@ public class CustomerController {
 	 * 
 	 * @param customerDetails
 	 * @return
-	 * @throws PFFInterfaceException
 	 */
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
@@ -104,7 +102,6 @@ public class CustomerController {
 	 * 
 	 * @param customerDetails
 	 * @return
-	 * @throws PFFInterfaceException
 	 */
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
@@ -170,6 +167,7 @@ public class CustomerController {
 
 		Customer curCustomer = customerDetails.getCustomer();
 		CustomerDetails prvCustomerDetails = null;
+		 
 		
 		if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
 			// fetch customer object
@@ -209,7 +207,8 @@ public class CustomerController {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
 					curCustomer.getCustMName(), curCustomer.getCustLName()));
 		}
-		
+	/*	CustomerStatusCode customerStatusCode = getCustomerDetailsService().getCustStatusByMinDueDays();
+		curCustomer.setCustSts(customerStatusCode.getCustStsCode());*/
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 			// generate new customer CIF
 			String custCIF = customerDetailsService.getNewProspectCustomerCIF();
@@ -218,6 +217,7 @@ public class CustomerController {
 			curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			curCustomer.setCustCIF(custCIF);
 			curCustomer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			curCustomer.setVersion(1);
 			curCustomer.setLastMntBy(userDetails.getLoginUsrID());
 		} else {
 			Customer prvCustomer = prvCustomerDetails.getCustomer();
@@ -242,6 +242,7 @@ public class CustomerController {
 					curEmpDetail.setNewRecord(true);
 					curEmpDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curEmpDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curEmpDetail.setVersion(1);
 				} else {
 					List<CustomerEmploymentDetail> prvEmpDetails = prvCustomerDetails.getEmploymentDetailsList();
 					if (prvEmpDetails != null) {
@@ -268,6 +269,7 @@ public class CustomerController {
 					curAddres.setNewRecord(true);
 					curAddres.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curAddres.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curAddres.setVersion(1);
 				} else {
 					List<CustomerAddres> prvAddressList = prvCustomerDetails.getAddressList();
 					if (curAddressList != null && prvAddressList != null) {
@@ -294,6 +296,7 @@ public class CustomerController {
 					curCustPhoneNum.setNewRecord(true);
 					curCustPhoneNum.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustPhoneNum.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustPhoneNum.setVersion(1);
 				} else {
 					List<CustomerPhoneNumber> prvCustomerPhoneNumberList = prvCustomerDetails.getCustomerPhoneNumList();
 					if (prvCustomerPhoneNumberList != null) {
@@ -320,6 +323,7 @@ public class CustomerController {
 					curCustEmail.setNewRecord(true);
 					curCustEmail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustEmail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustEmail.setVersion(1);
 				} else {
 					List<CustomerEMail> prvCustomerEMailList = prvCustomerDetails.getCustomerEMailList();
 					if (prvCustomerEMailList != null) {
@@ -338,7 +342,8 @@ public class CustomerController {
 				}
 			}
 		}
-
+		BigDecimal custTotIncomeExp = BigDecimal.ZERO;
+		BigDecimal custTotExpense = BigDecimal.ZERO;
 		// customer income details
 		List<CustomerIncome> customerIncomes = customerDetails.getCustomerIncomeList();
 		if (customerIncomes != null) {
@@ -348,6 +353,7 @@ public class CustomerController {
 					curCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustomerIncome.setMargin(BigDecimal.ZERO);
 					curCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustomerIncome.setVersion(1);
 
 				} else {
 					List<CustomerIncome> prvCustomerIncomeList = prvCustomerDetails.getCustomerIncomeList();
@@ -365,6 +371,14 @@ public class CustomerController {
 						}
 					}
 				}
+				
+					if (StringUtils.equals(PennantConstants.INCOME, curCustomerIncome.getIncomeExpense())) {
+						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getCustIncome());
+					}
+				 else if (StringUtils.equals(PennantConstants.EXPENSE, curCustomerIncome.getIncomeExpense())) {
+						custTotIncomeExp = custTotIncomeExp.add(curCustomerIncome.getCustIncome());
+					}
+				
 			}
 		}
 
@@ -375,6 +389,7 @@ public class CustomerController {
 				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 					curCustDocument.setNewRecord(true);
 					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustDocument.setVersion(1);
 					//curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
@@ -412,6 +427,7 @@ public class CustomerController {
 					curCustBankInfo.setNewRecord(true);
 					curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustBankInfo.setVersion(1);
 				} else {
 					List<CustomerBankInfo> prvCustomerBankInfoList = prvCustomerDetails.getCustomerBankInfoList();
 					if (prvCustomerBankInfoList != null) {
@@ -438,6 +454,7 @@ public class CustomerController {
 					curCustChequeInfo.setNewRecord(true);
 					curCustChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustChequeInfo.setVersion(1);
 				} else {
 					List<CustomerChequeInfo> prvCustomerChequeInfoList = prvCustomerDetails.getCustomerChequeInfoList();
 					if (prvCustomerChequeInfoList != null) {
@@ -464,6 +481,7 @@ public class CustomerController {
 					curCustomerExtLiability.setNewRecord(true);
 					curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustomerExtLiability.setVersion(1);
 				} else {
 					List<CustomerExtLiability> prvCustomerExtLiabilityList = prvCustomerDetails
 							.getCustomerExtLiabilityList();
@@ -480,9 +498,12 @@ public class CustomerController {
 						}
 					}
 				}
+				custTotExpense = custTotExpense.add(curCustomerExtLiability.getInstalmentAmount());
 			}
+			
 		}
-		
+		curCustomer.setCustTotalIncome(custTotIncomeExp);
+		curCustomer.setCustTotalExpense(custTotExpense);
 		logger.debug("Leaving");
 	}
 
@@ -1025,4 +1046,5 @@ public class CustomerController {
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+	
 }

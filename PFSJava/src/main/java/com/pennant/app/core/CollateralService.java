@@ -12,7 +12,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CollateralService extends ServiceHelper {
 
@@ -56,7 +56,7 @@ public class CollateralService extends ServiceHelper {
 			while (resultSet.next()) {
 				try {
 					doCollateralDemarking(resultSet);
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception: ", e);
 					continue;
 				}
@@ -78,10 +78,10 @@ public class CollateralService extends ServiceHelper {
 	 * Method for validate the collateral Demark request and send to middleware services
 	 * 
 	 * @param resultSet
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws SQLException
 	 */
-	public void doCollateralDemarking(ResultSet resultSet) throws PFFInterfaceException, SQLException {
+	public void doCollateralDemarking(ResultSet resultSet) throws InterfaceException, SQLException {
 		logger.debug("Entering");
 
 		FinCollaterals finCollaterals = new FinCollaterals();

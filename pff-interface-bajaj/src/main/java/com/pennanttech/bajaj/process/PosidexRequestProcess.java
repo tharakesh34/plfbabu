@@ -165,7 +165,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" SELECT * from INT_POSIDEX_CUST_VIEW");
 
 		if (lastRunDate != null) {
-			sql.append(" WHERE CUST_LASTMNTON > :CUST_LASTMNTON");
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
@@ -342,8 +342,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" SELECT count(*) from INT_POSIDEX_CUST_VIEW");
 
 		if (lastRunDate != null) {
-			sql.append(" WHERE CUST_LASTMNTON > :CUST_LASTMNTON");
-			parmMap.addValue("CUST_LASTMNTON", lastRunDate);
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
+			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
 		try {
@@ -362,8 +362,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("SELECT count(*) from INT_POSIDEX_CUST_LOAN_VIEW");
 
 		if (lastRunDate != null) {
-			sql.append(" WHERE FIN_LASTMNTON > :FIN_LASTMNTON");
-			parmMap.addValue("FIN_LASTMNTON", lastRunDate);
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
+			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
 		try {

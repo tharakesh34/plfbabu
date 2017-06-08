@@ -454,8 +454,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 			}
 
 			if (getUserAction() == -1) {
-				MessageUtil
-						.showErrorMessage(Labels.getLabel("label_Message_CustomerOverrideAlert"));
+				MessageUtil.showError(Labels.getLabel("label_Message_CustomerOverrideAlert"));
 			} else {
 				setObject(customerDedupList);
 				onClose();

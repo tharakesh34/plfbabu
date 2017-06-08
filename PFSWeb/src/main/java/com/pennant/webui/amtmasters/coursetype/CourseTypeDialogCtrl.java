@@ -55,7 +55,6 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -70,7 +69,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -169,8 +167,7 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 			doSetFieldProperties();
 			doShowDialog(getCourseType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CourseTypeDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -456,14 +453,7 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_CourseTypeDialog_CourseTypeCode.value")+" : "+aCourseType.getCourseTypeCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCourseType.getRecordType())){
 				aCourseType.setVersion(aCourseType.getVersion()+1);
 				aCourseType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -482,9 +472,8 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 					closeDialog(); 
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -610,8 +599,7 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -309,8 +309,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 
 		doSearch();
 
-		MessageUtil
-				.showInfoMessage("ECS Representment batch processed successfully.");
+		MessageUtil.showMessage("ECS Representment batch processed successfully.");
 
 		logger.debug("Leaving");
 	}

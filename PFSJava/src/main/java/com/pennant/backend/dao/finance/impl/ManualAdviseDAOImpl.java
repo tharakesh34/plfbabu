@@ -634,4 +634,30 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * Method for Update utilization amount after amounts Reversal
+	 */
+	@Override
+	public void reverseUtilise(long adviseID, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", adviseID);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
+		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		updateSql.append(" Where AdviseID =:AdviseID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 }	

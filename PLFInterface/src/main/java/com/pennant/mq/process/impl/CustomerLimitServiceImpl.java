@@ -11,11 +11,11 @@ import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
 import com.pennant.coreinterface.process.CustomerLimitProcess;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.processutil.CustomerLimitDetailProcess;
 import com.pennant.mq.processutil.CustomerLimitPositionProcess;
 import com.pennant.mq.processutil.CustomerLimitUtilProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	private final static Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);
@@ -29,17 +29,17 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	}
 	
 	@Override
-	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws PFFInterfaceException {
+	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		return null;
 	}
 
 	@Override
-	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		return null;
 	}
 
 	@Override
-	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws PFFInterfaceException{
+	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException{
 		logger.debug("Entering");
 
 		CustomerLimitPosition customerLimitPosition = null;
@@ -48,7 +48,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.CUST_LIMIT_SUMMARY);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -56,7 +56,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	}
 
 	@Override
-	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		return null;
 	}
 
@@ -72,7 +72,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 *  
 	 *  @return CustomerLimitDetailReply
 	 */
-	public CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws PFFInterfaceException {
+	public CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitDetail limitDetail = new CustomerLimitDetail();
@@ -97,7 +97,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 * @throws JaxenException 
 	 */
 	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq) 
-			throws PFFInterfaceException{
+			throws InterfaceException{
 		logger.debug("Entering");
 		
 		CustomerLimitPosition limitPosReply = null;
@@ -106,7 +106,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.CUST_LIMIT_SUMMARY);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -128,7 +128,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization custLimitUtilization) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -137,7 +137,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -156,7 +156,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization custLimitUtilization) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -165,7 +165,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -184,7 +184,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization custLimitUtilReq) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -193,7 +193,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -212,7 +212,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization custLimitUtilReq) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -221,7 +221,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -240,7 +240,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization custLimitUtilReq) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -249,7 +249,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -268,7 +268,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization custLimitUtilReq) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerLimitUtilization limitUtilReply = null;
@@ -277,7 +277,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 
@@ -296,7 +296,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	 */
 	@Override
 	public CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization custLimitUtilReq) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		CustomerLimitUtilization limitUtilReply = null;
@@ -305,7 +305,7 @@ public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 					InterfaceMasterConfigUtil.DEAL_ONLINE_REQUEST);
 		} catch(JaxenException jxe) {
 			logger.warn("Exception: ", jxe);
-			throw new PFFInterfaceException("PTI9008", jxe.getMessage());
+			throw new InterfaceException("PTI9008", jxe.getMessage());
 		}
 		logger.debug("Leaving");
 		

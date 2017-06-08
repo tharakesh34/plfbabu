@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ReserveCIFProcess extends MQProcess {
 
@@ -30,13 +30,13 @@ public class ReserveCIFProcess extends MQProcess {
 	 * @param customer
 	 * @param msgFormat
 	 * @return String
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public String reserveCIF(InterfaceCustomer customer, String msgFormat)throws PFFInterfaceException {
+	public String reserveCIF(InterfaceCustomer customer, String msgFormat)throws InterfaceException {
 		logger.debug("Entering");
 
 		if (customer == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Customer"}," Cannot be Empty");	
+			throw new InterfaceException("PTI3001", "Customer Cannot be Empty");
 		}
 
 		// Set MQ Message configuration details
@@ -58,9 +58,9 @@ public class ReserveCIFProcess extends MQProcess {
 				response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
-			throw new PFFInterfaceException(pfe.getErrorCode(), pfe.getErrorMessage());
+			throw new InterfaceException(pfe.getErrorCode(), pfe.getErrorMessage());
 		}
 
 		logger.debug("Leaving");
@@ -73,9 +73,9 @@ public class ReserveCIFProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private String processReserveCIFResponse(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException {
+	private String processReserveCIFResponse(OMElement responseElement, AHBMQHeader header) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -93,7 +93,7 @@ public class ReserveCIFProcess extends MQProcess {
 		} else if(StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())){
 			return ReserveCIFRefNum;
 		} else {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 	}
 
@@ -103,14 +103,14 @@ public class ReserveCIFProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private OMElement getReserveCIFRequestElement(InterfaceCustomer customer, String referenceNum,OMFactory factory) 
-			throws PFFInterfaceException{
+			throws InterfaceException{
 		logger.debug("Entering");
 
 		if(customer == null) {
-			throw new PFFInterfaceException("PTI3001", "Customer can not be null");
+			throw new InterfaceException("PTI3001", "Customer can not be null");
 		}
 		OMElement requestElement= factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
 		OMElement reserveCIFRequest= factory.createOMElement("reserveCIFRequest",null);

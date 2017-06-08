@@ -195,7 +195,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("finType");
 		excludeFields.add("custShrtName");
 		excludeFields.add("partnerBankAcType");
-		excludeFields.add("transactionRef");
 		excludeFields.add("rejectReason");
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("alwFileDownload");

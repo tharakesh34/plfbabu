@@ -160,7 +160,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
@@ -178,6 +177,7 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
@@ -904,7 +904,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws WrongValueException
 	 */
 	public void onClick$btnCalcRepayments(Event event) throws InterruptedException, WrongValueException,
-			PFFInterfaceException {
+			InterfaceException {
 		logger.debug("Entering" + event.toString());
 
 		boolean isChgRpy = false;
@@ -1256,7 +1256,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
 				if (curDisb.getDisbDate().compareTo(actualMaturity) >= 0) {
-					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
 					Events.sendEvent(Events.ON_CLICK, this.btnChangeRepay, null);
 					logger.debug("Leaving");
 					return;
@@ -1725,9 +1725,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 
-		} catch (PFFInterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+		} catch (InterfaceException pfe) {
+			MessageUtil.showError(pfe);
 			return;
 		} catch (WrongValueException we) {
 			throw we;
@@ -2535,14 +2534,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-		} catch (InvocationTargetException e) {
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
 
@@ -2873,7 +2867,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	@SuppressWarnings("unused")
-	private boolean isValid(boolean isChgRpy, boolean isSaveProcess) throws InterruptedException, PFFInterfaceException {
+	private boolean isValid(boolean isChgRpy, boolean isSaveProcess) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		Date curBussDate = DateUtility.getAppDate();

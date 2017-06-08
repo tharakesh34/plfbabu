@@ -208,8 +208,7 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_ODFacilityFinanceMainDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

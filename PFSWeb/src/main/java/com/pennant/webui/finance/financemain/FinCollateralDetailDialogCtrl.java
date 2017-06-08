@@ -89,13 +89,13 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -250,8 +250,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			doSetFieldProperties();
 			doShowDialog(getFinCollateral());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinCollateralDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -710,16 +709,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				fieldName +" : "+aFinCollaterals.getReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinCollaterals.getRecordType())) {
 				aFinCollaterals.setVersion(aFinCollaterals.getVersion() + 1);
 				aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -749,8 +739,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -958,8 +947,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1167,7 +1155,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	}
 
 	public void onChange$FDReference(Event event) throws InterruptedException, WrongValueException, 
-														PFFInterfaceException, ParseException {
+														InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		FinCollaterals finCollaterals = null;
@@ -1190,9 +1178,9 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			} else {
 				clearDepositDetails();
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			clearDepositDetails();
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1213,11 +1201,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws WrongValueException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws ParseException
 	 */
 	public void onClick$btnVerifyCheque(Event event) throws InterruptedException, WrongValueException, 
-			PFFInterfaceException, ParseException {
+			InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		// Validate the mandatory fields
@@ -1257,18 +1245,18 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 						}
 						
 						// setting response status into status field
-						MessageUtil.showErrorMessage(chkStatus.toString());
+						MessageUtil.showError(chkStatus.toString());
 						return;
 					} else {
-						throw new PFFInterfaceException(chequeVerifyResponse.getReturnCode(),
+						throw new InterfaceException(chequeVerifyResponse.getReturnCode(),
 								chequeVerifyResponse.getReturnText());
 					}
 				}
 			} else {
-				throw new PFFInterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
+				throw new InterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
 			}
-		} catch (PFFInterfaceException e) {
-			MessageUtil.showErrorMessage(e.getMessage());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1278,9 +1266,9 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * Method for prepare capture cheque details and send to middleware to validate
 	 * 
 	 * @return ChequeVerification
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private ChequeVerification doChequeVerification() throws PFFInterfaceException {
+	private ChequeVerification doChequeVerification() throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = getFinCollateralHeaderDialogCtrl().getFinanceDetail().getCustomerDetails();

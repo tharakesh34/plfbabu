@@ -107,7 +107,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * ************************************************************<br>
@@ -449,8 +448,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -674,8 +672,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		
-		int conf = MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"));
-		if (conf == MultiLineMessageBox.YES) {
+		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
 			closeDialog();
 			Events.postEvent("onClick$button_CollateralStructureList_NewCollateralStructure",
 					collateralStructureListCtrl.window_CollateralStructureList, this.collateralStructure);
@@ -1195,15 +1192,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				+ "\n\n --> "
 				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value")
 				+ " : " + collateralStructure.getCollateralType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(collateralStructure.getRecordType())) {
 				collateralStructure.setVersion(collateralStructure.getVersion() + 1);
 				collateralStructure.setRecordType(PennantConstants.RECORD_TYPE_DEL);

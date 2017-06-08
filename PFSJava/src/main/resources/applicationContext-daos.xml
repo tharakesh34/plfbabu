@@ -2591,6 +2591,7 @@
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -4226,6 +4227,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -5994,6 +5996,7 @@
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

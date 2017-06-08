@@ -16,7 +16,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import com.pennant.Interface.service.HostStatusEnquiryService;
 import com.pennant.coreinterface.model.HostEnquiry;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class HostStatusUtil extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = -9200852008893081678L;
@@ -55,7 +55,7 @@ public class HostStatusUtil extends QuartzJobBean implements StatefulJob, Serial
 								.getCurBusDate()));
 						statusDetail.nextBusinessDate = DateUtility.convertDateFromAS400(new BigDecimal(hostEnquiry
 								.getNextBusDate()));
-					} catch (PFFInterfaceException e) {
+					} catch (InterfaceException e) {
 						logger.error("Exception: ", e);
 						statusDetail.hostStatus = "ERR";
 					} catch (Exception e) {

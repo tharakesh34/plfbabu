@@ -64,9 +64,9 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the
@@ -179,7 +179,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * @throws InterruptedException 
 	 * @throws JaxenException 
 	 */
-	public void doWriteBeanToComponents(CustomerLimit customerLimit) throws PFFInterfaceException, InterruptedException, JaxenException {
+	public void doWriteBeanToComponents(CustomerLimit customerLimit) throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
 		
 		this.custCIF.setValue(customerLimit.getCustCIF());
@@ -216,8 +216,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			// during user action.
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -230,7 +229,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * @throws InterruptedException 
 	 * @throws JaxenException 
 	 */
-	public void doFilllistbox(String custMnemonic) throws PFFInterfaceException, InterruptedException, JaxenException {
+	public void doFilllistbox(String custMnemonic) throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
 		
 		com.pennant.coreinterface.model.CustomerLimit limit = new com.pennant.coreinterface.model.CustomerLimit();
@@ -249,9 +248,8 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			if(getCustomerLimit().isRepeatThousands()){
 				formatter = formatter + 3;
 			}
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 
 		if (list != null) {
@@ -341,8 +339,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitCategoryEnquiryList.zul",
 					null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

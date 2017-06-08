@@ -225,9 +225,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 					getNotes("LimitHeader", String.valueOf(getLimitHeader().getHeaderId()), getLimitHeader()
 							.getVersion()), this);
 
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -246,9 +245,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitCustomerReferencesDialog.zul",
 						null, map);
 			}
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -383,9 +381,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			setDialog(DialogType.EMBEDDED);
-		} catch (final Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

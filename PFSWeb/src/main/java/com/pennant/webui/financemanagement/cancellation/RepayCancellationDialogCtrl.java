@@ -60,7 +60,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
@@ -79,13 +78,12 @@ import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 /**
@@ -287,15 +285,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Show a confirm box for Manual Reversals
 			final String msg = Labels.getLabel(
 			"message.Question.Are_you_sure_todo_Manual_Reversal_Postings") + "\n";
-			final String title = Labels.getLabel("message.Deleting.Record");
-			MultiLineMessageBox.doSetTemplate();
-
-			int conf = MultiLineMessageBox.show(msg, title,
-					MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("doDelete: Yes");
-				doSave();
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			doSave();
 			}
 		}else{
 			doSave();
@@ -743,11 +734,8 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("return Value:" + processCompleted);

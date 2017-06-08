@@ -5,24 +5,24 @@ import java.util.List;
 import com.pennant.coreinterface.model.AccountBalance;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface AccountDataProcess {
 
 	
 	
-	int removeAccountHolds() throws PFFInterfaceException;
+	int removeAccountHolds() throws InterfaceException;
 
 	List<AccountBalance> addAccountHolds(List<AccountBalance> accountslIst,
-			String holdType) throws PFFInterfaceException;
+			String holdType) throws InterfaceException;
 
 	InterfaceAccount createAccount(InterfaceAccount accountDetail)
-			throws PFFInterfaceException;
+			throws InterfaceException;
 
 	CollateralMark collateralMarking(CollateralMark collateralMark)
-			throws PFFInterfaceException;
+			throws InterfaceException;
 
 	CollateralMark collateralDeMarking(CollateralMark collateralMark)
-			throws PFFInterfaceException;
+			throws InterfaceException;
 	
 }

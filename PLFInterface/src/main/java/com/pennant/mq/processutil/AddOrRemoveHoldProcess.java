@@ -11,11 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.account.AddOrRemoveHold;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AddOrRemoveHoldProcess extends MQProcess {
 
@@ -31,13 +31,13 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * @param ddsRequest
 	 * @param msgFormat
 	 * @return DDARequestReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public AddOrRemoveHold sendAddOrRemoveHoldReq(AddOrRemoveHold addHold, String msgFormat) throws PFFInterfaceException  {
+	public AddOrRemoveHold sendAddOrRemoveHoldReq(AddOrRemoveHold addHold, String msgFormat) throws InterfaceException  {
 		logger.debug("Entering");
 
 		if (addHold == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"AddHold"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "AddHold Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details 
@@ -53,7 +53,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(addHold, referenceNum, factory, msgFormat);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -70,7 +70,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * @param msgFormat 
 	 * @return
 	 */
-	private AddOrRemoveHold setAddOrRemoveHoldReply(OMElement responseElement,	AHBMQHeader header, String msgFormat) throws PFFInterfaceException {
+	private AddOrRemoveHold setAddOrRemoveHoldReply(OMElement responseElement,	AHBMQHeader header, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -90,7 +90,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			OMElement rootElement = OMAbstractFactory.getOMFactory().createOMElement(new QName("AddOrRemoveHold"));
@@ -101,7 +101,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 			}
 			accHoldReply = new AddOrRemoveHold();
 			accHoldReply = (AddOrRemoveHold) doUnMarshalling(rootElement, accHoldReply);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -119,9 +119,9 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 	 * @param factory
 	 * @param msgFormat 
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private OMElement getRequestElement(AddOrRemoveHold addHold, String referenceNum, OMFactory factory, String msgFormat) throws PFFInterfaceException {
+	private OMElement getRequestElement(AddOrRemoveHold addHold, String referenceNum, OMFactory factory, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = null;

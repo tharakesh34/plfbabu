@@ -72,7 +72,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.common.menu.util.ILabelElement;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * 
@@ -113,11 +112,9 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 			if ((user.getLogonFromTime() != null) && (user.getLogonToTime() != null)) {
 				if ((DateUtility.compareTime(new Date(System.currentTimeMillis()), user.getLogonFromTime(), false) == -1)
 						|| DateUtility.compareTime(new Date(System.currentTimeMillis()), user.getLogonToTime(), false) == 1) {
-					MultiLineMessageBox.show(
-							Labels.getLabel("OPERATIONS_TIME",
-									new String[] { PennantAppUtil.getTime(user.getLogonFromTime()).toString(),
-											PennantAppUtil.getTime(user.getLogonToTime()).toString() }), "",
-							MultiLineMessageBox.OK, MultiLineMessageBox.INFORMATION, true);
+					MessageUtil.showMessage(Labels.getLabel("OPERATIONS_TIME",
+							new String[] { PennantAppUtil.getTime(user.getLogonFromTime()).toString(),
+									PennantAppUtil.getTime(user.getLogonToTime()).toString() }));
 				} else {
 					openPage();
 				}
@@ -186,8 +183,7 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 			Executions.createComponents(zulPage, tabpanel, mapParams);
 			tab.setSelected(true);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 

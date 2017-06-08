@@ -1345,6 +1345,4 @@
                        BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode	
 		</createView>
 	</changeSet>
-
-
 </databaseChangeLog>
