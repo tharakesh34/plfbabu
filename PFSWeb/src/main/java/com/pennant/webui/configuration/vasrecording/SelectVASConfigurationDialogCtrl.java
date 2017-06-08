@@ -57,7 +57,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -87,10 +86,9 @@ import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
@@ -287,8 +285,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		VasCustomer vasCustomer = new VasCustomer();
 		if (this.customerRow.isVisible()) {
 			if (!isCustomerExists()) {
-				MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
 				return;
 			}
 			vasRecording.setPrimaryLinkRef(this.custCIF.getValue());

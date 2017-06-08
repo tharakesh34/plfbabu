@@ -80,7 +80,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.South;
@@ -156,7 +155,6 @@ import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -3111,8 +3109,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							this.tabkYCDetails.setSelected(true);
 						}
 
-						MultiLineMessageBox.doSetTemplate();
-						MultiLineMessageBox.show(msg, "Phone Details", MultiLineMessageBox.OK, Messagebox.ERROR, true);
+						MessageUtil.showError(msg);
 
 						return false;
 					}
@@ -3150,8 +3147,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				this.tabkYCDetails.setSelected(true);
 				String msg = Labels.getLabel("CustomerEmail_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerEmail_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			}
 		}
 
@@ -3197,16 +3193,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custTab.setSelected(true);
 			}
 			this.tabkYCDetails.setSelected(true);
-			MultiLineMessageBox.doSetTemplate();
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				String msg = isRetailCustomer ? Labels.getLabel("CustomerResidenceAddress_NoEmpty") : Labels
 						.getLabel("CustomerOfficeAddress_NoEmpty");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			} else {
 				String msg = Labels.getLabel("CustomerResidenceAddress_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(msg);
 			}
 		}
 		logger.debug("Leaving");
@@ -3237,11 +3230,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					custTab.setSelected(true);
 				}
 				this.tabkYCDetails.setSelected(true);
-				MultiLineMessageBox.doSetTemplate();
 
 				String msg = Labels.getLabel("CustomerPhoneNumber_High_Priority");
-				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerAddress_Confirmation"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			MessageUtil.showError(msg);
 
 			}
 			logger.debug("Leaving");
@@ -3360,7 +3351,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			tab.setSelected(true);
 		}
 		this.tabkYCDetails.setSelected(true);
-		MultiLineMessageBox.doSetTemplate();
 		switch (validationNo) {
 		case 1:
 			String field = isRetailCustomer ? Labels.getLabel("label_CustomerDialog_CustDOB.value") : Labels
@@ -3401,8 +3391,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			break;
 		}
 
-		MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerDocuments_Confirmation"), MultiLineMessageBox.OK,
-				Messagebox.ERROR, true);
+		MessageUtil.showError(msg);
 
 	}
 
@@ -3919,11 +3908,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		if (StringUtils.isNotEmpty(this.custBaseCcy.getValue())
 				&& !StringUtils.equals(this.custBaseCcy.getValue(), custBaseCcy_Temp)) {
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(
-					Labels.getLabel("label_CurrencyChange", new String[] { getCurrencyAlertMessage() }),
-					Labels.getLabel("label_CurrencyChange_Confirmation"), MultiLineMessageBox.OK,
-					Messagebox.INFORMATION, true);
+			MessageUtil
+					.showMessage(Labels.getLabel("label_CurrencyChange", new String[] { getCurrencyAlertMessage() }));
 			doSetCurrencyFieldProperties();
 		}
 		custBaseCcy_Temp = this.custBaseCcy.getValue();
@@ -5422,9 +5408,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Labels.getLabel("label_Salaried") });
 			custTab.setSelected(true);
 			this.tabkYCDetails.setSelected(true);
-			MultiLineMessageBox.doSetTemplate();
-			MultiLineMessageBox.show(msg, Labels.getLabel("message.Error"), MultiLineMessageBox.OK, Messagebox.ERROR,
-					true);
+			MessageUtil.showError(msg);
 			return false;
 		}
 		return true;
