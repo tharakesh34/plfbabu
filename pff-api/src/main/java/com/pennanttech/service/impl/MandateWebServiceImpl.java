@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
@@ -418,7 +420,22 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 			return getErrorDetails("90205", valueParm);
 		}
+		
+		if(mandate.getStartDate() != null){
+			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+			if (mandate.getStartDate().before(mandbackDate)
+					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "mandate start date";
+				valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				return getErrorDetails("90318", valueParm);
+			}	
+		}
 		logger.debug("Leaving");
+		
+		
+		
 		return returnStatus;
 	}
 

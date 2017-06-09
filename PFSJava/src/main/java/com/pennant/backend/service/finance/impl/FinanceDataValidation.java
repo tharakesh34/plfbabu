@@ -1443,6 +1443,17 @@ public class FinanceDataValidation {
 					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
+				if(mandate.getStartDate() != null){
+					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+					if (mandate.getStartDate().before(mandbackDate)
+							|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "mandate start date";
+						valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+					}	
+				}
 				boolean isValidBranch = true;
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
 					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
