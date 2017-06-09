@@ -103,6 +103,7 @@ import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -3647,15 +3648,7 @@ public class FinanceDataValidation {
 			}
 
 			isOrigination = true;
-			if (finSchdData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-				if (ImplementationConstants.ALLOW_ADDDBSF) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
+			finEvent = PennantApplicationUtil.getEventCode(finSchdData.getFinanceMain().getFinStartDate());
 		} else {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
 				if(StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())) {

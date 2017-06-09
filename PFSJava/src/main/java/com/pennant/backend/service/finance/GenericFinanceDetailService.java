@@ -1254,13 +1254,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
-		if ("".equals(eventCode)) {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			if (finMain.getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-				}
-			}
+		if (StringUtils.isBlank(eventCode)) {
+			eventCode = PennantApplicationUtil.getEventCode(finMain.getFinStartDate());
 		}
 		
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;

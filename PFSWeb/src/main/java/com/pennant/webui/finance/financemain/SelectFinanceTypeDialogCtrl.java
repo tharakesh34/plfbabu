@@ -997,16 +997,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		Date finStartDate = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		if (finStartDate != null) {
-			String finEvent = "";
-			if (finStartDate.after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
+			String finEvent = PennantApplicationUtil.getEventCode(finStartDate);
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData()
 					.getFinanceType().getProductCategory())) {

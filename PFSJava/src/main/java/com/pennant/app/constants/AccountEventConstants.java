@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  CalculationConstants.java													*                           
+ * FileName    		:  AccountEventConstants.java											*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -47,8 +47,6 @@ public class AccountEventConstants {
 	public AccountEventConstants() {
 		super();
 	}
-
-	public static final boolean	ACCEVENT_ADDDBSF_REQ	= true;
 
 	public static final String	ACCEVENT_ADDDBS			= "ADDDBS";
 	public static final String	ACCEVENT_ADDDBSF		= "ADDDBSF";

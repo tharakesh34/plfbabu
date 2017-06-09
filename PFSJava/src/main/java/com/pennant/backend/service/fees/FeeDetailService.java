@@ -15,9 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
@@ -525,15 +523,7 @@ public class FeeDetailService {
 		boolean isOriginationFee = false;
 		if (StringUtils.isBlank(finEvent)) {
 			isOriginationFee = true;
-			if (financeMain.getFinStartDate().after(DateUtility.getAppDate())) {
-				if (ImplementationConstants.ALLOW_ADDDBSF) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
+			finEvent = PennantApplicationUtil.getEventCode(financeMain.getFinStartDate());
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {

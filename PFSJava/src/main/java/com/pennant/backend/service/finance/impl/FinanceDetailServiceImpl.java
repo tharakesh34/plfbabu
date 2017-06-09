@@ -1162,18 +1162,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		//Finance Accounting Fee Charge Details
-		String eventCode = "";
-		Date curBussDate = DateUtility.getAppDate();
-		if (startDate.after(curBussDate)) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-
+		String eventCode = PennantApplicationUtil.getEventCode(startDate);
 		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode,
 				FinanceConstants.MODULEID_FINTYPE);
 
@@ -1602,17 +1591,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (StringUtils.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				eventCode = AccountEventConstants.ACCEVENT_CMTDISB;
 			} else {
-
-				Date curBussDate = DateUtility.getAppDate();
-				if (financeMain.getFinStartDate().after(curBussDate)) {
-					if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-						eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-					} else {
-						eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-					}
-				} else {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
+				eventCode = PennantApplicationUtil.getEventCode(financeMain.getFinStartDate());
 			}
 		}
 

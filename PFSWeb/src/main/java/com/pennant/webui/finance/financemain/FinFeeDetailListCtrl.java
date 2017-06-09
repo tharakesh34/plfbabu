@@ -81,7 +81,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -379,22 +378,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			appendFinBasicDetails();
 			doCheckEnquiry();
 
-			if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate() != null) {
-				String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				
-				if (StringUtils.isBlank(moduleDefiner)) {
-					if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-						if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-							feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-						} 
-					}
-				} else {
-					feeEvent = eventCode;
-				}
-				
-				financeDetail.getFinScheduleData().setFeeEvent(feeEvent);
-			}
+			String feeEvent = "";
 			
+			if (StringUtils.isBlank(moduleDefiner)) {
+				feeEvent = PennantApplicationUtil.getEventCode(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate());
+			} else {
+				feeEvent = eventCode;
+			}
+
+			financeDetail.getFinScheduleData().setFeeEvent(feeEvent);
 			doWriteBeanToComponents(financeDetail);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1930,13 +1922,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private void doSetFeeChanges(FinScheduleData finScheduleData){
 		logger.debug("Entering");
 		
-		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		
-		if (finScheduleData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} 
-		}
+		String feeEvent = PennantApplicationUtil.getEventCode(finScheduleData.getFinanceMain().getFinStartDate());
 		
 		if(!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)){
 			List<FinTypeFees> finTypeFeesList = getFinanceDetailService().getFinTypeFees(

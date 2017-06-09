@@ -2318,7 +2318,7 @@ public class PennantStaticListUtil {
 	public static List<AccountEngineEvent> getOriginationAccountingEvents() {
 		if (accountingEventsOrg == null) {
 			accountingEventsOrg = new ArrayList<AccountEngineEvent>();
-			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSF, Labels.getLabel("label_AccountingEvent_ADDDBSF"),AccountEventConstants.ACCEVENT_ADDDBSF_REQ));
+			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSF, Labels.getLabel("label_AccountingEvent_ADDDBSF"), ImplementationConstants.ALLOW_ADDDBSF));
 			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSN, Labels.getLabel("label_AccountingEvent_ADDDBSN"),true));
 			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSP, Labels.getLabel("label_AccountingEvent_ADDDBSP"),true));
 		}

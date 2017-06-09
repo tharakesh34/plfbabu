@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -11,7 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zkplus.spring.SpringUtil;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -599,5 +602,18 @@ public class PennantApplicationUtil {
 		
 		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : ""; 
  	}
+	
+	public static String getEventCode(Date date) {
+		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+
+		if (date.after(DateUtility.getAppDate())) {
+			if (ImplementationConstants.ALLOW_ADDDBSF) {
+				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+			}
+		}
+
+		return feeEvent;
+	}
+	
 	
  }
