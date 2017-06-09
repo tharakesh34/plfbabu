@@ -15,4 +15,11 @@
 		</addColumn>
 	</changeSet>
  	
+ 	
+ 		<changeSet id="02" author="Durgaprasad g">
+	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="FAVOURNUMBER" newDataType="varchar(100)"/>
+	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="PAYABLELOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="PRINTINGLOC" newDataType="varchar(50)"/>
+	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="ACCTHOLDERNAME" newDataType="varchar(200)"/>
+	</changeSet>
 </databaseChangeLog>
