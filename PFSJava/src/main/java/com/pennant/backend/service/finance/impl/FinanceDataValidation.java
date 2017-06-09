@@ -208,11 +208,11 @@ public class FinanceDataValidation {
 		}
 		
 		// Vas Fee validations
-/*		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
+		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
-		}*/
+		}
 		
 		// Fee validations
 		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall, "");
@@ -1805,19 +1805,6 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 					}
-					/*if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
-							&& StringUtils.isBlank(advPayment.getPhoneAreaCode())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "phoneAreaCode";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
-					}
-
-					if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
-							&& StringUtils.isBlank(advPayment.getPhoneNumber())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "phoneNumber";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
-					}*/
 				}
 			}
 		}
@@ -3651,7 +3638,7 @@ public class FinanceDataValidation {
 
 			isOrigination = true;
 			if (finSchdData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+				if (ImplementationConstants.ALLOW_ADDDBSF) {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
 				} else {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;

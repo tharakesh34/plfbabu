@@ -83,7 +83,6 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -124,7 +123,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private PartnerBankDAO				partnerBankDAO;
 	private ManualPaymentService		manualPaymentService;
 	private RepayCalculator				repayCalculator;
-	private FinFeeDetailService			finFeeDetailService;
 	private FinanceProfitDetailDAO		profitDetailsDAO;
 
 	/**
@@ -1734,13 +1732,14 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
 		
-		List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
-		financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
+		//List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
+		//financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
 		
 		if (financeDetail != null) {
 			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 						feeDetail.setOriginationFee(true);
+						feeDetail.setRcdVisible(false);
 				}
 			}
 			financeDetail.setAccountingEventCode(eventCode);
@@ -1911,10 +1910,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
 	}
 	
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {

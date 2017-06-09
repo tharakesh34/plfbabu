@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -135,6 +136,19 @@ public class FeeDetailService {
 		calculateFeePercentageAmount(finScheduleData);
 		
 		validateFeeConfig(getFinFeeDetailList(), finScheduleData);
+		
+		// add vas recording fees into actual list
+		if(finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
+			List<FinFeeDetail> vasFees = new ArrayList<FinFeeDetail>();
+			for(FinFeeDetail detail:finScheduleData.getFinFeeDetailList()) {
+				if(StringUtils.equals(detail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					detail.setRemainingFee(detail.getActualAmount().subtract(detail.getPaidAmount())
+							.subtract(detail.getWaivedAmount()));
+					vasFees.add(detail);
+				}
+			}
+			finFeeDetailList.addAll(vasFees);
+		}
 
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
@@ -169,7 +183,6 @@ public class FeeDetailService {
 				}
 			}
 		}
-		//finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
 
 		// Insurance Amounts calculation
 		List<FinInsurances> insurances = financeDetail.getFinScheduleData().getFinInsuranceList();
@@ -513,7 +526,7 @@ public class FeeDetailService {
 		if (StringUtils.isBlank(finEvent)) {
 			isOriginationFee = true;
 			if (financeMain.getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+				if (ImplementationConstants.ALLOW_ADDDBSF) {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
 				} else {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
@@ -532,7 +545,14 @@ public class FeeDetailService {
 		}
 		if(isOriginationFee) {
 			for(FinFeeDetail finFeeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				if(!StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if(StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					finFeeDetail.setNewRecord(true);
+					finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+					finFeeDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+					finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					finFeeDetail.setOriginationFee(true);
+				} else {
 					finFeeDetail.setFinEvent(finEvent);
 				}
 			}

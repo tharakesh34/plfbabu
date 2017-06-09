@@ -94,10 +94,10 @@ public class SummaryDetailService {
 			summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
 
 			// set Finance closing status
-			if (StringUtils.isBlank(finPftDetail.getClosingStatus())) {
+			if (StringUtils.isBlank(financeMain.getClosingStatus())) {
 				summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
 			} else {
-				summary.setFinStatus(finPftDetail.getClosingStatus());
+				summary.setFinStatus(financeMain.getClosingStatus());
 			}
 
 
