@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
@@ -59,7 +60,7 @@ public class MandateController {
 		mandate.setNewRecord(true);
 		mandate.setActive(true);
 		mandate.setVersion(1);
-		
+		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 		//get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
@@ -136,7 +137,7 @@ public class MandateController {
 		mandate.setNewRecord(false);
 		mandate.setVersion(prvMandate.getVersion() + 1);
 		mandate.setActive(true);
-		
+		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 		// copy properties
 		BeanUtils.copyProperties(mandate,prvMandate);
 		

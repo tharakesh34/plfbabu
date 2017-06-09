@@ -1675,6 +1675,18 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));
 					return errorDetails;
 				}
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if(financeMain != null){
+				if (advPayment.getLlDate().before(financeMain.getFinStartDate())
+						|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "disbursement Date";
+					valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
+					valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+					return errorDetails;
+				}
+				}
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
 
@@ -1802,19 +1814,6 @@ public class FinanceDataValidation {
 						if (!(advPayment.getPhoneNumber().matches("\\d{10}"))) {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
 						}
-					}
-
-					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-					if(financeMain != null){
-					if (advPayment.getLlDate().before(financeMain.getFinStartDate())
-							|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "disbursement Date";
-						valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
-						valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-						return errorDetails;
-					}
 					}
 				}
 			}

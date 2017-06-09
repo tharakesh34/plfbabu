@@ -26,6 +26,7 @@ import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
@@ -422,6 +423,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			financeDetail.getMandate().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
+			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 			financeDetail.getMandate().setVersion(1);
 			
 			// mandate details
