@@ -79,6 +79,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -168,6 +169,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected void doAddFilters() {
 		super.doAddFilters();
 
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("LLDATE", DateUtility.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+		this.searchObject.addFilters(filter);
+
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
@@ -179,7 +184,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
 			this.searchObject.addFilters(filters);
-
 		}
 	}
 
