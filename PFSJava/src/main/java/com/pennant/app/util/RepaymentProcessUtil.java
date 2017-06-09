@@ -523,6 +523,12 @@ public class RepaymentProcessUtil {
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 			}
+			
+			// Manual Advise Postings
+			List<ManualAdviseMovements> movements = receiptDetail.getAdvMovements();
+			if(movements != null && !movements.isEmpty()){
+				procManualAdvPostings(receiptDetail, financeMain, movements, receiptHeader.getPostBranch());
+			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			receiptDetailList.get(i).setLogKey(logKey);
@@ -532,20 +538,112 @@ public class RepaymentProcessUtil {
 
 	}
 	
+	/**
+	 * Method for Processing Manual Advise Postings
+	 * @param receiptDetail
+	 * @param financeMain
+	 * @param movements
+	 * @param postBranch
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws InterfaceException 
+	 */
+	private void procManualAdvPostings(FinReceiptDetail receiptDetail, FinanceMain financeMain,
+			List<ManualAdviseMovements> movements, String postBranch) throws InterfaceException, IllegalAccessException, InvocationTargetException{
+		logger.debug("Entering");
+
+		// Summing Same Type of Fee Types to Single Field
+		HashMap<String, BigDecimal> movementMap = new HashMap<>(); 
+		for (int m = 0; m < movements.size(); m++) {
+			ManualAdviseMovements movement = movements.get(m);
+			
+			BigDecimal amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
+				amount = movementMap.get(movement.getFeeTypeCode() + "_P");
+			}
+			movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
+			
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
+				amount = movementMap.get(movement.getFeeTypeCode() + "_W");
+			}
+			movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
+			
+			String payType = "";
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+				payType = "EX_";
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+				payType = "EA_";
+			}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+				payType = "PA_";
+			}else{
+				payType = "PB_";
+			}
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(payType+movement.getFeeTypeCode() + "_P")){
+				amount = movementMap.get(payType+movement.getFeeTypeCode() + "_P");
+			}
+			movementMap.put(payType+movement.getFeeTypeCode() + "_P",  amount.add(movement.getPaidAmount()));
+		}
+
+		// Accounting Postings Process Execution
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if(amountCodes == null){
+			amountCodes = new AEAmountCodes();
+		}
+		
+		aeEvent.setCustID(financeMain.getCustID());
+		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinType(financeMain.getFinType());
+		aeEvent.setPromotion(financeMain.getPromotionCode());
+		aeEvent.setBranch(financeMain.getFinBranch());
+		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setPostingUserBranch(postBranch);
+		aeEvent.setLinkedTranId(0);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		
+		aeEvent.getAcSetIDList().clear();
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
+					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+		} else {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), 
+					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+		}
+		
+		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+		dataMap.putAll(movementMap);
+		aeEvent.setDataMap(dataMap);
+
+		// Accounting Entry Execution
+		getPostingsPreparationUtil().postAccounting(aeEvent);
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Preparation of Fees Data in Receipts
+	 * @param amountCodes
+	 * @param dataMap
+	 * @param finFeeDetailList
+	 * @return
+	 */
 	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList) {
 		logger.debug("Entering");
 
 		if (finFeeDetailList != null) {
-
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				if(!finFeeDetail.isRcdVisible()){
 					continue;
 				}
-
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
-
 			}
 		}
 

@@ -422,6 +422,9 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		StringBuilder selectSql = new StringBuilder(" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
 		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID ");
+		if(StringUtils.contains(type, "View")){
+			selectSql.append(" , FeeTypeCode ");
+		}
 		selectSql.append(" From ManualAdviseMovements");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");

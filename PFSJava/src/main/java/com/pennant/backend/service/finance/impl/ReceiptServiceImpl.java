@@ -259,7 +259,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 					
 					// Manual Advise Movements
-					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix()));
+					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), "_TView"));
 					
 					// Excess Reserve Amounts
 					excessReserves.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
