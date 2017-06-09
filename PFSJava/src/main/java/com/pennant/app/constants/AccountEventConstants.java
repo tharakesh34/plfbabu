@@ -111,5 +111,6 @@ public class AccountEventConstants {
 	public static final String	ACCEVENT_HOLDEMI		= "HLDEMI";
 	public static final String	ACCEVENT_FEEPAY			= "FEEPAY";
 	public static final String	ACCEVENT_MANFEE			= "MANFEE";
+	public static final String	ACCEVENT_PAYMTINS		= "PAYMTINS";
 
 }

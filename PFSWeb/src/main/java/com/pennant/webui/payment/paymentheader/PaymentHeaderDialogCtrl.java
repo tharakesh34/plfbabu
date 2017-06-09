@@ -59,6 +59,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Decimalbox;
@@ -74,6 +75,8 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
@@ -85,7 +88,12 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentInstruction;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.backend.service.rmtmasters.AccountingSetService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -94,6 +102,7 @@ import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.Literal;
@@ -143,7 +152,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private transient DisbursementInstructionsDialogCtrl disbursementInstructionsDialogCtrl;
 	private int ccyFormatter = 0;
 	private List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
-
+	protected String selectMethodName	= "onSelectTab";
+	private AccountingSetService accountingSetService;
+	private transient AccountingDetailDialogCtrl	accountingDetailDialogCtrl;
+	private AccountEngineExecution	engineExecution;
+	private boolean isAccountingExecuted	= false;
+	private long accountsetId;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -378,8 +393,29 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		this.recordStatus.setValue(aPaymentHeader.getRecordStatus());
+		
+		// Accounting Details Tab Addition
+		appendAccountingDetailTab(aPaymentHeader,true);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	public void onSelectTab(ForwardEvent event) throws Exception {
+		Tab tab = (Tab) event.getOrigin().getTarget();
+		logger.debug(tab.getId() + " --> " + "Entering");
+		String module = getIDbyTab(tab.getId());
+		doClearMessage();
+
+		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
+			doWriteComponentsToBean(paymentHeader);
+			appendAccountingDetailTab(this.paymentHeader, false);
+		}
+
+	}
+	
+	private String getIDbyTab(String tabID) {
+		return tabID.replace("TAB", "");
 	}
 
 	/**
@@ -405,6 +441,101 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					tabDisbInstructionsTabPanel, map);
 		} catch (Exception e) {
 			logger.error(e);
+		}
+	}
+	
+	
+	/**
+	 * Method for Rendering Schedule Details Data in finance
+	 */
+	protected void appendAccountingDetailTab(PaymentHeader aPaymentHeader, boolean onLoadProcess) {
+		logger.debug("Entering");
+
+		PaymentInstruction paymentInstruction = aPaymentHeader.getPaymentInstruction();
+		if (paymentInstruction == null) {
+			paymentInstruction = new PaymentInstruction();
+		}
+
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
+			createTab = true;
+		}
+
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		}
+		
+		Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		if(tabpanel!=null){
+			tabpanel.setHeight(getListBoxHeight(7));
+			
+		}
+		if (!onLoadProcess) {
+			accountsetId=accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_PAYMTINS,
+					AccountEventConstants.ACCEVENT_PAYMTINS);
+			final HashMap<String, Object> map = new HashMap<>();
+				map.put("paymentInstruction", paymentInstruction);
+				map.put("acSetID", accountsetId);
+				map.put("enqModule", true);
+				map.put("dialogCtrl", this);
+				map.put("isNotFinanceProcess", true);
+				map.put("postAccReq", false);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul", getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
+			if (tab != null) {
+				tab.setVisible(true);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+	
+	
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+	
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug("Leaving");
+	}
+	
+	private void clearTabpanelChildren(String id) {
+		Tabpanel tabpanel = getTabpanel(id);
+		if (tabpanel != null) {
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.getChildren().clear();
 		}
 	}
 
@@ -658,6 +789,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		boolean isNew = false;
 
 		doSetValidation();
+		boolean validate = false;
+		validate = validateAccounting(validate);
+		
+		// Accounting Details Validations
+		if (validate && !isAccountingExecuted) {
+			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+			return;
+		}
 		
 		doWriteComponentsToBean(aPaymentHeader);
 		
@@ -727,6 +866,18 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+	
+	
+	private boolean validateAccounting(boolean validate) {
+		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
+				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+				|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			validate = false;
+		} else {
+			validate = true;
+		}
+		return validate;
 	}
 
 	/**
@@ -1133,6 +1284,68 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	
+	/**
+	 * Method for Executing Accountng Details
+	 * 
+	 * @throws Exception
+	 */
+	public void executeAccounting() throws Exception {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		amountCodes.setFinType(financeMain.getFinType());
+		aeEvent.setBranch(financeMain.getFinBranch());
+		aeEvent.setCustID(financeMain.getCustID());
+
+		/*
+		 * amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
+		 * amountCodes.setPartnerBankAcType(getFeePostings().getPartnerBankAcType());
+		 */
+
+		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+		paymentHeader.getPaymentInstruction().getDeclaredFieldValues(aeEvent.getDataMap());
+
+		BigDecimal paybleAdviseAmt = BigDecimal.ZERO;
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		BigDecimal emiInAdavance = BigDecimal.ZERO;
+
+		for (PaymentDetail paymentDetail : getPaymentDetailList()) {
+			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+				paybleAdviseAmt = paybleAdviseAmt.add(paymentDetail.getAmount());
+			} else if ("E".equals(paymentDetail.getAmountType())) {
+				excessAmount = excessAmount.add(paymentDetail.getAmount());
+			} else if ("A".equals(paymentDetail.getAmountType())) {
+				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
+			}
+		}
+		aeEvent.getDataMap().put("pi_payableAdvice", paybleAdviseAmt);
+		aeEvent.getDataMap().put("pi_excessAmount", excessAmount);
+		aeEvent.getDataMap().put("pi_emiInAdvance", emiInAdavance);
+		aeEvent.getDataMap().put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+		
+		aeEvent.getAcSetIDList().add(accountsetId);
+		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+		accountingSetEntries.addAll(returnSetEntries);
+
+		if (accountingDetailDialogCtrl != null) {
+			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+			isAccountingExecuted = true;
+		}
+
+		logger.debug("Leaving");
+	}
 
 	// Setters and getters
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
@@ -1161,6 +1374,26 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	}
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
+	}
+
+	public void setAccountingSetService(AccountingSetService accountingSetService) {
+		this.accountingSetService = accountingSetService;
+	}
+
+	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
+		return accountingDetailDialogCtrl;
+	}
+
+	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
+		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
+	}
+
+	public AccountEngineExecution getEngineExecution() {
+		return engineExecution;
+	}
+
+	public void setEngineExecution(AccountEngineExecution engineExecution) {
+		this.engineExecution = engineExecution;
 	}
 
 }
