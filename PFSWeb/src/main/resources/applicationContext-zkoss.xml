@@ -4770,6 +4770,8 @@
 	<bean id="paymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.PaymentHeaderDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService"/>
 		<property name="eventManager" ref="eventManager" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
 	</bean>
 
 	<!-- SelectPaymentHeaderDialogCtrl --> 
