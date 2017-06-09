@@ -557,4 +557,16 @@ WHERE     	NOT EXISTS (SELECT 1 FROM ManualAdviseMovements_Temp WHERE MovementID
 	 INSERT INTO ErrorDetails VALUES('90336','EN','E','cif,collateralRef,finReference are mutually exclusive..','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="28" author="Irfan">
+		<dropView viewName="ManualAdviseMovements_View" />
+	</changeSet>
+	<changeSet id="29" author="Irfan">
+	<createView viewName="ManualAdviseMovements_TView" replaceIfExists="true">
+		Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+		 From ManualAdviseMovements_Temp T1 INNER JOIN
+			  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID INNER JOIN
+			  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+	
+	</createView>
+	</changeSet>
 </databaseChangeLog>
