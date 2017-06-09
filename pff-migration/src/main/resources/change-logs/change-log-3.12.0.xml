@@ -546,5 +546,15 @@ WHERE     	NOT EXISTS (SELECT 1 FROM ManualAdviseMovements_Temp WHERE MovementID
 	</createView>
 	
 	</changeSet>
-	
+	<changeSet id="27" author="Srikanth">
+	<sql>
+	 Delete from ErrorDetails Where ErrorCode in('90326','90327','90328','90259','90335','90336');
+	 INSERT INTO ErrorDetails VALUES('90326','EN','E','VAS fees should be provided in the request with feeCode as"{VASProduct}".','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90327','EN','E','VAS fees not applicable for this loan.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90328','EN','E','VAS recording and VAS fees mismatch in the request.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90259','EN','E','Negative values are not allowed for feeCode:{0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90335','EN','E','Request should contain any one of cif/collateralRef/finReference.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90336','EN','E','cif,collateralRef,finReference are mutually exclusive..','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
