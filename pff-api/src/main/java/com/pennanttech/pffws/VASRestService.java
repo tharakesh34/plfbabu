@@ -10,6 +10,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.vas.VASRecordingDetail;
 
 @Produces("application/json")
 public interface VASRestService {
@@ -28,5 +29,9 @@ public interface VASRestService {
 	@POST
 	@Path("/vasService/getRecordVAS")
 	public VASRecording getRecordVAS(VASRecording vasRecording) throws ServiceException;
+	
+	@POST
+	@Path("/vasService/getVASRecordings")
+	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException;
 	
 }

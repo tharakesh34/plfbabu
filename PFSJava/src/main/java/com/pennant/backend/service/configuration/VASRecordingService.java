@@ -43,6 +43,7 @@
 package com.pennant.backend.service.configuration;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -72,5 +73,7 @@ public interface VASRecordingService {
 	AuditDetail doValidations(VASRecording vasRecording);
 
 	VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst);
+
+	List<VASRecording> getVasRecordingsByPrimaryLinkRef(String primaryLinkRef);
 
 }
