@@ -96,6 +96,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ************************************************************<br>
@@ -170,7 +171,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		super.doAddFilters();
 
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("LLDATE", DateUtility.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
 		this.searchObject.addFilters(filter);
 
 		if (fromDate.getValue() != null) {
@@ -379,10 +380,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("alwFileDownload");
 		searchObject.addTabelName(this.tableName);
 
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		searchObject.addFilter(filter[0]);
+
+
+		
 		for (SearchFilterControl searchControl : searchControls) {
-			Filter filter = searchControl.getFilter();
-			if (filter != null) {
-				searchObject.addFilter(filter);
+			Filter filters = searchControl.getFilter();
+			if (filters != null) {
+				searchObject.addFilter(filters);
 			}
 		}
 
