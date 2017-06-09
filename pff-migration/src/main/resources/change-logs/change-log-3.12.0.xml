@@ -438,4 +438,25 @@
 			
 		</createView>
 	</changeSet>
+	<changeSet id="20" author="Siva">
+		<createView viewName="FINODCRECOVERY_VIEW" replaceIfExists="true">
+			 SELECT   T1.FinReference, T1.SchDate FinODSchdDate, T1.SchdFor FinODFor, T3.ValueDate MovementDate, T1.RepaySchID SeqNo, T1.DaysLate ODDays, 
+  (T1.PrincipalSchdBal + T1.ProfitSchdBal) FinCurODAmt, T1.PrincipalSchdBal FinCurODPri, T1.ProfitSchdBal FinCurODPft, 
+                      T5.ODChargeType PenaltyType, T5.ODChargeCalOn PenaltyCalOn, T5.ODChargeAmtOrPerc PenaltyAmtPerc, T1.PenaltyAmt Penalty, 
+                      T1.MaxWaiver, T1.WaivedAmt, T1.PenaltyPayNow PenaltyPaid,(T1.PenaltyAmt -T1.PenaltyPayNow - T1.WaivedAmt)  PenaltyBal, 0 RcdCanDel, 
+                      T4.CustCIF lovDescCustCIF, T4.CustShrtName lovDescCustShrtName
+                      , T2.FinStartDate lovDescFinStartDate, T2.MaturityDate lovDescMaturityDate, T2.FinAmount lovDescFinAmount
+                      , T2.FinAmount-T2.FinRepaymentAmount lovDescCurFinAmt,T2.FinCcy
+					  , FinCurODPri LovDescCurSchPriDue
+					  , FinCurODPft LovDescCurSchPftDue
+					  , T5.TotPenaltyAmt LovDescTotOvrDueChrg
+					  , TotWaived LovDescTotOvrDueChrgWaived
+					  , TotPenaltyPaid LovDescTotOvrDueChrgPaid
+FROM          FinRepayScheduleDetail T1 INNER JOIN
+                       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+                       Customers T4 on T4.CustID=T2.CustID INNER JOIN
+                       FinRepayHeader T3 ON T1.RepayID = T3.RepayID INNER JOIN
+                       FINODDetails T5 ON T1.FinReference = T5.FinReference AND T1.SchDate  = T5.FinODSchdDate			
+		</createView>
+	</changeSet>
 </databaseChangeLog>

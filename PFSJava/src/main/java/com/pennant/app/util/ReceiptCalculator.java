@@ -413,7 +413,7 @@ public class ReceiptCalculator implements Serializable {
 									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0 && balPri.compareTo(totalReceiptAmt) > 0){
 										balPri = totalReceiptAmt;
 									}
-									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri);
+									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, null);
 
 									// Reset Total Receipt Amount
 									totalReceiptAmt = totalReceiptAmt.subtract(balPri);
@@ -454,12 +454,12 @@ public class ReceiptCalculator implements Serializable {
 												}
 											}
 											
-											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft);
+											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft, null);
 											
 											// TDS Payments
 											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
 											if(tdsAdjust.compareTo(BigDecimal.ZERO) > 0){
-												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust);
+												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust, null);
 												
 												if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_TDS)){
 													BigDecimal totTDSPayNow = paidAllocationMap.get(RepayConstants.ALLOCATION_TDS);
@@ -494,7 +494,7 @@ public class ReceiptCalculator implements Serializable {
 												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0 && balLatePft.compareTo(totalReceiptAmt) > 0){
 													balLatePft = totalReceiptAmt;
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft);
+												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft, null);
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
@@ -525,7 +525,7 @@ public class ReceiptCalculator implements Serializable {
 										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0 && balPenalty.compareTo(totalReceiptAmt) > 0){
 											balPenalty = totalReceiptAmt;
 										}
-										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty);
+										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, overdue.getTotPenaltyBal());
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
@@ -535,6 +535,8 @@ public class ReceiptCalculator implements Serializable {
 
 										// Update Schedule to avoid on Next loop Payment
 										overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().subtract(balPenalty));
+										overdueMap.remove(schdDate);
+										overdueMap.put(schdDate, overdue);
 										isSchdPaid = true;
 									}
 								}
@@ -582,7 +584,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0 && balFee.compareTo(totalReceiptAmt) > 0){
 														balFee = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
@@ -636,7 +638,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balIns.compareTo(totalReceiptAmt) > 0){
 														balIns = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
@@ -970,7 +972,8 @@ public class ReceiptCalculator implements Serializable {
 	 * @param balPayNow
 	 * @return
 	 */
-	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo, BigDecimal balPayNow){
+	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo, 
+			BigDecimal balPayNow, BigDecimal actualPenalty){
 		
 		if(rsd == null){
 			rsd = new RepayScheduleDetail();
@@ -1039,6 +1042,7 @@ public class ReceiptCalculator implements Serializable {
 		
 		// Penalty Charge Detail Payment 
 		if(rpyTo == RepayConstants.REPAY_PENALTY){
+			rsd.setPenaltyAmt(actualPenalty);
 			rsd.setPenaltyPayNow(balPayNow);
 		}
 		
