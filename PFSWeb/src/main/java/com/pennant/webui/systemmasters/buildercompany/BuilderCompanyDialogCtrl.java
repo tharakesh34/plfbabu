@@ -568,8 +568,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 			this.btnCancel.setVisible(true);
 			
 		}
-			this.groupId.setButtonDisabled(isReadOnly("BuilderCompanyDialog_groupId"));
-			this.segmentation.setButtonDisabled(isReadOnly("BuilderCompanyDialog_segmentation"));
+			readOnlyComponent(isReadOnly("BuilderCompanyDialog_groupId"), this.groupId);
+			readOnlyComponent(isReadOnly("BuilderCompanyDialog_segmentation"), this.segmentation);
 			
 			if (isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
