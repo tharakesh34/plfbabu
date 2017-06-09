@@ -10,8 +10,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
@@ -23,15 +22,14 @@ import com.pennanttech.pff.core.Literal;
 public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequestProcess.class);
 
-	private List<String> disbursments;
-	
+	private List<String>		disbursments;
+
 	public DisbursemenIMPSRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, false, valueDate);
 	}
 
 	@Override
 	protected void processData() {
-		executionStatus.setRemarks("Loading data..");
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = :STATUS");
@@ -40,40 +38,42 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("ID", disbursments);
 		parmMap.addValue("STATUS", "Approved");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource	map			= null;
 			TransactionStatus		txnStatus	= null;
 
 			@Override
-			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-				while (rs.next()) {
-					executionStatus.setRemarks("processing the record " + ++totalRecords);
-					processedCount++;
-					txnStatus = transManager.getTransaction(transDef);
-					try {
-						map = mapData(rs);
+			public void processRow(ResultSet rs) throws SQLException {
+				long id = rs.getLong("ID");
+				logger.debug("Processing the disbursement " + id);
 
-						updateDisbursement(rs.getLong("DISBURSEMENT_ID"));
+				processedCount++;
+				txnStatus = transManager.getTransaction(transDef);
+				try {
+					map = mapData(rs);
 
-						updateDisbursementRequest(rs.getLong("ID"), batchId);
+					updateDisbursement(rs.getLong("DISBURSEMENT_ID"));
 
-						save(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
+					updateDisbursementRequest(id, batchId);
 
-						successCount++;
+					save(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
 
-						transManager.commit(txnStatus);
+					successCount++;
 
-					} catch (Exception e) {
-						transManager.rollback(txnStatus);
-						failedCount++;
-						saveBatchLog(rs.getString("DISBURSEMENT_ID"), "F", e.getMessage());
-					} finally {
-						map = null;
-						txnStatus.flush();
-						txnStatus = null;
-					}
+					transManager.commit(txnStatus);
+
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					transManager.rollback(txnStatus);
+					failedCount++;
+					logger.debug("Disbursement request: " + map.toString());
+					saveBatchLog(rs.getString("DISBURSEMENT_ID"), "F", e.getMessage());
+				} finally {
+					map = null;
+					txnStatus.flush();
+					txnStatus = null;
 				}
-				return totalRecords;
+
 			}
 		});
 	}
@@ -85,7 +85,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		map.addValue("BCAGENTID", null);
 		map.addValue("SENDERID", null);
 		map.addValue("RECEIVERNAME", rs.getString("BENFICIARY_NAME"));
-		
+
 		map.addValue("RECEIVERMOBILENO", rs.getString("BENFICIARY_MOBILE"));
 		map.addValue("RECEIVEREMAILID", rs.getString("CUSTOMER_EMAIL"));
 		map.addValue("IFSCODE", rs.getString("IFSC_CODE"));
@@ -98,7 +98,17 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		map.addValue("REMARKS", StringUtils.substring(rs.getString("REMARKS"), 0, 9));
 		map.addValue("CHANNELPARTNERREFNO", rs.getString("ID"));
 		map.addValue("PICKUPFLAG", Status.N.name());
-		map.addValue("AGREEMENTID", BigDecimal.ZERO);
+		
+		String appId = null;
+		String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
+		if (finReference != null) {
+			appId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+			appId = StringUtils.trim(appId);
+			map.addValue("AGREEMENTID", Integer.parseInt(appId));
+		} else {
+			map.addValue("AGREEMENTID", BigDecimal.ZERO);
+
+		}
 
 		return map;
 	}

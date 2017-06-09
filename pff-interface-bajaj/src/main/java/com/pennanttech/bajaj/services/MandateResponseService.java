@@ -253,11 +253,12 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		if ("Y".equals(respmandate.getStatus())) {
 			paramMap.addValue("STATUS", "REJECTED");
+			paramMap.addValue("MANDATEREF", null);
 		} else {
 			paramMap.addValue("STATUS", "APPROVED");
+			paramMap.addValue("MANDATEREF", respmandate.getMandateRef());
 		}
-
-		paramMap.addValue("MANDATEREF", respmandate.getMandateRef());
+		
 		paramMap.addValue("REASON", respmandate.getReason());
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
