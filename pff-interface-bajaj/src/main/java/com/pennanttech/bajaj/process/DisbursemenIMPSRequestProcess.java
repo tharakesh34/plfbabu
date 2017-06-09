@@ -25,7 +25,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 	private List<String>		disbursments;
 
 	public DisbursemenIMPSRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, false, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap = new MapSqlParameterSource();
 
 		parmMap.addValue("ID", disbursments);
-		parmMap.addValue("STATUS", "Approved");
+		parmMap.addValue("STATUS", "APPROVED");
 
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource	map			= null;
