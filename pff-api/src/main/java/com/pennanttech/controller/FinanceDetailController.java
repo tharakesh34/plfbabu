@@ -383,6 +383,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 		if(financeMain != null) {
 			finScheduleData.setFinReference(financeMain.getFinReference());
+			finScheduleData.setFinReference(financeMain.getFinReference());
 			finScheduleData.setFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 			finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
 			finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
@@ -390,6 +391,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			//summary
 			FinanceDetail response = new FinanceDetail();
 			//used for AEAMOUNTS class 
+			response.setFinReference(financeMain.getFinReference());
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);;
 			response.getFinScheduleData().setFinanceMain(financeMain);
 			response.getFinScheduleData().setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());

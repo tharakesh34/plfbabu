@@ -593,6 +593,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinanceDetail response = new FinanceDetail();
 		FinScheduleData finScheduleData = new FinScheduleData();
 		
+		response.setFinReference(financeMain.getFinReference());
 		finScheduleData.setFinanceMain(financeMain);
 		finScheduleData.setFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
