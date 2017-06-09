@@ -167,8 +167,6 @@ public class RateReviewService extends ServiceHelper {
 		if (StringUtils.isEmpty(finEODEvent.getRecalType())) {
 			finEODEvent.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		}
-		
-		
 
 		if (!StringUtils.equals(finEODEvent.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
 			finEODEvent.setRecalFromDate(findRecalFromDate(finEODEvent, iEvtFrom));

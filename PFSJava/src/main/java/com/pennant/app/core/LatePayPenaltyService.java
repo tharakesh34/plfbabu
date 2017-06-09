@@ -132,7 +132,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		return fod;
 	}
 
-	public void prepareDueDateData(FinODDetails fod, Date valueDate, String idb) throws Exception {
+	private void prepareDueDateData(FinODDetails fod, Date valueDate, String idb) throws Exception {
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
