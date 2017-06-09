@@ -47,6 +47,9 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(String id,boolean isWIF,String type);
@@ -55,4 +58,13 @@ public interface FinFeeDetailService {
 	List<AuditDetail> doApprove(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
 	List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
 	List<AuditDetail> validate(List<FinFeeDetail> finFeeDetails, long workflowId, String method, String auditTranType, String  usrLanguage,boolean isWIF);
+	List<FinReceiptDetail> getFinReceiptDetais(String finReference);
+	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
+	List<AuditDetail> validateFinFeeReceipts(FinanceDetail financeDetail, long workflowId, String method,
+			String auditTranType, String usrLanguage, List<AuditDetail> auditDetails);
+	List<AuditDetail> saveOrUpdateFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
+			String auditTranType);
+	List<AuditDetail>  doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType);
+	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
+			String auditTranType);
 }

@@ -47,6 +47,7 @@ public class FinReceiptDetail implements Entity {
 	private boolean						delRecord		= false;
 	private String						partnerBankAc;
 	private String						partnerBankAcType;
+	private String						reference;					// only for Fees
 	private String						feeTypeDesc;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
@@ -319,6 +320,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 	public String getFeeTypeDesc() {

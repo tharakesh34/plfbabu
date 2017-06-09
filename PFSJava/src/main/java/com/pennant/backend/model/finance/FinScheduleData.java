@@ -170,6 +170,9 @@ public class FinScheduleData {
 	
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	
+	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<FinReceiptDetail>();
+	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
 
 	public FinScheduleData() {
 		super();
@@ -739,5 +742,21 @@ public class FinScheduleData {
 
 	public void setTdPftAccured(BigDecimal tdPftAccured) {
 		this.tdPftAccured = tdPftAccured;
+	}
+
+	public List<FinReceiptDetail> getFinReceiptDetails() {
+		return finReceiptDetails;
+	}
+
+	public void setFinReceiptDetails(List<FinReceiptDetail> finReceiptDetails) {
+		this.finReceiptDetails = finReceiptDetails;
+	}
+
+	public List<FinFeeReceipt> getFinFeeReceipts() {
+		return finFeeReceipts;
+	}
+
+	public void setFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts) {
+		this.finFeeReceipts = finFeeReceipts;
 	}
 }

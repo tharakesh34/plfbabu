@@ -2626,7 +2626,10 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-
+	<bean id="finFeeReceiptDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinFeeReceiptDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 	<!--============ Covenant Type Details ============== -->
 
 	<bean id="finCovenantTypeListCtrl"

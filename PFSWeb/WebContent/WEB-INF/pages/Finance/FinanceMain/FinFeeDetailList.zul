@@ -60,6 +60,8 @@
 									id="listheader_FeeDetailList_Terms"
 									label="${c:l('listheader_FeeDetailList_Terms.label')}"
 									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_Adjust" sort="false" />
 							</listhead>
 						</listbox>
 					</groupbox>
@@ -201,6 +203,41 @@
 									id="listheader_FeeDetailList_ValueDate"
 									label="${c:l('listheader_FeeDetailList_ValueDate.label')}"
 									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_FinFeeReceipts" style="border:none;">
+						<caption label="${c:l('gp_ReceiptFeesDetails')}">
+						</caption>
+						<listbox id="listBoxFinFeeReceipts"
+							fixedLayout="false" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" 
+							multiple="false" ca:data-scrollable="true" sizedByContent="true">
+							<listhead sizable="false">
+								<listheader
+									id="listheader_FeeDetailList_ReceiptType"
+									label="${c:l('listheader_FeeDetailList_ReceiptType.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_Reference"
+									label="${c:l('listheader_FeeDetailList_Reference.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_ReceiptFeeType"
+									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+									sort="false"  />
+								<listheader
+									id="listheader_FeeDetailList_ReceiptAmount"
+									label="${c:l('listheader_FeeDetailList_ReceiptAmount.label')}"
+									sort="false"/>
+								<listheader
+									id="listheader_FeeDetailList_ReceiptPaidAmount"
+									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
+									sort="false" />
+								<listheader
+									id="listheader_FeeDetailList_Balance"
+									label="${c:l('listheader_FeeDetailList_Balance.label')}"
+									sort="false" visible="false"/>	
 							</listhead>
 						</listbox>
 					</groupbox>

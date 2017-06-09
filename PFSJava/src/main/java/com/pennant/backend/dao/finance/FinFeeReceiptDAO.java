@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinFeeDetailDAO.java                                                   * 	  
+ * FileName    		:  FinFeeReceiptDAO.java                                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  14-08-2013    														*
+ * Creation Date    :  1-06-2017    														*
  *                                                                  						*
- * Modified Date    :  14-08-2013    														*
+ * Modified Date    :  1-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
+ * 1-06-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -43,28 +43,14 @@
 package com.pennant.backend.dao.finance;
 import java.util.List;
 
-import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinReceiptDetail;
-import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 
 
-public interface FinFeeDetailDAO {
+public interface FinFeeReceiptDAO {
 
-	FinFeeDetail getFinFeeDetail();
-	FinFeeDetail getNewFinFeeDetail();
-	FinFeeDetail getFinFeeDetailById(FinFeeDetail finFeeDetail, boolean isWIF, String type);
-	void update(FinFeeDetail finFeeDetailDAO,boolean isWIF,String type);
-	void delete(FinFeeDetail finFeeDetailDAO,boolean isWIF,String type);
-	long save(FinFeeDetail finFeeDetailDAO,boolean isWIF,String type);
-	void refresh(FinFeeDetail entity);
-	List<FinFeeDetail> getFinFeeDetailByFinRef(String id,boolean isWIF, String type);
-	void deleteByFinRef(String finReference,boolean isWIF, String tableType);
-	int getFeeSeq(FinFeeDetail finFeeDetail,boolean isWIF,String type);
-    FinanceSummary getTotalFeeCharges(FinanceSummary finSummary);
-	List<FinFeeDetail> getFinScheduleFees(String reference, boolean isWIF, String type);
-	List<FinFeeDetail> getFinFeeDetailByFinRef(String reference, boolean isWIF, String type, String finEvent);
-	List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type);
-	List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference);
-	FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type);
-	void statusUpdate(long feeID, String status, boolean isWIF, String type);
+	FinFeeReceipt getFinFeeReceiptById(FinFeeReceipt finFeeReceipt, String type);
+	void update(FinFeeReceipt finFeeReceipt,String type);
+	void delete(FinFeeReceipt finFeeReceipt,String type);
+	long save(FinFeeReceipt finFeeReceipt,String type);
+	List<FinFeeReceipt> getFinFeeReceiptByFinRef(List<Long> feeIds, String type);
 }

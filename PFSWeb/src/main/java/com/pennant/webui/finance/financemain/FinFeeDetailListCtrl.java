@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +91,9 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -116,31 +119,32 @@ import com.pennant.webui.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul file.
  */
 public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
 	private final static Logger logger = Logger.getLogger(FinFeeDetailListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FeeDetailList;
 
 	protected Button btnNew_NewPaymentDetail;
 	protected Listbox listBoxPaymentDetails;
 	protected Listbox listBoxFeeDetail;
+	protected Listbox listBoxFinFeeReceipts;
 	protected Listbox listBoxInsuranceDetails;
 	protected Button  btnNew_FeeDetailList_FinInsurance;
 	protected Groupbox  gb_InsuranceDetails;
 	protected Groupbox  gb_PaymentDetails;
+	protected Groupbox  gb_FinFeeReceipts;
 	protected Listheader  listheader_FeeDetailList_PaymentRef;
 	
 	protected Listheader  listheader_FeeDetailList_FeeScheduleMethod;
 	protected Listheader  listheader_FeeDetailList_Terms;
+	protected Listheader  listheader_FeeDetailList_Adjust;
 	
 	// For Dynamically calling of this Controller
 	private FinanceDetail financeDetail;
@@ -168,6 +172,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public static final String FEE_UNIQUEID_FEESCHEDULEMETHOD = "FEEMTHD"; 
 	public static final String FEE_UNIQUEID_TERMS = "TERMS"; 
 	public static final String FEE_UNIQUEID_REMAININGFEE = "REMFEE"; 
+	public static final String FEE_UNIQUEID_ADJUST = "ADJUST"; 
 	
 	private FinanceDetailService financeDetailService;
 	private RuleService ruleService;
@@ -180,6 +185,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String	 moduleDefiner = "";
 	private String	eventCode	   = "";
 	private Map<String, FeeRule>			feeRuleDetailsMap		= null;
+	private LinkedHashMap<Long, List<FinFeeReceipt>>	finFeeReceiptMap		= new LinkedHashMap<Long, List<FinFeeReceipt>>();
 
 	/**
 	 * default constructor.<br>
@@ -196,9 +202,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	// Component Events
 	
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinAdvancePayment object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -288,6 +293,32 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		
+		int divHeight = this.borderLayoutHeight - 80;
+		int semiBorderlayoutHeights = divHeight / 2;
+		// this.listBoxFeeDetail.setHeight(this.borderLayoutHeight - (listBoxFeeDetail.getItemCount() * 20) - 185 + "px");
+		this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 + "px");
+		this.listBoxFinFeeReceipts.setHeight(semiBorderlayoutHeights - 85 + "px");
+		this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
+		this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
+		
+		if (isWIF) {
+			this.gb_PaymentDetails.setVisible(false);
+			this.listheader_FeeDetailList_PaymentRef.setVisible(false);
+		} else {
+			this.gb_PaymentDetails.setVisible(false);
+			this.listheader_FeeDetailList_PaymentRef.setVisible(false);
+		}
+		
+		if (parent != null) {
+			this.window_FeeDetailList.setHeight(borderLayoutHeight - 75 + "px");
+			parent.appendChild(this.window_FeeDetailList);
+		}
+
+		if (StringUtils.isNotBlank(this.moduleDefiner)) {
+			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(false);
+			this.listheader_FeeDetailList_Terms.setVisible(false);
+		}
+		
 		logger.debug("Leaving");
 	}
 		
@@ -301,12 +332,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 	
-	
+	/**
+	 * Set Visible for components by checking if there's a right for it.
+	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
+		
 		getUserWorkspace().allocateAuthorities("FinFeeDetailListCtrl",roleCode);
 		this.btnNew_NewPaymentDetail.setVisible(getUserWorkspace().isAllowed("FinFeeDetailListCtrl_NewPaymentDetail"));
 		this.btnNew_FeeDetailList_FinInsurance.setVisible(getUserWorkspace().isAllowed("FinFeeDetailListCtrl_NewFinInsurance"));
+		
 		logger.debug("leaving");
 	}
 
@@ -339,57 +374,34 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void doShowDialog(FinanceDetail financeDetail) throws InterruptedException {
 		logger.debug("Entering");
-	
+
 		try {
 			appendFinBasicDetails();
 			doCheckEnquiry();
+
 			if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate() != null) {
-				String feeEvent = "";
-				if(StringUtils.isBlank(moduleDefiner)){
+				String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+				
+				if (StringUtils.isBlank(moduleDefiner)) {
 					if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
 						if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
 							feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-						} else {
-							feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-						}
-					} else {
-						feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+						} 
 					}
-				}else{
+				} else {
 					feeEvent = eventCode;
 				}
+				
 				financeDetail.getFinScheduleData().setFeeEvent(feeEvent);
 			}
-			doWriteBeanToComponents(financeDetail);
-			int divHeight = this.borderLayoutHeight - 80;
-			int semiBorderlayoutHeights = divHeight / 2;
-			//this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 +"px");
-			this.listBoxFeeDetail.setHeight(this.borderLayoutHeight - (listBoxFeeDetail.getItemCount() * 20) - 185 + "px");
-			this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 +"px");
-			this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 +"px");
-			if(isWIF){
-				this.gb_PaymentDetails.setVisible(false);
-				this.listheader_FeeDetailList_PaymentRef.setVisible(false);
-			}else{
-				this.gb_PaymentDetails.setVisible(false);
-				this.listheader_FeeDetailList_PaymentRef.setVisible(false);
-			}
-			if (parent != null) {
-				this.window_FeeDetailList.setHeight(borderLayoutHeight-75+"px");
-				parent.appendChild(this.window_FeeDetailList);
-			}
 			
-			if (StringUtils.isNotBlank(this.moduleDefiner)) {
-				this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(false);
-				this.listheader_FeeDetailList_Terms.setVisible(false);
-			}
-
+			doWriteBeanToComponents(financeDetail);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
-
 	
 	/**
 	 * Writes the bean data to the components.<br>
@@ -399,7 +411,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void doWriteBeanToComponents(FinanceDetail financeDetail) {
 		logger.debug("Entering ");
+
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
+		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
+
 		if (financeDetail.isNewRecord()
 				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
@@ -423,15 +438,155 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		} else {
 			doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 		}
-		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
+
+		// Fee Receipts
+		long receiptid = 0;
+		boolean receiptFound = false;
+		BigDecimal receiptAmount = BigDecimal.ZERO;
+		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
+		List<FinFeeReceipt> prevFeeReceipts = financeDetail.getFinScheduleData().getFinFeeReceipts();
+
+		for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
+			String reference = "";
+			BigDecimal receiptAvlAmount = BigDecimal.ZERO;
+			BigDecimal receiptPaidAmount = BigDecimal.ZERO;
+			receiptid = finReceiptDetail.getReceiptID();
+			receiptAmount = finReceiptDetail.getAmount();
+			List<FinFeeReceipt> currentFeeReceipts = new ArrayList<FinFeeReceipt>();
+			
+			if(StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
+				reference = finReceiptDetail.getTransactionRef();
+			} else if(StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
+				reference = finReceiptDetail.getFavourNumber();
+			}
+
+			if (prevFeeReceipts.isEmpty()) {
+				receiptAvlAmount = finReceiptDetail.getAmount();
+			} else {
+				for (FinFeeReceipt finFeeReceipt : prevFeeReceipts) {
+					if (receiptid == finFeeReceipt.getReceiptID()) {
+						if (!finFeeReceipt.isNewRecord()) {
+							FinFeeReceipt befImage = new FinFeeReceipt();
+							BeanUtils.copyProperties(finFeeReceipt, befImage);
+							finFeeReceipt.setBefImage(befImage);
+						}
+
+						receiptPaidAmount = receiptPaidAmount.add(finFeeReceipt.getPaidAmount());
+						receiptAvlAmount = receiptAmount.subtract(receiptPaidAmount);
+						finFeeReceipt.setReceiptReference(reference);
+						finFeeReceipt.setAvailableAmount(receiptAvlAmount);
+						receiptFound = true;
+						currentFeeReceipts.add(finFeeReceipt);
+					}
+				}
+			}
+
+			if (receiptFound) {
+				receiptFound = false;
+			} else {
+				FinFeeReceipt finFeeReceipt = new FinFeeReceipt();
+				finFeeReceipt.setNewRecord(true);
+				finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
+				finFeeReceipt.setReceiptReference(reference);
+				finFeeReceipt.setReceiptType(finReceiptDetail.getPaymentType());
+				finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
+				finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
+				finFeeReceipt.setReceiptID(receiptid);
+				finFeeReceipt.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
+				finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
+				currentFeeReceipts.add(finFeeReceipt);
+			}
+
+			this.finFeeReceiptMap.put(receiptid, currentFeeReceipts);
+		}
+
+		doFillFinFeeReceipts(this.finFeeReceiptMap);
+
 		logger.debug("Leaving ");
 	}
 	
 	
-	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> finTypeFeesList){
+	public void doFillFinFeeReceipts(LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap) {
+		logger.debug("Entering");
+
+		if (finFeeReceiptMap.size() > 0) {
+			this.gb_FinFeeReceipts.setVisible(true);
+		} else {
+			this.gb_FinFeeReceipts.setVisible(false);
+		}
+
+		this.listBoxFinFeeReceipts.getItems().clear();
+		this.finFeeReceiptMap = finFeeReceiptMap;
+		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
+		List<FinFeeReceipt> finFeeReceipts;
+
+		for (Long key : finFeeReceiptMap.keySet()) {
+			finFeeReceipts = finFeeReceiptMap.get(key);
+
+			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
+				Listitem item = new Listitem();
+				Listcell lc;
+
+				// Receipt Type
+				lc = new Listcell(finFeeReceipt.getReceiptType());
+				lc.setParent(item);
+
+				// Receipt Reference
+				lc = new Listcell(finFeeReceipt.getReceiptReference());
+				lc.setParent(item);
+
+				// Fee Type
+				lc = new Listcell(finFeeReceipt.getFeeType());
+				lc.setParent(item);
+
+				// Receipt Amount
+				Decimalbox receiptAmountBox = new Decimalbox();
+				receiptAmountBox.setMaxlength(18);
+				receiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+				receiptAmountBox.setDisabled(true);
+				receiptAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getReceiptAmount(), formatter));
+				lc = new Listcell();
+				lc.appendChild(receiptAmountBox);
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// Paid Amount
+				Decimalbox paidAmountBox = new Decimalbox();
+				paidAmountBox.setMaxlength(18);
+				paidAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+				paidAmountBox.setDisabled(true);
+				paidAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getPaidAmount(), formatter));
+				lc = new Listcell();
+				lc.appendChild(paidAmountBox);
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// Remaining Fee
+				Decimalbox remFeeBox = new Decimalbox();
+				remFeeBox.setMaxlength(18);
+				remFeeBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+				remFeeBox.setDisabled(true);
+				remFeeBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getRemainingFee(), formatter));
+				lc = new Listcell();
+				lc.appendChild(remFeeBox);
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				this.listBoxFinFeeReceipts.appendChild(item);
+			}
+		}
+
+		logger.debug("Leaving ");
+	}
+
+	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> finTypeFeesList) {
+		logger.debug("Entering");
+
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
-		if(finTypeFeesList != null && !finTypeFeesList.isEmpty()){
+		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
 			FinFeeDetail finFeeDetail = null;
+			
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);
@@ -442,7 +597,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setFeeOrder(finTypeFee.getFeeOrder());
 				finFeeDetail.setFeeTypeCode(finTypeFee.getFeeTypeCode());
 				finFeeDetail.setFeeTypeDesc(finTypeFee.getFeeTypeDesc());
-				
 				finFeeDetail.setFeeScheduleMethod(finTypeFee.getFeeScheduleMethod());
 				finFeeDetail.setCalculationType(finTypeFee.getCalculationType());
 				finFeeDetail.setRuleCode(finTypeFee.getRuleCode());
@@ -453,24 +607,26 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
 				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
 				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
-				
+
 				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
 				finFeeDetail.setActualAmount(finTypeFee.getAmount());
-				if(StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)){
+				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					finFeeDetail.setPaidAmount(finTypeFee.getAmount());
 				}
-				if(StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)){
+				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 					finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
 				}
-				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
-				
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
+						.subtract(finFeeDetail.getPaidAmount()));
+
 				finFeeDetails.add(finFeeDetail);
 			}
 		}
+
+		logger.debug("Leaving ");
+
 		return finFeeDetails;
 	}
-	
-	
 	
 	private void doCheckEnquiry() {
 		if(isEnquiry){
@@ -510,6 +666,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void onPaymentDetailDoubleClicked(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		
 		Clients.clearWrongValue(this.btnNew_NewPaymentDetail);
 		doClearFeeWrongValueExceptions();
 
@@ -538,11 +695,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void doFillFeePaymentDetails(List<FeePaymentDetail> feePaymentDetails,boolean isDataModify) {
 		logger.debug("Entering");
+		
 		this.listBoxPaymentDetails.getItems().clear();
 		setFeePaymentDetailList(feePaymentDetails);
 		getFinanceDetail().setFeePaymentDetailList(feePaymentDetails);
@@ -564,14 +723,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				this.listBoxPaymentDetails.appendChild(item);
 			}
 		}
+		
 		if(isDataModify){
 			doFillPaymentRefData();
 		}
+		
 		logger.debug("Leaving");
 	}
 	
 	public void processFeeDetails(FinScheduleData aFinScheduleData){
 		logger.debug("Entering");
+		
 		if(aFinScheduleData !=null){
 			List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(aFinScheduleData,true);
 			Cloner cloner = new Cloner();
@@ -586,7 +748,51 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 			aFinScheduleData.setFinFeeDetailList(finFeeDetailList);
+			
+			List<FinFeeReceipt> finFeeReceipts = null;
+			for(FinFeeReceipt oldFinFeeReceipt: aFinScheduleData.getFinFeeReceipts()) {
+				finFeeReceipts = this.finFeeReceiptMap.get(oldFinFeeReceipt.getReceiptID());
+				boolean receiptFound = false;
+				for(FinFeeReceipt feeReceipt: finFeeReceipts) {
+					if (oldFinFeeReceipt.getFeeID() == feeReceipt.getFeeID()) {
+						receiptFound = true;
+					}
+				}
+				
+				if(!receiptFound) {
+					oldFinFeeReceipt.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					finFeeReceipts.add(oldFinFeeReceipt);
+				}
+			}
+			
+			finFeeReceipts = new ArrayList<FinFeeReceipt>();
+			for (Long key : this.finFeeReceiptMap.keySet()) {
+				List<FinFeeReceipt> finFeeReceiptsList = this.finFeeReceiptMap.get(key);
+				for (int i = 0; i < finFeeReceiptsList.size(); i++) {
+					FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
+					if ((finFeeReceiptTemp.getFeeTypeId() == 0) && StringUtils.equals(finFeeReceiptTemp.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+						finFeeReceiptsList.add(finFeeReceiptTemp);
+					}
+					if (finFeeReceiptTemp.getFeeTypeId() == 0 || StringUtils.isBlank(finFeeReceiptTemp.getFeeType())) {
+						finFeeReceiptsList.remove(i);
+						i = 0;
+					}
+				}
+				finFeeReceipts.addAll(finFeeReceiptsList);
+			}
+			
+			if(finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
+				for(FinFeeReceipt finFeeReceipt : finFeeReceipts) {
+					finFeeReceipt.setRecordStatus(aFinScheduleData.getFinanceMain().getRecordStatus());
+					finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+					finFeeReceipt.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					finFeeReceipt.setUserDetails(getUserWorkspace().getLoggedInUser());
+				}
+			}
+			
+			aFinScheduleData.setFinFeeReceipts(finFeeReceipts);
 		}
+		
 		logger.debug("Leaving");
 	}
 	
@@ -596,6 +802,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void renderVASFee(FinFeeDetail vasFee){
 		logger.debug("Entering");
+		
 		List<FinFeeDetail> feelist = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), false);
 		if(feelist == null){
 			feelist = new ArrayList<>();
@@ -603,7 +810,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feelist.add(vasFee);
 		doFillFinFeeDetailList(feelist);
 		setFinFeeDetailList(feelist);
-		dataChanged = true;
+		this.dataChanged = true;
+		
 		logger.debug("Leaving");
 	}
 	
@@ -613,10 +821,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void removeVASFee(String vasReferene){
 		logger.debug("Entering");
+		
 		List<FinFeeDetail> feelist = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), false);
 		if(feelist == null){
 			feelist = new ArrayList<>();
 		}
+		
 		for (int i = 0; i < feelist.size(); i++) {
 			
 			FinFeeDetail feeDetail = feelist.get(i);
@@ -628,14 +838,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		doFillFinFeeDetailList(feelist);
 		setFinFeeDetailList(feelist);
-		dataChanged = true;
+		this.dataChanged = true;
+		
 		logger.debug("Leaving");
 	}
 	
 	private List<FinFeeDetail> fetchFeeDetails(FinScheduleData aFinScheduleData, boolean validate) {
 		logger.debug("Entering");
+		
 		doClearFeeWrongValueExceptions();
-
 		Decimalbox calbox;
 		Decimalbox actualBox;
 		Decimalbox paidBox;
@@ -861,13 +1072,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public BigDecimal getFeePaidAmount(int formatter){
 		logger.debug("Entering");
+		
 		Decimalbox actualBox;
 		Decimalbox waivedBox;
-		
 		BigDecimal totalPaidAmt = BigDecimal.ZERO;
+		
 		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
-			
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
 				}
@@ -880,6 +1091,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		logger.debug("Leaving");
+		
 		return totalPaidAmt;
 	}
 	
@@ -927,191 +1139,211 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 			throw new WrongValuesException(wvea);
 		}
+	
 		logger.debug("Leaving");
 	}
 	
 	public void doFillFinFeeDetailList(List<FinFeeDetail> finFeeDetails) {
 		logger.debug("Entering");
-		
+
 		List<ValueLabel> remFeeSchList = PennantStaticListUtil.getRemFeeSchdMethods();
 		this.listBoxFeeDetail.getItems().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int formatter =  CurrencyUtil.getFormat(finMain.getFinCcy());
+		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 		if (finMain.isQuickDisb() && readOnly) {
-			readOnly=isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP"); 
+			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
-			for (FinFeeDetail detail : finFeeDetails) {
-				if(!detail.isRcdVisible()){
+			for (FinFeeDetail finFeeDetail : finFeeDetails) {
+				if (!finFeeDetail.isRcdVisible()) {
 					continue;
 				}
-				if(!detail.isNewRecord()){
+				
+				if (!finFeeDetail.isNewRecord()) {
 					FinFeeDetail befImage = new FinFeeDetail();
-					BeanUtils.copyProperties(detail, befImage);
-					detail.setBefImage(befImage);
+					BeanUtils.copyProperties(finFeeDetail, befImage);
+					finFeeDetail.setBefImage(befImage);
 				}
+
 				Listitem item = new Listitem();
 				Listcell lc;
-				if(StringUtils.isNotEmpty(detail.getVasReference())){
-					lc = new Listcell(detail.getVasReference());
-				}else{
-					lc = new Listcell(detail.getFeeTypeDesc());
+
+				String feeType = finFeeDetail.getFeeTypeDesc();
+				if (StringUtils.isNotEmpty(finFeeDetail.getVasReference())) {
+					feeType = finFeeDetail.getVasReference();
 				}
-				lc.setParent(item);
 				
-				//Calculate Amount
+				//Fee Type
+				lc = new Listcell(feeType);
+				lc.setParent(item);
+
+				// Calculate Amount
 				Decimalbox calBox = new Decimalbox();
 				calBox.setMaxlength(18);
 				calBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				calBox.setDisabled(true);
-				calBox.setId(getComponentId(FEE_UNIQUEID_CALCULATEDAMOUNT, detail));
-				calBox.setValue(PennantAppUtil.formateAmount(detail.getCalculatedAmount(),formatter));
+				calBox.setId(getComponentId(FEE_UNIQUEID_CALCULATEDAMOUNT, finFeeDetail));
+				calBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getCalculatedAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(calBox);
 				lc.setStyle("text-align:right;");
-				lc.setParent(item);		
-				
-				//Actual Amount
+				lc.setParent(item);
+
+				// Actual Amount
 				Decimalbox actualBox = new Decimalbox();
 				actualBox.setMaxlength(18);
 				actualBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				actualBox.setDisabled(readOnly ? true : !detail.isAlwModifyFee());
-				actualBox.setId(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, detail));
-				actualBox.setValue(PennantAppUtil.formateAmount(detail.getActualAmount(),formatter));
+				actualBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
+				actualBox.setId(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
+				actualBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getActualAmount(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(actualBox);
 				lc.setParent(item);
-				
-				//Waived Amount
+
+				// Waived Amount
 				Decimalbox waiverBox = new Decimalbox();
 				waiverBox.setMaxlength(18);
 				waiverBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-				if(detail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0){
+				if (finFeeDetail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
 					waiverBox.setDisabled(readOnly);
-				}else{
+				} else {
 					waiverBox.setDisabled(true);
 				}
-				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, detail));
-				waiverBox.setValue(PennantAppUtil.formateAmount(detail.getWaivedAmount(),formatter));
+				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
+				waiverBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(waiverBox);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				
-				//Paid Amount
+
+				// Paid Amount
 				Decimalbox paidBox = new Decimalbox();
 				paidBox.setMaxlength(18);
 				paidBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				paidBox.setDisabled(readOnly);
-				paidBox.setId(getComponentId(FEE_UNIQUEID_PAIDAMOUNT, detail));
-				paidBox.setValue(PennantAppUtil.formateAmount(detail.getPaidAmount(),formatter));
+				paidBox.setId(getComponentId(FEE_UNIQUEID_PAIDAMOUNT, finFeeDetail));
+				paidBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(paidBox);
 				lc.setStyle("text-align:right;");
-				lc.setParent(item);		
-				
-				//Remaining Fee
+				lc.setParent(item);
+
+				// Remaining Fee
 				Decimalbox remFeeBox = new Decimalbox();
 				remFeeBox.setMaxlength(18);
 				remFeeBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remFeeBox.setDisabled(true);
-				remFeeBox.setId(getComponentId(FEE_UNIQUEID_REMAININGFEE, detail));
-				remFeeBox.setValue(PennantAppUtil.formateAmount(detail.getRemainingFee(),formatter));
+				remFeeBox.setId(getComponentId(FEE_UNIQUEID_REMAININGFEE, finFeeDetail));
+				remFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
 				lc = new Listcell();
 				lc.appendChild(remFeeBox);
 				lc.setStyle("text-align:right;");
-				lc.setParent(item);	
-				
-				//Payment Method
+				lc.setParent(item);
+
+				// Payment Method
 				lc = new Listcell();
 				Combobox payMethCombo = new Combobox();
-				fillPaymentRefComboBox(payMethCombo, detail.getPaymentRef(),this.feePaymentDetailList, "");
+				fillPaymentRefComboBox(payMethCombo, finFeeDetail.getPaymentRef(), this.feePaymentDetailList, "");
 				payMethCombo.setWidth("96%");
-				payMethCombo.setId(getComponentId(FEE_UNIQUEID_PAYMENTMETHOD, detail));
+				payMethCombo.setId(getComponentId(FEE_UNIQUEID_PAYMENTMETHOD, finFeeDetail));
 				payMethCombo.setDisabled(readOnly);
 				lc.appendChild(payMethCombo);
 				lc.setParent(item);
-				
+
 				// Remaining Fee schedule Method
 				lc = new Listcell();
-				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
-				String feeScheduleMethod = detail.getFeeScheduleMethod();
-				if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod) || 
-						StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethod)) {
+				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
+						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+				String feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
+				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)
+						|| StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethod)) {
 					feeScheduleMethod = "";
 				}
 				Combobox feeSchdMethCombo = new Combobox();
 				fillComboBox(feeSchdMethCombo, feeScheduleMethod, remFeeSchList, excludeFields);
 				feeSchdMethCombo.setWidth("96%");
-				feeSchdMethCombo.setId(getComponentId(FEE_UNIQUEID_FEESCHEDULEMETHOD, detail));
+				feeSchdMethCombo.setId(getComponentId(FEE_UNIQUEID_FEESCHEDULEMETHOD, finFeeDetail));
 				boolean feeSchdMthdDisable = true;
-				if (detail.isAlwModifyFeeSchdMthd() && detail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
+				if (finFeeDetail.isAlwModifyFeeSchdMthd() && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
 					feeSchdMthdDisable = readOnly;
-				} 
+				}
 				feeSchdMethCombo.setDisabled(feeSchdMthdDisable);
 				lc.appendChild(feeSchdMethCombo);
 				lc.setParent(item);
-				
-				if (StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+
+				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					paidBox.setValue(BigDecimal.ZERO);
-					//paidBox.setDisabled(true);
-					//waiverBox.setDisabled(true);
 					waiverBox.setValue(actualBox.getValue());
-				} else if (StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					waiverBox.setValue(BigDecimal.ZERO);
-					//waiverBox.setDisabled(true);
-					//paidBox.setDisabled(true);
 					paidBox.setValue(actualBox.getValue());
-				} 
-				
+				}
+
 				// Terms
 				Intbox termsBox = new Intbox();
 				termsBox.setMaxlength(5);
-				termsBox.setId(getComponentId(FEE_UNIQUEID_TERMS, detail));
-				termsBox.setValue(detail.getTerms());
+				termsBox.setId(getComponentId(FEE_UNIQUEID_TERMS, finFeeDetail));
+				termsBox.setValue(finFeeDetail.getTerms());
 				boolean termsDisable = false;
-				if(detail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0){
-					if(StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)){
+				if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
+					if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 						termsDisable = readOnly;
-					}else{
+					} else {
 						termsDisable = true;
 					}
-				}else{
+				} else {
 					termsDisable = true;
 				}
-				termsBox.setDisabled(termsDisable); 
+				termsBox.setDisabled(termsDisable);
 				lc = new Listcell();
 				lc.appendChild(termsBox);
 				lc.setParent(item);
-				
-				this.listBoxFeeDetail.appendChild(item);
-				
-				List<Object> amountBoxlist = new ArrayList<Object>(8);
+
+				Button adjust = new Button("Adjust");
+				adjust.setId(getComponentId(FEE_UNIQUEID_ADJUST, finFeeDetail));
+				lc = new Listcell();
+				lc.appendChild(adjust);
+				if ((finFeeDetail.isNew() && finFeeDetail.isOriginationFee()) || (paidBox.getValue().compareTo(BigDecimal.ZERO) == 0)) {
+					readOnlyComponent(true, adjust);
+				} else {
+					readOnlyComponent(isReadOnly("FinFeeDetailListCtrl_Adjust"), adjust);
+				}
+				lc.setParent(item);
+
+				List<Object> amountBoxlist = new ArrayList<Object>(11);
 				amountBoxlist.add(actualBox);
 				amountBoxlist.add(paidBox);
 				amountBoxlist.add(waiverBox);
 				amountBoxlist.add(remFeeBox);
 				amountBoxlist.add(feeSchdMethCombo);
 				amountBoxlist.add(termsBox);
-				amountBoxlist.add(detail);
+				amountBoxlist.add(finFeeDetail);
 				amountBoxlist.add(finMain.isQuickDisb());
-				actualBox.addForward("onChange",window_FeeDetailList,"onChangeActualBox",amountBoxlist);
-				paidBox.addForward("onChange",window_FeeDetailList,"onChangeFeeAmount",amountBoxlist);
-				waiverBox.addForward("onChange",window_FeeDetailList,"onChangeFeeAmount",amountBoxlist);
-				termsBox.addForward("onChange",window_FeeDetailList,"onChangeFeeTerms", null);
-				feeSchdMethCombo.addForward("onChange",window_FeeDetailList,"onChangeFeeScheduleMethod",amountBoxlist);
+				amountBoxlist.add(feeType);
+				amountBoxlist.add(finFeeDetail.getFeeTypeID());
+				amountBoxlist.add(adjust);
+				actualBox.addForward("onChange", window_FeeDetailList, "onChangeActualBox", amountBoxlist);
+				paidBox.addForward("onChange", window_FeeDetailList, "onChangeFeeAmount", amountBoxlist);
+				waiverBox.addForward("onChange", window_FeeDetailList, "onChangeFeeAmount", amountBoxlist);
+				termsBox.addForward("onChange", window_FeeDetailList, "onChangeFeeTerms", null);
+				feeSchdMethCombo.addForward("onChange", window_FeeDetailList, "onChangeFeeScheduleMethod", amountBoxlist);
+				adjust.addForward("onClick", window_FeeDetailList, "onClickAdjust", amountBoxlist);
+
+				this.listBoxFeeDetail.appendChild(item);
 			}
 		}
-		
+
 		// To Reset Totals
-		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts").invoke(getFinanceMainDialogCtrl());
 			} catch (Exception e) {
@@ -1137,6 +1369,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	@SuppressWarnings("unchecked")
 	public void onChangeFeeAmount(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
+		
 		List<Object> list = (List<Object>) event.getData();
 		Decimalbox actualBox = (Decimalbox) list.get(0);
 		Decimalbox paidBox = (Decimalbox) list.get(1);
@@ -1144,8 +1377,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Decimalbox remFeeBox = (Decimalbox) list.get(3);
 		Combobox feeSchdMthdBox = (Combobox) list.get(4);
 		Intbox termsBox = (Intbox) list.get(5);
-		FinFeeDetail detail  = (FinFeeDetail) list.get(6);
+		FinFeeDetail finFeeDetail  = (FinFeeDetail) list.get(6);
 		boolean quickDisb  = (boolean) list.get(7);
+		Button adjustButton = (Button) list.get(10);
 
 		actualBox.setErrorMessage("");
 		paidBox.setErrorMessage("");
@@ -1154,20 +1388,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feeSchdMthdBox.setErrorMessage("");
 		termsBox.setErrorMessage("");
 
-		//String feeSchedule = getComboboxValue(feeSchdMthdBox);
-		
 		remFeeBox.setValue(BigDecimal.valueOf(actualBox.doubleValue())
 				.subtract(BigDecimal.valueOf(waiverBox.doubleValue()))
 				.subtract(BigDecimal.valueOf(paidBox.doubleValue())));
-		// if(!(StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_WAIVED_BY_BANK) ||
-		// StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_PAID_BY_CUSTOMER))) {
-		// if(detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0){
-		// feeSchdMthdBox.setDisabled(true);
-		// feeSchdMthdBox.setSelectedIndex(0);
-		// }else {
-		// feeSchdMthdBox.setDisabled(false);
-		// }
-		// } else {
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 
 		if (quickDisb && readOnly) {
@@ -1175,21 +1398,44 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		boolean feeSchdMthdDisable = false;
-		if (detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
+		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
 		} 
 		
-		// else {
-		// feeSchdMthdDisable = true;
-		// }
-
 		feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
-		// }
+		
+		if (BigDecimal.valueOf(paidBox.doubleValue()).compareTo(BigDecimal.ZERO) == 0) {
+			adjustButton.setDisabled(true);
+			
+			if (!this.finFeeReceiptMap.isEmpty()) {
+				boolean receiptFound = false;
+				for (Long key : this.finFeeReceiptMap.keySet()) {
+					List<FinFeeReceipt> finFeeReceipts = this.finFeeReceiptMap.get(key);
+					for (int i = 0; i < finFeeReceipts.size(); i++) {
+						FinFeeReceipt finFeeReceipt = finFeeReceipts.get(i);
+						if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
+							finFeeReceipts.remove(i);
+							receiptFound = true;
+						}
+					}
+				}
+
+				if (receiptFound) {
+					doFillFinFeeReceipts(this.finFeeReceiptMap);
+				}
+			}
+		} else {
+			if(getFinanceDetail().getFinScheduleData().getFinReceiptDetails().isEmpty()) {
+				adjustButton.setDisabled(true);
+			} else {
+				readOnlyComponent(isReadOnly("FinFeeDetailListCtrl_Adjust"), adjustButton);
+			}
+		}
 		
 		this.dataChanged = true;
-		
+
 		// Can be utilized only on Receipts Process
-		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
 			} catch (Exception e) {
@@ -1207,6 +1453,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	@SuppressWarnings("unchecked")
 	public void onChangeActualBox(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
+		
 		List<Object> list = (List<Object>) event.getData();
 
 		Decimalbox actualBox = (Decimalbox) list.get(0);
@@ -1244,9 +1491,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 				}
 				boolean feeSchdMthdDisable = false;
-				if(detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) > 0){
+				if (detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) > 0) {
 					feeSchdMthdDisable = readOnly;
-				}else{
+				} else {
 					feeSchdMthdDisable = true;
 				}
 
@@ -1257,7 +1504,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		this.dataChanged = true;
 		
 		// Can be utilized only on Receipts Process
-		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
 			} catch (Exception e) {
@@ -1274,7 +1521,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void onChangeFeeTerms(ForwardEvent event){
 		logger.debug("Entering" + event.toString());
+		
 		this.dataChanged = true;
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -1295,9 +1544,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Combobox feeSchdMethodBox = (Combobox) list.get(4);
 		Intbox termBox = (Intbox) list.get(5);
 
- 		//paidBox.setDisabled(false);
-		//waiverBox.setDisabled(false);
- 
 		String feeSchedule = getComboboxValue(feeSchdMethodBox);
 		if (StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 			termBox.setDisabled(false);
@@ -1318,8 +1564,53 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				paidBox.setValue(actualBox.getValue());
 			} 
 		}
+		
 		this.dataChanged = true;
 
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Assigning the Receipts for Fees
+	 * @param event
+	 * @throws InterruptedException 
+	 */
+	@SuppressWarnings("unchecked")
+	public void onClickAdjust(ForwardEvent event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		
+		if (this.finFeeReceiptMap == null || this.finFeeReceiptMap.isEmpty()) {
+			MessageUtil.showError("Fee receipts are not available.");
+			return;
+		}
+
+		List<Object> list = (List<Object>) event.getData();
+		
+		Decimalbox actualBox = (Decimalbox) list.get(0);
+		Decimalbox paidBox = (Decimalbox) list.get(1);
+		Decimalbox waiverBox = (Decimalbox) list.get(2);
+		String feeType = (String) list.get(8);
+		long feeTypeId = (long) list.get(9);
+		
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("FeeAmount", BigDecimal.valueOf(actualBox.doubleValue()));
+		map.put("PaidAmount", BigDecimal.valueOf(paidBox.doubleValue()));
+		map.put("WaiverAmount", BigDecimal.valueOf(waiverBox.doubleValue()));
+		map.put("finFeeDetailListCtrl", this);
+		map.put("role", getRole());
+		map.put("feeType", feeType);
+		map.put("feeTypeId", feeTypeId);
+		map.put("financeDetail", getFinanceDetail());
+		map.put("finFeeReceiptMap", this.finFeeReceiptMap);
+		
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeReceiptDialog.zul", null, map);
+		} catch (Exception e) {
+			logger.error("Exception: Opening window", e);
+			MessageUtil.showError(e);
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 	
@@ -1339,7 +1630,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return false;
 	}
 	
-	
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
@@ -1351,7 +1641,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
 	}
 
 	/**
@@ -1362,7 +1651,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * @param list
 	 */
 	public void fillPaymentRefComboBox(Combobox combobox, String value, List<FeePaymentDetail> list, String excludeFields) {
-		logger.debug("Entering fillComboBox()");
+		logger.debug("Entering");
+		
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
@@ -1383,7 +1673,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
-		logger.debug("Leaving fillComboBox()");
+		
+		logger.debug("Leaving");
 	}
 
 	private void doFillPaymentRefData(){
@@ -1400,20 +1691,22 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 	}
 	
-	
 	public void onClick$btnNew_FeeDetailList_FinInsurance(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+		
 		FinInsurances finInsurance = new FinInsurances();
 		finInsurance.setNewRecord(true);
 		finInsurance.setInsuranceReq(true);
 		finInsurance.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
 		finInsurance.setWorkflowId(getWorkFlowId());
 		doShowInsuranceDialog(finInsurance);
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
 	private void doShowInsuranceDialog(FinInsurances finInsurance) {
-
+		logger.debug("Entering");
+		
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("finInsurance", finInsurance);
 		arg.put("finFeeDetailListCtrl", this);
@@ -1431,6 +1724,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void doFillFinInsurances(List<FinInsurances> finInsurances) {
 		logger.debug("Entering");
+		
 		try {
 			if (finInsurances != null) {
 				setFinInsuranceList(finInsurances);
@@ -1439,10 +1733,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		} catch (Exception e) {
 			logger.debug(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
 	private void fillFinInsuranecs(List<FinInsurances> finInsurances) {
+		logger.debug("Entering");
+		
 		this.listBoxInsuranceDetails.getItems().clear();
 		for (FinInsurances finInsurance : finInsurances) {
 			Listitem item = new Listitem();
@@ -1511,6 +1808,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinInsuranceItemDoubleClicked");
 			this.listBoxInsuranceDetails.appendChild(item);
 		}
+		
+		logger.debug("Leaving");
 	}
 	
 	public void onFinInsuranceItemDoubleClicked(ForwardEvent event) throws InterruptedException {
@@ -1524,13 +1823,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		logger.debug("Leaving");
-
 	}
-	
-	
 	
 	public void doExecuteFeeCharges(boolean isSchdCal,FinScheduleData finScheduleData) throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
+		
 		Clients.clearWrongValue(this.listBoxFeeDetail.getChildren());
 		
 		if (!isSchdCal && finScheduleData.getFinanceScheduleDetails().size() <= 0) {
@@ -1583,7 +1880,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						rule = ruleService.getRuleById(insurance.getCalRule(), RuleConstants.MODULE_INSRULE,
 								RuleConstants.MODULE_INSRULE);
 						if (rule != null) {
-							insAmount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
+							insAmount = (BigDecimal) this.ruleExecutionUtil.executeRule(rule.getSQLRule(),
 									declaredFieldValues, financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 						}
 					}
@@ -1632,16 +1929,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	
 	private void doSetFeeChanges(FinScheduleData finScheduleData){
 		logger.debug("Entering");
-		String feeEvent = "";
+		
+		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		
 		if (finScheduleData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
 			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
 				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+			} 
 		}
+		
 		if(!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)){
 			List<FinTypeFees> finTypeFeesList = getFinanceDetailService().getFinTypeFees(
 					finScheduleData.getFinanceMain().getFinType(),feeEvent, true, FinanceConstants.MODULEID_FINTYPE);
@@ -1651,15 +1947,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			Map<String,FinFeeDetail> feeDetailMap = new HashMap<String,FinFeeDetail>();
 			
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailUpdateList()) {
-				if(!finFeeDetail.isNewRecord()){
-					if(!finFeeDetail.isRcdVisible() &&
-							StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)){
+				if (!finFeeDetail.isNewRecord()) {
+					if (!finFeeDetail.isRcdVisible()
+							&& StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 						finFeeDetail.setRcdVisible(true);
 						finFeeDetail.setDataModified(true);
 						finFeeDetail.setNewRecord(false);
 						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
-					}else{
+					} else {
 						finFeeDetail.setVersion(finFeeDetail.getVersion() + 1);
 						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 						finFeeDetail.setRcdVisible(false);
@@ -1671,7 +1967,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			
 			List<FinFeeDetail> finFeeDetailListNew = convertToFinanceFees(finTypeFeesList);
 			for (FinFeeDetail finFeeDetail : finFeeDetailListNew) {
-				if(!feeDetailMap.containsKey(getUniqueID(finFeeDetail))){
+				if (!feeDetailMap.containsKey(getUniqueID(finFeeDetail))) {
 					feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
 				}
 			}
@@ -1679,11 +1975,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			setFinFeeDetailList(new ArrayList<FinFeeDetail>(feeDetailMap.values()));
 		}
 		finScheduleData.setFeeEvent(feeEvent);
+		
 		logger.debug("Leaving");
 	}
 	
-	
 	private List<FinFeeDetail> calculateFees(List<FinFeeDetail> finFeeDetailsList, FinScheduleData finScheduleData){
+		logger.debug("Entering");
 		
 		List<String> feeRuleCodes = new ArrayList<String>();
 		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
@@ -1693,7 +1990,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		if(feeRuleCodes.size() > 0){
-			List<Rule> feeRules =  getRuleService().getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES, finScheduleData.getFeeEvent());
+			List<Rule> feeRules =  this.ruleService.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES, finScheduleData.getFeeEvent());
 			if(feeRules != null && !feeRules.isEmpty()){
 				HashMap<String, Object> executionMap = new HashMap<String, Object>();
 				Map<String,String> ruleSqlMap = new HashMap<String,String>();
@@ -1713,7 +2010,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						String[] fields = feeRule.getFields().split(",");
 						for(String field : fields) {
 							if (!executionMap.containsKey(field)) {
-								getRuleExecutionUtil().setExecutionMap(field, objectList, executionMap);
+								this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 							}
 						}
 					}
@@ -1770,6 +2067,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		
 		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
 		
+		logger.debug("Leaving");
 		
 		return finFeeDetailsList;
 	}
@@ -1787,22 +2085,21 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap,String finCcy) {
 		logger.debug("Entering");
-		BigDecimal result = BigDecimal.ZERO;
 		
+		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut =  getRuleExecutionUtil().executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
-			if (exereslut ==null || StringUtils.isEmpty(exereslut.toString())) {
+			Object exereslut = this.ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
+			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
-			}else{
+			} else {
 				result = new BigDecimal(exereslut.toString());
 			}
-			
 		} catch (Exception e) {
 			logger.debug(e);
 		}
 		
-		
 		logger.debug("Leaving");
+		
 		return result;
 	}
 	
@@ -1847,6 +2144,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public AEAmountCodes getCustomerData(AEAmountCodes amountCodes){
 		logger.debug("Entering");
+		
 		try {
 			amountCodes = (AEAmountCodes) getFinanceMainDialogCtrl().getClass().getMethod("doGetFeeCustomerData", 
 					AEAmountCodes.class).invoke(getFinanceMainDialogCtrl(), amountCodes);
@@ -1855,7 +2153,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		} catch (Exception e) {
 			logger.info(e);
 		}
+		
 		logger.debug("Leaving");
+		
 		return amountCodes;	
 	}
 	
@@ -1931,7 +2231,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
 
 	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
@@ -2021,16 +2320,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		this.engineExecution = engineExecution;
 	}
 
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
-	public RuleService getRuleService() {
-		return ruleService;
-	}
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -2050,5 +2343,4 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public void setFeeRuleDetailsMap(Map<String, FeeRule> feeRuleDetailsMap) {
 		this.feeRuleDetailsMap = feeRuleDetailsMap;
 	}
-
 }
