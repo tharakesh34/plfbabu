@@ -58,7 +58,7 @@ public class SummaryDetailService {
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if (finPftDetail == null) {
 				finPftDetail = new FinanceProfitDetail();
-				finPftDetail.setFinStartDate(financeMain.getFinStartDate());
+				financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
 						.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
 			} 
