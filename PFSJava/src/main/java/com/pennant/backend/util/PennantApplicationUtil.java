@@ -593,17 +593,22 @@ public class PennantApplicationUtil {
 		return deCodedData;
 	}
 	
-	public static String getSecRoleCodeDesc(String roleCode){
+	public static String getSecRoleCodeDesc(String roleCode) {
+		logger.debug("Entering");
+
 		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
 		searchObject.addFilterEqual("RoleCd", roleCode);
 		searchObject.addField("RoleDesc");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<SecurityRole> securityRolesList = pagedListService.getBySearchObject(searchObject);
-		
-		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : ""; 
- 	}
+
+		logger.debug("Leaving");
+		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : "";
+	}
 	
 	public static String getEventCode(Date date) {
+		logger.debug("Entering");
+
 		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 
 		if (date.after(DateUtility.getAppDate())) {
@@ -612,8 +617,7 @@ public class PennantApplicationUtil {
 			}
 		}
 
+		logger.debug("Leaving");
 		return feeEvent;
 	}
-	
-	
  }
