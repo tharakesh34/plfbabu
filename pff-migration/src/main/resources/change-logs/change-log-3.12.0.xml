@@ -790,4 +790,11 @@ WHERE     	NOT EXISTS (SELECT 1 FROM ManualAdviseMovements_Temp WHERE MovementID
 				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
+	
+	<changeSet id="32" author="Manoj.P">
+		<sql>
+			 UPDATE BMTBankDetail set BANKSHORTCODE = NULL WHERE BANKSHORTCODE IN (
+			select BANKSHORTCODE from BMTBankDetail group by BANKSHORTCODE having count(*) > 1);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
