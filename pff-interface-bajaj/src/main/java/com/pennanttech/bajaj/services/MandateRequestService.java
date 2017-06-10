@@ -204,7 +204,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 		seq = seq + 1;
 		bankCodeSeq.put(bankCode, seq);
 
-		return bankCode + "-" + seq;
+		return StringUtils.trimToEmpty(bankCode) + "-" + seq;
 	}
 
 	private Map<String, Integer> getCountByProcessed() {
