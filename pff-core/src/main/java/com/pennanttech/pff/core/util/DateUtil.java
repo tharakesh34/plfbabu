@@ -39,8 +39,9 @@ public class DateUtil {
 		SHORT_TIME("HH:mm"),
 		LONG_TIME("HH:mm:ss"),
 		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
-		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
-
+		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss"),
+		ddMMYYYY("ddMMYYYY");
+		
 		private final String	pattern;
 
 		private DateFormat(String pattern) {
