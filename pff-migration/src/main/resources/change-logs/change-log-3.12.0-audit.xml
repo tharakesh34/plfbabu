@@ -22,4 +22,11 @@
 	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="PRINTINGLOC" newDataType="varchar(50)"/>
 	  <modifyDataType tableName="ADTPAYMENTINSTRUCTIONS" columnName="ACCTHOLDERNAME" newDataType="varchar(200)"/>
 	</changeSet>
+	
+	<changeSet id="03" author="Durgaprasad g">
+	 <addColumn tableName="ADTPAYMENTHEADER">
+	   <column name="linkedTranId" type="bigint"/>
+	 </addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
