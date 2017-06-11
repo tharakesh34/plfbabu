@@ -1085,6 +1085,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinanceMainTemp", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_LView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
+		ModuleUtil.register("FeeReceiptFinance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
+				"FinanceMain", "FinanceMain_TView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
+		
 		ModuleUtil.register("FinanceDetail", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 
