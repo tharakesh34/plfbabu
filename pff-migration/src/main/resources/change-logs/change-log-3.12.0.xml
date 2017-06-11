@@ -809,4 +809,14 @@ LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId
 			select BANKSHORTCODE from BMTBankDetail group by BANKSHORTCODE having count(*) > 1);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="33" author="Durgaprasad G">
+	 <addColumn tableName="PAYMENTHEADER">
+	   <column name="linkedTranId" type="bigint"/>
+	 </addColumn>
+	 <addColumn tableName="PAYMENTHEADER_TEMP">
+	   <column name="linkedTranId" type="bigint"/>
+	 </addColumn>
+	
+	</changeSet>
 </databaseChangeLog>
