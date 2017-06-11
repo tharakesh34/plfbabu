@@ -648,6 +648,18 @@ WHERE     	NOT EXISTS (SELECT 1 FROM ManualAdviseMovements_Temp WHERE MovementID
 			   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
 		</createView>
 	</changeSet>
+
+	<changeSet id="31" author="Siva">
+		<createView viewName="ReceiptAllocationDetail_AView" replaceIfExists="true">
+			select T1.ReceiptID, T1.AllocationID, T1.AllocationType, T1.AllocationTo, T1.PaidAmount,
+T1.WaivedAmount, coalesce(T3.FeeTypeDesc, T5.FeeTypeDesc) TypeDesc  from ReceiptAllocationDetail T1  
+LEFT JOIN FinFeeDetail T2 ON T1.AllocationTo = T2.FeeID AND T1.AllocationType = 'FEE'
+LEFT JOIN FeeTypes T3 ON T2.FeeTypeId = T3.FeeTypeId 
+LEFT JOIN ManualAdvise T4 ON T1.AllocationTo = T4.AdviseID AND T1.AllocationType = 'MANADV'
+LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId 
+		</createView>
+	</changeSet>
+
 	
 	<changeSet id="31" author="Manoj.P">
 		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">

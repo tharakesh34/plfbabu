@@ -117,6 +117,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(receiptHeader != null){
 			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
+			
+			// Receipt Allocation Details
+			receiptHeader.setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(receiptID, "_AView"));
+			
 		}
 
 		logger.debug("Leaving");
