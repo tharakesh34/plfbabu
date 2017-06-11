@@ -890,4 +890,19 @@ LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId
 	 </createView>
 	
 	</changeSet>
+	
+	<changeSet id="37" author="Durgaprasad G">
+	 <sql>
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_payableAdvice';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_excessAmount';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_emiInAdvance';
+		DELETE from BMTAmountCodes Where allowedevent = 'PAYMTINS' AND amountCode = 'pi_paymentAmount';
+		
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_payableAdvice', 'Payable advise Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_excessAmount', 'Excess Amount', '1', 1, 1005,  Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_emiInAdvance', 'EMI in Advance Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+		Insert into BMTAmountCodes Values ('PAYMTINS','0','pi_paymentAmount', 'Payment Amount', '1', 1, 1005, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 ); 
+	 </sql>
+	</changeSet>
+	
 </databaseChangeLog>
