@@ -46,5 +46,6 @@ public class SMTParameterConstants {
 	public static final String	EOD_THREAD_COUNT	= "EOD_THREAD_COUNT";
 	public static final String	IGNORING_BUCKET		= "IGNORING_BUCKET";
 	public static final String	EOD_CHUNK_SIZE		= "EOD_CHUNK_SIZE";
+	public static final String	ACCRUAL_CAL_ON		= "ACCRUAL_CAL_ON";//0-eod, 1-sod
 	public static final String	ROUND_LASTSCHD		= "ROUND_LASTSCHD";
 }

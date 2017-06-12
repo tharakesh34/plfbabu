@@ -46,6 +46,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -69,6 +70,24 @@ public class LatePayMarkingService extends ServiceHelper {
 	 */
 	public LatePayMarkingService() {
 		super();
+	}
+
+	public List<FinODDetails> calPDOnBackDatePayment(FinanceMain finmain, List<FinODDetails> finODDetails,
+			Date valueDate, String pftDayBasis, List<FinanceScheduleDetail> finScheduleDetails,
+			List<FinanceRepayments> repayments, String roundingMode, int roundingTarget) {
+		for (FinODDetails fod : finODDetails) {
+			latePayPenaltyService.computeLPP(fod, valueDate, pftDayBasis, finScheduleDetails, repayments, roundingMode,
+					roundingTarget);
+
+			String lpiMethod = finmain.getPastduePftCalMthd();
+			if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
+				latePayInterestService.computeLPI(fod, valueDate, pftDayBasis, finScheduleDetails, repayments,
+						finmain.getPastduePftMargin(), roundingMode, roundingTarget);
+			}
+
+		}
+		return finODDetails;
+
 	}
 
 	/**
@@ -136,7 +155,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 					updateFinPftDetails(finEODEvent, fod, valueDate, false);
 				}
-
 			}
 
 			boolean isAmountDue = false;
@@ -194,9 +212,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				finEODEvent.getFinODDetails().set(i, fod);
 				isODRecordFound = true;
 			}
-
 			break;
-
 		}
 
 		//OD Details not found. Create it now
@@ -214,12 +230,15 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		latePayPenaltyService.computeLPP(fod, valueDate, finMain.getProfitDaysBasis(),
-				finEODEvent.getFinanceScheduleDetails(), finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+				finEODEvent.getFinanceScheduleDetails(), null, finMain.getCalRoundingMode(),
+				finMain.getRoundingTarget());
 
 		String lpiMethod = finEODEvent.getFinanceMain().getPastduePftCalMthd();
 
 		if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
-			latePayInterestService.computeLPI(finEODEvent, fod, valueDate);
+			latePayInterestService.computeLPI(fod, valueDate, finMain.getProfitDaysBasis(),
+					finEODEvent.getFinanceScheduleDetails(), null, finMain.getPastduePftMargin(),
+					finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 		}
 
 		updateFinPftDetails(finEODEvent, fod, valueDate, true);

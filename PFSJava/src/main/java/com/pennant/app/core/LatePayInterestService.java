@@ -59,15 +59,13 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public void computeLPI(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
+	public void computeLPI(FinODDetails fod, Date valueDate, String idb, List<FinanceScheduleDetail> finScheduleDetails,
+			List<FinanceRepayments> repayments, BigDecimal pastduePftMargin, String roundingMode, int roundingTarget) {
 		logger.debug(" Entering ");
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
-		String idb = finEODEvent.getFinanceMain().getProfitDaysBasis();
-		BigDecimal lpiMargin = finEODEvent.getFinanceMain().getPastduePftMargin().divide(new BigDecimal(100));
-		String roundingMode = finEODEvent.getFinanceMain().getCalRoundingMode();
-		int roundingTarget = finEODEvent.getFinanceMain().getRoundingTarget();
+		BigDecimal lpiMargin = pastduePftMargin.divide(new BigDecimal(100));
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
@@ -85,7 +83,9 @@ public class LatePayInterestService extends ServiceHelper {
 		odcr.setFinCurODAmt(odPri.add(odPft));
 		schdODCRecoveries.add(odcr);
 
-		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
+		if (repayments == null) {
+			repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
+		}
 
 		//Load Overdue Charge Recovery from Repayment Movements
 		for (int i = 0; i < repayments.size(); i++) {
@@ -138,33 +138,30 @@ public class LatePayInterestService extends ServiceHelper {
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
 
-			BigDecimal penaltyRate = getPenaltyRate(finEODEvent.getFinanceScheduleDetails(), dateCur, lpiMargin);
+			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
 					penaltyRate);
 
 			odcr.setPenalty(penalty);
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
-		
+
 		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 		logger.debug(" Leaving ");
 	}
 
-	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin)
-			throws Exception {
+	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin) {
 
 		BigDecimal penaltyRate = BigDecimal.ZERO;
-
+		
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			if (finSchdDetails.get(i).getSchDate().compareTo(mvtDate) > 0) {
 				break;
 			}
 
 			penaltyRate = finSchdDetails.get(i).getCalculatedRate();
-
 		}
-
 		penaltyRate = penaltyRate.add(lpiMargin);
 		return penaltyRate;
 	}
