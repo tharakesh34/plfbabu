@@ -187,6 +187,9 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				// FromDate
 				if(DateUtility.compare(finServiceInstruction.getFromDate(), schDetail.getSchDate()) == 0) {
 					isValidFromDate = true;
+					if(checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+						return auditDetail;
+					}
 				}
 				// ToDate
 				if(DateUtility.compare(finServiceInstruction.getToDate(), schDetail.getSchDate()) == 0) {

@@ -80,6 +80,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
@@ -1741,7 +1742,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				return auditDetail;
 			}
 		}
-		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY) && StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
+		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+				StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
 			if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_ADJMUR)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_RECRPY)) {
 				String[] valueParm = new String[2];
@@ -1811,7 +1813,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 		}
-
+		
+		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
+				StringUtils.isNotBlank(finServiceInstruction.getExcessAdjustTo())) {
+			if(!StringUtils.equals(finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)
+				&& !StringUtils.equals(finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ExcessAdjustTo:"+finServiceInstruction.getExcessAdjustTo();
+				valueParm[1] = RepayConstants.EXCESSADJUSTTO_EXCESS+","+RepayConstants.EXCESSADJUSTTO_EMIINADV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90337", "", valueParm)));
+				}
+		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}

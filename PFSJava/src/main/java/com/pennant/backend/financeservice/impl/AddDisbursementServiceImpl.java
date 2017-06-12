@@ -304,6 +304,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		if(financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
 			for(FinAdvancePayments finAdvancePayment: financeDetail.getAdvancePaymentsList()) {
 				totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
+				
+				// Validate from date and disb date.
+				if(DateUtility.compare(finServiceInstruction.getFromDate(), finAdvancePayment.getLlDate()) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Disb date:"+DateUtility.formatToLongDate(finAdvancePayment.getLlDate());;
+					valueParm[1] = "From date:"+DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm)));
+				}
 			}
 			
 			List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
