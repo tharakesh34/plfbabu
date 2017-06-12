@@ -479,7 +479,7 @@ public class FinStatementController extends SummaryDetailService {
 		if (finOdDetails != null) {
 			for (FinODDetails odDetails : finOdDetails) {
 				FinODDetails detail = latePayPenaltyService.computeLPP(odDetails, finServiceInst.getFromDate(),
-						financeMain.getProfitDaysBasis(), financeScheduleDetails, financeMain.getCalRoundingMode(),
+						financeMain.getProfitDaysBasis(), financeScheduleDetails,null, financeMain.getCalRoundingMode(),
 						financeMain.getRoundingTarget());
 				totPenaltyAmt = totPenaltyAmt.add(detail.getTotPenaltyAmt());
 			}
