@@ -126,12 +126,19 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
-	public static void showMessage(ErrorDetails error) {
+	/**
+	 * Shows an information message box and logs the message. Returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @return The button being pressed.
+	 */
+	public static int showMessage(ErrorDetails error) {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
 	/**

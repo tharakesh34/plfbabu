@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.util;
 
 import java.io.Serializable;
@@ -48,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Messagebox;
@@ -61,7 +59,6 @@ import com.pennant.webui.util.MultiLineMessageBox;
 
 public class ErrorControl extends Messagebox implements Serializable {
 	private static final long	serialVersionUID	= 6395769771121558224L;
-	private static final Logger	logger				= Logger.getLogger(ErrorControl.class);
 
 	private int					returnCode			= PennantConstants.porcessCONTINUE;
 	AuditHeader					auditHeader;
@@ -131,28 +128,16 @@ public class ErrorControl extends Messagebox implements Serializable {
 	}
 
 	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
-		int retValue;
-		String title;
-		int buttons;
-		String icon;
-		logger.info("Error Detail: " + errorDetail.getErrorCode() + " - " + errorDetail.getError());
-
 		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 			return MessageUtil.showError(errorDetail, MessageUtil.ABORT);
 		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
-			buttons = MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE;
-			title = Labels.getLabel("message.Overide");
-			icon = MultiLineMessageBox.EXCLAMATION;
+			String title = Labels.getLabel("message.Overide");
 
-			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
-					buttons, icon, true);
+			return MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
+					MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE, MultiLineMessageBox.EXCLAMATION, true);
 		} else {
-			MessageUtil.showMessage(errorDetail);
-			retValue = MessageUtil.OK;
+			return MessageUtil.showMessage(errorDetail);
 		}
-
-		return retValue;
-
 	}
 
 	public int getReturnCode() {
