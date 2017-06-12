@@ -735,6 +735,12 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 		if (finODPenaltyRate != null) {
+			if(finODPenaltyRate.getODChargeAmtOrPerc() == null ){
+				finODPenaltyRate.setODChargeAmtOrPerc(BigDecimal.ZERO);
+			}
+			if(finODPenaltyRate.getODMaxWaiverPerc() == null ){
+				finODPenaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
+			}
 			if (!finODPenaltyRate.isApplyODPenalty()) {
 				if (finODPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())
 						|| StringUtils.isNotBlank(finODPenaltyRate.getODChargeCalOn())
