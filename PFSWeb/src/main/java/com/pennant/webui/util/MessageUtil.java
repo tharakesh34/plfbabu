@@ -91,9 +91,17 @@ public final class MessageUtil {
 	 */
 	public static final int		NO			= Messagebox.NO;
 	/**
+	 * A Cancel button.
+	 */
+	public static final int		CANCEL		= Messagebox.CANCEL;
+	/**
 	 * A Abort button.
 	 */
 	public static final int		ABORT		= Messagebox.ABORT;
+	/**
+	 * A Abort button.
+	 */
+	public static final int		OVERIDE		= Messagebox.IGNORE;
 
 	private static final String	SUFFIX		= "\n\n";
 
@@ -111,6 +119,22 @@ public final class MessageUtil {
 	public static int confirm(String message) {
 		MultiLineMessageBox.doSetTemplate();
 		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, YES | NO, EXCLAMATION, NO);
+	}
+
+	/**
+	 * Shows a confirmation message box with the specified buttons and returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int confirm(ErrorDetails error, int buttons) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION, NO);
 	}
 
 	/**

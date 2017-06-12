@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Messagebox;
 
@@ -55,7 +54,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 public class ErrorControl extends Messagebox implements Serializable {
 	private static final long	serialVersionUID	= 6395769771121558224L;
@@ -78,7 +76,6 @@ public class ErrorControl extends Messagebox implements Serializable {
 	@SuppressWarnings("unused")
 	private ErrorControl(Component parent, AuditHeader auditHeader) throws InterruptedException {
 		super();
-		MultiLineMessageBox.doErrorTemplate();
 
 		if (auditHeader != null) {
 
@@ -131,10 +128,7 @@ public class ErrorControl extends Messagebox implements Serializable {
 		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
 			return MessageUtil.showError(errorDetail, MessageUtil.ABORT);
 		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
-			String title = Labels.getLabel("message.Overide");
-
-			return MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
-					MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE, MultiLineMessageBox.EXCLAMATION, true);
+			return MessageUtil.confirm(errorDetail, MessageUtil.CANCEL | MessageUtil.OVERIDE);
 		} else {
 			return MessageUtil.showMessage(errorDetail);
 		}
