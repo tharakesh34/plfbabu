@@ -308,9 +308,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		
 		// Remove Receipt Records , because fees in Receipts collected automatically
-		Filter referenceFilter[] = new Filter[1];
+		Filter referenceFilter[] = new Filter[2];
 		referenceFilter[0] = new Filter("RcdMaintainSts", FinanceConstants.FINSER_EVENT_RECEIPT, Filter.OP_NOT_EQUAL);
-		this.finReference.setFilters(referenceFilter);
+		referenceFilter[1] = Filter.isNull("RcdMaintainSts");
+		
+		Filter filter[] = new Filter[1];
+		filter[0] = Filter.or(referenceFilter);
+		this.finReference.setFilters(filter);
 
 		//Receipts Details
 		this.receiptAmount.setProperties(true , formatter);
@@ -675,10 +679,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			
 			// If Fee Details not exists against Reference , not allowed to proceed further
-			/*if(!feesExists){
-				MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
-				return;
-			}*/
+			if(!feesExists){
+				/*MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
+				return;*/
+			}
 
 			if(!recReject){
 				doClearMessage();
