@@ -120,11 +120,18 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		super.doAfterCompose(comp);
 		user = getUserWorkspace().getLoggedInUser();
 		
+		String appDate = DateUtility.getAppDate(DateFormat.SHORT_DATE);
 		set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
-		set_LoginDateText(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+		set_LoginDateText(appDate);
 		set_UserText(user.getUserName());
 		set_BranchCodeText(user.getBranchCode());
 		set_DepartmentCodeText(user.getDepartmentCode());
+		
+		// Desktop Time Setting
+		label_currentDate.setValue(appDate);
+		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("HH:mm");
+		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
+		
 		doShowLabel();
 
 		// Listener for Last Login
@@ -259,7 +266,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		Date date  = DateUtility.getAppDate();
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
 		label_currentDate.setValue(dateFormat.format(date));
-		dateFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+		dateFormat = new java.text.SimpleDateFormat("HH:mm");
 		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
 		String hostStatusReq = SysParamUtil.getValueAsString("HOSTSTATUS_REQUIRED");
 		
