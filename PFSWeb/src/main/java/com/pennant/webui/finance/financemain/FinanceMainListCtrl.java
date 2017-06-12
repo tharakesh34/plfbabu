@@ -67,7 +67,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tabbox;
@@ -654,13 +653,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (tatDetail == null || (tatDetail != null && tatDetail.gettATStartTime() == null)) {
 				final String msg = Labels.getLabel("label_TATProcess_UserAction");
 
-				final String title = Labels.getLabel("label_TatProcess_Title");
-				MultiLineMessageBox.doSetTemplate();
-
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(msg) == MultiLineMessageBox.YES) {
 					if (tatDetail == null) {
 						tatDetail = new TATDetail();
 						tatDetail.setModule(FinanceConstants.FINSER_EVENT_ORG);
