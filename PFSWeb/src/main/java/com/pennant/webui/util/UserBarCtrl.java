@@ -159,7 +159,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 */
 	public void onCreate$winUserBar(Event event) {
 		this.winUserBar.setBorder("none");
-		this.hostStatusTimer.setDelay(1000);
+		this.hostStatusTimer.setDelay(60000);
 		this.hostStatusTimer.start();
 	}
  
