@@ -122,6 +122,20 @@ public final class MessageUtil {
 	}
 
 	/**
+	 * Shows a confirmation message box and returns the button that has been chosen.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int confirm(String message, int buttons) {
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
+	}
+
+	/**
 	 * Shows a confirmation message box with the specified buttons and returns the button that has been chosen.
 	 * 
 	 * @param error
@@ -134,7 +148,7 @@ public final class MessageUtil {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 
 		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION, NO);
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
 	}
 
 	/**
