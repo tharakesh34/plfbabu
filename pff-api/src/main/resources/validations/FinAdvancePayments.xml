@@ -103,14 +103,24 @@
 		</field>
 		<field name="liabilityHoldName">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>favourName should have maximum 8 characters</message>
+				<message>favourName should have maximum 100 characters</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
-				<element name="max">8</element>
+				<element name="max">100</element>
 			</constraint>
+				<constraint annotation="javax.validation.constraints.Pattern">
+			<message>favourName  invalid. Allowed Characters are [a-z A-Z and special character ' ] must starts with Characters only.
+			</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z_\s]*</element>
+			</constraint> 
 		</field>
 		<field name="payableLoc">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
