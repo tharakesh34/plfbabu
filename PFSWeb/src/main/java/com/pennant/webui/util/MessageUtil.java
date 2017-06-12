@@ -90,6 +90,10 @@ public final class MessageUtil {
 	 * A No button.
 	 */
 	public static final int		NO			= Messagebox.NO;
+	/**
+	 * A Abort button.
+	 */
+	public static final int		ABORT		= Messagebox.ABORT;
 
 	private static final String	SUFFIX		= "\n\n";
 
@@ -155,6 +159,23 @@ public final class MessageUtil {
 
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	/**
+	 * Shows an error message box and logs the message. Returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int showError(ErrorDetails error, int buttons) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, ERROR);
 	}
 
 	/**

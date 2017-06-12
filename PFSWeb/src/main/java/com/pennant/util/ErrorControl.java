@@ -132,20 +132,14 @@ public class ErrorControl extends Messagebox implements Serializable {
 
 	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
 		int retValue;
-		String title = Labels.getLabel("message.Information");
-		int buttons = MultiLineMessageBox.OK;
-		String icon = MultiLineMessageBox.INFORMATION;
+		String title;
+		int buttons;
+		String icon;
 		logger.info("Error Detail: " + errorDetail.getErrorCode() + " - " + errorDetail.getError());
 
 		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
-			buttons = MultiLineMessageBox.ABORT;
-			title = Labels.getLabel("message.Error");
-			icon = MultiLineMessageBox.ERROR;
-
-			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
-					buttons, icon, true);
+			return MessageUtil.showError(errorDetail, MessageUtil.ABORT);
 		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
-
 			buttons = MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE;
 			title = Labels.getLabel("message.Overide");
 			icon = MultiLineMessageBox.EXCLAMATION;
