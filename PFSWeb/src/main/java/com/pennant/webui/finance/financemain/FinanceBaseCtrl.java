@@ -167,7 +167,6 @@ import com.pennant.webui.financemanagement.payments.ManualPaymentDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.InterfaceException;
@@ -7060,14 +7059,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				if (!recSave && commitment.getCmtAvailable().compareTo(finAmtCmtCcy) < 0) {
 					if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinCommitmentOvrride()) {
 						final String msg = Labels.getLabel("message_AvailAmt_Commitment_Required_Override_YesNo");
-						final String title = Labels.getLabel("message.Information");
 
-						MultiLineMessageBox.doSetTemplate();
-						int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.CANCEL
-								| MultiLineMessageBox.IGNORE, MultiLineMessageBox.QUESTION, true);
-
-						if (conf == MultiLineMessageBox.CANCEL) {
-							logger.debug("doClose: Yes");
+						if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 							return false;
 						}
 					} else {
@@ -7076,16 +7069,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			} else if (!this.commitmentRef.isReadonly()) {
-
 				final String msg = Labels.getLabel("message_Commitment_Required_Override_YesNo");
-				final String title = Labels.getLabel("message.Information");
 
-				MultiLineMessageBox.doSetTemplate();
-				int conf = MultiLineMessageBox.show(msg, title,
-						MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE, MultiLineMessageBox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.CANCEL) {
-					logger.debug("doClose: Yes");
+				if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 					return false;
 				}
 			}
