@@ -4,7 +4,7 @@
 
 	<groupId>com.pennant.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>3.12.2</version>
+	<version>3.12.3</version>
 	<packaging>pom</packaging>
 
 	<properties>
