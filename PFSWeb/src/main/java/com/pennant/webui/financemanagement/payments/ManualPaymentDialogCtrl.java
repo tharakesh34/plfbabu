@@ -85,7 +85,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -176,7 +175,6 @@ import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -951,15 +949,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// Show a confirm box
 				final String msg = Labels.getLabel("label_EarlypayEffectOnSchedule_Method_Confirm",
 						new String[] { this.earlyRpyEffectOnSchd.getSelectedItem().getLabel() });
-				final String title = Labels.getLabel("message.Deleting.Record");
-				MultiLineMessageBox.doSetTemplate();
 
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.YES) {
-					logger.debug("Modify Effective Schedule Method: Yes");
-
+				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("manualPaymentDialogCtrl", this);
 					map.put("repayData", repayData);
@@ -968,7 +959,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							this.window_ManualPaymentDialog, map);
 
 				} else {
-					logger.debug("Modify Effective Schedule Method: No");
 					setEarlyRepayEffectOnSchedule(repayData);
 				}
 

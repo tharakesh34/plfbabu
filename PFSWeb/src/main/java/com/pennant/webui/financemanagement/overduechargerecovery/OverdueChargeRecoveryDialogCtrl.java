@@ -67,7 +67,6 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -94,7 +93,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 
 /**
@@ -1359,13 +1357,11 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			if (postingData != null && postingData.size() > 2 && postingData.get(2) != null
 					&& !("").equals(postingData.get(2))
 					&& postingData.get(2).toString().startsWith("Host Connection Failed")) {
-				Messagebox.show("\n" + (String) postingData.get(2), "E r r o r !", MultiLineMessageBox.OK,
-						MultiLineMessageBox.ERROR);
+				MessageUtil.showError((String) postingData.get(2));
 				paidAmount = new BigDecimal(0);
 			} else {
 				if (paidAmount.compareTo(new BigDecimal(-1)) == 0) {
-					Messagebox.show("\n" + "Insufficient balance.", "Overdue Recovery Charge", MultiLineMessageBox.OK,
-							MultiLineMessageBox.INFORMATION);
+					MessageUtil.showMessage("Insufficient balance.");
 					paidAmount = new BigDecimal(0);
 					closeDialog();
 				} else {
