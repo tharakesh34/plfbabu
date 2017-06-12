@@ -1,7 +1,6 @@
 package com.pennant.cache.util;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -95,15 +94,15 @@ public class AccountingConfigCache {
 	 * @return AccountType
 	 */
 	public static AccountType getAccountType(String acType) {
-		AccountType accountType;
-
-		try {
-			accountType = accountTypeCache.get(acType);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from  Finance Type Accounting cache: ",e);
-			accountType = getAccountTypeById(acType);
-		}
-		return accountType;
+//		AccountType accountType;
+//
+//		try {
+//			accountType = accountTypeCache.get(acType);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from  Finance Type Accounting cache: ",e);
+//			accountType = getAccountTypeById(acType);
+//		}
+		return  getAccountTypeById(acType);
 	}
 
 
@@ -130,15 +129,16 @@ public class AccountingConfigCache {
 	 */
 	public static long getAccountSetID(String finType, String event,
 			int moduleId) {
-		long accountSetID = Long.MIN_VALUE;
-		String accountSetKey = finType + "@" + event + "@" + moduleId;
-		try {
-			accountSetID = finTypeAccountCache.get(accountSetKey);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from  Account Type cache: ",e);
-			accountSetID = getAccountSetID(accountSetKey);
-		}
-		return accountSetID;
+//		String accountSetKey = finType + "@" + event + "@" + moduleId;
+//		long accountSetID = Long.MIN_VALUE;
+//		try {
+//			accountSetID = finTypeAccountCache.get(accountSetKey);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from  Account Type cache: ",e);
+//			accountSetID = getAccountSetID(accountSetKey);
+//		}
+		return getFinTypeAccountingDAO().getAccountSetID(finType,
+				event, moduleId);
 	}
 
 	/**
@@ -163,15 +163,16 @@ public class AccountingConfigCache {
 	 * @return List of TransactionEntry for the Account Set
 	 */
 	public static List<TransactionEntry> getTransactionEntry(long accountSetid) {
-		List<TransactionEntry> transactionEntries;
-		try {
-			transactionEntries = transactionEntryCache.get(accountSetid);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from Transaction Entry cache: ", e);
-			transactionEntries = getTransactionEntryDAO()
-					.getListTranEntryForBatch(accountSetid, "");
-		}
-		return transactionEntries;
+//		List<TransactionEntry> transactionEntries;
+//		try {
+//			transactionEntries = transactionEntryCache.get(accountSetid);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from Transaction Entry cache: ", e);
+//			transactionEntries = getTransactionEntryDAO()
+//					.getListTranEntryForBatch(accountSetid, "");
+//		}
+		return getTransactionEntryDAO()
+				.getListTranEntryForBatch(accountSetid, "");
 	}
 
 
@@ -196,16 +197,17 @@ public class AccountingConfigCache {
 	 */
 	public static Rule getRule(String ruleCode, String ruleModule,
 			String ruleEvent) {
-		Rule rule;
-		String ruleKey = ruleCode + "@" + ruleModule + "@" + ruleEvent;
-		try {
-			rule = ruleCache.get(ruleKey);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from Rule cache: ", e);
-			rule = getRuleDAO()
-					.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
-		}
-		return rule;
+//		String ruleKey = ruleCode + "@" + ruleModule + "@" + ruleEvent;
+//		Rule rule;
+//		try {
+//			rule = ruleCache.get(ruleKey);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from Rule cache: ", e);
+//			rule = getRuleDAO()
+//					.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
+//		}
+		return getRuleDAO()
+				.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 	}
 
 	/**
