@@ -1743,6 +1743,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 						feeDetail.setOriginationFee(true);
 						feeDetail.setRcdVisible(false);
+						feeDetail.setRecordType(PennantConstants.RCD_UPD);
+						feeDetail.setRecordStatus(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 			financeDetail.setAccountingEventCode(eventCode);
