@@ -4,13 +4,13 @@
 <window border="none" width="300pt" closable="false"
 	use="org.zkoss.zul.impl.MessageboxDlg">
 	<!--
-	<style dynamic="true">
+		<style dynamic="true">
 		.myMultiMessageBox .z-panel-header { background: #FC7A7C -1px;
 		font-weight:bold; zoom: 1; border: 1px solid; line-height:
 		15px;} .myMultiMessageBox .z-panel-body { border-style:none
 		solid solid; border-width:0 1px 1px; overflow:hidden;
 		padding:0px; }
-	</style>
+		</style>
 	-->
 	<panel title="${arg.title}" border="normal"
 		sclass="myMultiMessageBox">
@@ -27,14 +27,14 @@
 			<hbox style="margin-left:auto; margin-right:auto">
 				<button id="btn1" identity="${arg.OK}"
 					sclass="z-messagebox-btn"
-					use="org.zkoss.zul.impl.MessageboxDlg$Button" 
+					use="org.zkoss.zul.impl.MessageboxDlg$Button"
 					if="${!empty arg.OK}" />
 				<button identity="${arg.CANCEL}"
 					sclass="z-messagebox-btn"
 					use="org.zkoss.zul.impl.MessageboxDlg$Button"
 					if="${!empty arg.CANCEL}" />
 				<button identity="${arg.YES}" sclass="z-messagebox-btn"
-					use="org.zkoss.zul.impl.MessageboxDlg$Button" 
+					use="org.zkoss.zul.impl.MessageboxDlg$Button"
 					if="${!empty arg.YES}" />
 				<button identity="${arg.NO}" sclass="z-messagebox-btn"
 					use="org.zkoss.zul.impl.MessageboxDlg$Button"
