@@ -141,15 +141,20 @@ public class ErrorControl extends Messagebox implements Serializable {
 			title = Labels.getLabel("message.Error");
 			icon = MultiLineMessageBox.ERROR;
 
+			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
+					buttons, icon, true);
 		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
 
 			buttons = MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE;
 			title = Labels.getLabel("message.Overide");
 			icon = MultiLineMessageBox.EXCLAMATION;
-		}
 
-		retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title, buttons,
-				icon, true);
+			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
+					buttons, icon, true);
+		} else {
+			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
+					buttons, icon, true);
+		}
 
 		return retValue;
 
