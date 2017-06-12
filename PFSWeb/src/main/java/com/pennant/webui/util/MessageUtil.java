@@ -70,13 +70,13 @@ public final class MessageUtil {
 	 */
 	private static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
 	/**
-	 * A symbol consisting of a white X in a circle with a red background.
-	 */
-	private static final String	ERROR		= Messagebox.ERROR;
-	/**
 	 * A symbol of a lower case letter i in a circle.
 	 */
 	private static final String	INFORMATION	= Messagebox.INFORMATION;
+	/**
+	 * A symbol consisting of a white X in a circle with a red background.
+	 */
+	private static final String	ERROR		= Messagebox.ERROR;
 
 	/**
 	 * A OK button.
@@ -127,7 +127,7 @@ public final class MessageUtil {
 	}
 
 	/**
-	 * Shows an information message box and logs the message. Returns the button that has been chosen.
+	 * Shows an information message box, logs the message and returns the button that has been chosen.
 	 * 
 	 * @param error
 	 *            The {@link ErrorDetails error} object.
