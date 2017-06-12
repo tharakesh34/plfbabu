@@ -105,7 +105,6 @@ import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRende
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -653,7 +652,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (tatDetail == null || (tatDetail != null && tatDetail.gettATStartTime() == null)) {
 				final String msg = Labels.getLabel("label_TATProcess_UserAction");
 
-				if (MessageUtil.confirm(msg) == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					if (tatDetail == null) {
 						tatDetail = new TATDetail();
 						tatDetail.setModule(FinanceConstants.FINSER_EVENT_ORG);
