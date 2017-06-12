@@ -3253,7 +3253,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		boolean isvalidEmployment = true;
 		if (this.customerEmploymentDetailList != null && !this.customerEmploymentDetailList.isEmpty()) {
 			for (CustomerEmploymentDetail custEmployment : this.customerEmploymentDetailList) {
-				if (custEmployment.getCustEmpFrom().before(customerDetails.getCustomer().getCustDOB())) {
+				if (custEmployment.getCustEmpFrom()!=null && this.custDOB.getValue()!=null &&
+						custEmployment.getCustEmpFrom().before(this.custDOB.getValue())) {
 					isvalidEmployment = false;
 					break;
 				}
