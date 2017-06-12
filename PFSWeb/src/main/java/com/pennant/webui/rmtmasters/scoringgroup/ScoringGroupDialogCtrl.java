@@ -103,7 +103,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.scoringslab.model.ScoringSlabListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -1163,7 +1162,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		if((this.listBoxRetailScoringMetrics.getItemCount() > 0) || 
 				(this.listBoxFinScoringMetrics.getItemCount() > 0) ||
 				(this.listBoxNFScoringMetrics.getItemCount() > 0)){
-			if (MessageUtil.confirm("Do You want to modify Scoring Metric Details Data?") == MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm("Do You want to modify Scoring Metric Details Data?") == MessageUtil.YES) {
 				this.listBoxRetailScoringMetrics.getItems().clear();
 				this.listBoxFinScoringMetrics.getItems().clear();
 				this.listBoxNFScoringMetrics.getItems().clear();

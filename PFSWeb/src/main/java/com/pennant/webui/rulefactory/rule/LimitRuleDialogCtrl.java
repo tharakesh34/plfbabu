@@ -112,7 +112,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.App;
@@ -1016,7 +1015,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		}
 
 		final String msg = Labels.getLabel("message.information.only6Rows");
-		final String title = Labels.getLabel("message.Information");
 		// TODO Here 6 is hard coded to Restrict the No of Conditions which has
 		// to be Parameterized
 		if (parent.getChildren().size() < 6) {
@@ -1036,8 +1034,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				}
 			}
 		} else {
-			MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK,
-					MultiLineMessageBox.INFORMATION, true);
+			MessageUtil.showMessage(msg);
 		}
 		logger.debug("Leaving");
 	}
@@ -1076,7 +1073,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		boolean childReq = false;
 		List<Component> treeChild = cmp.getChildren();
 		final String msg = Labels.getLabel("message.information.only3Rows");
-		final String title = Labels.getLabel("message.Information");
 
 		for (int i = 0; i < treeChild.size(); i++) {
 			if (treeChild.get(i) instanceof Treechildren) {
@@ -1111,7 +1107,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				// TODO Here 3 is hard coded to Restrict the No of Conditions
 				// which has to be Parameterized
 				else if (child.size() == 3) {
-					MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK, MultiLineMessageBox.INFORMATION, true);
+					MessageUtil.showMessage(msg);
 					childReq = true;
 				}
 			} else {

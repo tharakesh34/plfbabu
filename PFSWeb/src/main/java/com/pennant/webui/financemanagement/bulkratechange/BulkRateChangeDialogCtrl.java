@@ -72,7 +72,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -108,7 +107,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -1744,7 +1742,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 				final String msg = " No Finances Founded With Finance Type " + this.finType.getValue() + " And Schedule Date Greater than or equal to " +
 						DateUtility.formatUtilDate(this.schFromDate.getValue(), PennantConstants.dateFormat);
 
-				MultiLineMessageBox.show(msg, Labels.getLabel("message.Information"), MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+				MessageUtil.showMessage(msg);
 
 			} catch (WrongValueException e) {
 				logger.error(e);

@@ -65,7 +65,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -88,7 +87,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -953,14 +951,12 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 				StringUtils.isEmpty(this.finReference.getValidatedValue()) && 
 				StringUtils.isEmpty(this.custCIF.getValue())){
 
-			MultiLineMessageBox.doSetTemplate();
 			String msg = Labels.getLabel("FinSuspHold_Mandatory",new String[]{
 					Labels.getLabel("label_FinSuspHoldDialog_Product.value"),
 					Labels.getLabel("label_FinSuspHoldDialog_FinType.value"),
 					Labels.getLabel("label_FinSuspHoldDialog_CustCIF.value"),
 					Labels.getLabel("label_FinSuspHoldDialog_FinReference.value")});
-			MultiLineMessageBox.show(msg, Labels.getLabel("FinSuspHold_Mandatory.Title"), 
-					MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			MessageUtil.showError(msg);
 			validData = false;
 		}
 		logger.debug("Leaving");
