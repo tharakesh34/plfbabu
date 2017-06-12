@@ -845,18 +845,10 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			if(msg == null){
 				msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
 			}	
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-					| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION,true);
-
-			if (conf==MultiLineMessageBox.YES){
-				logger.debug("doClose: Yes");
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				doSave();
 				close=false;
-			}else{
-				logger.debug("doClose: No");
 			}
 		}else{
 			logger.debug("isDataChanged : false");
@@ -1171,14 +1163,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		if((this.listBoxRetailScoringMetrics.getItemCount() > 0) || 
 				(this.listBoxFinScoringMetrics.getItemCount() > 0) ||
 				(this.listBoxNFScoringMetrics.getItemCount() > 0)){
-
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show("Do You want to modify Scoring Metric Details Data ? ", 
-					"Confirmation", MultiLineMessageBox.YES
-					| MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION,true);
-
-			if (conf==MultiLineMessageBox.YES){
-				
+			if (MessageUtil.confirm("Do You want to modify Scoring Metric Details Data?") == MultiLineMessageBox.YES) {
 				this.listBoxRetailScoringMetrics.getItems().clear();
 				this.listBoxFinScoringMetrics.getItems().clear();
 				this.listBoxNFScoringMetrics.getItems().clear();
