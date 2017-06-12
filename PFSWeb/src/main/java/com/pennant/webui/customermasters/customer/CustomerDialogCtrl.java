@@ -2718,6 +2718,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!validateEmailDetails(this.tabkYCDetails)) {
 				return;
 			}
+			if (isRetailCustomer && !validateEmployemntDetails(this.tabkYCDetails)) {
+				return;
+			}
+			
 		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
@@ -3087,6 +3091,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (!validateEmailDetails(tab)) {
 					return false;
 				}
+				if (isRetailCustomer && !validateEmployemntDetails(tab)) {
+					return false;
+				}
 				if (this.btnNew_CustomerPhoneNumber.isVisible() && validateAllDetails) {
 					boolean isphonenum = false;
 					boolean iscustNationality = false;
@@ -3238,6 +3245,33 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			logger.debug("Leaving");
 			
 		return isMandAddExist;
+	}
+
+	
+	private boolean validateEmployemntDetails(Tab custTab) {
+		logger.debug("Entering");
+		boolean isvalidEmployment = true;
+		if (this.customerEmploymentDetailList != null && !this.customerEmploymentDetailList.isEmpty()) {
+			for (CustomerEmploymentDetail custEmployment : this.customerEmploymentDetailList) {
+				if (custEmployment.getCustEmpFrom().before(customerDetails.getCustomer().getCustDOB())) {
+					isvalidEmployment = false;
+					break;
+				}
+			}
+
+			if (!isvalidEmployment) {
+				this.tabkYCDetails.setSelected(true);
+				if (custTab != null) {
+					custTab.setSelected(true);
+				}
+				this.tabkYCDetails.setSelected(true);
+
+				String msg = Labels.getLabel("CustomerEmployment_NotBefore_DOB");
+				MessageUtil.showError(msg);
+
+			}
+		}
+		return isvalidEmployment;
 	}
 
 	private boolean isPhoneNumberExist() {
