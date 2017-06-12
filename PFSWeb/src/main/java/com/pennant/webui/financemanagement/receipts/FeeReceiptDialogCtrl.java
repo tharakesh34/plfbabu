@@ -157,6 +157,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Combobox										receiptMode;
 	protected CurrencyBox									receiptAmount;
 	protected Combobox										allocationMethod;
+	protected Row											row_RealizationDate;
+	protected Datebox										realizationDate;
 	
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -318,6 +320,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		//Receipts Details
 		this.receiptAmount.setProperties(true , formatter);
+		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
@@ -376,6 +379,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptMode"), this.receiptMode);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptAmount"), this.receiptAmount);
 		this.excessAdjustTo.setDisabled(true);
+		readOnlyComponent(isReadOnly("FeeReceiptDialog_realizationDate"), this.realizationDate);
 		
 		//Receipt Details
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_favourNo"), this.favourNo);
@@ -848,6 +852,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), ",EXCESS,");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+		this.realizationDate.setValue(header.getRealizationDate());
+		if(!isReadOnly("FeeReceiptDialog_realizationDate") || header.getRealizationDate() != null){
+			this.row_RealizationDate.setVisible(true);
+		}else{
+			this.row_RealizationDate.setVisible(false);
+		}
 		
 		if(!header.isNewRecord()){
 			this.finReference.setValue(header.getReference(),"");
@@ -1097,6 +1107,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					.getLabel("label_FeeReceiptDialog_AllocationMethod.value")));
 		}
 		
+		if(this.row_RealizationDate.isVisible() && !this.realizationDate.isDisabled()){
+			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_RealizationDate.value"), 
+					true, this.valueDate.getValue(), DateUtility.getAppDate(), true));
+		}
+		
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 			
 			if(!this.chequeAcNo.isReadonly()){
@@ -1186,6 +1201,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptMode.setConstraint("");
 		this.excessAdjustTo.setConstraint("");
 		this.allocationMethod.setConstraint("");
+		this.realizationDate.setConstraint("");
 		
 		this.favourNo.setConstraint("");
 		this.valueDate.setConstraint("");
@@ -1214,6 +1230,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptMode.setErrorMessage("");
 		this.excessAdjustTo.setErrorMessage("");
 		this.allocationMethod.setErrorMessage("");
+		this.realizationDate.setErrorMessage("");
 		
 		this.favourNo.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
@@ -1264,6 +1281,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		try {
 			header.setReceiptAmount(PennantApplicationUtil.unFormateAmount(receiptAmount.getValidateValue(), finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			header.setRealizationDate(this.realizationDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

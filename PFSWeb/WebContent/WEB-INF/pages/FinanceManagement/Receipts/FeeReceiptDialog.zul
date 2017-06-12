@@ -210,6 +210,18 @@
 													id="excessAdjustTo" width="180px" readonly="true" />
 											</hbox>
 										</row>
+										<row id="row_RealizationDate">
+												<label
+													id="label_FeeReceiptDialog_RealizationDate"
+													value="${c:l('label_FeeReceiptDialog_RealizationDate.value')}" />
+												<hbox
+													id="hbox_FeeReceiptDialog_RealizationDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="realizationDate" width="100px" />
+												</hbox>
+											</row>
 									</rows>
 								</grid>
 							</groupbox>
