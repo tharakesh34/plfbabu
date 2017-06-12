@@ -138,7 +138,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -2748,14 +2747,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (ddaProcessData != null) {
 			if (!StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
-
-				MultiLineMessageBox.doSetTemplate();
 				String message = Labels.getLabel("REPAY_DDA_" + financeMain.getFinRepayMethod());
 
-				int conf = MultiLineMessageBox.show(message, Labels.getLabel("DDA_CAN_TITLE"), MultiLineMessageBox.YES
-						| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(message) == MessageUtil.YES) {
 					getDdaControllerService().cancelDDARegistration(finReference);
 					processCompleted = true;
 				} else {
@@ -2765,13 +2759,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} else if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
 
 				if (isDDADataChanged(ddaProcessData)) {
-					MultiLineMessageBox.doSetTemplate();
-
-					int conf = MultiLineMessageBox.show(Labels.getLabel("REPAY_DDA_DDA"),
-							Labels.getLabel("DDA_REREG_TITLE"), MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-							Messagebox.QUESTION, true);
-
-					if (conf == MultiLineMessageBox.YES) {
+					if (MessageUtil.confirm(Labels.getLabel("REPAY_DDA_DDA")) == MessageUtil.YES) {
 
 						// send DDA Cancellation request
 						getDdaControllerService().cancelDDARegistration(finReference);

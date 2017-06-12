@@ -65,7 +65,6 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -94,7 +93,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -970,10 +968,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			dataChanged = true;
 		}
 		if(dataChanged) {
-			int conf = MultiLineMessageBox.show(Labels.getLabel("CHEQUE_REVALIDATE"), Labels.getLabel("message.Information"), 
-					MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-			
-			if (conf == MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm(Labels.getLabel("CHEQUE_REVALIDATE")) == MessageUtil.YES) {
 				this.pdcStatus.setValue("");
 				return;
 			} else {
