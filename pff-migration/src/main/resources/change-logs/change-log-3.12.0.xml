@@ -905,4 +905,13 @@ LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId
 	 </sql>
 	</changeSet>
 	
+	<changeSet id="38" author="Durgaprasad G">
+	 <sql>
+	 delete from SMTPARAMETERS where sysparmcode='ROUND_LASTSCHD';
+	  INSERT INTO SMTPARAMETERS VALUES ('ROUND_LASTSCHD', 'Round Last Schedule also 0/1', 'int ', '1',  '1', '4', '0',null, null, '0: Do not round 1: Round as per Loan Type', '1', '1000',  CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, '0');
+	 </sql>
+	 </changeSet>
+	
+	
+	
 </databaseChangeLog>
