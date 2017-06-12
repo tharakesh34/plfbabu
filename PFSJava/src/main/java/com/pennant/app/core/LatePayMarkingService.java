@@ -73,8 +73,12 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	public List<FinODDetails> calPDOnBackDatePayment(FinanceMain finmain, List<FinODDetails> finODDetails,
-			Date valueDate, String pftDayBasis, List<FinanceScheduleDetail> finScheduleDetails,
-			List<FinanceRepayments> repayments, String roundingMode, int roundingTarget) {
+			Date valueDate, List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
+		
+		String pftDayBasis = finmain.getProfitDaysBasis();
+		String roundingMode = finmain.getCalRoundingMode();
+		int roundingTarget = finmain.getRoundingTarget();
+		
 		for (FinODDetails fod : finODDetails) {
 			latePayPenaltyService.computeLPP(fod, valueDate, pftDayBasis, finScheduleDetails, repayments, roundingMode,
 					roundingTarget);
