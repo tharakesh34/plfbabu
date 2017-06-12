@@ -258,7 +258,6 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.App;
@@ -6174,7 +6173,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!recSave && !this.finStartDate.isReadonly() && !isFirstTask()
 				&& StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)
 				&& !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
-			MultiLineMessageBox.doSetTemplate();
 			// validate finance start date and application date
 			int maxAwdFinDays = SysParamUtil.getValueAsInt("DAYS_BET_APP_START");
 			if (DateUtility.getDaysBetween(this.finStartDate.getValue(), appDate) > maxAwdFinDays) {
@@ -6183,10 +6181,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
 								DateUtility.formatToShortDate(DateUtility.addDays(appDate, -maxAwdFinDays)),
 								DateUtility.formatToShortDate(DateUtility.addDays(appDate, maxAwdFinDays)) });
-				int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"),
-						MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-				if (conf == MultiLineMessageBox.YES) {
-					logger.debug("doClose: No");
+				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					return false;
 				}
 			}
@@ -6199,10 +6194,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							"label_MaxFinanceProcessDays_Validation",
 							new String[] { String.valueOf(maxDaystoProcessFin),
 									Labels.getLabel("label_FinanceMainDialog_FinStartDate.value") });
-					int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"),
-							MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf == MultiLineMessageBox.YES) {
-						logger.debug("doClose: No");
+					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						return false;
 					}
 				}
@@ -7149,13 +7141,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (manualSchedule.isChecked()) {
 
 			if (getFinanceDetail().getFinScheduleData().isSchduleGenerated()) {
-				final String title = Labels.getLabel("message.Information");
-
-				MultiLineMessageBox.doSetTemplate();
-
-				int conf = MultiLineMessageBox.show(Labels.getLabel("label_ScheduleMsg"), title,
-						MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(Labels.getLabel("label_ScheduleMsg")) == MessageUtil.YES) {
 					//set the totals and profits to zero in finance main bean 
 					appendScheduleDetailTab(false, false);
 				} else {
@@ -7208,13 +7194,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} else {
 			if (getManualScheduleDetailDialogCtrl() != null) {
-				final String title = Labels.getLabel("message.Information");
-
-				MultiLineMessageBox.doSetTemplate();
-
-				int conf = MultiLineMessageBox.show(Labels.getLabel("label_ScheduleMsg"), title,
-						MultiLineMessageBox.YES | MultiLineMessageBox.NO, MultiLineMessageBox.QUESTION, true);
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(Labels.getLabel("label_ScheduleMsg")) == MessageUtil.YES) {
 					Tab tab = null;
 					if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE)) != null) {
 						tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE));
@@ -8110,13 +8090,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			final String msg = "Schedule will be recreated would you like to proceed";
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-			if (conf == MultiLineMessageBox.YES) {
-
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				if (getManualScheduleDetailDialogCtrl() != null) {
 					getManualScheduleDetailDialogCtrl().doPrepareSchdData(getFinanceDetail().getFinScheduleData(),
 							false);
@@ -8144,12 +8119,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			final String msg = "Schedule will be recreated would you like to proceed";
-			final String title = Labels.getLabel("message.Information");
 
-			MultiLineMessageBox.doSetTemplate();
-			int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					MultiLineMessageBox.QUESTION, true);
-			if (conf == MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()
 						&& !this.stepFinance.isChecked()) {
 					this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
@@ -13832,14 +13803,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!recSave && commitment.getCmtAvailable().compareTo(finAmtCmtCcy) < 0) {
 					if (finType.isFinCommitmentOvrride()) {
 						final String msg = Labels.getLabel("message_AvailAmt_Commitment_Required_Override_YesNo");
-						final String title = Labels.getLabel("message.Information");
 
-						MultiLineMessageBox.doSetTemplate();
-						int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.CANCEL
-								| MultiLineMessageBox.IGNORE, MultiLineMessageBox.QUESTION, true);
-
-						if (conf == MultiLineMessageBox.CANCEL) {
-							logger.debug("doClose: Yes");
+						if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 							return false;
 						}
 					} else {
@@ -13851,14 +13816,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (finType.isFinCommitmentOvrride()) {
 					final String msg = Labels.getLabel("message_Commitment_Required_Override_YesNo");
-					final String title = Labels.getLabel("message.Information");
 
-					MultiLineMessageBox.doSetTemplate();
-					int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.CANCEL
-							| MultiLineMessageBox.IGNORE, MultiLineMessageBox.QUESTION, true);
-
-					if (conf == MultiLineMessageBox.CANCEL) {
-						logger.debug("doClose: Yes");
+					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 						return false;
 					}
 				} else {
