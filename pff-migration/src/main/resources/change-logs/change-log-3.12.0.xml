@@ -912,6 +912,11 @@ LEFT JOIN FeeTypes T5 ON T4.FeeTypeId = T5.FeeTypeId
 	 </sql>
 	 </changeSet>
 	
+	<changeSet id="39" author="Manoj.P">
+		<sql>
+			 update data_engine_config set FILENAMEFORMAT = '${PARTNER_BANK_CODE}, ${ddMMYYYYHHmmss}' where NAME IN ('DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT');
+		</sql>
+	</changeSet>
 	
 	
 </databaseChangeLog>
