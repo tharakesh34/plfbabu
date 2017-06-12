@@ -304,9 +304,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setTaskId("");
 			mandate.setNextTaskId("");
 			mandate.setWorkflowId(0);
-			if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
+			
+			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_RELEASE)) {
+				mandate.setStatus(MandateConstants.STATUS_APPROVED);
+			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				mandate.setStatus(MandateConstants.STATUS_NEW);
 			}
+			
 			MandateStatus mandateStatus = new MandateStatus();
 			mandateStatus.setMandateID(mandate.getMandateID());
 			mandateStatus.setStatus(mandate.getStatus());
