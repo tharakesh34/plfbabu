@@ -81,7 +81,7 @@ public final class MessageUtil {
 	/**
 	 * A OK button.
 	 */
-	private static final int	OK			= Messagebox.OK;
+	public static final int		OK			= Messagebox.OK;
 	/**
 	 * A Yes button.
 	 */
@@ -122,6 +122,14 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
+	public static void showMessage(ErrorDetails error) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+	}
+
 	/**
 	 * Shows an error message box and logs the message.
 	 * 
@@ -142,8 +150,7 @@ public final class MessageUtil {
 	 *            The {@link ErrorDetails error} object.
 	 */
 	public static void showError(ErrorDetails error) {
-		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
-
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		MultiLineMessageBox.doSetTemplate();

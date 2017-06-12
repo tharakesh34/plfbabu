@@ -56,6 +56,7 @@ import org.zkoss.zul.Messagebox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 
 public class ErrorControl extends Messagebox implements Serializable {
@@ -152,8 +153,8 @@ public class ErrorControl extends Messagebox implements Serializable {
 			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
 					buttons, icon, true);
 		} else {
-			retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title,
-					buttons, icon, true);
+			MessageUtil.showMessage(errorDetail);
+			retValue = MessageUtil.OK;
 		}
 
 		return retValue;
