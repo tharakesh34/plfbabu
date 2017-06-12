@@ -94,7 +94,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static Currency getCurrencyObject(String ccy) {
-		return currencies.get(ccy);
+		return getCurrency(ccy);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class CurrencyUtil {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
-		Currency currecny = currencies.get(ccy);
+		Currency currecny = getCurrency(ccy);
 		if (currecny != null) {
 			return currecny.getCcyEditField();
 		}
@@ -128,7 +128,7 @@ public class CurrencyUtil {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
-		Currency currecny = currencies.get(ccy);
+		Currency currecny = getCurrency(ccy);
 		if (currecny != null) {
 			return currecny.getCcyDesc();
 		}
@@ -142,7 +142,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static String getCcyNumber(String ccy) {
-		Currency currecny = currencies.get(ccy);
+		Currency currecny = getCurrency(ccy);
 		if (currecny != null) {
 			return currecny.getCcyNumber();
 		}
@@ -156,7 +156,7 @@ public class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal getExChangeRate(String ccy) {
-		Currency currecny = currencies.get(ccy);
+		Currency currecny = getCurrency(ccy);
 		if (currecny != null) {
 			return currecny.getCcySpotRate();
 		}
@@ -165,5 +165,9 @@ public class CurrencyUtil {
 
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		CurrencyUtil.currencyDAO = currencyDAO;
+	}
+	
+	public static Currency getCurrency(String ccy) {
+		return currencyDAO.getCurrency(ccy);
 	}
 }
