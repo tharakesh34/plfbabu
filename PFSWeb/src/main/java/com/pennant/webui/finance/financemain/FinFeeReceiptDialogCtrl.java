@@ -46,8 +46,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -196,56 +196,19 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 		int formatter = CurrencyUtil.getFormat(this.financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
 
 		for (Listitem listItem : listItems) {
-			FinFeeReceipt finFeeReceipt = (FinFeeReceipt) listItem.getAttribute("finFeeReceipt");
-			List<FinFeeReceipt> finFeeReceiptsList = this.finFeeReceiptMap.get(finFeeReceipt.getReceiptID());
-
-			if (!finFeeReceipt.isExist()) {
-				finFeeReceipt.setExist(true);
-				finFeeReceiptsList.add(finFeeReceipt);
-			}
-
-			for (int i = 0; i < finFeeReceiptsList.size(); i++) {
-				FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
-				if (finFeeReceiptTemp.getFeeTypeId() == 0 || StringUtils.isBlank(finFeeReceiptTemp.getFeeType())) {
-					finFeeReceiptsList.remove(i);
-					break;
-				}
-			}
-
 			paidBox = (Decimalbox) listItem.getChildren().get(4).getFirstChild();
 			remReceiptFeeBox = (Decimalbox) listItem.getChildren().get(5).getFirstChild();
 			paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
-			remReceiptAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()),
-					formatter);
+			remReceiptAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(remReceiptFeeBox.doubleValue()), formatter);
+			totalPaidAmount = totalPaidAmount.add(BigDecimal.valueOf(paidBox.doubleValue()));
 
 			try {
 				if (remReceiptAmount.compareTo(BigDecimal.ZERO) < 0) {
-					throw new WrongValueException(paidBox,
-							"Paid amount should be less than or equals to available amount.");
+					throw new WrongValueException(paidBox, Labels.getLabel("label_FinFeeReceiptDialog_PaiBox_Error.value"));
 				}
 			} catch (WrongValueException wv) {
 				wve.add(wv);
 			}
-
-			totalPaidAmount = totalPaidAmount.add(BigDecimal.valueOf(paidBox.doubleValue()));
-
-			if (BigDecimal.ZERO.compareTo(paidAmount) == 0) {
-				if (finFeeReceipt.isExist()) {
-					for (int i = 0; i < finFeeReceiptsList.size(); i++) {
-						FinFeeReceipt finFeeReceipt2 = finFeeReceiptsList.get(i);
-						if (finFeeReceipt2.getFeeType().equals(this.finFeeType)) {
-							finFeeReceipt2.setFeeType(null);
-							finFeeReceipt2.setFeeTypeId(0);
-							if (finFeeReceipt2.getId() != Long.MIN_VALUE) {
-								finFeeReceipt2.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-							}
-						}
-					}
-				}
-			} else {
-				finFeeReceipt.setPaidAmount(paidAmount);
-			}
-			finFeeReceipt.setPaidAmount(paidAmount);
 		}
 
 		if (!wve.isEmpty()) {
@@ -254,12 +217,44 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
-		}
-
-		if (this.paidAmountValue.compareTo(totalPaidAmount) != 0) {
-			MessageUtil.showError("Paid amount should be equals to total receipts paid amounts.");
+		} else if (this.paidAmountValue.compareTo(totalPaidAmount) != 0) {
+			MessageUtil.showError(Labels.getLabel("label_FinFeeReceiptDialog_TotalPaidAmount_Error.value"));
 			return;
 		} else {
+			for (Listitem listItem : listItems) {
+				paidBox = (Decimalbox) listItem.getChildren().get(4).getFirstChild();
+				paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
+
+				FinFeeReceipt finFeeReceipt = (FinFeeReceipt) listItem.getAttribute("finFeeReceipt");
+				List<FinFeeReceipt> finFeeReceiptsList = this.finFeeReceiptMap.get(finFeeReceipt.getReceiptID());
+
+				if (!finFeeReceipt.isExist()) {
+					if (paidAmount.compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
+					} else {
+						finFeeReceiptsList.add(finFeeReceipt);
+					}
+				} else {
+					if (BigDecimal.ZERO.compareTo(paidAmount) == 0) {
+						for (int i = 0; i < finFeeReceiptsList.size(); i++) {
+							FinFeeReceipt finFeeReceipt2 = finFeeReceiptsList.get(i);
+							if (finFeeReceipt2.getFeeType().equals(this.finFeeType)) {
+								if (finFeeReceiptsList.size() > 1) {
+									finFeeReceiptsList.remove(i);
+									break;
+								} else {
+									finFeeReceipt2.setFeeTypeId(0);
+									finFeeReceipt2.setFeeType("");
+									finFeeReceipt2.setPaidAmount(BigDecimal.ZERO);
+								}
+							}
+						}
+					}
+				}
+
+				finFeeReceipt.setPaidAmount(paidAmount);
+			}
+
 			this.finFeeDetailListCtrl.doFillFinFeeReceipts(this.finFeeReceiptMap);
 			closeDialog();
 		}
@@ -355,7 +350,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				}
 
 				if (i == 0) {
-					availableAmt = receiptAmt.subtract(availableAmt);
+					availableAmt = receiptAmt;
 				}
 
 				if (finFeeReceipt.getFeeTypeId() == this.feeTypeId) {
@@ -364,6 +359,17 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				} else {
 					availableAmt = availableAmt.subtract(finFeeReceipt.getPaidAmount());
 				}
+
+				if (finFeeReceiptList.size() == 1 && finFeeReceipt.getFeeTypeId() <= 0) {
+					finFeeReceiptTemp = finFeeReceipt;
+					finFeeReceiptTemp.setNewRecord(true);
+					finFeeReceiptTemp.setFeeType(this.finFeeType);
+					finFeeReceiptTemp.setFeeTypeId(this.feeTypeId);
+					finFeeReceiptTemp.setWorkflowId(workFlowId);
+					finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
+					finFeeReceiptTemp.setExist(true);
+				}
+
 			}
 
 			if (finFeeReceipt != null && finFeeReceiptTemp == null) {

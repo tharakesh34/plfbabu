@@ -64,7 +64,7 @@ public interface FinFeeDetailService {
 			String auditTranType, String usrLanguage, List<AuditDetail> auditDetails);
 	List<AuditDetail> saveOrUpdateFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
 			String auditTranType);
-	List<AuditDetail>  doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType);
+	List<AuditDetail>  doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType, String finReference);
 	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
 			String auditTranType);
 }

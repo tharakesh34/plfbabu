@@ -27,41 +27,43 @@
 								<listheader
 									id="listheader_FeeDetailList_FeeType"
 									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
-									sort="false" />
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_CalculatedAmount"
 									label="${c:l('listheader_FeeDetailList_CalculatedAmount.label')}"
-									sort="false" />
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_ActualAmount"
 									label="${c:l('listheader_FeeDetailList_ActualAmount.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_WaivedAmount"
 									label="${c:l('listheader_FeeDetailList_WaivedAmount.label')}"
-									sort="false"  />
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_PaidAmount"
 									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
-									sort="false" />
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_RemainingFee"
 									label="${c:l('listheader_FeeDetailList_RemainingFee.label')}"
-									sort="false"/>	
+									sort="false" hflex="min" />	
 								<listheader
 									id="listheader_FeeDetailList_PaymentRef"
 									label="${c:l('listheader_FeeDetailList_PaymentRef.label')}"
-									sort="false"/>
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_FeeScheduleMethod"
 									label="${c:l('listheader_FeeDetailList_FeeScheduleMethod.label')}"
-									sort="false" />
+									sort="false" hflex="min" />
 								<listheader
 									id="listheader_FeeDetailList_Terms"
 									label="${c:l('listheader_FeeDetailList_Terms.label')}"
-									sort="false" />
+									sort="false" hflex="min" />
 								<listheader
-									id="listheader_FeeDetailList_Adjust" sort="false" />
+									id="listheader_FeeDetailList_Adjust"
+									label="${c:l('listheader_FeeDetailList_Adjustments.label')}" 
+									sort="false" hflex="min" />
 							</listhead>
 						</listbox>
 					</groupbox>
@@ -206,13 +208,33 @@
 							</listhead>
 						</listbox>
 					</groupbox>
-					<groupbox id="gb_FinFeeReceipts" style="border:none;">
-						<caption label="${c:l('gp_ReceiptFeesDetails')}">
+					<separator/>
+					<div id="div_AutoAllocate" sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<toolbar align="start"
+								sclass="toolbar-start" />
+							<toolbar align="center"
+								sclass="toolbar-center" />
+							<toolbar align="start"
+								sclass="toolbar-end">
+								<button id="btn_autoAllocate"
+									label="${c:l('label_Allocate')}"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+					<groupbox id="gb_FinFeeReceipts"
+						style="border:none;">
+						<caption
+							label="${c:l('gp_ReceiptFeesDetails')}">
 						</caption>
 						<listbox id="listBoxFinFeeReceipts"
 							fixedLayout="false" span="true"
-							emptyMessage="${c:l('listbox.emptyMessage')}" 
-							multiple="false" ca:data-scrollable="true" sizedByContent="true">
+							emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+							ca:data-scrollable="true" sizedByContent="true">
 							<listhead sizable="false">
 								<listheader
 									id="listheader_FeeDetailList_ReceiptType"
@@ -223,21 +245,21 @@
 									label="${c:l('listheader_FeeDetailList_Reference.label')}"
 									sort="false" />
 								<listheader
-									id="listheader_FeeDetailList_ReceiptFeeType"
-									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
-									sort="false"  />
-								<listheader
 									id="listheader_FeeDetailList_ReceiptAmount"
 									label="${c:l('listheader_FeeDetailList_ReceiptAmount.label')}"
-									sort="false"/>
+									sort="false" align="right"/>
+								<listheader
+									id="listheader_FeeDetailList_ReceiptFeeType"
+									label="${c:l('listheader_FeeDetailList_FeeType.label')}"
+									sort="false" />
 								<listheader
 									id="listheader_FeeDetailList_ReceiptPaidAmount"
 									label="${c:l('listheader_FeeDetailList_PaidAmount.label')}"
-									sort="false" />
+									sort="false" align="right"/>
 								<listheader
 									id="listheader_FeeDetailList_Balance"
 									label="${c:l('listheader_FeeDetailList_Balance.label')}"
-									sort="false" visible="false"/>	
+									sort="false" align="right"/>
 							</listhead>
 						</listbox>
 					</groupbox>

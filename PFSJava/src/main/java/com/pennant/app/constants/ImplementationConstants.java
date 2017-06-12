@@ -108,4 +108,6 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_ADDDBSF					= false;					// Add Disbursement future date Required or Not 
 	
 	public static final boolean FRQ_DATE_VALIDATION				= true;   //Constant to check Frequency and Date Match/Not
+
+	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// 	inserting Payable Advise while receipt remaining amount is there
 }

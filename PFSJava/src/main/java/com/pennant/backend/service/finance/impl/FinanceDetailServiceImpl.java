@@ -743,7 +743,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Fee Details
 		scheduleData.getFinFeeDetailList().addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView", eventCodeRef)));
 
-		// Finance Receipt Details
+		/*// Finance Receipt Details
 		scheduleData.setFinReceiptDetails(getFinFeeDetailService().getFinReceiptDetais(finReference));
 		List<Long> feeIds = new ArrayList<Long>();
 		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
@@ -752,7 +752,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		
 		if (!feeIds.isEmpty()) {
 			scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_TView"));
-		}
+		}*/
 
 		// Collateral Details
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -3549,7 +3549,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance Fee Receipt Details
 			if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
 				getFinFeeDetailService().doApproveFinFeeReceipts(
-						financeDetail.getFinScheduleData().getFinFeeReceipts(), "", tranType);
+						financeDetail.getFinScheduleData().getFinFeeReceipts(), "", tranType, financeMain.getFinReference());
 			}
 		}
 
@@ -5088,12 +5088,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
-		// Finance Fee Receipts
-		if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
-			financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
+		if(StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+			// Finance Fee Receipts
+			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
+				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
+			}
+			auditDetails.addAll(getFinFeeDetailService().validateFinFeeReceipts(financeDetail,
+					financeMain.getWorkflowId(), method, auditTranType, usrLanguage, auditDetails));
 		}
-		auditDetails.addAll(getFinFeeDetailService().validateFinFeeReceipts(financeDetail,
-				financeMain.getWorkflowId(), method, auditTranType, usrLanguage, auditDetails));
 		
 		//Finance Insurance details
 		//=======================================

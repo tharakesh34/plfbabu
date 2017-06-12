@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ManualAdviseDAOImpl.java                                                   * 	  
+ * FileName    		:  ManualAdviseDAOImpl.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
