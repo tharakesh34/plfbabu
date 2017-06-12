@@ -78,7 +78,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 
 /**
@@ -309,7 +308,8 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		
 		//Need to check Process failure case
 		if(success){
-			MultiLineMessageBox.show("Bulk Rate Application Process Succeed for Finance Count " +getRateChangeFinances().size());
+			MessageUtil.showMessage(
+					"Bulk Rate Application Process Succeed for Finance Count " + getRateChangeFinances().size());
 		}
 		
 		logger.debug("Leaving" +event.toString());

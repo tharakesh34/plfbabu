@@ -76,7 +76,6 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -325,7 +324,8 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 
 		//Need to check Process failure case
 		if(success){
-			MultiLineMessageBox.show("Bulk Deferment Application Process Succeed for Finance Count " +getDefermentChangeFinances().size());
+			MessageUtil.showMessage("Bulk Deferment Application Process Succeed for Finance Count "
+					+ getDefermentChangeFinances().size());
 		}
 
 		logger.debug("Leaving" +event.toString());
