@@ -1,7 +1,6 @@
 package com.pennant.cache.util;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -121,14 +120,14 @@ public class FinanceConfigCache {
 	 * @return FinanceType
 	 */
 	public static FinanceType getFinanceType(String finType){
-		FinanceType financeType=null;
-		try {
-			financeType =  financeTypeCache.get(finType);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from FinanceType cache: ", e);
-			financeType =  getFinanceTypeByID(finType);
-		}
-		return financeType;
+//		FinanceType financeType=null;
+//		try {
+//			financeType =  financeTypeCache.get(finType);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from FinanceType cache: ", e);
+//			financeType =  getFinanceTypeByID(finType);
+//		}
+		return getFinanceTypeByID(finType);
 	}
 	
 	/**
@@ -149,16 +148,16 @@ public class FinanceConfigCache {
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucket(long bucketID){
-		DPDBucket dpdBucket=null;
-		
-		try {
-			dpdBucket =  dPDBucketCache.get(bucketID);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from DPDBucket cache: ", e);
-			dpdBucket =  getDPDBucketByID(bucketID);
-		}
+//		DPDBucket dpdBucket=null;
+//		
+//		try {
+//			dpdBucket =  dPDBucketCache.get(bucketID);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from DPDBucket cache: ", e);
+//			dpdBucket =  getDPDBucketByID(bucketID);
+//		}
 
-		return dpdBucket;
+		return getDPDBucketByID(bucketID);
 	}
 	
 	/**
@@ -179,16 +178,16 @@ public class FinanceConfigCache {
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucketCode(String bucketCode){
-		DPDBucket dpdBucket=null;
+//		DPDBucket dpdBucket=null;
+//		
+//		try {
+//			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from DPDBucket cache: ", e);
+//			dpdBucket =  getDPDBucketByCode(bucketCode);
+//		}
 		
-		try {
-			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from DPDBucket cache: ", e);
-			dpdBucket =  getDPDBucketByCode(bucketCode);
-		}
-		
-		return dpdBucket;
+		return getDPDBucketByCode(bucketCode);
 	}
 	
 	/**
@@ -211,12 +210,13 @@ public class FinanceConfigCache {
 	 */
 	public static List<DPDBucketConfiguration> getDPDBucketConfiguration(String productCode){
 		
-		try {
-			return  dPDBucketConfigurationCache.get(productCode);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
-			return  getDPDBucketConfigurationById(productCode);
-		}
+//		try {
+//			return  dPDBucketConfigurationCache.get(productCode);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
+//			return  getDPDBucketConfigurationById(productCode);
+//		}
+		return  getDPDBucketConfigurationById(productCode);
 
 	}
 	
@@ -239,16 +239,16 @@ public class FinanceConfigCache {
 	 * @return NPABucket
 	 */
 	public static NPABucket getNPABucket(long bucketID){
-		NPABucket npaBucket=null;
-		
-		try {
-			npaBucket =  nPABucketCache.get(bucketID);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from NPABucket cache: ", e);
-			npaBucket =  getNPABucketByID(bucketID);
-		}
+//		NPABucket npaBucket=null;
+//		
+//		try {
+//			npaBucket =  nPABucketCache.get(bucketID);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from NPABucket cache: ", e);
+//			npaBucket =  getNPABucketByID(bucketID);
+//		}
 
-		return npaBucket;
+		return getNPABucketByID(bucketID);
 	}
 	
 	
@@ -270,13 +270,13 @@ public class FinanceConfigCache {
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<NPABucketConfiguration> getNPABucketConfiguration(String productCode) {
-		try {
-			return nPABucketConfigurationCache.get(productCode);
-		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
-			return getNPABucketConfigurationByCode(productCode);
-		}
-
+//		try {
+//			return nPABucketConfigurationCache.get(productCode);
+//		} catch (ExecutionException e) {
+//			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
+//			return getNPABucketConfigurationByCode(productCode);
+//		}
+		return getNPABucketConfigurationByCode(productCode);
 	}
 
 	/**
