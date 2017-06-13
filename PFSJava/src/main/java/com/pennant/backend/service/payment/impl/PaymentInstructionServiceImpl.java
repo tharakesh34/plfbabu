@@ -53,9 +53,10 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.payment.PaymentInstruction;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.Literal;
@@ -437,6 +438,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 				recordStatus = paymentInstruction.getRecordStatus();
 				paymentInstruction.setRecordType("");
 				paymentInstruction.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				paymentInstruction.setStatus(DisbursementConstants.STATUS_APPROVED);
 			}
 			if (saveRecord) {
 				getPaymentInstructionDAO().save(paymentInstruction, tableType);

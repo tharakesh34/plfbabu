@@ -65,7 +65,7 @@ public interface PaymentDetailDAO extends BasicCrudDao<PaymentDetail> {
 
 	boolean isDuplicateKey(long paymentDetailId, TableType tableType);
 
-	List<PaymentDetail> getPaymentDetailList(long paymentDetailId, String type);
+	List<PaymentDetail> getPaymentDetailList(long paymentId, String type);
 
 	void deleteList(PaymentDetail paymentDetail, TableType tableType);
 

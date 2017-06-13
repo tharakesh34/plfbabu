@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -72,4 +73,8 @@ public interface PaymentDetailService {
 	List<PaymentDetail> getPaymentDetailList(long paymentId, String type);
 
 	List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName);
+
+	void paymentReversal(PaymentInstruction paymentInstruction);
+
+	void updatePaymentStatus(PaymentInstruction paymentInstruction);
 }

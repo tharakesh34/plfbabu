@@ -123,10 +123,10 @@ public class PaymentHeaderDAOImpl extends BasisNextidDaoImpl<PaymentHeader> impl
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into PaymentHeader");
 		sql.append(tableType.getSuffix());
-		sql.append("(paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference,");
+		sql.append("(paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference, linkedTranId,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :paymentId, :paymentType, :paymentAmount, :createdOn, :approvedOn, :status, :finReference,");
+		sql.append(" :paymentId, :paymentType, :paymentAmount, :createdOn, :approvedOn, :status, :finReference, :linkedTranId,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// Get the sequence number.
 		if (paymentHeader.getPaymentId() <= 0) {

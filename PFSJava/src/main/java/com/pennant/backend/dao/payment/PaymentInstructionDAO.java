@@ -43,7 +43,7 @@
 package com.pennant.backend.dao.payment;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.payment.PaymentInstruction;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.TableType;
 
 public interface PaymentInstructionDAO extends BasicCrudDao<PaymentInstruction> {
@@ -62,5 +62,7 @@ public interface PaymentInstructionDAO extends BasicCrudDao<PaymentInstruction> 
 	boolean isDuplicateKey(long paymentInstructionId, TableType tableType);
 
 	PaymentInstruction getPaymentInstructionDetails(long paymentId, String type);
+
+	void updatePaymentInstrucionStatus(PaymentInstruction paymentInstruction, TableType mainTab);
 
 }

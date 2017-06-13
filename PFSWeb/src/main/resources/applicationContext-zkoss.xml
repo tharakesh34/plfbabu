@@ -4780,7 +4780,7 @@
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
-	<bean id="disbursementsInstructionsDialogCtrl" class="com.pennant.webui.payment.paymentheader.DisbursementInstructionsDialogCtrl" parent="basisListCtrl" scope="prototype">
+	<bean id="paymentInstructionDialogCtrl" class="com.pennant.webui.payment.paymentheader.PaymentInstructionDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
  

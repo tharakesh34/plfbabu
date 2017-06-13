@@ -55,6 +55,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
+import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -62,6 +63,7 @@ import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentDetailService;
@@ -80,6 +82,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentDetailDAO paymentDetailDAO;
+	private PaymentInstructionDAO paymentInstructionDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 
@@ -117,6 +120,13 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public PaymentInstructionDAO getPaymentInstructionDAO() {
+		return paymentInstructionDAO;
+	}
+	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
+		this.paymentInstructionDAO = paymentInstructionDAO;
 	}
 
 	/**
@@ -519,8 +529,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 
 	@Override
-	public List<PaymentDetail> getPaymentDetailList(long paymentDetailId, String type) {
-		return getPaymentDetailDAO().getPaymentDetailList(paymentDetailId, type);
+	public List<PaymentDetail> getPaymentDetailList(long paymentId, String type) {
+		return getPaymentDetailDAO().getPaymentDetailList(paymentId, type);
 	}
 
 	private void saveOrUpdate(PaymentDetail paymentDetail) {
@@ -650,6 +660,31 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 		}
 		logger.debug("Leaving");
+	}
+
+
+	@Override
+	public void paymentReversal(PaymentInstruction paymentInstruction) {
+		logger.debug(Literal.ENTERING);
+		
+		List<PaymentDetail> detailsList = getPaymentDetailDAO().getPaymentDetailList(paymentInstruction.getPaymentId(), TableType.MAIN_TAB.getSuffix());
+		if (detailsList != null && !detailsList.isEmpty()) {
+			for (PaymentDetail paymentDetail : detailsList) {
+				if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+					getFinExcessAmountDAO().updateExcessAmount(paymentDetail.getReferenceId(), "U", paymentDetail.getAmount().negate());
+				} else {
+					getManualAdviseDAO().reverseUtilise(paymentDetail.getReferenceId(),  paymentDetail.getAmount());
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updatePaymentStatus(PaymentInstruction paymentInstruction) {
+		logger.debug(Literal.ENTERING);
+		getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

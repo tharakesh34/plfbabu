@@ -69,8 +69,7 @@
 						<columns>
 							<column width="90%" />
 						</columns>
-						<rows id="panelRows"
-							style="overflow: visible !important" />
+						<rows id="panelRows" style="overflow: visible !important" />
 					</grid>
 				</div>
 			</center>

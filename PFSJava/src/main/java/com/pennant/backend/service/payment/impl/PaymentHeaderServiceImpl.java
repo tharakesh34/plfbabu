@@ -42,30 +42,47 @@
  */
 package com.pennant.backend.service.payment.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.security.auth.login.AccountNotFoundException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
-import com.pennant.backend.model.payment.PaymentInstruction;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.service.rmtmasters.AccountingSetService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -80,37 +97,26 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
+	private AccountingSetService accountingSetService;
+	private PostingsDAO postingsDAO;
+	private AccountEngineExecution	engineExecution;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
+ 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
-	 */
+ 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
-	/**
-	 * @return the paymentHeaderDAO
-	 */
+ 
 	public PaymentHeaderDAO getPaymentHeaderDAO() {
 		return paymentHeaderDAO;
 	}
-
-	/**
-	 * @param paymentHeaderDAO
-	 *            the paymentHeaderDAO to set
-	 */
+ 
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
@@ -121,6 +127,18 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public void setPaymentInstructionService(PaymentInstructionService paymentInstructionService) {
 		this.paymentInstructionService = paymentInstructionService;
+	}
+
+	public void setAccountingSetService(AccountingSetService accountingSetService) {
+		this.accountingSetService = accountingSetService;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
+
+	public void setEngineExecution(AccountEngineExecution engineExecution) {
+		this.engineExecution = engineExecution;
 	}
 
 	/**
@@ -303,6 +321,13 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		PaymentHeader paymentHeader = new PaymentHeader();
 		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
+		
+		// Processing Accounting Details
+		if (StringUtils.equals(paymentHeader.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+		}
+		
+		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentHeader.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(paymentHeaderDAO.getPaymentHeader(paymentHeader.getPaymentId(), ""));
@@ -467,17 +492,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			for (PaymentDetail detail : paymentHeader.getPaymentDetailList()) {
 				detail.setPaymentId(paymentHeader.getPaymentId());
 				detail.setWorkflowId(paymentHeader.getWorkflowId());
-				
-				/*detail.setRecordStatus(paymentHeader.getRecordStatus());
-				detail.setRecordType(paymentHeader.getRecordType());
-				detail.setNewRecord(paymentHeader.isNewRecord());*/
-				
-				/*detail.setUserDetails(paymentHeader.getUserDetails());
-				detail.setLastMntOn(paymentHeader.getLastMntOn());
-				detail.setRoleCode(paymentHeader.getRoleCode());
-				detail.setNextRoleCode(paymentHeader.getNextRoleCode());
-				detail.setTaskId(paymentHeader.getTaskId());
-				detail.setNextTaskId(paymentHeader.getNextTaskId());*/
 			}
 			auditDetailMap.put("PaymentDetails", this.paymentDetailService.setPaymentDetailAuditData(paymentHeader.getPaymentDetailList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("PaymentDetails"));
@@ -592,4 +606,115 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return auditDetails;
 	}
 	
+	
+	/**
+	 * Method for Execute posting Details on Core Banking Side
+	 * 
+	 * @param auditHeader
+	 * @param appDate
+	 * @return
+	 * @throws AccountNotFoundException
+	 */
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date appDate) throws InterfaceException {
+		logger.debug("Entering");
+
+		long linkedTranId = Long.MIN_VALUE;
+		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
+
+		PaymentHeader paymentHeader = new PaymentHeader();
+		BeanUtils.copyProperties((PaymentHeader) auditHeader.getAuditDetail().getModelData(), paymentHeader);
+		try {
+			if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				AEEvent aeEvent = new AEEvent();
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				if (amountCodes == null) {
+					amountCodes = new AEAmountCodes();
+				}
+				FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
+				amountCodes.setFinType(financeMain.getFinType());
+				aeEvent.setBranch(financeMain.getFinBranch());
+				aeEvent.setCustID(financeMain.getCustID());
+
+				PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
+				if (paymentInstruction != null) {
+					amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
+					amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
+				}
+				
+				aeEvent.setCcy(financeMain.getFinCcy());
+				aeEvent.setFinReference(financeMain.getFinReference());
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+				BigDecimal paybleAdviseAmt = BigDecimal.ZERO;
+				BigDecimal excessAmount = BigDecimal.ZERO;
+				BigDecimal emiInAdavance = BigDecimal.ZERO;
+
+				for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+					if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+						paybleAdviseAmt = paybleAdviseAmt.add(paymentDetail.getAmount());
+					} else if ("E".equals(paymentDetail.getAmountType())) {
+						excessAmount = excessAmount.add(paymentDetail.getAmount());
+					} else if ("A".equals(paymentDetail.getAmountType())) {
+						emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
+					}
+				}
+				aeEvent.getDataMap().put("pi_payableAdvice", paybleAdviseAmt);
+				aeEvent.getDataMap().put("pi_excessAmount", excessAmount);
+				aeEvent.getDataMap().put("pi_emiInAdvance", emiInAdavance);
+				aeEvent.getDataMap().put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+
+				long accountsetId = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_PAYMTINS, AccountEventConstants.ACCEVENT_PAYMTINS);
+				aeEvent.getAcSetIDList().add(accountsetId);
+
+				list = engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet();
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E", "Accounting Engine Failed to Create Postings:" + e.getMessage(), new String[] {}, new String[] {}));
+			auditHeader.setErrorList(errorDetails);
+			list = null;
+		}
+
+		if (list != null && !list.isEmpty()) {
+			// Method for validating Postings with interface program and
+			// return results
+			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE || list.get(0).getLinkedTranId() == 0) {
+				linkedTranId = postingsDAO.getLinkedTransId();
+			} else {
+				linkedTranId = list.get(0).getLinkedTranId();
+			}
+
+			if (list != null && list.size() > 0) {
+				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+				for (int i = 0; i < list.size(); i++) {
+					ReturnDataSet set = list.get(i);
+					set.setLinkedTranId(linkedTranId);
+					set.setPostDate(appDate);
+					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils
+							.trimToEmpty(set.getErrorId())))) {
+						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
+								.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()),
+								new String[] {}, new String[] {}));
+					} else {
+						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
+					}
+				}
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
+
+		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
+			// save Postings
+			if (list != null && !list.isEmpty()) {
+				postingsDAO.saveBatch(list);
+			}
+		}
+		
+		paymentHeader.setLinkedTranId(linkedTranId);
+		auditHeader.getAuditDetail().setModelData(paymentHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
 }

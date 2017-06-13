@@ -60,6 +60,7 @@ import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -81,6 +82,7 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 	private Date approvedOn;
 	private String status;
 	private String paymentInstrType;
+	private long linkedTranId;
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -185,6 +187,14 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setPaymentInstrType(String paymentInstrType) {
 		this.paymentInstrType = paymentInstrType;
+	}
+	
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 
 	public boolean isNewRecord() {

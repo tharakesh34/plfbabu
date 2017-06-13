@@ -50,12 +50,35 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		} catch (InterruptedException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		thread.start();
 	}
+	
+	public class DisbursementProcessThread extends Thread {
+		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
 
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix)
-			throws Exception {
+		private String						finType;
+		private String						fileNamePrefix;
+		private long						userId;
+		private List<FinAdvancePayments>	disbursements;
+
+		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) {
+			this.finType = finType;
+			this.userId = userId;
+			this.disbursements = disbursements;
+			this.fileNamePrefix = fileNamePrefix;
+		}
+
+		@Override
+		public void run() {
+			try {
+				processDisbursements(finType, userId, disbursements, fileNamePrefix);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+	
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder list = new StringBuilder();
@@ -249,7 +272,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("ID", idList);
-		filterMap.put("STATUS", "Approved");
+		filterMap.put("STATUS", "APPROVED");
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
@@ -260,7 +283,6 @@ public class DisbursementRequestService extends BajajService implements Disburse
 			parameterMap.put("CLIENT_CODE", fileNamePrefix);
 			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 4, "0"));
 		}
-
 		try {
 			export.setValueDate(getValueDate());
 			export.setFilterMap(filterMap);
@@ -356,7 +378,8 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		sql.append(" PAYMENT_DETAIL6,");
 		sql.append(" PAYMENT_DETAIL7,");
 		sql.append(" STATUS,");
-		sql.append(" REMARKS");
+		sql.append(" REMARKS,");
+		sql.append(" CHANNEL");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
@@ -413,31 +436,6 @@ public class DisbursementRequestService extends BajajService implements Disburse
 			logger.error(Literal.EXCEPTION, e);
 		}
 		return keyHolder.getKey().longValue();
-	}
-
-	public class DisbursementProcessThread extends Thread {
-		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
-
-		private String						finType;
-		private String						fileNamePrefix;
-		private long						userId;
-		private List<FinAdvancePayments>	disbursements;
-
-		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) {
-			this.finType = finType;
-			this.userId = userId;
-			this.disbursements = disbursements;
-			this.fileNamePrefix = fileNamePrefix;
-		}
-
-		@Override
-		public void run() {
-			try {
-				processDisbursements(finType, userId, disbursements, fileNamePrefix);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
 	}
 	
 	private boolean validateImpsRequest(ResultSet rs) throws Exception {
