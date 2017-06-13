@@ -241,4 +241,12 @@
 	 </createView>
 	
 	</changeSet>
+	
+	<changeSet id="06" author="Durgaprasad G">
+	 <sql>
+	  Update SECUSERS set authtype = 'DAO';
+  	  Update SECUSERS_RTEMP set authtype = 'DAO';
+  	  Update SECUSERS_TEMP set authtype = 'DAO';
+	 </sql>
+	</changeSet>
 </databaseChangeLog>
