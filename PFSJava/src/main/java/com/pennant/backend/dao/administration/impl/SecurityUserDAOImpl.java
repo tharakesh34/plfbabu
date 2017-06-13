@@ -56,14 +56,16 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SecurityUsers model</b> class.<br>
@@ -127,7 +129,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
 		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries, UsrDesg," );
+		selectSql.append(" UsrInvldLoginTries, UsrDesg, AuthType," );
 		if(StringUtils.trimToEmpty(type).contains("View")){
 			selectSql.append(" lovDescUsrDftAppCode , lovDescUsrDftAppCodeName , " );
 			selectSql.append(" lovDescUsrDeptCodeName ,lovDescUsrBranchCodeName,LovDescUsrLanguage,");
@@ -172,7 +174,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		selectSql.append(" UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, " );
 		selectSql.append(" UsrAcExp,UsrAcExpDt, UsrCredentialsExp, UsrAcLocked, UsrLanguage, " );
 		selectSql.append(" UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken, UsrIsMultiBranch, " );
-		selectSql.append(" UsrInvldLoginTries,UsrDesg," );
+		selectSql.append(" UsrInvldLoginTries,UsrDesg, AuthType," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if(StringUtils.trimToEmpty(type).contains("View")){
@@ -219,6 +221,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	 * @throws DataAccessException
 	 * 
 	 */
+	@SuppressWarnings("serial")
 	public void delete(SecurityUser securityUser, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -233,10 +236,17 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				throw new ConcurrencyException();
+				ErrorDetails errorDetails= getError ("41003",securityUser.getUsrLogin() , 
+						securityUser.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {
+				};
 			}
 		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
+			logger.warn("Exception: ", e);
+			ErrorDetails errorDetails= getError ("41006",securityUser.getUsrLogin() ,
+					securityUser.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}
@@ -269,14 +279,14 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		insertSql .append(" UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrCredentialsExp, " );
 		insertSql .append(" UsrAcLocked, UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, " );
 		insertSql .append(" UsrDeptCode, UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, " );
-		insertSql .append(" UsrDesg," );
+		insertSql .append(" UsrDesg, AuthType," );
 		insertSql .append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		insertSql .append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql .append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, " );
 		insertSql .append(" :UsrLName, :UsrMobile, :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, " );
 		insertSql .append(" :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp, :UsrCredentialsExp, " );
 		insertSql .append(" :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, " );
-		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, :UsrDesg,");
+		insertSql .append(" :UsrDeptCode, :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries,:UsrAcExpDt, :UsrDesg, :AuthType,");
 		insertSql .append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql .append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -300,6 +310,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	 * @throws DataAccessException
 	 * 
 	 */
+	@SuppressWarnings("serial")
 	@Override
 	public void update(SecurityUser securityUser,String type) {
 		logger.debug("Entering");
@@ -307,13 +318,13 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		
 		StringBuilder   updateSql = new StringBuilder  ("Update SecUsers");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set UsrLogin = :UsrLogin, UserStaffID = :UserStaffID, UsrFName = :UsrFName, ");
+		updateSql.append(" Set UsrLogin = :UsrLogin, UsrPwd = :UsrPwd, UserStaffID = :UserStaffID, UsrFName = :UsrFName, ");
 		updateSql.append(" UsrMName = :UsrMName, UsrLName = :UsrLName, UsrMobile = :UsrMobile, UsrEmail = :UsrEmail, ");
 		updateSql.append(" UsrEnabled = :UsrEnabled, UsrCanSignonFrom = :UsrCanSignonFrom, UsrCanSignonTo = :UsrCanSignonTo,");
 		updateSql.append(" UsrCanOverrideLimits = :UsrCanOverrideLimits, UsrAcExp = :UsrAcExp, UsrCredentialsExp = :UsrCredentialsExp," );
 		updateSql.append(" UsrAcLocked = :UsrAcLocked, UsrLanguage = :UsrLanguage, UsrDftAppId= :UsrDftAppId, UsrDftAppCode = :UsrDftAppCode, ");
 		updateSql.append(" UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode, ");
-		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg,UsrAcExpDt =:UsrAcExpDt,");
+		updateSql.append(" UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries, UsrDesg = :UsrDesg, AuthType = :AuthType, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -327,7 +338,10 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}
@@ -337,6 +351,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	 *  if Record not updated then throws DataAccessException 
 	 * @param securityUser (SecurityUsers) 
 	 */
+	@SuppressWarnings("serial")
 	public void changePassword(SecurityUser securityUser) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -352,9 +367,19 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError ("41004",securityUser.getUsrLogin() , securityUser.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
+	}
+	
+	private ErrorDetails  getError(String errorId, String userLogin, String userLanguage){
+		String[][] parms= new String[2][1]; 
+		parms[1][0] = userLogin;
+		parms[0][0] = PennantJavaUtil.getLabel("label_UsrLogin")+":" +parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 	
 	/**
@@ -415,6 +440,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Update  SecurityUser Division Branch  Details
 	 */
+	@SuppressWarnings("serial")
 	@Override
 	public void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type) {
 		logger.debug("Entering");
@@ -432,7 +458,10 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			logger.debug("Error Update Method Count :"+recordCount);
+			ErrorDetails errorDetails= getError ("41004",String.valueOf(securityUserDivBranch.getUsrID()) , securityUserDivBranch.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}
@@ -440,6 +469,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Delete  Each Branch Under Division   
 	 */
+	@SuppressWarnings("serial")
 	@Override
 	public void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch, String type) {
 		logger.debug("Entering");
@@ -455,10 +485,17 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				throw new ConcurrencyException();
+				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUserDivBranch.getUsrID()) , 
+						securityUserDivBranch.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {
+				};
 			}
 		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
+			logger.warn("Exception: ", e);
+			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUserDivBranch.getUsrID()) ,
+					securityUserDivBranch.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}
@@ -494,6 +531,7 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 	/**
 	 * This method is to Delete  SecurityUser Division Branch  Details Under User
 	 */
+	@SuppressWarnings("serial")
 	@Override
 	public void deleteBranchs(SecurityUser securityUser, String type) {
 		logger.debug("Entering");
@@ -509,10 +547,17 @@ public class SecurityUserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implem
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				throw new ConcurrencyException();
+				ErrorDetails errorDetails= getError ("41003",String.valueOf(securityUser.getUsrID()) , 
+						securityUser.getUserDetails().getUsrLanguage());
+				throw new DataAccessException(errorDetails.getError()) {
+				};
 			}
 		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
+			logger.warn("Exception: ", e);
+			ErrorDetails errorDetails= getError ("41006",String.valueOf(securityUser.getUsrID()) ,
+					securityUser.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
 		}
 		logger.debug("Leaving");
 	}

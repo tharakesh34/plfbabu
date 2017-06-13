@@ -131,6 +131,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	protected Window window_SecurityUserDialog; // autoWired
 	protected Textbox usrLogin; // autoWired
+	protected Combobox authType; // autoWired
 	protected Textbox usrPwd; // autoWired
 	protected Textbox usrnewPwd; // autoWired
 	protected Textbox usrConfirmPwd; // autoWired
@@ -176,6 +177,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private transient PagedListService pagedListService;
 	private transient ChangePasswordModel changePasswordModel = new ChangePasswordModel();
 	private List<ValueLabel> listUsrDftAppId = PennantStaticListUtil.getAppCodes();
+	private List<ValueLabel> authTypesList = PennantStaticListUtil.getAuthnticationTypes();
 	protected Map<String, Object> divBranchs = new HashMap<String, Object>();
 	protected Map<String, HashMap<String, Object>> dynamicDivBranchs = new HashMap<String, HashMap<String, Object>>();
 	private SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
@@ -240,8 +242,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			} else {
 				setSecurityUserListCtrl(null);
 			}
-
-			setListusrDftAppId();
+			
 			// set Field Properties
 			doSetFieldProperties();
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(false);
@@ -260,6 +261,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
+		
+		setListusrDftAppId();
+		fillComboBox(authType, "", authTypesList, "");
+		
 		// Empty sent any required attributes
 		int pwdMaxLenght = Integer.parseInt(SysParamUtil.getValueAsString("USR_PWD_MAX_LEN"));
 		this.usrLogin.setMaxlength(50);
@@ -351,8 +356,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public void onClick$btnEdit(Event event) throws InterruptedException {
 		logger.debug("Entering ");
 		doEdit();
-		this.rowSecurityUserDialogUsrPwd.setVisible(false);
-		this.rowSecurityUserDialogUsrConfirmPwd.setVisible(false);
+		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
 		logger.debug("Leaving ");
 	}
 
@@ -450,15 +454,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (securityUser.isNew()) {
 			this.usrDftAppId.setSelectedIndex(0);
 		} else {
-			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(String.valueOf(securityUser.getUsrDftAppId()),
-					PennantStaticListUtil.getAppCodes()));
+			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(String.valueOf(securityUser.getUsrDftAppId()), PennantStaticListUtil.getAppCodes()));
 		}
-
+		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
 		this.usrDeptCode.setValue(aSecurityUser.getUsrDeptCode());
 		this.usrIsMultiBranch.setChecked(aSecurityUser.isUsrIsMultiBranch());
 		this.usrLanguage.setValue(aSecurityUser.getUsrLanguage());
 		if (aSecurityUser.isNewRecord()) {
+			setPasswordRowVisibility(aSecurityUser.getAuthType());
 			this.usrEnabled.setChecked(true);
 			this.usrBranchCode.setDescription("");
 			this.usrDeptCode.setDescription("");
@@ -474,6 +478,25 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.recordStatus.setValue(aSecurityUser.getRecordStatus());
 		logger.debug("Leaving ");
 	}
+	
+	/**
+	 * List of authentication types, based on the selection visible the password
+	 * rows. if authentication type is DAO then visible the password rows.
+	 */
+	public void onChange$authType(Event event) throws Exception {
+		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
+	}
+
+	/**
+	 * Setting the password row visibility based on the authentication type.
+	 * 
+	 */
+	private void setPasswordRowVisibility(String authType) {
+		boolean isDAO = AuthenticationType.DAO.name().equals(authType);
+		this.rowSecurityUserDialogUsrPwd.setVisible(isDAO && !isReadOnly("SecurityUserDialog_usrPwd"));
+		this.rowSecurityUserDialogUsrConfirmPwd.setVisible(isDAO && !isReadOnly("SecurityUserDialog_usrPwd"));
+	}
+	
 
 	/**
 	 * Writes the components values to the bean.<br>
@@ -489,80 +512,105 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		try {
 			aSecurityUser.setUsrLogin(StringUtils.trimToEmpty(this.usrLogin.getValue()));
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if (App.AUTH_TYPE.equals(AuthenticationType.DAO)) {
-			if (aSecurityUser.isNew()) {
-				try {
-					if (StringUtils.isBlank(this.usrPwd.getValue())) {
-						throw new WrongValueException(this.usrPwd, Labels.getLabel("FIELD_NO_EMPTY",
-								new String[] { Labels.getLabel("label_SecurityUserDialog_UsrPwd.value") }));
-
+		
+		try {
+			aSecurityUser.setAuthType(this.authType.getSelectedItem().getValue().toString());
+			if (AuthenticationType.DAO.name().equals(aSecurityUser.getAuthType())) {
+				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
+					try {
+						if (StringUtils.isBlank(this.usrPwd.getValue())) {
+							throw new WrongValueException(this.usrPwd, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SecurityUserDialog_UsrPwd.value") }));
+						}
+						aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.usrPwd.getValue()));
+					} catch (WrongValueException we) {
+						wve.add(we);
 					}
-					aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.usrPwd.getValue()));
+				}
 
+				try {
+					if (StringUtils.isBlank(this.usrConfirmPwd.getValue()) && this.rowSecurityUserDialogUsrPwd.isVisible()) {
+						throw new WrongValueException(this.usrConfirmPwd, Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_SecurityUserDialog_UsrconfirmPwd.value") }));
+					}
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
-			}
-			if (aSecurityUser.isNew()) {
+
 				try {
-					if (StringUtils.isBlank(this.usrConfirmPwd.getValue())) {
-						throw new WrongValueException(this.usrConfirmPwd, Labels.getLabel("FIELD_NO_EMPTY",
-								new String[] { Labels.getLabel("label_SecurityUserDialog_UsrconfirmPwd.value") }));
+					/* Check Password and confirm password are same or not */
+					if (StringUtils.isNotBlank(this.usrPwd.getValue()) && StringUtils.isNotBlank(this.usrConfirmPwd.getValue())) {
+						if (!(StringUtils.trimToEmpty(this.usrPwd.getValue()).equals(StringUtils.trimToEmpty(this.usrConfirmPwd.getValue())))) {
+							throw new WrongValueException(usrConfirmPwd, Labels.getLabel("label_SecurityUserDialog_Pwd_not_match.value"));
+						}
 					}
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
+
+				try {
+					if (StringUtils.isNotBlank(this.usrPwd.getValue())) {
+						this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
+					}
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
+					PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
+					aSecurityUser.setUsrPwd(pwdEncoder.encode(aSecurityUser.getUsrPwd()));
+				}
+			} else {
+				aSecurityUser.setUsrPwd(null);
 			}
-			if (securityUser.isNew() && StringUtils.isNotEmpty(this.usrPwd.getValue())) {
-				PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-				aSecurityUser.setUsrPwd(pwdEncoder.encode(aSecurityUser.getUsrPwd()));
-			}
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		try {
 			aSecurityUser.setUserStaffID(this.userStaffID.getValue());
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrFName(StringUtils.trimToEmpty(this.usrFName.getValue()));
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrMName(StringUtils.trimToEmpty(this.usrMName.getValue()));
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrLName(StringUtils.trimToEmpty(this.usrLName.getValue()));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrMobile(this.usrMobile.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrEmail(StringUtils.trimToEmpty(this.usrEmail.getValue()));
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrEnabled(this.usrEnabled.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if (this.usrCanSignonFrom != null) {
 				aSecurityUser.setUsrCanSignonFrom(PennantAppUtil.getTime(this.usrCanSignonFrom.getValue()));
@@ -570,6 +618,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if (this.usrCanSignonTo != null) {
 				aSecurityUser.setUsrCanSignonTo(PennantAppUtil.getTime(this.usrCanSignonTo.getValue()));
@@ -588,12 +637,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			/* Check whether usrCanSignonTo time is before usrCanSignonFrom or not */
 			if ((this.usrCanSignonTo.getValue() != null) && (this.usrCanSignonFrom.getValue() != null)) {
-				int timeDiff = DateUtility.compareTime(aSecurityUser.getUsrCanSignonFrom(),
-						aSecurityUser.getUsrCanSignonTo(), false);
+				int timeDiff = DateUtility.compareTime(aSecurityUser.getUsrCanSignonFrom(), aSecurityUser.getUsrCanSignonTo(), false);
 				if (timeDiff == 1 || timeDiff == 0) {
 					throw new WrongValueException(this.usrCanSignonTo, Labels.getLabel(
-							"FIELD_TIME_MUST_AFTER",
-							new String[] { Labels.getLabel("label_SecurityUserDialog_UsrCanSignonTo.value"),
+							"FIELD_TIME_MUST_AFTER", new String[] { Labels.getLabel("label_SecurityUserDialog_UsrCanSignonTo.value"),
 									Labels.getLabel("label_SecurityUserDialog_UsrCanSignonFrom.value") }));
 				}
 			}
@@ -606,37 +653,41 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				throw new WrongValueException(this.usrCanSignonFrom, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SecurityUserDialog_UsrCanSignonFrom.value") }));
 			}
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrCanOverrideLimits(this.usrCanOverrideLimits.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrAcExp(this.usrAcExp.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrCredentialsExp(this.usrCredentialsExp.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setUsrAcLocked(this.usrAcLocked.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setLovDescUsrLanguage(this.usrLanguage.getDescription());
 			aSecurityUser.setUsrLanguage(this.usrLanguage.getValidatedValue());
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			String strUsrDftAppId = (String) this.usrDftAppId.getSelectedItem().getValue();
 			if (StringUtils.isBlank(strUsrDftAppId)) {
@@ -645,16 +696,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 			aSecurityUser.setUsrDftAppId(Integer.parseInt(strUsrDftAppId));
 			aSecurityUser.setUsrDftAppCode(App.CODE);
-
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setLovDescUsrBranchCodeName(this.usrBranchCode.getDescription());
 			aSecurityUser.setUsrBranchCode(this.usrBranchCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aSecurityUser.setLovDescUsrDeptCodeName(this.usrDeptCode.getDescription());
 			aSecurityUser.setUsrDeptCode(this.usrDeptCode.getValidatedValue());
@@ -667,32 +719,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if (aSecurityUser.isNew()) {
-			try {
-				/* Check Password and confirm password are same or not */
-				if (StringUtils.isNotBlank(this.usrPwd.getValue())
-						&& StringUtils.isNotBlank(this.usrConfirmPwd.getValue())) {
-					if (!(StringUtils.trimToEmpty(this.usrPwd.getValue()).equals(StringUtils
-							.trimToEmpty(this.usrConfirmPwd.getValue())))) {
-						throw new WrongValueException(usrConfirmPwd,
-								Labels.getLabel("label_SecurityUserDialog_Pwd_not_match.value"));
-					}
-				}
-			} catch (WrongValueException we) {
-
-				wve.add(we);
-			}
-		}
-		if (aSecurityUser.isNew()) {
-			try {
-				if (StringUtils.isNotBlank(this.usrPwd.getValue())) {
-					this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
-				}
-
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-		}
+		
 		try {
 			aSecurityUser.setLovDescUsrDesg(this.usrDesg.getDescription());
 			aSecurityUser.setUsrDesg(this.usrDesg.getValue());
@@ -704,18 +731,20 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		doRemoveLOVValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			
 			/* if any Exception Occurs make password and new password Fields empty */
 			this.usrPwd.setValue("");
 			this.usrConfirmPwd.setValue("");
 			this.div_PwdStatusMeter.setStyle("background-color:white");
 			this.label_PwdStatus.setValue("");
+			
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
+			
 			secUserDetailsTab.setSelected(true);
 			throw new WrongValuesException(wvea);
 		}
-
 		aSecurityUser.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving ");
 	}
@@ -756,7 +785,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (this.secUserDivBranchsTab.isVisible()) {
 				doFillDivisionBranchTab();
 			}
-
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -796,6 +824,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrLogin.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_SecurityUserDialog_UsrLogin.value"), null, true));
 		}
+		
+		if (!this.authType.isDisabled()) {
+			this.authType.setConstraint(new StaticListValidator(authTypesList,Labels.getLabel("label_SecurityUserDialog_AuthenticationType.value")));
+		}
+		
 		if (!this.userStaffID.isReadonly()) {
 			this.userStaffID.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_SecurityUserDialog_UserStaffID.value"), PennantRegularExpressions.REGEX_ALPHANUM,
@@ -842,6 +875,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug("Entering ");
 		setValidationOn(false);
 		this.usrLogin.setConstraint("");
+		this.authType.setConstraint("");
 		this.usrConfirmPwd.setConstraint("");
 		this.usrPwd.setConstraint("");
 		this.userStaffID.setConstraint("");
@@ -892,6 +926,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected void doClearMessage() {
 		logger.debug("Entering ");
 		this.usrLogin.setErrorMessage("");
+		this.authType.setErrorMessage("");
 		this.usrConfirmPwd.setErrorMessage("");
 		this.usrPwd.setErrorMessage("");
 		this.userStaffID.setErrorMessage("");
@@ -922,7 +957,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public void validate(Component comp, Object value) throws WrongValueException {
 		logger.debug("Entering ");
 		if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
-
 			if (changePasswordModel.checkPasswordCriteria(this.usrLogin.getValue(), this.usrPwd.getValue())) {
 				throw new WrongValueException(usrPwd, Labels.getLabel("label_Invalid_Password"));
 			}
@@ -931,7 +965,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	// CRUD operations
-
 	/**
 	 * Deletes a SecurityUsers object from database.<br>
 	 * 
@@ -979,6 +1012,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
+		
 		if (getSecurityUser().isNewRecord()) {
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(true);
 			this.rowSecurityUserDialogUsrPwd.setVisible(true);
@@ -997,6 +1031,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 			this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
 		}
+		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrLogin.setReadonly(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
@@ -1047,6 +1082,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public void doReadOnly() {
 		logger.debug("Entering ");
 		this.usrLogin.setReadonly(true);
+		this.authType.setDisabled(true);
 		this.usrPwd.setReadonly(true);
 		this.usrConfirmPwd.setReadonly(true);
 		this.userStaffID.setReadonly(true);
@@ -1129,8 +1165,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		doSetValidation();
 		// fill the SecurityUser object with the components data
 		doWriteComponentsToBean(aSecurityUser);
-		if (this.secUserDivBranchsTab.isVisible()
-				&& (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
+		if (this.secUserDivBranchsTab.isVisible() && (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
 			doSaveDivBranchDetails(aSecurityUser);
 		}
 		/*

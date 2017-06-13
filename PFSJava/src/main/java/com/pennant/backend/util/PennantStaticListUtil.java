@@ -15,6 +15,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennanttech.pff.core.App.AuthenticationType;
 
 public class PennantStaticListUtil {
 	
@@ -192,6 +193,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> presentmentBatchStatusList;
 	private static ArrayList<RoundingTarget> roundingTargetList;
 	private static ArrayList<ValueLabel> postingPurposeList;
+	private static ArrayList<ValueLabel> authTypes;
 
 	
 
@@ -2675,6 +2677,16 @@ public class PennantStaticListUtil {
 			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LIMIT,Labels.getLabel("label_Limit")));
 		}
 		return postingPurposeList;
+	}
+	
+	public static ArrayList<ValueLabel> getAuthnticationTypes() {
+
+		if (authTypes == null) {
+			authTypes = new ArrayList<ValueLabel>(3);
+			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeExteranal.value")));
+			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeInternal.value")));
+		}
+		return authTypes;
 	}
 }
 

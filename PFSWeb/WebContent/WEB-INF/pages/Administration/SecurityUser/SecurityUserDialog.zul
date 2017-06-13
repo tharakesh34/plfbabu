@@ -103,6 +103,12 @@
 														<uppercasebox
 															id="usrLogin" width="350px" />
 													</hbox>
+													
+													<label value="${c:l('label_SecurityUserDialog_AuthenticationType.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<combobox id="authType"  width="200px" readonly="true"/>
+													</hbox>
 												</row>
 												<row
 													id="rowSecurityUserDialogUsrPwd" visible="true">

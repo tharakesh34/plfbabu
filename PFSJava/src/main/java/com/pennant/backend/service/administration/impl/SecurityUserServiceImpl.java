@@ -67,6 +67,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.App.AuthenticationType;
 
 /**
  * Service implementation for methods that depends on <b>SecurityUsers</b>.<br>
@@ -133,16 +134,17 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			securityUser.setNextTaskId("");
 			securityUser.setRecordType("");
 			securityUser.setWorkflowId(0);
-
 		}
 
 		if (securityUser.isNewRecord()) {
-			securityUser.setId(getSecurityUserDAO().save(securityUser,tableType));
-			getSecurityUserPasswordsDAO().save(securityUser);	
+			securityUser.setId(getSecurityUserDAO().save(securityUser, tableType));
+			if (AuthenticationType.DAO.name().equals(securityUser.getAuthType())) {
+				getSecurityUserPasswordsDAO().save(securityUser);
+			}
 			auditHeader.getAuditDetail().setModelData(securityUser);
 			auditHeader.setAuditReference(String.valueOf(securityUser.getId()));
-		}else{
-			getSecurityUserDAO().update(securityUser,tableType);
+		} else {
+			getSecurityUserDAO().update(securityUser, tableType);
 		}
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		// set SecUser Division Branch Details Audit
