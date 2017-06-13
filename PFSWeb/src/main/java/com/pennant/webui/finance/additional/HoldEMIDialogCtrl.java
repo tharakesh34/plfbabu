@@ -458,7 +458,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}*/
 				
-				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
+				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0){
 					continue;
 				}
 				

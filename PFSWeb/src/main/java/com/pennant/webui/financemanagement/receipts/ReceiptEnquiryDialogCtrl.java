@@ -447,6 +447,25 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		
+		// Fee Amount Collected along Receipt
+		if(receiptHeader.getTotFeeAmount() != null && receiptHeader.getTotFeeAmount().compareTo(BigDecimal.ZERO) > 0){
+			item = new Listitem();
+			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_EventFee"));
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(receiptHeader.getTotFeeAmount(), formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			this.listBoxPastdues.appendChild(item);
+			totalPaidAmount = totalPaidAmount.add(receiptHeader.getTotFeeAmount());
+		}
+		
 		// Creating Pastdue Totals to verify against calculations & for validation
 		if(totalPaidAmount.compareTo(BigDecimal.ZERO) > 0 || totalWaivedAmount.compareTo(BigDecimal.ZERO) > 0){
 			addFooter(totalPaidAmount, totalWaivedAmount, formatter, true);

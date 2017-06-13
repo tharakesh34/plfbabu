@@ -5645,6 +5645,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -6631,6 +6633,7 @@
 		<aop:scoped-proxy />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->

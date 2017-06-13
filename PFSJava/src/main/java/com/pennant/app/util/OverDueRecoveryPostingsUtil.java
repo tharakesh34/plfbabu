@@ -55,6 +55,7 @@ import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
@@ -99,7 +101,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
-			long linkedTranId, boolean fullyPaidSchd, String postBranch) throws InterfaceException, IllegalAccessException,
+			long linkedTranId, boolean fullyPaidSchd, FinRepayQueueHeader rpyQueueHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
 		logger.debug("Entering");
@@ -123,7 +125,15 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setAeAmountCodes(new AEAmountCodes());
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				aeEvent.setFinReference(financeMain.getFinReference());
-				aeEvent.setPostingUserBranch(postBranch);
+				aeEvent.setCustID(financeMain.getCustID());
+				aeEvent.setFinType(financeMain.getFinType());
+				aeEvent.setBranch(financeMain.getFinBranch());
+				aeEvent.setCcy(financeMain.getFinCcy());
+				aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
+				amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
+				amountCodes.setFinType(financeMain.getFinType());
+				
 				amountCodes.setPenaltyPaid(penaltyPaidNow);
 				amountCodes.setPenaltyWaived(penaltyWaived);
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
@@ -143,6 +153,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				Date dateAppDate = DateUtility.getAppDate();
 				aeEvent.setPostDate(dateAppDate);
 				aeEvent.setValueDate(dateValueDate);
+				
+				if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
+							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+				} else {
+					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), 
+							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+				}
 				
 				// Posting details calling
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);

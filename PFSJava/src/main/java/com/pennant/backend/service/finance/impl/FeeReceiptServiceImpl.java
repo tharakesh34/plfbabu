@@ -260,6 +260,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
+		amountCodes.setFinType(receiptHeader.getFinType());
 		
 		// Fetch Accounting Set ID
 		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,

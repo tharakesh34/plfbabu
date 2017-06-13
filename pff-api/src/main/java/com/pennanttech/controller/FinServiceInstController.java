@@ -1215,7 +1215,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		
 		// calculate allocations
 		Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(financeDetail.getFinScheduleData(), 
-				totReceiptAmt, receiptHeader.getReceiptPurpose());
+				totReceiptAmt, finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose());
 		finReceiptData.setAllocationMap(allocationMap);
 
 		// validate repayment amount

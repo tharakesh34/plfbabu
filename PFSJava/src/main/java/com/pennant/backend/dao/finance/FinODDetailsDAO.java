@@ -110,6 +110,8 @@ public interface FinODDetailsDAO {
 	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
 
 	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
+	
+	void updateList(List<FinODDetails> overdues);
 
 	//EOD
 	List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate);

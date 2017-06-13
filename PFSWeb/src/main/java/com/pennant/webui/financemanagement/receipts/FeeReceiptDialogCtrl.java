@@ -1064,6 +1064,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
+		amountCodes.setFinType(getReceiptHeader().getFinType());
 		
 		// Fetch Accounting Set ID
 		long accountingSetID = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,

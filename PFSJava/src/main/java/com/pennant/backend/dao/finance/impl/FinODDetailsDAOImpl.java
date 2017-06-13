@@ -143,6 +143,29 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Updating Overdue Details after Recalculation in Receipts/Payments
+	 * @param overdues
+	 */
+	@Override
+	public void updateList(List<FinODDetails> overdues) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
+		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
+		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
+		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
+		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal, LPIWaived= :LPIWaived");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public void updateBatch(FinODDetails finOdDetails) {
@@ -743,7 +766,13 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select FinODSchdDate, TotPenaltyBal, LPIBal ");
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
+		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
+		selectSql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
+		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
+		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
+		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		selectSql.append(" FinLMdfDate ");
 		selectSql.append(" From FinODDetails");
 		selectSql.append(" Where FinReference =:FinReference ");
 
