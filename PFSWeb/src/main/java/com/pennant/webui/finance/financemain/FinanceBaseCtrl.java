@@ -84,7 +84,6 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -1336,8 +1335,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1519,8 +1517,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			customerWindow = Executions.createComponents(zulFilePathName, tabpanel, map);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

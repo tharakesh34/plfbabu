@@ -72,7 +72,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -298,14 +297,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && listBoxLimitStructureDetailItems.getFirstChild() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, listBoxLimitStructureDetailItems.getFirstChild());
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -320,14 +318,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && item.getPreviousSibling() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, item.getPreviousSibling());
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -342,14 +339,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && item.getNextSibling() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item.getNextSibling(), item);
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showMessage("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -364,14 +360,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, null);
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());

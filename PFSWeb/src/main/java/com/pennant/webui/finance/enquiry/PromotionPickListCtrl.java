@@ -67,7 +67,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -240,8 +239,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			String zulFilePathName = "/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul";
 			childWindow = Executions.createComponents(zulFilePathName, gb_Cusotmer, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -409,8 +407,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 			}
 		} catch (Exception e) {
-			Messagebox.show(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

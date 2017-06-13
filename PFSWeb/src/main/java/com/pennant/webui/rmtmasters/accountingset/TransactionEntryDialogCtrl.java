@@ -75,7 +75,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
@@ -1689,9 +1688,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void onUser$btnValidate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (validate(event)) {
-			int answer = Messagebox.show("NO Errors Found ! Proceed With Simulation ?", "Validated", Messagebox.YES
-					| Messagebox.NO, Messagebox.QUESTION);
-			if (answer == Messagebox.YES) {
+			if (MessageUtil.confirm("No Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 				// create a new window for input values
 				createSimulationWindow(variables);
 			}
@@ -1725,8 +1722,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						if (!amountcodes.contains(variable.get("name"))) {
 							// if new variables found throw error message
 							noerrors = false;
-							Messagebox.show("Unknown Variable :" + variable.get("name"), "Unknown", Messagebox.OK,
-									Messagebox.ERROR);
+							MessageUtil.showError("Unknown Variable :" + variable.get("name"));
 							return noerrors;
 						} else {
 							noerrors = true;
@@ -1741,8 +1737,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				for (int i = 0; i < errors.size(); i++) {
 					JSONObject error = (JSONObject) errors.get(i);
 					if (error != null) {
-						Messagebox.show(error.get("reason").toString(), "Error : At Line " + error.get("line")
-								+ ",Position " + error.get("character"), Messagebox.OK, Messagebox.ERROR);
+						MessageUtil.showError("Error : At Line " + error.get("line") + ",Position "
+								+ error.get("character") + "\n\n" + error.get("reason").toString());
 					}
 				}
 			}
@@ -1750,7 +1746,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			return true;
 		}
 		if (!noerrors) {
-			Messagebox.show("Error found in Rule. Please correct the rule and try again");
+			MessageUtil.showError("Error found in Rule. Please correct the rule and try again");
 		}
 		return noerrors;
 	}
@@ -1779,12 +1775,12 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private boolean validateResult() throws InterruptedException {
 		if (this.amountRule.getValue().contains("Result")) {
 			if (this.amountRule.getValue().contains("{")) {
-				Messagebox.show("Logical Operators Not Allowed", "Logical Operators", Messagebox.OK, Messagebox.ERROR);
+				MessageUtil.showError("Logical Operators Not Allowed");
 				return false;
 			}
 
 		} else {
-			Messagebox.show("Result not found ", "Result", Messagebox.OK, Messagebox.ERROR);
+			MessageUtil.showError("Result not found");
 			return false;
 		}
 		return true;

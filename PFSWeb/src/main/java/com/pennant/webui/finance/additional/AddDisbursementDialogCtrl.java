@@ -66,7 +66,6 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -1032,8 +1031,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
-				Messagebox.show("Account Details not Found!!!",
-						Labels.getLabel("message.Error"), Messagebox.ABORT,Messagebox.ERROR);
+				MessageUtil.showError("Account Details not Found!!!");
 			}
 		}
 
