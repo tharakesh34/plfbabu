@@ -23,6 +23,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.disbIdList = disbIdList;
+		this.logBatch = true;
 	}
 
 	@Override
