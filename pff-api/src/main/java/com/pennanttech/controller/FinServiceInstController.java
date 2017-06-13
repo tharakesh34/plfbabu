@@ -1170,7 +1170,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
-		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY) ||
+				StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			if(StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
 				receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 			} 
@@ -1325,7 +1326,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		} else {
 			
 			//Schedule Updations
-			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData().
+					getFinanceScheduleDetails();
 			// Repay Schedule Data rebuild
 			List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
 			List<FinReceiptDetail> receiptDetailList = finReceiptData.getReceiptHeader().getReceiptDetails();
@@ -1735,18 +1737,23 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
 		
-		//List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
-		//financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
+/*		List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
+		financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);*/
 		
+		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
 		if (financeDetail != null) {
 			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					if(feeDetail.isOriginationFee()) {
 						feeDetail.setOriginationFee(true);
 						feeDetail.setRcdVisible(false);
 						feeDetail.setRecordType(PennantConstants.RCD_UPD);
 						feeDetail.setRecordStatus(PennantConstants.RECORD_TYPE_UPD);
+						newList.add(feeDetail);
+					}
 				}
 			}
+			financeDetail.getFinScheduleData().setFinFeeDetailList(newList); 
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);

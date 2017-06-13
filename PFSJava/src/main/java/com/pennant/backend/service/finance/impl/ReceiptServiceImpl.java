@@ -1456,6 +1456,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
@@ -1517,7 +1520,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
-
 			if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				receiptData.getRepayMain().setEarlyPayAmount(totalBal);
 			}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
