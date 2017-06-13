@@ -220,20 +220,21 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 
 
 	@Override
-	public int geFeeReceiptCount(String reference, String receiptPurpose) {
+	public int geFeeReceiptCount(String reference, String receiptPurpose, long receiptId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
 		int count = 0;
 
-		StringBuilder selectSql = new StringBuilder("Select count(*)  from (select Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader union all ");
-		selectSql.append("select Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp)T");
-		selectSql.append(" Where Reference = :Reference AND ReceiptPurpose = :ReceiptPurpose AND ReceiptModeStatus in('A','F')");
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from (select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader union all ");
+		selectSql.append("select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp)T");
+		selectSql.append(" Where ReceiptID <> :ReceiptID AND Reference = :Reference AND ReceiptPurpose = :ReceiptPurpose AND ReceiptModeStatus in('A','F')");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("ReceiptPurpose", receiptPurpose);
+		source.addValue("ReceiptID", receiptId);
 
 		try {
 			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);

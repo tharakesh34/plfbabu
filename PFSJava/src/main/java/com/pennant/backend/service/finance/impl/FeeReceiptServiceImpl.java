@@ -446,8 +446,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		}
 		
 		// Duplicate FEEReceipt reference and purpose
-		if (receiptHeader.isNew()) {
-			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose())) {
+		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()) &&
+				!PennantConstants.RCD_STATUS_REJECTED.equals(receiptHeader.getRecordStatus()) &&
+				!PennantConstants.RCD_STATUS_CANCELLED.equals(receiptHeader.getRecordStatus())) {
+			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose(),receiptHeader.getReceiptID())) {
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
 			}
 		}
@@ -461,12 +463,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		return auditDetail;
 	}
 
-	private boolean getFeeReceiptExist(String reference, String receiptPurpose) {
+	private boolean getFeeReceiptExist(String reference, String receiptPurpose,long receiptId) {
 		logger.debug("Entering");
 
 		boolean codeExist = false;
 
-		if (getFinReceiptHeaderDAO().geFeeReceiptCount(reference, receiptPurpose) != 0) {
+		if (getFinReceiptHeaderDAO().geFeeReceiptCount(reference, receiptPurpose, receiptId) != 0) {
 			codeExist = true;
 		}
 
