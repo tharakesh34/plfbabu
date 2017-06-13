@@ -443,8 +443,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		}
 		
 		// Duplicate FEEReceipt reference and purpose
-		if (getFeeReceiptExist(receiptHeader.getReference(),receiptHeader.getReceiptPurpose())) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
+		if (receiptHeader.isNew()) {
+			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose())) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
