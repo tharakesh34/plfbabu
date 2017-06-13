@@ -18,7 +18,6 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
@@ -31,6 +30,7 @@ import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResultSimulation.zul file.
@@ -221,8 +221,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 			// make result row visible and set value
 			getRuleResult(object);
 		} catch (Exception e) {
-			Messagebox.show(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
