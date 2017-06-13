@@ -345,7 +345,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			if (item != null && item.getNextSibling() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item.getNextSibling(), item);
 			} else {
-				MessageUtil.showMessage("Please select one Limit Structure Detail");
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
