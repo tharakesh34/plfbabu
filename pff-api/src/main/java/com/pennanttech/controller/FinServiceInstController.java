@@ -1287,6 +1287,18 @@ public class FinServiceInstController extends SummaryDetailService {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90282", valueParm));
 				return response;
 			}
+			
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), DateUtility.getAppDate()) < 0) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					String[] valueParm = new String[2];
+					valueParm[0] = "Received Date  " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+					valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90205", valueParm));
+					return response;
+				}
+			}
 
 			if(finScheduleData.getFinFeeDetailList() != null) {
 				for(FinFeeDetail finFeeDetail:finScheduleData.getFinFeeDetailList()) {
