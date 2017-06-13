@@ -36,6 +36,8 @@
 	<bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/>
 	<bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseService" scope="prototype" parent="bajajService"/>
 	<bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestService" scope="prototype" parent="bajajService"/>
+	<bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
+	
 	
 	<!-- Disbursement Imps Response  -->
 	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>
