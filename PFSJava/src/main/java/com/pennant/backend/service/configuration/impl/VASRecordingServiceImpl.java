@@ -1936,13 +1936,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				vasRecording.setRecurringDate(DateUtility.getAppDate());
 				vasRecording.setRenewalFee(BigDecimal.ZERO);
 			}
-			if (StringUtils.isBlank(vasRecording.getDsaId())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "dsaId";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			} else {
+			if (StringUtils.isNotBlank(vasRecording.getDsaId())){
 				RelationshipOfficer relationshipOfficer = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
 				if (relationshipOfficer == null) {
@@ -1953,13 +1947,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (StringUtils.isBlank(vasRecording.getDmaId())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "dmaId";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			} else {
+			if (StringUtils.isNotBlank(vasRecording.getDmaId())){
 				RelationshipOfficer dmaCode = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getDmaId(), "");
 				if (dmaCode == null ) {
@@ -1970,13 +1958,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (StringUtils.isBlank(vasRecording.getFulfilOfficerId())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "fulfilOfficerId";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			} else {
+			if (StringUtils.isNotBlank(vasRecording.getFulfilOfficerId())) {
 				RelationshipOfficer dmaCode = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getFulfilOfficerId(), "");
 				if (dmaCode == null) {
@@ -1987,13 +1969,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (StringUtils.isBlank(vasRecording.getReferralId())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "referralId";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			} else {
+			if (StringUtils.isNotBlank(vasRecording.getReferralId())){
 				RelationshipOfficer referralId = relationshipOfficerDAO
 						.getRelationshipOfficerById(vasRecording.getReferralId(), "");
 				if (referralId == null) {
