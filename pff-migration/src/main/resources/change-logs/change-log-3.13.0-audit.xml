@@ -22,4 +22,12 @@
 <changeSet id="03" author="Durgaprasad G">
  <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
 </changeSet>
+<changeSet id="04" author="Irfan">
+	<addColumn tableName="ADTRMTACCOUNTTYPES">
+		<column name="gSTApplicable" type="char(1)"/>
+		<column name="hSNNumber" type="varchar(50)"/>
+		<column name="natureService" type="varchar(50)"/>
+		<column name="revChrgApplicable" type="char(1)"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
