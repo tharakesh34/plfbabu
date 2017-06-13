@@ -58,7 +58,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
@@ -85,7 +84,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -669,10 +667,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_FinTypeFeesDialog_FeeType.value")+" : "+ aFinTypeFees.getFeeTypeCode()+","+
 				Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value")+" : "+aFinTypeFees.getFinEvent();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
+
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			
 			/*if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,false)){
 				return;
@@ -1127,11 +1123,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				if(StringUtils.equals(finTypeFees.getFinEvent(), finTypeFeesTemp.getFinEvent()) && 
 						!StringUtils.equals(finTypeFees.getFeeTypeCode(), finTypeFeesTemp.getFeeTypeCode()) &&
 						finTypeFees.getFeeOrder() == finTypeFeesTemp.getFeeOrder() && finTypeFees.isOriginationFee() == this.isOriginationFee){
-					MultiLineMessageBox.doSetTemplate();
-					MultiLineMessageBox.show(Labels.getLabel("FeeOrder_Duplication_NotAllowed",new String[]{
-							Integer.toString(finTypeFeesTemp.getFeeOrder())}),isOriginationFee ? 
-									Labels.getLabel("label_FeeDetails_Origination") : Labels.getLabel("label_FeeDetails_Servicing"),
-									MultiLineMessageBox.OK,Messagebox.ERROR, true);
+					MessageUtil.showError(Labels.getLabel("FeeOrder_Duplication_NotAllowed",
+							new String[] { Integer.toString(finTypeFeesTemp.getFeeOrder()) }));
 					return true;
 				}
 			}

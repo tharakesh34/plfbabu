@@ -70,7 +70,6 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -98,7 +97,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
@@ -1380,7 +1378,6 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
-			MultiLineMessageBox.doSetTemplate();
 			String errorMsg = "";
 			String warningMsg = "";
 			int errorCount = 0;
@@ -1403,12 +1400,11 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				}
 			}
 			if (StringUtils.isNotEmpty(errorMsg)){
-				MultiLineMessageBox.show(errorMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(errorMsg);
 				return false;
 			}else if(StringUtils.isNotEmpty(warningMsg)){
 				warningMsg = warningMsg + " \n \n "+ "Do you want to proceed?";
-				int conf = MultiLineMessageBox.show(warningMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-				if (conf != MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(warningMsg) != MessageUtil.YES) {
 					return false;
 				}
 			}
@@ -1458,7 +1454,6 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
-			MultiLineMessageBox.doSetTemplate();
 			String errorMsg = "";
 			String warningMsg = "";
 			int errorCount = 0;
@@ -1481,12 +1476,11 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				}
 			}
 			if (StringUtils.isNotEmpty(errorMsg)){
-				MultiLineMessageBox.show(errorMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(errorMsg);
 				return false;
 			}else if(StringUtils.isNotEmpty(warningMsg)){
-				warningMsg = warningMsg + " \n \n "+ "Do you want to proceed?";
-				int conf = MultiLineMessageBox.show(warningMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-				if (conf != MultiLineMessageBox.YES) {
+				warningMsg = warningMsg + "\n\n" + "Do you want to proceed?";
+				if (MessageUtil.confirm(warningMsg) != MessageUtil.YES) {
 					return false;
 				}
 			}

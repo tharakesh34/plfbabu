@@ -62,7 +62,6 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -77,7 +76,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Fee/RuleResult/feeTierDialog.zul file.
@@ -348,7 +346,6 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			JSONArray codeVariables = (JSONArray) data[2];
 			boolean isSaveRecord = (Boolean) data[3];
 
-			int conf;
 			String values = "";
 			String fieldValue="";
 			List<ValueLabel> fieldList = new ArrayList<>();
@@ -378,11 +375,8 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 				createSimulationWindow(fieldList);
 			} else {
 				if (errors.size() != 0) {
-					conf = MultiLineMessageBox.show(
-							errors.size() + PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror"),
-							PennantJavaUtil.getLabel("Validate_Title"), MultiLineMessageBox.YES
-									| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf == MultiLineMessageBox.YES) {
+					if (MessageUtil.confirm(errors.size()
+							+ PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror")) == MessageUtil.YES) {
 						Events.postEvent("onUser$errors", window_RuleResultDialog, errors);
 					}
 				} else {
@@ -393,8 +387,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 						}
 						calculateBox.setAttribute("calculatedFields", values);
 					} else {
-						conf = MultiLineMessageBox.show(PennantJavaUtil.getLabel("message_NoError_CodeMirror"),
-								" Error Details", MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+						MessageUtil.showMessage(PennantJavaUtil.getLabel("message_NoError_CodeMirror"));
 					}
 				}
 			}
@@ -419,21 +412,18 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			for (int i = 0; i < message.size(); i++) {
 				JSONObject jsonObject = (JSONObject) message.get(i);
 				if (jsonObject != null) {
-					int conf;
-					String errorMsg = (String) jsonObject.get("reason");
-					String title = " Error : Line-" + jsonObject.get("line") + ",Character-"
-							+ jsonObject.get("character");
+					String errorMsg = "Error : Line-" + jsonObject.get("line") + ",Character-"
+							+ jsonObject.get("character") + "\n\n" + (String) jsonObject.get("reason");
 
 					if (message.size() - 1 != i + 1) {
 						errorMsg = errorMsg + "\n\n" + PennantJavaUtil.getLabel("message_ErrorProcess_Conformation");
-						conf = MultiLineMessageBox.show(errorMsg, title, MultiLineMessageBox.YES
-								| MultiLineMessageBox.NO, Messagebox.ERROR, true);
-					} else {
-						conf = MultiLineMessageBox
-								.show(errorMsg, title, MultiLineMessageBox.OK, Messagebox.ERROR, true);
-					}
 
-					if (conf == MultiLineMessageBox.NO || conf == MultiLineMessageBox.OK) {
+						if (MessageUtil.confirm(errorMsg) == MessageUtil.NO) {
+							break;
+						}
+					} else {
+						MessageUtil.showError(errorMsg);
+
 						break;
 					}
 				}
