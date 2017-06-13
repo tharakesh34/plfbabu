@@ -256,4 +256,10 @@
 		 <modifyDataType tableName="SECUSERS_TEMP" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
 	</changeSet>
 	
+	<changeSet id="08" author="Durgaprasad G">
+	 <dropNotNullConstraint tableName="SECUSERS" columnName="USRPWD"/>
+	 <dropNotNullConstraint tableName="SECUSERS_RTEMP" columnName="USRPWD"/>
+	 <dropNotNullConstraint tableName="SECUSERS_TEMP" columnName="USRPWD"/>
+	</changeSet>
+	
 </databaseChangeLog>
