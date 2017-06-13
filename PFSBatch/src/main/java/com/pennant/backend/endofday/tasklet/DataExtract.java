@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.util.DateUtility;
 import com.pennanttech.bajaj.services.ALMRequestService;
 import com.pennanttech.bajaj.services.ControlDumpRequestService;
+import com.pennanttech.bajaj.services.DataMartRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
 
@@ -28,6 +29,8 @@ public class DataExtract implements Tasklet {
 	private ControlDumpRequestService	controlDumpRequestService;
 	@Autowired
 	private PosidexRequestService		posidexRequestService;
+	@Autowired
+	private DataMartRequestService		dataMartRequestService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -45,6 +48,7 @@ public class DataExtract implements Tasklet {
 
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
+			new DataMartRequest(new Long(1000), dataMartRequestService).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -124,6 +128,27 @@ public class DataExtract implements Tasklet {
 			try {
 				logger.debug("Control Dump Request Service started...");
 				this.posidexRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+	
+	
+	public class DataMartRequest extends Thread {
+		private long					userId;
+		private DataMartRequestService	dataMartRequestService;
+
+		public DataMartRequest(long userId, DataMartRequestService dataMartRequestService) {
+			this.userId = userId;
+			this.dataMartRequestService = dataMartRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("DataMart Request Service started...");
+				this.dataMartRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
