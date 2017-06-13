@@ -9,4 +9,9 @@
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
 
+<changeSet id="01" author="Durgaprasad G">
+  <addColumn tableName="ADTSECUSERS">
+   <column name="AUTHTYPE" type="CHAR(3)"/>
+  </addColumn>
+</changeSet>
 </databaseChangeLog>
