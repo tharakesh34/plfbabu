@@ -471,19 +471,20 @@ public class FinAdvancePaymentsCtrl {
 	private boolean allowMaintainAfterRequestSent(FinAdvancePayments aFinAdvancePayments) {
 		if (StringUtils.equals(DisbursementConstants.STATUS_AWAITCON, aFinAdvancePayments.getStatus())) {
 			if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
-					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType())) {
+					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
+							aFinAdvancePayments.getPaymentType())) {
 				return true;
 			}
 			return false;
 		}
-		
+
 		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
 			return false;
 		}
 
 		return true;
 	}
-	
+
 	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
 		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursement, financeMain, loanApproved);
 	}
@@ -499,7 +500,8 @@ public class FinAdvancePaymentsCtrl {
 		return false;
 	}
 
-	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq, boolean group) {
+	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq,
+			boolean group) {
 
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
@@ -540,6 +542,31 @@ public class FinAdvancePaymentsCtrl {
 
 	}
 
+	public void markCancelIfNoDisbursmnetFound(List<FinAdvancePayments> finAdvancePaymentsList) {
+
+		if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
+			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
+				if (PennantConstants.RECORD_TYPE_NEW.equals(finAdvancePayments.getRecordType())) {
+					boolean notExists = checkSequnceExists(finAdvancePayments.getDisbSeq());
+					if (!notExists) {
+						finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					}
+				}
+			}
+		}
+	}
+
+	private boolean checkSequnceExists(int disbSeq) {
+		if (financeDisbursement != null && !financeDisbursement.isEmpty()) {
+			for (FinanceDisbursement financeDisbursement : financeDisbursement) {
+				if (financeDisbursement.getDisbSeq() == disbSeq) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursement = financeDisbursement;
 	}
@@ -551,6 +578,7 @@ public class FinAdvancePaymentsCtrl {
 	public void setApprovedDisbursments(List<FinanceDisbursement> approvedDisbursments) {
 		this.approvedDisbursments = approvedDisbursments;
 	}
+
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}

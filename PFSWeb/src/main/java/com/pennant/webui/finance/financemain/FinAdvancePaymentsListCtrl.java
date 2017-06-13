@@ -351,6 +351,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 				if (main != null && main.getFinAmount() != null) {
 					finAdvancePaymentsCtrl.setFinanceDisbursement(schdData.getDisbursementDetails());
 					finAdvancePaymentsCtrl.setFinanceMain(main);
+					finAdvancePaymentsCtrl.markCancelIfNoDisbursmnetFound(getFinAdvancePaymentsList());
 					boolean validate = getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
 					
 					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
