@@ -249,4 +249,11 @@
   	  Update SECUSERS_TEMP set authtype = 'DAO';
 	 </sql>
 	</changeSet>
+	
+	<changeSet id="07" author="Durgaprasad G">
+		 <modifyDataType tableName="SECUSERS" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
+		 <modifyDataType tableName="SECUSERS_RTEMP" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
+		 <modifyDataType tableName="SECUSERS_TEMP" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
+	</changeSet>
+	
 </databaseChangeLog>
