@@ -14,4 +14,9 @@
    <column name="AUTHTYPE" type="CHAR(3)"/>
   </addColumn>
 </changeSet>
+
+<changeSet id="02" author="Durgaprasad G">
+	<modifyDataType tableName="ADTSECUSERS" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
+</changeSet>
+
 </databaseChangeLog>
