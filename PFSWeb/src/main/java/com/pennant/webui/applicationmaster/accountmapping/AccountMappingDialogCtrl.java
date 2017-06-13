@@ -61,7 +61,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -244,7 +243,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 				}
 
 				if (subHeadRuleList == null || subHeadRuleList.isEmpty()) {
-					Messagebox.show("Transaction Entries are not defined for this loan type");
+					MessageUtil.showMessage("Transaction Entries are not defined for this loan type");
 					return;
 				}
 
