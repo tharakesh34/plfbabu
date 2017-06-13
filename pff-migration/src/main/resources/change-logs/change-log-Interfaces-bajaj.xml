@@ -1365,5 +1365,83 @@
 		tableName="DM_SUBQ_DISB_DETAILS" />
 </changeSet>
 
+<changeSet author="Manoj.P" id="50">
+	<addPrimaryKey columnNames="AGREEMENTNO,DISBURSEMENTNO" constraintName="PK_DM_AGG_DID"
+		tableName="DM_SUBQ_DISB_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="51">
+	<addPrimaryKey columnNames="ECS_ID" constraintName="PK_DM_OPECS_ECSID"
+		tableName="DM_OPENECS_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="52">
+	<createTable tableName="DM_IVR_GATEWAY_FLEXI">
+		<column name="AGREEMENTNO" type="VARCHAR2(20)" />
+		<column name="DROP_LINE_LIMIT" type="NUMBER(20,2)" />
+		<column name="AMOUNT_DRAWN_LIMIT" type="NUMBER(20,2)" />
+		<column name="UTLIZED_BALANCE_LIMIT" type="NUMBER(20,2)" />
+		<column name="PRINCIPLE_AMOUNT_PAID" type="NUMBER(20,2)" />
+		<column name="BALANCE_PRINCIPAL_OUTSTANDING" type="NUMBER(20,2)" />
+		<column name="PROCESS_DATE" type="datetime" />
+		<column name="BUSINESSDATE" type="datetime" />
+		<column name="BATCH_ID" type="NUMBER" />
+	</createTable>
+</changeSet>
+
+<changeSet author="Manoj.P" id="53">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_IVR_AGGNO"
+		tableName="DM_IVR_GATEWAY_FLEXI" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="54">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_RES_AGGNO"
+		tableName="DM_RESCH_DETAILS_DAILY" />
+</changeSet>
+
+
+<changeSet author="Manoj.P" id="55">
+ 	<modifyDataType tableName="DM_DISB_DETAILS_DAILY" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_LOAN_DETAILS_DAILY" columnName="BATCH_ID " newDataType="bigint"/>
+	<modifyDataType tableName="DM_INSURANCE_DETAILS" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_PROPERTY_DTL" 	columnName="BATCH_ID " newDataType="bigint"/>
+	
+	<modifyDataType tableName="DM_APPLICANT_DETAILS" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_ADDRESS_DETAILS" columnName="BATCH_ID " newDataType="bigint"/>
+	<modifyDataType tableName="DM_APPLICATION_DETAILS" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_COAPPLICANT_DETAILS" columnName="BATCH_ID " newDataType="bigint"/>
+	
+	<modifyDataType tableName="DM_OPENECS_DETAILS" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_SUBQ_DISB_DETAILS" columnName="BATCH_ID " newDataType="bigint"/>
+	<modifyDataType tableName="DM_IVR_GATEWAY_FLEXI" columnName="BATCH_ID" newDataType="bigint"/>
+	<modifyDataType tableName="DM_LOANWISE_CHARGE_DETAILS" columnName="BATCH_ID" newDataType="bigint"/>
+</changeSet>
+
+<changeSet author="Manoj.P" id="56">
+    <dropColumn  columnName="MICR_CODE" tableName="DM_LEA_DOC_DTL"/>
+</changeSet>
+
+<changeSet author="Manoj.P" id="57">
+    <addColumn tableName="DM_PREPAYMENT_DETAILS">
+        <column name="BUSINESS_YEAR" type="NUMBER"/>
+    </addColumn>
+</changeSet>
+
+<changeSet author="Manoj.P" id="58">
+    <dropColumn  columnName="CUSTOMER_TYPE" tableName="FORECLOSURECHARGES"/>
+</changeSet>
+
+
+<changeSet author="Manoj.P" id="59">
+	<renameColumn newColumnName="PRE_EMI" oldColumnName="PRE-EMI"
+		tableName="FORECLOSURECHARGES" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="60">
+    <addColumn tableName="DM_LOANWISE_REPAYSCHD_DTLS">
+        <column name="BUSINESSDATE" type="datetime"/>
+    </addColumn>
+</changeSet>
+
 
 </databaseChangeLog>
