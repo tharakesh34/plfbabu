@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,6 +11,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -25,6 +27,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -90,6 +93,17 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row											row_fundingAcNo;	
 	protected Row											row_remarks;	
 	protected Listbox										listBoxReceipts;
+
+	//Allocation Details
+	protected Textbox										allocation_finType;
+	protected Textbox										allocation_finReference;
+	protected Textbox										allocation_finCcy;
+	protected Textbox										allocation_finBranch;
+	protected Textbox										allocation_CustCIF;
+	protected Decimalbox									allocation_paidByCustomer;
+
+	protected Listbox										listBoxPastdues;
+	protected Listbox										listBoxManualAdvises;
 
 	private FinReceiptHeader								receiptHeader						= null;
 
@@ -317,6 +331,14 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		
+		// Allocation Basic Details
+		this.allocation_finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
+		this.allocation_finReference.setValue(header.getReference());
+		this.allocation_finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
+		this.allocation_finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());
+		this.allocation_CustCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
+		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
+		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
@@ -358,8 +380,116 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
+		// Allocations Adjustment
+		doFillAllocationDetail(header.getAllocations(), finFormatter);
+		
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
+	 * @param header
+	 * @param allocatePaidMap
+	 */
+	private void doFillAllocationDetail(List<ReceiptAllocationDetail> allocations, int formatter){
+		logger.debug("Entering");
+		
+		Listitem item = null;
+		Listcell lc = null;
+		
+		// Get Receipt Purpose to Make Waiver amount Editable
+		this.listBoxManualAdvises.getItems().clear();
+		this.listBoxPastdues.getItems().clear();
+		
+		BigDecimal totalPaidAmount = BigDecimal.ZERO;
+		BigDecimal totalWaivedAmount = BigDecimal.ZERO;
+		BigDecimal totalAdvPaidAmount = BigDecimal.ZERO;
+		BigDecimal totalAdvWaivedAmount = BigDecimal.ZERO;
+		
+		if(allocations != null && !allocations.isEmpty()){
+
+			for (int i = 0; i < allocations.size(); i++) {
+
+				ReceiptAllocationDetail allocation = allocations.get(i);
+
+				item = new Listitem();
+				String label = Labels.getLabel("label_RecceiptDialog_AllocationType_"+allocation.getAllocationType());
+				if(StringUtils.isNotEmpty(allocation.getTypeDesc())){
+					label = allocation.getTypeDesc();
+				}
+				lc = new Listcell(label);
+				lc.setStyle("font-weight:bold;color: #191a1c;");
+				lc.setParent(item);
+
+				lc = new Listcell(PennantApplicationUtil.amountFormate(allocation.getPaidAmount(), formatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				
+				lc = new Listcell(PennantApplicationUtil.amountFormate(allocation.getWaivedAmount(), formatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+					this.listBoxManualAdvises.appendChild(item);
+					totalAdvPaidAmount = totalAdvPaidAmount.add(allocation.getPaidAmount());
+					totalAdvWaivedAmount = totalAdvWaivedAmount.add(allocation.getWaivedAmount());
+				}else{
+					this.listBoxPastdues.appendChild(item);
+					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_TDS)){
+						totalPaidAmount = totalPaidAmount.subtract(allocation.getPaidAmount());
+						totalWaivedAmount = totalWaivedAmount.subtract(allocation.getWaivedAmount());
+					}else{
+						totalPaidAmount = totalPaidAmount.add(allocation.getPaidAmount());
+						totalWaivedAmount = totalWaivedAmount.add(allocation.getWaivedAmount());
+					}
+				}
+			}
+		}
+		
+		// Creating Pastdue Totals to verify against calculations & for validation
+		if(totalPaidAmount.compareTo(BigDecimal.ZERO) > 0 || totalWaivedAmount.compareTo(BigDecimal.ZERO) > 0){
+			addFooter(totalPaidAmount, totalWaivedAmount, formatter, true);
+		}
+		
+		// Creating Manual Advise Totals to verify against calculations & for validation
+		if(totalAdvPaidAmount.compareTo(BigDecimal.ZERO) > 0 || totalAdvWaivedAmount.compareTo(BigDecimal.ZERO) > 0){
+			addFooter(totalAdvPaidAmount, totalAdvWaivedAmount, formatter, false);
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Adding footer to show Totals
+	 * @param dueAmount
+	 * @param paidAmount
+	 * @param waivedAmount
+	 * @param formatter
+	 * @param isPastDue
+	 */
+	private void addFooter(BigDecimal paidAmount,BigDecimal waivedAmount, int formatter, boolean isPastDue){
+		
+		// Creating Totals to verify against calculations & for validation
+		Listitem item = new Listitem();
+		item.setStyle("background-color: #C0EBDF;align:bottom;");
+		Listcell lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_Totals"));
+		lc.setStyle("font-weight:bold;");
+		lc.setParent(item);
+
+		lc = new Listcell(PennantAppUtil.amountFormate(paidAmount, formatter));
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.setParent(item);
+
+		lc = new Listcell(PennantAppUtil.amountFormate(waivedAmount, formatter));
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.setParent(item);
+		
+		if(isPastDue){
+			this.listBoxPastdues.appendChild(item);
+		}else{
+			this.listBoxManualAdvises.appendChild(item);
+		}
 	}
 
 	/**

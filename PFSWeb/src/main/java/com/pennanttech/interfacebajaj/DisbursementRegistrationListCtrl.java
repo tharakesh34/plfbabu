@@ -79,6 +79,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -95,6 +96,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ************************************************************<br>
@@ -168,6 +170,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected void doAddFilters() {
 		super.doAddFilters();
 
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		this.searchObject.addFilters(filter);
+
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
@@ -179,7 +185,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
 			this.searchObject.addFilters(filters);
-
 		}
 	}
 
@@ -375,10 +380,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("alwFileDownload");
 		searchObject.addTabelName(this.tableName);
 
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		searchObject.addFilter(filter[0]);
+
+
+		
 		for (SearchFilterControl searchControl : searchControls) {
-			Filter filter = searchControl.getFilter();
-			if (filter != null) {
-				searchObject.addFilter(filter);
+			Filter filters = searchControl.getFilter();
+			if (filters != null) {
+				searchObject.addFilter(filters);
 			}
 		}
 

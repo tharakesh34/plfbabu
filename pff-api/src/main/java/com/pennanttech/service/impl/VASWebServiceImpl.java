@@ -25,6 +25,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.VASController;
 import com.pennanttech.pffws.VASRestService;
 import com.pennanttech.pffws.VASSoapService;
+import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
@@ -239,6 +240,61 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		logger.debug("Leaving");
 		return response;
 	}
+	
+	/**
+	 * Fetch the Record VASRecording details by key field
+	 * 
+	 * @param vasRecording
+	 * @return VASRecordingDetail
+	 */
+	@Override
+	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException {
+		
+		VASRecordingDetail vASRecordingDetail= null;
+		try {
+			boolean isMutiValues = false;
+			if (StringUtils.isBlank(vasRecording.getCif()) && StringUtils.isBlank(vasRecording.getFinReference())
+					&& StringUtils.isBlank(vasRecording.getCollateralRef())) {
+				vASRecordingDetail = new VASRecordingDetail();
+				String[] valueParm = new String[1];
+				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90335", valueParm));
+				return vASRecordingDetail;
+			} else {
+				if (StringUtils.isNotBlank(vasRecording.getCif())) {
+					if (StringUtils.isNotBlank(vasRecording.getFinReference())
+							|| StringUtils.isNotBlank(vasRecording.getCollateralRef())) {
+						isMutiValues = true;
+					}
+					vasRecording.setPrimaryLinkRef(vasRecording.getCif());
+				} else if (StringUtils.isNotBlank(vasRecording.getFinReference())) {
+					if (StringUtils.isNotBlank(vasRecording.getCif())
+							|| StringUtils.isNotBlank(vasRecording.getCollateralRef())) {
+						isMutiValues = true;
+					}
+					vasRecording.setPrimaryLinkRef(vasRecording.getFinReference());
+				} else if (StringUtils.isNotBlank(vasRecording.getCollateralRef())) {
+					if (StringUtils.isNotBlank(vasRecording.getCif())
+							|| StringUtils.isNotBlank(vasRecording.getFinReference())) {
+						isMutiValues = true;
+					}
+					vasRecording.setPrimaryLinkRef(vasRecording.getCollateralRef());
+				}
+			}
+			if(isMutiValues){
+				vASRecordingDetail = new VASRecordingDetail();
+				String[] valueParm = new String[1];
+				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90336", valueParm));
+				return vASRecordingDetail;
+			}
+			vASRecordingDetail =vasController.getVASRecordings(vasRecording);
+			
+		} catch (Exception e) {
+			logger.error(e);
+			vASRecordingDetail = new VASRecordingDetail();
+			vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		return vASRecordingDetail;
+	}
 
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
@@ -259,4 +315,5 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 	public void setVasController(VASController vasController) {
 		this.vasController = vasController;
 	}
+
 }

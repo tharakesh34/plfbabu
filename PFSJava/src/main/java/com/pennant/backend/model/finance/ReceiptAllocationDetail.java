@@ -7,6 +7,7 @@ public class ReceiptAllocationDetail {
 	private long receiptID = 0;
 	private int allocationID = 0;
 	private String allocationType;
+	private String typeDesc;
 	private long allocationTo;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
@@ -61,6 +62,14 @@ public class ReceiptAllocationDetail {
 
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
+	}
+
+	public String getTypeDesc() {
+		return typeDesc;
+	}
+
+	public void setTypeDesc(String typeDesc) {
+		this.typeDesc = typeDesc;
 	}
 	
 }

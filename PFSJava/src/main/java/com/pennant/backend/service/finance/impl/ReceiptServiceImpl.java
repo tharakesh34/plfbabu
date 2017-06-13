@@ -117,6 +117,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(receiptHeader != null){
 			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
+			
+			// Receipt Allocation Details
+			receiptHeader.setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(receiptID, "_AView"));
+			
 		}
 
 		logger.debug("Leaving");
@@ -259,7 +263,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 					
 					// Manual Advise Movements
-					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix()));
+					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), "_TView"));
 					
 					// Excess Reserve Amounts
 					excessReserves.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));

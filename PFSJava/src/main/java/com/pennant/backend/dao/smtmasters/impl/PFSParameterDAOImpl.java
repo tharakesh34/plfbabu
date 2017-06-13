@@ -90,7 +90,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 	 */
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
-		logger.debug("Entering");
+		//logger.debug("Entering");
 
 		PFSParameter parameter = new PFSParameter();
 		parameter.setId(id);
@@ -104,7 +104,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where SysParmCode =:SysParmCode ");
 
-		logger.debug("selectSql: " + sql.toString());
+		//logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(parameter);
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
 
@@ -116,7 +116,7 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 			parameter = null;
 		}
 
-		logger.debug("Leaving");
+		//logger.debug("Leaving");
 		return parameter;
 	}
 

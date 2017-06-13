@@ -92,7 +92,6 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 
 	private List<PaymentDetail> paymentDetailList;
 	private PaymentInstruction paymentInstruction;
-
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {

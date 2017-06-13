@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -11,7 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zkplus.spring.SpringUtil;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -590,14 +593,31 @@ public class PennantApplicationUtil {
 		return deCodedData;
 	}
 	
-	public static String getSecRoleCodeDesc(String roleCode){
+	public static String getSecRoleCodeDesc(String roleCode) {
+		logger.debug("Entering");
+
 		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
 		searchObject.addFilterEqual("RoleCd", roleCode);
 		searchObject.addField("RoleDesc");
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<SecurityRole> securityRolesList = pagedListService.getBySearchObject(searchObject);
-		
-		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : ""; 
- 	}
+
+		logger.debug("Leaving");
+		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : "";
+	}
 	
+	public static String getEventCode(Date date) {
+		logger.debug("Entering");
+
+		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+
+		if (date.after(DateUtility.getAppDate())) {
+			if (ImplementationConstants.ALLOW_ADDDBSF) {
+				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+			}
+		}
+
+		logger.debug("Leaving");
+		return feeEvent;
+	}
  }

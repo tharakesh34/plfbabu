@@ -45,6 +45,7 @@ package com.pennant.backend.model.payment;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -158,6 +159,20 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 		return excludeFields;
 	}
 
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> paymentInstMap) {
+
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				paymentInstMap.put("pi_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			
+			}
+		}
+		return paymentInstMap;
+	}
+	
+	
 	public long getId() {
 		return paymentInstructionId;
 	}

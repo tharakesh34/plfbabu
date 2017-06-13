@@ -30,6 +30,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.service.impl.VASWebServiceImpl;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class VASController {
@@ -180,7 +181,36 @@ public class VASController {
 		logger.debug("Leaving");
 		return response;
 	}
+	/**
+	 * Fetch the Record VASRecording details by key field
+	 * 
+	 * @param vasRecording
+	 * @return VASRecordingDetail
+	 */
+	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) {
+		logger.debug("Entering");
+		VASRecordingDetail vASRecordingDetail = null;
+		try {
+			List<VASRecording> vasRecordingList;
+			vasRecordingList = vASRecordingService.getVasRecordingsByPrimaryLinkRef(vasRecording.getPrimaryLinkRef());
+			if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+				vASRecordingDetail = new VASRecordingDetail();
+				vASRecordingDetail.setVasRecordingList(vasRecordingList);
+				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				vASRecordingDetail = new VASRecordingDetail();
+				String[] valueParm = new String[1];
+				valueParm[0] = vasRecording.getPrimaryLinkRef();
+				vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			}
 
+		} catch (Exception e) {
+			vASRecordingDetail = new VASRecordingDetail();
+			vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug("Leaving");
+		return vASRecordingDetail;
+	}
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -201,5 +231,6 @@ public class VASController {
 	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
 		this.vASConfigurationService = vASConfigurationService;
 	}
+	
 
 }

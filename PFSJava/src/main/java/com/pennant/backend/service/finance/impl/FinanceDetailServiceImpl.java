@@ -112,6 +112,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -344,6 +345,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Fee Details
 		financeDetail.getFinScheduleData().setFinFeeDetailList(
 				getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
+		
+		//Finance Receipt Details
+		scheduleData.setFinReceiptDetails(getFinFeeDetailService().getFinReceiptDetais(finReference));
+		List<Long> feeIds = new ArrayList<Long>();
+		for(FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
+			feeIds.add(finFeeDetail.getFeeID());
+		}
+		
+		if (!feeIds.isEmpty()) {
+			scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_TView"));
+		}
 
 		//insurance Details
 		scheduleData.setFinInsuranceList(getFinInsurancesDAO().getFinInsuranceListByRef(finReference, "_TView", false));
@@ -730,6 +742,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Fee Details
 		scheduleData.getFinFeeDetailList().addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView", eventCodeRef)));
+
+		/*// Finance Receipt Details
+		scheduleData.setFinReceiptDetails(getFinFeeDetailService().getFinReceiptDetais(finReference));
+		List<Long> feeIds = new ArrayList<Long>();
+		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
+			feeIds.add(finFeeDetail.getFeeID());
+		}
+		
+		if (!feeIds.isEmpty()) {
+			scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_TView"));
+		}*/
 
 		// Collateral Details
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -1139,18 +1162,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		//Finance Accounting Fee Charge Details
-		String eventCode = "";
-		Date curBussDate = DateUtility.getAppDate();
-		if (startDate.after(curBussDate)) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-
+		String eventCode = PennantApplicationUtil.getEventCode(startDate);
 		Long accSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), eventCode,
 				FinanceConstants.MODULEID_FINTYPE);
 
@@ -1366,7 +1378,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			// Finance Fee Schedule Details
 			if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
-
 				List<Long> feeIDList = new ArrayList<>();
 				for (FinFeeDetail feeDetail : finOriginationFeeList) {
 					feeIDList.add(feeDetail.getFeeID());
@@ -1378,7 +1389,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							feeIDList, false, "");
 
 					if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-
 						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
 						for (int i = 0; i < feeScheduleList.size(); i++) {
 							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
@@ -1581,17 +1591,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (StringUtils.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				eventCode = AccountEventConstants.ACCEVENT_CMTDISB;
 			} else {
-
-				Date curBussDate = DateUtility.getAppDate();
-				if (financeMain.getFinStartDate().after(curBussDate)) {
-					if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-						eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-					} else {
-						eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-					}
-				} else {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
+				eventCode = PennantApplicationUtil.getEventCode(financeMain.getFinStartDate());
 			}
 		}
 
@@ -2166,6 +2166,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditHeader.getAuditTranType(), isWIF));
 		}
 
+		// Finance Fee Receipts
+		//=======================================
+		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
+				&& !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
+			for(FinFeeReceipt finFeeReceipt : financeDetail.getFinScheduleData().getFinFeeReceipts()) {
+				for(FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+					if(finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
+						finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
+						break;
+					}
+				}
+			}
+			
+			auditDetails.addAll(getFinFeeDetailService().saveOrUpdateFinFeeReceipts(
+					financeDetail.getFinScheduleData().getFinFeeReceipts(), tableType.getSuffix(),
+					auditHeader.getAuditTranType()));
+		}
+		
 		// set Finance Insurance Details Audit
 		//=======================================
 		if (financeDetail.getFinScheduleData().getFinInsuranceList() != null
@@ -3527,6 +3545,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							"", tranType, isWIF);
 				}
 			}
+
+			// Finance Fee Receipt Details
+			if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
+				getFinFeeDetailService().doApproveFinFeeReceipts(
+						financeDetail.getFinScheduleData().getFinFeeReceipts(), "", tranType, financeMain.getFinReference());
+			}
 		}
 
 		// Save New Finance Object created with DownPayment Support program
@@ -3730,6 +3754,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							auditHeader.getAuditTranType(), isWIF));
 				}
 
+				//Fin Fee Receipt Details Deletion
+				if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
+					auditDetailList.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
+							financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType()));
+				}
+				
 				//Step Details Deletion
 				//=======================================
 				getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "_Temp");
@@ -3786,8 +3816,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
-		return auditHeader;
 
+		return auditHeader;
 	}
 
 	/**
@@ -4769,6 +4799,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditHeader.getAuditTranType(), isWIF));
 		}
 
+		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
+			auditDetails.addAll(getFinFeeDetailService().deleteFinFeeReceipts(
+					financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp",
+					auditHeader.getAuditTranType()));
+		}
+		
 		auditHeader.setAuditDetails(auditDetails);
 
 		if (!isWIF) {
@@ -5051,12 +5087,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						method, auditTranType, usrLanguage, isWIF));
 			}
 		}
+		
+		if(StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+			// Finance Fee Receipts
+			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
+				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
+			}
+			auditDetails.addAll(getFinFeeDetailService().validateFinFeeReceipts(financeDetail,
+					financeMain.getWorkflowId(), method, auditTranType, usrLanguage, auditDetails));
+		}
+		
 		//Finance Insurance details
 		//=======================================
 		if (financeDetail.getFinScheduleData().getFinInsuranceList() != null
 				&& !financeDetail.getFinScheduleData().getFinInsuranceList().isEmpty()) {
-
 			List<FinInsurances> finInsurance = financeDetail.getFinScheduleData().getFinInsuranceList();
+
 			if (finInsurance != null && !finInsurance.isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinInsuranceDetails");
 				details = getFinInsuranceValidation().vaildateDetails(details, method, usrLanguage);

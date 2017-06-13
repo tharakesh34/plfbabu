@@ -89,6 +89,9 @@ public class ReceiptAllocationDetailDAOImpl implements ReceiptAllocationDetailDA
 		source.addValue("ReceiptID", receiptID);
 
 		StringBuilder selectSql = new StringBuilder(" Select ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append( " ,TypeDesc ");
+		}
 		selectSql.append(" From ReceiptAllocationDetail");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where ReceiptID =:ReceiptID ");

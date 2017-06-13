@@ -683,19 +683,11 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.financeDetail.setFeeCharges(getFinanceDetailService().getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), 
 					curBussDate, true));	
 			
-			if(curBussDate != null){
-				String finEvent = "";
-				if (curBussDate.after(DateUtility.getAppDate())) {
-					if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-						finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-					} else {
-						finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-					}
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
+			if (curBussDate != null) {
+				String finEvent = PennantApplicationUtil.getEventCode(curBussDate);
 				this.financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-				this.financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(this.finType.getValue(),finEvent, true, FinanceConstants.MODULEID_FINTYPE));
+				this.financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(this.finType.getValue(),
+						finEvent, true, FinanceConstants.MODULEID_FINTYPE));
 			}
 			
 			boolean newCust = false;

@@ -398,6 +398,24 @@ public class CurrencyDAOImpl extends BasisCodeDAO<Currency> implements CurrencyD
 		logger.debug("Leaving");
 		return currencies;
 	}
+	
+	@Override
+	public Currency getCurrency(String ccy) {
+		logger.debug("Entering ");
+		
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CcyCode", ccy);
+		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyDesc, CcyNumber, CcyEditField,");
+		selectSql.append(" CcySpotRate, CcyIsReceprocal, CcyUserRateSell, CcyUserRateBuy, CcyMinorCcyUnits,");
+		selectSql.append(" CcyMinorCcyDesc, CcySymbol");
+		selectSql.append(" FROM  RMTCurrencies where CcyCode = :CcyCode");
+		logger.debug("selectSql: " + selectSql.toString()); 
+		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		
+		Currency currencies = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),source, typeRowMapper); 
+		logger.debug("Leaving");
+		return currencies;
+	}
 
 	@Override
     public List<Currency> getCurrencyList(List<String> asList) {

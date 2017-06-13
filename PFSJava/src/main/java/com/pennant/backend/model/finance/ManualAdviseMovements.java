@@ -9,6 +9,7 @@ public class ManualAdviseMovements {
 	private long adviseID = Long.MIN_VALUE;
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
+	private String feeTypeCode;
 	private Date movementDate;
 	private BigDecimal movementAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
@@ -88,6 +89,12 @@ public class ManualAdviseMovements {
 	}
 	public void setReceiptMode(String receiptMode) {
 		this.receiptMode = receiptMode;
+	}
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 }

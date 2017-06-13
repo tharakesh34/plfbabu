@@ -20,8 +20,8 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 
 	List<Long> disbIdList = null;
 
-	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList,boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
+	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.disbIdList = disbIdList;
 	}
 
@@ -29,7 +29,6 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		executionStatus.setRemarks("Loading data..");
 		TransactionStatus txnStatus = null;
 		txnStatus = transManager.getTransaction(transDef);
 		try {
@@ -44,7 +43,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
-			logger.error(Literal.ENTERING);
+			logger.error(Literal.EXCEPTION, e);
 			transManager.rollback(txnStatus);
 			failedCount++;
 			saveBatchLog(String.valueOf(executionStatus.getId()), "F", e.getMessage());

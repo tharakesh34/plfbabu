@@ -1715,6 +1715,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		logger.debug("Leaving");
 	}
+	@Override
+	public List<VASRecording> getVasRecordingsByPrimaryLinkRef(String primaryLinkRef) {
+		return vASRecordingDAO.getVASRecordingsByLinkRef(primaryLinkRef,"");
+	}
 	//validations For API Specific
 	@Override
 	public AuditDetail doValidations(VASRecording vasRecording) {
@@ -2387,5 +2391,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+	
 
 }

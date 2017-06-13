@@ -405,8 +405,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finMain.setRecalFromDate(finServiceInstruction.getFromDate());
 		finMain.setRecalToDate(finMain.getMaturityDate());
 
-		BigDecimal addingFeeToFinance = BigDecimal.ZERO;
-		
 		// Service details calling for Schedule calculation
 		setFinScheduleData(cancelDisbursementService.getCancelDisbDetails(getFinScheduleData()));		
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

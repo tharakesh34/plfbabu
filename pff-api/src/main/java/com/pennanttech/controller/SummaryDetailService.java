@@ -58,7 +58,7 @@ public class SummaryDetailService {
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if (finPftDetail == null) {
 				finPftDetail = new FinanceProfitDetail();
-				finPftDetail.setFinStartDate(financeMain.getFinStartDate());
+				financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
 						.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
 			} 
@@ -94,10 +94,10 @@ public class SummaryDetailService {
 			summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
 
 			// set Finance closing status
-			if (StringUtils.isBlank(finPftDetail.getClosingStatus())) {
+			if (StringUtils.isBlank(financeMain.getClosingStatus())) {
 				summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
 			} else {
-				summary.setFinStatus(finPftDetail.getClosingStatus());
+				summary.setFinStatus(financeMain.getClosingStatus());
 			}
 
 

@@ -67,7 +67,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tabbox;
@@ -106,7 +105,6 @@ import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRende
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -654,13 +652,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (tatDetail == null || (tatDetail != null && tatDetail.gettATStartTime() == null)) {
 				final String msg = Labels.getLabel("label_TATProcess_UserAction");
 
-				final String title = Labels.getLabel("label_TatProcess_Title");
-				MultiLineMessageBox.doSetTemplate();
-
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					if (tatDetail == null) {
 						tatDetail = new TATDetail();
 						tatDetail.setModule(FinanceConstants.FINSER_EVENT_ORG);

@@ -1940,13 +1940,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceWriteoff financeWriteoff = doWriteComponentsToBean();
 
-		if ("".equals(eventCode)) {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			if (finMain.getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-				}
-			}
+		if (StringUtils.isBlank(eventCode)) {
+			eventCode = PennantApplicationUtil.getEventCode(finMain.getFinStartDate());
 		}
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;

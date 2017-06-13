@@ -138,6 +138,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
@@ -166,7 +167,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
@@ -826,9 +826,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.accruedPft.setValue(PennantAppUtil.formateAmount(getRepayMain().getAccrued(), finformatter));
 
 		//Total Overdue Penalty Amount TODO: Remove
-		BigDecimal pendingODC = getOverdueChargeRecoveryService().getPendingODCAmount(aFinScheduleData.getFinReference());
-		receiptData.setPendingODC(pendingODC);
-		this.pendingODC.setValue(PennantAppUtil.formateAmount(pendingODC, finformatter));
+		this.pendingODC.setValue(PennantAppUtil.formateAmount(receiptData.getPendingODC(), finformatter));
 
 		// Receipt Basic Details
 		this.receipt_finType.setValue(getRepayMain().getFinType());
@@ -3832,7 +3830,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					
 					// Accounting Postings Process Execution
 					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
-					
 					amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 					amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -3935,9 +3932,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
 					
 					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
 					} else {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
 					}
 				}
 				
@@ -3970,6 +3969,68 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setRpExcessTds(BigDecimal.ZERO);
 				amountCodes.setRpEmiAdvTds(BigDecimal.ZERO);
 				amountCodes.setRpPayableTds(BigDecimal.ZERO);
+				
+			}
+			
+			// Manual Advise Postings
+			List<ManualAdviseMovements> movements = receiptDetail.getAdvMovements();
+			if(movements != null && !movements.isEmpty()){
+				
+				// Summing Same Type of Fee Types to Single Field
+				HashMap<String, BigDecimal> movementMap = new HashMap<>(); 
+				for (int i = 0; i < movements.size(); i++) {
+					ManualAdviseMovements movement = movements.get(i);
+					
+					BigDecimal amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(movement.getFeeTypeCode() + "_P")){
+						amount = movementMap.get(movement.getFeeTypeCode() + "_P");
+					}
+					movementMap.put(movement.getFeeTypeCode() + "_P", amount.add(movement.getPaidAmount()));
+					
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(movement.getFeeTypeCode() + "_W")){
+						amount = movementMap.get(movement.getFeeTypeCode() + "_W");
+					}
+					movementMap.put(movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
+					
+					String payType = "";
+					if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+						payType = "EX_";
+					}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+						payType = "EA_";
+					}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+						payType = "PA_";
+					}else{
+						payType = "PB_";
+					}
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(payType + movement.getFeeTypeCode() + "_P")){
+						amount = movementMap.get(payType + movement.getFeeTypeCode() + "_P");
+					}
+					movementMap.put(payType + movement.getFeeTypeCode() + "_P",  amount.add(movement.getPaidAmount()));
+				}
+				
+				// Accounting Postings Process Execution
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+				aeEvent.getAcSetIDList().clear();
+				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
+							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+				} else {
+					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
+							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+				}
+
+				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+				dataMap.putAll(movementMap);
+				aeEvent.setDataMap(dataMap);
+
+				// Accounting Entry Execution
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+				returnSetEntries.addAll(aeEvent.getReturnDataSet());
+
 			}
 		}
 		
@@ -4013,59 +4074,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
 		if (finFeeDetailList != null) {
-			FeeRule feeRule;
-
-			BigDecimal deductFeeDisb = BigDecimal.ZERO;
-			BigDecimal addFeeToFinance = BigDecimal.ZERO;
-			BigDecimal paidFee = BigDecimal.ZERO;
-			BigDecimal feeWaived = BigDecimal.ZERO;
-
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				
 				if(!finFeeDetail.isRcdVisible()){
 					continue;
 				}
-				feeRule = new FeeRule();
-
-				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
-				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
-
-				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", 0);
-				}
-
-				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
-				}
-
-				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
-				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
-				}
-
-				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
-				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
 			}
-
-			amountCodes.setDeductFeeDisb(deductFeeDisb);
-			amountCodes.setAddFeeToFinance(addFeeToFinance);
-			amountCodes.setFeeWaived(feeWaived);
-			amountCodes.setPaidFee(paidFee);
 		}
 
 		logger.debug("Leaving");

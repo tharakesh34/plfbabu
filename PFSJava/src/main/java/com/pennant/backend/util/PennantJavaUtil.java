@@ -202,6 +202,7 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -1083,6 +1084,9 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinanceMainTemp", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_LView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
+		
+		ModuleUtil.register("FeeReceiptFinance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
+				"FinanceMain", "FinanceMain_TView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
 		ModuleUtil.register("FinanceDetail", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
@@ -1966,6 +1970,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
 						new String[] { "id", "name", "city" }, null, 600));
+		
+		ModuleUtil.register("FinFeeReceipt", new ModuleMapping("FinFeeReceipt", FinFeeReceipt.class, new String[] {
+				"FinFeeReceipts", "FinFeeReceipts" }, null, new String[] { "feeID", "id" }, null, 600));
 		
 		/*Payment Instructions*/
 		ModuleUtil.register("PaymentHeader", new ModuleMapping("PaymentHeader", PaymentHeader.class, new String[] { "PaymentHeader",

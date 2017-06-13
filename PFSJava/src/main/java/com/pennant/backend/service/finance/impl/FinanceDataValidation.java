@@ -103,6 +103,7 @@ import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -208,11 +209,11 @@ public class FinanceDataValidation {
 		}
 		
 		// Vas Fee validations
-/*		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
+		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
-		}*/
+		}
 		
 		// Fee validations
 		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall, "");
@@ -734,6 +735,12 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 		if (finODPenaltyRate != null) {
+			if(finODPenaltyRate.getODChargeAmtOrPerc() == null ){
+				finODPenaltyRate.setODChargeAmtOrPerc(BigDecimal.ZERO);
+			}
+			if(finODPenaltyRate.getODMaxWaiverPerc() == null ){
+				finODPenaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
+			}
 			if (!finODPenaltyRate.isApplyODPenalty()) {
 				if (finODPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())
 						|| StringUtils.isNotBlank(finODPenaltyRate.getODChargeCalOn())
@@ -1443,6 +1450,17 @@ public class FinanceDataValidation {
 					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
+				if(mandate.getStartDate() != null){
+					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+					if (mandate.getStartDate().before(mandbackDate)
+							|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "mandate start date";
+						valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+					}	
+				}
 				boolean isValidBranch = true;
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
 					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
@@ -1664,6 +1682,18 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));
 					return errorDetails;
 				}
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if(financeMain != null){
+				if (advPayment.getLlDate().before(financeMain.getFinStartDate())
+						|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "disbursement Date";
+					valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
+					valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+					return errorDetails;
+				}
+				}
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
 
@@ -1792,32 +1822,6 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
 						}
 					}
-
-					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-					if(financeMain != null){
-					if (advPayment.getLlDate().before(financeMain.getFinStartDate())
-							|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "disbursement Date";
-						valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
-						valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-						return errorDetails;
-					}
-					}
-					/*if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
-							&& StringUtils.isBlank(advPayment.getPhoneAreaCode())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "phoneAreaCode";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
-					}
-
-					if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
-							&& StringUtils.isBlank(advPayment.getPhoneNumber())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "phoneNumber";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
-					}*/
 				}
 			}
 		}
@@ -3650,15 +3654,7 @@ public class FinanceDataValidation {
 			}
 
 			isOrigination = true;
-			if (finSchdData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
+			finEvent = PennantApplicationUtil.getEventCode(finSchdData.getFinanceMain().getFinStartDate());
 		} else {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
 				if(StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())) {

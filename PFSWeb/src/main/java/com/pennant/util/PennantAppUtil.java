@@ -1968,9 +1968,9 @@ public class PennantAppUtil {
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
 		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSP);
-		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 		
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
 		}
 
@@ -1987,7 +1987,7 @@ public class PennantAppUtil {
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			for (AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
 				if (StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())) {
-					accountEngineEvent.setMandatory(AccountEventConstants.ACCEVENT_ADDDBSF_REQ);
+					accountEngineEvent.setMandatory(true);
 				}
 			}
 		}

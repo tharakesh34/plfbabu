@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.util;
 
 import java.io.Serializable;
@@ -48,19 +47,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Messagebox;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.MessageUtil;
 
 public class ErrorControl extends Messagebox implements Serializable {
 	private static final long	serialVersionUID	= 6395769771121558224L;
-	private static final Logger	logger				= Logger.getLogger(ErrorControl.class);
 
 	private int					returnCode			= PennantConstants.porcessCONTINUE;
 	AuditHeader					auditHeader;
@@ -80,7 +76,6 @@ public class ErrorControl extends Messagebox implements Serializable {
 	@SuppressWarnings("unused")
 	private ErrorControl(Component parent, AuditHeader auditHeader) throws InterruptedException {
 		super();
-		MultiLineMessageBox.doErrorTemplate();
 
 		if (auditHeader != null) {
 
@@ -130,29 +125,13 @@ public class ErrorControl extends Messagebox implements Serializable {
 	}
 
 	private int showDetails(ErrorDetails errorDetail) throws InterruptedException {
-		int retValue;
-		String title = Labels.getLabel("message.Information");
-		int buttons = MultiLineMessageBox.OK;
-		String icon = MultiLineMessageBox.INFORMATION;
-		logger.info("Error Detail: " + errorDetail.getErrorCode() + " - " + errorDetail.getError());
-
 		if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_ERROR)) {
-			buttons = MultiLineMessageBox.ABORT;
-			title = Labels.getLabel("message.Error");
-			icon = MultiLineMessageBox.ERROR;
-
+			return MessageUtil.showError(errorDetail, MessageUtil.ABORT);
 		} else if (errorDetail.getErrorSeverity().equalsIgnoreCase(PennantConstants.ERR_SEV_WARNING)) {
-
-			buttons = MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE;
-			title = Labels.getLabel("message.Overide");
-			icon = MultiLineMessageBox.EXCLAMATION;
+			return MessageUtil.confirm(errorDetail, MessageUtil.CANCEL | MessageUtil.OVERIDE);
+		} else {
+			return MessageUtil.showMessage(errorDetail);
 		}
-
-		retValue = MultiLineMessageBox.show(errorDetail.getErrorCode() + "-" + errorDetail.getError(), title, buttons,
-				icon, true);
-
-		return retValue;
-
 	}
 
 	public int getReturnCode() {

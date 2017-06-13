@@ -75,6 +75,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.TreasuaryFinanceService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.InterfaceException;
@@ -1093,21 +1094,10 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		finScheduleData.setFinReference(financeMain.getFinReference());
 		finScheduleData.setFinanceMain(financeMain);
 		
-		Date curBussDate = DateUtility.getAppDate();
-		
-		if (financeMain.getFinStartDate() != null && financeMain.getFinStartDate().after(curBussDate)) {
-			if(AccountEventConstants.ACCEVENT_ADDDBSF_REQ){
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-			}else{
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-		
-		Long accSetId;
+		eventCode = PennantApplicationUtil.getEventCode(financeMain.getFinStartDate());
 		String promotionCode = financeMain.getPromotionCode();
 
+		Long accSetId;
 		if (StringUtils.isNotBlank(promotionCode)) {
 			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
 					FinanceConstants.MODULEID_PROMOTION);

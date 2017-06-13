@@ -502,7 +502,12 @@ update FINANCEMAIN_TEMP set SchCalOnRvw='TILLMDT' where SchCalOnRvw='CURPRD';
 </sql>
 
 </changeSet>	
-	
+<changeSet id="59" author="satish">
+<sql>
+insert into SMTparameters values('ACCRUAL_CAL_ON','Accrual Calculated on SOD(1) or EOD(0)','int',0,'0',1,0,null,null,'Accrual Calculate on SOD or EOD',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+</sql>
+
+</changeSet>	
 	
 
 </databaseChangeLog>

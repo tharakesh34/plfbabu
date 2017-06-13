@@ -70,18 +70,18 @@ public final class MessageUtil {
 	 */
 	private static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
 	/**
-	 * A symbol consisting of a white X in a circle with a red background.
-	 */
-	private static final String	ERROR		= Messagebox.ERROR;
-	/**
 	 * A symbol of a lower case letter i in a circle.
 	 */
 	private static final String	INFORMATION	= Messagebox.INFORMATION;
+	/**
+	 * A symbol consisting of a white X in a circle with a red background.
+	 */
+	private static final String	ERROR		= Messagebox.ERROR;
 
 	/**
 	 * A OK button.
 	 */
-	private static final int	OK			= Messagebox.OK;
+	public static final int		OK			= Messagebox.OK;
 	/**
 	 * A Yes button.
 	 */
@@ -90,6 +90,18 @@ public final class MessageUtil {
 	 * A No button.
 	 */
 	public static final int		NO			= Messagebox.NO;
+	/**
+	 * A Cancel button.
+	 */
+	public static final int		CANCEL		= Messagebox.CANCEL;
+	/**
+	 * A Abort button.
+	 */
+	public static final int		ABORT		= Messagebox.ABORT;
+	/**
+	 * A Abort button.
+	 */
+	public static final int		OVERIDE		= Messagebox.IGNORE;
 
 	private static final String	SUFFIX		= "\n\n";
 
@@ -110,6 +122,36 @@ public final class MessageUtil {
 	}
 
 	/**
+	 * Shows a confirmation message box and returns the button that has been chosen.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int confirm(String message, int buttons) {
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
+	}
+
+	/**
+	 * Shows a confirmation message box with the specified buttons and returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int confirm(ErrorDetails error, int buttons) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
+	}
+
+	/**
 	 * Shows an information message box and logs the message.
 	 * 
 	 * @param message
@@ -120,6 +162,21 @@ public final class MessageUtil {
 
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+	}
+
+	/**
+	 * Shows an information message box, logs the message and returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @return The button being pressed.
+	 */
+	public static int showMessage(ErrorDetails error) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
 	/**
@@ -142,12 +199,28 @@ public final class MessageUtil {
 	 *            The {@link ErrorDetails error} object.
 	 */
 	public static void showError(ErrorDetails error) {
-		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
-
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	/**
+	 * Shows an error message box and logs the message. Returns the button that has been chosen.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 * @param buttons
+	 *            A combination of buttons.
+	 * @return The button being pressed.
+	 */
+	public static int showError(ErrorDetails error, int buttons) {
+		String message = error.getErrorCode().concat(": ").concat(error.getError());
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, ERROR);
 	}
 
 	/**

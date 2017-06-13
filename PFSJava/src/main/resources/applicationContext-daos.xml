@@ -5400,6 +5400,12 @@
 		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<bean id="finFeeReceiptDAO"
+		class="com.pennant.backend.dao.finance.impl.FinFeeReceiptDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<bean id="finFeeDetailService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -5425,6 +5431,9 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->

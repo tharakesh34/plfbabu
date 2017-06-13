@@ -101,16 +101,17 @@ public class AccrualService extends ServiceHelper {
 		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-			if (custEODEvent.getEodValueDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodValueDate())) == 0) {
+			if (custEODEvent.getEodValueDate()
+					.compareTo(DateUtility.getMonthEnd(custEODEvent.getEodValueDate())) == 0) {
 				isAmzPostToday = true;
 			}
 		} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-			if (getEodConfig() !=null && getEodConfig().isInExtMnth()) {
+			if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
 				if (getEodConfig().getMnthExtTo().compareTo(custEODEvent.getEodValueDate()) == 0) {
 					isAmzPostToday = true;
 				}
 			}
-			
+
 		} else {
 			isAmzPostToday = true;
 		}
@@ -297,6 +298,9 @@ public class AccrualService extends ServiceHelper {
 		Date prvSchdDate = null;
 		Date curSchdDate = null;
 		Date nextSchdDate = null;
+
+		int valueToadd = SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON);
+		Date accrualDate = DateUtility.addDays(valueDate, valueToadd);
 		Date pdDate = pftDetail.getPrvODDate();
 
 		for (int i = 0; i < schdDetails.size(); i++) {
@@ -345,10 +349,10 @@ public class AccrualService extends ServiceHelper {
 			BigDecimal acrNormal = BigDecimal.ZERO;
 
 			// Amortization
-			if (curSchdDate.compareTo(valueDate) < 0) {
+			if (curSchdDate.compareTo(accrualDate) < 0) {
 				pftAmz = curSchd.getProfitCalc();
-			} else if (valueDate.compareTo(prvSchdDate) > 0 && valueDate.compareTo(nextSchdDate) <= 0) {
-				int days = getNoDays(prvSchdDate, valueDate);
+			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
+				int days = getNoDays(prvSchdDate, accrualDate);
 				int daysInCurPeriod = curSchd.getNoOfDays();
 				pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
 						0, RoundingMode.HALF_DOWN);

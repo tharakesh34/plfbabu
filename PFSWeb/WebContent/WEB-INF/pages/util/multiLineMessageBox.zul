@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?page title="Multiline Messagebox" language="xul/html"?>
-
 <window width="450px" closable="false"
 	use="org.zkoss.zul.impl.MessageboxDlg">
 	<panel title="${arg.title}" border="normal"
@@ -39,7 +38,7 @@
 					sclass="z-messagebox-btn"
 					use="org.zkoss.zul.impl.MessageboxDlg$Button"
 					if="${!empty arg.ABORT}" style="margin: 0px 4px;" />
-				<button identity="${arg.IGNORE}"
+				<button identity="${arg.IGNORE}" label="Overide"
 					sclass="z-messagebox-btn"
 					use="org.zkoss.zul.impl.MessageboxDlg$Button"
 					if="${!empty arg.IGNORE}" style="margin: 0px 4px;" />

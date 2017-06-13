@@ -41,6 +41,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -768,13 +769,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
-		if ("".equals(eventCode)) {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			if (finMain.getFinStartDate().after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-				}
-			}
+		if (StringUtils.isBlank(eventCode)) {
+			eventCode = PennantApplicationUtil.getEventCode(finMain.getFinStartDate());
 		}
 		
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;

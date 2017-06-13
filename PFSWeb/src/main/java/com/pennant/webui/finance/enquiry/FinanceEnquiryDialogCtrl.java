@@ -777,7 +777,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
-			this.curFinAmountValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount()
+			this.curFinAmountValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue()
 					.add(aFinanceMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : aFinanceMain.getFeeChargeAmt())
 					.add(aFinanceMain.getInsuranceAmt() == null ? BigDecimal.ZERO : aFinanceMain.getInsuranceAmt())
 					.subtract(aFinanceMain.getDownPayment() == null ? BigDecimal.ZERO : aFinanceMain.getDownPayment())

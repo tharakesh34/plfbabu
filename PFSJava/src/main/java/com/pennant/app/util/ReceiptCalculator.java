@@ -86,7 +86,6 @@ public class ReceiptCalculator implements Serializable {
 	private static final long					serialVersionUID	= 8062681791631293126L;
 	private static Logger						logger				= Logger.getLogger(ReceiptCalculator.class);
 
-	Date										curBussniessDate	= DateUtility.getAppDate();
 	private FinODDetailsDAO						finODDetailsDAO;
 	private ManualAdviseDAO						manualAdviseDAO;
 
@@ -196,6 +195,7 @@ public class ReceiptCalculator implements Serializable {
 	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 
+		Date curBussniessDate = DateUtility.getAppDate();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 		List<FinReceiptDetail> receiptDetailList = receiptData.getReceiptHeader().getReceiptDetails();
@@ -382,6 +382,7 @@ public class ReceiptCalculator implements Serializable {
 												movement.setMovementAmount(balAdvise);
 												movement.setPaidAmount(balAdvise);
 												movement.setWaivedAmount(BigDecimal.ZERO);
+												movement.setFeeTypeCode(advise.getFeeTypeCode());
 												receiptDetail.getAdvMovements().add(movement);
 											}
 										}
@@ -413,7 +414,7 @@ public class ReceiptCalculator implements Serializable {
 									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0 && balPri.compareTo(totalReceiptAmt) > 0){
 										balPri = totalReceiptAmt;
 									}
-									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri);
+									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, curBussniessDate, null);
 
 									// Reset Total Receipt Amount
 									totalReceiptAmt = totalReceiptAmt.subtract(balPri);
@@ -454,12 +455,12 @@ public class ReceiptCalculator implements Serializable {
 												}
 											}
 											
-											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft);
+											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft, curBussniessDate,null);
 											
 											// TDS Payments
 											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
 											if(tdsAdjust.compareTo(BigDecimal.ZERO) > 0){
-												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust);
+												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust, curBussniessDate,null);
 												
 												if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_TDS)){
 													BigDecimal totTDSPayNow = paidAllocationMap.get(RepayConstants.ALLOCATION_TDS);
@@ -494,7 +495,7 @@ public class ReceiptCalculator implements Serializable {
 												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0 && balLatePft.compareTo(totalReceiptAmt) > 0){
 													balLatePft = totalReceiptAmt;
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft);
+												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft,curBussniessDate, null);
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
@@ -525,7 +526,7 @@ public class ReceiptCalculator implements Serializable {
 										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0 && balPenalty.compareTo(totalReceiptAmt) > 0){
 											balPenalty = totalReceiptAmt;
 										}
-										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty);
+										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, curBussniessDate,overdue.getTotPenaltyBal());
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
@@ -535,6 +536,8 @@ public class ReceiptCalculator implements Serializable {
 
 										// Update Schedule to avoid on Next loop Payment
 										overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().subtract(balPenalty));
+										overdueMap.remove(schdDate);
+										overdueMap.put(schdDate, overdue);
 										isSchdPaid = true;
 									}
 								}
@@ -582,7 +585,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0 && balFee.compareTo(totalReceiptAmt) > 0){
 														balFee = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, curBussniessDate,null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
@@ -636,7 +639,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balIns.compareTo(totalReceiptAmt) > 0){
 														balIns = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, curBussniessDate,null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
@@ -715,6 +718,7 @@ public class ReceiptCalculator implements Serializable {
 										movement.setMovementAmount(balAdvise);
 										movement.setPaidAmount(balAdvise);
 										movement.setWaivedAmount(BigDecimal.ZERO);
+										movement.setFeeTypeCode(advise.getFeeTypeCode());
 										receiptDetail.getAdvMovements().add(movement);
 									}
 								}
@@ -970,7 +974,8 @@ public class ReceiptCalculator implements Serializable {
 	 * @param balPayNow
 	 * @return
 	 */
-	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo, BigDecimal balPayNow){
+	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo, 
+			BigDecimal balPayNow, Date valueDate, BigDecimal actualPenalty){
 		
 		if(rsd == null){
 			rsd = new RepayScheduleDetail();
@@ -1003,7 +1008,7 @@ public class ReceiptCalculator implements Serializable {
 			rsd.setSchdFeePaid(curSchd.getSchdFeePaid());
 			rsd.setSchdFeeBal(rsd.getSchdFee().subtract(rsd.getSchdFeePaid()));
 			
-			rsd.setDaysLate(DateUtility.getDaysBetween(curSchd.getSchDate(), curBussniessDate));
+			rsd.setDaysLate(DateUtility.getDaysBetween(curSchd.getSchDate(), valueDate));
 			rsd.setDaysEarly(0);
 		}
 		
@@ -1039,6 +1044,7 @@ public class ReceiptCalculator implements Serializable {
 		
 		// Penalty Charge Detail Payment 
 		if(rpyTo == RepayConstants.REPAY_PENALTY){
+			rsd.setPenaltyAmt(actualPenalty);
 			rsd.setPenaltyPayNow(balPayNow);
 		}
 		
@@ -1054,6 +1060,7 @@ public class ReceiptCalculator implements Serializable {
 	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, String receiptPurpose) {
 		logger.debug("Entering");
 		
+		Date curBussniessDate = DateUtility.getAppDate();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 
@@ -1464,6 +1471,7 @@ public class ReceiptCalculator implements Serializable {
 	private FinReceiptData calSummaryDetail(FinReceiptData receiptData, FinScheduleData finScheduleData, String receiptPurpose) {
 		logger.debug("Entering");
 
+		Date curBussniessDate = DateUtility.getAppDate();
 		BigDecimal priPaid = BigDecimal.ZERO;
 		BigDecimal pftPaid = BigDecimal.ZERO;
 		BigDecimal tdsAmount = BigDecimal.ZERO;
@@ -1722,6 +1730,7 @@ public class ReceiptCalculator implements Serializable {
 		// Fetch Sum of Overdue Charges
 		BigDecimal penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
 		if(penaltyBal.compareTo(BigDecimal.ZERO) > 0){
+			receiptData.setPendingODC(penaltyBal);
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
 		}
 		

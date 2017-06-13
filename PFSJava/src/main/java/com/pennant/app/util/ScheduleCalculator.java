@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.rits.cloning.Cloner;
 
 public class ScheduleCalculator {
@@ -2723,7 +2724,7 @@ public class ScheduleCalculator {
 		BigDecimal cal_XIRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
 		BigDecimal calcAmount = BigDecimal.ZERO;
-		
+
 		List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
 		List<Date> repayDateList = new ArrayList<Date>(1);
 		List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
@@ -3116,8 +3117,11 @@ public class ScheduleCalculator {
 				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 		calint = calint.add(prvSchd.getProfitFraction());
-		curSchd.setProfitFraction(calint.subtract(round(calint)));
-		calint = round(calint);
+		BigDecimal calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
+				finMain.getRoundingTarget());
+
+		curSchd.setProfitFraction(calint.subtract(calIntRounded));
+		calint = calIntRounded;
 
 		curSchd.setProfitCalc(calint);
 		curSchd.setRepayComplete(false);
@@ -3156,14 +3160,7 @@ public class ScheduleCalculator {
 
 		/* If capitalize on this schedule date */
 		if (curSchd.isCpzOnSchDate()) {
-
-			// To avoid unwanted capitalization due to Rounding (31 MAY 2017)
-			BigDecimal absPftBal = curSchd.getProfitBalance().abs();
-			if (absPftBal.compareTo(new BigDecimal(finMain.getRoundingTarget())) > 0) {
-				curSchd.setCpzAmount(curSchd.getProfitBalance());
-			} else {
-				curSchd.setCpzAmount(BigDecimal.ZERO);
-			}
+			curSchd.setCpzAmount(curSchd.getProfitBalance());
 		} else {
 			curSchd.setCpzAmount(BigDecimal.ZERO);
 		}
@@ -3245,8 +3242,9 @@ public class ScheduleCalculator {
 						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
-				calIntFraction = calInt.subtract(round(calInt));
-				calInt = round(calInt);
+				BigDecimal calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+				calIntFraction = calInt.subtract(calIntRounded);
+				calInt = calIntRounded;
 				curSchd.setRepayComplete(false);
 				curSchd.setProfitFraction(calIntFraction);
 			} else {
@@ -3305,6 +3303,23 @@ public class ScheduleCalculator {
 							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 									.add(curSchd.getProfitCalc()));
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
+
+							//Rounding Last Installment
+							String roundingMode = finScheduleData.getFinanceMain().getCalRoundingMode();
+							int roundingTarget = finScheduleData.getFinanceMain().getRoundingTarget();
+
+							int roundRequired = SysParamUtil.getValueAsInt(SMTParameterConstants.ROUND_LASTSCHD);
+
+							if (roundRequired == 1) {
+								curSchd.setRepayAmount(CalculationUtil.roundAmount(curSchd.getRepayAmount(),
+										roundingMode, roundingTarget));
+								curSchd.setProfitSchd(curSchd.getRepayAmount().subtract(curSchd.getPrincipalSchd()));
+
+								if (curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) < 0) {
+									curSchd.setProfitSchd(BigDecimal.ZERO);
+								}
+							}
+
 							isRepayComplete = true;
 						}
 					}
@@ -3345,14 +3360,7 @@ public class ScheduleCalculator {
 
 				// Capitalize OR not
 				if (curSchd.isCpzOnSchDate()) {
-
-					// To avoid unwanted capitalization due to Rounding (31 MAY 2017)
-					BigDecimal absPftBal = curSchd.getProfitBalance().abs();
-					if (absPftBal.compareTo(new BigDecimal(finMain.getRoundingTarget())) > 0) {
-						curSchd.setCpzAmount(curSchd.getProfitBalance());
-					} else {
-						curSchd.setCpzAmount(BigDecimal.ZERO);
-					}
+					curSchd.setCpzAmount(curSchd.getProfitBalance());
 				} else {
 					curSchd.setCpzAmount(BigDecimal.ZERO);
 				}
@@ -3420,7 +3428,7 @@ public class ScheduleCalculator {
 		/*
 		 * if (curSchd.getSchDate().compareTo(finMain.getRecalFromDate()) < 0) { return curSchd; }
 		 */
-		
+
 		if (curSchd.getPresentmentId() > 0) {
 			return curSchd;
 		}
@@ -3445,7 +3453,7 @@ public class ScheduleCalculator {
 					}
 				}
 
-				curSchd.setProfitSchd(curSchd.getProfitCalc());
+				curSchd.setProfitSchd(schdInterest);
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 
@@ -4374,6 +4382,21 @@ public class ScheduleCalculator {
 		if (!isRepayComplete) {
 			finScheduleData.getFinanceMain().setCalTerms(finScheduleData.getFinanceMain().getCalTerms() + 1);
 			finScheduleData.getFinanceMain().setCalMaturity(curSchd.getSchDate());
+		}
+
+		//Rounding Last Installment
+		String roundingMode = finScheduleData.getFinanceMain().getCalRoundingMode();
+		int roundingTarget = finScheduleData.getFinanceMain().getRoundingTarget();
+
+		int roundRequired = SysParamUtil.getValueAsInt(SMTParameterConstants.ROUND_LASTSCHD);
+
+		if (roundRequired == 1) {
+			curSchd.setRepayAmount(CalculationUtil.roundAmount(curSchd.getRepayAmount(), roundingMode, roundingTarget));
+			curSchd.setProfitSchd(curSchd.getRepayAmount().subtract(curSchd.getPrincipalSchd()));
+
+			if (curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) < 0) {
+				curSchd.setProfitSchd(BigDecimal.ZERO);
+			}
 		}
 
 		logger.debug("Leaving");

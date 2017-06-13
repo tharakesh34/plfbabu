@@ -60,7 +60,6 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -121,7 +120,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.InterfaceException;
@@ -997,16 +995,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		Date finStartDate = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		if (finStartDate != null) {
-			String finEvent = "";
-			if (finStartDate.after(DateUtility.getAppDate())) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
+			String finEvent = PennantApplicationUtil.getEventCode(finStartDate);
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData()
 					.getFinanceType().getProductCategory())) {
@@ -1301,15 +1290,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				String custCIF = this.customerDetailsService.getEIDNumberById(eidNum, "");
 
 				if (custCIF != null) {
-					MultiLineMessageBox.doSetTemplate();
-					String msg = Labels.getLabel(
-							"label_SelectFinanceTypeDialog_ProspectExist",
-							new String[] {
-									isRetailCustomer ? Labels.getLabel("label_CustCRCPR") : Labels
-											.getLabel("label_CustTradeLicenseNumber"), custCIF + ". \n" });
-					int conf = MultiLineMessageBox.show(msg, Labels.getLabel("title_ProspectExist"),
-							MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf != MultiLineMessageBox.YES) {
+					String msg = Labels
+							.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
+									new String[] {
+											isRetailCustomer ? Labels.getLabel("label_CustCRCPR")
+													: Labels.getLabel("label_CustTradeLicenseNumber"),
+											custCIF + ". \n" });
+
+					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 						return false;
 					}
 					this.existingCust.setSelected(true);
@@ -1481,12 +1469,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} catch (InterfaceException pfe) {
 			if (StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
-					int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"),
-							Labels.getLabel("message.Information"), MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-							Messagebox.QUESTION, true);
+					int conf = MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer"));
 
-					if (conf == MultiLineMessageBox.YES) {
-						logger.debug("Re-Enter Customer CIF: Yes");
+					if (conf == MessageUtil.YES) {
 						return null;
 					} else {
 						customerDetails = getNewCustomerDetail();

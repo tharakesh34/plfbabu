@@ -63,6 +63,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
@@ -159,6 +160,25 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	}
 	
 	@Override
+	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReferece) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT " );
+		selectSql.append(" From FINRECEIPTHEADER T1 " );
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID" );
+		selectSql.append(" where ReceiptPurpose = 'FeePayment' And T1.Reference = '" + finReferece + "'" );
+		
+		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+		logger.debug("Leaving");
+		
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);	
+	}
+	
+	@Override
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference,boolean isWIF, String type) {
 		logger.debug("Entering");
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
@@ -238,7 +258,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference And FeeScheduleMethod IN ('STFI', 'STNI', 'STET', 'POSP') AND Status !='C' ");
+		selectSql.append(" Where FinReference = :FinReference And FeeScheduleMethod IN ('STFI', 'STNI', 'STET', 'POSP')");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);

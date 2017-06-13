@@ -83,7 +83,6 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -124,7 +123,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private PartnerBankDAO				partnerBankDAO;
 	private ManualPaymentService		manualPaymentService;
 	private RepayCalculator				repayCalculator;
-	private FinFeeDetailService			finFeeDetailService;
 	private FinanceProfitDetailDAO		profitDetailsDAO;
 
 	/**
@@ -1166,13 +1164,16 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
 		receiptHeader.setReference(finServiceInst.getFinReference());
+		receiptHeader.setExcessAdjustTo(finServiceInst.getExcessAdjustTo());
 		receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
-		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
-			receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if(StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
+				receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+			} 
 		} else {
 			receiptHeader.setExcessAdjustTo(PennantConstants.List_Select);
 		}
@@ -1734,13 +1735,16 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
 		
-		List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
-		financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
+		//List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
+		//financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
 		
 		if (financeDetail != null) {
 			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 						feeDetail.setOriginationFee(true);
+						feeDetail.setRcdVisible(false);
+						feeDetail.setRecordType(PennantConstants.RCD_UPD);
+						feeDetail.setRecordStatus(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 			financeDetail.setAccountingEventCode(eventCode);
@@ -1911,10 +1915,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
 	}
 	
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {

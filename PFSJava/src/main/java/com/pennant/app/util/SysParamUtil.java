@@ -103,7 +103,7 @@ public class SysParamUtil {
 			throw new IllegalArgumentException();
 		}
 
-		return getSystemParameterValue(parmDetails.get(code));
+		return getSystemParameterValue(getParamByID(code));
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class SysParamUtil {
 			throw new IllegalArgumentException();
 		}
 
-		Object value = getSystemParameterValue(parmDetails.get(code));
+		Object value = getSystemParameterValue(getParamByID(code));
 
 		if (value == null) {
 			return null;
@@ -143,7 +143,7 @@ public class SysParamUtil {
 			throw new IllegalArgumentException();
 		}
 
-		return (Date) getSystemParameterValue(parmDetails.get(code));
+		return (Date) getSystemParameterValue(getParamByID(code));
 	}
 
 	/**
@@ -240,7 +240,8 @@ public class SysParamUtil {
 	 * @return
 	 */
 	public static PFSParameter getSystemParameterObject(String parmCode) {
-		return parmDetails.get(parmCode);
+		
+		return getParamByID(parmCode);
 	}
 
 	/**
@@ -285,4 +286,9 @@ public class SysParamUtil {
 	public void setPFSParameterDAO(PFSParameterDAO pFSParameterDAO) {
 		SysParamUtil.pFSParameterDAO = pFSParameterDAO;
 	}
+	
+	private static PFSParameter getParamByID(String code){
+		return pFSParameterDAO.getPFSParameterById(StringUtils.trimToEmpty(code), "");
+	}
+	
 }

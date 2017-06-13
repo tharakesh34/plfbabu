@@ -2626,7 +2626,10 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-
+	<bean id="finFeeReceiptDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinFeeReceiptDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 	<!--============ Covenant Type Details ============== -->
 
 	<bean id="finCovenantTypeListCtrl"
@@ -4767,6 +4770,8 @@
 	<bean id="paymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.PaymentHeaderDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService"/>
 		<property name="eventManager" ref="eventManager" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
 	</bean>
 
 	<!-- SelectPaymentHeaderDialogCtrl --> 

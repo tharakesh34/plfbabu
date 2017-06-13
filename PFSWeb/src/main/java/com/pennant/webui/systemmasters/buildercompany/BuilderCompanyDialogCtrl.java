@@ -521,7 +521,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBuilderCompany.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBuilderCompany.getName();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aBuilderCompany.getRecordType()).equals("")){
 				aBuilderCompany.setVersion(aBuilderCompany.getVersion()+1);
@@ -568,8 +568,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 			this.btnCancel.setVisible(true);
 			
 		}
-			this.groupId.setButtonDisabled(isReadOnly("BuilderCompanyDialog_groupId"));
-			this.segmentation.setButtonDisabled(isReadOnly("BuilderCompanyDialog_segmentation"));
+			readOnlyComponent(isReadOnly("BuilderCompanyDialog_groupId"), this.groupId);
+			readOnlyComponent(isReadOnly("BuilderCompanyDialog_segmentation"), this.segmentation);
 			
 			if (isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {

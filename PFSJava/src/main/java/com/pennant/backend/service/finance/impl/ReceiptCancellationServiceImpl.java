@@ -761,6 +761,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "");
 				if (advMovements != null && !advMovements.isEmpty()) {
 					for (ManualAdviseMovements movement : advMovements) {
+						
+						if((movement.getPaidAmount().add(movement.getWaivedAmount())).compareTo(BigDecimal.ZERO) == 0){
+							continue;
+						}
+						
 						getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(),
 								movement.getPaidAmount().negate(), movement.getWaivedAmount().negate(),
 								TableType.MAIN_TAB);

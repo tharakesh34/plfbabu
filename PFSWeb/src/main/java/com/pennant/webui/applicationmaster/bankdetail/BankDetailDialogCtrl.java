@@ -445,7 +445,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 
 		if (!this.bankShortCode.isReadonly()){
 			this.bankShortCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BankDetailDialog_BankShortCode.value"), 
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		logger.debug("Leaving");
 	}

@@ -797,6 +797,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		if (finServiceInstruction.getFinODPenaltyRate() != null) {
 			if (finServiceInstruction.getFinODPenaltyRate().isApplyODPenalty()) {
+				if(finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc() == null ){
+					finServiceInstruction.getFinODPenaltyRate().setODChargeAmtOrPerc(BigDecimal.ZERO);
+				}
+				if(finServiceInstruction.getFinODPenaltyRate().getODMaxWaiverPerc() == null ){
+					finServiceInstruction.getFinODPenaltyRate().setODMaxWaiverPerc(BigDecimal.ZERO);
+				}
 				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() <= 0) {
 					return beanValidation("odGraceDays");
 				}

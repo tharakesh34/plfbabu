@@ -59,7 +59,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.CustEODEvent;
@@ -91,7 +90,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pff.core.InterfaceException;
 
@@ -598,59 +596,15 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		if (finFeeDetailList != null) {
-			FeeRule feeRule;
-
-			BigDecimal deductFeeDisb = BigDecimal.ZERO;
-			BigDecimal addFeeToFinance = BigDecimal.ZERO;
-			BigDecimal paidFee = BigDecimal.ZERO;
-			BigDecimal feeWaived = BigDecimal.ZERO;
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 				if(!finFeeDetail.isRcdVisible()){
 					continue;
 				}
-				feeRule = new FeeRule();
-
-				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());
-				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-				feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
-
-				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", BigDecimal.ZERO);
-				}
-
-				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
-				} else {
-					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", BigDecimal.ZERO);
-				}
-
-				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
-				} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-					addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
-				}
-
-				paidFee = paidFee.add(finFeeDetail.getPaidAmount());
-				feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
 			}
-
-			amountCodes.setDeductFeeDisb(deductFeeDisb);
-			amountCodes.setAddFeeToFinance(addFeeToFinance);
-			amountCodes.setFeeWaived(feeWaived);
-			amountCodes.setPaidFee(paidFee);
-
 		}
 
 		logger.debug("Leaving");

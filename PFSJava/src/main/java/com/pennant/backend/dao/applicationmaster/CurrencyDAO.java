@@ -41,6 +41,7 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.applicationmaster;
+
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -51,10 +52,10 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods declaration for the <b>Currency model</b> class.<br>
  * 
  */
-public interface CurrencyDAO extends BasicCrudDao<Currency>{
+public interface CurrencyDAO extends BasicCrudDao<Currency> {
 
 	Currency getCurrencyById(String id, String type);
-	
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -65,9 +66,16 @@ public interface CurrencyDAO extends BasicCrudDao<Currency>{
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String ccyCode, TableType tableType);
+
 	boolean getUniqueCurrencyByID(Currency currency, boolean ccyNum, boolean swiftCode);
+
 	String getCurrencyById(String id);
+
 	List<Currency> getCurrencyList();
+
 	Currency getCurrencyByCode(String id);
+
 	List<Currency> getCurrencyList(List<String> asList);
+
+	Currency getCurrency(String ccy);
 }

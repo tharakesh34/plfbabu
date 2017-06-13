@@ -26,10 +26,9 @@ import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -69,7 +68,6 @@ import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
@@ -90,13 +88,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private CustomerDetailsService		customerDetailsService;
 	private FinanceDetailService		financeDetailService;
-	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private StepPolicyDetailDAO			stepPolicyDetailDAO;
 	private StepPolicyHeaderDAO			stepPolicyHeaderDAO;
 	private BankBranchService			bankBranchService;
-	private FinanceMainDAO				financeMainDAO;
 	private FeeDetailService			feeDetailService;
-	private FinFeeDetailService			finFeeDetailService;
 	private CollateralSetupService		collateralSetupService;
 	private FinanceMainService			financeMainService;
 	private JointAccountDetailService	jointAccountDetailService;
@@ -261,7 +256,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			
 			if (StringUtils.isNotBlank(finReference)) {
 				// prepare response object
-				response = getFinanceDetailResponse(finReference);
+				response = getFinanceDetailResponse(auditHeader);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 				logger.debug("Leaving");
@@ -428,6 +423,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			financeDetail.getMandate().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
+			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 			financeDetail.getMandate().setVersion(1);
 			
 			// mandate details
@@ -590,55 +586,41 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @param finReference
 	 * @return
 	 */
-	private FinanceDetail getFinanceDetailResponse(String finReference) {
+	private FinanceDetail getFinanceDetailResponse(AuditHeader auditHeader) {
 		logger.debug("Enteing");
 
-		// fetch finance basic details
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", false);
-		FinanceDetail financeDetail = new FinanceDetail();
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceDetail response = new FinanceDetail();
 		FinScheduleData finScheduleData = new FinScheduleData();
 		
+		response.setFinReference(financeMain.getFinReference());
 		finScheduleData.setFinanceMain(financeMain);
-		
-		List<FinFeeDetail> finTypeFeeDetails = finFeeDetailService.getFinFeeDetailById(finReference, false, "_View");
-		if (finTypeFeeDetails != null) {
-			finScheduleData.setFinFeeDetailList(finTypeFeeDetails);
-		}
-		
-		// fetch step details if exists
-		if (financeMain != null && financeMain.isStepFinance()) {
-			List<FinanceStepPolicyDetail> stepPolicyDetails = financeStepDetailDAO.getFinStepDetailListByFinRef(
-					finReference, "", false);
-			finScheduleData.setStepPolicyDetails(stepPolicyDetails);
-		}
-		
-		// fetch finance schedule details
-		List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
-				"", false);
-		if(finSchduleList != null) {
-			finScheduleData.setFinanceScheduleDetails(finSchduleList);
-		}
-		financeDetail.setFinScheduleData(finScheduleData);
+		finScheduleData.setFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
+		finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
+		finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
+		response.setFinScheduleData(finScheduleData);
 		
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
-		financeDetail.getFinScheduleData().setFinanceSummary(summary);
+		response.getFinScheduleData().setFinanceSummary(summary);
 
 		// nullify the unnecessary object
 		finScheduleData.setDisbursementDetails(null);
 		finScheduleData.setRepayInstructions(null);
 		finScheduleData.setRateInstruction(null);
 
-		financeDetail.setFinScheduleData(finScheduleData);
+		response.setFinScheduleData(finScheduleData);
 
-		financeDetail.setJountAccountDetailList(null);
-		financeDetail.setGurantorsDetailList(null);
-		financeDetail.setDocumentDetailsList(null);
-		financeDetail.setFinanceCollaterals(null);
+		response.setJountAccountDetailList(null);
+		response.setGurantorsDetailList(null);
+		response.setDocumentDetailsList(null);
+		response.setFinanceCollaterals(null);
 
 		logger.debug("Leaving");
 
-		return financeDetail;
+		return response;
 	}
 
 	public FinanceDetail getFinanceDetails(String finReference) {
@@ -967,10 +949,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.stepPolicyDetailDAO = stepPolicyDetailDAO;
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -988,17 +966,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.stepPolicyHeaderDAO = stepPolicyHeaderDAO;
 	}
 	
-	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
-		this.financeStepDetailDAO = financeStepDetailDAO;
-	}
-	
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
 	}
 	
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}

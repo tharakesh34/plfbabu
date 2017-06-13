@@ -76,7 +76,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>VASRecording table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
+@XmlType(propOrder = { "cif","finReference","collateralRef","productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
 		"feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId", "fulfilOfficerId",
 		"referralId","renewalFee","vasStatus","extendedDetails", "documents","returnStatus" })
 @XmlRootElement(name = "vasDetail")
@@ -153,6 +153,13 @@ public class VASRecording extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name="extendedDetails")
 	@XmlElement(name="extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
+	//API Specific
+	@XmlElement
+    private String cif;
+    @XmlElement
+	private String finReference;
+    @XmlElement
+    private String collateralRef;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	
@@ -198,6 +205,9 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("extendedDetails");
 		excludeFields.add("returnStatus");
 		excludeFields.add("feeAccounting");
+		excludeFields.add("cif");
+		excludeFields.add("finReference");
+		excludeFields.add("collateralRef");
 		return excludeFields;
 	}
 
@@ -576,6 +586,30 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setFeeAccounting(long feeAccounting) {
 		this.feeAccounting = feeAccounting;
+	}
+
+	public String getCif() {
+		return cif;
+	}
+
+	public void setCif(String cif) {
+		this.cif = cif;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getCollateralRef() {
+		return collateralRef;
+	}
+
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
 }

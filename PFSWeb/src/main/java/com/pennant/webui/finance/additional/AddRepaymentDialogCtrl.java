@@ -83,7 +83,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/WIAddRateChange.zul file.
@@ -950,12 +949,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * */
 	private boolean showMessage(String msg, String title) throws InterruptedException {
 		logger.debug("Entering");
-		MultiLineMessageBox.doErrorTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.CANCEL | MultiLineMessageBox.IGNORE,
-				MultiLineMessageBox.EXCLAMATION, true);
-		if (conf == MultiLineMessageBox.IGNORE) {
+
+		if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.OVERIDE) {
 			overrideCount = 1;
-			logger.debug("Leaving");
 			return true;
 		}
 		logger.debug("Leaving");

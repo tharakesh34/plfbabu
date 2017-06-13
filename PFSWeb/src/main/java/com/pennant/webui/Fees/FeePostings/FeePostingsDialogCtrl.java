@@ -107,7 +107,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.VASConsatnts;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -528,7 +527,6 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		map.put("roleCode", getRole());
 		map.put("dialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
-		map.put("moduleName", VASConsatnts.MODULE_NAME);
 		map.put("postAccReq", false);
 		return map;
 	}
