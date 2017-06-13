@@ -206,14 +206,6 @@ public class SelectNewFacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		if (!StringUtils.trimToEmpty(this.approvalFor.getSelectedItem().getValue().toString()).equals(FacilityConstants.FACILITY_NEW)) {
 			if (this.financeReference.getValidatedValue() == null || StringUtils.isBlank(this.financeReference.getValidatedValue())) {
 				throw new WrongValueException(this.financeReference, Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_SelectNewFacilityDialog_FinanceReference.value") }));
-				//				String msg = Labels.getLabel("label_Facilty_Review_Amend_Confirmation",new String[]{this.label_financeReference.getValue()});
-				//				final String title = Labels.getLabel("title.Facilty_Confirmation");
-				//				int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true));
-				//				if (conf != MultiLineMessageBox.YES) {
-				//					return;
-				//				}
-
-
 			}
 		}
 

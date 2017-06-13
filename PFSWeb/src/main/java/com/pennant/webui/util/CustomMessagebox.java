@@ -51,14 +51,14 @@ import org.zkoss.zul.Messagebox;
  * Lines can be breaked with the \n . <br>
  * <br>
  */
-public class MultiLineMessageBox extends Messagebox implements Serializable {
+public class CustomMessagebox extends Messagebox implements Serializable {
 	private static final long		serialVersionUID	= 1L;
 
 	// path of the messagebox zul-template
 	private transient static String	_templ				= "/WEB-INF/pages/util/multiLineMessageBox.zul";
 	private transient static String	_temp2				= "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
 
-	public MultiLineMessageBox() {
+	public CustomMessagebox() {
 		super();
 	}
 

@@ -715,41 +715,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doDelete() throws InterruptedException {/*
-														 * logger.debug("Entering" ); final Provision aProvision = new
-														 * Provision(); BeanUtils .copyProperties (getProvision(),
-														 * aProvision); String tranType =PennantConstants .TRAN_WF;
-														 * 
-														 * // Show a confirm box final String msg = Labels.getLabel(
-														 * "message.Question.Are_you_sure_to_delete_this_record" ) +
-														 * "\n\n --> " + aProvision .getFinReference(); final String
-														 * title = Labels.getLabel( "message.Deleting.Record" );
-														 * MultiLineMessageBox .doSetTemplate();
-														 * 
-														 * int conf = (MultiLineMessageBox .show(msg, title,
-														 * MultiLineMessageBox .YES| MultiLineMessageBox .NO,
-														 * Messagebox.QUESTION, true));
-														 * 
-														 * if (conf== MultiLineMessageBox .YES){ logger.debug(
-														 * "doDelete: Yes");
-														 * 
-														 * if (StringUtils.trimToEmpty ( aProvision.getRecordType
-														 * ()).equals("")){ aProvision .setVersion( aProvision
-														 * .getVersion()+1); aProvision .setRecordType (PennantConstants
-														 * .RECORD_TYPE_DEL);
-														 * 
-														 * if (isWorkFlowEnabled( )){ aProvision.setNewRecord (true);
-														 * tranType=PennantConstants .TRAN_WF; }else{ tranType
-														 * =PennantConstants .TRAN_DEL; } }
-														 * 
-														 * try { if(doProcess(aProvision ,tranType)){ refreshList();
-														 * closeDialog(this. window_ProvisionDialog , "Provision"); }
-														 * 
-														 * }catch (DataAccessException e){ logger.error( "Exception: ",
-														 * e); showMessage(e); }
-														 * 
-														 * } logger.debug("Leaving" );
-														 */
+	private void doDelete() throws InterruptedException {
+		//
 	}
 
 	/**

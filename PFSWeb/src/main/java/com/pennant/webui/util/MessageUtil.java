@@ -117,8 +117,8 @@ public final class MessageUtil {
 	 * @return The button being pressed.
 	 */
 	public static int confirm(String message) {
-		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, YES | NO, EXCLAMATION, NO);
+		CustomMessagebox.doSetTemplate();
+		return CustomMessagebox.show(message.concat(SUFFIX), App.NAME, YES | NO, EXCLAMATION, NO);
 	}
 
 	/**
@@ -131,8 +131,8 @@ public final class MessageUtil {
 	 * @return The button being pressed.
 	 */
 	public static int confirm(String message, int buttons) {
-		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
+		CustomMessagebox.doSetTemplate();
+		return CustomMessagebox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
 	}
 
 	/**
@@ -147,8 +147,8 @@ public final class MessageUtil {
 	public static int confirm(ErrorDetails error, int buttons) {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 
-		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
+		CustomMessagebox.doSetTemplate();
+		return CustomMessagebox.show(message.concat(SUFFIX), App.NAME, buttons, EXCLAMATION);
 	}
 
 	/**
@@ -160,8 +160,8 @@ public final class MessageUtil {
 	public static void showMessage(String message) {
 		logger.info(message);
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
 	/**
@@ -175,8 +175,8 @@ public final class MessageUtil {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
-		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+		CustomMessagebox.doSetTemplate();
+		return CustomMessagebox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
 	/**
@@ -188,8 +188,8 @@ public final class MessageUtil {
 	public static void showError(String message) {
 		logger.info(message);
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
@@ -202,8 +202,8 @@ public final class MessageUtil {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
@@ -219,8 +219,8 @@ public final class MessageUtil {
 		String message = error.getErrorCode().concat(": ").concat(error.getError());
 		logger.info(message);
 
-		MultiLineMessageBox.doSetTemplate();
-		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, buttons, ERROR);
+		CustomMessagebox.doSetTemplate();
+		return CustomMessagebox.show(message.concat(SUFFIX), App.NAME, buttons, ERROR);
 	}
 
 	/**
@@ -250,8 +250,8 @@ public final class MessageUtil {
 	private static void show(InterfaceException e) {
 		logger.warn(Literal.EXCEPTION, e);
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
@@ -267,8 +267,8 @@ public final class MessageUtil {
 			logger.info(e.getMessage());
 		}
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
@@ -280,8 +280,8 @@ public final class MessageUtil {
 	private static void show(Exception e) {
 		logger.error("Exception: ", e);
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(ErrorCode.PPS_900.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+		CustomMessagebox.doSetTemplate();
+		CustomMessagebox.show(ErrorCode.PPS_900.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
