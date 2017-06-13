@@ -19,4 +19,7 @@
 	<modifyDataType tableName="ADTSECUSERS" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
 </changeSet>
 
+<changeSet id="03" author="Durgaprasad G">
+ <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
+</changeSet>
 </databaseChangeLog>
