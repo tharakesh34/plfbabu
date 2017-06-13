@@ -151,6 +151,7 @@ public class RepayConstants {
 	// Receipt Payment Statuses
 	public static final String	MODULETYPE_BOUNCE		= "B";
 	public static final String	MODULETYPE_CANCEL		= "C";
+	public static final String	MODULETYPE_FEECANCEL	= "F";
 	
 	// Payment Statuses
 	public static final String PAYMENT_INTIATED = "I";

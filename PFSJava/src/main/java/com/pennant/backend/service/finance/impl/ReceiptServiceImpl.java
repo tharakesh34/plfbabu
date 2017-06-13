@@ -110,12 +110,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @return
 	 */
 	@Override
-	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type) {
+	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment, String type) {
 		logger.debug("Entering");
 
 		// Receipt Header Details
 		FinReceiptHeader receiptHeader = null;
-		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, "_View");
+		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, type);
 
 		// Fetch Receipt Detail List
 		if(receiptHeader != null){
@@ -123,7 +123,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptHeader.setReceiptDetails(receiptDetailList);
 			
 			// Receipt Allocation Details
-			receiptHeader.setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(receiptID, "_AView"));
+			if(!isFeePayment){
+				receiptHeader.setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(receiptID, "_AView"));
+			}
 			
 		}
 

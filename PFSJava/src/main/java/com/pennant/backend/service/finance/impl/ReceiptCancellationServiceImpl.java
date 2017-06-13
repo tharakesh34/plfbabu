@@ -124,7 +124,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		
 		String tableType = "_View";
 		if(isFeePayment){
-			tableType = "_FView";
+			tableType = "_FCView";
 		}
 		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, tableType);
 
@@ -1067,6 +1067,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		// ============================================
 		getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 
+		// Update Receipt Detail Status
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
+					receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
+		}
+		
 		return null;
 	}
 

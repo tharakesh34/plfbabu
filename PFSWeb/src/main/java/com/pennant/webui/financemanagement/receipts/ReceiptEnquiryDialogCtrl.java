@@ -541,7 +541,8 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.setParent(item);
 
 		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+receiptDetail.getStatus()));
-		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)){
+		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED) ||
+				StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_FEES)){
 			lc.setStyle("font-weight:bold;color: #0252d3;");
 		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)){
 			lc.setStyle("font-weight:bold;color: #00a83d;");
