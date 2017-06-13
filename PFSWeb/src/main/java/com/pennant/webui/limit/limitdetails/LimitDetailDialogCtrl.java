@@ -76,7 +76,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -111,7 +110,6 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 
 /**
@@ -405,17 +403,14 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	public void onFulfill$limitStructureCode(Event event) throws Exception {
 		logger.debug("Entering");
 		Clients.clearWrongValue(this.limitStructureCode);
-		int conf = MultiLineMessageBox.YES;
+		int conf = MessageUtil.YES;
 
 		if (getLimitHeader().getLimitStructureCode() != null && !getLimitHeader().getLimitStructureCode().isEmpty()) {
 			final String msg = Labels.getLabel("message.Question.Are_you_sure_to_Modify_this_record") + "\n\n --> "
 					+ getLimitHeader().getLimitStructureCode();
-			final String title = Labels.getLabel("message.Deleting.Record");
-			MultiLineMessageBox.doSetTemplate();
-			conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					Messagebox.QUESTION, true));
+			conf = MessageUtil.confirm(msg);
 		}
-		if (conf == MultiLineMessageBox.YES) {
+		if (conf == MessageUtil.YES) {
 
 			Object dataObject = limitStructureCode.getObject();
 			if (dataObject instanceof String) {

@@ -98,7 +98,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -855,13 +854,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		LimitStructureDetail limitStructureDetails = (LimitStructureDetail) remove.getParent().getParent()
 				.getAttribute("Data");
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
 		int count = getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode());
 		if (count == 0 || limitStructureDetails.isNew()) {
-			int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					Messagebox.QUESTION, true));
-			if (conf == MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				logger.debug("doDelete: Yes");
 				if (!limitStructureDetails.isNew()) {
 					if (limitStructureDetails.getRecordType() != null

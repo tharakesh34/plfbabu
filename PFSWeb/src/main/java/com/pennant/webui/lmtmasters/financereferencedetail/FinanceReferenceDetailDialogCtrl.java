@@ -73,7 +73,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -102,7 +101,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
 
 /**
@@ -955,7 +953,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			}
 		}
 		if(feeErrorDetails != null && !feeErrorDetails.isEmpty()){
-			MultiLineMessageBox.doSetTemplate();
 			String errorMsg = "";
 			String warningMsg = "";
 			int errorCount = 0;
@@ -978,12 +975,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				}
 			}
 			if (StringUtils.isNotEmpty(errorMsg)){
-				MultiLineMessageBox.show(errorMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError(errorMsg);
 				return false;
 			}else if(StringUtils.isNotEmpty(warningMsg)){
-				warningMsg = warningMsg + " \n \n "+ "Do you want to proceed?";
-				int conf = MultiLineMessageBox.show(warningMsg, Labels.getLabel("title_Fees_Confirmation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-				if (conf != MultiLineMessageBox.YES) {
+				warningMsg = warningMsg + "\n\n" + "Do you want to proceed?";
+
+				if (MessageUtil.confirm(warningMsg) != MessageUtil.YES) {
 					return false;
 				}
 			}
