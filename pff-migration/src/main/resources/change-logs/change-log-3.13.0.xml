@@ -311,5 +311,98 @@
 				                            WHERE      ReceiptID = T1.ReceiptID)				
 		 </createView>
 	</changeSet>
+<changeSet id="11" author="Irfan">
+	<sql>	
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeDialog_gSTApplicable','AccountTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeDialog_hSNNumber','AccountTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeDialog_natureService','AccountTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountTypeDialog_revChrgApplicable','AccountTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AccountType_Maker'), (Select RightID from SecRights where RightName = 'AccountTypeDialog_gSTApplicable'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AccountType_Maker'), (Select RightID from SecRights where RightName = 'AccountTypeDialog_hSNNumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AccountType_Maker'), (Select RightID from SecRights where RightName = 'AccountTypeDialog_natureService'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AccountType_Maker'), (Select RightID from SecRights where RightName = 'AccountTypeDialog_revChrgApplicable'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
+
+<changeSet id="12" author="Irfan">
+	<addColumn tableName="RMTACCOUNTTYPES">
+		<column name="gSTApplicable" type="char(1)"/>
+		<column name="hSNNumber" type="varchar(50)"/>
+		<column name="natureService" type="varchar(50)"/>
+		<column name="revChrgApplicable" type="char(1)"/>
+	</addColumn>
+	<addColumn tableName="RMTACCOUNTTYPES_TEMP">
+		<column name="gSTApplicable" type="char(1)"/>
+		<column name="hSNNumber" type="varchar(50)"/>
+		<column name="natureService" type="varchar(50)"/>
+		<column name="revChrgApplicable" type="char(1)"/>
+	</addColumn>
+</changeSet>
+
+
+<changeSet id="13" author="Irfan">
+	<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
+	
+	SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+			  T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenterID,T1.CostCenterID, T1.GSTApplicable,  T1.HSNNumber, T1.NatureService, T1.RevChrgApplicable,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+			 T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+			 T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+			 FROM         RMTAccountTypes_Temp T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID 
+			 UNION ALL
+			SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+			T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,T1.CostCenterID, T1.GSTApplicable,  T1.HSNNumber, T1.NatureService, T1.RevChrgApplicable, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+			 T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+			 T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+			 FROM         RMTAccountTypes T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID 
+			 WHERE     (NOT EXISTS
+			 (SELECT     1 Expr1
+			 FROM          RMTAccountTypes_Temp
+			 WHERE      (AcType = T1.AcType)))
+	
+	</createView>
+
+</changeSet>
+
+<changeSet id="14" author="Irfan">
+	<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
+		SELECT    T1.AcType, T1.AcTypeDesc, T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+		T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID, T1.CostCenterID, T1.GSTApplicable,  T1.HSNNumber, T1.NatureService, T1.RevChrgApplicable, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+		       T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+		       T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+					 FROM         RMTAccountTypes T1 Left Join
+											AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId 
+											INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+	
+	</createView>
+
+</changeSet>
 	
 </databaseChangeLog>
