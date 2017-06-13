@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
@@ -22,15 +23,16 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	private Date				appDate;
 
 	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
 		this.appDate = appDate;
 	}
 
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
-		executionStatus.setRemarks("Loading data..");
-
+		
+		loadCount();
+		
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_ALM_VIEW");
@@ -45,8 +47,8 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 				String[] filterFields = new String[1];
 				filterFields[0] = "AGREEMENTNO";
 				while (rs.next()) {
-					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
+					executionStatus.setProcessedRecords(processedCount);
 					try {
 						map = mapData(rs);
 						saveOrUpdate(map, "ALM", destinationJdbcTemplate, filterFields);
@@ -69,6 +71,21 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 			}
 		});
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void loadCount() {
+		StringBuilder sql = new StringBuilder();
+
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		sql.append(" SELECT count(*) from INT_ALM_VIEW");
+
+		try {
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
+			executionStatus.setTotalRecords(totalRecords);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
 	}
 
 	@Override
