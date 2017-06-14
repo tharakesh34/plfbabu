@@ -265,6 +265,29 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	public void logMandateHistory(Mandate respmandate, long requestId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		
+		StringBuilder sql =new StringBuilder("Insert Into MandatesStatus");
+		sql.append(" (mandateID, status, reason, changeDate, fileID)");
+		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
+		
+		paramMap.addValue("mandateID", respmandate.getMandateID());
+		
+		if ("Y".equals(respmandate.getStatus())) {
+			paramMap.addValue("STATUS", "REJECTED");
+		} else {
+			paramMap.addValue("STATUS", "APPROVED");
+		}
+		paramMap.addValue("REASON", respmandate.getReason());
+		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("fileID", requestId);
+		
+		this.namedJdbcTemplate.update(sql.toString(), paramMap);
+		logger.debug(Literal.LEAVING);
+	}
 
 	private void updateMandateRequest(Mandate respmandate, long id) {
 		logger.debug(Literal.ENTERING);
