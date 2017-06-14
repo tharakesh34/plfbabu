@@ -328,8 +328,6 @@ WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
 	<column name="PINCODE" type="VARCHAR2(10)" />
 </addColumn>
 </changeSet>
-<<<<<<< .mine
-
 
 	<changeSet id="13" author="Ganesh">
 		<addColumn tableName="RMTBRANCHES_TEMP">
