@@ -963,4 +963,11 @@ union
 			BMTAmountCodes where AllowedEvent = 'REPAY' and Amountcode not in (select Amountcode from BMTAmountCodes where AllowedEvent = 'EARLYSTL');
 		</sql>
 	</changeSet>
+	<changeSet id="37" author="murthy.y">
+		<sql>
+			UPDATE DATA_ENGINE_TABLE SET NAME = 'TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='DE_GL_TRAIL_BAL_REPORT_VIEW';
+			UPDATE DATA_ENGINE_TABLE SET NAME = 'TRANSACTION_DETAIL_REPORT_VIEW' WHERE NAME ='DE_GL_TRAN_DETAIL_REPORT_VIEW';
+			UPDATE DATA_ENGINE_TABLE SET NAME = 'TRANSACTION_SUMMARY_REPORT' WHERE NAME ='SAPGL_TRAN_SUMMARY_REPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

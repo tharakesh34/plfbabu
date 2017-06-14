@@ -5,17 +5,17 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.SAPGLServiceImpl;
+import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
 
 public class TestSAPGL {
-	private SAPGLServiceImpl	sapglService;
+	private TrailBalanceReportService	trailBalanceReportService;
 
 	@Before
 	public void startAHI() {
 		try {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		sapglService = context.getBean(SAPGLServiceImpl.class);
-		} catch(Exception e) {
+			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			trailBalanceReportService = context.getBean(TrailBalanceReportService.class);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -23,7 +23,7 @@ public class TestSAPGL {
 	@Test
 	public void process() {
 		try {
-			sapglService.generateGLReport(new Long(1000));
+			trailBalanceReportService.generateReport(new Long(1000));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
