@@ -404,5 +404,13 @@
 	</createView>
 
 </changeSet>
+<changeSet id="15" author="Irfan">
+	<sql>
+		Update 	RMTAccountTypes set GSTApplicable=0 where  GSTApplicable is null;
+		Update 	RMTAccountTypes set RevChrgApplicable=0 where  RevChrgApplicable is null;
+		Update 	RMTAccountTypes_TEMP set GSTApplicable=0 where  GSTApplicable is null;
+		Update 	RMTAccountTypes_TEMP set RevChrgApplicable=0 where  RevChrgApplicable is null;
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
