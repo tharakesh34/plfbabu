@@ -42,6 +42,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.service.solutionfactory.ExtendedFieldDetailService;
+import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -337,30 +339,32 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail>{
 			if(aExtendedFieldHeader.getExtendedFieldDetails() == null){
 				aExtendedFieldHeader.setExtendedFieldDetails(new ArrayList<ExtendedFieldDetail>());
 			}
+			if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
+					|| StringUtils.equals(aExtendedFieldHeader.getModuleName(), AssetConstants.EXTENDEDFIELDS_MODULE)) {
+				//TODO: Modify dynamic from static
+				ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
+				unitCount.setFieldName("NOOFUNITS");
+				unitCount.setFieldLabel("Number of Units");
+				unitCount.setFieldType(ExtendedFieldConstants.FIELDTYPE_INT);
+				unitCount.setFieldLength(3);
+				unitCount.setFieldSeqOrder(10);
+				unitCount.setFieldMandatory(true);
+				unitCount.setRecordType(PennantConstants.RCD_ADD);
+				unitCount.setVersion(1);
 
-			//TODO: Modify dynamic from static
-			ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
-			unitCount.setFieldName("NOOFUNITS");
-			unitCount.setFieldLabel("Number of Units");
-			unitCount.setFieldType(ExtendedFieldConstants.FIELDTYPE_INT);
-			unitCount.setFieldLength(3);
-			unitCount.setFieldSeqOrder(10);
-			unitCount.setFieldMandatory(true);
-			unitCount.setRecordType(PennantConstants.RCD_ADD);
-			unitCount.setVersion(1);
+				ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
+				unitPrice.setFieldName("UNITPRICE");
+				unitPrice.setFieldLabel("Unit Price");
+				unitPrice.setFieldType(ExtendedFieldConstants.FIELDTYPE_AMOUNT);
+				unitPrice.setFieldLength(18);
+				unitPrice.setFieldSeqOrder(20);
+				unitPrice.setFieldMandatory(true);
+				unitPrice.setRecordType(PennantConstants.RCD_ADD);
+				unitPrice.setVersion(1);
 
-			ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
-			unitPrice.setFieldName("UNITPRICE");
-			unitPrice.setFieldLabel("Unit Price");
-			unitPrice.setFieldType(ExtendedFieldConstants.FIELDTYPE_AMOUNT);
-			unitPrice.setFieldLength(18);
-			unitPrice.setFieldSeqOrder(20);
-			unitPrice.setFieldMandatory(true);
-			unitPrice.setRecordType(PennantConstants.RCD_ADD);
-			unitPrice.setVersion(1);
-			
-			aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
-			aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
+				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
+				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
+			}
 			
 		}
 		
@@ -456,7 +460,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail>{
 		}
 
 		try {
-			// fill the components with the data
+			// fill thwe components with the data
 			doWriteBeanToComponents(aExtendedFieldHeader);
 			if (parentTabPanel != null) {
 				this.toolbar.setVisible(false);
