@@ -45,6 +45,7 @@ package com.pennant.app.util;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
@@ -105,7 +106,7 @@ public class CurrencyUtil {
 	 */
 	public static int getFormat(String ccy) {
 
-		if (ccy == null) {
+		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
@@ -124,7 +125,7 @@ public class CurrencyUtil {
 	 */
 	public static String getCcyDesc(String ccy) {
 
-		if (ccy == null) {
+		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
 
@@ -168,6 +169,9 @@ public class CurrencyUtil {
 	}
 	
 	public static Currency getCurrency(String ccy) {
+		if (StringUtils.isEmpty(ccy)) {
+			ccy = SysParamUtil.getAppCurrency();
+		}
 		return currencyDAO.getCurrency(ccy);
 	}
 }
