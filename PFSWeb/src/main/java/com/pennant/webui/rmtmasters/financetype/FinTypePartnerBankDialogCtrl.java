@@ -59,6 +59,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -638,14 +639,20 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		 * @param event
 		 * @throws Exception
 		 */
-		public void onChange$purpose(Event event) throws Exception {
-			logger.debug("Entering" + event.toString());
+	public void onChange$purpose(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
 
-			fillComboBox(this.paymentMode, "", paymentModesList, "");
-			setPartnerBankProperties();
-			
-			logger.debug("Leaving" + event.toString());
+		String purposeValue = this.purpose.getSelectedItem().getValue();
+
+		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
+			this.paymentModesList = PennantStaticListUtil.getPaymentTypes(false);
 		}
+
+		fillComboBox(this.paymentMode, "", paymentModesList, "");
+		setPartnerBankProperties();
+
+		logger.debug("Leaving" + event.toString());
+	}
 		
 		/**
 		 * Set the Rule Return Type
