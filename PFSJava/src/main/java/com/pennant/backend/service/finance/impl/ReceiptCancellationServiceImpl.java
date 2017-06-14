@@ -26,6 +26,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -104,6 +105,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitManagement	limitManagement;
 	private CustomerDAO		customerDAO;
+	private FinFeeReceiptDAO		finFeeReceiptDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -503,7 +505,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			String finReference = receiptHeader.getReference();
 			boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
 			if (!rcdAvailable) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", "", null, null),usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", null),usrLanguage));
+			}
+			boolean rcdAssigned = getFinFeeReceiptDAO().isFinFeeReceiptAllocated(receiptHeader.getReceiptID(), "_View");
+			if (rcdAssigned) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60210", null),usrLanguage));
 			}
 		}
 
@@ -1381,6 +1387,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
+		return finFeeReceiptDAO;
+	}
+
+	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
+		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
 
 }

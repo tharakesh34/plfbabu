@@ -5783,6 +5783,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->

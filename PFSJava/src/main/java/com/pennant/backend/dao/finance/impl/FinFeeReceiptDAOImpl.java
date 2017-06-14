@@ -122,6 +122,34 @@ public class FinFeeReceiptDAOImpl extends BasisNextidDaoImpl<FinFeeReceipt> impl
 		return finFeeReceipt;
 	}
 
+	/**
+	 * Method for Checking Count of Receipt by using Receipt ID
+	 */
+	@Override
+	public boolean isFinFeeReceiptAllocated(long receiptID, String type) {
+		logger.debug("Entering");
+		
+		FinFeeReceipt receipt = new FinFeeReceipt();
+		receipt.setReceiptID(receiptID);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT Count(*) From FinFeeReceipts");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE  ReceiptID = :ReceiptID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receipt);
+		int count = 0;
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			count = 0;
+		}
+		
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
+	
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptByFinRef(final List<Long> feeIds, String type) {
 		logger.debug("Entering");
