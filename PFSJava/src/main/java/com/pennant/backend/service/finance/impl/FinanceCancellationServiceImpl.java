@@ -421,6 +421,9 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		financeMain.setRecordType("");
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 		
+		// Profit Details Inactive status Updation
+		getProfitDetailsDAO().UpdateActiveSts(finReference, false);
+		
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");

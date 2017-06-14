@@ -6780,6 +6780,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setReadonly(true);
 		this.finLimitRef.setReadonly(true);
 		this.tDSApplicable.setDisabled(true);
+		this.depreciationFrq.setDisabled(true);
 
 		// Step Finance Fields
 		this.stepFinance.setDisabled(true);

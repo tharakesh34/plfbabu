@@ -571,6 +571,26 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Updation of Finance Active Status after Finance Cancellation
+	 */
+	@Override
+	public void UpdateActiveSts(String finReference, boolean isActive) {
+		logger.debug("Entering");
+		
+		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+		finProfitDetails.setFinReference(finReference);
+		finProfitDetails.setFinIsActive(isActive);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
+		updateSql.append(" Set FinIsActive = :FinIsActive Where FinReference =:FinReference");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public void saveAccumulates(Date valueDate) {
