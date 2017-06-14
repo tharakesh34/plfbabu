@@ -96,7 +96,7 @@ public class FinAdvancePaymentsCtrl {
 	List<ValueLabel>					paymentDetailList	= PennantStaticListUtil.getPaymentDetails();
 	List<ValueLabel>					paymentTypeList		= PennantStaticListUtil.getPaymentTypes(true);
 	private FinanceMain					financeMain;
-	private List<FinanceDisbursement>	financeDisbursement;
+	private List<FinanceDisbursement>	financeDisbursements;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 
@@ -215,7 +215,7 @@ public class FinAdvancePaymentsCtrl {
 
 				BigDecimal subTotal = BigDecimal.ZERO;
 				Integer key = entrySet.getKey();
-				FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursement, financeMain, key, true);
+				FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursements, financeMain, key, true);
 				BigDecimal groupDisbAmount = groupFinDisbursement.getDisbAmount();
 				Date groupDate = groupFinDisbursement.getDisbDate();
 
@@ -368,7 +368,7 @@ public class FinAdvancePaymentsCtrl {
 		map.put("moduleType", module);
 		map.put("enqModule", isEnquiry);
 		map.put("multiParty", multiParty);
-		map.put("financeDisbursement", financeDisbursement);
+		map.put("financeDisbursement", financeDisbursements);
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
 		if ("POISSUE".equals(module)) {
@@ -486,7 +486,7 @@ public class FinAdvancePaymentsCtrl {
 	}
 
 	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
-		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursement, financeMain, loanApproved);
+		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursements, financeMain, loanApproved);
 	}
 
 	private boolean isApprovedDisbursments(FinAdvancePayments aFinAdvancePayments) {
@@ -557,8 +557,8 @@ public class FinAdvancePaymentsCtrl {
 	}
 
 	private boolean checkSequnceExists(int disbSeq) {
-		if (financeDisbursement != null && !financeDisbursement.isEmpty()) {
-			for (FinanceDisbursement financeDisbursement : financeDisbursement) {
+		if (financeDisbursements != null && !financeDisbursements.isEmpty()) {
+			for (FinanceDisbursement financeDisbursement : financeDisbursements) {
 				if (financeDisbursement.getDisbSeq() == disbSeq) {
 					return true;
 				}
@@ -568,7 +568,7 @@ public class FinAdvancePaymentsCtrl {
 	}
 
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
-		this.financeDisbursement = financeDisbursement;
+		this.financeDisbursements = financeDisbursement;
 	}
 
 	public void setFinanceMain(FinanceMain financeMain) {
