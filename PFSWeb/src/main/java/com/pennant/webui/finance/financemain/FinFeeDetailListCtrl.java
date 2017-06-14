@@ -919,6 +919,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				for (FinFeeReceipt feeReceipt : finFeeReceipts) {
 					if (oldFinFeeReceipt.getFeeID() == feeReceipt.getFeeID()) {
 						if(StringUtils.isBlank(feeReceipt.getRecordType())) {
+							FinFeeReceipt befImage = new FinFeeReceipt();
+							BeanUtils.copyProperties(oldFinFeeReceipt, befImage);
+							oldFinFeeReceipt.setBefImage(befImage);
+							
 							BigDecimal paidAmt = feeReceipt.getPaidAmount();
 							BeanUtils.copyProperties(oldFinFeeReceipt, feeReceipt);
 							feeReceipt.setPaidAmount(paidAmt);

@@ -5088,7 +5088,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
-		if(StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			// Finance Fee Receipts
 			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
 				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
