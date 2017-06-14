@@ -674,4 +674,24 @@ union
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 		</createView>
 	</changeSet>
+	<changeSet id="24" author="murthy.y">
+		<dropTable tableName="SAPGL_TRAN_DETAIL_REPORT_TEMP"/>
+		<dropView viewName="GL_TRAIL_BALANCE_REPORT_VIEW"/>
+	</changeSet>
+	<changeSet id="25" author="murthy.y">
+		<renameTable newTableName="TRANSACTION_DETAIL_REPORT" oldTableName="SAPGL_TRAN_DETAIL_REPORT"/>
+		<renameTable newTableName="TRANSACTION_DETAIL_REPORT_TEMP" oldTableName="SAPGL_TRAN_DETAIL_REPORT_STAGE"/>
+	</changeSet>
+	<changeSet id="26" author="murthy.y">
+		<renameTable newTableName="TRANSACTION_SUMMARY_REPORT" oldTableName="SAPGL_TRAN_SUMMARY_REPORT"/>
+		<renameTable newTableName="TRAIL_BALANCE_HEADER" oldTableName="SAPGL_TRAIL_BALANCE_HEADER"/>
+		<renameTable newTableName="TRAIL_BALANCE_REPORT" oldTableName="SAPGL_TRAIL_BALANCE_REPORT"/>
+	</changeSet>
+	
+	<changeSet id="27" author="murthy.y">
+		<delete tableName="TRAIL_BALANCE_REPORT"></delete>
+		<delete tableName="TRAIL_BALANCE_HEADER"></delete>
+		<modifyDataType tableName="TRAIL_BALANCE_REPORT" columnName="ACTYPEGRPID" newDataType="VARCHAR(20)"/>
+		<modifyDataType tableName="TRAIL_BALANCE_REPORT" columnName="DESCRIPTION" newDataType="VARCHAR(100)"/>
+	</changeSet>
 </databaseChangeLog>
