@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -364,23 +365,24 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+		
+		if (!StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL) && StringUtils.trimToEmpty(dPDBucketConfiguration.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
+			int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
+					dPDBucketConfiguration.getDueDays(), "");
 
-		int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
-				dPDBucketConfiguration.getDueDays(), "");
+			if (count != 0) {
 
-		if (count != 0) {
+				String[] errParm = new String[2];
+				String[] valueParm = new String[2];
+				valueParm[0] = dPDBucketConfiguration.getProductCode();
+				valueParm[1] = String.valueOf(dPDBucketConfiguration.getDueDays());
+				errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
+				errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + ":" + valueParm[1];
 
-			String[] errParm = new String[2];
-			String[] valueParm = new String[2];
-			valueParm[0] = dPDBucketConfiguration.getProductCode();
-			valueParm[1] = String.valueOf(dPDBucketConfiguration.getDueDays());
-			errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
-			errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + ":" + valueParm[1];
-
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015",
-					errParm, valueParm), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015",
+						errParm, valueParm), usrLanguage));
+			}
 		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
