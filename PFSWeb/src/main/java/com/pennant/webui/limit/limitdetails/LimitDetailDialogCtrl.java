@@ -86,6 +86,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -123,10 +124,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	private final static Logger				logger				= Logger.getLogger(LimitDetailDialogCtrl.class);
 
 	/*
-	 * ************************************************************************
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 * ************************************************************************
+	 * ************************************************************************ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ************************************************************************
 	 */
 	protected Window						window_LimitHeaderDialog;
 	protected Listbox						listBoxLimitDetail;
@@ -184,8 +184,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	private Label							window_LimitHeaderDialog_title;
 
 	// not auto wired vars
-	private transient LimitHeader			limitHeader;															// overhanded per param
-	private transient LimitDetailListCtrl	limitDetailListCtrl;													// overhanded per
+	private transient LimitHeader			limitHeader;														// overhanded per param
+	private transient LimitDetailListCtrl	limitDetailListCtrl;												// overhanded per
 	// param
 
 	// ServiceDAOs / Domain Classes
@@ -488,9 +488,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Combobox actualOrResevd = (Combobox) event.getOrigin().getTarget();
 		LimitDetails limitDetails = (LimitDetails) item.getAttribute("DATA");
-		if (actualOrResevd.getSelectedItem() != null
-				&& StringUtils.equals(PennantConstants.List_Select, actualOrResevd.getSelectedItem().getValue()
-						.toString()))
+		if (actualOrResevd.getSelectedItem() != null && StringUtils.equals(PennantConstants.List_Select,
+				actualOrResevd.getSelectedItem().getValue().toString()))
 			limitDetails.setLimitChkMethod(actualOrResevd.getSelectedItem().getValue().toString());
 		setLimitstatus(limitDetails);
 		logger.debug("Leaving" + event.toString());
@@ -765,7 +764,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		// Review Date
 		try {
 			aLimitHeader.setLimitRvwDate(this.reviewDate.getValue());
-			if (reviewDate.getValue() != null && expiryDate.getValue() !=null) {
+			if (reviewDate.getValue() != null && expiryDate.getValue() != null) {
 				if (reviewDate.getValue().after(expiryDate.getValue())) {
 					wve.add(new WrongValueException(reviewDate, "Review Date should be before the Expiry Date"));
 				}
@@ -839,16 +838,16 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		doClearMessage();
 		// Expiry Date
 		if (!this.expiryDate.isReadonly() && active.isChecked()) {
-			this.expiryDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
+			this.expiryDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
 		}
 		// Review Date
 		if (!this.reviewDate.isReadonly() && active.isChecked()) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.YEAR, 1); // to get previous year add -1
 			Date nextYear = cal.getTime();
-			this.reviewDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, false));
+			this.reviewDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, false));
 		}
 		currency.setMandatoryStyle(active.isChecked());
 
@@ -985,11 +984,11 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				}
 				expryDate.setParent(lc);
 
-				expryDate.setDisabled(!limitDetails.isEditable()
-						|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				expryDate.setDisabled(
+						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				if (!expryDate.isReadonly() && active.isChecked()) {
-					expryDate.setConstraint(new PTDateValidator(Labels
-							.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
+					expryDate.setConstraint(new PTDateValidator(
+							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
 				}
 				lc.setParent(item);
 				//=================
@@ -1002,12 +1001,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				limitCheck.setChecked(limitDetails.isLimitCheck());
 				limitCheck.setParent(lc);
 				if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType)) {
-					limitCheck.setDisabled(!limitDetails.isEditable()
-							|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks")
-							|| !(ImplementationConstants.ONLINE_IRL_CHECK));
+					limitCheck.setDisabled(
+							!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks")
+									|| !(ImplementationConstants.ONLINE_IRL_CHECK));
 				} else {
-					limitCheck.setDisabled(!limitDetails.isEditable()
-							|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+					limitCheck.setDisabled(
+							!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				}
 				lc.setParent(item);
 				//=================
@@ -1015,9 +1014,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				Checkbox revolving = new Checkbox();
 				revolving.setChecked(limitDetails.isRevolving());
 				revolving.addForward("onClick", self, "onClickRevolving");
-				readOnlyComponent(
-						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks")
-								|| enqiryModule, revolving);
+				readOnlyComponent(!limitDetails.isEditable()
+						|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks") || enqiryModule, revolving);
 				if (limitDetails.getLimitLine() != null
 						&& !(StringUtils.equals(LimitConstants.LIMIT_ITEM_UNCLSFD, limitDetails.getLimitLine()))) {
 					lc.appendChild(revolving);
@@ -1040,14 +1038,14 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 						Labels.getLabel("listheader_ReservedOrActual.label")));
 				actulOrReserved.setStyle("background:none;");
 				actulOrReserved.setParent(lc);
-				actulOrReserved.setDisabled(!limitDetails.isEditable()
-						|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				actulOrReserved.setDisabled(
+						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc.setParent(item);
 				//====================
 				Decimalbox limitSanctioned = new Decimalbox();
-				limitSanctioned.setDisabled(!limitDetails.isEditable()
-						|| getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				limitSanctioned.setDisabled(
+						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc = new Listcell();
 				limitSanctioned.setMaxlength(21);
@@ -1317,8 +1315,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_LimitHeaderDialog, auditHeader);
 						return processCompleted;
 					}
@@ -1393,8 +1391,21 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		HashMap<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<Listitem> listtoprocess = this.listBoxLimitDetail.getItems();
 
+		Date lineMaxExpDate = DateUtility.getAppDate();
 		for (Listitem item : listtoprocess) {
 			LimitDetails limit = (LimitDetails) item.getAttribute("DATA");
+			long strdId = limit.getLimitStructureDetailsID();
+			Datebox expireDate = (Datebox) item.getFellowIfAny("ExpireDate_" + strdId);
+
+			if (expireDate != null) {
+				Date lineExpDate = expireDate.getValue();
+				if (lineExpDate != null && lineMaxExpDate != null) {
+					if (lineExpDate.compareTo(lineMaxExpDate) >= 0) {
+						lineMaxExpDate = lineExpDate;
+					}
+				}
+			}
+
 			if (!StringUtils.isEmpty(limit.getGroupCode())) {
 				if (StringUtils.equals(LimitConstants.LIMIT_ITEM_TOTAL, limit.getGroupCode())) {
 					continue;
@@ -1404,6 +1415,15 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 					groupLineMap.put(limit.getGroupCode(),
 							getLimitDetailService().getLinesForGroup(limit.getGroupCode()));
 				}
+			}
+		}
+
+		if (this.expiryDate.getValue() != null && lineMaxExpDate != null) {
+			if (this.expiryDate.getValue().compareTo(lineMaxExpDate) < 0) {
+				wve.add(new WrongValueException(this.expiryDate,
+						Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
+								new String[] { Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"),
+										DateUtility.formatToShortDate(lineMaxExpDate) })));
 			}
 		}
 
@@ -1427,8 +1447,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 				if (sactioned.compareTo(childMaxAmount) < 0) {
 					if (!amountBox.isReadonly() && !amountBox.isDisabled()) {
-						wve.add(new WrongValueException(amountBox, Labels.getLabel("Limit_Group_Total_Max",
-								new String[] { limit.getGroupName() })));
+						wve.add(new WrongValueException(amountBox,
+								Labels.getLabel("Limit_Group_Total_Max", new String[] { limit.getGroupName() })));
 					}
 				}
 			}
@@ -1450,7 +1470,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				totalBox = amountBox;
 				continue;
 			}
-			
+
 			Set<String> totalGroups = groupLineMap.keySet();
 			if (!StringUtils.isEmpty(limit.getGroupCode()) && totalGroups.contains(limit.getGroupCode())) {
 				if (maxofGroups.compareTo(sactioned) <= 0) {
@@ -1464,12 +1484,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			}
 		}
 
-		if (total.compareTo(maxofGroups) < 0 && totalBox!=null) {
+		if (total.compareTo(maxofGroups) < 0 && totalBox != null) {
 			if (!totalBox.isReadonly() && !totalBox.isDisabled()) {
-				wve.add(new WrongValueException(totalBox, Labels
-						.getLabel("Limit_Group_Total_Max", new String[] { "Total" })));
+				wve.add(new WrongValueException(totalBox,
+						Labels.getLabel("Limit_Group_Total_Max", new String[] { "Total" })));
 			}
-		
+
 		}
 
 		logger.debug(" Leaving ");
