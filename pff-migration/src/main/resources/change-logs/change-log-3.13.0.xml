@@ -617,4 +617,12 @@ union
 		INSERT INTO ErrorDetails VALUES('60210','EN','E','Receipt already allocated to Loan. Not allowed to Cancel the receipt.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="22" author="Siva">
+		<sql>
+			Update rmtfinancetypes SET FinScheduleOn = 'ADJMUR', AlwEarlyPayMethods = 'ADJMUR,RECRPY' WHERE ProductCategory = 'CONV';
+			Update rmtfinancetypes SET FinScheduleOn = 'ADJMUR', AlwEarlyPayMethods = 'ADJMUR' WHERE ProductCategory = 'ODFCLITY';
+			Update rmtfinancetypes_Temp SET FinScheduleOn = 'ADJMUR', AlwEarlyPayMethods = 'ADJMUR,RECRPY' WHERE ProductCategory = 'CONV';
+			Update rmtfinancetypes_Temp SET FinScheduleOn = 'ADJMUR', AlwEarlyPayMethods = 'ADJMUR' WHERE ProductCategory = 'ODFCLITY';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
