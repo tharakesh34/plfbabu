@@ -77,6 +77,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 						try {
 							txnStatus = transManager.getTransaction(transDef);
 							updateMandates(respMandate);
+							logMandateHistory(respMandate, mandate.getRequestID());
 							updateMandateRequest(respMandate, respBatchId);
 							transManager.commit(txnStatus);
 						} catch (Exception e) {
@@ -220,7 +221,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
+		sql.append(" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
@@ -266,7 +267,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public void logMandateHistory(Mandate respmandate, long requestId) {
+	private void logMandateHistory(Mandate respmandate, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		

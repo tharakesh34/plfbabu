@@ -167,7 +167,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 					rowMap.remove("CUST_EMI");
 
 					id = String.valueOf(insertData(rowMap));
-					logMandateHistory((Long)rowMap.get("MANDATEID"), id);
+					logMandateHistory((BigDecimal)rowMap.get("MANDATEID"), id);
 					rowMap = null;
 					return id;
 				}
@@ -239,7 +239,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 		return bankCodeMap;
 	}
 	
-	private void logMandateHistory(long mandateId, long requestId) {
+	private void logMandateHistory(BigDecimal mandateId, String requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 

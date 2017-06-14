@@ -75,6 +75,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	@XmlElement
 	private long mandateID = Long.MIN_VALUE;
+	private long requestID;
 	@XmlElement
 	private String mandateRef;
 	private long custID;
@@ -194,6 +195,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("totEMIAmount");
 		excludeFields.add("pccityName");
 		excludeFields.add("finReference");
+		excludeFields.add("requestID");
 		return excludeFields;
 	}
 
@@ -578,6 +580,14 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public long getRequestID() {
+		return requestID;
+	}
+
+	public void setRequestID(long requestID) {
+		this.requestID = requestID;
 	}
 
 }
