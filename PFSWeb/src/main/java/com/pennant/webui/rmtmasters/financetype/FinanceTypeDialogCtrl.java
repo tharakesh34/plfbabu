@@ -4594,6 +4594,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 								.getError());
 						this.financeBaserate.setBaseValue("");
 					}
+				}else{
+					this.fInMinRate.setValue(PennantApplicationUtil.formatRate(Double.valueOf(0), 2));
+					this.finMaxRate.setValue(PennantApplicationUtil.formatRate(Double.valueOf(0), 2));
+					this.row_FinRepRates.setVisible(false);
 				}
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {
