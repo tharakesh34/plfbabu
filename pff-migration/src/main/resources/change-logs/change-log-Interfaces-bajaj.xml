@@ -1443,5 +1443,56 @@
     </addColumn>
 </changeSet>
 
+<changeSet author="Manoj.P" id="61">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_SOA_AGGNO"
+		tableName="DM_SEND_SOA_EMAIL" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="62">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_LOV_AGGNO"
+		tableName="DM_LOAN_VOUCHER_DETAILS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="63">
+	<addPrimaryKey columnNames="AGREEMENTID" constraintName="PK_DM_LOC_AGGID"
+		tableName="DM_LOANWISE_CHARGE_DETAILS" />
+</changeSet>
+
+
+<changeSet author="Manoj.P" id="64">
+	<addPrimaryKey columnNames="AGREEMENTNO,DUEDATE" constraintName="PK_DM_LWR_AGGIDDT"
+		tableName="DM_LOANWISE_REPAYSCHD_DTLS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="65">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_NOC_AGGNO"
+		tableName="DM_NOC_ELIGIBLE_LOANS" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="66">
+	<addPrimaryKey columnNames="APPLID" constraintName="PK_DM_HTS_UNA"
+		tableName="DM_HTS_UNADJUSTED_AMT" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="67">
+	<addPrimaryKey columnNames="AGREEMENTID" constraintName="PK_DM_FCC_AGGID"
+		tableName="FORECLOSURECHARGES" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="68">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_PPD_AGGNO"
+		tableName="DM_PREPAYMENT_DETAILS" />
+</changeSet>
+
+
+<changeSet author="Manoj.P" id="69">
+	<addPrimaryKey columnNames="AGREEMENTID" constraintName="PK_DM_LEA_AGID"
+		tableName="DM_LEA_DOC_DTL" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="70">
+	<addPrimaryKey columnNames="AGREEMENTNO" constraintName="PK_DM_PD_AGGNO"
+		tableName="DM_PRESENTATION_DETAILS" />
+</changeSet>
 
 </databaseChangeLog>
