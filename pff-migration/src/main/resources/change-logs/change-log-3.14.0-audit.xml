@@ -9,4 +9,17 @@
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
 
+<changeSet id="01" author="Irfan">
+	<renameColumn tableName="ADTRMTACCOUNTTYPES" oldColumnName="gSTApplicable" newColumnName="taxApplicable"/>
+	<renameColumn tableName="ADTRMTACCOUNTTYPES" oldColumnName="hSNNumber" newColumnName="aCCADDLVAR1"/>
+	<renameColumn tableName="ADTRMTACCOUNTTYPES" oldColumnName="natureService" newColumnName="aCCADDLVAR2"/>
+	<renameColumn tableName="ADTRMTACCOUNTTYPES" oldColumnName="revChrgApplicable" newColumnName="aCCADDLCHAR1"/>
+</changeSet>
+<changeSet id="02" author="Irfan">
+	<addColumn tableName="ADTRMTACCOUNTTYPES">
+		<column name="aCCADDLVAR3" type="varchar(50)"/>
+		<column name="aCCADDLVAR4" type="varchar(50)"/>
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>
