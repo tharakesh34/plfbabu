@@ -10105,7 +10105,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
-					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayPftDate.getValue() != null
+					if (ImplementationConstants.FRQ_DATE_VALIDATION && !this.nextRepayPftDate.isReadonly() && this.nextRepayPftDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.repayPftFrq.getValue(),
 									this.nextRepayPftDate.getValue())) {
 						throw new WrongValueException(this.nextRepayPftDate,
