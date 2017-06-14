@@ -1,7 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import static org.testng.Assert.fail;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
