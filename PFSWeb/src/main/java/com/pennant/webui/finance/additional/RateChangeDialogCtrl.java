@@ -764,6 +764,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		//Last date
 		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
+		Date currBussDate = DateUtility.getAppDate();
 		for (int i = 1; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
 
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
@@ -774,9 +775,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 ||
 					curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
-				continue;
-			}else{
-				break;
+			}
+			
+			if(curSchd.getSchDate().compareTo(currBussDate) <= 0){
+				lastPaidDate = currBussDate;
 			}
 		}
 		
