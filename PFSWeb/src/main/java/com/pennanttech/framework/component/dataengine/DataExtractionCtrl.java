@@ -2,8 +2,6 @@ package com.pennanttech.framework.component.dataengine;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Hbox;
@@ -34,9 +32,6 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	protected Timer timer;
 
 	protected DataEngineConfig dataEngineConfig;
-	private DataSource dataSource;
-	private Configuration config = null;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -161,9 +156,4 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 }

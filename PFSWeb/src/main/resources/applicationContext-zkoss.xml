@@ -4802,7 +4802,6 @@
 	
 	 <bean id="dataImportCtrl" class="com.pennanttech.framework.component.dataengine.DataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
 	  	<property name="dataEngineConfig" ref="dataEngineConfig" />
-	  	<property name="dataSource" ref="pfsDatasource" />
 	  </bean>
 	   <!-- <bean id="dataExportCtrl" class="com.pennanttech.framework.component.dataengine.DataExportCtrl"  parent="basisCtrl" scope="prototype" >
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />

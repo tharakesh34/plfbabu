@@ -194,6 +194,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<RoundingTarget> roundingTargetList;
 	private static ArrayList<ValueLabel> postingPurposeList;
 	private static ArrayList<ValueLabel> authTypes;
+	private static ArrayList<ValueLabel> presentmentsStatusList;
 
 	
 
@@ -2121,6 +2122,7 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("4", Labels.getLabel("label_Represent_Mandate_Notapprove")));
 			presentmentExclusionList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Mandate_Expiry")));
 			presentmentExclusionList.add(new ValueLabel("6", Labels.getLabel("label_Represent_Manual_Exclude")));
+			presentmentExclusionList.add(new ValueLabel("7", Labels.getLabel("label_Represent_Manual_Reject")));
 		}
 		return presentmentExclusionList;
 	}
@@ -2687,6 +2689,18 @@ public class PennantStaticListUtil {
 			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeInternal.value")));
 		}
 		return authTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getPresentmentsStatusList() {
+		if (presentmentsStatusList == null) {
+			presentmentsStatusList = new ArrayList<ValueLabel>(5);
+			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));
+			presentmentsStatusList.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
+			presentmentsStatusList.add(new ValueLabel("E", Labels.getLabel("label_Presentment_Status_Error")));
+			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
+		}
+		return presentmentsStatusList;
 	}
 }
 

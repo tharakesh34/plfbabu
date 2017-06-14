@@ -530,20 +530,16 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
 		
 		if(receiptHeader == null){
-			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id :" + presentmentDetail.getReceiptID());
+			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id: " + presentmentDetail.getReceiptID());
 			return presentmentDetail;
 		}
-		
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
-
 		if (bounceReason == null) {
-			presentmentDetail.setErrorDesc("Bounce Reason not available for the return code :" + returnCode);
+			presentmentDetail.setErrorDesc("Bounce Reason not available for the reason code: " + returnCode);
 			return presentmentDetail;
 		}
-
 		
 		FinReceiptDetail finReceiptDetail = null;
-
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
 				if (item.getPaymentType().equals(presentmentDetail.getMandateType())) {
@@ -554,14 +550,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		if(finReceiptDetail == null){
-			presentmentDetail.setErrorDesc("FinReceiptDetail not available for the MandateType :" +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc("FinReceiptDetails not available for the MandateType: " +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		
 		ManualAdvise manualAdvise = getManualAdvise(receiptHeader,  bounceReason, finReceiptDetail);
 		
 		if(manualAdvise == null){
-			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType :" +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType: " +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		

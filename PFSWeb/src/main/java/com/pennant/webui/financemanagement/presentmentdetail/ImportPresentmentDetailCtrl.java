@@ -9,14 +9,18 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.ProcessExecution;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pff.core.Literal;
@@ -31,8 +35,9 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	protected Button btnSave;
 	protected Textbox txtFileName;
 	protected Timer timer;
+	protected Row panelRow;
 
-	protected ProcessExecution importPresentments;
+	private ProcessExecution processExecution = null;
 	private PresentmentDetailExtract fileImport;
 	private FileExtractService<PresentmentDetailExtract> presentmentExtractService;
 	String errorMsg = null;
@@ -55,22 +60,27 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_ImportPresentmentDetails(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-		
-		this.importPresentments.setProcess(PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
+
+		if (processExecution == null) {
+			processExecution = new ProcessExecution();
+			createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
+		}
+		processExecution.setProcess(PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
 		String status = PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.getStatus();
 		timer.start();
-		this.importPresentments.render();
-		if (PennantConstants.FILESTATUS_STARTING.equals(status) || PennantConstants.FILESTATUS_FAILED.equals(status) || PennantConstants.FILESTATUS_SUCCESS.equals(status)) {
-			this.btnSave.setDisabled(false);
-			this.timer.stop();
-			this.btnUpload.setDisabled(false);
-		} else if (PennantConstants.FILESTATUS_EXECUTING.equals(status)) {
-			this.btnSave.setDisabled(true);
-			this.btnUpload.setDisabled(true);
+		processExecution.render();
+
+		if (ExecutionStatus.F.name().equals(status) || ExecutionStatus.I.name().equals(status)) {
+			if (ExecutionStatus.S.name().equals(status) || ExecutionStatus.F.name().equals(status)) {
+				btnSave.setDisabled(false);
+				timer.stop();
+			}
+			btnUpload.setDisabled(false);
+		} else if (ExecutionStatus.F.name().equals(status)) {
+			btnSave.setDisabled(true);
+			btnUpload.setDisabled(true);
 		}
-		
-		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -83,7 +93,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 */
 	public void onUpload$btnUpload(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		txtFileName.setText("");
 		errorMsg = null;
 		Media media = event.getMedia();
@@ -97,34 +107,33 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			errorMsg = e.getMessage();
 			MessageUtil.showError(e.getMessage());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setFileImportData() throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (fileImport == null) {
 			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void renderPannel() {
 		logger.debug(Literal.ENTERING);
-		
-		renderPannel(fileImport);
-		importPresentments.render();
-		
+
+		presentmentExtractService.renderPannel(fileImport);
+		processExecution.render();
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
-		doValidations();
 
+		doValidations();
 		try {
 			if (errorMsg != null) {
 				throw new Exception(errorMsg);
@@ -135,25 +144,25 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			MessageUtil.showError(e.getMessage());
 			return;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void doValidations() {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
 			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (importPresentments.getChildren() != null) {
-			importPresentments.getChildren().clear();
+		if (processExecution.getChildren() != null) {
+			processExecution.getChildren().clear();
 		}
 		Thread thread = new Thread(fileImport);
 		timer.start();
@@ -163,19 +172,29 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onTimer$timer(Event event) {
-		Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
+	private void createPanel(ProcessExecution pannel, DataEngineStatus dataEngineStatus) {
+		logger.debug(Literal.ENTERING);
+
+		pannel.setId("Presentment Details");
+		pannel.setBorder("normal");
+		pannel.setTitle("Presentment Details");
+		pannel.setWidth("460px");
+		pannel.setProcess(dataEngineStatus);
+		pannel.render();
+		panelRow.setStyle("overflow: visible !important");
+		Hbox hbox = new Hbox();
+		hbox.setAlign("center");
+		hbox.appendChild(pannel);
+		panelRow.appendChild(hbox);
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void renderPannel(PresentmentDetailExtract extractDetails) {
-		PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.reset();
-		PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(extractDetails.getFile().getName());
-		PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setActualCount(extractDetails.getTotalRecords());
-		PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setExecutionName("PRESENTMENT_RESPONSE_IMPORT");
+	public void onTimer$timer(Event event) {
+		Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
 	}
 
 	public void setPresentmentExtractService(FileExtractService<PresentmentDetailExtract> presentmentExtractService) {
 		this.presentmentExtractService = presentmentExtractService;
 	}
-
 }
