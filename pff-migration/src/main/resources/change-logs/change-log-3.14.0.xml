@@ -240,4 +240,87 @@ WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
 			);	
 		</sql>
 	</changeSet>
+	<changeSet id="13" author="Irfan">
+	<addColumn tableName="RMTCountryVsProvince">
+		<column name="taxExempted" type="char(1)"/>
+		<column name="unionTerritory" type="char(1)"/>
+		<column name="taxStateCode" type="char(2)"/>
+		<column name="taxAvailable" type="char(1)"/>
+		<column name="businessArea" type="varchar(100)"/>
+	</addColumn>
+</changeSet>
+<changeSet id="14" author="Irfan">
+	<addColumn tableName="RMTCountryVsProvince_Temp">
+		<column name="taxExempted" type="char(1)"/>
+		<column name="unionTerritory" type="char(1)"/>
+		<column name="taxStateCode" type="char(2)"/>
+		<column name="taxAvailable" type="char(1)"/>
+		<column name="businessArea" type="varchar(100)"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="15" author="Irfan">
+	<createView viewName="RMTCOUNTRYVSPROVINCE_VIEW" replaceIfExists="true">
+		SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince_Temp T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			UNION ALL
+			SELECT     T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea,T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+			                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+			FROM         RMTCountryVsProvince  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			WHERE     NOT EXISTS
+			                          (SELECT     1
+                            FROM          RMTCountryVsProvince_Temp
+                            WHERE      CPCountry = T1.CPCountry AND CPProvince = T1.CPProvince)
+	
+	
+	</createView>
+
+</changeSet>
+<changeSet id="16" author="Irfan">
+	<createView viewName="RMTCOUNTRYVSPROVINCE_AVIEW" replaceIfExists="true">
+		SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+        T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+	
+	
+	</createView>
+
+</changeSet>
+<changeSet id="11" author="Irfan">
+	<sql>	
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxExempted','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_unionTerritory','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxStateCode','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxAvailable','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_businessArea','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxExempted'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_unionTerritory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxStateCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxAvailable'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_businessArea'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
