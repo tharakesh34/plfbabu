@@ -843,4 +843,92 @@ union
 		</createView>
 	</changeSet>
 	
+	<changeSet id="29" author="murthy.y">
+		<createTable tableName="TRAIL_BALANCE_REPORT_LAST_RUN">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HOSTACCOUNT" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="30" author="manojkumar.p">
+		<addForeignKeyConstraint constraintName="FK_TBRLR_HID"
+			referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID" baseTableName="TRAIL_BALANCE_REPORT_LAST_RUN" baseColumnNames="HEADERID" />
+	</changeSet>
+	<changeSet id="31" author="murthy.y">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE)/CCYMINORCCYUNITS CUST_EMI,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+       		 (SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
