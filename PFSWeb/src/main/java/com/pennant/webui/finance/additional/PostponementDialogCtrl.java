@@ -324,38 +324,28 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
-					dateCombobox.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					dateCombobox.appendChild(comboitem);
-					dateCombobox.setSelectedItem(comboitem);
-					continue;
-				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
-					dateCombobox.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					dateCombobox.appendChild(comboitem);
-					dateCombobox.setSelectedItem(comboitem);
-					continue;
-				}
-
-				if(curSchd.getSchDate().before(curBussDate)){
+				
+				// Not allow Before Current Business Date
+				if(curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
 				
+				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate) <= 0){
+					continue;
+				}
+
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+
 				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-					continue;
-				}
-				
-				if(DateUtility.compare(curSchd.getSchDate(),graceEndDate)<=0){
 					continue;
 				}
 				

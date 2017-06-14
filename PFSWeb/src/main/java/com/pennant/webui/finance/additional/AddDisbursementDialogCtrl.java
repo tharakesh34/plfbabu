@@ -939,19 +939,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					lastPaidDate = curSchd.getSchDate();
 				}
 
-				// Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
-					dateCombobox.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					dateCombobox.appendChild(comboitem);
-					dateCombobox.setSelectedItem(comboitem);
-					continue;
-				}
-
-				// Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");

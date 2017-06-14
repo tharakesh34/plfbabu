@@ -107,6 +107,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient AddTermsService		addTermsService;
 	private transient RemoveTermsService	rmvTermsService;
+	private boolean appDateValidationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -148,6 +149,10 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinanceScheduleDetail(this.financeScheduleDetail);
 			} else {
 				setFinanceScheduleDetail(null);
+			}
+			
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// READ OVERHANDED params !
@@ -532,6 +537,11 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (DateUtility.compare(curSchd.getSchDate(), grcEndDate) <= 0) {
 					continue;
 				}
+				
+				// Not allow Before Current Business Date
+				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					continue;
+				}
 
 				//Not Allowed for Repayment
 				if (!(curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(
@@ -539,18 +549,14 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Not before Current Business date & not Current Schedule Term Date
-				if (curBussDate.compareTo(curSchd.getSchDate()) > 0) {
-					continue;
-				} 
-
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
-					continue;
-				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
 

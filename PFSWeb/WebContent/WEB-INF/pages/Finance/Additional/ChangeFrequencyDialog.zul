@@ -8,17 +8,17 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ChangeFrequencyDialog" border="normal"
-		apply="${changeFrequencyDialogCtrl}" width="650px" height="300px"
+		apply="${changeFrequencyDialogCtrl}" width="650px" height="250px"
 		sizable="false" title="${c:l('window_ChangeFrequencyDialog.title')}"  closable="true">
 
 		<borderlayout id="borderlayoutFrequency">
 			<center border="none" autoscroll="true">
 
-				<groupbox id="gb_FrequencyDetails" height="220px" style="border:1px solid #F38C60;">
+				<groupbox id="gb_FrequencyDetails" height="170px" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
-							<column width="180px" />
-                            <column width="290px"/>
+							<column width="220px" />
+                            <column />
 						</columns>
 						<rows>
 							<row>
