@@ -1887,6 +1887,13 @@ public class FinanceDataValidation {
 		FinanceType financeType = finScheduleData.getFinanceType();
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
+		// Application number
+		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > 20) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Application Number";
+			valueParm[1] = "20 characters";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+		}
 		// Finance start date
 		Date appDate = DateUtility.getAppDate();
 		Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));

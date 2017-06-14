@@ -1511,7 +1511,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					
 				} else if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) < 0) {
 					if(!isLastTermAdjusted){
-						priBalance = prvSchd.getClosingBalance();
+						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						isLastTermAdjusted = true;
 					}
 					// Future Disbursements into Early paid Balance

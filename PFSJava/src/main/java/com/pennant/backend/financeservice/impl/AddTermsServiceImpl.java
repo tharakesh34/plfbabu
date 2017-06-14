@@ -51,11 +51,11 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		boolean isWIF = finServiceInstruction.isWif();
 		String finReference = finServiceInstruction.getFinReference();
 		
-		if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), DateUtility.getAppDate()) > 0) {
+		if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), DateUtility.getAppDate()) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "From date";
+			valueParm[0] = "Recal From Date";
 			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30512", "", valueParm), lang));
 			return auditDetail;
 		}
 		
