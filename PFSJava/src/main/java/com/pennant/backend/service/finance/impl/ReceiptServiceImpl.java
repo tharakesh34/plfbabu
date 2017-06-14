@@ -1516,6 +1516,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 					// Future Disbursements into Early paid Balance
 					priBalance = priBalance.add(curSchd.getDisbAmount());
+				} else if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) > 0) {
+					// Past Schedule Principal Amounts
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 				}
 			}
 		}
