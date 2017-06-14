@@ -201,7 +201,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					custMap.addValue("FILLER_STRING_1", rs.getObject("FILLER_STRING_1"));
 					extractCustomerReportDetails(customerId, custMap);
 					transManager.commit(txnStatus);
-
 					successCount++;
 				} catch (Exception e) {
 					transManager.rollback(txnStatus);
