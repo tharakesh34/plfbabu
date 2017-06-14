@@ -22,7 +22,6 @@
 	</addColumn>
 </changeSet>
 
-
 <changeSet id="03" author="Vinay">
 		<createTable tableName="AdtTAXDETAIL">
 		<column name="AuditId" type="bigint">
@@ -70,4 +69,10 @@
 		<column name="businessArea" type="varchar(100)"/>
 	</addColumn>
 </changeSet>
+<changeSet id="05" author="Ganesh">
+	<addColumn tableName="ADTRMTBRANCHES">
+		<column name="PinCode" type="VARCHAR2(10)" />
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>

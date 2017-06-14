@@ -328,7 +328,79 @@ WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
 	<column name="PINCODE" type="VARCHAR2(10)" />
 </addColumn>
 </changeSet>
+<<<<<<< .mine
+
+
+	<changeSet id="13" author="Ganesh">
+		<addColumn tableName="RMTBRANCHES_TEMP">
+			<column name="PINCODE" type="VARCHAR2(10)" />
+		</addColumn>
+	</changeSet>
+
+<changeSet id="14" author="Ganesh">
+	<createView viewName="RMTBRANCHES_VIEW" replaceIfExists="true">
+SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,
+		T3.CPProvinceName lovDescBranchProvinceName  ,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode , 			T1.BranchIsActive , T1.NewBranchCode , T6.BranchDesc NewBranchDesc , T1.Version , T1.LastMntBy , T1.LastMntOn ,T1.RecordStatus ,
+		T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId , 
+		T1.MiniBranch,T1.BranchType, T1.ParentBranch, T1.PinCode, 
+	        T1.Region,T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet, T7.BranchDesc ParentBranchDesc, 
+		T5.CountryDesc lovDescBranchSwiftCountryName  
+	     FROM RMTBranches_Temp T1
+          LEFT JOIN BMTCountries T2   ON T1.BranchCountry = T2.CountryCode
+           LEFT JOIN RMTCountryVsProvince T3   ON T1.BranchCountry = T3.CPCountry
+	            AND T1.BranchProvince = T3.CPProvince
+           LEFT JOIN RMTProvinceVsCity T4   ON T1.BranchCountry = T4.PCCountry
+	            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+           LEFT JOIN BMTCountries T5   ON T1.BranchSwiftCountry = T5.CountryCode
+	   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+	    LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+		 LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+		   UNION ALL 
+   SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		          T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,T3.CPProvinceName lovDescBranchProvinceName  ,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		          T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode ,T1.BranchIsActive ,T1.NewBranchCode , T6.BranchDesc NewBranchDesc,
+		          T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType ,T1.WorkflowId , T1.MiniBranch,T1.BranchType, T1.ParentBranch, T1.PinCode,
+		          T1.Region, T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet,T7.BranchDesc ParentBranchDesc,T5.CountryDesc lovDescBranchSwiftCountryName 
+		     FROM RMTBranches T1
+		           LEFT JOIN BMTCountries T2 ON T1.BranchCountry = T2.CountryCode
+		           LEFT JOIN RMTCountryVsProvince T3 ON T1.BranchCountry = T3.CPCountry
+		            AND T1.BranchProvince = T3.CPProvince
+		           LEFT JOIN RMTProvinceVsCity T4 ON T1.BranchCountry = T4.PCCountry
+		            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+		           LEFT JOIN BMTCountries T5 ON T1.BranchSwiftCountry = T5.CountryCode
+				   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+				   LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+			 LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+		     WHERE NOT EXISTS ( SELECT 1 
+		                        FROM RMTBranches_Temp 
+		                          WHERE BranchCode = T1.BranchCode )
+</createView>
+</changeSet>
+
+
+	<changeSet id="15" author="Ganesh">
+		<createView replaceIfExists="true" viewName="RMTBRANCHES_AVIEW">
+  SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		          T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,T3.CPProvinceName lovDescBranchProvinceName,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		          T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode ,T1.BranchIsActive ,T1.NewBranchCode , T6.BranchDesc NewBranchDesc,
+		          T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType ,T1.WorkflowId , T1.MiniBranch,T1.BranchType, T1.ParentBranch , T1.PinCode,
+		          T1.Region,T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet, T7.BranchDesc ParentBranchDesc,T5.CountryDesc lovDescBranchSwiftCountryName 
+		     FROM RMTBranches T1
+           LEFT JOIN BMTCountries T2   ON T1.BranchCountry = T2.CountryCode
+           LEFT JOIN RMTCountryVsProvince T3   ON T1.BranchCountry = T3.CPCountry
+            AND T1.BranchProvince = T3.CPProvince
+           LEFT JOIN RMTProvinceVsCity T4   ON T1.BranchCountry = T4.PCCountry
+            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+           LEFT JOIN BMTCountries T5   ON T1.BranchSwiftCountry = T5.CountryCode
+		   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+		    LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+		LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+</createView>
+	</changeSet>
 	
+ 
 	<changeSet id="13" author="Kesav">
 		<sql>
 			Delete from FeeTypes where FeeTypeCode = 'MNLFEE';
@@ -345,5 +417,6 @@ WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
 			'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+
 
 </databaseChangeLog>
