@@ -416,5 +416,30 @@ SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.
 		</sql>
 	</changeSet>
 
+	<changeSet id="16" author="Ganesh">
+		<sql>
+		delete from PINCODES where PINCODEID=1;
+			INSERT INTO PINCODES (PINCODEID, PINCODE, CITY, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)
+		VALUES (1,'3452349','1001',2,2,1000,'01-06-17','Approved','','','','','', 0);
+			update RMTBRANCHES set pincode=1;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="17" author="Ganesh">
+		<addNotNullConstraint tableName="RMTBRANCHES"
+		columnName="PINCODE" columnDataType="varchar(10)" />
+</changeSet>
+
+<changeSet id="18" author="Ganesh">
+		<sql>
+			update RMTBRANCHES_temp set pincode=1;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="19" author="Ganesh">
+		<addNotNullConstraint tableName="RMTBRANCHES_temp"
+		columnName="PINCODE" columnDataType="varchar(10)" />
+</changeSet>
+	
 
 </databaseChangeLog>
