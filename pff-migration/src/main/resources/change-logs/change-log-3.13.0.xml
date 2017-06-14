@@ -942,4 +942,16 @@ union
 	<changeSet id="33" author="murthy.y">
 		<dropView viewName="DE_GL_TRAIL_BAL_REPORT_VIEW"/>
 	</changeSet>
+	<changeSet id="34" author="murthy.y">
+		<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true">
+			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
+			ORDER BY LINK
+		</createView>
+	</changeSet>
+	<changeSet id="35" author="murthy.y">
+		<dropView viewName="DE_GL_TRAN_DETAIL_REPORT_VIEW"/>
+	</changeSet>
 </databaseChangeLog>
