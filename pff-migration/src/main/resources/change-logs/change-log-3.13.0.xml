@@ -610,4 +610,11 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="21" author="Kesava">
+		<sql>
+		Delete from ErrorDetails where errorCode = '60210';
+		INSERT INTO ErrorDetails VALUES('60210','EN','E','Receipt already allocated to Loan. Not allowed to Cancel the receipt.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
