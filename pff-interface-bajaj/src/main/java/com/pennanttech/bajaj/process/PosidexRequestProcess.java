@@ -205,8 +205,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				} catch (Exception e) {
 					transManager.rollback(txnStatus);
 					logger.error(Literal.EXCEPTION);
-					saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
 					failedCount++;
+					saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
 				} finally {
 					txnStatus.flush();
 					txnStatus = null;
@@ -318,8 +318,9 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 					loanSuccessCount++;
 				} catch (Exception e) {
-					loanFailedCount++;
 					logger.error(Literal.EXCEPTION, e);
+					failedCount++;
+					loanFailedCount++;
 					saveBatchLog(finreferenceNo, "F", e.getMessage());
 				}
 			}
