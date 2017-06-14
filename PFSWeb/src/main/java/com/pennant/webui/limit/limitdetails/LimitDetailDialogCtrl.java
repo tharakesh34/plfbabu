@@ -984,8 +984,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				}
 				expryDate.setParent(lc);
 
-				expryDate.setDisabled(
-						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				expryDate.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				if (!expryDate.isReadonly() && active.isChecked()) {
 					expryDate.setConstraint(new PTDateValidator(
 							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, false));
@@ -1038,14 +1037,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 						Labels.getLabel("listheader_ReservedOrActual.label")));
 				actulOrReserved.setStyle("background:none;");
 				actulOrReserved.setParent(lc);
-				actulOrReserved.setDisabled(
-						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				actulOrReserved.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc.setParent(item);
 				//====================
 				Decimalbox limitSanctioned = new Decimalbox();
-				limitSanctioned.setDisabled(
-						!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				limitSanctioned.setDisabled( getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc = new Listcell();
 				limitSanctioned.setMaxlength(21);
