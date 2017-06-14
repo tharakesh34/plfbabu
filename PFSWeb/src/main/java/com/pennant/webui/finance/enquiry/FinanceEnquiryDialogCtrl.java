@@ -896,7 +896,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				this.gb_gracePeriodDetails.setVisible(false);
 			}
-			this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
 			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 					PennantStaticListUtil.getInterestRateType(false), "");
@@ -1121,7 +1121,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.disb_profitDaysBasis.setValue(StringUtils.trimToEmpty(aFinanceMain.getProfitDaysBasis()));
 				this.disb_finReference.setValue(StringUtils.trimToEmpty(aFinanceMain.getFinReference()));
 				this.disb_grcEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
-				this.disb_noOfTerms.setValue(String.valueOf(aFinanceMain.getNumberOfTerms()));
+				this.disb_noOfTerms.setValue(String.valueOf(aFinanceMain.getCalTerms()));
 				this.disb_startDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
 				this.disb_maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
 
@@ -1196,7 +1196,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			this.unPaidInstlments.setValue(String.valueOf(finSummary.getNumberOfTerms()
+			this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getCalTerms()
 					- finSummary.getPaidInstlments()));
 			if (financeSummary != null && financeSummary.getFinODTotPenaltyBal() != null) {
 				this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(
