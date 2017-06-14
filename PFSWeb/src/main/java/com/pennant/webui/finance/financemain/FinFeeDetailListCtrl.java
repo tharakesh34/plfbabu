@@ -2301,6 +2301,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		case PennantConstants.FEE_CALCULATEDON_LOANAMOUNT:
 			calculatedAmt = financeMain.getFinAmount().subtract(financeMain.getDownPayment());
 			break;
+		case PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL:
+			calculatedAmt = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getFinRepaymentAmount());
+			break;
 		default:
 			break;
 		}

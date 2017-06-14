@@ -2498,6 +2498,7 @@ public class PennantStaticListUtil {
 			feeCalculatedOn = new ArrayList<ValueLabel>(2);
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE, Labels.getLabel("Fee_CalculatedOn_TotalAssetValue")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_LOANAMOUNT, Labels.getLabel("Fee_CalculatedOn_LoanAmount")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL, Labels.getLabel("Fee_CalculatedOn_OutStandingPrincipal")));
 		}
 		return feeCalculatedOn;
 	}

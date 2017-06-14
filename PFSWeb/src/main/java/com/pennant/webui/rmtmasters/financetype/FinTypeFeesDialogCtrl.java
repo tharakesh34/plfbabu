@@ -374,26 +374,30 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 */
 	public void doWriteBeanToComponents(FinTypeFees aFinTypeFees) {
 		logger.debug("Entering");
+		
 		String excluedeFields = "";
 		this.feeType.setObject(setObjectAsLong(aFinTypeFees.getFeeTypeID()));
 		this.feeType.setValue(aFinTypeFees.getFeeTypeCode()); 
 		this.feeType.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getFeeTypeDesc())); 
 		this.finEvent.setValue(aFinTypeFees.getFinEvent()); 
-		if(StringUtils.isEmpty(aFinTypeFees.getFinEventDesc())){
+		
+		if (StringUtils.isEmpty(aFinTypeFees.getFinEventDesc())) {
 			aFinTypeFees.setFinEventDesc(this.finEvent.getDescription());
-		}else{
-			this.finEvent.setDescription(aFinTypeFees.getFinEventDesc()); 
+		} else {
+			this.finEvent.setDescription(aFinTypeFees.getFinEventDesc());
 		}
+		
 		this.ruleCode.setValue(aFinTypeFees.getRuleCode()); 
 		this.ruleCode.setDescription(StringUtils.trimToEmpty(aFinTypeFees.getRuleDesc())); 
 		this.amount.setValue(PennantAppUtil.formateAmount(aFinTypeFees.getAmount(),ccyFormat));
 		this.percentage.setValue(aFinTypeFees.getPercentage()); 
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
 		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc()); 
+		String calOnExcludeFields = "";
 		fillComboBox(this.calculationType, aFinTypeFees.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes(), "");
-		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(), "");
 		
 		if (isOriginationFee) {
+			calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
 			if (isOverdraft) {
 				this.finEvent.setList(PennantAppUtil.getOverdraftOrgAccountingEvents());
 			} else {
@@ -402,19 +406,25 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} else {
 			this.finEvent.setList(PennantAppUtil.getAccountingEvents());
 		}
+		
+		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
 
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
 		}
+		
 		fillComboBox(this.feeScheduleMethod, aFinTypeFees.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
 		this.alwDeviation.setChecked(aFinTypeFees.isAlwDeviation()); 
 		this.alwModifyFee.setChecked(aFinTypeFees.isAlwModifyFee()); 
 		this.alwModifyFeeSchdMthd.setChecked(aFinTypeFees.isAlwModifyFeeSchdMthd()); 
+		
 		if(aFinTypeFees.isNewRecord()){
 			this.alwModifyFeeSchdMthd.setChecked(true); 
 		} 
+		
 		this.active.setChecked(aFinTypeFees.isActive());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
+		
 		doSetRuleFilters();
 		doSetConditionalProp();
 		doSetCalculationTypeProp();
@@ -440,7 +450,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	 */
 	public void doWriteComponentsToBean(FinTypeFees aFinTypeFees) throws InterruptedException {
 		logger.debug("Entering");
+	
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		
 		try {
 			if (readIDValueFromExtCombobox(this.feeType) == null) {
 				this.feeType.setConstraint(new PTStringValidator(Labels.getLabel("label_FinTypeFeesDialog_FeeType.value"),null,true,true));
@@ -451,12 +463,14 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			aFinTypeFees.setFinEvent(this.finEvent.getValue());
 			aFinTypeFees.setFinEventDesc(this.finEvent.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if ("#".equals(getComboboxValue(this.calculationType))) {
 				throw new WrongValueException(this.calculationType, Labels.getLabel("STATIC_INVALID",
@@ -466,6 +480,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if (this.row_CalculationOn.isVisible() && "#".equals(getComboboxValue(this.calculationOn))) {
 				throw new WrongValueException(this.calculationOn, Labels.getLabel("STATIC_INVALID",
@@ -475,6 +490,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if (this.row_FeeScheduleMethod.isVisible() && "#".equals(getComboboxValue(this.feeScheduleMethod))) {
 				throw new WrongValueException(this.feeScheduleMethod, Labels.getLabel("STATIC_INVALID",
@@ -600,7 +616,6 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinTypeFees);
-			
 			this.window_FinTypeFeesDialog.doModal();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
