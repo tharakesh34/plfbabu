@@ -939,4 +939,7 @@ union
 			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = TBH.CURRENCY
 		</createView>
 	</changeSet>
+	<changeSet id="33" author="murthy.y">
+		<dropView viewName="DE_GL_TRAIL_BAL_REPORT_VIEW"/>
+	</changeSet>
 </databaseChangeLog>
