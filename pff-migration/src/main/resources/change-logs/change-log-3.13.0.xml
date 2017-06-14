@@ -502,4 +502,38 @@ WHERE     (NOT EXISTS
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where status = 'AC' OR status = 'NEW')
 		</createView>
 	</changeSet>
+	
+	<changeSet id="19" author="Manoj.P">
+		<sql>
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+					
+			INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menuItem_DataExtraction','Data Extraction',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+						
+			INSERT INTO SECGROUPS VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS),'DATA_EXTRACTION','Data Extraction.',0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+						
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='DATA_EXTRACTION'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menuItem_DataExtraction'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+						
+			INSERT INTO SECROLES VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES),1,'DATA_EXTRACTION','Data Extraction','',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+						
+			INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='DATA_EXTRACTION'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='DATA_EXTRACTION'),0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+						
+			INSERT INTO SecOperations VALUES ((select MAX(OprID)+1 from SecOperations),'OPERATION_DATA_EXTRACTION','Data Extraction',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+					
+			INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='OPERATION_DATA_EXTRACTION'), (select RoleID from SecRoles where RoleCd='DATA_EXTRACTION'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+					
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
