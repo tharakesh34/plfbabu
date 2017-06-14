@@ -666,11 +666,14 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			BounceReason details = (BounceReason) dataObject;
 			if (details != null) {
 				HashMap<String, Object> executeMap = new HashMap<String, Object>();
+				
 				if(this.receiptHeader != null) {
 					if(this.receiptHeader.getReceiptDetails() != null && !this.receiptHeader.getReceiptDetails().isEmpty()) {
 						for(FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
 							if(StringUtils.equals(this.receiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
-								executeMap = finReceiptDetail.getDeclaredFieldValues();
+								executeMap.put("MandateType", finReceiptDetail.getPaymentType());
+								executeMap.put("PresentmentAmt", finReceiptDetail.getAmount());
+								executeMap.put("reqFinType", receiptHeader.getFinType());
 								break;
 							}
 						}
