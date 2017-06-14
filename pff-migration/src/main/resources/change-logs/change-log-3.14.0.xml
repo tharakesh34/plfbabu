@@ -322,5 +322,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
 </changeSet>
-	
+
+<changeSet author="Ganesh" id="12">
+<addColumn tableName="RMTBRANCHES">
+	<column name="PINCODE" type="VARCHAR2(10)" />
+</addColumn>
+</changeSet>
 </databaseChangeLog>
