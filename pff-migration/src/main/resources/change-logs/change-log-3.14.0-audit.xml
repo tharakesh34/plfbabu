@@ -60,4 +60,14 @@
 			<column name="WorkflowId" type="bigint" />  		
 </createTable>
 	</changeSet>
+	
+	<changeSet id="04" author="Irfan">
+	<addColumn tableName="ADTRMTCOUNTRYVSPROVINCE">
+		<column name="taxExempted" type="char(1)"/>
+		<column name="unionTerritory" type="char(1)"/>
+		<column name="taxStateCode" type="char(2)"/>
+		<column name="taxAvailable" type="char(1)"/>
+		<column name="businessArea" type="varchar(100)"/>
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
