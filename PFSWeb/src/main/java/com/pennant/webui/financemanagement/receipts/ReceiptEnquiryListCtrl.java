@@ -256,6 +256,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
+		arg.put("module", module);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryDialog.zul", null, arg);

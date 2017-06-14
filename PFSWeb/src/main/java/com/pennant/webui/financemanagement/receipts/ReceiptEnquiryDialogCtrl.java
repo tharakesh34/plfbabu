@@ -18,6 +18,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -104,8 +105,10 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 
 	protected Listbox										listBoxPastdues;
 	protected Listbox										listBoxManualAdvises;
+	protected Tab 											allocationDetailsTab;
 
 	private FinReceiptHeader								receiptHeader						= null;
+	private String module="";
 
 	/**
 	 * default constructor.<br>
@@ -144,6 +147,13 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 				befImage = cloner.deepClone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
+			}
+			
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
+			}
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+				this.allocationDetailsTab.setVisible(false);
 			}
 			this.south.setHeight("0px");
 
@@ -381,7 +391,9 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Allocations Adjustment
-		doFillAllocationDetail(header.getAllocations(), finFormatter);
+		if (!StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			doFillAllocationDetail(header.getAllocations(), finFormatter);
+		}
 		
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");

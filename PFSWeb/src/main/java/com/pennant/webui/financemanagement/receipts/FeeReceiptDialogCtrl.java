@@ -302,7 +302,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		//Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(receiptHeader.getFinCcy());
 
-		this.finReference.setModuleName("FeeReceiptFinance");
+		this.finReference.setModuleName("FinanceMainTemp");
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
