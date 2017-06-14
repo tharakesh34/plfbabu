@@ -74,6 +74,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsList.zul file.
@@ -382,7 +383,10 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		showErrorDetails(wve);
 
 		if (finDetail != null && proceed) {
-			finDetail.setAdvancePaymentsList(finAdvancePaymentsList);
+
+			Cloner cloner = new Cloner();
+			List<FinAdvancePayments> finadvpaymentsList = cloner.deepClone(getFinAdvancePaymentsList());
+			finDetail.setAdvancePaymentsList(finadvpaymentsList);
 		}
 		logger.debug("Leaving");
 		return proceed;
