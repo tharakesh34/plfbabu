@@ -1614,4 +1614,106 @@ Delete from CUSTOMERS_TEMP ;
     	ORDER BY DS.ID DESC
 		</createView>
 	</changeSet>
+	<changeSet id="65" author="Satya">
+	<createTable tableName="Entity">
+		<column name="EntityCode" type="varchar(8)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="EntityDesc" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="PANNumber" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Country" type="char(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="StateCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CityCode" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="PinCode" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Active" type="boolean" />
+		<column name="Version" type="NUMBER(10,0)" />
+		<column name="Lastmntby" type="NUMBER(19,0)" />
+		<column name="Lastmnton" type="datetime" />
+		<column name="Recordstatus" type="nvarchar(50)" />
+		<column name="Rolecode" type="nvarchar(50)" />
+		<column name="Nextrolecode" type="nvarchar(200)" />
+		<column name="Taskid" type="nvarchar(50)" />
+		<column name="Nexttaskid" type="nvarchar(200)" />
+		<column name="Recordtype" type="nvarchar(50)" />
+		<column name="Workflowid" type="NUMBER(19,0)" />
+	</createTable>
+</changeSet>
+	<changeSet id="66" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_Country_Entity"
+			referencedTableName="BMTCountries" referencedColumnNames="CountryCode"
+			baseTableName="Entity" baseColumnNames="Country" />
+	</changeSet>
+	<changeSet id="67" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_StateCode_Entity"
+			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
+			baseTableName="Entity" baseColumnNames="StateCode" />
+	</changeSet>
+	<changeSet id="68" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_Country_Entity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCITY"
+			baseTableName="Entity" baseColumnNames="CityCode" />
+	</changeSet>
+	<changeSet id="69" author="Satya">
+		<createTable tableName="Entity_Temp">
+			<column name="EntityCode" type="varchar(8)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EntityDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PANNumber" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Country" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="StateCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CityCode" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="70" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_Country_Entity_Temp"
+			referencedTableName="BMTCountries" referencedColumnNames="CountryCode"
+			baseTableName="Entity_Temp" baseColumnNames="Country" />
+	</changeSet>
+	<changeSet id="71" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_StateCode_Entity_Temp"
+			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
+			baseTableName="Entity_Temp" baseColumnNames="StateCode" />
+	</changeSet>
+	<changeSet id="72" author="Satya">
+		<addForeignKeyConstraint constraintName="FK_Country_Entity_Temp"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCITY"
+			baseTableName="Entity_Temp" baseColumnNames="CityCode" />
+	</changeSet>
 </databaseChangeLog>
