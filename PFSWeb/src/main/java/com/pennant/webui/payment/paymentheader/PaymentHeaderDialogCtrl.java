@@ -479,7 +479,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			final HashMap<String, Object> map = new HashMap<>();
 				map.put("paymentInstruction", paymentInstruction);
 				map.put("acSetID", accountsetId);
-				map.put("enqModule", true);
+				map.put("enqModule", enqiryModule);
 				map.put("dialogCtrl", this);
 				map.put("isNotFinanceProcess", true);
 				map.put("postAccReq", false);
