@@ -654,4 +654,15 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
 	<column name="postingDivision" type="VARCHAR2(8)" />
 </addColumn>
 </changeSet>
+<changeSet id="32" author="Irfan">
+	<sql>
+		Update RMTCountryVsProvince set taxExempted=0 where taxExempted is null;
+		Update RMTCountryVsProvince set unionTerritory=0 where taxExempted is null;
+		Update RMTCountryVsProvince set taxAvailable=0 where taxExempted is null;
+		Update RMTCountryVsProvince_Temp set taxExempted=0 where taxExempted is null;
+		Update RMTCountryVsProvince_Temp set unionTerritory=0 where taxExempted is null;
+		Update RMTCountryVsProvince_Temp set taxAvailable=0 where taxExempted is null;
+	</sql>
+
+</changeSet>
 </databaseChangeLog>
