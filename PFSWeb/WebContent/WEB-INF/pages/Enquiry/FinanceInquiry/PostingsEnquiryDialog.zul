@@ -77,7 +77,7 @@
 									hflex="min" />
 								<listheader
 									id="listheader_Acc_ValueDate"
-									label="${c:l('listheader_Acc_ValueDate.label')}" sort="false"
+									label="${c:l('listheader_Acc_PostDate.label')}" sort="false"
 									hflex="min" />
 								<listheader id="listheader_Acc_TranDesc"
 									label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
