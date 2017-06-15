@@ -86,4 +86,61 @@
 	</addColumn>
 </changeSet>
 
+<changeSet id="08" author="Vinay">
+	<dropTable tableName="AdtTAXDETAIL" />
+</changeSet>
+<changeSet id="09" author="Vinay">
+		<createTable tableName="AdtTAXDETAIL">
+                        <column name="AuditId" type="bigint">
+			<constraints nullable="false" />
+		        </column>
+		        <column name="AuditDate" type="datetime">
+			<constraints nullable="false" />
+		        </column>
+		        <column name="AuditSeq" type="int">
+			<constraints nullable="false" />
+		        </column>
+		        <column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false" />
+		        </column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="char(2)">
+                        <constraints nullable="false"/>
+                        </column>
+			<column name="STATECODE" type="varchar(8)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="ENTITYCODE" type="varchar(8)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="TAXCODE" type="varchar(100)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="ADDRESSLINE1" type="varchar(100)">
+                        <constraints nullable="false" />
+                        </column>
+                        <column name="ADDRESSLINE2" type="varchar(100)"/>
+			<column name="ADDRESSLINE3" type="varchar(100)"/>
+                        <column name="ADDRESSLINE4" type="varchar(100)"/>
+			<column name="PINCODE" type="varchar(10)">
+                        <constraints nullable="false" />
+                        </column>
+                        <column name="CITYCODE" type="varchar(50)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
