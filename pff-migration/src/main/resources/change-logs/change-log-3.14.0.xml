@@ -578,5 +578,15 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
 					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode)
 </createView>
 </changeSet>
+
+	<changeSet id="25" author="Madhubabu">
+		<sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeePostingsDialog_postingDivision','FeePostingsDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEEPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'FeePostingsDialog_postingDivision'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+	</changeSet>
+
 	
 </databaseChangeLog>
