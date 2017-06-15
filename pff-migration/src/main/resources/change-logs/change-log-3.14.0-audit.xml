@@ -74,5 +74,10 @@
 		<column name="PinCode" type="VARCHAR2(10)" />
 	</addColumn>
 </changeSet>
+<changeSet author="Madhubabu" id="06">
+<addColumn tableName="AdtFeePostings">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
 
 </databaseChangeLog>
