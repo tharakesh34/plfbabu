@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
@@ -12,7 +13,9 @@ import com.pennant.backend.model.configuration.VASRecording;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = {"vasRecordingList","returnStatus" })
 public class VASRecordingDetail {
-	@XmlElement(name="vasRecordings")
+	
+	@XmlElementWrapper(name="vasDetails")
+	@XmlElement(name="vasDetail")
 	private List<VASRecording> vasRecordingList;
 	@XmlElement
 	private WSReturnStatus returnStatus;

@@ -1244,10 +1244,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws InvocationTargetException
 	 */
 	private AEEvent prepareAccountingData(
-			FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail) throws InterruptedException,
+			FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail, Date valueDate) throws InterruptedException,
 			IllegalAccessException, InvocationTargetException {
 
 		Date curBDay = DateUtility.getAppDate();
+		if(valueDate == null){
+			valueDate = curBDay;
+		}
 		String eventCode = financeDetail.getAccountingEventCode();
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1269,7 +1272,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			totalPriSchdOld = profitDetail.getTotalpriSchd();
 		}
 		
-		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
+		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, valueDate, curBDay);
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
 		} else {
@@ -1470,22 +1473,24 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		BeanUtils.copyProperties((FinanceDetail) auditHeader.getAuditDetail().getModelData(), financeDetail);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String eventCode = financeDetail.getAccountingEventCode();
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		AEEvent aeEvent = new AEEvent();
+		Date valueDate = null;
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
 			pftDetail = new FinanceProfitDetail();
+			
+			// Added Value date as Finance Start Date in case of origination Disbursement
+			valueDate = financeMain.getFinStartDate();
 		}else{
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
 		}
 
 		try {
-			aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail);
+			aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
 			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

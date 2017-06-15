@@ -142,6 +142,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	Calendar calender=Calendar.getInstance();
 	private transient boolean validationOn;
 	private transient RateChangeService rateChangeService;
+	private boolean appDateValidationReq = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -186,6 +187,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinanceScheduleDetail(this.financeScheduleDetail);
 			} else {
 				setFinanceScheduleDetail(null);
+			}
+			
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// READ OVERHANDED params !
@@ -469,38 +474,16 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			isOverdraft=true;
 		}
 		
+		Date curBussDate = DateUtility.getAppDate();
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				
-				// Excluding Present generated file Schedule Terms
-				if(curSchd.getPresentmentId() > 0){
-					this.cbRateChangeFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					dateCombobox.appendChild(comboitem);
-					dateCombobox.setSelectedItem(comboitem);
+				//Review from Date should be Greater than the appdate 
+				if(appDateValidationReq && DateUtility.compare(curSchd.getSchDate(),curBussDate)<=0){
 					includedPrvSchTerm = false;
-					continue;
-				}
-
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
-					this.cbRateChangeFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					dateCombobox.appendChild(comboitem);
-					dateCombobox.setSelectedItem(comboitem);
-					includedPrvSchTerm = false;
-					continue;
-				}
-				
-				//in Overdraft the Review from Date should be Greater than the appdate 
-				if(isOverdraft && DateUtility.compare(curSchd.getSchDate(),DateUtility.getAppDate())<0){
-					includedPrvSchTerm = true;
 					continue;
 				}
 				
@@ -536,6 +519,31 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						continue;
 					}
 				}
+				
+				// Excluding Present generated file Schedule Terms
+				if(curSchd.getPresentmentId() > 0){
+					this.cbRateChangeFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					includedPrvSchTerm = false;
+					continue;
+				}
+
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					this.cbRateChangeFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					includedPrvSchTerm = false;
+					continue;
+				}
+				
 				
 				if(i == financeScheduleDetails.size() -1){
 					continue;
@@ -756,6 +764,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		//Last date
 		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
+		Date currBussDate = DateUtility.getAppDate();
 		for (int i = 1; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
 
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
@@ -766,9 +775,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 ||
 					curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
-				continue;
-			}else{
-				break;
+			}
+			
+			if(curSchd.getSchDate().compareTo(currBussDate) <= 0){
+				lastPaidDate = currBussDate;
 			}
 		}
 		

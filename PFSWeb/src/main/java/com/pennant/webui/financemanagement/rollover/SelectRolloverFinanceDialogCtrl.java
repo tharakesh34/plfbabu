@@ -64,7 +64,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -105,7 +104,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.InterfaceException;
@@ -832,11 +830,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 
 		} catch (InterfaceException pfe) {
 			if(StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
-				int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
-						MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-				
-				if (conf == MultiLineMessageBox.YES) {
-					logger.debug("Re-Enter Customer CIF: Yes");
+				if (MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer")) == MessageUtil.YES) {
 					return null;
 				}
 			} else {
@@ -845,11 +839,8 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
-					MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("Re-Enter Customer CIF: Yes");
+			if (MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer")) == MessageUtil.YES) {
 				return null;
 			}
 		}

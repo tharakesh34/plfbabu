@@ -76,7 +76,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -2255,7 +2254,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
-			Messagebox.show(message, Labels.getLabel("message.Information"), Messagebox.OK, Messagebox.INFORMATION);
+			MessageUtil.showMessage(message);
 		}
 		// Write the additional validations as per below example
 		// get the selected branch object from the box

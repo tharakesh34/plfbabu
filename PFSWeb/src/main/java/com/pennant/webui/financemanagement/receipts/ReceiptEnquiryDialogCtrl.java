@@ -18,6 +18,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -104,8 +105,10 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 
 	protected Listbox										listBoxPastdues;
 	protected Listbox										listBoxManualAdvises;
+	protected Tab 											allocationDetailsTab;
 
 	private FinReceiptHeader								receiptHeader						= null;
+	private String module="";
 
 	/**
 	 * default constructor.<br>
@@ -144,6 +147,13 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 				befImage = cloner.deepClone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
+			}
+			
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
+			}
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+				this.allocationDetailsTab.setVisible(false);
 			}
 			this.south.setHeight("0px");
 
@@ -381,7 +391,9 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Allocations Adjustment
-		doFillAllocationDetail(header.getAllocations(), finFormatter);
+		if (!StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			doFillAllocationDetail(header.getAllocations(), finFormatter);
+		}
 		
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
@@ -445,6 +457,26 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				}
 			}
+		}
+		
+		// Fee Amount Collected along Receipt
+		if(receiptHeader.getTotFeeAmount() != null && receiptHeader.getTotFeeAmount().compareTo(BigDecimal.ZERO) > 0){
+			item = new Listitem();
+			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_EventFee", 
+					PennantAppUtil.getlabelDesc(getReceiptHeader().getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose())));
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(receiptHeader.getTotFeeAmount(), formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			this.listBoxPastdues.appendChild(item);
+			totalPaidAmount = totalPaidAmount.add(receiptHeader.getTotFeeAmount());
 		}
 		
 		// Creating Pastdue Totals to verify against calculations & for validation
@@ -521,7 +553,8 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.setParent(item);
 
 		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+receiptDetail.getStatus()));
-		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)){
+		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED) ||
+				StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_FEES)){
 			lc.setStyle("font-weight:bold;color: #0252d3;");
 		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)){
 			lc.setStyle("font-weight:bold;color: #00a83d;");

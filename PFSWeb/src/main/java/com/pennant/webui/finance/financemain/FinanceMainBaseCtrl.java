@@ -100,7 +100,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -1863,8 +1862,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1935,8 +1933,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_ETIHADCB), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1951,8 +1948,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS, true);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1975,8 +1971,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENTFIELDS), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1997,8 +1992,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_ASSETEVALUATION), getDefaultArguments());
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2029,8 +2023,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2057,8 +2050,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_COVENANTTYPE), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2094,8 +2086,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -10114,7 +10105,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
-					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayPftDate.getValue() != null
+					if (ImplementationConstants.FRQ_DATE_VALIDATION && !this.nextRepayPftDate.isReadonly() && this.nextRepayPftDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.repayPftFrq.getValue(),
 									this.nextRepayPftDate.getValue())) {
 						throw new WrongValueException(this.nextRepayPftDate,
@@ -15094,8 +15085,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					"/WEB-INF/pages/Finance/BundledProducts/BundledProductsDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS), map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

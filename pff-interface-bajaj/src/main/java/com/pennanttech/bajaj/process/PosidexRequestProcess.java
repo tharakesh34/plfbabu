@@ -8,8 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -18,6 +17,7 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -49,7 +49,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private String summary = null;
 
 	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
 	}
 
 	@Override
@@ -60,10 +60,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		headerId = logHeader();
 
-		totalRecords = getUpdatedCustomerCount();
-
-		totalLoans = getLoanCount();
-
+		loadCount();
+		
 		loaddefaults();
 
 		try {
@@ -153,6 +151,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	public void extractData() {
 		try {
 			extractCustomerDetails();
+			extractCustomerLoanDetails();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -169,53 +168,51 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			TransactionStatus txnStatus = null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public void processRow(ResultSet rs) throws SQLException {
+				processedCount++;
+				executionStatus.setProcessedRecords(processedCount);
+				
 				long customerId = 0;
 				boolean isExist = false;
 
-				while (rs.next()) {
-					customerId = rs.getLong("CUSTOMER_NO");
-					try {
-						MapSqlParameterSource custMap = mapCustData(rs);
 
-						isExist = isRecordExist(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate, customerKey);
+				customerId = rs.getLong("CUSTOMER_NO");
+				try {
+					MapSqlParameterSource custMap = mapCustData(rs);
 
-						txnStatus = transManager.getTransaction(transDef);
-						if (isExist) {
-							custMap.addValue("PROCESS_TYPE", "U");
-							update(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate, customerKey);
-							updateCount++;
-						} else {
-							custMap.addValue("PROCESS_TYPE", "I");
-							save(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate);
-							insertCount++;
-						}
+					isExist = isRecordExist(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate, customerKey);
 
-						extractCustomerAddressDetails(customerId);
-						extractCustomerLoanDetails(customerId);
-						custMap.addValue("FILLER_STRING_1", rs.getObject("FILLER_STRING_1"));
-						extractCustomerReportDetails(customerId, custMap);
-						transManager.commit(txnStatus);
-
-						successCount++;
-						processedCount++;
-					} catch (Exception e) {
-						transManager.rollback(txnStatus);
-						logger.error(Literal.EXCEPTION);
-						saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
-						failedCount++;
-					} finally {
-						txnStatus.flush();
-						txnStatus = null;
+					txnStatus = transManager.getTransaction(transDef);
+					if (isExist) {
+						custMap.addValue("PROCESS_TYPE", "U");
+						update(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate, customerKey);
+						updateCount++;
+					} else {
+						custMap.addValue("PROCESS_TYPE", "I");
+						save(custMap, CUSTOMER_DETAILS, destinationJdbcTemplate);
+						insertCount++;
 					}
-				}
-				return 0;
-			}
 
+					extractCustomerAddressDetails(customerId);
+					custMap.addValue("FILLER_STRING_1", rs.getObject("FILLER_STRING_1"));
+					extractCustomerReportDetails(customerId, custMap);
+					transManager.commit(txnStatus);
+					successCount++;
+				} catch (Exception e) {
+					transManager.rollback(txnStatus);
+					logger.error(Literal.EXCEPTION);
+					failedCount++;
+					saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
+				} finally {
+					txnStatus.flush();
+					txnStatus = null;
+				}
+			
+			}
 		});
 
 	}
@@ -253,89 +250,119 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public void processRow(ResultSet rs) throws SQLException {
 				boolean isExist;
-				while (rs.next()) {
-					MapSqlParameterSource adrrMap = mapAddrData(rs);
+				MapSqlParameterSource adrrMap = mapAddrData(rs);
 
+				try {
 					isExist = isRecordExist(adrrMap, CUSTOMER_ADDR_DETAILS, destinationJdbcTemplate, customerKey);
-
-					try {
-						if (isExist) {
-							adrrMap.addValue("PROCESS_TYPE", "U");
-							update(adrrMap, CUSTOMER_ADDR_DETAILS, destinationJdbcTemplate, customerKey);
-						} else {
-							adrrMap.addValue("PROCESS_TYPE", "I");
-							save(adrrMap, CUSTOMER_ADDR_DETAILS, destinationJdbcTemplate);
-						}
-					} catch (Exception e) {
-						throw e;
+					if (isExist) {
+						adrrMap.addValue("PROCESS_TYPE", "U");
+						update(adrrMap, CUSTOMER_ADDR_DETAILS, destinationJdbcTemplate, customerKey);
+					} else {
+						adrrMap.addValue("PROCESS_TYPE", "I");
+						save(adrrMap, CUSTOMER_ADDR_DETAILS, destinationJdbcTemplate);
 					}
+				} catch (Exception e) {
+					throw e;
 				}
-				return 0;
+
 			}
 		});
 
 	}
 
-	private void extractCustomerLoanDetails(long customerId) throws SQLException {
+	private void extractCustomerLoanDetails() throws SQLException {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * from INT_POSIDEX_CUST_LOAN_VIEW");
-		sql.append(" WHERE CUSTOMER_NO = :CUSTOMER_NO");
-		parmMap.addValue("CUSTOMER_NO", customerId);
+		//sql.append(" WHERE CUSTOMER_NO = :CUSTOMER_NO");
+		//parmMap.addValue("CUSTOMER_NO", customerId);
 
 		if (lastRunDate != null) {
 			sql.append(" AND LASTMNTON > : LASTMNTON");
 			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
-
+		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public void processRow(ResultSet rs) throws SQLException {
+				processedCount++;
+				executionStatus.setProcessedRecords(processedCount);
+				
 				boolean isExist;
-				while (rs.next()) {
-					String finreferenceNo = null;
-					try {
-						MapSqlParameterSource loanMap = mapLoanMapData(rs);
-						finreferenceNo = loanMap.getValue("LAN_NO").toString();
+				String finreferenceNo = null;
+				try {
+					MapSqlParameterSource loanMap = mapLoanMapData(rs);
+					finreferenceNo = loanMap.getValue("LAN_NO").toString();
 
+					try {
 						isExist = isRecordExist(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate,
 								customerLoanKey);
-
-						try {
-							if (isExist) {
-								loanMap.addValue("PROCESS_TYPE", "U");
-								update(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate, customerLoanKey);
-								loanUpdateCount++;
-							} else {
-								loanMap.addValue("PROCESS_TYPE", "I");
-								save(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate);
-								loanInsertCount++;
-							}
-						} catch (Exception e) {
-							throw e;
+						if (isExist) {
+							loanMap.addValue("PROCESS_TYPE", "U");
+							update(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate, customerLoanKey);
+							loanUpdateCount++;
+						} else {
+							loanMap.addValue("PROCESS_TYPE", "I");
+							save(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate);
+							loanInsertCount++;
 						}
-
-						loanSuccessCount++;
 					} catch (Exception e) {
-						loanFailedCount++;
-						logger.error(Literal.EXCEPTION, e);
-						saveBatchLog(finreferenceNo, "F", e.getMessage());
+						throw e;
 					}
+
+					loanSuccessCount++;
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					failedCount++;
+					loanFailedCount++;
+					saveBatchLog(finreferenceNo, "F", e.getMessage());
 				}
-				return 0;
 			}
 		});
 
 	}
 
-	private int getUpdatedCustomerCount() {
+	
+	private void loadCount() {
+		StringBuilder sql = new StringBuilder();
+
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		sql.append("select sum(count) from (");
+		sql.append(" SELECT count(*) count from INT_POSIDEX_CUST_VIEW");
+		
+		if (lastRunDate != null) {
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
+		}
+		
+		sql.append(" union all ");
+		sql.append("SELECT count(*) count from INT_POSIDEX_CUST_LOAN_VIEW");
+		
+		if (lastRunDate != null) {
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
+		}
+		
+		sql.append(") T ");
+
+		if (lastRunDate != null) {
+			parmMap.addValue("LASTMNTON", lastRunDate);
+		}
+
+		try {
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(),parmMap, Integer.class);
+			executionStatus.setTotalRecords(totalRecords);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+	}
+	
+	/*private int getUpdatedCustomerCount() {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 
@@ -373,7 +400,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 
 		return 0;
-	}
+	}*/
 
 	private Date getLatestRunDate() {
 		StringBuilder sql = new StringBuilder();
@@ -429,7 +456,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	@Override
+	/*@Override
 	public void updateRemarks(StringBuilder remarks) {
 		StringBuilder builder = new StringBuilder();
 		if (failedCount > 0 || loanFailedCount > 0) {
@@ -448,7 +475,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		remarks.append(builder.toString());
 		summary = remarks.toString();
-	}
+	}*/
 
 	private MapSqlParameterSource mapLoanMapData(ResultSet rs) throws SQLException {
 		MapSqlParameterSource map = new MapSqlParameterSource();

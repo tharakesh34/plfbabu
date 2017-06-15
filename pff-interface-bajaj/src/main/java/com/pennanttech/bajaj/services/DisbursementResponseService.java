@@ -9,15 +9,20 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.DisbursementResponse;
 import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
+import com.pennanttech.pff.core.services.payments.PaymentProcess;
 
 public class DisbursementResponseService extends BajajService implements DisbursementResponse {
 	private final Logger		logger	= Logger.getLogger(getClass());
 
 	@Autowired
 	private DisbursementProcess	disbursementProcess;
+	
+	@Autowired
+	private PaymentProcess paymentProcess;
 
 	public DisbursementResponseService() {
 		super();
@@ -25,13 +30,14 @@ public class DisbursementResponseService extends BajajService implements Disburs
 
 	@Override
 	public void receiveResponse(Object... params) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;
+		
+	 	//Disbursements
 		List<FinAdvancePayments> disbursements = null;
 		RowMapper<FinAdvancePayments> rowMapper = null;
-		
-		
-		
 		try {
 			sql = new StringBuilder();
 			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE, FA.PAYMENTTYPE, DR.STATUS,");
@@ -57,6 +63,38 @@ public class DisbursementResponseService extends BajajService implements Disburs
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+		}  
+		
+		//Payments..
+		List<PaymentInstruction> instructions = null;
+		RowMapper<PaymentInstruction> instructionRowMapper = null;
+		try { 
+			sql = new StringBuilder();
+			sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO, ");
+			sql.append(" PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID, PI.PAYMENTAMOUNT,");
+			sql.append(" PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS, DR.REJECT_REASON REJECTREASON,");
+			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
+			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+			sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
+			sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
+			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue("RESP_BATCH_ID", params[0]);
+			
+			instructionRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
+			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
+			
+			for (PaymentInstruction instruction : instructions) {
+				try {
+					paymentProcess.process(instruction);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		} 
+		
+		logger.debug(Literal.LEAVING);
 	}
 }

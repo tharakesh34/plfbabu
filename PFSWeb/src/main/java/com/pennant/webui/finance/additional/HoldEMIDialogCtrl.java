@@ -432,6 +432,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		boolean isSelect = true;
 		if (financeScheduleDetails != null) {
+			Date curBussDate = DateUtility.getAppDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -458,7 +459,8 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}*/
 				
-				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
+				// Not allow Before Current Business Date
+				if(curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
 				

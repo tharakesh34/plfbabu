@@ -96,14 +96,14 @@
 									<label/>
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-									<datebox id="fromDate" width="171px" />
+									<datebox id="fromDate" width="171px" format="dd/MM/yyyy" />
 									</hbox>
 									
 									<label value="${c:l('label_MandateList_ToDate.value')}" />
 									<label value="" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-									<datebox id="toDate" width="171px" />
+									<datebox id="toDate" width="171px" format="dd/MM/yyyy"/>
 									</hbox>
 								</row> 
 							</rows> 

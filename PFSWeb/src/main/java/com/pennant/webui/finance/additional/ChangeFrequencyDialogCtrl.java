@@ -107,6 +107,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private ScheduleDetailDialogCtrl			financeMainDialogCtrl;
 
 	private transient ChangeFrequencyService	changeFrequencyService;
+	private boolean appDateValidationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -141,6 +142,10 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
+			}
+			
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// we get the FinanceMainDialogCtrl controller. So we have access
@@ -288,6 +293,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (financeScheduleDetails != null) {
 			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -304,7 +310,13 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 					continue;
 				}
-				//Change Frequency is not allowed for the schedule which has the presenment
+				
+				// Not allow Before Current Business Date
+				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					continue;
+				}
+				
+				//Change Frequency is not allowed for the schedule which has the presentment
 				if(curSchd.getPresentmentId() > 0){
 					prvSchd = curSchd;
 					continue;
@@ -319,8 +331,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbFrqFromDate.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -330,29 +342,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					prvSchd = curSchd;
 					continue;
 				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
-					this.cbFrqFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					this.cbFrqFromDate.appendChild(comboitem);
-					prvSchd = curSchd;
-					continue;
-				}
 				
 				if(i == financeScheduleDetails.size() -1){
-					continue;
-				}
-				
-				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
-					this.cbFrqFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					this.cbFrqFromDate.appendChild(comboitem);
-					prvSchd = curSchd;
 					continue;
 				}
 				

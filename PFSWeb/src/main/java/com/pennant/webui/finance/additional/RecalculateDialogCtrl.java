@@ -107,6 +107,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private transient String				moduleDefiner;
 
 	private transient RecalculateService	recalService;
+	private boolean appDateValidationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -141,6 +142,10 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
+			}
+			
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			if (arguments.containsKey("financeScheduleDetail")) {
@@ -266,6 +271,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		boolean isMaturityDone = false;
 
 		if (financeScheduleDetails != null) {
+			Date curBussDate = DateUtility.getAppDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -274,14 +280,20 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (!curSchd.isRepayOnSchDate()) {
 					continue;
 				}
-
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+				
+				// Not allow Before Current Business Date
+				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					continue;
 				}
-
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
 				

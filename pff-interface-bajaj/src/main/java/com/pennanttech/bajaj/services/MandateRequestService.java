@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
@@ -166,6 +167,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 					rowMap.remove("CUST_EMI");
 
 					id = String.valueOf(insertData(rowMap));
+					logMandateHistory((BigDecimal)rowMap.get("MANDATEID"), id);
 					rowMap = null;
 					return id;
 				}
@@ -186,7 +188,6 @@ public class MandateRequestService extends BajajService implements MandateReques
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		try {
 			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "ID" });
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -236,6 +237,25 @@ public class MandateRequestService extends BajajService implements MandateReques
 			sql = null;
 		}
 		return bankCodeMap;
+	}
+	
+	private void logMandateHistory(BigDecimal mandateId, String requestId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
+		sql.append(" (mandateID, status, reason, changeDate, fileID)");
+		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
+
+		paramMap.addValue("mandateID", mandateId);
+
+		paramMap.addValue("STATUS", "AC");
+		paramMap.addValue("REASON", null);
+		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("fileID", requestId);
+
+		this.namedJdbcTemplate.update(sql.toString(), paramMap);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

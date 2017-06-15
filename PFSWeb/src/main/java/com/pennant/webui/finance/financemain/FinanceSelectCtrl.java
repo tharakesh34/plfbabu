@@ -928,7 +928,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
 		
 		if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG) ) {
-			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) "); 
+			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1 OR RateChgAnyDay = 1) "); 
 			whereClause.append(" AND FinCurrAssetValue > 0 "); 
 			
 			/*whereClause.append(" OR (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND "); 

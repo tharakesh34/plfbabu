@@ -19,13 +19,11 @@
 	</bean>
    <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestService" scope="prototype" parent="bajajService"/>     
 	
-	<bean id="SAPGLService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
-		<property name="dataSource" ref="dataSource"/>
-	</bean>
-	
+	 <bean id="trailBalanceReportService" class="com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl"  scope="prototype" parent="bajajService"/>
 	 <bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/> 
 	 <bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/> 
 	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseService" scope="prototype" parent="bajajService"/> 
 	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/> 
 	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestService" scope="prototype" parent="bajajService"/> 
+	 <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
 </beans>

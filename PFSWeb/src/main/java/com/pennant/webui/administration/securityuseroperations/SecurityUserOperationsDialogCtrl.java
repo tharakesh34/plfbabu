@@ -596,35 +596,6 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-
-		// save it to database
-		/*try {
-			if (aSecurityUser.getSecurityUserOperationsList().size() == 0) {
-				// Show a confirm box
-				final String msg = "There is no change in the operation assignment , do you want to assign opaerations? "; 
-				final String title = Labels.getLabel("message.Information");
-				MultiLineMessageBox.doSetTemplate();
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						MultiLineMessageBox.QUESTION, true);
-				if (conf == MultiLineMessageBox.NO) {
-					closeDialog();
-				} 	
-			} else {
-
-				if (doProcess(aSecurityUser, tranType)) {
-					// doWriteComponentsToBean();
-					refreshList();
-					closeDialog();
-				}
-			}
-
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(win_SecurityUserOperationsDialog, e);
-		}
-
-		logger.debug("Leaving ");
-	}*/
 		
 		// save it to database
 				try {

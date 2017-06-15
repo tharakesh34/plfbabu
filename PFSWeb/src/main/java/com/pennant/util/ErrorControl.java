@@ -42,24 +42,20 @@
 */
 package com.pennant.util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zul.Messagebox;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.MessageUtil;
 
-public class ErrorControl extends Messagebox implements Serializable {
-	private static final long	serialVersionUID	= 6395769771121558224L;
-
-	private int					returnCode			= PennantConstants.porcessCONTINUE;
-	AuditHeader					auditHeader;
+public class ErrorControl {
+	private int	returnCode	= PennantConstants.porcessCONTINUE;
+	AuditHeader	auditHeader;
 
 	public ErrorControl() {
 		super();

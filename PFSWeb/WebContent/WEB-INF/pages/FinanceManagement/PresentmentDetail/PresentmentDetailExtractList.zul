@@ -60,13 +60,13 @@
 										value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory"  />
-										<combobox id="mandateType" 	width="250px" />
+										<combobox id="mandateType" 	width="270px" />
 									</hbox>
 
 									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<uppercasebox id="loanType" width="250px" />
+										<uppercasebox id="loanType" width="200px" />
 										<button id="btnloanType" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
@@ -75,13 +75,13 @@
 									<label value="${c:l('label_PresentmentDetailList_Fromdate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="fromdate" width="155px" />
+										<datebox id="fromdate" width="130px" />
 									</hbox>
 
 									<label value="${c:l('label_PresentmentDetailList_ToDate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="toDate" width="155px" />
+										<datebox id="toDate" width="130px" />
 									</hbox>
 								</row>
 								

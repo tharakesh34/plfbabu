@@ -69,6 +69,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
@@ -562,9 +563,6 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug("Leaving");
 	}
 
-
-
-
 	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
 		this.presentmentHeaderService = presentmentHeaderService;
 	}
@@ -572,6 +570,9 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, boolean isExclude) {
 		logger.debug("Entering");
 
+		ArrayList<ValueLabel> excludeList = PennantStaticListUtil.getPresentmentExclusionList();
+		ArrayList<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
+		
 		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
 			listbox.getItems().clear();
 			Listcell lc;
@@ -599,18 +600,17 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getMandateType(),
-						PennantStaticListUtil.getMandateTypeList()));
+				lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getMandateType(), PennantStaticListUtil.getMandateTypeList()));
 				lc.setParent(item);
 				if (isExclude) {
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(
-							String.valueOf(presentmentDetail.getExcludeReason()),
-							PennantStaticListUtil.getPresentmentExclusionList()));
+					lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentDetail.getExcludeReason()), excludeList));
+					lc.setParent(item);
+				} else {
+					lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getStatus(), statusList));
 					lc.setParent(item);
 				}
 
 				item.setAttribute("data", presentmentDetail);
-
 				listbox.appendChild(item);
 			}
 		} else {

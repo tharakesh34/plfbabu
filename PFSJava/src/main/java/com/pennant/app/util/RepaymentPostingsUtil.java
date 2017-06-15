@@ -163,7 +163,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Penalty Payments, if any Payment calculations done
 		long linkedTranId = Long.MIN_VALUE;
 		if (rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0 || rpyQueueHeader.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, valuedate, financeMain, rpyQueueHeader.getPostBranch());
+			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, valuedate, financeMain, rpyQueueHeader);
 
 			if (actReturnList != null) {
 				if (!(Boolean) actReturnList.get(0)) {
@@ -210,7 +210,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doOverduePostings(long linkedTranId, List<FinRepayQueue> finRepayQueueList,
-			Date dateValueDate, FinanceMain financeMain, String postBranch) throws InterfaceException, IllegalAccessException,
+			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 		List<Object> returnList = null;
@@ -228,7 +228,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 				returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, repayQueue.getRpyDate(), 
 						repayQueue.getFinRpyFor(), dateValueDate, repayQueue.getPenaltyPayNow(), repayQueue.getWaivedAmount(), 
-						repayQueue.getChargeType(), linkedTranId, fullyPaidSchd, postBranch);
+						repayQueue.getChargeType(), linkedTranId, fullyPaidSchd, repayQueueHeader);
 
 				if (!(Boolean) returnList.get(0)) {
 					return returnList;
@@ -814,7 +814,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
 		if ((ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI))
 				|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP))) {
-			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, "");
+			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, null);
 			if (actReturnList != null) {
 				return actReturnList;
 			}
@@ -843,7 +843,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPCS))
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FPICS))) {
 				List<Object> returnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate,
-						financeMain, "");
+						financeMain, null);
 				if (returnList != null) {
 					return returnList;
 				}

@@ -84,7 +84,7 @@ public class LoadFinanceData extends ServiceHelper {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 
 			// Find various events required today or not
-			if (curSchd.getSchDate().compareTo(valueDate) == 0) {
+			if (curSchd.getSchDate().compareTo(businessDate) == 0) {
 				// Disbursement Exist
 				if (curSchd.isDisbOnSchDate()) {
 					finEODEvent.setIdxDisb(i);

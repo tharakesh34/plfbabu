@@ -51,13 +51,10 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 				txnStatus = transManager.getTransaction(transDef);
 				try {
 					map = mapData(rs);
-
-					updateDisbursement(rs.getLong("DISBURSEMENT_ID"));
-
+					updateDisbursement(rs.getLong("DISBURSEMENT_ID"), rs.getString("CHANNEL"));
 					updateDisbursementRequest(id, batchId);
 
 					save(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
-
 					successCount++;
 
 					transManager.commit(txnStatus);
@@ -109,15 +106,21 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 			map.addValue("AGREEMENTID", BigDecimal.ZERO);
 
 		}
+		map.addValue("CHANNEL", rs.getString("CHANNEL"));
 
 		return map;
 	}
 
-	private int updateDisbursement(long paymentId) {
+	private int updateDisbursement(long paymentId, String channel) {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		try {
-			sql.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  :STATUS WHERE  PAYMENTID = :PAYMENTID");
+			//IF Status is P then we will update customer payments tables..
+			if ("P".equals(channel)) {
+				sql.append("UPDATE PAYMENTINSTRUCTIONS  SET STATUS  =  :STATUS WHERE  PAYMENTINSTRUCTIONID = :PAYMENTID");
+			} else {
+				sql.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  :STATUS WHERE  PAYMENTID = :PAYMENTID");
+			}
 
 			paramMap.addValue("STATUS", "AC");
 			paramMap.addValue("PAYMENTID", paymentId);

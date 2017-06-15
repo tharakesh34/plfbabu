@@ -87,7 +87,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -3070,8 +3069,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul", tabpanel, map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

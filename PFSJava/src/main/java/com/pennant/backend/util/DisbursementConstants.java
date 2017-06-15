@@ -59,5 +59,8 @@ public class DisbursementConstants {
 	public static final String	STATUS_REJECTED				= "REJECTED";
 	public static final String	STATUS_CANCEL				= "CANCELED";
 	public static final String	STATUS_PAID					= "PAID";
+	
+	//Payment Channels 
+	public static final String	CHANNEL_PAYMENT				= "P";
 
 }

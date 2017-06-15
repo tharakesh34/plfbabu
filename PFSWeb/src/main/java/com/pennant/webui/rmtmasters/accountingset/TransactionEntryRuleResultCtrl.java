@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
-import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Decimalbox;
@@ -22,6 +21,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
 
 /**
  * This is the controller class for the
@@ -137,8 +137,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 			tempResult = tempResult.setScale(2,RoundingMode.UP);
 			this.result.setValue(String.valueOf(tempResult));
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

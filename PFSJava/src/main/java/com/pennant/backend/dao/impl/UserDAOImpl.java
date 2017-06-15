@@ -167,12 +167,10 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 
 		SecurityUser secUser = new SecurityUser();
 
-		StringBuilder selectSql = new StringBuilder("SELECT UsrID, UsrLogin, UsrPwd, UsrLName, UsrMName,UsrFName,");
+		StringBuilder selectSql = new StringBuilder("SELECT UsrID, UsrLogin, UsrPwd, AuthType, UsrLName, UsrMName,UsrFName,");
 		selectSql.append(" UsrMobile,UsrEmail,UsrEnabled,UsrCanSignonFrom,UsrCanSignonTo,UsrCanOverrideLimits,");
-		selectSql
-				.append("	UsrAcExp, UsrCredentialsExp,UserStaffID, UsrAcLocked,UsrLanguage,UsrDftAppCode,UsrBranchCode,UsrDeptCode,");
-		selectSql
-				.append(" UsrToken, UsrIsMultiBranch,UsrInvldLoginTries,UsrAcExpDt,LastMntOn, LastMntBy,nextRoleCode,TaskId,nextTaskId,LastLoginOn,LastFailLoginOn");
+		selectSql.append(" UsrAcExp, UsrCredentialsExp,UserStaffID, UsrAcLocked,UsrLanguage,UsrDftAppCode,UsrBranchCode,UsrDeptCode,");
+		selectSql.append(" UsrToken, UsrIsMultiBranch,UsrInvldLoginTries,UsrAcExpDt,LastMntOn, LastMntBy,nextRoleCode,TaskId,nextTaskId,LastLoginOn,LastFailLoginOn");
 		selectSql.append(" FROM SecUsers where UsrLogin = :usrLogin");
 		//FIXME Satish : Password should not retrieved to avoid this we have commented out the log printing. 
 //		logger.debug("selectSql: " + selectSql.toString());
@@ -181,9 +179,7 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
-			secUser = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-
+			secUser = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 //			logger.warn("Exception: ", e);
 			secUser = null;

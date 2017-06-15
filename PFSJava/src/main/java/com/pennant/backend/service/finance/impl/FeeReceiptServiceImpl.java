@@ -243,7 +243,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
 		aeEvent.setFinReference(receiptHeader.getReference());
 		aeEvent.setCustCIF(receiptHeader.getCustCIF());
 		aeEvent.setCustID(receiptHeader.getCustID());
@@ -260,6 +260,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
+		amountCodes.setFinType(receiptHeader.getFinType());
 		
 		// Fetch Accounting Set ID
 		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
@@ -274,7 +275,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		aeEvent.getAcSetIDList().add(accountingSetID);
 
 		try {
-			getPostingsPreparationUtil().postAccounting(aeEvent);
+			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -298,12 +299,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		
 		// Save Receipt Header
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
 			
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
 			
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
 			for (FinRepayHeader rpyHeader : rpyHeaderList) {
 				rpyHeader.setReceiptSeqID(receiptSeqID);
+				rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 				
 				//Save Repay Header details
 				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
@@ -443,8 +446,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		}
 		
 		// Duplicate FEEReceipt reference and purpose
-		if (getFeeReceiptExist(receiptHeader.getReference(),receiptHeader.getReceiptPurpose())) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
+		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()) &&
+				!PennantConstants.RCD_STATUS_REJECTED.equals(receiptHeader.getRecordStatus()) &&
+				!PennantConstants.RCD_STATUS_CANCELLED.equals(receiptHeader.getRecordStatus())) {
+			if (getFeeReceiptExist(receiptHeader.getReference(), receiptHeader.getReceiptPurpose(),receiptHeader.getReceiptID())) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -456,12 +463,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		return auditDetail;
 	}
 
-	private boolean getFeeReceiptExist(String reference, String receiptPurpose) {
+	private boolean getFeeReceiptExist(String reference, String receiptPurpose,long receiptId) {
 		logger.debug("Entering");
 
 		boolean codeExist = false;
 
-		if (getFinReceiptHeaderDAO().geFeeReceiptCount(reference, receiptPurpose) != 0) {
+		if (getFinReceiptHeaderDAO().geFeeReceiptCount(reference, receiptPurpose, receiptId) != 0) {
 			codeExist = true;
 		}
 

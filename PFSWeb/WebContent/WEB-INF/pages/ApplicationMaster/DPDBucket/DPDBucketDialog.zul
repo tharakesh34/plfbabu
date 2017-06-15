@@ -42,7 +42,7 @@
 							<button id="btnNotes"
 								tooltiptext="${c:l('btnNotes.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+								sclass="z-toolbarbutton" visible="false" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center"

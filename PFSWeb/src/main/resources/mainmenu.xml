@@ -16,6 +16,9 @@
 	
 	<menuItem id="menu_Item_ReloadResources" zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul" rightName = 'menuItem_Reload_Resources'/>
 	
+	<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataExtraction"/>
+	
+	
 	<!-- System Masters Menu Tree -->
 	<menu id="menu_Category_SystemMaster" rightName="menuCat_SystemMaster" >
 <!-- 		<menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul"  rightName="menuItem_SystemMaster_Academic"/> -->
@@ -391,6 +394,7 @@
        <menuItem id="menu_Item_ReAgeHolidays" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReAgeHolidays"/>
        <menuItem id="menu_Item_ReceiptBounce" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B"  rightName="menuItem_FinanceManagement_ReceiptBounce" />
        <menuItem id="menu_Item_ReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C"  rightName="menuItem_FinanceManagement_ReceiptCancellation" />
+       <menuItem id="menu_Item_FeeReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=F"  rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
        <menuItem id="menu_Item_ReceiptRealization" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul"  rightName="menuItem_FinanceManagement_ReceiptRealization" />
        <menuItem id="menu_Item_FeeReceipts" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"  rightName="menuItem_FinanceManagement_FeeReceipts" />
 	   <menuItem id="menu_Item_Recalculate" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Recalculate"/>
@@ -460,7 +464,8 @@
 		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>-->
 		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E&amp;enqiryModule=Y" rightName="menuItem_Enquiry_VASRecording" /> 
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
-		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
+		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=R"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
+		<menuItem id="menu_Item_FeeReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=F"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry"  rightName="menuCat_CustomerEnquiry">
@@ -633,8 +638,8 @@
 	</menu>
 	
 	<!-- <menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
-		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
-		<menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" rightName="menuItem_DataEngine_DataExport"/>
+		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataEngine_DataImport"/>
+ 		<menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" rightName="menuItem_DataEngine_DataExport"/> 
 	</menu> -->
 	
   	<!-- CollateralType-->

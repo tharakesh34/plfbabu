@@ -68,7 +68,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -2037,8 +2036,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 					BeanUtils.copyProperties(finRefDet.getBefImage(), befImage);
 					newFinrefDet.setBefImage(befImage);
 				} else {
-					Messagebox.show("30542:" + newFinrefDet.getLovDescRefDesc() + " already linked.", "error", 
-							Messagebox.OK, Messagebox.ERROR);
+					MessageUtil.showError("30542:" + newFinrefDet.getLovDescRefDesc() + " already linked.");
 					contains = true;
 				}
 				break;

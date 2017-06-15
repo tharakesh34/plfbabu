@@ -245,10 +245,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	private void doSetFieldProperties() {
 
-		this.fromDate.setFormat(DateFormat.LONG_DATE.getPattern());
-		this.toDate.setFormat(DateFormat.LONG_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.LONG_DATE.getPattern());
-
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
 		listHeader_CheckBox_Comp = new Checkbox();

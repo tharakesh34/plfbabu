@@ -56,7 +56,6 @@ import com.pennant.UserWorkspace;
 import com.pennant.common.menu.domain.IMenuDomain;
 import com.pennant.common.menu.domain.MenuDomain;
 import com.pennant.common.menu.domain.MetaMenuFactory;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
 
 abstract public class MenuFactory implements Serializable {
@@ -64,6 +63,7 @@ abstract public class MenuFactory implements Serializable {
 
 	final private LinkedList<Component> stack;
 	private UserWorkspace workspace;
+	private String authType = null;
 
 	protected MenuFactory(Component component) {
 		super();
@@ -128,10 +128,12 @@ abstract public class MenuFactory implements Serializable {
 
 	private boolean isAllowed(IMenuDomain treecellValue) {
 		
-		if(!App.AUTH_TYPE.equals(AuthenticationType.DAO)) {
-			if("menu_Item_ChgPwd".equals(treecellValue.getId()) || "menu_Item_PasswordResetUser".equals(treecellValue.getId())) {
-				return false;
-			} 
+		if (StringUtils.isNotEmpty(authType)) {
+			if (!StringUtils.equals(AuthenticationType.DAO.name(), authType)) {
+				if ("menu_Item_ChgPwd".equals(treecellValue.getId()) || "menu_Item_PasswordResetUser".equals(treecellValue.getId())) {
+					return false;
+				}
+			}
 		}
 		
 		return isAllowed(treecellValue.getRightName());
@@ -193,10 +195,12 @@ abstract public class MenuFactory implements Serializable {
 		defaultTreecell.setLabel(" " + label);
 	}
 	
-	private UserWorkspace getUserWorkspace(){
-		if(workspace==null){
+	private UserWorkspace getUserWorkspace() {
+		if (workspace == null) {
 			workspace = (UserWorkspace) SpringUtil.getBean("userWorkspace");
-		}	
+		}
+		authType = StringUtils.trimToEmpty(workspace.getLoggedInUser().getAuthType());
+
 		return workspace;
 	}
 }

@@ -4467,10 +4467,7 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 
-	<!-- Data Engine -->
-	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
-		<constructor-arg ref="pfsDatasource" />
-	</bean>
+	
 
 	<!-- Promotion -->
 	<bean id="promotionListCtrl"
@@ -4780,7 +4777,7 @@
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
-	<bean id="disbursementsInstructionsDialogCtrl" class="com.pennant.webui.payment.paymentheader.DisbursementInstructionsDialogCtrl" parent="basisListCtrl" scope="prototype">
+	<bean id="paymentInstructionDialogCtrl" class="com.pennant.webui.payment.paymentheader.PaymentInstructionDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
  
@@ -4798,5 +4795,16 @@
 		<property name="pinCodeService" ref="pinCodeService"/>
 	</bean>
 	
+	<!-- Data Engine -->
+	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
+		<constructor-arg ref="pfsDatasource" />
+	</bean>
 	
+	 <bean id="dataImportCtrl" class="com.pennanttech.framework.component.dataengine.DataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
+	  	<property name="dataEngineConfig" ref="dataEngineConfig" />
+	  </bean>
+	   <!-- <bean id="dataExportCtrl" class="com.pennanttech.framework.component.dataengine.DataExportCtrl"  parent="basisCtrl" scope="prototype" >
+	    <property name="dataEngineConfig" ref="dataEngineConfig" />
+	  	<property name="dataSource" ref="pfsDatasource" />
+	  </bean> -->
 </beans>

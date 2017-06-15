@@ -106,18 +106,26 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected void doSetProperties() {
 		
 		this.module = getArgument("module");
-		
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			super.moduleCode = "ReceiptBounce";
 			super.pageRightName = "ReceiptBounceList";
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.moduleCode = "ReceiptCancellation";
 			super.pageRightName = "ReceiptCancellationList";
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			super.moduleCode = "ReceiptCancellation";
+			super.pageRightName = "ReceiptCancellationList";
 		}
 	
-		super.tableName = "FinReceiptHeader_View";
-		super.queueTableName = "FinReceiptHeader_View";
-		super.enquiryTableName = "FinReceiptHeader_View";
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			super.tableName = "FinReceiptHeader_FCView";
+			super.queueTableName = "FinReceiptHeader_FCView";
+			super.enquiryTableName = "FinReceiptHeader_FCView";
+		}else{
+			super.tableName = "FinReceiptHeader_View";
+			super.queueTableName = "FinReceiptHeader_View";
+			super.enquiryTableName = "FinReceiptHeader_View";
+		}
 	}
 
 	/**
@@ -168,6 +176,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL) ) ");
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
+					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL) ) ");
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND ((ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_FEES+"'  AND RecordType IS NULL) "
 					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL) ) ");
 		}
 	}
@@ -251,8 +262,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion()
-		+ " ";
+		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

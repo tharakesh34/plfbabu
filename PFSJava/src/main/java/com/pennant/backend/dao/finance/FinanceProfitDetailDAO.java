@@ -93,4 +93,6 @@ public interface FinanceProfitDetailDAO {
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
 
 	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
+
+	void UpdateActiveSts(String finReference, boolean isActive);
 }

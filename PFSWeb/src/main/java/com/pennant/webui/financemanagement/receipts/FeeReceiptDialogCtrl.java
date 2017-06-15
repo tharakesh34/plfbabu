@@ -302,7 +302,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		//Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(receiptHeader.getFinCcy());
 
-		this.finReference.setModuleName("FeeReceiptFinance");
+		this.finReference.setModuleName("FinanceMainTemp");
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
@@ -832,8 +832,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FeeReceiptDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1048,7 +1047,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
 		aeEvent.setFinReference(getReceiptHeader().getReference());
 		aeEvent.setCustCIF(getReceiptHeader().getCustCIF());
 		aeEvent.setBranch(getReceiptHeader().getFinBranch());
@@ -1064,6 +1063,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
+		amountCodes.setFinType(getReceiptHeader().getFinType());
 		
 		// Fetch Accounting Set ID
 		long accountingSetID = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,

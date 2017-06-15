@@ -641,8 +641,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_VASProductCategoryDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -717,14 +716,12 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		try {
 
 			if (doProcess(aVASProductCategory, tranType)) {
-				//doWriteBeanToComponents(aVASProductCategory);
 				refreshList();
 				closeDialog();
 			}
 
-		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_VASProductCategoryDialog, e);
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

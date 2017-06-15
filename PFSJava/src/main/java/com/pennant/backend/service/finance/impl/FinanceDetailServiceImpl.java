@@ -1678,8 +1678,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
-		if (!isWIF && aAuditHeader.isNextProcess()) {
-			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader);
+		if (!isWIF) {
+			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader,true);
 		}
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
@@ -2191,6 +2191,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinInsuranceDetails");
 			details = processFinInsuranceDetails(details, tableType.getSuffix(), financeDetail, isWIF);
 			auditDetails.addAll(details);
+		}
+		
+		if (!isWIF) {
+			 processLimitSaveOrUpdate(aAuditHeader,false);
 		}
 
 		if (!isWIF) {
@@ -2878,8 +2882,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String roleCode = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
-		if (!isWIF && aAuditHeader.isNextProcess()) {
-			aAuditHeader = processLimitApprove(aAuditHeader);
+		if (!isWIF) {
+			aAuditHeader = processLimitApprove(aAuditHeader,true);
 		}
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
@@ -3044,6 +3048,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(financeMain.getFinReference(), curBDay);
 		}
 		String recordType = financeMain.getRecordType();
+		
+		if (!isWIF) {
+			processLimitApprove(aAuditHeader,false);
+		}
 
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -3789,7 +3797,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//=======================================
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 			}
-
+			
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -4840,13 +4848,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Maker limit unblock should happen in the origination only
 		if (StringUtils.isEmpty(financeMain.getRcdMaintainSts())) {
 			if (ImplementationConstants.LIMIT_INTERNAL) {
-				getLimitManagement().processLoanLimitOrgination(financeDetail, false, LimitConstants.UNBLOCK);
+				getLimitManagement().processLoanLimitOrgination(financeDetail, false, LimitConstants.UNBLOCK,false);
 			} else {
 				getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.CANCEL_RESERVE);
 			}
 		} else if (StringUtils.equals(financeMain.getRcdMaintainSts(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			if (ImplementationConstants.LIMIT_INTERNAL) {
-				getLimitManagement().processLoanDisbursments(financeDetail, false, LimitConstants.CANCIL);
+				getLimitManagement().processLoanDisbursments(financeDetail, false, LimitConstants.CANCIL,false);
 			}
 		}
 
@@ -5088,7 +5096,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		
-		if(StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			// Finance Fee Receipts
 			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
 				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
@@ -6308,7 +6316,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}*/
 		
-		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
 
 		// Finance Fee Schedule Details
 		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -7900,7 +7908,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return finRepayQueue;
 	}
 
-	private AuditHeader processLimitSaveOrUpdate(AuditHeader aAuditHeader) {
+	private AuditHeader processLimitSaveOrUpdate(AuditHeader aAuditHeader,boolean validateOnly) {
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
 
@@ -7932,7 +7940,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					if ("".equals(moduleType) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleType)) {
 						List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(
-								financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK);
+								financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK,validateOnly);
 						if (!errorDetails.isEmpty()) {
 							aAuditHeader.setErrorList(errorDetails);
 						}
@@ -7940,7 +7948,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							&& !prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 						if (finmain.getFinAssetValue().compareTo(finmain.getFinCurrAssetValue()) == 0) {
 							List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(
-									financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK);
+									financeDetail, aAuditHeader.isOveride(), LimitConstants.BLOCK,validateOnly);
 							if (!errorDetails.isEmpty()) {
 								aAuditHeader.setErrorList(errorDetails);
 							}
@@ -7954,7 +7962,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return aAuditHeader;
 	}
 
-	private AuditHeader processLimitApprove(AuditHeader aAuditHeader) {
+	private AuditHeader processLimitApprove(AuditHeader aAuditHeader,boolean validateOnly) {
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
 
@@ -7973,7 +7981,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					transType = LimitConstants.APPROVE;
 				}
 				List<ErrorDetails> errorDetails = getLimitManagement().processLoanLimitOrgination(financeDetail,
-						aAuditHeader.isOveride(), transType);
+						aAuditHeader.isOveride(), transType,validateOnly);
 				if (!errorDetails.isEmpty()) {
 					aAuditHeader.setErrorList(errorDetails);
 				}
@@ -7981,7 +7989,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (moduleType.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
 					List<ErrorDetails> errorDetails = getLimitManagement().processLimitIncrease(financeDetail,
-							aAuditHeader.isOveride());
+							aAuditHeader.isOveride(),validateOnly);
 					if (!errorDetails.isEmpty()) {
 						aAuditHeader.setErrorList(errorDetails);
 					}
@@ -7997,7 +8005,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					if (!StringUtils.isBlank(tranType)) {
 						List<ErrorDetails> errorDetails = getLimitManagement().processLoanDisbursments(financeDetail,
-								aAuditHeader.isOveride(), tranType);
+								aAuditHeader.isOveride(), tranType,validateOnly);
 						if (!errorDetails.isEmpty()) {
 							aAuditHeader.setErrorList(errorDetails);
 						}

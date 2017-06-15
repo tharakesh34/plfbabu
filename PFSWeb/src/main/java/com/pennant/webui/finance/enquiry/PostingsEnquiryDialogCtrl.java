@@ -101,7 +101,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private String finReference = "";
 	private FinanceDetailService financeDetailService;
 	private FinanceEnquiry enquiry;
-	String accEvents = "";
+	StringBuilder accEvents = new StringBuilder("");
 
 	/**
 	 * default constructor.<br>
@@ -172,6 +172,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		try {
 			doCheckEnquiry();
 			//Fill Posting Details
+			this.showAccrual.setChecked(true);
 			doFillPostings();
 			
 			if(tabPanel_dialogWindow != null){
@@ -223,15 +224,15 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private void doFillPostings() {
 		logger.debug("Entering");
 		fillComboBox(this.postingGroup, PennantConstants.EVENTBASE, PennantStaticListUtil.getPostingGroupList(), "");
-		String events = "'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE'";
+		StringBuilder events = new StringBuilder("'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE'");
 		
 		if(this.showAccrual.isChecked()) {
-			events = "'ADDDBSF','ADDDBSN','ADDDBSP','AMZ','AMZSUSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE','ISTBILL', 'GRACEEND'";
+			events.append(",'AMZ','AMZSUSP'");
 		}
 		accEvents=events;
-		if(StringUtils.isNotEmpty(events)) {
+		if(StringUtils.isNotEmpty(events.toString())) {
 			postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference,
-					events, this.showZeroCals.isChecked(),"");
+					events.toString(), this.showZeroCals.isChecked(),"");
 		}
 		doGetListItemRenderer(postingDetails);
 		logger.debug("Leaving");
@@ -241,7 +242,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering" + event.toString());
 		List<ReturnDataSet> postingList= new ArrayList<>();
 		postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference,
-				accEvents, this.showZeroCals.isChecked(),this.postingGroup.getSelectedItem().getValue().toString());
+				accEvents.toString(), this.showZeroCals.isChecked(),this.postingGroup.getSelectedItem().getValue().toString());
 		logger.debug("Leaving" + event.toString());
 		for (ReturnDataSet returnDataSet : postingDetails) {
 			returnDataSet.setPostingGroupBy(this.postingGroup.getSelectedItem().getValue().toString());

@@ -73,7 +73,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -847,9 +846,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			preScriptValidated = true;
 			//check if code mirror is empty or not 
 			if(StringUtils.isNotEmpty(this.preValidation.getValue().trim())){
-				int answer = Messagebox.show("NO Errors Found ! Proceed With Simulation ?", "Validated", 
-						Messagebox.YES | Messagebox.NO, Messagebox.QUESTION);
-				if (answer == Messagebox.YES) {
+				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.preValidation.getValue());
 				}
@@ -870,9 +867,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			postScriptValidated = true;
 			//check if code mirror is empty or not 
 			if(StringUtils.isNotEmpty(this.postValidation.getValue().trim())){
-				int answer = Messagebox.show("NO Errors Found ! Proceed With Simulation ?", "Validated", 
-						Messagebox.YES | Messagebox.NO, Messagebox.QUESTION);
-				if (answer == Messagebox.YES) {
+				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
 					createSimulationWindow(variables, this.postValidation.getValue());
 				}
@@ -943,7 +938,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 						if (!fieldNames.contains(variable.get("name"))) {
 							// if new variables found throw error message
 							noerrors = false;
-							Messagebox.show("Unknown Variable :" + variable.get("name"), "Unknown", Messagebox.OK, Messagebox.ERROR);
+							MessageUtil.showError("Unknown Variable :" + variable.get("name"));
 							return noerrors;
 						} else {
 							noerrors = true;
@@ -958,8 +953,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				for (int i = 0; i < errors.size(); i++) {
 					JSONObject error = (JSONObject) errors.get(i);
 					if (error != null) {
-						Messagebox.show(error.get("reason").toString(), "Error : At Line " + error.get("line") + ",Position " + error.get("character"), Messagebox.OK,
-						        Messagebox.ERROR);
+						MessageUtil.showError("Error : At Line " + error.get("line") + ",Position "
+								+ error.get("character") + "\n\n" + error.get("reason").toString());
 						return false;
 					}
 				}
@@ -981,21 +976,21 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		if(!bothValidations){
 			if(isPostValidation){
 				if (!this.postValidation.getValue().contains("errors")) {
-					Messagebox.show("Error Details not found ", "ERROR", Messagebox.OK, Messagebox.ERROR);
+					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}else{
 				if (!this.preValidation.getValue().contains("errors")) {
-					Messagebox.show("Error Details not found ", "ERROR", Messagebox.OK, Messagebox.ERROR);
+					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
 		}else{
 			if (StringUtils.isNotEmpty(this.preValidation.getValue()) && !this.preValidation.getValue().contains("errors")) {
-				Messagebox.show("Error Details not found in Pre Validations.", "ERROR", Messagebox.OK, Messagebox.ERROR);
+				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
 			}else if(StringUtils.isNotEmpty(this.postValidation.getValue()) && !this.postValidation.getValue().contains("errors")){
-				Messagebox.show("Error Details not found in Post Validations.", "ERROR", Messagebox.OK, Messagebox.ERROR);
+				MessageUtil.showError("Error Details not found in Post Validations.");
 				return false;
 			}
 		}

@@ -76,6 +76,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -88,6 +89,7 @@ public class ReceiptCalculator implements Serializable {
 
 	private FinODDetailsDAO						finODDetailsDAO;
 	private ManualAdviseDAO						manualAdviseDAO;
+	private ReceiptService						receiptService;
 
 	// Default Constructor
 	public ReceiptCalculator() {
@@ -101,22 +103,22 @@ public class ReceiptCalculator implements Serializable {
 	 * ___________________________________________________________________________________________
 	 */
 
-	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
-		return procInitiateReceipt(receiptData, scheduleData, receiptPurpose);
+	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
+		return procInitiateReceipt(receiptData, scheduleData, valueDate, receiptPurpose);
 	}
 
 	/** To Calculate the Amounts for given schedule */
-	public FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
+	private FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
 		logger.debug("Entering");
 
 		// Initialize Repay
 		if ("I".equals(receiptData.getBuildProcess())) {
-			receiptData = initializeReceipt(receiptData, scheduleData, receiptPurpose);
+			receiptData = initializeReceipt(receiptData, scheduleData, valueDate, receiptPurpose);
 		}
 
 		// Recalculate Repay
 		if ("R".equals(receiptData.getBuildProcess())) {
-			receiptData = recalReceipt(receiptData, scheduleData, receiptPurpose);
+			receiptData = recalReceipt(receiptData, scheduleData, valueDate, receiptPurpose);
 		}
 		
 		logger.debug("Leaving");
@@ -129,7 +131,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param scheduleData
 	 * @return
 	 */
-	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
+	private FinReceiptData initializeReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -180,22 +182,400 @@ public class ReceiptCalculator implements Serializable {
 		repayMain.setRepayAmountExcess(BigDecimal.ZERO);
 		receiptData.setRepayMain(repayMain);
 
-		receiptData = calSummaryDetail(receiptData, scheduleData, receiptPurpose);
+		receiptData = calSummaryDetail(receiptData, scheduleData, valueDate, receiptPurpose);
 		
 		logger.debug("Leaving");
 		return receiptData;
 	}
 
 	/**
+	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
+	 */
+	private FinReceiptData calSummaryDetail(FinReceiptData receiptData, FinScheduleData finScheduleData, Date valueDate,String receiptPurpose) {
+		logger.debug("Entering");
+
+		BigDecimal priPaid = BigDecimal.ZERO;
+		BigDecimal pftPaid = BigDecimal.ZERO;
+		BigDecimal tdsAmount = BigDecimal.ZERO;
+		BigDecimal cpzTillNow = BigDecimal.ZERO;
+		Boolean isNextDueSet = false;
+		boolean isSkipLastDateSet = false;
+		
+		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		if(finScheduleData.getFinanceMain().isTDSApplicable()){
+
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+
+			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
+		}
+
+		RepayMain repayMain = receiptData.getRepayMain();
+		List<FinanceScheduleDetail> scheduleDetails = finScheduleData.getFinanceScheduleDetails();
+
+		Cloner cloner = new Cloner();
+		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
+		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
+
+		boolean setEarlyPayRecord = false;
+		BigDecimal pftAccruedTillNow = BigDecimal.ZERO;
+		BigDecimal tdsAccruedTillNow = BigDecimal.ZERO;
+		BigDecimal priBalance = BigDecimal.ZERO;
+		boolean partAccrualReq = true;
+		FinanceScheduleDetail curSchd = null;
+		FinanceScheduleDetail prvSchd = null;
+		for (int i = 0; i < tempScheduleDetails.size(); i++) {
+			curSchd = tempScheduleDetails.get(i);
+			if(i != 0){
+				prvSchd = tempScheduleDetails.get(i - 1);
+			}
+			Date schdDate = curSchd.getSchDate();
+
+			// Finance amount and current finance amount
+			repayMain.setFinAmount(repayMain.getFinAmount().add(curSchd.getDisbAmount())
+					.add(curSchd.getFeeChargeAmt() == null ? BigDecimal.ZERO : curSchd.getFeeChargeAmt()));
+
+			repayMain.setCurFinAmount(repayMain.getFinAmount().subtract(curSchd.getSchdPriPaid())
+					.subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDownPaymentAmount()));
+
+			if (schdDate.compareTo(valueDate) < 0) {
+				repayMain.setCurFinAmount(repayMain.getCurFinAmount().subtract(curSchd.getCpzAmount()));
+			}else{
+				
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) || 
+						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					if (DateUtility.getDaysBetween(valueDate, schdDate) == 0) {
+						repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
+						repayMain.setEarlyRepayNewSchd(null);
+						setEarlyPayRecord = true;
+					} else {
+						if (!setEarlyPayRecord) {
+
+							setEarlyPayRecord = true;
+							if ("NONSCH".equals(SysParamUtil.getValueAsString("EARLYPAY_TERM_INS"))) {
+								repayMain.setEarlyPayOnSchDate(valueDate);
+								repayMain.setEarlyPayNextSchDate(curSchd.getSchDate());
+							} else {
+								repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
+							}
+
+							FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(repayMain.getFinReference());
+							newSchdlEP.setDefSchdDate(repayMain.getEarlyPayOnSchDate());
+							newSchdlEP.setSchDate(repayMain.getEarlyPayOnSchDate());
+							newSchdlEP.setSchSeq(1);
+							newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+							newSchdlEP.setRepayOnSchDate(true);
+							newSchdlEP.setPftOnSchDate(true);
+							newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
+							newSchdlEP.setBaseRate(prvSchd.getBaseRate());
+							newSchdlEP.setSplRate(prvSchd.getSplRate());
+							newSchdlEP.setMrgRate(prvSchd.getMrgRate());
+							newSchdlEP.setActRate(prvSchd.getActRate());
+							newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
+							newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
+							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
+							repayMain.setEarlyRepayNewSchd(newSchdlEP);
+						}
+					}
+				}
+			}
+
+			// Profit scheduled and Paid
+			repayMain.setProfit(repayMain.getProfit().add(curSchd.getProfitSchd()));
+			
+			// Accrued Profit Calculation
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				if (DateUtility.compare(schdDate, valueDate) < 0) {
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+					
+					if(finScheduleData.getFinanceMain().isTDSApplicable()){
+						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
+					}
+					
+				}else if (DateUtility.compare(valueDate, schdDate) == 0) {
+					
+					BigDecimal remPft = curSchd.getProfitCalc();
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
+					if(prvSchd != null){
+						remPft = remPft.add(prvSchd.getProfitBalance());
+						pftAccruedTillNow = pftAccruedTillNow.add(prvSchd.getProfitBalance());
+					}
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
+					
+					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc()));
+						if(prvSchd != null){
+							repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(prvSchd.getProfitBalance()));
+						}
+					}else{
+						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
+					}
+					
+					if(finScheduleData.getFinanceMain().isTDSApplicable()){
+						BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
+					}
+					partAccrualReq = false;
+					
+					// Future Disbursements into Early paid Balance
+					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
+				} else {
+					if(partAccrualReq && prvSchd != null){
+						partAccrualReq = false;
+						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate, curSchd.getBalanceForPftCal(),
+								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						accruedPft = accruedPft.add(prvSchd.getProfitFraction());
+						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());
+						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
+						
+						priBalance = priBalance.add(prvSchd.getClosingBalance());
+						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
+						
+						if(finScheduleData.getFinanceMain().isTDSApplicable()){
+							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+						}
+					}
+					
+					// Future Disbursements into Early paid Balance
+					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
+				}
+			}
+			
+			pftPaid = pftPaid.add(curSchd.getSchdPftPaid());
+
+			// Principal scheduled and Paid
+			repayMain.setPrincipal(repayMain.getPrincipal().add(curSchd.getPrincipalSchd()));
+			priPaid = priPaid.add(curSchd.getSchdPriPaid());
+
+			// Capitalization and Capitalized till now
+			repayMain.setTotalCapitalize(repayMain.getTotalCapitalize().add(curSchd.getCpzAmount()));
+
+			//Total Fee Amount
+			repayMain.setTotalFeeAmt(repayMain.getTotalFeeAmt().add(
+					curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
+
+			// Overdue Principal and Profit
+			if (DateUtility.compare(schdDate, valueDate) <= 0) {
+				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
+				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
+						curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
+
+				repayMain.setOverdueProfit(repayMain.getOverdueProfit().add(
+						curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())));
+				
+				// TDS Calculation
+				BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+				BigDecimal actPftAdjust = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+				tdsAmount = tdsAmount.add(unpaidPft.subtract(actPftAdjust));
+
+			}
+
+			// Down Payment
+			repayMain.setDownpayment(repayMain.getDownpayment().add(curSchd.getDownPaymentAmount()));
+
+			// REPAY SCHEDULE RECORD
+			if (curSchd.isRepayOnSchDate()
+					|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+				BigDecimal balance = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+				balance = balance.add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPftPaid());
+
+				if (balance.compareTo(BigDecimal.ZERO) > 0) {
+					isSkipLastDateSet = true;
+				}
+
+				// Set the last and next scheduled repayments to deferred dates (Agreed with customer)
+				if (balance.compareTo(BigDecimal.ZERO) == 0 && !isSkipLastDateSet) {
+					repayMain.setDateLastFullyPaid(curSchd.getSchDate());
+				}
+
+				if (balance.compareTo(BigDecimal.ZERO) > 0 && !isNextDueSet) {
+					repayMain.setDateNextPaymentDue(curSchd.getSchDate());
+					isNextDueSet = true;
+				}
+			}
+		}
+		
+		repayMain.setProfitBalance(repayMain.getProfit().subtract(pftPaid));
+		repayMain.setPrincipalBalance(repayMain.getPrincipal().subtract(priPaid));
+		
+		// Allocation Map and Description Details Preparation
+		if(receiptData.getAllocationMap() == null){
+			receiptData.setAllocationMap(new HashMap<String, BigDecimal>());
+		}
+		
+		// Applicable only when Fees, Insurances & Manual Advises to maintain descriptions in screen level
+		if(receiptData.getAllocationDescMap() == null){
+			receiptData.setAllocationDescMap(new HashMap<String, String>());
+		}
+
+		// Principal Amount
+		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, priBalance);
+		}else{
+			if(repayMain.getOverduePrincipal().compareTo(BigDecimal.ZERO) > 0){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getOverduePrincipal());
+			}
+		}
+		
+		// Profit Amount
+		BigDecimal pftAmt = BigDecimal.ZERO;
+		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			pftAmt = pftAccruedTillNow.subtract(pftPaid);
+		}else{
+			pftAmt = repayMain.getOverdueProfit();
+		}
+		
+		// TDS calculation Process
+		if(pftAmt.compareTo(BigDecimal.ZERO) > 0){
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAccruedTillNow);
+			}else{
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAmount);
+			}
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, pftAmt);
+		}
+		
+		// Fetching Actual Late Payments based on Value date passing
+		BigDecimal latePayPftBal = BigDecimal.ZERO;
+		BigDecimal penaltyBal = BigDecimal.ZERO;
+		if(DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0){
+			latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference());
+			penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
+		}else{
+			
+			// Calculate overdue Penalties
+			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate);
+
+			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
+			if(overdueList != null && !overdueList.isEmpty()){
+				for (int i = 0; i < overdueList.size(); i++) {
+					FinODDetails finODDetail = overdueList.get(i);
+					if (finODDetail.getFinODSchdDate().compareTo(valueDate)>0) {
+						continue;
+					}
+					latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+					penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+				}
+			}
+		}
+		
+		// Fetch Late Pay Profit Details
+		if(latePayPftBal.compareTo(BigDecimal.ZERO) > 0){
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_LPFT, latePayPftBal);
+		}
+		
+		// Fetch Sum of Overdue Charges
+		if(penaltyBal.compareTo(BigDecimal.ZERO) > 0){
+			receiptData.setPendingODC(penaltyBal);
+			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
+		}
+		
+		// Fee Details
+		if(finScheduleData.getFinFeeDetailList() != null && 
+				!finScheduleData.getFinFeeDetailList().isEmpty()){
+			
+			for (int i = 0; i < finScheduleData.getFinFeeDetailList().size(); i++) {
+				FinFeeDetail feeDetail = finScheduleData.getFinFeeDetailList().get(i);
+				if(StringUtils.equals(feeDetail.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
+					continue;
+				}
+
+				if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+					
+					// Calculate Overdue Fee Schedule Amount
+					List<FinFeeScheduleDetail> feeSchdList = feeDetail.getFinFeeScheduleDetailList();
+					BigDecimal pastFeeAmount = BigDecimal.ZERO;
+					for (int j = 0; j < feeSchdList.size(); j++) {
+						
+						FinFeeScheduleDetail feeSchd = feeSchdList.get(j);
+						if (DateUtility.compare(feeSchd.getSchDate(), valueDate) <= 0 || 
+								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+							pastFeeAmount = pastFeeAmount.add(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
+						}else{
+							break;
+						}
+					}
+					
+					// Adding Fee Details to Map
+					if(pastFeeAmount.compareTo(BigDecimal.ZERO) > 0){
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), pastFeeAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), 
+								StringUtils.isEmpty(feeDetail.getFeeTypeDesc()) ? feeDetail.getVasReference() : feeDetail.getFeeTypeDesc());
+					}
+				}
+			}
+		}
+		
+		// Insurance Details
+		if(finScheduleData.getFinInsuranceList() != null && 
+				!finScheduleData.getFinInsuranceList().isEmpty()){
+			
+			for (int i = 0; i < finScheduleData.getFinInsuranceList().size(); i++) {
+				FinInsurances finInsurance = finScheduleData.getFinInsuranceList().get(i);
+
+				if(StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)){
+					
+					// Calculate Overdue Fee Schedule Amount
+					List<FinSchFrqInsurance> insSchdList = finInsurance.getFinSchFrqInsurances();
+					BigDecimal pastInsAmount = BigDecimal.ZERO;
+					for (int j = 0; j < insSchdList.size(); j++) {
+						
+						FinSchFrqInsurance insSchd = insSchdList.get(j);
+						if (DateUtility.compare(insSchd.getInsSchDate(), valueDate) <= 0 ||
+								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+							pastInsAmount = pastInsAmount.add(insSchd.getAmount().subtract(insSchd.getInsurancePaid()));
+						}else{
+							break;
+						}
+					}
+					
+					// Adding Fee Details to Map
+					if(pastInsAmount.compareTo(BigDecimal.ZERO) > 0){
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), pastInsAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), 
+								finInsurance.getInsuranceTypeDesc()+"-"+finInsurance.getInsReference());
+					}
+				}
+			}
+		}
+		
+		// Manual Advises 
+		List<ManualAdvise> adviseList = getManualAdviseDAO().getManualAdviseByRef(repayMain.getFinReference(), 
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+		if(adviseList != null && !adviseList.isEmpty()){
+			for (ManualAdvise advise : adviseList) {
+				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+				// Adding Advise Details to Map
+				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
+					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
+					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+				}
+			}
+		}
+		
+		logger.debug("Leaving");
+		return receiptData;
+	}
+	
+	/**
 	 * Method for Calculation of Schedule payment based on Allocated Details from Receipts
 	 * @param receiptData
 	 * @param scheduleData
 	 * @return
 	 */
-	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, String receiptPurpose) {
+	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
 		logger.debug("Entering");
 
-		Date curBussniessDate = DateUtility.getAppDate();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 		List<FinReceiptDetail> receiptDetailList = receiptData.getReceiptHeader().getReceiptDetails();
@@ -219,8 +599,19 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		// Fetch total overdue details
+		List<FinODDetails> overdueList = null;
+		
+		// Value Date Penalty Calculation
+		if(DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0){
+			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+		}else {
+			// Calculate overdue Penalties
+			overdueList = getReceiptService().getValueDatePenalties(scheduleData, receiptData.getReceiptHeader().getReceiptAmount().subtract(
+					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate);
+		}
+		
+		// Overdue Penalties Mapping Preparations
 		Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
-		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		if (overdueList != null && !overdueList.isEmpty()) {
 			for (int m = 0; m < overdueList.size(); m++) {
 				if (overdueMap.containsKey(overdueList.get(m).getFinODSchdDate())) {
@@ -337,15 +728,15 @@ public class ReceiptCalculator implements Serializable {
 				RepayScheduleDetail rsd = null;
 
 				// Skip if repayment date after Current Business date
-				if (schdDate.compareTo(curBussniessDate) > 0 && 
+				if (schdDate.compareTo(valueDate) > 0 && 
 						!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 					break;
 				}
 				
 				// Find out early payment/ partial Settlement schedule term and amount
-				if ((schdDate.compareTo(curBussniessDate) == 0 && 
+				if ((schdDate.compareTo(valueDate) == 0 && 
 						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) ||
-						(schdDate.compareTo(curBussniessDate) >= 0 && 
+						(schdDate.compareTo(valueDate) >= 0 && 
 						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
 					
 					// Manual Advises 
@@ -414,7 +805,7 @@ public class ReceiptCalculator implements Serializable {
 									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0 && balPri.compareTo(totalReceiptAmt) > 0){
 										balPri = totalReceiptAmt;
 									}
-									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, curBussniessDate, null);
+									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, valueDate, null);
 
 									// Reset Total Receipt Amount
 									totalReceiptAmt = totalReceiptAmt.subtract(balPri);
@@ -455,12 +846,12 @@ public class ReceiptCalculator implements Serializable {
 												}
 											}
 											
-											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft, curBussniessDate,null);
+											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft, valueDate,null);
 											
 											// TDS Payments
 											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
 											if(tdsAdjust.compareTo(BigDecimal.ZERO) > 0){
-												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust, curBussniessDate,null);
+												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust, valueDate,null);
 												
 												if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_TDS)){
 													BigDecimal totTDSPayNow = paidAllocationMap.get(RepayConstants.ALLOCATION_TDS);
@@ -495,7 +886,7 @@ public class ReceiptCalculator implements Serializable {
 												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0 && balLatePft.compareTo(totalReceiptAmt) > 0){
 													balLatePft = totalReceiptAmt;
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft,curBussniessDate, null);
+												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft,valueDate, null);
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
@@ -526,7 +917,7 @@ public class ReceiptCalculator implements Serializable {
 										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0 && balPenalty.compareTo(totalReceiptAmt) > 0){
 											balPenalty = totalReceiptAmt;
 										}
-										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, curBussniessDate,overdue.getTotPenaltyBal());
+										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, valueDate,overdue.getTotPenaltyBal());
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
@@ -585,7 +976,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0 && balFee.compareTo(totalReceiptAmt) > 0){
 														balFee = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, curBussniessDate,null);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, valueDate,null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
@@ -639,7 +1030,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balIns.compareTo(totalReceiptAmt) > 0){
 														balIns = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, curBussniessDate,null);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, valueDate,null);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
@@ -1057,10 +1448,9 @@ public class ReceiptCalculator implements Serializable {
 	 * @param receiptData
 	 * @param aFinScheduleData
 	 */
-	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, String receiptPurpose) {
+	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, Date valueDate, String receiptPurpose) {
 		logger.debug("Entering");
 		
-		Date curBussniessDate = DateUtility.getAppDate();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 
@@ -1082,9 +1472,16 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 		
-		// Fetch manual Advise Details details
+		// Fetching Actual Late Payments based on Value date passing
 		Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
-		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+		List<FinODDetails> overdueList = null;
+		if(DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0){
+			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+		}else {
+			// Calculate overdue Penalties
+			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate);
+		}
+
 		if (overdueList != null && !overdueList.isEmpty()) {
 			for (int i = 0; i < overdueList.size(); i++) {
 				if (overdueMap.containsKey(overdueList.get(i).getFinODSchdDate())) {
@@ -1126,14 +1523,14 @@ public class ReceiptCalculator implements Serializable {
 			Date schdDate = curSchd.getSchDate();
 
 			// Skip if repayment date after Current Business date
-			if (schdDate.compareTo(curBussniessDate) > 0 && 
+			if (schdDate.compareTo(valueDate) > 0 && 
 					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
 			}
 			
 			// Early settlement case to calculate profit Till Accrual amount
 			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-				if (schdDate.compareTo(curBussniessDate) >= 0){
+				if (schdDate.compareTo(valueDate) >= 0){
 					isLastTermForES = true;
 				}
 			}
@@ -1152,7 +1549,7 @@ public class ReceiptCalculator implements Serializable {
 					
 					if(isLastTermForES){
 						priCalcCompleted = true;
-						if (schdDate.compareTo(curBussniessDate) >= 0){
+						if (schdDate.compareTo(valueDate) >= 0){
 							balPri = balPri.add(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
 						}
 					}
@@ -1189,13 +1586,13 @@ public class ReceiptCalculator implements Serializable {
 							// On Early settlement Case, for the last terms should consider total outstanding Principal
 							if(isLastTermForES){
 								pftCalcCompleted = true;
-								if (schdDate.compareTo(curBussniessDate) > 0){
-									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
+								if (schdDate.compareTo(valueDate) > 0){
+									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate, curSchd.getBalanceForPftCal(),
 											prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 									
 									balPft = balPft.add(prvSchd.getProfitBalance()).add(prvSchd.getProfitFraction());
 									balPft = CalculationUtil.roundAmount(balPft, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
-								}else if (schdDate.compareTo(curBussniessDate) == 0){
+								}else if (schdDate.compareTo(valueDate) == 0){
 									balPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()).add(prvSchd.getProfitBalance());
 								}
 							}
@@ -1247,6 +1644,7 @@ public class ReceiptCalculator implements Serializable {
 									if(totalReceiptAmt.compareTo(balLatePft) > 0){
 										totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
 									}else{
+										balLatePft = totalReceiptAmt;
 										totalReceiptAmt = BigDecimal.ZERO;
 									}
 
@@ -1465,364 +1863,6 @@ public class ReceiptCalculator implements Serializable {
 		return allocatePaidMap;
 	}
 
-	/**
-	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
-	 */
-	private FinReceiptData calSummaryDetail(FinReceiptData receiptData, FinScheduleData finScheduleData, String receiptPurpose) {
-		logger.debug("Entering");
-
-		Date curBussniessDate = DateUtility.getAppDate();
-		BigDecimal priPaid = BigDecimal.ZERO;
-		BigDecimal pftPaid = BigDecimal.ZERO;
-		BigDecimal tdsAmount = BigDecimal.ZERO;
-		BigDecimal cpzTillNow = BigDecimal.ZERO;
-		Boolean isNextDueSet = false;
-		boolean isSkipLastDateSet = false;
-		
-		BigDecimal tdsMultiplier = BigDecimal.ONE;
-		if(finScheduleData.getFinanceMain().isTDSApplicable()){
-
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
-
-			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
-			}
-		}
-
-		RepayMain repayMain = receiptData.getRepayMain();
-		List<FinanceScheduleDetail> scheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		
-		Cloner cloner = new Cloner();
-		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
-		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
-
-		boolean setEarlyPayRecord = false;
-		BigDecimal pftAccruedTillNow = BigDecimal.ZERO;
-		BigDecimal tdsAccruedTillNow = BigDecimal.ZERO;
-		BigDecimal priBalance = BigDecimal.ZERO;
-		boolean partAccrualReq = true;
-		FinanceScheduleDetail curSchd = null;
-		FinanceScheduleDetail prvSchd = null;
-		for (int i = 0; i < tempScheduleDetails.size(); i++) {
-			curSchd = tempScheduleDetails.get(i);
-			if(i != 0){
-				prvSchd = tempScheduleDetails.get(i - 1);
-			}
-			Date schdDate = curSchd.getSchDate();
-
-			// Finance amount and current finance amount
-			repayMain.setFinAmount(repayMain.getFinAmount().add(curSchd.getDisbAmount())
-					.add(curSchd.getFeeChargeAmt() == null ? BigDecimal.ZERO : curSchd.getFeeChargeAmt()));
-
-			repayMain.setCurFinAmount(repayMain.getFinAmount().subtract(curSchd.getSchdPriPaid())
-					.subtract(curSchd.getSchdPftPaid()).subtract(curSchd.getDownPaymentAmount()));
-
-			if (schdDate.compareTo(curBussniessDate) < 0) {
-				repayMain.setCurFinAmount(repayMain.getCurFinAmount().subtract(curSchd.getCpzAmount()));
-			}else{
-				
-				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) || 
-						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					if (DateUtility.getDaysBetween(curBussniessDate, schdDate) == 0) {
-						repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
-						repayMain.setEarlyRepayNewSchd(null);
-						setEarlyPayRecord = true;
-					} else {
-						if (!setEarlyPayRecord) {
-
-							setEarlyPayRecord = true;
-							if ("NONSCH".equals(SysParamUtil.getValueAsString("EARLYPAY_TERM_INS"))) {
-								repayMain.setEarlyPayOnSchDate(curBussniessDate);
-								repayMain.setEarlyPayNextSchDate(curSchd.getSchDate());
-							} else {
-								repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
-							}
-
-							FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(repayMain.getFinReference());
-							newSchdlEP.setDefSchdDate(repayMain.getEarlyPayOnSchDate());
-							newSchdlEP.setSchDate(repayMain.getEarlyPayOnSchDate());
-							newSchdlEP.setSchSeq(1);
-							newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
-							newSchdlEP.setRepayOnSchDate(true);
-							newSchdlEP.setPftOnSchDate(true);
-							newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
-							newSchdlEP.setBaseRate(prvSchd.getBaseRate());
-							newSchdlEP.setSplRate(prvSchd.getSplRate());
-							newSchdlEP.setMrgRate(prvSchd.getMrgRate());
-							newSchdlEP.setActRate(prvSchd.getActRate());
-							newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
-							newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
-							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
-							repayMain.setEarlyRepayNewSchd(newSchdlEP);
-						}
-					}
-				}
-			}
-
-			// Profit scheduled and Paid
-			repayMain.setProfit(repayMain.getProfit().add(curSchd.getProfitSchd()));
-			
-			// Accrued Profit Calculation
-			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-				if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
-					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
-					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-					
-					if(finScheduleData.getFinanceMain().isTDSApplicable()){
-						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-						tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
-					}
-					
-				}else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
-					
-					BigDecimal remPft = curSchd.getProfitCalc();
-					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
-					if(prvSchd != null){
-						remPft = remPft.add(prvSchd.getProfitBalance());
-						pftAccruedTillNow = pftAccruedTillNow.add(prvSchd.getProfitBalance());
-					}
-					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
-					
-					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
-						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc()));
-						if(prvSchd != null){
-							repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(prvSchd.getProfitBalance()));
-						}
-					}else{
-						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
-					}
-					
-					if(finScheduleData.getFinanceMain().isTDSApplicable()){
-						BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-						tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
-					}
-					partAccrualReq = false;
-					
-					// Future Disbursements into Early paid Balance
-					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
-				} else {
-					if(partAccrualReq && prvSchd != null){
-						partAccrualReq = false;
-						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
-								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-						accruedPft = accruedPft.add(prvSchd.getProfitFraction());
-						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-								finScheduleData.getFinanceMain().getRoundingTarget());
-						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
-						
-						priBalance = priBalance.add(prvSchd.getClosingBalance());
-						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
-						
-						if(finScheduleData.getFinanceMain().isTDSApplicable()){
-							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
-						}
-					}
-					
-					// Future Disbursements into Early paid Balance
-					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
-				}
-			}
-			
-			pftPaid = pftPaid.add(curSchd.getSchdPftPaid());
-
-			// Principal scheduled and Paid
-			repayMain.setPrincipal(repayMain.getPrincipal().add(curSchd.getPrincipalSchd()));
-			priPaid = priPaid.add(curSchd.getSchdPriPaid());
-
-			// Capitalization and Capitalized till now
-			repayMain.setTotalCapitalize(repayMain.getTotalCapitalize().add(curSchd.getCpzAmount()));
-
-			//Total Fee Amount
-			repayMain.setTotalFeeAmt(repayMain.getTotalFeeAmt().add(
-					curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
-
-			// Overdue Principal and Profit
-			if (DateUtility.compare(schdDate, curBussniessDate) <= 0) {
-				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
-				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
-						curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
-
-				repayMain.setOverdueProfit(repayMain.getOverdueProfit().add(
-						curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())));
-				
-				// TDS Calculation
-				BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-				BigDecimal actPftAdjust = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-				tdsAmount = tdsAmount.add(unpaidPft.subtract(actPftAdjust));
-
-			}
-
-			// Down Payment
-			repayMain.setDownpayment(repayMain.getDownpayment().add(curSchd.getDownPaymentAmount()));
-
-			// REPAY SCHEDULE RECORD
-			if (curSchd.isRepayOnSchDate()
-					|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-				BigDecimal balance = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-				balance = balance.add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPftPaid());
-
-				if (balance.compareTo(BigDecimal.ZERO) > 0) {
-					isSkipLastDateSet = true;
-				}
-
-				// Set the last and next scheduled repayments to deferred dates (Agreed with customer)
-				if (balance.compareTo(BigDecimal.ZERO) == 0 && !isSkipLastDateSet) {
-					repayMain.setDateLastFullyPaid(curSchd.getSchDate());
-				}
-
-				if (balance.compareTo(BigDecimal.ZERO) > 0 && !isNextDueSet) {
-					repayMain.setDateNextPaymentDue(curSchd.getSchDate());
-					isNextDueSet = true;
-				}
-			}
-		}
-		
-		repayMain.setProfitBalance(repayMain.getProfit().subtract(pftPaid));
-		repayMain.setPrincipalBalance(repayMain.getPrincipal().subtract(priPaid));
-		
-		// Allocation Map and Description Details Preparation
-		if(receiptData.getAllocationMap() == null){
-			receiptData.setAllocationMap(new HashMap<String, BigDecimal>());
-		}
-		
-		// Applicable only when Fees, Insurances & Manual Advises to maintain descriptions in screen level
-		if(receiptData.getAllocationDescMap() == null){
-			receiptData.setAllocationDescMap(new HashMap<String, String>());
-		}
-
-		// Principal Amount
-		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, priBalance);
-		}else{
-			if(repayMain.getOverduePrincipal().compareTo(BigDecimal.ZERO) > 0){
-				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PRI, repayMain.getOverduePrincipal());
-			}
-		}
-		
-		// Profit Amount
-		BigDecimal pftAmt = BigDecimal.ZERO;
-		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			pftAmt = pftAccruedTillNow.subtract(pftPaid);
-		}else{
-			pftAmt = repayMain.getOverdueProfit();
-		}
-		
-		// TDS calculation Process
-		if(pftAmt.compareTo(BigDecimal.ZERO) > 0){
-			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAccruedTillNow);
-			}else{
-				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAmount);
-			}
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, pftAmt);
-		}
-		
-		// Fetch Late Pay Profit Details
-		BigDecimal latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference());
-		if(latePayPftBal.compareTo(BigDecimal.ZERO) > 0){
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_LPFT, latePayPftBal);
-		}
-		
-		// Fetch Sum of Overdue Charges
-		BigDecimal penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
-		if(penaltyBal.compareTo(BigDecimal.ZERO) > 0){
-			receiptData.setPendingODC(penaltyBal);
-			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
-		}
-		
-		// Fee Details
-		if(finScheduleData.getFinFeeDetailList() != null && 
-				!finScheduleData.getFinFeeDetailList().isEmpty()){
-			
-			for (int i = 0; i < finScheduleData.getFinFeeDetailList().size(); i++) {
-				FinFeeDetail feeDetail = finScheduleData.getFinFeeDetailList().get(i);
-				if(StringUtils.equals(feeDetail.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
-					continue;
-				}
-
-				if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
-						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
-						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
-					
-					// Calculate Overdue Fee Schedule Amount
-					List<FinFeeScheduleDetail> feeSchdList = feeDetail.getFinFeeScheduleDetailList();
-					BigDecimal pastFeeAmount = BigDecimal.ZERO;
-					for (int j = 0; j < feeSchdList.size(); j++) {
-						
-						FinFeeScheduleDetail feeSchd = feeSchdList.get(j);
-						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) <= 0 || 
-								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-							pastFeeAmount = pastFeeAmount.add(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
-						}else{
-							break;
-						}
-					}
-					
-					// Adding Fee Details to Map
-					if(pastFeeAmount.compareTo(BigDecimal.ZERO) > 0){
-						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), pastFeeAmount);
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), 
-								StringUtils.isEmpty(feeDetail.getFeeTypeDesc()) ? feeDetail.getVasReference() : feeDetail.getFeeTypeDesc());
-					}
-				}
-			}
-		}
-		
-		// Insurance Details
-		if(finScheduleData.getFinInsuranceList() != null && 
-				!finScheduleData.getFinInsuranceList().isEmpty()){
-			
-			for (int i = 0; i < finScheduleData.getFinInsuranceList().size(); i++) {
-				FinInsurances finInsurance = finScheduleData.getFinInsuranceList().get(i);
-
-				if(StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)){
-					
-					// Calculate Overdue Fee Schedule Amount
-					List<FinSchFrqInsurance> insSchdList = finInsurance.getFinSchFrqInsurances();
-					BigDecimal pastInsAmount = BigDecimal.ZERO;
-					for (int j = 0; j < insSchdList.size(); j++) {
-						
-						FinSchFrqInsurance insSchd = insSchdList.get(j);
-						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) <= 0 ||
-								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-							pastInsAmount = pastInsAmount.add(insSchd.getAmount().subtract(insSchd.getInsurancePaid()));
-						}else{
-							break;
-						}
-					}
-					
-					// Adding Fee Details to Map
-					if(pastInsAmount.compareTo(BigDecimal.ZERO) > 0){
-						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), pastInsAmount);
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), 
-								finInsurance.getInsuranceTypeDesc()+"-"+finInsurance.getInsReference());
-					}
-				}
-			}
-		}
-		
-		// Manual Advises 
-		List<ManualAdvise> adviseList = getManualAdviseDAO().getManualAdviseByRef(repayMain.getFinReference(), 
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
-		if(adviseList != null && !adviseList.isEmpty()){
-			for (ManualAdvise advise : adviseList) {
-				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
-				// Adding Advise Details to Map
-				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
-					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
-					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
-				}
-			}
-		}
-		
-		logger.debug("Leaving");
-		return receiptData;
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1839,6 +1879,13 @@ public class ReceiptCalculator implements Serializable {
 	}
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public ReceiptService getReceiptService() {
+		return receiptService;
+	}
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
 
 }

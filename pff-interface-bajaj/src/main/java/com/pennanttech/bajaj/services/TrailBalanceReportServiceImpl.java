@@ -14,47 +14,59 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.generalledger.GeneralLedgerService;
+import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-public class SAPGLServiceImpl extends BajajService implements GeneralLedgerService {
-	private final Logger logger = Logger.getLogger(getClass());
+public class TrailBalanceReportServiceImpl extends BajajService implements TrailBalanceReportService {
+	private final Logger	logger			= Logger.getLogger(getClass());
 
-	private long						userId;
-	private Date						valueDate			= null;
-	private Date						glDate			= null;
-	private Date						monthStartDate	= null;
-	private Date						monthEndDate	= null;
-	private long						headerId		= 0;
-	private String						currency		= null;
-	private String						companyName		= null;
-	private String						reportName		= null;
-	private String						fileName		= null;
+	private long			userId;
+	private Date			valueDate		= null;
+	private Date			glDate			= null;
+	private Date			monthStartDate	= null;
+	private Date			monthEndDate	= null;
+	private long			headerId		= 0;
+	private String			currency		= null;
+	private String			companyName		= null;
+	private String			reportName		= null;
+	private String			fileName		= null;
 
 	@Override
-	public void generateGLReport(Object... params) throws Exception {
+	public void generateReport(Object... params) throws Exception {
 		this.userId = (long) params[0];
 		try {
 			prepareGLDates();
 
 			clearTables();
-
 			prepareTransactionDetails();
-
 			prepareTransactionSummary();
-
 			prepareTrailBalace();
 
-			updateGLDates();
+			TransactionStatus txnStatus = transManager.getTransaction(transDef);
+			try {
+				clearPreviousMonthTrailBalace();
+				saveCurrentMonthTrailBalace();
+				updateGLDates();
+				transManager.commit(txnStatus);
+			} catch (Exception e) {
+				transManager.rollback(txnStatus);
+				logger.error(Literal.EXCEPTION, e);
+				throw e;
+			} finally {
+				txnStatus.flush();
+				txnStatus = null;
+			}
 
 			generateGLReport();
 
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 
@@ -64,7 +76,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO SAPGL_TRAN_SUMMARY_REPORT SELECT");
+		sql.append(" INSERT INTO TRANSACTION_SUMMARY_REPORT SELECT");
 		sql.append("  DISTINCT LINK,");
 		sql.append(" :BLDAT,");
 		sql.append(" :BLART,");
@@ -74,7 +86,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		sql.append(" :APP_DFT_CURR,");
 		sql.append(" :XBLNR,");
 		sql.append(" :BKTXT");
-		sql.append(" FROM SAPGL_TRAN_DETAIL_REPORT");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("BLDAT", monthEndDate);
@@ -104,18 +116,23 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO SAPGL_TRAIL_BALANCE_REPORT SELECT");
+		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");
 		sql.append(" :HEADERID,");
-		sql.append(" ACTYPEGRPID,");
-		sql.append(" HOSTACCOUNT,");
-		sql.append(" DESCRIPTION,");
-		sql.append(" OPENINGBAL,");
-		sql.append(" OPENINGBALTYPE,");
-		sql.append(" DEBITAMOUNT,");
-		sql.append(" CREDITAMOUNT,");
-		sql.append(" CLOSINGBAL,");
-		sql.append(" CLOSINGBALTYPE");
-		sql.append(" FROM GL_TRAIL_BALANCE_REPORT_VIEW");
+		sql.append(" ATG.GROUPCODE,");
+		sql.append(" AM.HOSTACCOUNT HOSTACCOUNT,");
+		sql.append(" AT.ACTYPEDESC DESCRIPTION,");
+		sql.append(" COALESCE(LR.CLOSINGBAL, 0) OPENINGBAL,");
+		sql.append(" COALESCE(LR.CLOSINGBALTYPE, ' ') OPENINGBALTYPE,");
+		sql.append(" TODAYDEBITS DEBITAMOUNT,");
+		sql.append(" TODAYCREDITS CREDITAMOUNT,");
+		sql.append(" COALESCE(AH.TODAYNET, 0),");
+		sql.append(" CASE WHEN AH.TODAYNET > 0 THEN '40' ELSE '50' END");
+		sql.append(" FROM (SELECT ACCOUNTID, SUM(TODAYDEBITS) TODAYDEBITS, SUM(TODAYCREDITS) TODAYCREDITS, SUM(TODAYNET) TODAYNET FROM ACCOUNTSHISTORY AH");
+		sql.append(" GROUP BY ACCOUNTID) AH");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = AH.ACCOUNTID");
+		sql.append(" INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE");
+		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG ON  ATG.GROUPID = AT.ACTYPEGRPID");
+		sql.append(" LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR ON LR.ACTYPEGRPID = ATG.GROUPCODE AND LR.HOSTACCOUNT = AM.HOSTACCOUNT");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
@@ -125,9 +142,33 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to prpare the transaction summary report.");
+		}
+	}
+
+	private void clearPreviousMonthTrailBalace() {
+		try {
+			jdbcTemplate.execute("TRUNCATE TABLE TRAIL_BALANCE_REPORT_LAST_RUN");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void saveCurrentMonthTrailBalace() throws Exception {
+		MapSqlParameterSource paramMap;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT_LAST_RUN");
+		sql.append(" SELECT * FROM TRAIL_BALANCE_REPORT WHERE HEADERID = :HEADERID");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HEADERID", headerId);
+
+		try {
+			namedJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception("Unable to insert current month trail balance.");
 		} finally {
 			paramMap = null;
-			sql = null;
 		}
 	}
 
@@ -142,7 +183,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 		MapSqlParameterSource paramMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO SAPGL_TRAIL_BALANCE_HEADER VALUES(");
+		sql.append(" INSERT INTO TRAIL_BALANCE_HEADER VALUES(");
 		sql.append(" :ID,");
 		sql.append(" :FILENAME,");
 		sql.append(" :COMPANYNAME,");
@@ -190,12 +231,12 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 	private void createNextId() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT COALESCE(MAX(ID), 0) + 1");
-		sql.append(" FROM SAPGL_TRAIL_BALANCE_HEADER");
+		sql.append(" FROM TRAIL_BALANCE_HEADER");
 
 		try {
 			this.headerId = this.jdbcTemplate.queryForObject(sql.toString(), Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception {}", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			sql = null;
 		}
@@ -251,14 +292,12 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 	private void prepareTransactionDetails() throws Exception {
 		int totalTransactions = extractTransactionsData();
-		totalTransactions = groupTranactions();
-		
-		if (totalTransactions == 0) {
-			throw new Exception("Transaction details not avialble for the dates between  "+DateUtil.format(monthStartDate, DateFormat.LONG_DATE) + " and "+DateUtil.format(monthEndDate, DateFormat.LONG_DATE) );
-		}
+		//totalTransactions = groupTranactions();
 
 		if (totalTransactions == 0) {
-			throw new Exception("Transaction details not avialble.");
+			throw new Exception("Transaction details not avialble for the dates between  "
+					+ DateUtil.format(monthStartDate, DateFormat.LONG_DATE) + " and "
+					+ DateUtil.format(monthEndDate, DateFormat.LONG_DATE));
 		}
 
 		int pageSize = (Integer) getSMTParameter("SAPGL_TRAN_RECORD_COUNT", Integer.class);
@@ -331,7 +370,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 		MapSqlParameterSource parameterSource;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO SAPGL_TRAN_DETAIL_REPORT SELECT");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT");
 		sql.append(" :ID,");
 		sql.append(" :LINK,");
 		sql.append(" :BSCHL,");
@@ -344,7 +383,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		sql.append(" PRCTR,");
 		sql.append(" ZUONR,");
 		sql.append(" SGTXT");
-		sql.append(" FROM SAPGL_TRAN_DETAIL_REPORT_STAGE WHERE ROWNUM =:ROWNUM");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
 
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("ID", summaryRecordId);
@@ -364,7 +403,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr) {
 		MapSqlParameterSource parameterSource;
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT BSCHL, COALESCE(SUM(WRBTR), 0) WRBTR FROM SAPGL_TRAN_DETAIL_REPORT WHERE LINK = :LINK GROUP BY BSCHL");
+		sql.append("SELECT BSCHL, COALESCE(SUM(WRBTR), 0) WRBTR FROM TRANSACTION_DETAIL_REPORT WHERE LINK = :LINK GROUP BY BSCHL");
 
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("LINK", pageItr);
@@ -386,10 +425,9 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 	private void clearTables() {
 		logger.info("Clearing GL Tables..");
-		jdbcTemplate.execute("TRUNCATE TABLE SAPGL_TRAN_SUMMARY_REPORT");
-		jdbcTemplate.execute("TRUNCATE TABLE SAPGL_TRAN_DETAIL_REPORT");
-		jdbcTemplate.execute("TRUNCATE TABLE SAPGL_TRAN_DETAIL_REPORT_STAGE");
-		jdbcTemplate.execute("TRUNCATE TABLE SAPGL_TRAN_DETAIL_REPORT_TEMP");
+		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_SUMMARY_REPORT");
+		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT");
+		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_TEMP");
 	}
 
 	private int extractTransactionsData() throws Exception {
@@ -397,47 +435,30 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		MapSqlParameterSource paramMap;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO SAPGL_TRAN_DETAIL_REPORT_TEMP");
-		sql.append(" SELECT ROWNUM,");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT_TEMP");
+		sql.append(" SELECT");
+		sql.append(" ROWNUM,");
 		sql.append(" 0,");
-		sql.append(" (CASE WHEN DRORCR=:DR THEN 40 WHEN DRORCR=:CR THEN 50 END) BSCHL,");
-		sql.append(" HKONT,");
-		sql.append(" UMSKZ,");
-		sql.append(" COALESCE(WRBTR, 0) WRBTR,");
+		sql.append(" CASE WHEN AH.POSTAMOUNT < 0 THEN '40' ELSE '50' END BSCHL,");
+		sql.append(" AM.HOSTACCOUNT HKONT,");
+		sql.append(" :UMSKZ,");
+		sql.append(" AH.POSTAMOUNT WRBTR,");
 		sql.append(" :GSBER,");
 		sql.append(" :BUPLA,");
-		sql.append(" KOSTL,");
-		sql.append(" PRCTR,");
+		sql.append(" COALESCE(CC.COSTCENTERCODE, :KOSTL) KOSTL,");
+		sql.append(" PC.PROFITCENTERCODE PRCTR,");
 		sql.append(" :ZUONR,");
 		sql.append(" :SGTXT");
-		sql.append(" FROM (");
-		sql.append(" SELECT");
-		sql.append(" DRORCR,");
-		sql.append(" HKONT,");
-		sql.append(" :UMSKZ UMSKZ,");
-		sql.append(" KOSTL,");
-		sql.append(" PRCTR,");
-		sql.append(" SUM(POSTAMOUNT) WRBTR FROM(");
-		sql.append(" SELECT AM.HOSTACCOUNT HKONT,DRORCR, POSTAMOUNT,");
-		sql.append(" COALESCE(CC.COSTCENTERCODE, :KOSTL) KOSTL,");
-		sql.append(" PC.PROFITCENTERCODE PRCTR");
-		sql.append(" FROM POSTINGS P");
-		sql.append(" INNER JOIN FINANCEMAIN F ON F.FINREFERENCE = P.FINREFERENCE");
-		sql.append(" INNER JOIN ACCOUNTS A ON A.ACCOUNTID = P.ACCOUNT");
-		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
-		sql.append(" INNER JOIN RMTFINANCETYPES RF ON RF.FINTYPE = F.FINTYPE");
-		sql.append(" INNER JOIN RMTACCOUNTTYPES RC ON RC.ACTYPE = A.ACTYPE");
-		sql.append(" INNER JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = RC.PROFITCENTERID OR PC.PROFITCENTERID = RF.PROFITCENTERID");
-		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = RC.COSTCENTERID");
-		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
-		sql.append(" AND POSTSTATUS =:POSTSTATUS)T");
-		sql.append(" GROUP BY HKONT, DRORCR, KOSTL, PRCTR)");
+		sql.append(" FROM (SELECT AH.ACCOUNTID,SUM(AH.TODAYNET)POSTAMOUNT FROM ACCOUNTSHISTORY AH");
+		sql.append(" WHERE AH.POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
+		sql.append(" GROUP BY AH.ACCOUNTID) AH");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = AH.ACCOUNTID");
+		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
+		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
 		paramMap.addValue("MONTH_ENDDATE", monthEndDate);
-		paramMap.addValue("DR", "D");
-		paramMap.addValue("CR", "C");
 		paramMap.addValue("POSTSTATUS", "S");
 		paramMap.addValue("UMSKZ", getSMTParameter("UMSKZ", String.class));
 		paramMap.addValue("GSBER", getSMTParameter("GSBER", String.class));
@@ -475,94 +496,12 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		valueDate = getValueDate();
 	}
 
-	private int groupTranactions() {
-		logger.info("Grouping the GL Transaction..");
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT T1.*, T2.COUNT FROM SAPGL_TRAN_DETAIL_REPORT_TEMP T1");
-		sql.append(" INNER JOIN (SELECT COUNT(*) COUNT, HKONT, PRCTR, KOSTL");
-		sql.append(" FROM SAPGL_TRAN_DETAIL_REPORT_TEMP GROUP BY  HKONT, PRCTR, KOSTL) T2 ON T1.HKONT = T2.HKONT AND T1.PRCTR = T2.PRCTR AND T1.KOSTL = T2.KOSTL");
-
-		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
-
-			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				int count = 0;
-				int id = 1;
-				MapSqlParameterSource paramMap;
-				boolean secondRecord = false;
-				BigDecimal total = BigDecimal.ZERO;
-
-				while (rs.next()) {
-					paramMap = new MapSqlParameterSource();
-					paramMap.addValue("ID", id);
-					paramMap.addValue("LINK", rs.getLong("LINK"));
-					paramMap.addValue("BSCHL", rs.getInt("BSCHL"));
-					paramMap.addValue("HKONT", rs.getString("HKONT"));
-					paramMap.addValue("UMSKZ", rs.getString("UMSKZ"));
-					paramMap.addValue("WRBTR", rs.getBigDecimal("WRBTR"));
-					paramMap.addValue("GSBER", rs.getString("GSBER"));
-					paramMap.addValue("BUPLA", rs.getString("BUPLA"));
-					paramMap.addValue("KOSTL", rs.getString("KOSTL"));
-					paramMap.addValue("PRCTR", rs.getString("PRCTR"));
-					paramMap.addValue("ZUONR", rs.getString("ZUONR"));
-					paramMap.addValue("SGTXT", rs.getString("SGTXT"));
-					
-					if ((Integer) paramMap.getValue("BSCHL") == 40) {
-						BigDecimal amount = (BigDecimal) paramMap.getValue("WRBTR");
-						paramMap.addValue("WRBTR", amount.negate());
-					}
-					
-					
-
-					if (rs.getInt("COUNT") == 1) {
-						count = saveTransactions(count, paramMap);
-						id++;
-					} else {
-						int creditDebit = (Integer) paramMap.getValue("BSCHL");
-						BigDecimal amount = (BigDecimal) paramMap.getValue("WRBTR");
-
-						if (creditDebit == 50) {
-							total = total.add(amount);
-						} else {
-							total = total.subtract(amount);
-						}
-
-						if (secondRecord) {
-							paramMap.addValue("WRBTR", total);
-							count = saveTransactions(count, paramMap);
-							id++;
-							total = BigDecimal.ZERO;
-							secondRecord = false;
-						} else {
-							secondRecord = true;
-						}
-					}
-				}
-				return count;
-			}
-		});
-
-	}
-
-	private int saveTransactions(int count, MapSqlParameterSource paramMap) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO SAPGL_TRAN_DETAIL_REPORT_STAGE VALUES(");
-		sql.append(":ID,:LINK, :BSCHL, :HKONT, :UMSKZ, :WRBTR, :GSBER, :BUPLA, :KOSTL, :PRCTR, :ZUONR, :SGTXT)");
-
-		try {
-			count = count + namedJdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return count;
-	}
-
 	private int saveGLTranactions(int fromRange, int toRange) {
 		MapSqlParameterSource parameterSource;
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO SAPGL_TRAN_DETAIL_REPORT SELECT * FROM  SAPGL_TRAN_DETAIL_REPORT_STAGE");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT * FROM  TRANSACTION_DETAIL_REPORT_TEMP");
 		sql.append(" WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
 
 		parameterSource = new MapSqlParameterSource();
@@ -574,7 +513,6 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		return 0;
 	}
 
@@ -583,7 +521,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" UPDATE SAPGL_TRAN_DETAIL_REPORT SET LINK = :LINK");
+		sql.append(" UPDATE TRANSACTION_DETAIL_REPORT SET LINK = :LINK");
 		sql.append(" WHERE LINK =0");
 
 		paramMap = new MapSqlParameterSource();
@@ -609,21 +547,24 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 	private void generateTransactionReport() throws Exception {
 		logger.info("Generating Transaction Detail Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+				getValueDate());
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
 
 	private void generateTransactionSummaryReport() throws Exception {
 		logger.info("Generating Transaction Summary Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+				getValueDate());
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
 	private void generateTrailBalanceReport() throws Exception {
 		logger.info("Generating Trail Balance Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+				getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("HEADERID", headerId);

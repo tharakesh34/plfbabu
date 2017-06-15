@@ -2,6 +2,7 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -22,7 +23,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -80,6 +84,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected int   oldVar_sortOperator_finBranch;
 
 	private transient ReceiptService receiptService;
+	private String module;
 
 	/**
 	 * The default constructor.
@@ -90,10 +95,20 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "FinReceiptHeader";
-		super.tableName = "FinReceiptHeader_View";
-		super.queueTableName = "FinReceiptHeader_View";
-		super.enquiryTableName = "FinReceiptHeader_View";
+
+		this.module = getArgument("module");
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			super.moduleCode = "FeeReceipt";
+			super.tableName = "FinReceiptHeader_FCView";
+			super.queueTableName = "FinReceiptHeader_FCView";
+			super.enquiryTableName = "FinReceiptHeader_FCView";
+		}else{
+			super.moduleCode = "FinReceiptHeader";
+			super.tableName = "FinReceiptHeader_View";
+			super.queueTableName = "FinReceiptHeader_View";
+			super.enquiryTableName = "FinReceiptHeader_View";
+		}
+
 	}
 
 	/**
@@ -138,9 +153,20 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			this.workFlowFrom.setVisible(false);
 			this.listheader_RecordStatus.setVisible(false);
 			this.listheader_RecordType.setVisible(false);
-			
+
 		}
 		search();
+	}
+	
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			this.searchObject.addWhereClause(" ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL  ");
+		}else{
+			this.searchObject.addWhereClause(" ReceiptPurpose != '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL ");
+		}
 	}
 
 	/**
@@ -189,7 +215,14 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		// Get the selected entity.
 		long receiptID = (long) selectedItem.getAttribute("id");
-		FinReceiptHeader header = receiptService.getFinReceiptHeaderById(receiptID, "_View");
+		
+		boolean isFeePayment = false;
+		String type = "_View";
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			isFeePayment = true;
+			type = "_FCView";
+		}
+		FinReceiptHeader header = receiptService.getFinReceiptHeaderById(receiptID, isFeePayment, type);
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -223,6 +256,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
+		arg.put("module", module);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryDialog.zul", null, arg);

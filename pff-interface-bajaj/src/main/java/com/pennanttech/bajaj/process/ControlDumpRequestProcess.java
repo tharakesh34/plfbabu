@@ -10,9 +10,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
@@ -24,7 +26,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	Date						monthEndDate	= null;
 
 	public ControlDumpRequestProcess(DataSource dataSource, long userId,Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
 		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;
@@ -35,13 +37,16 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		try {
+			
 		// Handling retry on same day.
 		deleteData("CF_CONTROL_DUMP_LOG", "CREATED_ON");
 		deleteData("CF_CONTROL_DUMP", "CREATED_ON");
 
 		// Moving last run data to log table.
 		copyDataFromMainToLogTable(appDate);
-
+		
+		loadcount();
+		
 		execute();
 		
 		} catch(Exception e) {
@@ -52,6 +57,27 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		}
 		
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void loadcount() {
+		MapSqlParameterSource parmMap;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT count(*) from INT_CF_CONTROL_VIEW");
+		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
+		sql.append(" AND LASTREPAYDATE >= :monthStartDate AND LASTREPAYDATE <= :monthEndDate ");
+
+		parmMap = new MapSqlParameterSource();
+		parmMap.addValue("LOAN_STATUS", "A");
+		parmMap.addValue("monthStartDate", monthStartDate);
+		parmMap.addValue("monthEndDate", monthEndDate);
+
+		try {
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
+			executionStatus.setTotalRecords(totalRecords);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
 	}
 
 	private void execute() {
@@ -67,37 +93,34 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("monthStartDate", monthStartDate);
 		parmMap.addValue("monthEndDate", monthEndDate);
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource	map	= null;
 
 			@Override
-			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-				while (rs.next()) {
-					executionStatus.setRemarks("processing the record " + totalRecords++);
-					processedCount++;
-					try {
-						map = mapData(rs);
-						save(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
-						successCount++;
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-						logger.debug("Control dump record: " + map.toString());
-						failedCount++;
+			public void processRow(ResultSet rs) throws SQLException {
+				processedCount++;
+				executionStatus.setProcessedRecords(processedCount);
+				try {
+					map = mapData(rs);
+					save(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
+					successCount++;
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					logger.debug("Control dump record: " + map.toString());
+					failedCount++;
 
-						String keyId = rs.getString("AGREEMENTNO");
-						String  error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e.getMessage().length());
-						
-						if (StringUtils.trimToNull(keyId) == null) {
-							keyId = String.valueOf(processedCount);
-						}
-						
-						saveBatchLog(keyId, "F", error);
-					} finally {
-						map = null;
+					String keyId = rs.getString("AGREEMENTNO");
+					String  error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e.getMessage().length());
+					
+					if (StringUtils.trimToNull(keyId) == null) {
+						keyId = String.valueOf(processedCount);
 					}
+					
+					saveBatchLog(keyId, "F", error);
+				} finally {
+					map = null;
 				}
-
-				return totalRecords;
+			
 			}
 		});
 	}

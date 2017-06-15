@@ -70,7 +70,6 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
@@ -422,7 +421,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 						if (!subCategoryCodes.contains(variable.get("name"))) {
 							// if new variables found throw error message
 							noerrors = false;
-							Messagebox.show("Unknown Variable :" + variable.get("name"), "Unknown", Messagebox.OK, Messagebox.ERROR);
+							MessageUtil.showError("Unknown Variable :" + variable.get("name"));
 							return noerrors;
 						} else {
 							noerrors = true;
@@ -434,8 +433,8 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				for (int i = 0; i < errors.size(); i++) {
 					JSONObject error = (JSONObject) errors.get(i);
 					if (error != null) {
-						Messagebox.show(error.get("reason").toString(), "Error : At Line " + error.get("line") + ",Position " + error.get("character"), Messagebox.OK,
-								Messagebox.ERROR);
+						MessageUtil.showError("Error : At Line " + error.get("line") + ",Position "
+								+ error.get("character") + "\n\n" + error.get("reason").toString());
 					}
 				}
 			}

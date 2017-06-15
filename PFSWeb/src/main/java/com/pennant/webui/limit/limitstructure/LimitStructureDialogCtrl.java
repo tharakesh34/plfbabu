@@ -72,7 +72,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -98,7 +97,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -299,14 +297,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && listBoxLimitStructureDetailItems.getFirstChild() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, listBoxLimitStructureDetailItems.getFirstChild());
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -321,14 +318,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && item.getPreviousSibling() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, item.getPreviousSibling());
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -343,14 +339,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null && item.getNextSibling() != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item.getNextSibling(), item);
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -365,14 +360,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering" + event.toString());
 		int count = listBoxLimitStructureDetailItems.getItems().size();
 		if (count == 0) {
-			Messagebox.show("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.",
-					"Error", 1, Messagebox.ERROR);
+			MessageUtil.showError("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 		} else if (count > 1) {
 			Listitem item = this.listBoxLimitStructureDetailItems.getSelectedItem();
 			if (item != null) {
 				listBoxLimitStructureDetailItems.insertBefore(item, null);
 			} else {
-				Messagebox.show("Please select one Limit Structure Detail", "Error", 1, Messagebox.ERROR);
+				MessageUtil.showError("Please select one Limit Structure Detail");
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -855,13 +849,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		LimitStructureDetail limitStructureDetails = (LimitStructureDetail) remove.getParent().getParent()
 				.getAttribute("Data");
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
 		int count = getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode());
 		if (count == 0 || limitStructureDetails.isNew()) {
-			int conf = (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-					Messagebox.QUESTION, true));
-			if (conf == MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				logger.debug("doDelete: Yes");
 				if (!limitStructureDetails.isNew()) {
 					if (limitStructureDetails.getRecordType() != null

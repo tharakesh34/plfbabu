@@ -85,7 +85,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -1503,8 +1502,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_INSURANCES), map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -1535,8 +1533,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountingList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -1567,8 +1564,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FEES), map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -1599,8 +1595,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_PARTNERBANK), map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -4599,6 +4594,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 								.getError());
 						this.financeBaserate.setBaseValue("");
 					}
+				}else{
+					this.fInMinRate.setValue(PennantApplicationUtil.formatRate(Double.valueOf(0), 2));
+					this.finMaxRate.setValue(PennantApplicationUtil.formatRate(Double.valueOf(0), 2));
+					this.row_FinRepRates.setVisible(false);
 				}
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_SPECIAL)) {

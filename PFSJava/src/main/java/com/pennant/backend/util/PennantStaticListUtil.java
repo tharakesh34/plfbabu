@@ -15,6 +15,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennanttech.pff.core.App.AuthenticationType;
 
 public class PennantStaticListUtil {
 	
@@ -192,6 +193,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> presentmentBatchStatusList;
 	private static ArrayList<RoundingTarget> roundingTargetList;
 	private static ArrayList<ValueLabel> postingPurposeList;
+	private static ArrayList<ValueLabel> authTypes;
+	private static ArrayList<ValueLabel> presentmentsStatusList;
 
 	
 
@@ -782,7 +785,7 @@ public class PennantStaticListUtil {
 
 		if(schCalOnList == null){
 			schCalOnList = new ArrayList<ValueLabel>(5);
-			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
+			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
@@ -2119,6 +2122,7 @@ public class PennantStaticListUtil {
 			presentmentExclusionList.add(new ValueLabel("4", Labels.getLabel("label_Represent_Mandate_Notapprove")));
 			presentmentExclusionList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Mandate_Expiry")));
 			presentmentExclusionList.add(new ValueLabel("6", Labels.getLabel("label_Represent_Manual_Exclude")));
+			presentmentExclusionList.add(new ValueLabel("7", Labels.getLabel("label_Represent_Manual_Reject")));
 		}
 		return presentmentExclusionList;
 	}
@@ -2494,6 +2498,7 @@ public class PennantStaticListUtil {
 			feeCalculatedOn = new ArrayList<ValueLabel>(2);
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE, Labels.getLabel("Fee_CalculatedOn_TotalAssetValue")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_LOANAMOUNT, Labels.getLabel("Fee_CalculatedOn_LoanAmount")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL, Labels.getLabel("Fee_CalculatedOn_OutStandingPrincipal")));
 		}
 		return feeCalculatedOn;
 	}
@@ -2675,6 +2680,28 @@ public class PennantStaticListUtil {
 			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LIMIT,Labels.getLabel("label_Limit")));
 		}
 		return postingPurposeList;
+	}
+	
+	public static ArrayList<ValueLabel> getAuthnticationTypes() {
+
+		if (authTypes == null) {
+			authTypes = new ArrayList<ValueLabel>(3);
+			authTypes.add(new ValueLabel(AuthenticationType.DAO.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeExteranal.value")));
+			authTypes.add(new ValueLabel(AuthenticationType.LDAP.name(), Labels.getLabel("label_SecurityUserDialog_AuthenticationTypeInternal.value")));
+		}
+		return authTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getPresentmentsStatusList() {
+		if (presentmentsStatusList == null) {
+			presentmentsStatusList = new ArrayList<ValueLabel>(5);
+			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));
+			presentmentsStatusList.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
+			presentmentsStatusList.add(new ValueLabel("E", Labels.getLabel("label_Presentment_Status_Error")));
+			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
+		}
+		return presentmentsStatusList;
 	}
 }
 

@@ -93,7 +93,6 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -1971,8 +1970,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -3000,7 +2998,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			Messagebox.show("Account Details not Found!!!", Labels.getLabel("message.Error"), Messagebox.ABORT, Messagebox.ERROR);
+			MessageUtil.showError("Account Details not Found!!!");
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -3032,8 +3030,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
-				Messagebox.show("Account Details not Found!!!", Labels.getLabel("message.Error"), Messagebox.ABORT,
-						Messagebox.ERROR);
+				MessageUtil.showError("Account Details not Found!!!");
 			}
 		} else {
 			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
@@ -3146,8 +3143,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 			}
 		} catch (Exception e) {
-			Messagebox.show(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving executeRule()");

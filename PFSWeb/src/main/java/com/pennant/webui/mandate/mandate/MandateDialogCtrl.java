@@ -727,24 +727,42 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doDesignByStatus(Mandate aMandate) {
-		String satsu = StringUtils.trimToEmpty(aMandate.getStatus());
+		String mandateStatus = StringUtils.trimToEmpty(aMandate.getStatus());
 
-		if (satsu.equals("") || satsu.equals(PennantConstants.List_Select)) {
+		if (mandateStatus.equals("") || mandateStatus.equals(PennantConstants.List_Select)) {
 			this.rowStatus.setVisible(false);
 		} else {
 			this.rowStatus.setVisible(true);
 		}
 
-		if (satsu.equals(MandateConstants.STATUS_REJECTED)) {
+		if (mandateStatus.equals(MandateConstants.STATUS_REJECTED)) {
 			readOnlyComponent(true, status);
 			readOnlyComponent(true, reason);
 		}
 
-		if (satsu.equals(MandateConstants.STATUS_NEW)) {
+		if (mandateStatus.equals(MandateConstants.STATUS_NEW)) {
 			readOnlyComponent(true, status);
 			readOnlyComponent(true, reason);
 			this.reason.setValue("");
 			this.rowStatus.setVisible(false);
+		}
+		
+		if (mandateStatus.equals(MandateConstants.STATUS_APPROVED) || mandateStatus.equals(MandateConstants.STATUS_HOLD)
+				|| mandateStatus.equals(MandateConstants.STATUS_RELEASE)) {
+			readOnlyComponent(true, this.mandateRef);
+			readOnlyComponent(true, this.mandateType);
+			readOnlyComponent(true, this.bankBranchID);
+			readOnlyComponent(true, this.accNumber);
+			readOnlyComponent(true, this.accHolderName);
+			readOnlyComponent(true, this.jointAccHolderName);
+			readOnlyComponent(true, this.accType);
+			readOnlyComponent(true, this.maxLimit);
+			readOnlyComponent(true, this.periodicity);
+			readOnlyComponent(true, this.phoneNumber);
+			readOnlyComponent(true, this.startDate);
+			readOnlyComponent(true, this.expiryDate);
+			readOnlyComponent(true, this.openMandate);
+			readOnlyComponent(true, this.approvalID);
 		}
 
 	}

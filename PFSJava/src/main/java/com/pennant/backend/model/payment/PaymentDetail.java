@@ -70,7 +70,7 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private String amountType;
 	private String amountTypeName;
 	private BigDecimal amount = BigDecimal.ZERO;
-	private BigDecimal availableAmount = BigDecimal.ZERO;;
+	private BigDecimal availableAmount = BigDecimal.ZERO;
 	private long referenceId;
 	private String referenceIdName;
 	@XmlTransient
@@ -100,6 +100,7 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("amountTypeName");
 		excludeFields.add("referenceIdName");
 		excludeFields.add("availableAmount");
+		excludeFields.add("reserveAmount");
 		return excludeFields;
 	}
 

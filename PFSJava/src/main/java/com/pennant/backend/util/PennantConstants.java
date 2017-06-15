@@ -33,7 +33,10 @@
  */
 package com.pennant.backend.util;
 
-import com.pennant.backend.model.ExecutionStatus;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+
+ 
+
 
 /**
  * This stores all constants required for running the application
@@ -656,16 +659,13 @@ public class PennantConstants {
 	
 	public static final String FEE_CALCULATEDON_TOTALASSETVALUE = "TOTAST";
 	public static final String FEE_CALCULATEDON_LOANAMOUNT      = "LOANAM";
+	public static final String FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL = "OUTSPL";
 	// Validation Groups
 	public static final String VLD_CRT_SCHD              	= "CRTSCHD";
 	public static final String VLD_CRT_LOAN					= "CRTLOAN";
 	public static final String VLD_SRV_LOAN					= "SRVLOAN";
 	public static final String NOT_AVAILABLE				= "NAV";
 	
-	public static final ExecutionStatus BATCH_TYPE_PRESENTMENT_IMPORT = new ExecutionStatus();
+	public static final DataEngineStatus BATCH_TYPE_PRESENTMENT_IMPORT = new DataEngineStatus();
 	public static final String FILESTATUS_STARTING = "STARTING";
-	public static final String FILESTATUS_EXECUTING = "EXECUTING";
-	public static final String FILESTATUS_COMPLETED = "COMPLETED";
-	public static final String FILESTATUS_FAILED = "FAILED";
-	public static final String FILESTATUS_SUCCESS= "SUCCESS";
 }

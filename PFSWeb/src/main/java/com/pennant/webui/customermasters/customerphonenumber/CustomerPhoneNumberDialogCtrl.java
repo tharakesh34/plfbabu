@@ -893,16 +893,17 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				CustomerPhoneNumber customerPhoneNumber = getCustomerDialogCtrl().getCustomerPhoneNumberDetailList()
 						.get(i);
 
-				if (isNewRecord()) {
-					
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())&&
-							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) 
-							&& customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
+				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType()) &&
+							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) &&
+							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) && 
+							customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
+						
 						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":"+valueParm[1];
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "90287", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+								PennantConstants.KEY_FIELD, "90287", errParm, valueParm), getUserWorkspace().getUserLanguage()));
+						
 						return auditHeader;
 					}
 				}

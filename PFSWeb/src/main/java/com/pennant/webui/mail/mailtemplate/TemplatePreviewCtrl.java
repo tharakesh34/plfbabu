@@ -23,7 +23,6 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Tab;
@@ -295,7 +294,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl<Object> {
 			}
 			
 			if (wve.size()>0) {
-				Messagebox.show("Please Enter Some Values ", "Template Preview", Messagebox.OK, Messagebox.EXCLAMATION);
+				MessageUtil.showMessage("Please Enter Some Values ");
 				this.fieldTab.setSelected(true);
 			} else {
 				setContent(model);
@@ -328,10 +327,8 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl<Object> {
 					NotificationConstants.DEFAULT_CHARSET)));
 			this.previewTab.setSelected(true);
 			
-		} catch (TemplateException e) {
-			Messagebox.show(e.getMessage(), "Template Preview Window", Messagebox.OK, Messagebox.ERROR);
-		} catch (IOException e) {
-			Messagebox.show("Found Error" +e);
+		} catch (TemplateException | IOException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

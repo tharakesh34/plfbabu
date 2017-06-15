@@ -198,6 +198,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected Listbox										listBoxPayment;
 	protected Listbox										listBoxPosting;
 	protected Tab											receiptDetailsTab;
+	protected Tab											repaymentDetailsTab;
 	protected Tab											postingDetailsTab;
 
 	// Postings Details
@@ -226,6 +227,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			super.pageRightName = "ReceiptBounceDialog";
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			super.pageRightName = "ReceiptCancellationDialog";
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
 			super.pageRightName = "ReceiptCancellationDialog";
 		}
 	}
@@ -268,6 +271,10 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_ReceiptCancellationDialog.title"));
+			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+				super.pageRightName = "ReceiptCancellationDialog";
+				this.windowTitle.setValue(Labels.getLabel("window_FeeReceiptCancellationDialog.title"));
+				this.repaymentDetailsTab.setVisible(false);
 			}
 			
 			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");
@@ -642,8 +649,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ReceiptCancellationDialog, e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -660,11 +666,14 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			BounceReason details = (BounceReason) dataObject;
 			if (details != null) {
 				HashMap<String, Object> executeMap = new HashMap<String, Object>();
+				
 				if(this.receiptHeader != null) {
 					if(this.receiptHeader.getReceiptDetails() != null && !this.receiptHeader.getReceiptDetails().isEmpty()) {
 						for(FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
 							if(StringUtils.equals(this.receiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
-								executeMap = finReceiptDetail.getDeclaredFieldValues();
+								executeMap.put("MandateType", finReceiptDetail.getPaymentType());
+								executeMap.put("PresentmentAmt", finReceiptDetail.getAmount());
+								executeMap.put("reqFinType", receiptHeader.getFinType());
 								break;
 							}
 						}
@@ -713,9 +722,11 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering");
 		this.bounceCode.setConstraint("");
 		this.bounceRemarks.setConstraint("");
+		this.cancelReason.setConstraint("");
 		
 		this.bounceCode.setErrorMessage("");
 		this.bounceRemarks.setErrorMessage("");
+		this.cancelReason.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 

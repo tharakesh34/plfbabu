@@ -42,7 +42,7 @@ import com.pennant.backend.util.RuleReturnType;
 
 public class LimitManagement {
 
-	private static Logger				logger	= Logger.getLogger(LimitManagement.class);
+	private static Logger				logger			= Logger.getLogger(LimitManagement.class);
 	private CommitmentDAO				commitmentDAO;
 	private LimitDetailDAO				limitDetailDAO;
 	private LimitHeaderDAO				limitHeaderDAO;
@@ -53,15 +53,17 @@ public class LimitManagement {
 	private FinanceDisbursementDAO		financeDisbursementDAO;
 	private FinanceMainDAO				financeMainDAO;
 
-	public static final  String KEY_LIMITAMT="LIMITAMT";
-	public static final  String KEY_LINEEXPIRY="LINEEXPIRY";
+	public static final String			KEY_LIMITAMT	= "LIMITAMT";
+	public static final String			KEY_LINEEXPIRY	= "LINEEXPIRY";
+
 	/**
 	 * @param financeDetail
 	 * @param overide
 	 * @param tranType
 	 * @return
 	 */
-	public List<ErrorDetails> processLoanLimitOrgination(FinanceDetail financeDetail, boolean overide, String tranType) {
+	public List<ErrorDetails> processLoanLimitOrgination(FinanceDetail financeDetail, boolean overide, String tranType,
+			boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
@@ -132,15 +134,18 @@ public class LimitManagement {
 					limitReferenceMappingDAO.save(mapping);
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide));
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
+						validateOnly));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
 				if (!mapping.isProceeed()) {
 					return errors;
 				}
-				//log transaction
-				logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				if (!validateOnly) {
+					//log transaction
+					logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				}
 			}
 		}
 
@@ -153,7 +158,8 @@ public class LimitManagement {
 					limitReferenceMappingDAO.save(mapping);
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide));
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
+						validateOnly));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -162,8 +168,11 @@ public class LimitManagement {
 				if (!mapping.isProceeed()) {
 					return errors;
 				}
-				//log transaction
-				logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+
+				if (!validateOnly) {
+					//log transaction
+					logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				}
 			}
 		}
 		logger.debug(" Entering ");
@@ -180,7 +189,7 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override) {
+			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
@@ -191,29 +200,50 @@ public class LimitManagement {
 		if (limitTranDetail != null) {
 			blockAmount = limitTranDetail.getLimitAmount();
 		}
-		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
+
+		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+
+		//	validate
+		if (StringUtils.equals(LimitConstants.BLOCK, tranType)) {
+			if (limitTranDetail != null) {
+				boolean block = removePreviuosBlockIfAny(limitTranDetail.getLimitAmount(), limitAmount, limitDetails,
+						limitTranDetail.getId());
+				if (!block) {
+					mapping.setProceeed(false);
+					return errors;
+				}
+			}
+
+			if (!override) {
+				errors.addAll(
+						validate(limitDetails, limitAmount, blockAmount, allowOverride, DateUtility.getAppDate()));
+				if (!errors.isEmpty()) {
+					return errors;
+				}
+			}
+
+		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
+			if (!override) {
+				errors.addAll(
+						validate(limitDetails, limitAmount, blockAmount, allowOverride, DateUtility.getAppDate()));
+				if (!errors.isEmpty()) {
+					return errors;
+				}
+			}
+		}
+
+		//if only validate then do not update
+		if (validateOnly) {
+			return errors;
+		}
+
+		//update limit details
 		if (limitDetails != null) {
 			switch (tranType) {
 			case LimitConstants.BLOCK:
 
-				if (limitTranDetail != null) {
-					boolean block = removePreviuosBlockIfAny(limitTranDetail.getLimitAmount(), limitAmount,
-							limitDetails, limitTranDetail.getId());
-					if (!block) {
-						mapping.setProceeed(false);
-						return errors;
-					}
-				}
-				//	validate
-				if (!override) {
-					errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride,
-							DateUtility.getAppDate()));
-					if (!errors.isEmpty()) {
-						return errors;
-					}
-				}
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
 					details.setReservedLimit(details.getReservedLimit().add(limitAmount));
@@ -233,14 +263,6 @@ public class LimitManagement {
 				}
 				break;
 			case LimitConstants.APPROVE:
-				//	validate
-				if (!override) {
-					errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride,
-							DateUtility.getAppDate()));
-					if (!errors.isEmpty()) {
-						return errors;
-					}
-				}
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
@@ -264,7 +286,8 @@ public class LimitManagement {
 		return errors;
 	}
 
-	public List<ErrorDetails> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType) {
+	public List<ErrorDetails> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType,
+			boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
@@ -294,8 +317,8 @@ public class LimitManagement {
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
 
-		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO.getFinanceDisbursementDetails(
-				finMain.getFinReference(), "", false);
+		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
+				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
 		Date datemaxDate = DateUtility.getAppDate();
 
 		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
@@ -310,7 +333,7 @@ public class LimitManagement {
 					continue;
 				}
 			}
-			
+
 			if (disbursement.getDisbDate().compareTo(datemaxDate) > 0) {
 				datemaxDate = disbursement.getDisbDate();
 			}
@@ -335,7 +358,7 @@ public class LimitManagement {
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
 				errors.addAll(procesServicingLimits(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						datemaxDate));
+						datemaxDate, validateOnly));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -344,8 +367,11 @@ public class LimitManagement {
 				if (!mapping.isProceeed()) {
 					return errors;
 				}
-				//log transaction
-				logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+
+				if (!validateOnly) {
+					//log transaction
+					logFinanceTransasction(finMain, custHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				}
 			}
 		}
 
@@ -361,7 +387,7 @@ public class LimitManagement {
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
 				errors.addAll(procesServicingLimits(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						datemaxDate));
+						datemaxDate, validateOnly));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
@@ -370,8 +396,10 @@ public class LimitManagement {
 					return errors;
 				}
 
-				//log transaction
-				logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				if (!validateOnly) {
+					//log transaction
+					logFinanceTransasction(finMain, groupHeader, disbSeq, tranType, overide, tranAmt, limitAmount);
+				}
 			}
 		}
 
@@ -380,7 +408,8 @@ public class LimitManagement {
 	}
 
 	private List<ErrorDetails> procesServicingLimits(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, Date appdate) {
+			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, Date appdate,
+			boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
@@ -389,27 +418,54 @@ public class LimitManagement {
 		LimitTransactionDetail prvblock = getFinTransaction(finref, headerId, LimitConstants.BLOCK, -1);
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
+
+		LimitTransactionDetail blockAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
+				LimitConstants.BLOCK, headerId);
+		LimitTransactionDetail approvedAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
+				LimitConstants.APPROVE, headerId);
+		LimitTransactionDetail unblockkAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
+				LimitConstants.UNBLOCK, headerId);
+		BigDecimal prvReserv = blockAmt.getLimitAmount()
+				.subtract(approvedAmt.getLimitAmount().subtract(unblockkAmt.getLimitAmount()));
+
+		//	validate
+		if (StringUtils.equals(LimitConstants.BLOCK, tranType)) {
+			if (prvblock != null) {
+				boolean block = removePreviuosBlockIfAny(prvblock.getLimitAmount(), limitAmount, limitDetails,
+						prvblock.getId());
+				if (!block) {
+					mapping.setProceeed(false);
+					return errors;
+				}
+			}
+			//	validate
+			if (!override) {
+				errors.addAll(validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride, appdate));
+				if (!errors.isEmpty()) {
+					return errors;
+				}
+			}
+
+		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
+			//	validate
+			if (!override) {
+				errors.addAll(validate(limitDetails, limitAmount, prvReserv, allowOverride, appdate));
+				if (!errors.isEmpty()) {
+					return errors;
+				}
+			}
+		}
+
+		//if only validate then do not update
+		if (validateOnly) {
+			return errors;
+		}
+
+		//update
 		if (limitDetails != null) {
 			switch (tranType) {
 			// Block will used in case of normal loan
 			case LimitConstants.BLOCK:
-
-				if (prvblock != null) {
-					boolean block = removePreviuosBlockIfAny(prvblock.getLimitAmount(), limitAmount, limitDetails,
-							prvblock.getId());
-					if (!block) {
-						mapping.setProceeed(false);
-						return errors;
-					}
-				}
-
-				//	validate
-				if (!override) {
-					errors.addAll(validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride, appdate));
-					if (!errors.isEmpty()) {
-						return errors;
-					}
-				}
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
@@ -442,23 +498,6 @@ public class LimitManagement {
 
 			case LimitConstants.APPROVE:
 				//get previous reserve amount
-
-				LimitTransactionDetail blockAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
-						LimitConstants.BLOCK, headerId);
-				LimitTransactionDetail approvedAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
-						LimitConstants.APPROVE, headerId);
-				LimitTransactionDetail unblockkAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
-						LimitConstants.UNBLOCK, headerId);
-				BigDecimal prvReserv = blockAmt.getLimitAmount().subtract(
-						approvedAmt.getLimitAmount().subtract(unblockkAmt.getLimitAmount()));
-
-				//	validate
-				if (!override) {
-					errors.addAll(validate(limitDetails, limitAmount, prvReserv, allowOverride, appdate));
-					if (!errors.isEmpty()) {
-						return errors;
-					}
-				}
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
@@ -511,8 +550,8 @@ public class LimitManagement {
 		}
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
-		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO.getFinanceDisbursementDetails(
-				finMain.getFinReference(), "", false);
+		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
+				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
 
 		for (FinanceDisbursement disbursement : approvedDisbursments) {
 			if (StringUtils.trimToEmpty(disbursement.getDisbStatus()).equals(FinanceConstants.DISB_STATUS_CANCEL)) {
@@ -572,7 +611,8 @@ public class LimitManagement {
 	 * @param limitAmount
 	 * @param custLimitDetails
 	 */
-	public List<ErrorDetails> processLimitIncrease(FinanceDetail financeDetail, boolean override) {
+	public List<ErrorDetails> processLimitIncrease(FinanceDetail financeDetail, boolean override,
+			boolean validateOnly) {
 		logger.debug(" Entering ");
 
 		ArrayList<ErrorDetails> errors = new ArrayList<ErrorDetails>();
@@ -611,8 +651,8 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					custHeader.getHeaderId());
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
@@ -623,6 +663,10 @@ public class LimitManagement {
 					if (!errors.isEmpty()) {
 						return ErrorUtil.getErrorDetails(errors, usrlang);
 					}
+				}
+				//if only validate then do not update
+				if (validateOnly) {
+					return errors;
 				}
 
 				for (LimitDetails details : limitDetails) {
@@ -640,8 +684,8 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					groupHeader.getHeaderId());
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
@@ -653,6 +697,11 @@ public class LimitManagement {
 						return ErrorUtil.getErrorDetails(errors, usrlang);
 					}
 				}
+				//if only validate then do not update
+				if (validateOnly) {
+					return errors;
+				}
+
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
 					details.setReservedLimit(details.getReservedLimit().add(tranAmt));
@@ -702,8 +751,8 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					custHeader.getHeaderId());
 			if (mapping != null) {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(),
 						transAmount);
@@ -717,8 +766,8 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					groupHeader.getHeaderId());
 			if (mapping != null) {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(),
 						transAmount);
@@ -740,32 +789,19 @@ public class LimitManagement {
 	private void processRepay(LimitReferenceMapping mapping, BigDecimal limitAmount,
 			List<LimitDetails> custLimitDetails, String tansType) {
 		logger.debug(" Entering ");
-		boolean revolvingLine = true;
-		//Since all the limit are revolving we have commented  this code. once we are allowing revolving in limits we will allow
-		//		for (LimitDetails details : custLimitDetails) {
-		//			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
-		//				revolvingLine = true;
-		//				break;
-		//			}
-		//		}
-		//
-		//		if (!revolvingLine) {
-		//			return;
-		//		}
 		for (LimitDetails details : custLimitDetails) {
-			if (revolvingLine) {
-				details.setVersion(details.getVersion() + 1);
-				if (StringUtils.equals(tansType, LimitConstants.REPAY)) {
-					//Check need add it to reserved or not
-					details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
-					details.setReservedLimit(details.getReservedLimit().add(limitAmount));
-					limitDetailDAO.updateReserveUtilise(details, "");
-				} else if (StringUtils.equals(tansType, LimitConstants.PRINPAY)) {
-					//Check need add it to reserved or not
-					details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
-					limitDetailDAO.updateReserveUtilise(details, "");
-				}
+			details.setVersion(details.getVersion() + 1);
+			if (StringUtils.equals(tansType, LimitConstants.REPAY)) {
+				//Check need add it to reserved or not
+				details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
+				details.setReservedLimit(details.getReservedLimit().add(limitAmount));
+				limitDetailDAO.updateReserveUtilise(details, "");
+			} else if (StringUtils.equals(tansType, LimitConstants.PRINPAY)) {
+				//Check need add it to reserved or not
+				details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
+				limitDetailDAO.updateReserveUtilise(details, "");
 			}
+
 		}
 		logger.debug(" Leaving ");
 	}
@@ -802,8 +838,8 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					custHeader.getHeaderId());
 			if (mapping != null) {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(),
 						transAmount);
@@ -817,8 +853,8 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
-					finMain.getFinReference(), groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(),
+					groupHeader.getHeaderId());
 			if (mapping != null) {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(),
 						transAmount);
@@ -840,31 +876,18 @@ public class LimitManagement {
 	private void processRepayCancel(LimitReferenceMapping mapping, BigDecimal limitAmount,
 			List<LimitDetails> custLimitDetails, String tansType) {
 		logger.debug(" Entering ");
-		boolean revolvingLine = true;
-		//Since all the limit are revolving we have commented  this code. once we are allowing revolving in limits we will allow
-		//		for (LimitDetails details : custLimitDetails) {
-		//			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
-		//				revolvingLine = true;
-		//				break;
-		//			}
-		//		}
-		//
-		//		if (!revolvingLine) {
-		//			return;
-		//		}
+
 		for (LimitDetails details : custLimitDetails) {
-			if (revolvingLine) {
-				details.setVersion(details.getVersion() + 1);
-				if (StringUtils.equals(tansType, LimitConstants.REPAY)) {
-					//Check need add it to reserved or not
-					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
-					details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
-					limitDetailDAO.updateReserveUtilise(details, "");
-				} else if (StringUtils.equals(tansType, LimitConstants.PRINPAY)) {
-					//Check need add it to reserved or not
-					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
-					limitDetailDAO.updateReserveUtilise(details, "");
-				}
+			details.setVersion(details.getVersion() + 1);
+			if (StringUtils.equals(tansType, LimitConstants.REPAY)) {
+				//Check need add it to reserved or not
+				details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
+				details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
+				limitDetailDAO.updateReserveUtilise(details, "");
+			} else if (StringUtils.equals(tansType, LimitConstants.PRINPAY)) {
+				//Check need add it to reserved or not
+				details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
+				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 		}
 		logger.debug(" Leaving ");
@@ -920,8 +943,8 @@ public class LimitManagement {
 	 * @param overrideAllowed
 	 * @return
 	 */
-	private ErrorDetails validateLimitDetail(LimitDetails limitDetail, BigDecimal tranAmount,
-			BigDecimal preLimitAmount, boolean overrideAllowed, Date date) {
+	private ErrorDetails validateLimitDetail(LimitDetails limitDetail, BigDecimal tranAmount, BigDecimal preLimitAmount,
+			boolean overrideAllowed, Date date) {
 
 		// If limit expired then return error  
 		if (limitDetail != null) {
@@ -1119,7 +1142,7 @@ public class LimitManagement {
 	 * *****************************************************************************************************************
 	 * ********************************************* Commitment *******************************************************
 	 * *****************************************************************************************************************
-	 * */
+	 */
 
 	/**
 	 * @param commitment

@@ -96,7 +96,7 @@ public class FinAdvancePaymentsCtrl {
 	List<ValueLabel>					paymentDetailList	= PennantStaticListUtil.getPaymentDetails();
 	List<ValueLabel>					paymentTypeList		= PennantStaticListUtil.getPaymentTypes(true);
 	private FinanceMain					financeMain;
-	private List<FinanceDisbursement>	financeDisbursement;
+	private List<FinanceDisbursement>	financeDisbursements;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 
@@ -215,7 +215,7 @@ public class FinAdvancePaymentsCtrl {
 
 				BigDecimal subTotal = BigDecimal.ZERO;
 				Integer key = entrySet.getKey();
-				FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursement, financeMain, key, true);
+				FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursements, financeMain, key, true);
 				BigDecimal groupDisbAmount = groupFinDisbursement.getDisbAmount();
 				Date groupDate = groupFinDisbursement.getDisbDate();
 
@@ -368,7 +368,7 @@ public class FinAdvancePaymentsCtrl {
 		map.put("moduleType", module);
 		map.put("enqModule", isEnquiry);
 		map.put("multiParty", multiParty);
-		map.put("financeDisbursement", financeDisbursement);
+		map.put("financeDisbursement", financeDisbursements);
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
 		if ("POISSUE".equals(module)) {
@@ -471,21 +471,22 @@ public class FinAdvancePaymentsCtrl {
 	private boolean allowMaintainAfterRequestSent(FinAdvancePayments aFinAdvancePayments) {
 		if (StringUtils.equals(DisbursementConstants.STATUS_AWAITCON, aFinAdvancePayments.getStatus())) {
 			if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
-					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType())) {
+					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
+							aFinAdvancePayments.getPaymentType())) {
 				return true;
 			}
 			return false;
 		}
-		
+
 		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
 			return false;
 		}
 
 		return true;
 	}
-	
+
 	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
-		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursement, financeMain, loanApproved);
+		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursements, financeMain, loanApproved);
 	}
 
 	private boolean isApprovedDisbursments(FinAdvancePayments aFinAdvancePayments) {
@@ -499,7 +500,8 @@ public class FinAdvancePaymentsCtrl {
 		return false;
 	}
 
-	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq, boolean group) {
+	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq,
+			boolean group) {
 
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
@@ -540,8 +542,33 @@ public class FinAdvancePaymentsCtrl {
 
 	}
 
+	public void markCancelIfNoDisbursmnetFound(List<FinAdvancePayments> finAdvancePaymentsList) {
+
+		if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
+			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
+				if (PennantConstants.RECORD_TYPE_NEW.equals(finAdvancePayments.getRecordType())) {
+					boolean notExists = checkSequnceExists(finAdvancePayments.getDisbSeq());
+					if (!notExists) {
+						finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					}
+				}
+			}
+		}
+	}
+
+	private boolean checkSequnceExists(int disbSeq) {
+		if (financeDisbursements != null && !financeDisbursements.isEmpty()) {
+			for (FinanceDisbursement financeDisbursement : financeDisbursements) {
+				if (financeDisbursement.getDisbSeq() == disbSeq) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
-		this.financeDisbursement = financeDisbursement;
+		this.financeDisbursements = financeDisbursement;
 	}
 
 	public void setFinanceMain(FinanceMain financeMain) {
@@ -551,6 +578,7 @@ public class FinAdvancePaymentsCtrl {
 	public void setApprovedDisbursments(List<FinanceDisbursement> approvedDisbursments) {
 		this.approvedDisbursments = approvedDisbursments;
 	}
+
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}

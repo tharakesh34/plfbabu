@@ -950,7 +950,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (oldCollateralSetup != null
+				if (tempCollateralSetup != null && oldCollateralSetup != null
 						&& !oldCollateralSetup.getLastMntOn().equals(tempCollateralSetup.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));

@@ -164,6 +164,7 @@ public class AuthenticationDetails {
 		loggedInUser.setIpAddress(convertClientAddress());
 		loggedInUser.setBrowserType(getBrowser());
 		loggedInUser.setLogonTime(DateUtility.getTimestamp(new Date()));
+		loggedInUser.setAuthType(user.getAuthType());
 
 		return loggedInUser;
 	}

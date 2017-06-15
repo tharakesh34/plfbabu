@@ -59,6 +59,7 @@ public class FinReceiptData {
 	private BigDecimal actInsRefundAmt = BigDecimal.ZERO;
 	private String eventCodeRef = "";
 	private String sourceId;
+	private BigDecimal totReceiptAmount = BigDecimal.ZERO;
 
 	private RepayMain repayMain = new RepayMain();
 	private Map<String, BigDecimal> allocationMap = new HashMap<>();
@@ -172,6 +173,14 @@ public class FinReceiptData {
 
 	public void setAllocationDescMap(Map<String, String> allocationDescMap) {
 		this.allocationDescMap = allocationDescMap;
+	}
+
+	public BigDecimal getTotReceiptAmount() {
+		return totReceiptAmount;
+	}
+
+	public void setTotReceiptAmount(BigDecimal totReceiptAmount) {
+		this.totReceiptAmount = totReceiptAmount;
 	}
 
 }

@@ -56,7 +56,7 @@
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<combobox id="disbDate"   width="155px"/>
+											<combobox id="disbDate" width="155px" />
 											<intbox id="disbSeq" visible="false" />
 										</hbox>
 										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
@@ -77,25 +77,18 @@
 										</hbox>
 									</row>
 									<row>
-										<cell rowspan="2" valign="top">
+										<cell>
 											<hbox>
 												<label id="label_PartnetBankID" value="${c:l('label_FinAdvancePaymentsDialog_PartnerbankId.value')}" />
 											</hbox>
-											<hbox style="padding-top:5px;">
-												<label value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
-											</hbox>
+										</cell>
+										<cell>
+											<extendedcombobox id="partnerBankID" />
 										</cell>
 										<cell rowspan="2">
-											<extendedcombobox id="partnerBankID" />
-											<hbox style="padding-top:5px;">
-												<space spacing="2px" />
-												<textbox id="transactionRef" width="155px" />
-											</hbox>
-										</cell>
-										<cell>
 											<label value="${c:l('label_FinAdvancePaymentsDialog_Remarks.value')}" />
 										</cell>
-										<cell>
+										<cell rowspan="2">
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="remarks" multiline="true" rows="4" />
@@ -103,9 +96,14 @@
 										</cell>
 									</row>
 									<row>
-
+										<hbox>
+											<label value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
+										</hbox>
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="transactionRef" width="155px" />
+										</hbox>
 									</row>
-									<row></row>
 									<row visible="false">
 										<label id="label_custContribution" value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
 										<hbox id="hbox_custContribution">

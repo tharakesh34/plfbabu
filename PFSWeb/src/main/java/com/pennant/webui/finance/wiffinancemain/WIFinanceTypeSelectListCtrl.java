@@ -63,7 +63,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
@@ -72,7 +71,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
@@ -105,7 +103,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
@@ -597,11 +594,10 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			if(StringUtils.isNotBlank(this.eidNumber.getValue())){
 				String eidNum = PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue());
 				Long custID = getCustomerDetailsService().getEIDNumberByCustId(eidNum, "_View");
-				if(!custID.equals(0)){
-					MultiLineMessageBox.doSetTemplate();
+				if (!custID.equals(0)) {
 					String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",new String[]{Labels.getLabel("label_CustCRCPR"),custID + ". \n"});
-					int conf = MultiLineMessageBox.show(msg,Labels.getLabel("title_ProspectExist"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-					if (conf != MultiLineMessageBox.YES) {
+
+					if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 						return false;
 					}
 					this.custType_Exist.setSelected(true);
@@ -612,11 +608,9 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 					if(StringUtils.isNotEmpty(loanType)){
 						wifcustomer = getCustomerDetailsService().getWIFByEIDNumber(eidNum, "_AView");
 						if(wifcustomer!=null){
-							MultiLineMessageBox.doSetTemplate();
 							String msg = Labels.getLabel("label_FinanceTypeDialog_ProspectExist");
 
-							int conf = MultiLineMessageBox.show(msg,Labels.getLabel("title_ProspectExist"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-							if (conf != MultiLineMessageBox.YES) {
+							if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 								return false;
 							}
 							this.custType_Exist.setSelected(true);
@@ -820,11 +814,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
-					MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 
-			if (conf == MultiLineMessageBox.YES) {
-				logger.debug("Re-Enter Customer CIF: Yes");
+			if (MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer")) == MessageUtil.YES) {
 				return null;
 			}
 		}

@@ -27,8 +27,8 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentHeader;
-import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -47,9 +47,9 @@ import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
+public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DisbursementInstructionsDialogCtrl.class);
+	private final static Logger logger = Logger.getLogger(PaymentInstructionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -104,7 +104,7 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 	/**
 	 * default constructor.<br>
 	 */
-	public DisbursementInstructionsDialogCtrl() {
+	public PaymentInstructionDialogCtrl() {
 		super();
 	}
 
@@ -403,6 +403,10 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		if (this.paymentHeader.isNewRecord()) {
+			paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
+		}
+		
 		try {
 			paymentInstruction.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
@@ -438,12 +442,6 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 		}
 
 		try {
-			paymentInstruction.setFavourName(this.favouringName.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
 			paymentInstruction.setAccountNo(this.acctNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -457,6 +455,12 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 
 		try {
 			paymentInstruction.setFavourNumber(this.chequeOrDDumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			paymentInstruction.setFavourName(this.favouringName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -757,11 +761,15 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 			if (partnerBank != null) {
 				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
 				this.paymentInstruction.setPartnerBankName(partnerBank.getPartnerBankName());
+				this.paymentInstruction.setPartnerBankAc(partnerBank.getAccountNo());
+				this.paymentInstruction.setPartnerBankAcType(partnerBank.getAccountType());
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	
 	public void onChange$paymentType(Event event) {
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
 		this.partnerBankID.setButtonDisabled(false);

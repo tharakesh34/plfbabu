@@ -567,12 +567,7 @@ public class FinanceDataValidation {
 					detail.setRecurringDate(DateUtility.getAppDate());
 					detail.setRenewalFee(BigDecimal.ZERO);
 				}
-				if (StringUtils.isBlank(detail.getDsaId())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "dsaId";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					return errorDetails;
-				} else {
+				if(StringUtils.isNotBlank(detail.getDsaId())){
 					RelationshipOfficer relationshipOfficer = relationshipOfficerService
 							.getApprovedRelationshipOfficerById(detail.getDsaId());
 					if (relationshipOfficer == null) {
@@ -582,12 +577,7 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
-				if (StringUtils.isBlank(detail.getDmaId())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "dmaId";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					return errorDetails;
-				} else {
+				if (StringUtils.isNotBlank(detail.getDmaId())) {
 					RelationshipOfficer dmaCode = relationshipOfficerService
 							.getApprovedRelationshipOfficerById(detail.getDmaId());
 					if (dmaCode == null) {
@@ -597,12 +587,7 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
-				if (StringUtils.isBlank(detail.getFulfilOfficerId())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "fulfilOfficerId";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					return errorDetails;
-				} else {
+				if (StringUtils.isNotBlank(detail.getFulfilOfficerId())) {
 					RelationshipOfficer dmaCode = relationshipOfficerService
 							.getRelationshipOfficerById(detail.getFulfilOfficerId());
 					if (dmaCode == null) {
@@ -612,12 +597,7 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
-				if (StringUtils.isBlank(detail.getReferralId())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "referralId";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					return errorDetails;
-				} else {
+				if (StringUtils.isNotBlank(detail.getReferralId())) {
 					RelationshipOfficer referralId = relationshipOfficerService
 							.getApprovedRelationshipOfficerById(detail.getReferralId());
 					if (referralId == null) {
@@ -1907,6 +1887,13 @@ public class FinanceDataValidation {
 		FinanceType financeType = finScheduleData.getFinanceType();
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
+		// Application number
+		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > 20) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Application Number";
+			valueParm[1] = "20 characters";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+		}
 		// Finance start date
 		Date appDate = DateUtility.getAppDate();
 		Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));

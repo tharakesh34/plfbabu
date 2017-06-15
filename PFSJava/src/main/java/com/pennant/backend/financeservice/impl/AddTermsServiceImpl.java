@@ -3,10 +3,8 @@ package com.pennant.backend.financeservice.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -53,6 +51,14 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		boolean isWIF = finServiceInstruction.isWif();
 		String finReference = finServiceInstruction.getFinReference();
 		
+		if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), DateUtility.getAppDate()) <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Recal From Date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30512", "", valueParm), lang));
+			return auditDetail;
+		}
+		
 		if(finServiceInstruction.getRecalFromDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Recal From Date";
@@ -70,19 +76,16 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		boolean isValidRecalFromDate = false;
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
 		if(schedules != null) {
-			for(FinanceScheduleDetail schDetail: schedules) {
+			for (FinanceScheduleDetail schDetail : schedules) {
 				// FromDate
-				if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 				}
 				// RecalFromDate
-				if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-						|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-					if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
-						isValidRecalFromDate = true;
-						if(checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
-							return auditDetail;
-						}
+				if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+					isValidRecalFromDate = true;
+					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
+						return auditDetail;
 					}
 				}
 			}

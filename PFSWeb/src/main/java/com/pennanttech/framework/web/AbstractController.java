@@ -74,6 +74,7 @@ import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.web.components.ButtonControl;
+import com.pennanttech.pff.core.ErrorCode;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
 
 /**
@@ -944,11 +945,17 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		setValidation(true);
 	}
 
+	/**
+	 * @deprecated Instead use MessageUtil.showError(Exception)
+	 * @param window
+	 * @param e
+	 */
+	@Deprecated
 	public void showErrorMessage(Window window, Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetails("", PennantConstants.ERR_UNDEF,
-					PennantConstants.ERR_SEV_ERROR, e.getMessage(), null, null));
+					PennantConstants.ERR_SEV_ERROR, ErrorCode.PPS_900.getMessage(), null, null));
 			ErrorControl.showErrorControl(window, auditHeader);
 			logger.error("Exception: ", e);
 		} catch (Exception exp) {
@@ -956,11 +963,17 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 	}
 
+	/**
+	 * @deprecated Instead use MessageUtil.showError(Exception)
+	 * @param window
+	 * @param e
+	 */
+	@Deprecated
 	public void createException(Window window, Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetails("", PennantConstants.ERR_UNDEF,
-					PennantConstants.ERR_SEV_ERROR, e.getMessage(), null, null));
+					PennantConstants.ERR_SEV_ERROR, ErrorCode.PPS_900.getMessage(), null, null));
 			ErrorControl.showErrorControl(window, auditHeader);
 			logger.error("Exception: ", e);
 			window.onClose();

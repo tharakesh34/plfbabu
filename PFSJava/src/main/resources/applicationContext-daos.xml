@@ -5645,6 +5645,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5781,6 +5783,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -6631,6 +6634,7 @@
 		<aop:scoped-proxy />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->
@@ -9882,9 +9886,11 @@
 		<property name="localityDAO" ref="localityDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
-	
-		<!-- PaymentInsructions -->
-     <bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl"  parent="basisNextidDao">
+
+	<!-- PaymentInsructions -->
+	<bean id="paymentProcess" class="com.pennant.backend.dao.payment.impl.PaymentProcessImpl" />
+
+	<bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
@@ -9908,19 +9914,21 @@
            </props>
        </property>
    </bean>
-
- 	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl">
-       <property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	   <property name="paymentDetailService" ref="paymentDetailService" />
-	   <property name="paymentInstructionService" ref="paymentInstructionService" />
-   </bean>
- 
+	 <bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl">
+		<property name="paymentDetailService" ref="paymentDetailService" />
+		<property name="paymentInstructionService" ref="paymentInstructionService" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+	</bean>
  	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
        <property name="auditHeaderDAO" ref="auditHeaderDAO"/>
        <property name="paymentDetailDAO" ref="paymentDetailDAO"/>
        <property name="manualAdviseDAO" ref="manualAdviseDAO"/>
        <property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
+       <property name="paymentInstructionDAO" ref="paymentInstructionDAO"/>
     </bean>
 	
      <bean name="paymentInstructionService" class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">

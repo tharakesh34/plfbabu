@@ -328,13 +328,14 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" FinalRepayAmt = :FinalRepayAmt, FirstDisbDate = :FirstDisbDate,");
 		updateSql.append(" LatestDisbDate = :LatestDisbDate, FullPaidDate = :FullPaidDate,");
 		updateSql.append(" PrvRpySchDate = :PrvRpySchDate, PrvRpySchPri = :PrvRpySchPri,");
-		updateSql.append(" PrvRpySchPft = :PrvRpySchPft,");
+		updateSql.append(" PrvRpySchPft = :PrvRpySchPft, RepayFrq=:RepayFrq,");
 		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
 		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
 		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
-		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate ");
+		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
+		updateSql.append(" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus ");
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, ");
 		 * updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ");
@@ -565,6 +566,26 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
 		updateSql.append(" Set RepayAccountId = :RepayAccountId Where FinReference =:FinReference");
 
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Updation of Finance Active Status after Finance Cancellation
+	 */
+	@Override
+	public void UpdateActiveSts(String finReference, boolean isActive) {
+		logger.debug("Entering");
+		
+		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+		finProfitDetails.setFinReference(finReference);
+		finProfitDetails.setFinIsActive(isActive);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
+		updateSql.append(" Set FinIsActive = :FinIsActive Where FinReference =:FinReference");
+		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);

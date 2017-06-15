@@ -274,8 +274,6 @@ public class PaymentDetailDAOImpl extends BasisNextidDaoImpl<PaymentDetail> impl
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		if(type.contains("View")){
-		}	
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From PaymentDetails");
 		sql.append(type);
@@ -291,7 +289,6 @@ public class PaymentDetailDAOImpl extends BasisNextidDaoImpl<PaymentDetail> impl
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
-
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

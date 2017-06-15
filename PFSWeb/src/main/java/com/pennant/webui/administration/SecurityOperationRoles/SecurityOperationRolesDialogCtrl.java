@@ -558,36 +558,6 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-
-		/*// save it to database
-		try {
-			if (aSecurityOperation.getSecurityOperationRolesList().size() == 0) {
-				// Show a confirm box
-				final String msg = "There is no change in the roles assignment , do you want to assign roles? "; 
-				final String title = Labels.getLabel("message.Information");
-				MultiLineMessageBox.doSetTemplate();
-				int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-						MultiLineMessageBox.QUESTION, true);
-				if (conf == MultiLineMessageBox.NO) {
-					closeDialog();
-				} 	
-			
-			} else {
-
-				if (doProcess(aSecurityOperation, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			}
-
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showMessage(e);
-		}
-
-		logger.debug("Leaving ");
-	}*/
-
 		
 		try {
          	if (doProcess(aSecurityOperation, tranType)) {

@@ -73,6 +73,7 @@ public class LoggedInUser implements Serializable {
 	private String browserType;
 	private Timestamp logonTime;
 	private long loginLogId;
+	private String authType;
 
 	public LoggedInUser() {
 		super();
@@ -269,5 +270,13 @@ public class LoggedInUser implements Serializable {
 
 	public void setLoginLogId(long loginLogId) {
 		this.loginLogId = loginLogId;
+	}
+
+	public String getAuthType() {
+		return authType;
+	}
+
+	public void setAuthType(String authType) {
+		this.authType = authType;
 	}
 }

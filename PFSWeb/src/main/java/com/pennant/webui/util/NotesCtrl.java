@@ -65,7 +65,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Separator;
@@ -420,8 +419,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			}
 			
 		} catch (Exception e) {
-			logger.error("Exception", e);
-			Messagebox.show(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

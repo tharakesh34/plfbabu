@@ -148,6 +148,9 @@
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
 													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"
+													hflex="min" align="center" />
 											</listhead>
 										</listbox>
 									</groupbox>

@@ -130,6 +130,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
 	private transient ReScheduleService reScheduleService;
+	private boolean appDateValidationReq = false;
 	
 	/**
 	 * default constructor.<br>
@@ -166,6 +167,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
+			}
+			
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq  = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// we get the FinanceMainDialogCtrl controller. So we have access
@@ -370,6 +375,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		if (financeScheduleDetails != null) {
 			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -387,6 +393,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				// Not allow Before Current Business Date
+				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					continue;
+				}
+				
 				//Not Review Date
 				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
 					continue;
@@ -397,8 +408,8 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbFrqFromDate.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -409,17 +420,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Principal Paid (Partial/Full)
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
-					this.cbFrqFromDate.getItems().clear();
-					comboitem = new Comboitem();
-					comboitem.setValue("#");
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					this.cbFrqFromDate.appendChild(comboitem);
-					prvSchd = curSchd;
-					continue;
-				}
-				
 				if(i == financeScheduleDetails.size() -1){
 					continue;
 				}

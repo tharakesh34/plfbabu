@@ -504,6 +504,12 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		BigDecimal emiInAdvanceAmt;
 		String finReference = presentmentDetail.getFinReference();
 
+		// Mandate Rejected
+		if (MandateConstants.STATUS_REJECTED.equals(presentmentDetail.getMandateStatus())) {
+			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
+			return;
+		}
+		
 		// EMI HOLD
 		if (DateUtility.compare(presentmentDetail.getDefSchdDate(), detailHeader.getToDate()) > 0) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIHOLD);
@@ -614,11 +620,12 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	@Override
 	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);
+		
 		PresentmentDetail presentmentDetail = null;
 		try {
 			presentmentDetail = this.presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
 			if (presentmentDetail == null) {
-				throw new Exception(" Presentment details are not available for the presentment reference :" + presentmentRef);
+				throw new Exception(" Presentment details are not available for the presentment reference: " + presentmentRef);
 			}
 			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
@@ -626,6 +633,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
+		
 		return presentmentDetail;
 	}
 

@@ -77,6 +77,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 						try {
 							txnStatus = transManager.getTransaction(transDef);
 							updateMandates(respMandate);
+							logMandateHistory(respMandate, mandate.getRequestID());
 							updateMandateRequest(respMandate, respBatchId);
 							transManager.commit(txnStatus);
 						} catch (Exception e) {
@@ -220,7 +221,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
+		sql.append(" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
@@ -263,6 +264,29 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private void logMandateHistory(Mandate respmandate, long requestId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		
+		StringBuilder sql =new StringBuilder("Insert Into MandatesStatus");
+		sql.append(" (mandateID, status, reason, changeDate, fileID)");
+		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
+		
+		paramMap.addValue("mandateID", respmandate.getMandateID());
+		
+		if ("Y".equals(respmandate.getStatus())) {
+			paramMap.addValue("STATUS", "REJECTED");
+		} else {
+			paramMap.addValue("STATUS", "APPROVED");
+		}
+		paramMap.addValue("REASON", respmandate.getReason());
+		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("fileID", requestId);
+		
+		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 		logger.debug(Literal.LEAVING);
 	}
 

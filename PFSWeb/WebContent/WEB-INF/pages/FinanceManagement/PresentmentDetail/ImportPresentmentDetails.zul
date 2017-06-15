@@ -14,7 +14,7 @@
 			<hbox pack="stretch" width="100%">
 				<toolbar align="start"
 					style="float:left; border-style: none;">
-					<button id="btnSave" label="IMPORT" tooltiptext="${c:l('btnImport.tooltiptext')}" autodisable="btnSave,btnUpload" />
+					<button id="btnSave" label="IMPORT" tooltiptext="Import presentment file data." autodisable="btnSave,btnUpload" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -36,33 +36,23 @@
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_txtFileName" />
 										<textbox id="txtFileName" width="250px" readonly="true"/>
-										<button id="btnUpload" label="Browse" upload="true" autodisable="	" />
-										<!-- <combobox id="cmbFileType" width="300px" readonly="true" /> -->
+										<button id="btnUpload" tooltiptext="Browse presentment response file."  label="Browse" upload="true" autodisable="btnSave,btnUpload"/>
 									</hbox>
-									
-									<!-- <label value="${c:l('label_TransactionsFileUploadDialog_Valuedates.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<combobox id="valueDate" width="200px" readonly="true" />
-									</hbox> -->
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="true" style="overflow: visible !important">
+			<center border="none" autoscroll="true"
+				style="overflow: visible !important">
 				<groupbox style="overflow: visible !important">
 					<grid style="overflow: visible !important">
 						<columns>
 							<column width="90%" />
 						</columns>
-						<rows style="overflow: visible !important">
-							<row style="overflow: visible !important">
-								<hbox align="center">
-									<exePannel id="importPresentments" border="normal" title="Presentment Details" width="580px" />
-								</hbox>
-							</row>
+						<rows>
+							<row id="panelRow" style="overflow: visible !important" />
 						</rows>
 					</grid>
 				</groupbox>

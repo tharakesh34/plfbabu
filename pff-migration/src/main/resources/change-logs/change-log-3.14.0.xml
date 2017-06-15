@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="01" author="Irfan">
+<renameColumn tableName="RMTACCOUNTTYPES" oldColumnName="gSTApplicable" newColumnName="taxApplicable"/>
+<renameColumn tableName="RMTACCOUNTTYPES" oldColumnName="hSNNumber" newColumnName="aCCADDLVAR1"/>
+<renameColumn tableName="RMTACCOUNTTYPES" oldColumnName="natureService" newColumnName="aCCADDLVAR2"/>
+<renameColumn tableName="RMTACCOUNTTYPES" oldColumnName="revChrgApplicable" newColumnName="aCCADDLCHAR1"/>
+<renameColumn tableName="RMTACCOUNTTYPES_TEMP" oldColumnName="gSTApplicable" newColumnName="taxApplicable"/>
+<renameColumn tableName="RMTACCOUNTTYPES_TEMP" oldColumnName="hSNNumber" newColumnName="aCCADDLVAR1"/>
+<renameColumn tableName="RMTACCOUNTTYPES_TEMP" oldColumnName="natureService" newColumnName="aCCADDLVAR2"/>
+<renameColumn tableName="RMTACCOUNTTYPES_TEMP" oldColumnName="revChrgApplicable" newColumnName="aCCADDLCHAR1"/>
+</changeSet>
+<changeSet id="02" author="Irfan">
+<addColumn tableName="RMTACCOUNTTYPES">
+	<column name="aCCADDLVAR3" type="varchar(50)"/>
+	<column name="aCCADDLVAR4" type="varchar(50)"/>
+</addColumn>
+<addColumn tableName="RMTACCOUNTTYPES_TEMP">
+	<column name="aCCADDLVAR3" type="varchar(50)"/>
+	<column name="aCCADDLVAR4" type="varchar(50)"/>
+</addColumn>
+
+</changeSet>
+
+<changeSet id="03" author="Irfan">
+	<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
+	
+	SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+			  T1.AcLmtCategory, T1.AcTypeIsActive,T1.ProfitCenterID,T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1,
+			  T1.ACCADDLVAR3, T1.ACCADDLVAR4, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+			 T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+			 T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+			 FROM         RMTAccountTypes_Temp T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID 
+			 UNION ALL
+			SELECT    T1.AcType, T1.AcTypeDesc,  T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+			T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1,
+			 T1.ACCADDLVAR3, T1.ACCADDLVAR4,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+			 T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+			 T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+			 FROM         RMTAccountTypes T1 Left Join
+									AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID 
+			 WHERE     (NOT EXISTS
+			 (SELECT     1 Expr1
+			 FROM          RMTAccountTypes_Temp
+			 WHERE      (AcType = T1.AcType)))
+	
+	</createView>
+
+</changeSet>
+
+<changeSet id="04" author="Irfan">
+	<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
+		SELECT    T1.AcType, T1.AcTypeDesc, T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, 
+		T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID, T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1, 
+		T1.ACCADDLVAR3, T1.ACCADDLVAR4, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+		       T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId,T2.GroupCode,T2.GroupDescription,T2.AcctTypeLevel,
+		       T4.ProfitCenterCode,T4.ProfitCenterDesc,T3.CostCenterCode,T3.CostCenterDesc
+					 FROM         RMTAccountTypes T1 Left Join
+											AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId 
+											INNER JOIN
+											ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+											LEFT JOIN
+											CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+	
+	</createView>
+
+</changeSet>
+	
+	
+	
+		
+	<changeSet id="1" author="Vinay">
+		<createTable tableName="TAXDETAIL_TEMP">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="COUNTRY" type="char(2)">
+                        <constraints nullable="false"/>
+                        </column>
+			<column name="STATECODE" type="varchar(8)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="ENTITYCODE" type="varchar(8)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="TAXCODE" type="varchar(100)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="ADDRESSLINE1" type="varchar(100)">
+                        <constraints nullable="false" />
+                        </column>
+                        <column name="ADDRESSLINE2" type="varchar(100)"/>
+			<column name="ADDRESSLINE3" type="varchar(100)"/>
+                        <column name="ADDRESSLINE4" type="varchar(100)"/>
+			<column name="PINCODE" type="varchar(10)">
+                        <constraints nullable="false" />
+                        </column>
+                        <column name="CITYCODE" type="varchar(50)">
+                        <constraints nullable="false" />
+                        </column>
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2" author="Vinay">
+		<addUniqueConstraint columnNames="TAXCODE"
+			constraintName="UK_TAXCODE" deferrable="true" disabled="true"
+			initiallyDeferred="true" tableName="TAXDETAIL_TEMP" />
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_COUNTRY_TAXDETAIL_TEMP"
+			referencedTableName="BMTCountries" referencedColumnNames="CountryCode"
+			baseTableName="TAXDETAIL_TEMP" baseColumnNames="COUNTRY" />
+	</changeSet>
+	
+	<changeSet id="4" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_STATECODE_TAXDETAIL_TEMP"
+			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
+			baseTableName="TAXDETAIL_TEMP" baseColumnNames="STATECODE" />
+	</changeSet>
+	
+	<changeSet id="5" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_ENTITYCODE_TAXDETAIL_TEMP"
+			referencedTableName="Entities" referencedColumnNames="EntityCode"
+			baseTableName="TAXDETAIL_TEMP" baseColumnNames="ENTITYCODE" />
+	</changeSet>
+	
+	<changeSet id="6" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_CITYCODE_TAXDETAIL_TEMP"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCITY"
+			baseTableName="TAXDETAIL_TEMP" baseColumnNames="CITYCODE" />
+	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+	<createView viewName="TAXDETAIL_AView" replaceIfExists="true">
+
+SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entities T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+
+</createView>
+</changeSet>
+
+
+<changeSet id="9" author="Vinay">
+<createView viewName="TAXDETAIL_View" replaceIfExists="true">
+
+SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL_TEMP  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entities T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+
+UNION ALL
+
+SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entities T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+
+WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
+</createView>
+</changeSet>
+	<changeSet id="10" author="Vinay" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqTAXDETAIL START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="11" author="Vinay" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+  		 execute 'CREATE SEQUENCE SeqTAXDETAIL START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="12" author="Vinay" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SeqTAXDETAIL(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+	</changeSet>
+	<changeSet id="13" author="Irfan">
+	<addColumn tableName="RMTCountryVsProvince">
+		<column name="taxExempted" type="char(1)"/>
+		<column name="unionTerritory" type="char(1)"/>
+		<column name="taxStateCode" type="char(2)"/>
+		<column name="taxAvailable" type="char(1)"/>
+		<column name="businessArea" type="varchar(100)"/>
+	</addColumn>
+</changeSet>
+<changeSet id="14" author="Irfan">
+	<addColumn tableName="RMTCountryVsProvince_Temp">
+		<column name="taxExempted" type="char(1)"/>
+		<column name="unionTerritory" type="char(1)"/>
+		<column name="taxStateCode" type="char(2)"/>
+		<column name="taxAvailable" type="char(1)"/>
+		<column name="businessArea" type="varchar(100)"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="15" author="Irfan">
+	<createView viewName="RMTCOUNTRYVSPROVINCE_VIEW" replaceIfExists="true">
+		SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince_Temp T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			UNION ALL
+			SELECT     T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea,T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+			                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+			FROM         RMTCountryVsProvince  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+			WHERE     NOT EXISTS
+			                          (SELECT     1
+                            FROM          RMTCountryVsProvince_Temp
+                            WHERE      CPCountry = T1.CPCountry AND CPProvince = T1.CPProvince)
+	
+	
+	</createView>
+
+</changeSet>
+<changeSet id="16" author="Irfan">
+	<createView viewName="RMTCOUNTRYVSPROVINCE_AVIEW" replaceIfExists="true">
+		SELECT  T1.CPCountry, T1.CPProvince, T1.CPProvinceName,T1.SystemDefault, T1.TaxExempted, T1.UnionTerritory, T1.TaxStateCode, T1.TaxAvailable, 
+		T1.BusinessArea, T1.Version, T2.COUNTRYDESC lovDescCPCountryName, T1.LastMntBy, T1.LastMntOn, 
+        T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankRefNo, T1.CPIsActive
+				FROM         RMTCountryVsProvince T1 INNER JOIN
+                      BMTCountries  T2 ON T1.CPCountry = T2.CountryCode
+	
+	
+	</createView>
+
+</changeSet>
+<changeSet id="11" author="Irfan">
+	<sql>	
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxExempted','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_unionTerritory','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxStateCode','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_taxAvailable','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ProvinceDialog_businessArea','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxExempted'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_unionTerritory'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxStateCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_taxAvailable'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'ProvinceDialog_businessArea'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
+
+<changeSet author="Ganesh" id="12">
+<addColumn tableName="RMTBRANCHES">
+	<column name="PINCODE" type="VARCHAR2(10)" />
+</addColumn>
+</changeSet>
+
+	<changeSet id="13" author="Ganesh">
+		<addColumn tableName="RMTBRANCHES_TEMP">
+			<column name="PINCODE" type="VARCHAR2(10)" />
+		</addColumn>
+	</changeSet>
+
+<changeSet id="14" author="Ganesh">
+	<createView viewName="RMTBRANCHES_VIEW" replaceIfExists="true">
+SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,
+		T3.CPProvinceName lovDescBranchProvinceName  ,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode , 			T1.BranchIsActive , T1.NewBranchCode , T6.BranchDesc NewBranchDesc , T1.Version , T1.LastMntBy , T1.LastMntOn ,T1.RecordStatus ,
+		T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType , T1.WorkflowId , 
+		T1.MiniBranch,T1.BranchType, T1.ParentBranch, T1.PinCode, 
+	        T1.Region,T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet, T7.BranchDesc ParentBranchDesc, 
+		T5.CountryDesc lovDescBranchSwiftCountryName  
+	     FROM RMTBranches_Temp T1
+          LEFT JOIN BMTCountries T2   ON T1.BranchCountry = T2.CountryCode
+           LEFT JOIN RMTCountryVsProvince T3   ON T1.BranchCountry = T3.CPCountry
+	            AND T1.BranchProvince = T3.CPProvince
+           LEFT JOIN RMTProvinceVsCity T4   ON T1.BranchCountry = T4.PCCountry
+	            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+           LEFT JOIN BMTCountries T5   ON T1.BranchSwiftCountry = T5.CountryCode
+	   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+	    LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+		 LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+		   UNION ALL 
+   SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		          T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,T3.CPProvinceName lovDescBranchProvinceName  ,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		          T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode ,T1.BranchIsActive ,T1.NewBranchCode , T6.BranchDesc NewBranchDesc,
+		          T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType ,T1.WorkflowId , T1.MiniBranch,T1.BranchType, T1.ParentBranch, T1.PinCode,
+		          T1.Region, T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet,T7.BranchDesc ParentBranchDesc,T5.CountryDesc lovDescBranchSwiftCountryName 
+		     FROM RMTBranches T1
+		           LEFT JOIN BMTCountries T2 ON T1.BranchCountry = T2.CountryCode
+		           LEFT JOIN RMTCountryVsProvince T3 ON T1.BranchCountry = T3.CPCountry
+		            AND T1.BranchProvince = T3.CPProvince
+		           LEFT JOIN RMTProvinceVsCity T4 ON T1.BranchCountry = T4.PCCountry
+		            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+		           LEFT JOIN BMTCountries T5 ON T1.BranchSwiftCountry = T5.CountryCode
+				   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+				   LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+			 LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+		     WHERE NOT EXISTS ( SELECT 1 
+		                        FROM RMTBranches_Temp 
+		                          WHERE BranchCode = T1.BranchCode )
+</createView>
+</changeSet>
+
+
+	<changeSet id="15" author="Ganesh">
+		<createView replaceIfExists="true" viewName="RMTBRANCHES_AVIEW">
+  SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.BranchPOBox , T1.BranchCity ,
+		          T4.PCCityName lovDescBranchCityName  ,T1.BranchProvince ,T3.CPProvinceName lovDescBranchProvinceName,T1.BranchCountry ,T2.CountryDesc lovDescBranchCountryName  ,T1.BranchFax ,
+		          T1.BranchTel ,T1.BranchSwiftBankCde ,T1.BranchSwiftCountry , T1.BranchSwiftLocCode ,T1.BranchSwiftBrnCde , T1.BranchSortCode ,T1.BranchIsActive ,T1.NewBranchCode , T6.BranchDesc NewBranchDesc,
+		          T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode ,T1.TaskId , T1.NextTaskId , T1.RecordType ,T1.WorkflowId , T1.MiniBranch,T1.BranchType, T1.ParentBranch , T1.PinCode,
+		          T1.Region,T1.BankRefNo,T1.BranchAddrHNbr,T1.BranchFlatNbr,T1.BranchAddrStreet, T7.BranchDesc ParentBranchDesc,T5.CountryDesc lovDescBranchSwiftCountryName 
+		     FROM RMTBranches T1
+           LEFT JOIN BMTCountries T2   ON T1.BranchCountry = T2.CountryCode
+           LEFT JOIN RMTCountryVsProvince T3   ON T1.BranchCountry = T3.CPCountry
+            AND T1.BranchProvince = T3.CPProvince
+           LEFT JOIN RMTProvinceVsCity T4   ON T1.BranchCountry = T4.PCCountry
+            AND T1.BranchProvince = T4.PCProvince AND T1.BranchCity = T4.PCCity
+           LEFT JOIN BMTCountries T5   ON T1.BranchSwiftCountry = T5.CountryCode
+		   LEFT JOIN RMTBranches T6   ON T1.NewBranchCode = T6.BranchCode
+		    LEFT JOIN RMTBranches T7   ON T1.ParentBranch = T6.BranchCode
+		LEFT JOIN PINCODES_TEMP T8 ON T8.PINCODEID = T1.PinCode
+</createView>
+	</changeSet>
+	
+ 
+	<changeSet id="13" author="Kesav">
+		<sql>
+			Delete from FeeTypes where FeeTypeCode = 'MNLFEE';
+			Insert into FEETYPES (FEETYPEID,FEETYPECODE,FEETYPEDESC,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,
+			RECORDTYPE,WORKFLOWID,MANUALADVICE,ACCOUNTSETID,ADVISETYPE) 
+			values ((Select Max(FEETYPEID) + 1 from FeeTypes),'MNLFEE','Manual Advise Fee',1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1,null,2);
+			Update SeqFeeTypes Set SeqNo = (Select Max(FEETYPEID) from FeeTypes);
+			
+			DELETE From SMTPARAMETERS WHERE SYSPARMCODE = 'MANUALADVISE_FEETYPEID';
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,
+			SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+			values ('MANUALADVISE_FEETYPEID','Fee Type ID for Manual Advise','int',1,(Select FeeTypeID from FeeTypes Where FeeTypeCode = 'MNLFEE')
+			,10,0,null,null,'Fee Type ID for Manual Advise',1,1000,CURRENT_TIMESTAMP,
+			'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="Ganesh">
+		<sql>
+		delete from PINCODES where PINCODEID=1;
+			INSERT INTO PINCODES (PINCODEID, PINCODE, CITY, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)
+		VALUES (1,'3452349','1001',2,2,1000,'01-06-17','Approved','','','','','', 0);
+			update RMTBRANCHES set pincode=1;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="17" author="Ganesh">
+		<addNotNullConstraint tableName="RMTBRANCHES"
+		columnName="PINCODE" columnDataType="varchar(10)" />
+</changeSet>
+
+<changeSet id="18" author="Ganesh">
+		<sql>
+			update RMTBRANCHES_temp set pincode=1;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="19" author="Ganesh">
+		<addNotNullConstraint tableName="RMTBRANCHES_temp"
+		columnName="PINCODE" columnDataType="varchar(10)" />
+</changeSet>
+	
+<changeSet id="20" author="Amit">
+	<createTable tableName="GCDCUSTOMERS">
+		<column name="finCustId" type="VARCHAR2(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="sourceSystem" type="VARCHAR2(3)">
+			<constraints nullable="false" />
+		</column>
+		<column name="customerName" type="VARCHAR2(200)">
+			<constraints nullable="false" />
+		</column>
+		<column name="constId" type="NUMBER(19,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="industryId" type="VARCHAR2(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="categoryId" type="NUMBER(1,0)" />
+		<column name="spousename" type="VARCHAR2(1)" />
+		<column name="indvCorpFlag" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="fName" type="VARCHAR2(50)" />
+		<column name="mName" type="VARCHAR2(50)" />
+		<column name="lname" type="VARCHAR2(50)" />
+		<column name="DOB" type="datetime" />
+		<column name="sex" type="VARCHAR2(8)" />
+		<column name="incomeSource" type="VARCHAR2(1)" />
+		<column name="yearsOfCurrJob" type="datetime" />
+		<column name="DOI" type="datetime" />
+		<column name="mpAkerId" type="VARCHAR2(7)" />
+		<column name="makerDate" type="datetime" />
+		<column name="authId" type="VARCHAR2(7)" />
+		<column name="authDate" type="datetime" />
+		<column name="accType" type="VARCHAR2(1)" />
+		<column name="apCcocatg" type="VARCHAR2(1)" />
+		<column name="dateLastUpdate" type="datetime" />
+		<column name="nationalId" type="VARCHAR2(2)" />
+		<column name="passportNo" type="VARCHAR2(50)" />
+		<column name="nationality" type="VARCHAR2(5)" />
+		<column name="panNo" type="VARCHAR2(20)" />
+		<column name="regionId" type="NUMBER(1,0)" />
+		<column name="bankType" type="VARCHAR2(1)" />
+		<column name="entityFlag" type="VARCHAR2(1)" />
+		<column name="contactPerson" type="VARCHAR2(15)" />
+		<column name="custSearchId" type="VARCHAR2(20)" />
+		<column name="sectorId" type="NUMBER(8,0)" />
+		<column name="fraudFlag" type="VARCHAR2(1)" />
+		<column name="fraudScore" type="VARCHAR2(1)" />
+		<column name="emiCardElig" type="VARCHAR2(1)" />
+		<column name="addressDetail" type="VARCHAR2(500)" />
+		<column name="bankDetail" type="VARCHAR2(500)" />
+		<column name="nomineeName" type="VARCHAR2(100)" />
+		<column name="nomineeAddress" type="VARCHAR2(200)" />
+		<column name="nomineeRelationship" type="VARCHAR2(1)" />
+		<column name="fIELD9" type="VARCHAR2(1)" />
+		<column name="fIELD10" type="VARCHAR2(1)" />
+		<column name="insertUpdateFlag" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="statusFromFinnOne" type="VARCHAR2(1)" />
+		<column name="rejectionReason" type="VARCHAR2(100)" />
+		<column name="finnCustId" type="VARCHAR2(50)">
+		</column>
+		<column name="sfdcCustomerId" type="NUMBER(19,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="branchId" type="VARCHAR2(12)">
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet author="Amit" id="25">
+		<addPrimaryKey tableName="gcdcustomers"
+			constraintName="PK_ConstId"
+			columnNames="constId" />
+	</changeSet>
+	
+
+<changeSet author="Madhubabu" id="20">
+<addColumn tableName="FeePostings_Temp">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
+
+<changeSet author="Madhubabu" id="21">
+<addColumn tableName="FeePostings">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
+
+<changeSet id="22" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_VIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+          			smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode) 
+          
+union all
+
+SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+            T2.acType partnerBankAcType , T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+    FROM  FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+          			smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode) 
+          
+ WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FeePostings_Temp
+                            WHERE      (PostId = T1.PostId)))
+</createView>
+</changeSet>
+<changeSet id="23" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_AVIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode)
+
+</createView>
+</changeSet>
+
+<changeSet id="24" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_TVIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode)
+</createView>
+</changeSet>
+
+	<changeSet id="25" author="Madhubabu">
+		<sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeePostingsDialog_postingDivision','FeePostingsDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FEEPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'FeePostingsDialog_postingDivision'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+	</changeSet>
+
+	
+</databaseChangeLog>

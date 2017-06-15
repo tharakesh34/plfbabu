@@ -225,6 +225,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (isWorkFlowEnabled() && !isNewFinance()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCovenantTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			/* set components visible dependent of the users rights */
@@ -447,7 +449,6 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-			getUserWorkspace().allocateAuthorities("FinCovenantTypeDialog", getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnDelete"));

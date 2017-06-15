@@ -113,6 +113,9 @@ public class FeeScheduleCalculator {
 		for (FinFeeDetail finFeeDetail : feeDetails) {
 
 			if(finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) <= 0){
+				if(finFeeDetail.getFinFeeScheduleDetailList() != null){
+					finFeeDetail.getFinFeeScheduleDetailList().clear();
+				}
 				continue;
 			}
 

@@ -597,59 +597,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 	}
 
 	/**
-	 * This Method/Event for setting the rule modules and it clears tree if we
-	 * select another module and it also prompt the message
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	/*public void onChange$custCtgCode(Event event) throws Exception {		
-		logger.debug("Entering" +event.toString());	
-
-		if(custCtgCode.getSelectedIndex() == 0){
-			this.sQLQuery.setValue("");
-			tree.getChildren().clear();
-		}
-		else{
-			this.sQLQuery.setValue("");
-			this.tab_queryDesign.setSelected(true);
-			if(treechildren != null){
-				Component comp=(Component)combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNextSibling();
-				Combobox cb =new Combobox();
-				Textbox tb = new Textbox();
-				if(comp instanceof Combobox){
-					cb= (Combobox)comp;
-				}else if(comp instanceof Textbox){
-					tb= (Textbox)comp;
-				}
-				if(!(cb.getValue()).equals("") || !(tb.getValue().equals(""))){
-					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
-					final String title = Labels.getLabel("message.Information");
-
-					MultiLineMessageBox.doSetTemplate();
-					int conf = MultiLineMessageBox.show(msg, title,
-							MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-							MultiLineMessageBox.QUESTION, true);
-
-					if (conf == MultiLineMessageBox.YES) {
-						clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
-						this.sQLQuery.setValue("");
-					}	
-					else if(conf == MultiLineMessageBox.NO){}
-				}
-				else{
-					clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString()); 
-				}
-			}
-			else{
-				clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
-			}
-		}
-
-		logger.debug("Leaving" +event.toString());
-	}*/
-
-	/**
 	 * This method for clearing tree children and build a new tree
 	 * @throws Exception
 	 */

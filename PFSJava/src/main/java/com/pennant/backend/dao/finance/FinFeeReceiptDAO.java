@@ -53,4 +53,5 @@ public interface FinFeeReceiptDAO {
 	void delete(FinFeeReceipt finFeeReceipt,String type);
 	long save(FinFeeReceipt finFeeReceipt,String type);
 	List<FinFeeReceipt> getFinFeeReceiptByFinRef(List<Long> feeIds, String type);
+	boolean isFinFeeReceiptAllocated(long receiptID, String type);
 }

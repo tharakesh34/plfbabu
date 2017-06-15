@@ -1,4 +1,4 @@
-package com.pennanttech.controller;
+            package com.pennanttech.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -1160,6 +1160,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		String rpyHierarchy = finScheduleData.getFinanceType().getRpyHierarchy();
 		finScheduleData.getFinanceType().setRpyHierarchy(rpyHierarchy);
 		finScheduleData.getFinanceMain().setRcdMaintainSts(purpose);
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
@@ -1170,7 +1172,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
-		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY) ||
+				StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			if(StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
 				receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 			} 
@@ -1192,6 +1195,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (finReceiptDetail == null) {
 			finReceiptDetail = new FinReceiptDetail();
 			finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+		} else {
+			if(finReceiptDetail.getReceivedDate() == null) {
+				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			}
 		}
 		finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
@@ -1215,7 +1222,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		
 		// calculate allocations
 		Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(financeDetail.getFinScheduleData(), 
-				totReceiptAmt, receiptHeader.getReceiptPurpose());
+				totReceiptAmt, finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose());
 		finReceiptData.setAllocationMap(allocationMap);
 
 		// validate repayment amount
@@ -1226,6 +1233,32 @@ public class FinServiceInstController extends SummaryDetailService {
 				response.setReturnStatus(returnStatus);
 				return response;
 		}
+		
+		Date curBussDate = DateUtility.getAppDate();
+		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
+			return response;
+		}
+		
+		if(finServiceInst.getReceiptDetail() != null) {
+			Date finStartDate = DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
+					PennantConstants.DBDateFormat));
+			Date appDate = DateUtility.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(),
+					PennantConstants.DBDateFormat));
+			if (receiDate.compareTo(finStartDate) < 0 || receiDate.compareTo(appDate) > 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[3];
+				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+				valueParm[1] = DateUtility.formatToShortDate(financeMain.getFinStartDate());
+				valueParm[2] = DateUtility.formatToShortDate(DateUtility.getAppDate());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90282", valueParm));
+				return response;
+			}
+		}
+		
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose);
@@ -1235,14 +1268,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			doProcessPayments(finReceiptData, finServiceInst);
 		}
 
-		Date curBussDate = DateUtility.getAppDate();
-		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
-			return response;
-		}
-		
 		List<ErrorDetails> errorDetails = finReceiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
 		if(!errorDetails.isEmpty()) {
 			for(ErrorDetails error:errorDetails) {
@@ -1272,19 +1297,17 @@ public class FinServiceInstController extends SummaryDetailService {
 				finReceiptDetail.setPartnerBankAc(partnerBank.getAccountNo());
 				finReceiptDetail.setPartnerBankAcType(partnerBank.getAcType());
 			}
-			Date finStartDate = DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
-					PennantConstants.DBDateFormat));
-			Date appDate = DateUtility.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(),
-					PennantConstants.DBDateFormat));
-			if (receiDate.compareTo(finStartDate) < 0 || receiDate.compareTo(appDate) > 0) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				String[] valueParm = new String[3];
-				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
-				valueParm[1] = DateUtility.formatToShortDate(financeMain.getFinStartDate());
-				valueParm[2] = DateUtility.formatToShortDate(DateUtility.getAppDate());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90282", valueParm));
-				return response;
+			
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), DateUtility.getAppDate()) < 0) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					String[] valueParm = new String[2];
+					valueParm[0] = "Received Date  " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+					valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90205", valueParm));
+					return response;
+				}
 			}
 
 			if(finScheduleData.getFinFeeDetailList() != null) {
@@ -1325,7 +1348,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		} else {
 			
 			//Schedule Updations
-			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData().
+					getFinanceScheduleDetails();
 			// Repay Schedule Data rebuild
 			List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
 			List<FinReceiptDetail> receiptDetailList = finReceiptData.getReceiptHeader().getReceiptDetails();
@@ -1442,7 +1466,8 @@ public class FinServiceInstController extends SummaryDetailService {
 						}
 					}
 				} else {
-					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+							|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 						if (partAccrualReq && prvSchd != null) {
 							partAccrualReq = false;
 							BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
@@ -1735,18 +1760,23 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
 		
-		//List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
-		//financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
+/*		List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
+		financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);*/
 		
+		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
 		if (financeDetail != null) {
 			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					if(feeDetail.isOriginationFee()) {
 						feeDetail.setOriginationFee(true);
 						feeDetail.setRcdVisible(false);
 						feeDetail.setRecordType(PennantConstants.RCD_UPD);
 						feeDetail.setRecordStatus(PennantConstants.RECORD_TYPE_UPD);
+						newList.add(feeDetail);
+					}
 				}
 			}
+			financeDetail.getFinScheduleData().setFinFeeDetailList(newList); 
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);

@@ -219,6 +219,7 @@ import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
@@ -262,7 +263,6 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
-import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -1084,9 +1084,6 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FinanceMainTemp", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_LView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
-		
-		ModuleUtil.register("FeeReceiptFinance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-				"FinanceMain", "FinanceMain_TView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
 		ModuleUtil.register("FinanceDetail", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, null, new String[] { "FinReference", "FinType" }, null, 350));

@@ -885,6 +885,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		// validate maintained records.
+		int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
+		if (tempCount > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
+			return financeDetail;
+		}
+		
 		// service level validations
 		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
 		if (count <= 0) {
@@ -951,7 +962,18 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-
+		
+		// validate maintained records.
+		int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
+		if (tempCount > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
+			return financeDetail;
+		}
+		
 		// service level validations
 		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
 		if (count <= 0) {
@@ -1027,6 +1049,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return financeDetail;
 		} else {
+			// validate maintained records.
+			int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
+			if (tempCount > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFinReference();
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
+				return financeDetail;
+			}
+			
 			int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
 			if (count <= 0) {
 				financeDetail = new FinanceDetail();

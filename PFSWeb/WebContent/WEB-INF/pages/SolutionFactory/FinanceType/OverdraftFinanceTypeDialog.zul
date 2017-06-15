@@ -388,6 +388,28 @@
 												<extendedcombobox
 													id="profitCenter" />
 											</row>
+											<row
+												id="row_RoundingMode">
+												<label
+													id="label_FinanceTypeDialog_RoundingMode"
+													value="${c:l('label_FinanceTypeDialog_RoundingMode.value')}" />
+												<hbox>
+													<space
+														id="space_roundingMode" sclass="mandatory" spacing="2px" />
+													<combobox
+														id="roundingMode" width="250px" readonly="true" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_RoundingTarget"
+													value="${c:l('label_FinanceTypeDialog_RoundingTarget.value')}" />
+												<hbox>
+													<space
+														id="space_roundingTarget" sclass="mandatory"
+														spacing="2px" />
+													<combobox
+														id="roundingTarget" width="250px" readonly="true" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 									<grid sclass="GridLayoutNoBorder"
@@ -1338,28 +1360,6 @@
 															tooltiptext="${c:l('btnFrequencyDays.tooltiptext')}"
 															image="/images/icons/LOVSearch.png" />
 													</hbox>
-												</hbox>
-											</row>
-											<row
-												id="row_RoundingMode">
-												<label
-													id="label_FinanceTypeDialog_RoundingMode"
-													value="${c:l('label_FinanceTypeDialog_RoundingMode.value')}" />
-												<hbox>
-													<space
-														id="space_roundingMode" sclass="mandatory" spacing="2px" />
-													<combobox
-														id="roundingMode" width="250px" readonly="true" />
-												</hbox>
-												<label
-													id="label_FinanceTypeDialog_RoundingTarget"
-													value="${c:l('label_FinanceTypeDialog_RoundingTarget.value')}" />
-												<hbox>
-													<space
-														id="space_roundingTarget" sclass="mandatory"
-														spacing="2px" />
-													<combobox
-														id="roundingTarget" width="250px" readonly="true" />
 												</hbox>
 											</row>
 										</rows>

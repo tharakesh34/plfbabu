@@ -26,6 +26,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -104,6 +105,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitManagement	limitManagement;
 	private CustomerDAO		customerDAO;
+	private FinFeeReceiptDAO		finFeeReceiptDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -124,7 +126,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		
 		String tableType = "_View";
 		if(isFeePayment){
-			tableType = "_FView";
+			tableType = "_FCView";
 		}
 		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, tableType);
 
@@ -503,7 +505,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			String finReference = receiptHeader.getReference();
 			boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
 			if (!rcdAvailable) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", "", null, null),usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", null),usrLanguage));
+			}
+			boolean rcdAssigned = getFinFeeReceiptDAO().isFinFeeReceiptAllocated(receiptHeader.getReceiptID(), "_View");
+			if (rcdAssigned) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60210", null),usrLanguage));
 			}
 		}
 
@@ -530,20 +536,16 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
 		
 		if(receiptHeader == null){
-			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id :" + presentmentDetail.getReceiptID());
+			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id: " + presentmentDetail.getReceiptID());
 			return presentmentDetail;
 		}
-		
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
-
 		if (bounceReason == null) {
-			presentmentDetail.setErrorDesc("Bounce Reason not available for the return code :" + returnCode);
+			presentmentDetail.setErrorDesc("Bounce Reason not available for the reason code: " + returnCode);
 			return presentmentDetail;
 		}
-
 		
 		FinReceiptDetail finReceiptDetail = null;
-
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
 				if (item.getPaymentType().equals(presentmentDetail.getMandateType())) {
@@ -554,14 +556,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		if(finReceiptDetail == null){
-			presentmentDetail.setErrorDesc("FinReceiptDetail not available for the MandateType :" +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc("FinReceiptDetails not available for the MandateType: " +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		
 		ManualAdvise manualAdvise = getManualAdvise(receiptHeader,  bounceReason, finReceiptDetail);
 		
 		if(manualAdvise == null){
-			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType :" +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType: " +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		
@@ -1067,6 +1069,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		// ============================================
 		getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 
+		// Update Receipt Detail Status
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
+					receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
+		}
+		
 		return null;
 	}
 
@@ -1379,6 +1387,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
+		return finFeeReceiptDAO;
+	}
+
+	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
+		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
 
 }

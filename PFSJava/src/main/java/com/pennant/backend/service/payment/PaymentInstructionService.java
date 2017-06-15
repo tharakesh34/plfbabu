@@ -46,7 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.payment.PaymentInstruction;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.TableType;
 
 public interface PaymentInstructionService {

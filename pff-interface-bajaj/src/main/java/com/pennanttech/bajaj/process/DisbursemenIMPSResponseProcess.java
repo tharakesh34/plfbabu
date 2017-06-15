@@ -23,6 +23,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.disbIdList = disbIdList;
+		this.logBatch = true;
 	}
 
 	@Override
@@ -60,7 +61,6 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 		StringBuffer sql = new StringBuffer();
 
 		try {
-
 			sql.append("  UPDATE DISBURSEMENT_REQUESTS DR SET (DR.TRANSACTIONREF, DR.STATUS, DR.REMARKS, RESP_BATCH_ID) =");
 			sql.append(" (SELECT IDR.TRANSACTIONID, CASE WHEN IDR.STATUS = 0 THEN :E ELSE :R END, IDR.DESCRIPTION, :RESP_BATCH_ID ");
 			sql.append(" FROM INT_DSBIMPS_RESPONSE IDR WHERE IDR.CHANNELPARTNERREFNO = DR.ID AND IDR.CHANNELPARTNERREFNO IN (:RESP_IDS))");

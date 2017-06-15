@@ -1769,6 +1769,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RateChangeDialog.zul",
@@ -1818,6 +1819,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("repayment", true);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRepaymentDialog.zul",
@@ -1863,6 +1865,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ChangeFrequencyDialog.zul",
@@ -1886,6 +1889,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/ReScheduleDialog.zul",
@@ -2037,6 +2041,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("addTerms", true);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRmvTermsDialog.zul",
@@ -2062,6 +2067,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("addTerms", false);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddRmvTermsDialog.zul",
@@ -2111,6 +2117,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
+		map.put("appDateValidationReq", isAppDateValidationReq());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RecalculateDialog.zul",
@@ -2544,6 +2551,18 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for Checking Validation with Current Business date is required or not
+	 * */
+	private boolean isAppDateValidationReq(){
+		
+		boolean appDatevalidationReq = false;
+		if(!StringUtils.isEmpty(moduleDefiner) && !isWIF){
+			appDatevalidationReq = true;
+		}
+		return appDatevalidationReq;
 	}
 
 	// ******************************************************//

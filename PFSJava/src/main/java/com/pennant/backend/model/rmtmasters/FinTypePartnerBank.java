@@ -76,6 +76,8 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private String partnerBankName;
 	private boolean newRecord = false;
 	private String lovValue;
+	private String accountNo;
+	private String accountType;
 	private FinTypePartnerBank befImage;
 	private LoggedInUser userDetails;
 
@@ -99,6 +101,8 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
+		excludeFields.add("accountNo");
+		excludeFields.add("accountType");
 		return excludeFields;
 	}
 
@@ -208,6 +212,22 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
+	}
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
 	}
 
 }

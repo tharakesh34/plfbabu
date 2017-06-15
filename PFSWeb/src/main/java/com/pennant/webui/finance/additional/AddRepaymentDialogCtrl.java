@@ -125,6 +125,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private BigDecimal						totalAlwRpyAmt		= BigDecimal.ZERO;
 	private transient AddRepaymentService	addRepaymentService;
+	private boolean appDateValidationReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -165,6 +166,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				setFinanceScheduleDetail((FinanceScheduleDetail) arguments.get("financeScheduleDetail"));
 			} else {
 				setFinanceScheduleDetail(null);
+			}
+
+			if (arguments.containsKey("appDateValidationReq")) {
+				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
 			}
 
 			// READ OVERHANDED params !
@@ -385,6 +390,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		
+		Date curBussDate = DateUtility.getAppDate();
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -397,6 +404,33 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
+					continue;
+				}
+				
+				// Not allow Before Current Business Date
+				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					continue;
+				}
+				
+				// Excluding Present generated file Schedule Terms
+				if(curSchd.getPresentmentId() > 0){
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+
+				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
 					continue;
 				}
 				
