@@ -26,7 +26,7 @@
 		<property name="disbursementResponseFileService" ref="disbursementResponseFileService"/>
 	</bean>
 	
-	<bean id="generalLedgerService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl" parent="bajajService"/>
+	<!-- <bean id="generalLedgerService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl" parent="bajajService"/> -->
 	<bean id="mandateRequest" class="com.pennanttech.bajaj.services.MandateRequestService" scope="prototype" parent="bajajService"/>
 	<bean id="mandateResponseFileService" class="com.pennanttech.bajaj.services.MandateResponseFileService" scope="prototype" parent="bajajService"/>
 	<bean id="mandateResponse" class="com.pennanttech.bajaj.services.MandateResponseService" parent="bajajService"/>
