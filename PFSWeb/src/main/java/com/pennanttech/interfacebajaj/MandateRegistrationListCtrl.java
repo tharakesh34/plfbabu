@@ -44,6 +44,7 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -342,7 +343,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit().multiply(new BigDecimal(100)),
 					CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
