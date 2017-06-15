@@ -518,4 +518,65 @@ SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.
 			constraintName="PK_ConstId"
 			columnNames="constId" />
 	</changeSet>
+	
+
+<changeSet author="Madhubabu" id="20">
+<addColumn tableName="FeePostings_Temp">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
+
+<changeSet author="Madhubabu" id="21">
+<addColumn tableName="FeePostings">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
+
+<changeSet id="22" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_VIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+          			smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode) 
+          
+union all
+
+SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+            T2.acType partnerBankAcType , T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+    FROM  FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+          			smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode) 
+          
+ WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FeePostings_Temp
+                            WHERE      (PostId = T1.PostId)))
+</createView>
+</changeSet>
+<changeSet id="23" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_AVIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode)
+
+</createView>
+</changeSet>
+
+<changeSet id="24" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="FEEPOSTINGS_TVIEW">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,T1.PostingDivision,T4.DivisionCodeDesc,
+             T2.acType partnerBankAcType ,T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Smtdivisiondetail T4 ON T4.DivisionCode=T1.PostingDivision Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=rtrim(T1.FeeTyeCode)
+</createView>
+</changeSet>
+	
 </databaseChangeLog>
