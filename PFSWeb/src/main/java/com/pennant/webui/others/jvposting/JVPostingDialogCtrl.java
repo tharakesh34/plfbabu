@@ -94,6 +94,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.LegalExpenses;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.expenses.LegalExpensesService;
@@ -177,13 +178,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	protected Label label_Upload;
 	protected Hlayout hlayout_Upload;
 	protected Space space_Upload;
-	protected Textbox fileName;
-	protected Button btn_Upload;
 
 	
 	
 	protected ExtendedCombobox expReference;
-	
+	protected ExtendedCombobox	postingDivision;
 	protected ExtendedCombobox reference;
 	protected Combobox postingAgainst;
 	
@@ -768,12 +767,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// fileName
-		try {
-			aJVPosting.setFilename(this.fileName.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -826,6 +819,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
 		readOnlyComponent(isReadOnly("JVPostingDialog_PostingAgainst"), this.postingAgainst);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.reference);
+		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.postingDivision);
 		
 		setExtAccess("JVPostingDialog_ExchRateType", tempReadOnly,
 				this.exchangeRateType, row2);
@@ -898,7 +892,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.batchReference.setMaxlength(50);
-		this.fileName.setMaxlength(50);
 		
 		this.expReference.setMandatoryStyle(false);
 		this.expReference.setModuleName("LegalExpenses");
@@ -942,6 +935,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.expAmount.setScale(2);*/
 		this.batchPurpose.setMaxlength(35);
 		this.reference.setMandatoryStyle(true);		
+		
+		this.postingDivision.setMandatoryStyle(true);
+		this.postingDivision.setModuleName("DivisionDetail");
+		this.postingDivision.setValueColumn("DivisionCode");
+		this.postingDivision.setDescColumn("DivisionCodeDesc");
+		this.postingDivision.setValidateColumns(new String[] { "DivisionCodeDesc" });
 
 		logger.debug("Leaving");
 	}
@@ -987,7 +986,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.exchangeRateType.setValue(aJVPosting.getExchangeRateType());
 		this.exchangeRateType.setDescription(aJVPosting
 				.getRateTypeDescription());
-		this.fileName.setValue(aJVPosting.getFilename());
 		this.debitCount.setValue(aJVPosting.getDebitCount());
 		this.creditsCount.setValue(aJVPosting.getCreditsCount());
 		this.totDebitsByBatchCcy.setValue(PennantAppUtil.formateAmount(
@@ -997,6 +995,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.batchPurpose.setValue(aJVPosting.getBatchPurpose());
 		setFilters(StringUtils.equals(null, aJVPosting.getPostAgainst())? aJVPosting.getPostAgainst():aJVPosting.getPostAgainst().trim());
 		this.reference.setValue(aJVPosting.getReference());
+		this.postingDivision.setValue(aJVPosting.getPostingDivision(),aJVPosting.getDivisionCodeDesc());
 
 		this.recordStatus.setValue(aJVPosting.getRecordStatus());
 		doFillJVPostingEntryDetails(aJVPosting.getJVPostingEntrysList());
@@ -1015,6 +1014,29 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.postingBranch.setReadonly(false);
 		}
 		logger.debug("Leaving");
+	}
+	
+	public void onFulfill$reference(Event event) {
+
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.reference.getValue())) {
+			this.reference.setValue("", "");
+			this.postingDivision.setValue("","");
+			this.postingDivision.setButtonDisabled(false);
+		} else {
+			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+					FinanceConstants.POSTING_AGAINST_LOAN)) {				
+				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
+				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
+				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
+				this.postingDivision.setReadonly(true);
+			}else{
+				this.postingDivision.setReadonly(false);
+			}
+		}
+		logger.debug("Leaving");
+
 	}
 
 	/**
@@ -1053,12 +1075,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		// Batch Currency
 		try {
 			aJVPosting.setCurrency(this.baseCCy.getValidatedValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		// fileName
-		try {
-			aJVPosting.setFilename(this.fileName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1113,6 +1129,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			if (this.reference.getValue() != null) {
 				aJVPosting.setReference(this.reference.getValue());
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aJVPosting.setPostingDivision(this.postingDivision.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1187,7 +1208,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		this.batch.setConstraint("");
 		this.batchReference.setConstraint("");
-		this.fileName.setConstraint("");
 		this.debitCount.setConstraint("");
 		this.creditsCount.setConstraint("");
 		this.totDebitsByBatchCcy.setConstraint("");
@@ -1230,7 +1250,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		this.batch.setErrorMessage("");
 		this.batchReference.setErrorMessage("");
-		this.fileName.setErrorMessage("");
 		this.debitCount.setErrorMessage("");
 		this.creditsCount.setErrorMessage("");
 		this.totDebitsByBatchCcy.setErrorMessage("");
@@ -1300,7 +1319,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 		this.batchReference.setValue("");
-		this.fileName.setValue("");
 		this.debitCount.setText("");
 		this.creditsCount.setText("");
 		this.totDebitsByBatchCcy.setValue("");
@@ -1902,6 +1920,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.reference.setConstraint("");
 		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
+		this.postingDivision.setValue("","");
+		this.postingDivision.setReadonly(false);
 		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
 	}
 

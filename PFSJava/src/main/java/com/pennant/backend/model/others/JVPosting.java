@@ -75,6 +75,8 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	private String postAgainst;
 	private String reference;
+	private String postingDivision;
+	private String divisionCodeDesc;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -96,6 +98,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("rePostingModule");	
 		excludeFields.add("txnId");
 		excludeFields.add("finType");
+		excludeFields.add("divisionCodeDesc");
 		return excludeFields;
 	}
 
@@ -352,4 +355,21 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
+
+	public String getPostingDivision() {
+		return postingDivision;
+	}
+
+	public void setPostingDivision(String postingDivision) {
+		this.postingDivision = postingDivision;
+	}
+
+	public String getDivisionCodeDesc() {
+		return divisionCodeDesc;
+	}
+
+	public void setDivisionCodeDesc(String divisionCodeDesc) {
+		this.divisionCodeDesc = divisionCodeDesc;
+	}
+	
 }

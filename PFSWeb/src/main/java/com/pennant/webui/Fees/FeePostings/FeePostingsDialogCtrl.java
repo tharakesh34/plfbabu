@@ -140,6 +140,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	protected ExtendedCombobox						postingCcy;
 	protected Datebox								postDate;
 	protected Datebox								valueDate;
+	protected ExtendedCombobox						postingDivision;
 
 	private boolean									enqModule			= false;
 	// not auto wired vars
@@ -405,6 +406,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postingAmount.setReadonly(isReadOnly("FeePostingsDialog_postingAmount"));
 		this.postingCcy.setReadonly(isReadOnly("FeePostingsDialog_postingCurrency"));
 		this.valueDate.setDisabled(isReadOnly("FeePostingsDialog_valueDate"));
+		this.postingDivision.setReadonly(isReadOnly("FeePostingsDialog_postingDivision"));
 		this.remarks.setDisabled(isReadOnly("FeePostingsDialog_remarks"));
 		
 		
@@ -613,8 +615,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.feeTypeCode.setMandatoryStyle(true);
 		this.feeTypeCode.setModuleName("FeeType");
 		this.feeTypeCode.setValueColumn("FeeTypeCode");
-		this.postingCcy.setDescColumn("FeeTypeDesc");
-		this.postingCcy.setValidateColumns(new String[] { "FeeTypeCode" });
+		this.feeTypeCode.setDescColumn("FeeTypeDesc");
+		this.feeTypeCode.setValidateColumns(new String[] { "FeeTypeCode" });
 
 		this.postingCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.postingCcy.setMandatoryStyle(true);
@@ -632,7 +634,14 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.postDate.setDisabled(true);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		
 
+		this.postingDivision.setMandatoryStyle(true);
+		this.postingDivision.setModuleName("DivisionDetail");
+		this.postingDivision.setValueColumn("DivisionCode");
+		this.postingDivision.setDescColumn("DivisionCodeDesc");
+		this.postingDivision.setValidateColumns(new String[] { "DivisionCodeDesc" });
+		
 		this.postingAmount.setProperties(true, aCurrency.getCcyEditField());
 
 	}
@@ -650,6 +659,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.reference.setValue(aFeePostings.getReference());
 		this.feeTypeCode.setValue(aFeePostings.isNew() ? aFeePostings.getFeeTyeCode():aFeePostings.getFeeTyeCode().trim());
 		this.postingAmount.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
+		this.postingDivision.setValue(aFeePostings.getPostingDivision(),aFeePostings.getDivisionCodeDesc());
 		this.postingCcy.setValue(aFeePostings.getCurrency());
 		if(aFeePostings.isNew()){
 			this.postDate.setValue(DateUtility.getAppDate());
@@ -704,6 +714,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		try {
 			aFeePostings.setFeeTyeCode(this.feeTypeCode.getValue().trim());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFeePostings.setPostingDivision(this.postingDivision.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -923,11 +938,36 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$reference(Event event) {
+
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.reference.getValue())) {
+			this.reference.setValue("", "");
+			this.postingDivision.setValue("","");
+			this.postingDivision.setButtonDisabled(false);
+		} else {
+			if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+					FinanceConstants.POSTING_AGAINST_LOAN)) {				
+				FinanceMain financeMain = (FinanceMain) this.reference.getObject();
+				this.reference.setValue(financeMain.getFinReference(), financeMain.getFinType());
+				this.postingDivision.setValue(financeMain.getLovDescFinDivision());
+				this.postingDivision.setReadonly(true);
+			}else{
+				this.postingDivision.setReadonly(false);
+			}
+		}
+		logger.debug("Leaving");
+
+	}
 
 	public void onChange$postingAgainst(Event event) {
 		this.reference.setConstraint("");
 		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
+		this.postingDivision.setValue("","");
+		this.postingDivision.setReadonly(false);
 		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
 	}
 

@@ -143,4 +143,10 @@
 			
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="Madhubabu" id="10">
+	<addColumn tableName="AdtJvPostings">
+		<column name="postingDivision" type="VARCHAR2(8)" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>

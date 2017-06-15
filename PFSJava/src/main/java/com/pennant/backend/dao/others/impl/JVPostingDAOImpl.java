@@ -128,11 +128,11 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		jVPosting.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select BatchReference, Batch, PostingDate, Filename, Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus, BatchPostingStatus,PostAgainst,Reference");
+				"Select BatchReference, Batch, PostingDate, Filename, Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus, BatchPostingStatus,PostAgainst,Reference,postingDivision");
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CurrencyDesc");
+			selectSql.append(",CurrencyDesc,divisionCodeDesc");
 		}
 		selectSql.append(" From JVPostings");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -250,11 +250,11 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		StringBuilder insertSql = new StringBuilder("Insert Into JVPostings");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql
-		        .append(" (BatchReference,PostingDate, Batch, Filename,Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus , BatchPostingStatus,ExpReference,Reference,PostAgainst");
+		        .append(" (BatchReference,PostingDate, Batch, Filename,Branch, DebitCount, CreditsCount, TotDebitsByBatchCcy, TotCreditsByBatchCcy, BatchPurpose, Currency, ExchangeRateType, ValidationStatus , BatchPostingStatus,ExpReference,Reference,PostAgainst,PostingDivision");
 		insertSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql
-		        .append(" Values(:BatchReference,:PostingDate, :Batch,  :Filename,:Branch, :DebitCount, :CreditsCount, :TotDebitsByBatchCcy, :TotCreditsByBatchCcy, :BatchPurpose, :Currency, :ExchangeRateType, :ValidationStatus, :BatchPostingStatus,:ExpReference,:Reference,:PostAgainst");
+		        .append(" Values(:BatchReference,:PostingDate, :Batch,  :Filename,:Branch, :DebitCount, :CreditsCount, :TotDebitsByBatchCcy, :TotCreditsByBatchCcy, :BatchPurpose, :Currency, :ExchangeRateType, :ValidationStatus, :BatchPostingStatus,:ExpReference,:Reference,:PostAgainst,:PostingDivision");
 		insertSql
 		        .append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -287,7 +287,7 @@ public class JVPostingDAOImpl extends BasisNextidDaoImpl<JVPosting> implements J
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql
 		        .append(" Set PostingDate=:PostingDate, Batch = :Batch, Filename = :Filename,Branch=:Branch, DebitCount = :DebitCount, CreditsCount = :CreditsCount, TotDebitsByBatchCcy = :TotDebitsByBatchCcy, TotCreditsByBatchCcy = :TotCreditsByBatchCcy, BatchPurpose = :BatchPurpose, Currency = :Currency, ExchangeRateType = :ExchangeRateType, "
-		        		+ "ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus ,ExpReference =:ExpReference,Reference =:Reference,PostAgainst =:PostAgainst");
+		        		+ "ValidationStatus = :ValidationStatus, BatchPostingStatus = :BatchPostingStatus ,ExpReference =:ExpReference,Reference =:Reference,PostAgainst =:PostAgainst,PostingDivision =:PostingDivision");
 		updateSql
 		        .append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BatchReference =:BatchReference");

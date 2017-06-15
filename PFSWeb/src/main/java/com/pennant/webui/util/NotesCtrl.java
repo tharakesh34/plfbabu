@@ -589,6 +589,16 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		
 	}
 	
+	/**
+	 * Method for clear Error messages to Fields
+	 */
+	public  void onFulfill$remarks(){
+		logger.debug("Entering");
+		 doClearMessage();
+		logger.debug("Leaving");
+		
+	}
+	
 	public void getRecommendations() {
 		logger.debug("Entering");
 		
