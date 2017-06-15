@@ -37,6 +37,7 @@
 	<bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
 	<bean id="trailBalanceReportService" class="com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl"  scope="prototype" parent="bajajService"/>
 	
+	
 	<!-- Disbursement Imps Response  -->
 	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>
 	<bean id="disbrsementImpsResponseJob" class="com.pennanttech.pff.bajaj.schedule.job.DisbrsementImpsResponseJob"  >

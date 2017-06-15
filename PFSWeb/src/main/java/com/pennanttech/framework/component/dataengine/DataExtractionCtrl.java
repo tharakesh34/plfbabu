@@ -69,7 +69,7 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			String configName = config.getName();
 			if (!("ALM_REQUEST".equals(configName) || "CONTROL_DUMP_REQUEST".equals(configName)
 					|| "POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName) || "DATA_MART_REQUEST".equals(configName) || "POSIDEX_CUSTOMER_UPDATE_RESPONSE"
-						.equals(configName))) {
+						.equals(configName) || "GL_TRAIL_BALANCE_EXPORT".equals(configName))) {
 				continue;
 			}
 			if ("ALM_REQUEST".equals(configName)) {
@@ -98,6 +98,13 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 				BajajInterfaceConstants.DATA_MART_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
 				doFillPanel(config, BajajInterfaceConstants.DATA_MART_STATUS);
 			}
+			
+			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {
+				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
+				doFillPanel(config, BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+			}
+			
+			
 		}
 		timer.start();
 		logger.debug(Literal.LEAVING);
