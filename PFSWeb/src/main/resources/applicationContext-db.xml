@@ -84,8 +84,8 @@
 		<property name="searchSystemEnvironment" value="true" />
 		<property name="locations">
 		<list>
-			<value>file:${APP_ROOT_PATH}/BASE/config/jdbc.properties</value>
-			<value>file:${APP_ROOT_PATH}/BASE/config/mail.properties</value>
+			<value>file:${APP_ROOT_PATH}/PFF/BASE/config/jdbc.properties</value>
+			<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
 		</list>
 	</property>
 	 </bean>
@@ -96,8 +96,8 @@
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
 		<property name="locations">
 			<list>
-				<value>file:${APP_ROOT_PATH}/BASE/config/MQConfig.config</value>
-				<value>file:${APP_ROOT_PATH}/BASE/config/MQMessageFormat.config</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQConfig.config</value>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/MQMessageFormat.config</value>
 			</list>
 		</property>
 	</bean>
