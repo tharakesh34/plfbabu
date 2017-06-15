@@ -82,6 +82,10 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String costCenterDesc;
 	private String costCenterCode;
 	private String profitCenterCode;
+	private boolean taxApplicable;
+	private String  aCCADDLVAR1;
+	private String  aCCADDLVAR2;
+	private boolean aCCADDLCHAR1;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -309,5 +313,37 @@ public class AccountType extends AbstractWorkflowEntity {
 	public void setCostCenterID(Long costCenterID) {
 		this.costCenterID = costCenterID;
 	}
-	
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getaCCADDLVAR1() {
+		return aCCADDLVAR1;
+	}
+
+	public void setaCCADDLVAR1(String aCCADDLVAR1) {
+		this.aCCADDLVAR1 = aCCADDLVAR1;
+	}
+
+	public String getaCCADDLVAR2() {
+		return aCCADDLVAR2;
+	}
+
+	public void setaCCADDLVAR2(String aCCADDLVAR2) {
+		this.aCCADDLVAR2 = aCCADDLVAR2;
+	}
+
+	public boolean isaCCADDLCHAR1() {
+		return aCCADDLCHAR1;
+	}
+
+	public void setaCCADDLCHAR1(boolean aCCADDLCHAR1) {
+		this.aCCADDLCHAR1 = aCCADDLCHAR1;
+	}
+
 }

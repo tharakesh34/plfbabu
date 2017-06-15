@@ -54,6 +54,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -94,6 +95,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	protected Checkbox systemDefault;
 	protected Textbox bankRefNo;
 	protected Checkbox cPIsActive; // autoWired
+	protected Checkbox taxExempted; // autoWired
+	protected Checkbox unionTerritory; // autoWired
+	protected Textbox  taxStateCode; // autoWired
+	protected Checkbox taxAvailable; // autoWired
+	protected Textbox businessArea; // autoWired
+	
+	private String old_BusineesArea = "";
+	
 
 	// not auto wired variables
 	private Province  province; // overHanded per parameter
@@ -192,6 +201,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvince.setMaxlength(8);
 		this.cPProvinceName.setMaxlength(50);
 		this.bankRefNo.setMaxlength(20);
+		this.taxStateCode.setMaxlength(2);
+		this.businessArea.setMaxlength(100);
 
 		this.cPCountry.setMandatoryStyle(true);
 		this.cPCountry.setModuleName("Country");
@@ -319,6 +330,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.systemDefault.setChecked(aProvince.isSystemDefault());
 		this.bankRefNo.setValue(aProvince.getBankRefNo());
 		this.cPIsActive.setChecked(aProvince.iscPIsActive());
+		this.taxExempted.setChecked(aProvince.isTaxExempted());
+		this.unionTerritory.setChecked(aProvince.isUnionTerritory());
+		this.taxStateCode.setValue(aProvince.getTaxStateCode());
+		this.taxAvailable.setChecked(aProvince.isTaxAvailable());
+		this.businessArea.setValue(aProvince.getBusinessArea());
+		
+		old_BusineesArea = aProvince.getBusinessArea();
 		
 		if (aProvince.isNewRecord()){
 			this.cPCountry.setDescription("");
@@ -375,6 +393,35 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 		try {
 			aProvince.setcPIsActive(this.cPIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aProvince.setTaxExempted(this.taxExempted.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aProvince.setUnionTerritory(this.unionTerritory.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aProvince.setTaxStateCode(this.taxStateCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aProvince.setTaxAvailable(this.taxAvailable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+
+			if (!this.businessArea.isReadonly()) {
+				aProvince.setBusinessArea(this.businessArea.getValue());
+			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -464,7 +511,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		if (!this.bankRefNo.isReadonly()){
 			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BankRefNo.value"), 
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
-		}	
+		}
+		if (!this.taxStateCode.isReadonly()){
+			this.taxStateCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"), 
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -478,6 +529,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setConstraint("");
 		this.cPCountry.setConstraint("");
 		this.bankRefNo.setConstraint("");
+		this.taxStateCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -491,6 +543,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setErrorMessage("");
 		this.cPCountry.setErrorMessage("");
 		this.bankRefNo.setErrorMessage("");
+		this.taxStateCode.setErrorMessage("");
+		this.businessArea.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -562,6 +616,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
 		this.cPIsActive.setDisabled(isReadOnly("ProvinceDialog_CPIsActive"));
+		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
+		this.unionTerritory.setDisabled(isReadOnly("ProvinceDialog_unionTerritory"));
+		this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
+		this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
+		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
 //		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -592,6 +651,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.bankRefNo.setReadonly(true);
 		this.systemDefault.setDisabled(true);
 		this.cPIsActive.setDisabled(true);
+		this.taxExempted.setDisabled(true);
+		this.unionTerritory.setDisabled(true);
+		this.taxStateCode.setDisabled(true);
+		this.taxAvailable.setDisabled(true);
+		this.businessArea.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -618,6 +682,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setValue("");
 		this.bankRefNo.setValue("");
 		this.cPIsActive.setChecked(false);
+		this.taxExempted.setChecked(false);
+		this.unionTerritory.setChecked(false);
+		this.taxStateCode.setValue("");
+		this.taxAvailable.setChecked(false);
+		this.businessArea.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -636,6 +705,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		doSetValidation();
 		// fill the Province object with the components data
 		doWriteComponentsToBean(aProvince);
+		
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
@@ -913,6 +983,21 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public void onFulfill$cPCountry(Event event){
 		logger.debug("Entering");
 		doCheckSystemDefault();
+		logger.debug("Leaving");
+	}
+	
+	public void onChange$businessArea(Event event){
+		logger.debug("Entering");
+	
+		String businessAreaValue = this.businessArea.getValue();
+		if(StringUtils.isNotBlank(businessAreaValue) || StringUtils.equals(old_BusineesArea, businessAreaValue)) {
+			boolean businessAreaExist = this.provinceService.getBusinessAreaExist(businessAreaValue, "_View");
+			
+			if (businessAreaExist) {
+				this.businessArea.setErrorMessage("Already Exist"+" "+Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
+			}
+		}
+		
 		logger.debug("Leaving");
 	}
 	

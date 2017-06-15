@@ -61,6 +61,7 @@ private static final long serialVersionUID = 1L;
 	private String pinCode;
 	private String city;
 	private String pCCityName;
+	private String areaName;
 	private boolean active;
 	private boolean newRecord=false;
 	private String lovValue;
@@ -163,6 +164,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setpCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 
 }

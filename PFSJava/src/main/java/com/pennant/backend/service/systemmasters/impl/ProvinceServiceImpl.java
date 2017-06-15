@@ -356,7 +356,15 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			parameters[1] = PennantJavaUtil.getLabel("label_CPProvince") + ":"+ province.getCPProvince();
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-	
+		
+		// Duplicate State Code
+		if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && province.isNewRecord()
+				&& getStateCodeExist(province.getTaxStateCode(), "_View")) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_TaxStateCode") + ":"+ province.getTaxStateCode();
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", parameters, null));
+		}
 		if (province.isSystemDefault()) {
 			String dftCPProvince = getProvinceDAO().getSystemDefaultCount(province.getCPProvince());
 			if (StringUtils.isNotEmpty(dftCPProvince)) {
@@ -369,5 +377,34 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	private boolean getStateCodeExist(String taxStateCode, String type) {
+		logger.debug("Entering");
+
+		boolean codeExist = false;
+
+		if (getProvinceDAO().geStateCodeCount(taxStateCode, type) != 0) {
+			codeExist = true;
+		}
+
+		logger.debug("Leaving");
+
+		return codeExist;
+	}
+
+	@Override
+	public boolean getBusinessAreaExist(String businessAreaValue, String type) {
+		logger.debug("Entering");
+		
+		boolean businessArea = false;
+
+		if (getProvinceDAO().getBusinessAreaCount(businessAreaValue, type) != 0) {
+			businessArea = true;
+		}
+
+		logger.debug("Leaving");
+
+		return businessArea;
 	}
 }

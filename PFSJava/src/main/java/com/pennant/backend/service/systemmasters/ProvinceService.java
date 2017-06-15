@@ -58,5 +58,6 @@ public interface ProvinceService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	boolean getBusinessAreaExist(String businessAreaValue, String type);
 
 }

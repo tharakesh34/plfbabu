@@ -67,6 +67,12 @@ public class Province extends AbstractWorkflowEntity {
 	private boolean systemDefault;
 	private String bankRefNo;
 	private boolean cPIsActive;
+	private boolean taxExempted;
+	private boolean unionTerritory;
+	private String  taxStateCode;
+	private boolean taxAvailable;
+	private String businessArea;
+	
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -174,5 +180,45 @@ public class Province extends AbstractWorkflowEntity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public boolean isTaxExempted() {
+		return taxExempted;
+	}
+
+	public void setTaxExempted(boolean taxExempted) {
+		this.taxExempted = taxExempted;
+	}
+
+	public boolean isUnionTerritory() {
+		return unionTerritory;
+	}
+
+	public void setUnionTerritory(boolean unionTerritory) {
+		this.unionTerritory = unionTerritory;
+	}
+
+	public String getTaxStateCode() {
+		return taxStateCode;
+	}
+
+	public void setTaxStateCode(String taxStateCode) {
+		this.taxStateCode = taxStateCode;
+	}
+
+	public boolean isTaxAvailable() {
+		return taxAvailable;
+	}
+
+	public void setTaxAvailable(boolean taxAvailable) {
+		this.taxAvailable = taxAvailable;
+	}
+
+	public String getBusinessArea() {
+		return businessArea;
+	}
+
+	public void setBusinessArea(String businessArea) {
+		this.businessArea = businessArea;
 	}
 }
