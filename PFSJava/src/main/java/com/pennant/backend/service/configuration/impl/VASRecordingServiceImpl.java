@@ -1693,15 +1693,18 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
 			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())){
-				Customer customer = getCustomerDAO().getCustomerByCIF(getVASRecording().getPrimaryLinkRef(),"");
+				Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(),"");
 				aeEvent.setBranch(customer.getCustDftBranch());
 				aeEvent.setCcy(customer.getCustBaseCcy());
 				aeEvent.setCustID(customer.getCustID());
 			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())){
 				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
 						vASRecording.getPrimaryLinkRef(),"");
+				//TODO:Need to modify for getting branch as per performance
+				Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(),"");
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
+				aeEvent.setBranch(customer.getCustDftBranch());
 			}
 
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
