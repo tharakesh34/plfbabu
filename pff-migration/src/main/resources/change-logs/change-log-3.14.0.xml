@@ -669,4 +669,15 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
 		<modifyDataType tableName="gcdcustomers" columnName="branchId"
 			newDataType="number(19,0)" />
 	</changeSet>
+	<changeSet id="34" author="Irfan">
+	<sql>
+		Update RMTCountryVsProvince set taxExempted=0 where taxExempted is null;
+		Update RMTCountryVsProvince set unionTerritory=0 where unionTerritory is null;
+		Update RMTCountryVsProvince set taxAvailable=0 where taxAvailable is null;
+		Update RMTCountryVsProvince_Temp set taxExempted=0 where taxExempted is null;
+		Update RMTCountryVsProvince_Temp set unionTerritory=0 where unionTerritory is null;
+		Update RMTCountryVsProvince_Temp set taxAvailable=0 where taxAvailable is null;
+	</sql>
+
+</changeSet>
 </databaseChangeLog>
