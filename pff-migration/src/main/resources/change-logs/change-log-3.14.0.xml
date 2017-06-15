@@ -771,4 +771,20 @@ FROM                  JVPostings  T1 INNER JOIN
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
 </changeSet>
+<changeSet id="39" author="Ganesh">
+	<sql>
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'BranchDialog_PinCode');
+		Delete from SecRights where RightName = 'BranchDialog_PinCode'; 
+		
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BranchDialog_PinCode','BranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BRANCH_MAKER'), (Select RightID from SecRights where RightName = 'BranchDialog_PinCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
 </databaseChangeLog>
