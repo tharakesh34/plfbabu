@@ -1699,7 +1699,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				aeEvent.setCustID(customer.getCustID());
 			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())){
 				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
-						getVASRecording().getPrimaryLinkRef(),"");
+						vASRecording.getPrimaryLinkRef(),"");
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
 			}
