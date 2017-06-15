@@ -1723,4 +1723,40 @@ Delete from CUSTOMERS_TEMP ;
 	 </sql>
 	</changeSet>
 	
+	<changeSet id="74" author="Satya">
+	<createView viewName="Entity_AView" replaceIfExists="true">
+			 SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+		</createView>
+</changeSet>
+<changeSet id="75" author="Satya">
+<createView viewName="Entity_View" replaceIfExists="true">
+	SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity_Temp  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+            
+
+UNION ALL
+
+SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+            
+WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode)
+
+		</createView>
+</changeSet>
 </databaseChangeLog>
