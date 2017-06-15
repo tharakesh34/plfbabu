@@ -970,4 +970,30 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	</createTable>
 </changeSet>
 
+<changeSet author="Amit" id="44">
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="SOURCESYSTEM" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="CATEGORYID" newDataType="NUMBER(15,0)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="SPOUSENAME" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="INDVCORPFLAG" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="INCOMESOURCE" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="MPAKERID" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="AUTHID" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="ACCTYPE" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="APCCOCATG" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="NATIONALID" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="NATIONALITY" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="REGIONID" newDataType="NUMBER(10,0)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="BANKTYPE" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="ENTITYFLAG" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="SECTORID" newDataType="NUMBER(10,0)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="FRAUDFLAG" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="FRAUDSCORE" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="EMICARDELIG" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="NOMINEERELATIONSHIP" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="FIELD9" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="FIELD10" newDataType="VARCHAR2(10 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="INSERTUPDATEFLAG" newDataType="VARCHAR2(20 BYTE)" />
+		<modifyDataType tableName="GCDCUSTOMERS" columnName="STATUSFROMFINNONE" newDataType="VARCHAR2(10 BYTE)" />
+	</changeSet>
+
 </databaseChangeLog>
