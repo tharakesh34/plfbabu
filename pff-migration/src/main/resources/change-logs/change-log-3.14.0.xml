@@ -1605,4 +1605,13 @@ Delete from CUSTOMERS_TEMP ;
 		
 		</createView>
 	</changeSet>
+	
+	<changeSet id="64" author="Manoj.p">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+			  SELECT DS.ID, DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS 
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+    	ORDER BY DS.ID DESC
+		</createView>
+	</changeSet>
 </databaseChangeLog>
