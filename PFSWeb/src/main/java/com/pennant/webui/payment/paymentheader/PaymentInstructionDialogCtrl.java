@@ -62,6 +62,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected CurrencyBox paymentAmount;
 	protected ExtendedCombobox partnerBankID;
 	protected Textbox remarks;
+	protected Textbox tranReference;
+	protected Textbox status;
 
 	// IMPS Details
 	protected ExtendedCombobox issuingBank;
@@ -366,6 +368,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		
 		this.paymentAmount.setValue(PennantAppUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
 		this.remarks.setValue(paymentInstruction.getRemarks());
+		this.tranReference.setValue(paymentInstruction.getTransactionRef());
+		this.status.setValue(paymentInstruction.getStatus());
 
 		if (paymentInstruction.getBankBranchId() != Long.MIN_VALUE && paymentInstruction.getBankBranchId() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", paymentInstruction.getBankBranchId());
