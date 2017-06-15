@@ -42,41 +42,15 @@
  */
 package com.pennant.webui.workflow;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.Timestamp;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.dom4j.DocumentException;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.UploadEvent;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Iframe;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.impl.InputElement;
-
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
@@ -91,19 +65,9 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_workflowDesign; 
-	protected Textbox workFlowType;
-	protected Textbox workFlowSubType;
-	protected Textbox workFlowDesc;
-	protected Textbox workFlowXML;
-	protected Checkbox workFlowActive;
-	protected Groupbox gb_basicDetails;
-
 	// not auto wired vars
 	private WorkFlowDetails workFlowDetails; // overhanded per param
 	private transient WorkFlowListCtrl workFlowListCtrl; // overhanded per param
-
-	protected Button btnUpload;
-	
 	protected Iframe iframe;
 
 	private transient WorkFlowDetailsService workFlowDetailsService;
@@ -135,11 +99,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		setPageComponents(window_workflowDesign);
 
 		try {
-			
-			/* set components visible dependent of the users rights */
-			doCheckRights();
-
-			if (arguments.containsKey("workFlowDetails")) {
+			    if (arguments.containsKey("workFlowDetails")) {
 				this.workFlowDetails = (WorkFlowDetails) arguments
 						.get("workFlowDetails");
 				WorkFlowDetails flowDetails = new WorkFlowDetails();
@@ -157,8 +117,6 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 				setWorkFlowListCtrl(null);
 			}
 
-			// set Field Properties
-			doSetFieldProperties();
 			doShowDialog(getWorkFlowDetails());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -166,101 +124,8 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
-	 */
-
-	private void doCheckRights() {
-
-	}
-
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
-	private void doSetFieldProperties() {
-		logger.debug("Entering ");
-		this.workFlowType.setMaxlength(50);
-		this.workFlowSubType.setMaxlength(50);
-		this.workFlowDesc.setMaxlength(500);
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		validateErrors();
-		doSave();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * when the "cancel" button is clicked. <br>
-	 * 
-	 * @param event
-	 */
-	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
-		doCancel();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * when the "Upload" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		this.workFlowXML.setValue("");
-
-		if (event.getMedia().getName().endsWith(".xml")) {
-			try {
-				ByteArrayInputStream xmlStream = new ByteArrayInputStream(event
-						.getMedia().getStringData().getBytes());
-				XMLStreamReader parser = XMLInputFactory.newInstance()
-						.createXMLStreamReader(xmlStream);
-				StAXOMBuilder builder = new StAXOMBuilder(parser);
-				OMElement xmlEnvelope = builder.getDocumentElement();
-				this.workFlowXML.setValue(xmlEnvelope.toString());
-
-				WorkflowEngine workFlow = new WorkflowEngine(builder);
-				this.workFlowDetails.setFirstTaskOwner(workFlow.allFirstTaskOwners());
-				this.workFlowDetails.setWorkFlowRoles(StringUtils.join(workFlow.getActors(false), ';'));
-
-				this.btnSave.setVisible(true);
-			} catch (Exception e) {
-				MessageUtil.showError("Unable to parse the File");
-			}
-		} else {
-			MessageUtil.showError("The file must be an .xml file. Please select another file");
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * Cancel the actual operation. <br>
-	 * <br>
-	 * Resets to the original status.<br>
-	 * 
-	 */
-	private void doCancel() {
-		logger.debug("Entering ");
-		doWriteBeanToComponents(this.workFlowDetails.getBefImage());
-		logger.debug("Leaving ");
-	}
-
+	
+	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -270,25 +135,16 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 */
 	public void doWriteBeanToComponents(WorkFlowDetails aWorkFlowDetails) {
 		logger.debug("Entering ");
-		this.workFlowType.setValue(aWorkFlowDetails.getWorkFlowType());
-		this.workFlowSubType.setValue(aWorkFlowDetails.getWorkFlowSubType());
-		this.workFlowDesc.setValue(aWorkFlowDetails.getWorkFlowDesc());
-		if (aWorkFlowDetails.getWorkFlowXml() != null) {
-			this.workFlowXML.setValue(aWorkFlowDetails.getWorkFlowXml());
-		} else {
-			this.workFlowXML.setValue("");
-		}
-		this.workFlowActive.setChecked(aWorkFlowDetails.isWorkFlowActive());
-		
-		try {
-			WorkflowEngine.writeJsonToFile(aWorkFlowDetails.getWorkFlowType(), aWorkFlowDetails.getJsonDesign());
-		} catch(Exception e) {
-			logger.debug("Exception:", e);
-		}
-
 		this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "&uuid="
 				+ WorkflowEngine.getPbpmPackage() + "_"
 				+ aWorkFlowDetails.getWorkFlowType());
+		
+		if (aWorkFlowDetails.isNew()) {
+			this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "editor/#/processes");
+		} else {
+			this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "editor/#/editor/" +aWorkFlowDetails.getId());
+		}
+		
 		this.iframe.setAttribute("MYNAME", "SAI");
 
 		logger.debug("Leaving ");
@@ -305,12 +161,6 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 */
 	public void doShowDialog(WorkFlowDetails aWorkFlowDetails) throws Exception {
 		logger.debug("Entering");
-		if (aWorkFlowDetails.isNew()) {
-			doEdit();
-		} else {
-			doReadOnly();
-		}
-
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aWorkFlowDetails);
@@ -325,151 +175,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		logger.debug("Leaving ");
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aWorkFlowDetails
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 * @throws FactoryConfigurationError
-	 * @throws XMLStreamException
-	 */
-	public void doWriteComponentsToBean(WorkFlowDetails aWorkFlowDetails)
-			throws DocumentException, FileNotFoundException, IOException,
-			XMLStreamException, FactoryConfigurationError {
-		logger.debug("Entering ");
-		aWorkFlowDetails.setWorkFlowSubType(this.workFlowSubType.getValue());
-		aWorkFlowDetails.setWorkFlowDesc(this.workFlowDesc.getValue());
-		aWorkFlowDetails.setWorkFlowXml(this.workFlowXML.getValue());
-		aWorkFlowDetails.setWorkFlowType(this.workFlowType.getValue());
-
-		aWorkFlowDetails.setJsonDesign(WorkflowEngine.getJsonDesign(aWorkFlowDetails
-				.getWorkFlowType()));
-
-		logger.debug("Leaving ");
-	}
-
-	/*
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
-	 */
-
-	public void doSave() throws Exception {
-		logger.debug("Entering ");
-
-		if (!WorkflowEngine.bpmnSaved(this.workFlowType.getValue())) {
-			MessageUtil.showError("Please save the process diagram before submitting.");
-			return;
-		}
-
-		StAXOMBuilder builder = WorkflowEngine.getBpmnBuilder(this.workFlowType
-				.getValue());
-
-		OMElement element = builder.getDocumentElement();
-		this.workFlowXML.setValue(element.toString());
-
-		WorkflowEngine workflow = null;
-		try {
-			workflow = new WorkflowEngine(builder);
-		} catch (Exception ex) {
-			MessageUtil.showError("Please validate the process diagram before submitting.");
-			return;
-		}
-		this.workFlowDetails.setFirstTaskOwner(workflow.allFirstTaskOwners());
-		this.workFlowDetails.setWorkFlowRoles(StringUtils.join(workflow.getActors(false), ';'));
-
-		final WorkFlowDetails aWorkFlowDetails = getWorkFlowDetails();
-		// fill the WorkFlowDetails object with the components data
-		AuditHeader auditHeader = null;
-		doWriteComponentsToBean(aWorkFlowDetails);
-
-		// save it to database
-		try {
-
-			aWorkFlowDetails.setLastMntBy(getUserWorkspace()
-					.getLoggedInUser().getLoginUsrID());
-			aWorkFlowDetails.setLastMntOn(new Timestamp(System
-					.currentTimeMillis()));
-			aWorkFlowDetails.setUserDetails(getUserWorkspace()
-					.getLoggedInUser());
-			aWorkFlowDetails.setWorkFlowActive(true);
-
-			String tranType = "";
-			if (aWorkFlowDetails.isNew()) {
-				tranType = PennantConstants.RECORD_TYPE_NEW;
-			} else {
-				tranType = PennantConstants.RECORD_TYPE_UPD;
-			}
-
-			auditHeader = getAuditHeader(aWorkFlowDetails, tranType);
-
-			if (doSaveProcess(auditHeader)) {
-				final JdbcSearchObject<WorkFlowDetails> so = getWorkFlowListCtrl()
-						.getSearchObject();
-
-				// Set the ListModel
-				getWorkFlowListCtrl().pagingWorkFlowList.setActivePage(0);
-				getWorkFlowListCtrl().getPagedListWrapper().setSearchObject(so);
-				// call from cusromerList then synchronize the invoiceHeader
-				// listBox
-				if (getWorkFlowListCtrl().listBoxWorkFlow != null) {
-					// now synchronize the invoiceHeader listBox
-					getWorkFlowListCtrl().listBoxWorkFlow.getListModel();
-				}
-
-				closeDialog();
-			}
-
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * 
-	 * @param method
-	 *            (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
-	private boolean doSaveProcess(AuditHeader auditHeader) {
-		logger.debug("Entering ");
-		boolean processCompleted = false;
-		int retValue = PennantConstants.porcessOVERIDE;
-		try {
-
-			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				auditHeader = getWorkFlowDetailsService().saveOrUpdate(
-						auditHeader);
-
-				retValue = ErrorControl.showErrorControl(
-						this.window_workflowDesign, auditHeader);
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
-				}
-			}
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving ");
-		return processCompleted;
-	}
+	
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
@@ -478,85 +184,16 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		doClose(this.btnSave.isVisible());
+		refreshList();
+		doClose(false);
 	}
-
+	
 	/**
-	 * For validating the Errors
+	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void validateErrors() {
-		logger.debug("Entering ");
-		// Window window = (Window) event.getTarget();
-		int lastItemIndex = 0;
-		InputElement errorComponent = null;
-
-		for (Object component : this.window_workflowDesign.getFellows()) {
-
-			if (component instanceof InputElement) {
-				String errorMessage = ((InputElement) component)
-						.getErrorMessage();
-				if (errorMessage != null) {
-					if (lastItemIndex > ((InputElement) component)
-							.getTabindex() || lastItemIndex == 0) {
-						errorComponent = (InputElement) component;
-					}
-					((InputElement) component).setErrorMessage(errorMessage);
-					lastItemIndex = ((InputElement) component).getTabindex();
-				}
-			} else if (component instanceof Listbox) {
-			}
-		}
-		if (errorComponent != null) {
-			errorComponent.select();
-			return;
-		}
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Set the components to ReadOnly. <br>
-	 */
-	public void doReadOnly() {
-		logger.debug("Entering ");
-		this.workFlowType.setReadonly(true);
-		this.btnCancel.setVisible(false);
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	public void doEdit() {
-		logger.debug("Entering ");
-		if (getWorkFlowDetails().isNew()) {
-			this.workFlowType.setReadonly(false);
-		} else {
-			this.workFlowType.setReadonly(true);
-		}
-
-		workFlowDetails.setWorkFlowActive(true);
-		this.workFlowActive.setDisabled(true);
-		this.btnCancel.setVisible(false);
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aWorkFlowDetails
-	 *            (WorkFlowDetails)
-	 * @param tranType
-	 *            (String)
-	 * @return auditHeader
-	 */
-	private AuditHeader getAuditHeader(WorkFlowDetails aWorkFlowDetails,
-			String tranType) {
-		logger.debug("Entering ");
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aWorkFlowDetails.getBefImage(), aWorkFlowDetails);
-		return new AuditHeader(String.valueOf(aWorkFlowDetails.getId()), null,
-				null, null, auditDetail, aWorkFlowDetails.getUserDetails(),
-				getOverideMap());
+	private void refreshList() {
+		getWorkFlowListCtrl().doReset();
+		getWorkFlowListCtrl().search();
 	}
 
 	// ******************************************************//

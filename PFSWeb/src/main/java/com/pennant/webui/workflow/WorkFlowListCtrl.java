@@ -177,6 +177,12 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 		doReset();
 		search();
 	}
+	
+	public void doReset() {
+		logger.debug("Entering");
+		super.doReset();
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * The framework calls this event handler when user clicks the new button.
