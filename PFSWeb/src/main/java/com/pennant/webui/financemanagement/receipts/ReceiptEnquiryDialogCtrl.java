@@ -462,8 +462,8 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		// Fee Amount Collected along Receipt
 		if(receiptHeader.getTotFeeAmount() != null && receiptHeader.getTotFeeAmount().compareTo(BigDecimal.ZERO) > 0){
 			item = new Listitem();
-			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_EventFee", 
-					PennantAppUtil.getlabelDesc(getReceiptHeader().getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose())));
+			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_AllocationType_EventFee", new String[]{
+					PennantAppUtil.getlabelDesc(getReceiptHeader().getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose())}));
 			lc.setStyle("font-weight:bold;color: #191a1c;");
 			lc.setParent(item);
 
