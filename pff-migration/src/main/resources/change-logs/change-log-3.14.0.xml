@@ -811,7 +811,7 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
                             WHERE      (PostId = T1.PostId)))
 </createView>
 </changeSet>
-<changeSet id="41" author="satya">
+<!-- <changeSet id="41" author="satya">
 	<sql>
 
 UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
@@ -902,7 +902,7 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 
 
 </sql>
-</changeSet>
+</changeSet> -->
 
 <changeSet author="amit" id="40">
 		<dropNotNullConstraint tableName="GCDCUSTOMERS"
@@ -1123,6 +1123,30 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	
 	</createView>
 </changeSet>
+
+<changeSet id="48" author="Pruthvi" dbms="oracle">
+    <createView viewName="RPT_MANUALPAYMENTSDUE_VIEW" replaceIfExists="true" >
+       <![CDATA[select  branchdesc FinBranch,T1.FinBranch BranchCode, T1.CustCIF,T4.CustShrtName, T.FinReference, T1.FinCcy,DefSchdDate,CcyEditField,
+		T1.FinIsActive,T5.FinDivision,CCYISRECEPROCAL,CCYSPOTRATE,CCYMINORCCYUNITS,
+			(select  CcySpotRate TargetCcySpotRate from RMTCurrencies where CcyCode in
+			(Select SysParmValue from SMTparameters where SysParmcode='APP_DFT_CURR'))TARGETCCYSPOTRATE,
+			ProfitSchd,SchdPftPaid,PrincipalSchd,SchdPriPaid,
+			(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_NEXT_BUS_DATE')BussDate
+	from     FinScheduleDetails T  INNER JOIN 
+	         FinPftDetails T1  ON T.FinReference = T1.FinReference inner join
+           financemain fm  ON fm.FinReference = T1.FinReference inner join
+			 RMTCurrencies C  on C.ccyCode=T1.FinCcy INNER JOIN 
+			 RMTBranches T2  ON T2.BranchCode=T1.FinBranch INNER JOIN 
+			 Customers T4  ON T4.CustId = T1.CustId Inner jOin
+			 RMTFinanceTypes T5 ON T5.FinType = T1.FinType
+	where   T.DefSchdDate < (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_NEXT_BUS_DATE')
+			AND T.RepayOnSchDate = 1 AND 
+			((T.ProfitSchd - T.SchdPftPaid) > 0 OR (T.PrincipalSchd - T.SchdPriPaid) > 0 )
+      AND fm.finrepaymethod='MANUAL'
+			AND  (T1.ClosingStatus !='C' or T1.ClosingStatus is null)]]>
+    </createView>
+</changeSet>
+
 
 <changeSet id="48" author="Durgaprasad.g">
  <sql>
@@ -1781,4 +1805,5 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 		</createView>
 </changeSet>
 
+>>>>>>> .r75232
 </databaseChangeLog>
