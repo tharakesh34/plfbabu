@@ -94,9 +94,9 @@ public class WorkflowEngine {
 	 * Enumerates the namespaces that were used in the BPMN.
 	 */
 	private enum Namespace {
-		DEFAULT("http://www.omg.org/spec/BPMN/20100524/MODEL"), DROOLS("http://www.jboss.org/drools");
+		DEFAULT("http://www.omg.org/spec/BPMN/20100524/MODEL"), ACTIVITI("http://activiti.org/bpmn");
 
-		private String uri;
+		private String	uri;
 
 		private Namespace(String uri) {
 			this.uri = uri;
@@ -472,35 +472,27 @@ public class WorkflowEngine {
 		}
 
 		// Get Actor
-		String actor = XmlUtil.getElementText(element, "potentialOwner/resourceAssignmentExpression/formalExpression",
-				namespaceURI);
+		String actor = XmlUtil.getAttribute(element, "actor", Namespace.ACTIVITI.getUri(), "activiti");
 
 		// Get Additional Forms + Assignment Level + Base Actor.
 		String assignmentLevel = null;
 		String baseActor = null;
 		String[] additionalForms = null;
 
-		OMElement extensionElements = XmlUtil.getElement(element, "extensionElements", namespaceURI);
-		if (extensionElements != null) {
-			String onEntryScript = XmlUtil.getElementText(extensionElements, "onEntry-script/script",
-					Namespace.DROOLS.getUri());
-			if (onEntryScript != null) {
-				String value = getValue(onEntryScript, "\\|", "show_tabs");
-				if (value != null) {
-					additionalForms = StringUtils.split(value, ",");
-				}
-			}
-
-			String onExitScript = XmlUtil.getElementText(extensionElements, "onExit-script/script",
-					Namespace.DROOLS.getUri());
-			if (onExitScript != null) {
-				assignmentLevel = getValue(onExitScript, "\\|", "assignment");
-				baseActor = getValue(onExitScript, "\\|", "baseRole");
-			}
+		String forms = XmlUtil.getAttribute(element, "additionalForms", Namespace.ACTIVITI.getUri(), "activiti");
+		if (forms != null) {
+			additionalForms = forms.split("\\|");
 		}
 
+		assignmentLevel = XmlUtil.getAttribute(element, "assignmentLevel", Namespace.ACTIVITI.getUri(), "activiti");
+		baseActor = XmlUtil.getAttribute(element, "baseActor", Namespace.ACTIVITI.getUri(), "activiti");
+
 		// Get Delegator
-		String documentation = XmlUtil.getElementText(element, "documentation", namespaceURI);
+		String delegator = XmlUtil.getAttribute(element, "delegator", Namespace.ACTIVITI.getUri(), "activiti");
+
+		// Get Reinstate Level
+		String reinstateLevel = XmlUtil
+				.getAttribute(element, "reinstateLevel", Namespace.ACTIVITI.getUri(), "activiti");
 
 		UserTask task = new UserTask();
 		task.setId(id);
@@ -510,8 +502,8 @@ public class WorkflowEngine {
 		if (additionalForms != null) {
 			task.setAdditionalForms(Arrays.asList(additionalForms));
 		}
-		task.setDelegator(documentation != null && "delegator".equals(documentation) ? true : false);
-		task.setReinstateLevel(documentation != null && "additional_participant".equals(documentation) ? false : true);
+		task.setDelegator(delegator != null && delegator.equals("true") ? true : false);
+		task.setReinstateLevel(reinstateLevel != null && reinstateLevel.equals("true") ? true : true);
 
 		return task;
 	}
@@ -527,8 +519,7 @@ public class WorkflowEngine {
 	 */
 	protected ServiceTask getServiceTask(OMElement element, String id) {
 		// Get service operation.
-		String operation = XmlUtil.getAttribute(element, "servicetaskoperation", "http://www.jboss.org/drools",
-				"drools");
+		String operation = XmlUtil.getAttribute(element, "operation", Namespace.ACTIVITI.getUri(), "activiti");
 
 		ServiceTask task = new ServiceTask();
 		task.setId(id);
@@ -549,52 +540,26 @@ public class WorkflowEngine {
 	protected List<SequenceFlow> getSequenceFlows(Element element, String id) {
 		List<SequenceFlow> flows = new ArrayList<>();
 
-		OMElement sourceElement = XmlUtil.getElement(process, "id", id, element.name());
-
-		String sequenceId;
-		OMElement sequenceFlow;
-		String documentation;
-		boolean userAction;
-		String action;
-		String state;
+		SequenceFlow flow = null;
 		OMElement child;
-		SequenceFlow flow;
-		Iterator<OMElement> iterator = XmlUtil.getChildren(sourceElement);
+		Iterator<OMElement> iterator = XmlUtil.getChildren(process);
 
 		while (iterator.hasNext()) {
 			child = iterator.next();
 
-			if ("outgoing".equals(child.getLocalName())) {
-				// Get the sequence flow.
-				sequenceId = StringUtils.trimToEmpty(child.getText());
-				sequenceFlow = XmlUtil.getElement(process, "id", sequenceId, Element.sequenceFlow.name());
+			if (Element.sequenceFlow.name().equals(child.getLocalName())) {
+				if (XmlUtil.getAttribute(child, "sourceRef").equals(id)) {
+					flow = new SequenceFlow();
+					flow.setId(XmlUtil.getAttribute(child, "id"));
+					flow.setUserAction(Boolean.valueOf(XmlUtil.getAttribute(child, "representsUserAction")));
+					flow.setAction(XmlUtil.getAttribute(child, "action"));
+					flow.setState(XmlUtil.getAttribute(child, "state"));
+					flow.setConditionExpression(XmlUtil.getElementText(child, "conditionExpression", namespaceURI));
+					flow.setNotesMandatory(Boolean.valueOf(XmlUtil.getAttribute(child, "mandateNotes")));
+					flow.setTargetRef(XmlUtil.getAttribute(child, "targetRef"));
 
-				// Get the user action attributes.
-				documentation = null;
-				userAction = false;
-				action = null;
-				state = null;
-
-				documentation = XmlUtil.getElementText(sequenceFlow, "documentation", namespaceURI);
-				if (documentation != null) {
-					userAction = true;
-
-					String[] userActionAttributes = documentation.split("=");
-					action = userActionAttributes[0];
-					state = userActionAttributes[1];
+					flows.add(flow);
 				}
-
-				flow = new SequenceFlow();
-				flow.setId(sequenceId);
-				flow.setUserAction(userAction);
-				flow.setAction(action);
-				flow.setState(state);
-				flow.setConditionExpression(XmlUtil.getElementText(sequenceFlow, "conditionExpression", namespaceURI));
-				flow.setNotesMandatory(StringUtils
-						.isNotBlank(XmlUtil.getElementText(sequenceFlow, "auditing/documentation", namespaceURI)));
-				flow.setTargetRef(XmlUtil.getAttribute(sequenceFlow, "targetRef"));
-
-				flows.add(flow);
 			}
 		}
 
@@ -681,7 +646,7 @@ public class WorkflowEngine {
 			logger.warn("Exception: ", e);
 			return pbpmUrl;
 		}
-		return "http://" + ipAddress[1] + ":8080/designer/editor?profile=pbpm";
+		return "http://" + ipAddress[1] + ":8080/activiti-app/";
 	}
 
 	public static String getPbpmRepository() {
@@ -743,8 +708,8 @@ public class WorkflowEngine {
 		return saved;
 	}
 
-	public static StAXOMBuilder getBpmnBuilder(String type)
-			throws FileNotFoundException, IOException, XMLStreamException, FactoryConfigurationError {
+	public static StAXOMBuilder getBpmnBuilder(String type) throws FileNotFoundException, IOException,
+			XMLStreamException, FactoryConfigurationError {
 		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".bpmn");
 		StringWriter bpmn = new StringWriter();
 
