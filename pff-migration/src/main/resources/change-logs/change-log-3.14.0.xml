@@ -441,5 +441,75 @@ SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.
 		columnName="PINCODE" columnDataType="varchar(10)" />
 </changeSet>
 	
-
+<changeSet id="20" author="Amit">
+	<createTable tableName="GCDCUSTOMERS">
+		<column name="finCustId" type="VARCHAR2(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="sourceSystem" type="VARCHAR2(3)">
+			<constraints nullable="false" />
+		</column>
+		<column name="customerName" type="VARCHAR2(200)">
+			<constraints nullable="false" />
+		</column>
+		<column name="constId" type="NUMBER(19,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="industryId" type="VARCHAR2(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="categoryId" type="NUMBER(1,0)" />
+		<column name="spousename" type="VARCHAR2(1)" />
+		<column name="indvCorpFlag" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="fName" type="VARCHAR2(50)" />
+		<column name="mName" type="VARCHAR2(50)" />
+		<column name="lname" type="VARCHAR2(50)" />
+		<column name="DOB" type="datetime" />
+		<column name="sex" type="VARCHAR2(8)" />
+		<column name="incomeSource" type="VARCHAR2(1)" />
+		<column name="yearsOfCurrJob" type="datetime" />
+		<column name="DOI" type="datetime" />
+		<column name="mpAkerId" type="VARCHAR2(7)" />
+		<column name="makerDate" type="datetime" />
+		<column name="authId" type="VARCHAR2(7)" />
+		<column name="authDate" type="datetime" />
+		<column name="accType" type="VARCHAR2(1)" />
+		<column name="apCcocatg" type="VARCHAR2(1)" />
+		<column name="dateLastUpdate" type="datetime" />
+		<column name="nationalId" type="VARCHAR2(2)" />
+		<column name="passportNo" type="VARCHAR2(50)" />
+		<column name="nationality" type="VARCHAR2(5)" />
+		<column name="panNo" type="VARCHAR2(20)" />
+		<column name="regionId" type="NUMBER(1,0)" />
+		<column name="bankType" type="VARCHAR2(1)" />
+		<column name="entityFlag" type="VARCHAR2(1)" />
+		<column name="contactPerson" type="VARCHAR2(15)" />
+		<column name="custSearchId" type="VARCHAR2(20)" />
+		<column name="sectorId" type="NUMBER(8,0)" />
+		<column name="fraudFlag" type="VARCHAR2(1)" />
+		<column name="fraudScore" type="VARCHAR2(1)" />
+		<column name="emiCardElig" type="VARCHAR2(1)" />
+		<column name="addressDetail" type="VARCHAR2(500)" />
+		<column name="bankDetail" type="VARCHAR2(500)" />
+		<column name="nomineeName" type="VARCHAR2(100)" />
+		<column name="nomineeAddress" type="VARCHAR2(200)" />
+		<column name="nomineeRelationship" type="VARCHAR2(1)" />
+		<column name="fIELD9" type="VARCHAR2(1)" />
+		<column name="fIELD10" type="VARCHAR2(1)" />
+		<column name="insertUpdateFlag" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="statusFromFinnOne" type="VARCHAR2(1)" />
+		<column name="rejectionReason" type="VARCHAR2(100)" />
+		<column name="finnCustId" type="VARCHAR2(50)">
+		</column>
+		<column name="sfdcCustomerId" type="NUMBER(19,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="branchId" type="VARCHAR2(12)">
+		</column>
+	</createTable>
+</changeSet>
 </databaseChangeLog>
