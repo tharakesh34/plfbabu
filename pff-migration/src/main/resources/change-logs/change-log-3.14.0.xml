@@ -1804,6 +1804,4 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 
 		</createView>
 </changeSet>
-
->>>>>>> .r75232
 </databaseChangeLog>
