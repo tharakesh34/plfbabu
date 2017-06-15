@@ -1049,4 +1049,61 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 </sql>
 </changeSet>
 
+<changeSet id="46" author="Amit">
+	<createTable tableName="GCDCUSTOMERS_TEST">
+		<column name="FinCustId" type="VARCHAR2(50)"/>
+		<column name="SourceSystem" type="VARCHAR2(10)"/>
+		<column name="CustomerName" type="VARCHAR2(200)"/>
+		<column name="ConstId" type="NUMBER(19,0)">
+		<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="IndustryId" type="VARCHAR2(8)"/>
+		<column name="CategoryId" type="NUMBER(15,0)" />
+		<column name="Spousename" type="VARCHAR2(10)" />
+		<column name="IndvCorpFlag" type="VARCHAR2(10)"/>
+		<column name="FName" type="VARCHAR2(50)" />
+		<column name="MName" type="VARCHAR2(50)" />
+		<column name="Lname" type="VARCHAR2(50)" />
+		<column name="DOB" type="datetime" />
+		<column name="Sex" type="VARCHAR2(8)" />
+		<column name="IncomeSource" type="VARCHAR2(10)" />
+		<column name="YearsOfCurrJob" type="datetime" />
+		<column name="DOI" type="datetime" />
+		<column name="MpAkerId" type="VARCHAR2(10)" />
+		<column name="MakerDate" type="datetime" />
+		<column name="AuthId" type="VARCHAR2(10)" />
+		<column name="AuthDate" type="datetime" />
+		<column name="AccType" type="VARCHAR2(10)" />
+		<column name="ApCcocatg" type="VARCHAR2(10)" />
+		<column name="DateLastUpdate" type="datetime" />
+		<column name="NationalId" type="VARCHAR2(10)" />
+		<column name="PassportNo" type="VARCHAR2(50)" />
+		<column name="Nationality" type="VARCHAR2(10)" />
+		<column name="PanNo" type="VARCHAR2(20)" />
+		<column name="RegionId" type="NUMBER(10,0)" />
+		<column name="BankType" type="VARCHAR2(10)" />
+		<column name="EntityFlag" type="VARCHAR2(10)" />
+		<column name="ContactPerson" type="VARCHAR2(15)" />
+		<column name="CustSearchId" type="VARCHAR2(20)" />
+		<column name="SectorId" type="NUMBER(10,0)" />
+		<column name="FraudFlag" type="VARCHAR2(10)" />
+		<column name="FraudScore" type="VARCHAR2(10)" />
+		<column name="EmiCardElig" type="VARCHAR2(10)" />
+		<column name="AddressDetail" type="VARCHAR2(500)" />
+		<column name="BankDetail" type="VARCHAR2(500)" />
+		<column name="NomineeName" type="VARCHAR2(100)" />
+		<column name="NomineeAddress" type="VARCHAR2(200)" />
+		<column name="NomineeRelationship" type="VARCHAR2(10)" />
+		<column name="Field9" type="VARCHAR2(10)" />
+		<column name="Field10" type="VARCHAR2(10)" />
+		<column name="InsertUpdateFlag" type="VARCHAR2(20)"/>
+		<column name="StatusFromFinnOne" type="VARCHAR2(10)" />
+		<column name="RejectionReason" type="VARCHAR2(100)" />
+		<column name="FinnCustId" type="VARCHAR2(50)"/>
+		<column name="SfdcCustomerId" type="NUMBER(19,0)"/>
+		<column name="BranchId" type="VARCHAR2(12)">
+		</column>
+	</createTable>
+</changeSet>
+
 </databaseChangeLog>
