@@ -642,4 +642,16 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
 	</sql>
 
 </changeSet>
+
+<changeSet author="Madhubabu" id="30">
+<addColumn tableName="JVPOSTINGS_TEMP">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
+
+<changeSet author="Madhubabu" id="31">
+<addColumn tableName="JVPOSTINGS">
+	<column name="postingDivision" type="VARCHAR2(8)" />
+</addColumn>
+</changeSet>
 </databaseChangeLog>
