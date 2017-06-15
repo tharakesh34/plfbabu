@@ -149,4 +149,52 @@
 		<column name="postingDivision" type="VARCHAR2(8)" />
 	</addColumn>
 </changeSet>
+<changeSet id="11" author="Satya">
+	<createTable tableName="AdtEntity">
+		<column name="AuditId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditSeq" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="EntityCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="EntityDesc" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="PANNumber" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Country" type="char(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="StateCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CityCode" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="PinCode" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Active" type="boolean" />
+		<column name="Version" type="NUMBER(10,0)" />
+		<column name="Lastmntby" type="NUMBER(19,0)" />
+		<column name="Lastmnton" type="datetime" />
+		<column name="Recordstatus" type="nvarchar(50)" />
+		<column name="Rolecode" type="nvarchar(50)" />
+		<column name="Nextrolecode" type="nvarchar(200)" />
+		<column name="Taskid" type="nvarchar(50)" />
+		<column name="Nexttaskid" type="nvarchar(200)" />
+		<column name="Recordtype" type="nvarchar(50)" />
+		<column name="Workflowid" type="NUMBER(19,0)" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
