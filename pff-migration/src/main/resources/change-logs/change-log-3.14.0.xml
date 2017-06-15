@@ -512,4 +512,10 @@ SELECT T1.BranchCode ,T1.BranchDesc ,T1.BranchAddrLine1 ,T1.BranchAddrLine2 ,T1.
 		</column>
 	</createTable>
 </changeSet>
+
+<changeSet author="Amit" id="25">
+		<addPrimaryKey tableName="gcdcustomers"
+			constraintName="PK_ConstId"
+			columnNames="constId" />
+	</changeSet>
 </databaseChangeLog>
