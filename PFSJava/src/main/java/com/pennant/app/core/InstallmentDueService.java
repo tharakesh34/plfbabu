@@ -103,6 +103,8 @@ public class InstallmentDueService extends ServiceHelper {
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
+				//"_C" Should be there to post then amount
+				dataMap.put(feeSchd.getFeeTypeCode() + "_C", feeSchd.getSchAmount());
 				dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
 				dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
 				dataMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
@@ -112,6 +114,8 @@ public class InstallmentDueService extends ServiceHelper {
 		List<FinSchFrqInsurance> finInsList = finEODEvent.getFinSchFrqInsurances();
 		if (finInsList != null && !finInsList.isEmpty()) {
 			for (FinSchFrqInsurance insschd : finInsList) {
+				//"_C" Should be there to post then amount
+				dataMap.put(insschd.getInsuranceType() + "_C", insschd.getAmount());
 				dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
 				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 			}
