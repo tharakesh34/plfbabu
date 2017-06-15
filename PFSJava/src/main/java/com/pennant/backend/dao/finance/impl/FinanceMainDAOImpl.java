@@ -2086,6 +2086,26 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			throw new ConcurrencyException();
 		}
 	}
+	
+	@Override
+	public void updatePaymentInEOD(FinanceMain financeMain) {
+
+		logger.debug("Entering");
+		int recordCount = 0;
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain Set");
+		updateSql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, ");
+		updateSql.append("  FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus, ");
+		updateSql.append("  FinRepaymentAmount = :FinRepaymentAmount ");
+		updateSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
 
 	/**
 	 * Method for Fetching Approved Repayment method

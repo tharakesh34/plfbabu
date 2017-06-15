@@ -6559,6 +6559,7 @@
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="limitManagement" ref="limitManagement" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

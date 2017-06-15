@@ -403,6 +403,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
+		String oldFinStatus = financeMain.getFinStatus();
 		pftDetail = accrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
 		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate, financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
@@ -424,12 +425,14 @@ public class RepaymentPostingsUtil implements Serializable {
 		getProfitDetailsDAO().update(pftDetail, true);
 
 		//Get Customer Status
-		CustEODEvent custEODEvent = new CustEODEvent();
-		custEODEvent.setEodDate(dateValueDate);
-		custEODEvent.setEodValueDate(dateValueDate);
-		Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
-		custEODEvent.setCustomer(customer);
-		latePayMarkingService.processCustomerStatus(custEODEvent);
+		if(!StringUtils.equals(oldFinStatus, financeMain.getFinStatus())){
+			CustEODEvent custEODEvent = new CustEODEvent();
+			custEODEvent.setEodDate(dateValueDate);
+			custEODEvent.setEodValueDate(dateValueDate);
+			Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
+			custEODEvent.setCustomer(customer);
+			latePayMarkingService.processCustomerStatus(custEODEvent);
+		}
 
 		logger.debug("Leaving");
 		return financeMain;

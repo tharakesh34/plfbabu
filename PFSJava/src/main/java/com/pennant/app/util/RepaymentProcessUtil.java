@@ -23,6 +23,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
@@ -84,6 +85,7 @@ public class RepaymentProcessUtil {
 	private LimitManagement				limitManagement;
 	private ReceiptAllocationDetailDAO	allocationDetailDAO;	
 	private PostingsPreparationUtil		postingsPreparationUtil;
+	private FinanceMainDAO				financeMainDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -312,6 +314,7 @@ public class RepaymentProcessUtil {
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate);
 		doSaveReceipts(receiptHeader, null);
+		financeMainDAO.updatePaymentInEOD(financeMain);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
 	}
@@ -1481,6 +1484,14 @@ public class RepaymentProcessUtil {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }
