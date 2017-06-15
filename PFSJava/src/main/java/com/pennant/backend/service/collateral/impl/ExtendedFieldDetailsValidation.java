@@ -296,7 +296,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", null)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", null)));
 			}
 			break;
 		case "FUTURE_TODAY":
@@ -304,7 +304,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm)));
 			}
 			break;
 		case "PAST_TODAY":

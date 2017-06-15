@@ -137,7 +137,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			String[] valueParm = new String[2];
 			valueParm[0] = "Amount:"+finServiceInstruction.getAmount();
 			valueParm[1] = "Loan Amount:"+finServiceInstruction.getRecalType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), lang));
 		}
 		// validate reCalFromDate
 		if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT) 

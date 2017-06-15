@@ -1264,7 +1264,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Review date("+DateUtility.formatToShortDate(limitHeader.getLimitRvwDate())+")";
 				valueParm[1] = "Limit expiry date("+DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+")";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN"));
 			}
 		}
 		Calendar cal = Calendar.getInstance();

@@ -341,7 +341,7 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Schedule Terms";
 				valueParm[1] = "Number of terms:" + finScheduleData.getFinanceMain().getNumberOfTerms();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 			}
 		}
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
@@ -1892,7 +1892,7 @@ public class FinanceDataValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Application Number";
 			valueParm[1] = "20 characters";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 		}
 		// Finance start date
 		Date appDate = DateUtility.getAppDate();
@@ -2500,21 +2500,21 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHMax";
 				valueParm[1] = String.valueOf(financeType.getPlanEMIHMax());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 				return errorDetails;	
 			}
 			if(finMain.getPlanEMIHMaxPerYear() > financeType.getPlanEMIHMaxPerYear()){
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHMaxPerYear";
 				valueParm[1] = String.valueOf(financeType.getPlanEMIHMaxPerYear());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 				return errorDetails;	
 			}
 			if(!(financeType.getPlanEMIHLockPeriod() >= finMain.getPlanEMIHLockPeriod())){
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHLockPeriod";
 				valueParm[1] = String.valueOf(financeType.getPlanEMIHLockPeriod());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 				return errorDetails;	
 			}
 			if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
@@ -3636,7 +3636,7 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Schedule Terms";
 					valueParm[1] = "Number of terms:"+finSchdData.getFinanceMain().getNumberOfTerms();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 				}
 			}
 
