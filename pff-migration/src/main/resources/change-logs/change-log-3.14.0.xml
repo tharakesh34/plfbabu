@@ -588,5 +588,8 @@ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmoun
 		</sql>
 	</changeSet>
 
-	
+	<changeSet id="30" author="Amit">
+		<modifyDataType tableName="gcdcustomers" columnName="industryId"
+			newDataType="number(19,0)" />
+	</changeSet>
 </databaseChangeLog>
