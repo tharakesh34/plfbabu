@@ -40,7 +40,6 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -881,15 +880,14 @@ public class FinanceValidationService {
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (financeMain != null) {
-			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(financeMain
-					.getAccountsOfficer());
-			if (generalDepartment == null) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(financeMain.getAccountsOfficer());
+			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getAccountsOfficer();
 				return getErrorDetails("90501", valueParm);
 			}
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
-					.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
+			relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
@@ -897,9 +895,9 @@ public class FinanceValidationService {
 			}
 
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
-				GeneralDepartment salesDepartment = generalDepartmentService
-						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
-				if (salesDepartment == null) {
+				relationshipOfficer = relationshipOfficerService
+						.getApprovedRelationshipOfficerById(financeMain.getSalesDepartment());
+				if (relationshipOfficer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getAccountsOfficer();
 					return getErrorDetails("90501", valueParm);

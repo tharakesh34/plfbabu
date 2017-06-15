@@ -210,7 +210,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// Finance detail object
 			financeDetail.setUserAction("");
 			financeDetail.setExtSource(false);
-			financeDetail.setAccountingEventCode("");
+			financeDetail.setAccountingEventCode(PennantApplicationUtil.getEventCode(financeMain.getFinStartDate()));
 			financeDetail.setFinReference(financeMain.getFinReference());
 			financeDetail.setFinScheduleData(finScheduleData);
 

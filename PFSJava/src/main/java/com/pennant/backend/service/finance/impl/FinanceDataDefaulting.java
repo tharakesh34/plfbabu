@@ -474,13 +474,8 @@ public class FinanceDataDefaulting {
 		finMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
 		finMain.setPastduePftMargin(financeType.getPastduePftMargin());
 		finMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
-
-		// Multi Disbursement
-		if (financeType.isFinIsAlwMD()) {
-			finMain.setFinIsAlwMD(true);
-		} else {
-			finMain.setFinIsAlwMD(false);
-		}
+		finMain.setFinIsAlwMD(financeType.isFinIsAlwMD());
+		finMain.setAlwMultiDisb(financeType.isFinIsAlwMD());
 
 		//Repayment Method
 		if (StringUtils.isBlank(finMain.getFinRepayMethod())) {
@@ -495,6 +490,12 @@ public class FinanceDataDefaulting {
 		if (finMain.isStepFinance()) {
 			stepDefaulting(vldGroup, finScheduleData);
 		}
+		//defaults from application
+		finMain.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		finMain.setInitiateUser(userDetails.getLoginUsrID());
+		finMain.setInitiateDate(DateUtility.getAppDate());
+		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 	}
 
 	/*
@@ -847,6 +848,8 @@ public class FinanceDataDefaulting {
 			if (StringUtils.isBlank(finMain.getBpiTreatment())) {
 				finMain.setBpiTreatment(financeType.getBpiTreatment());
 			}
+		} else {
+			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}
 	}
 

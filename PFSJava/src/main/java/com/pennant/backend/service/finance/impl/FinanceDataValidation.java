@@ -82,7 +82,6 @@ import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -125,7 +124,6 @@ public class FinanceDataValidation {
 	private CollateralSetupService		collateralSetupService;
 	private MandateService				mandateService;
 	private StepPolicyService			stepPolicyService;
-	private GeneralDepartmentService	generalDepartmentService;
 	private RelationshipOfficerService	relationshipOfficerService;
 	private FinTypePartnerBankService	finTypePartnerBankService;
 	private VASConfigurationService		vASConfigurationService;
@@ -884,18 +882,18 @@ public class FinanceDataValidation {
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getAccountsOfficer())) {
-			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(finMain
 					.getAccountsOfficer());
-			if (generalDepartment == null) {
+			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getAccountsOfficer();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 			}
 		}
 		if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
-			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(finMain
 					.getSalesDepartment());
-			if (generalDepartment == null) {
+			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getAccountsOfficer();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
@@ -1897,10 +1895,10 @@ public class FinanceDataValidation {
 		// Finance start date
 		Date appDate = DateUtility.getAppDate();
 		Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
-		if (finMain.getFinStartDate().compareTo(minReqFinStartDate) < 0) {
+		if (finMain.getFinStartDate().compareTo(minReqFinStartDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = SysParamUtil.getValueAsString("BACKDAYS_STARTDATE");
-			valueParm[1] = DateUtility.formatDate(minReqFinStartDate, PennantConstants.XMLDateFormat);
+			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(minReqFinStartDate, 1), PennantConstants.XMLDateFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90134", valueParm)));
 		}
 
@@ -4050,10 +4048,6 @@ public class FinanceDataValidation {
 
 	public void setStepPolicyService(StepPolicyService stepPolicyService) {
 		this.stepPolicyService = stepPolicyService;
-	}
-
-	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
-		this.generalDepartmentService = generalDepartmentService;
 	}
 
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {

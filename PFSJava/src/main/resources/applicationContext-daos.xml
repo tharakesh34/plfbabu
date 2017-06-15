@@ -4216,7 +4216,6 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="mandateService" ref="mandateService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
-		<property name="generalDepartmentService" ref="generalDepartmentService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
