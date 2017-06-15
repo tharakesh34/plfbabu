@@ -127,6 +127,7 @@
 	    <menuItem id="menu_Item_BounceReason" zulNavigation="/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonList.zul" rightName="menuItem_applicationmaster_BounceReason"/>
 	    <menuItem id="menu_Item_CostCenter" zulNavigation="/WEB-INF/pages/ApplicationMaster/CostCenter/CostCenterList.zul" rightName="menuItem_applicationmaster_CostCenter"/>
 	    <menuItem id="menu_Item_ProfitCenter" zulNavigation="/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterList.zul" rightName="menuItem_applicationmaster_ProfitCenter"/>
+	    <menuItem id="menu_Item_TaxDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul" rightName="menuItem_applicationmaster_TaxDetail"/>
 	</menu>
 
 	<!-- Account Menu Tree -->

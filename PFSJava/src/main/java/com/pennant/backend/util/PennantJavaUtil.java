@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -119,6 +119,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.applicationmaster.TargetDetail;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.applicationmaster.VesselDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
@@ -574,7 +575,7 @@ public class PennantJavaUtil {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
-		"PinCodes_AView" }, masterWF, new String[] {"PinCode","City",},
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","City"},
 				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
@@ -1011,7 +1012,7 @@ public class PennantJavaUtil {
 				"SICCodes" }, masterWF, new String[] { "SicCode", "SicDesc" }, null, 300));
 
 		ModuleUtil.register("EntityCodes", new ModuleMapping("EntityCodes", EntityCodes.class, new String[] {
-				"EntityCodes", "EntityCodes" }, masterWF, new String[] { "EntityCode", "EntityDesc" }, null, 300));
+				"EntityCodes", "Entities_View" }, masterWF, new String[] { "EntityCode", "EntityDesc" }, null, 300));
 
 		ModuleUtil.register("StepPolicyHeader", new ModuleMapping("StepPolicyHeader", StepPolicyHeader.class,
 				new String[] { "StepPolicyHeader", "StepPolicyHeader_AView" }, masterWF, new String[] { "PolicyCode",
@@ -1980,7 +1981,9 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("PaymentInstruction", new ModuleMapping("PaymentInstruction", PaymentInstruction.class, new String[] { "PaymentInstructions",
 		"PaymentInstructions_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","BankCode","PaymentCCy"},null, 600));
-
+		
+		ModuleUtil.register("TaxDetail", new ModuleMapping("TaxDetail", TaxDetail.class, new String[] { "TAXDETAIL",
+		"TAXDETAIL_AView" }, masterWF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {
