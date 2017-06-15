@@ -49,9 +49,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -59,12 +61,17 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.Literal;
@@ -85,6 +92,9 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Paging pagingFileDownloadList;
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
+	
+	@Autowired
+	protected DataEngineConfig dataEngineConfig;
 
 	private Button downlaod;
 
@@ -120,16 +130,41 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList,
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
+		setComparator(new FileDownloadComparator());
 
+
+		registerField("Id");
 		registerField("Name");
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
+		registerField("EndTime");
 		
 		doRenderPage();
 		search();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	
+	
+	public class FileDownloadComparator implements Comparator<Object>, Serializable {
+		
+		private static final long serialVersionUID = -8606975433219761922L;
+
+		public FileDownloadComparator() {
+			
+		}
+		
+		@SuppressWarnings("deprecation")
+		@Override
+	    public int compare(Object o1, Object o2) { 
+			FileDownlaod data = (FileDownlaod) o1; 
+			FileDownlaod data2 = (FileDownlaod) o2; 
+	        return String.valueOf(data.getEndTime().getDay()).compareTo(
+	        		String.valueOf(data2.getEndTime().getDay())); 
+	        
+	    }
 	}
 
 	protected void doAddFilters() {
@@ -147,8 +182,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
-		doReset();
-		search();
+		refresh();
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
@@ -178,13 +212,20 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			inputStream = null;
 			Filedownload.save(stream.toByteArray(), "text/plain", fileName);
 			stream.close();
+		//	dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
 			stream = null;
+			refresh();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	private void refresh() {
+		doReset();
+		search();
+	}
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
@@ -196,33 +237,38 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 			Listcell lc;
 
+			
+			if (item instanceof Listgroup) {	
+				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getEndTime(),PennantConstants.dateTimeFormat)))); 
+
+			} else if (item instanceof Listgroupfoot) { 
+				Listcell cell = new Listcell("");
+				cell.setSpan(4);
+				item.appendChild(cell); 
+
+			} else {
+			
 			lc = new Listcell(fileDownlaod.getName());
 			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
-
-			lc = new Listcell(fileDownlaod.getFileLocation());
+			
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
-			lc.setParent(item);
-
-			if (fileDownlaod.getFileLocation() != null) {
-				lc = new Listcell(fileDownlaod.getFileLocation() + "/" + fileDownlaod.getFileName());
-			} else {
-				lc = new Listcell(fileDownlaod.getFileName());
-			}
-			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
+
 
 			lc = new Listcell();
 			downlaod = new Button();
 			downlaod.addForward("onClick", self, "onClick_Downlaod");
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
+			downlaod.setTooltiptext("Download");
+
 			downlaod.setAttribute("object", fileDownlaod);
 
 			StringBuilder builder = new StringBuilder();
@@ -237,12 +283,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				downlaod.setTooltiptext("File not available.");
 			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("Disbursement request for file generation failed.");
+				downlaod.setTooltiptext("SAPGL request for file generation failed.");
 			}
 
-			downlaod.setTooltiptext("Disbursement request download.");
 
 			lc.setParent(item);
+			}
 
 		}
 	}
