@@ -1082,7 +1082,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Collateral Details
 				if (ImplementationConstants.COLLATERAL_INTERNAL) {
 					financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO()
-							.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_TView"));
+							.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_View"));
 				} else {
 					financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference,
 							"_View"));
