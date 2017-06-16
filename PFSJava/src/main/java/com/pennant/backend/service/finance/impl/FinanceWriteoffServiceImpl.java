@@ -709,18 +709,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		financeWriteoff.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
-		try {
-			//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
-			getPostingsPreparationUtil().postAccounting(aeEvent);
-			financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
-
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterfaceException e) {
-			e.printStackTrace();
-		}
+		//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
+		getPostingsPreparationUtil().postAccounting(aeEvent);
+		financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
  
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 

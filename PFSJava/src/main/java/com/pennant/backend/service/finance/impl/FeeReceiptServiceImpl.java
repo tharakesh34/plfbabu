@@ -273,16 +273,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingSetID);
-
-		try {
-			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterfaceException e) {
-			e.printStackTrace();
-		}
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		// Receipt Header Updation
 		//=======================================

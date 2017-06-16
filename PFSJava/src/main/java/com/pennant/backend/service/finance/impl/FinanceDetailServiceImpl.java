@@ -3279,14 +3279,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 					details = processingVasRecordngList(details, "");
 					auditDetails.addAll(details);
-				}
 
-				//Vas Recording Extended Field Details
-				if (financeDetail.getFinScheduleData().getVasRecordingList() != null
-						&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
-					details = processingExtendedFieldDetailList(details, null, VASConsatnts.MODULE_NAME, "");
-					auditDetails.addAll(details);
+					//Vas Recording Extended Field Details
+					List<AuditDetail> exdDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
+					exdDetails = processingExtendedFieldDetailList(exdDetails, null, VASConsatnts.MODULE_NAME, "");
+					auditDetails.addAll(exdDetails);
 				}
 
 			} else {
