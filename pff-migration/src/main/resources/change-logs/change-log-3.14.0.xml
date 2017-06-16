@@ -99,7 +99,7 @@
 
 </changeSet>
 	
-	<!--  <changeSet id="05" author="Vinay">
+ <changeSet id="05" author="Vinay">
 		<createTable tableName="TAXDETAIL">
 			<column name="ID" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -140,7 +140,7 @@
 			<column name="Workflowid" type="NUMBER(19,0)" />
 			
 		</createTable>
-	</changeSet>  -->
+	</changeSet> 
 	
 	<changeSet id="02" author="Vinay">
 		<addUniqueConstraint columnNames="TAXCODE"
