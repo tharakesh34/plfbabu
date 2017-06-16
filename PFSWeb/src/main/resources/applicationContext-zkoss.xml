@@ -4814,5 +4814,14 @@
 		<property name="taxDetailService" ref="taxDetailService"/>
 	</bean>
 	
+	<!-- Entity -->
+	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="entityService" ref="entityService" />
+	</bean>
+	<bean id="entityDialogCtrl" class="com.pennant.webui.applicationmaster.entity.EntityDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="entityService" ref="entityService"/>
+	</bean>
+	
 	
 </beans>
