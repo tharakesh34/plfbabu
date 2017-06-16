@@ -2144,5 +2144,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
 		</createView>
 		</changeSet>
-		
+	
+	<changeSet id="106" author="Durgaprasad g">
+	 <sql>
+	  INSERT INTO REPORTLIST VALUES ('PaymentHeader','PaymentHeader','label_PaymentHeaderList_FinReference.value,label_PaymentHeaderList_PaymentType.value,label_PaymentHeaderList_ApprovedOn.value','finReference,paymentInstrType,approvedOn','String,String,Date',' ','ReportList03','Payment Instructions','Settlements',1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+	 </sql>
+	</changeSet>
 </databaseChangeLog>
