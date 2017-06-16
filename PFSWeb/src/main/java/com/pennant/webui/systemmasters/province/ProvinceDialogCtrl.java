@@ -514,7 +514,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 		if (!this.taxStateCode.isReadonly()){
 			this.taxStateCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"), 
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true,2,2));
 		}
 		logger.debug("Leaving");
 	}
@@ -990,11 +990,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Entering");
 	
 		String businessAreaValue = this.businessArea.getValue();
-		if(StringUtils.isNotBlank(businessAreaValue) || StringUtils.equals(old_BusineesArea, businessAreaValue)) {
-			boolean businessAreaExist = this.provinceService.getBusinessAreaExist(businessAreaValue, "_View");
-			
-			if (businessAreaExist) {
-				this.businessArea.setErrorMessage("Already Exist"+" "+Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
+		if (StringUtils.isNotBlank(businessAreaValue)) {
+			if (!StringUtils.equals(old_BusineesArea, businessAreaValue)) {
+				boolean businessAreaExist = this.provinceService.getBusinessAreaExist(businessAreaValue, "_View");
+				if (businessAreaExist) {
+					this.businessArea.setErrorMessage("Already Exist" + " "
+							+ Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
+				}
 			}
 		}
 		

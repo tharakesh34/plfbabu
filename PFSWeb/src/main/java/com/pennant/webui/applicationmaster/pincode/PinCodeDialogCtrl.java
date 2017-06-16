@@ -437,7 +437,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		}
 		if (!this.areaName.isReadonly()) {
 			this.areaName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value "), null,true,3,100));
+					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"), null,true,3,100));
 		}
 
 		logger.debug(Literal.LEAVING);
