@@ -548,7 +548,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptDetail finReceiptDetail = null;
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
-				if (item.getPaymentType().equals(presentmentDetail.getMandateType())) {
+				if (item.getPaymentType().equals(RepayConstants.PAYTYPE_PRESENTMENT)) {
 					finReceiptDetail = item;
 					break;
 				}
