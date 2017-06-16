@@ -514,6 +514,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
 					feeDetail.setVasReference(vasRecording.getVasReference());
+					feeDetail.setCalculatedAmount(vasRecording.getFee());
+					feeDetail.setFixedAmount(vasRecording.getFee());
+					feeDetail.setAlwDeviation(true);
+					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+					//feeDetail.setAlwModifyFee(true);
+					feeDetail.setAlwModifyFeeSchdMthd(true);
+					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
 				}
 			}
 		}

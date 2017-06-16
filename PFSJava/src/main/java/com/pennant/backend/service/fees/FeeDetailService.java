@@ -544,7 +544,10 @@ public class FeeDetailService {
 					finFeeDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 					finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
 					finFeeDetail.setOriginationFee(true);
+					finFeeDetail.setFeeTypeID(0);
+					finFeeDetail.setFeeSeq(0);
 				} else {
 					finFeeDetail.setFinEvent(finEvent);
 				}
