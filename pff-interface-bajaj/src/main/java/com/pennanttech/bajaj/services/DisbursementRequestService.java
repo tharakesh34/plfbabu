@@ -22,6 +22,7 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.DisbursementRequest;
+import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DisbursementRequestService extends BajajService implements DisbursementRequest {
@@ -304,7 +305,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		sql.append(" where Name = :Name AND LASTPROCESSEDON = :LASTPROCESSEDON");
 
 		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
-		paramMap.addValue("LASTPROCESSEDON", getValueDate());
+		paramMap.addValue("LASTPROCESSEDON", DateUtil.getSysDate());
 
 		try {
 			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);
