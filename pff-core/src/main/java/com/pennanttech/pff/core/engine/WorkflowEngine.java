@@ -43,13 +43,6 @@
 package com.pennanttech.pff.core.engine;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,8 +59,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -96,7 +87,7 @@ public class WorkflowEngine {
 	private enum Namespace {
 		DEFAULT("http://www.omg.org/spec/BPMN/20100524/MODEL"), ACTIVITI("http://activiti.org/bpmn");
 
-		private String	uri;
+		private String uri;
 
 		private Namespace(String uri) {
 			this.uri = uri;
@@ -491,8 +482,8 @@ public class WorkflowEngine {
 		String delegator = XmlUtil.getAttribute(element, "delegator", Namespace.ACTIVITI.getUri(), "activiti");
 
 		// Get Reinstate Level
-		String reinstateLevel = XmlUtil
-				.getAttribute(element, "reinstateLevel", Namespace.ACTIVITI.getUri(), "activiti");
+		String reinstateLevel = XmlUtil.getAttribute(element, "reinstateLevel", Namespace.ACTIVITI.getUri(),
+				"activiti");
 
 		UserTask task = new UserTask();
 		task.setId(id);
@@ -624,115 +615,4 @@ public class WorkflowEngine {
 
 		return result;
 	}
-
-	// *****************************************************************
-	// ************ PBPM Designer ************
-	// *****************************************************************
-	private static final String	pbpmUrl			= "http://localhost:8080/designer/editor?profile=pbpm";
-	private static final String	pbpmRepository	= "C:/pbpm/designer/repository";
-	private static final String	pbpmPackage		= "PFS";
-
-	public WorkflowEngine(StAXOMBuilder builder) {
-		definition = builder.getDocumentElement();
-
-		init();
-	}
-
-	public static String getPbpmUrl() {
-		String ipAddress[] = new String[2];
-		try {
-			ipAddress = InetAddress.getLocalHost().toString().split("/");
-		} catch (UnknownHostException e) {
-			logger.warn("Exception: ", e);
-			return pbpmUrl;
-		}
-		return "http://" + ipAddress[1] + ":8080/activiti-app/";
-	}
-
-	public static String getPbpmRepository() {
-		return pbpmRepository;
-	}
-
-	public static String getPbpmPackage() {
-		return pbpmPackage;
-	}
-
-	private static void createRepository() {
-		File file = new File(pbpmRepository);
-
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-
-		file = null;
-	}
-
-	private static void deleteFileFromRepository(String type, String extension) {
-		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + "." + extension);
-
-		if (file.exists()) {
-			file.delete();
-		}
-
-		file = null;
-	}
-
-	private static void createJsonFileInRepository(String type, String json) throws IOException {
-		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".json");
-
-		FileUtils.writeStringToFile(file, json);
-
-		file = null;
-	}
-
-	public static void writeJsonToFile(String type, String json) throws IOException {
-		createRepository();
-
-		deleteFileFromRepository(type, "json");
-		deleteFileFromRepository(type, "bpmn");
-		deleteFileFromRepository(type, "svg");
-
-		createJsonFileInRepository(type, json);
-	}
-
-	public static boolean bpmnSaved(String type) {
-		boolean saved = false;
-
-		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".bpmn");
-
-		if (file.exists()) {
-			saved = true;
-		}
-
-		file = null;
-		return saved;
-	}
-
-	public static StAXOMBuilder getBpmnBuilder(String type) throws FileNotFoundException, IOException,
-			XMLStreamException, FactoryConfigurationError {
-		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".bpmn");
-		StringWriter bpmn = new StringWriter();
-
-		IOUtils.copy(new FileInputStream(file), bpmn);
-
-		ByteArrayInputStream stream = new ByteArrayInputStream(bpmn.toString().getBytes());
-		XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-		StAXOMBuilder builder = new StAXOMBuilder(reader);
-
-		file = null;
-		return builder;
-	}
-
-	public static String getJsonDesign(String type) throws FileNotFoundException, IOException {
-		File file = new File(pbpmRepository + "/" + pbpmPackage + "_" + type + ".json");
-		StringWriter json = new StringWriter();
-
-		IOUtils.copy(new FileInputStream(file), json);
-
-		file = null;
-		return json.toString();
-	}
-	// *****************************************************************
-	// ************ PBPM Designer ************
-	// *****************************************************************
 }

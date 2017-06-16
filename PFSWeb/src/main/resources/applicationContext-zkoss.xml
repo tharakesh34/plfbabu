@@ -140,11 +140,6 @@
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 	</bean>
 
-	<bean id="workFlowDialogCtrl" class="com.pennant.webui.workflow.WorkFlowDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
-	</bean>
-
 	<bean id="workflowDesignCtrl" class="com.pennant.webui.workflow.WorkflowDesignCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
