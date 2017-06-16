@@ -2187,5 +2187,11 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 		</createView>
 		</changeSet>
 	
+	<changeSet id="110" author="Durgaprasad G">
+      <sql>
+      	Update SMTPARAMETERS set SYSPARMVALUE  = '/opt/PFF/presentment/response' WHERE SYSPARMCODE = 'PRESENTMENT_RESPONSE_UPLOAD_FILEPATH';
+      </sql>	
+	
+	</changeSet>
 	
 </databaseChangeLog>
