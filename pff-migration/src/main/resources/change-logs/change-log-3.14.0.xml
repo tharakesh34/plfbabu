@@ -1977,5 +1977,12 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 		</sql>
 	
 	</changeSet>
+	<changeSet id="93" author="Vijay">
+		<sql>
+		delete from SMTparameters where SYSPARMCODE='WF_DESIGNER_URL';
+			insert into SMTparameters values('WF_DESIGNER_URL',	'Workflow Designer Url','String', 1,'http://192.168.1.162:8080/activiti-app/',4, 0,null,null,'Workflow Designer Url',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
