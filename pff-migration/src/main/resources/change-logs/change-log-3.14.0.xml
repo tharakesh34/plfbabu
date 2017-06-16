@@ -1984,5 +1984,11 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 		
 		</sql>
 	</changeSet>
+	<changeSet id="94" author="Vijay">
+		<sql>
+			 Insert INTO SecUserOperations values ((select MAX(UsrOprID)+1 from SecUserOperations), (select UsrID from SecUsers WHERE UsrLogin='ADMIN'), (select OprID from SecOperations WHERE OprCode='OPERATION_WORKFLOW'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',1)
+			
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
