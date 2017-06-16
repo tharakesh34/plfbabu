@@ -212,7 +212,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			inputStream = null;
 			Filedownload.save(stream.toByteArray(), "text/plain", fileName);
 			stream.close();
-		//	dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
+			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
 			stream = null;
 			refresh();
 		} catch (Exception e) {

@@ -200,7 +200,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			stream.close();
 			stream = null;
 			
-		//	dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(),getUserWorkspace().getUserDetails().getUserId());
+			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(),getUserWorkspace().getUserDetails().getUserId());
 			refresh();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
