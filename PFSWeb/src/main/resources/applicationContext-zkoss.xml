@@ -143,6 +143,7 @@
 	<bean id="workflowDesignCtrl" class="com.pennant.webui.workflow.WorkflowDesignCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
+		<property name="designerUrl" value="${process.designer.url}" />
 	</bean>
 
 	<!-- ====================================================== -->

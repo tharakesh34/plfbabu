@@ -48,7 +48,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Window;
-import com.pennant.app.util.SysParamUtil;
+
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -72,6 +72,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 
 	private transient WorkFlowDetailsService workFlowDetailsService;
 	protected JdbcSearchObject<WorkFlowDetails> searchObj;
+	private String								designerUrl;
 
 	public WorkflowDesignCtrl() {
 		super();
@@ -136,12 +137,10 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	public void doWriteBeanToComponents(WorkFlowDetails aWorkFlowDetails) {
 		logger.debug("Entering ");
 		
-		String url = SysParamUtil.getValueAsString("WF_DESIGNER_URL");
-		
 		if (aWorkFlowDetails.isNew()) {
-			this.iframe.setSrc(url + "editor/#/processes");
+			this.iframe.setSrc(designerUrl + "editor/#/processes");
 		} else {
-			this.iframe.setSrc(url + "editor/#/editor/" +aWorkFlowDetails.getId());
+			this.iframe.setSrc(designerUrl + "editor/#/editor/" + aWorkFlowDetails.getId());
 		}
 		
 		this.iframe.setAttribute("MYNAME", "SAI");
@@ -224,4 +223,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		this.workFlowListCtrl = workFlowListCtrl;
 	}
 
+	public void setDesignerUrl(String designerUrl) {
+		this.designerUrl = designerUrl;
+	}
 }
