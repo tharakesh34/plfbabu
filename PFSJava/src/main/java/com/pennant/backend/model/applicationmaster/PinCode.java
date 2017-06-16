@@ -62,6 +62,8 @@ private static final long serialVersionUID = 1L;
 	private String city;
 	private String pCCityName;
 	private String areaName;
+	private String pCProvince;
+	private String lovDescPCProvinceName;
 	private boolean active;
 	private boolean newRecord=false;
 	private String lovValue;
@@ -84,6 +86,8 @@ private static final long serialVersionUID = 1L;
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("pCCityName");
+			excludeFields.add("pCProvince");
+			excludeFields.add("lovDescPCProvinceName");
 	return excludeFields;
 	}
 
@@ -158,11 +162,10 @@ private static final long serialVersionUID = 1L;
 	}
 
 
-	public String getpCCityName() {
+	public String getPCCityName() {
 		return pCCityName;
 	}
-
-	public void setpCCityName(String pCCityName) {
+	public void setPCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
 	}
 
@@ -172,6 +175,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setAreaName(String areaName) {
 		this.areaName = areaName;
+	}
+
+	public String getPCProvince() {
+		return pCProvince;
+	}
+
+	public void setPCProvince(String pCProvince) {
+		this.pCProvince = pCProvince;
+	}
+
+	public String getLovDescPCProvinceName() {
+		return lovDescPCProvinceName;
+	}
+
+	public void setLovDescPCProvinceName(String lovDescPCProvinceName) {
+		this.lovDescPCProvinceName = lovDescPCProvinceName;
 	}
 
 }
