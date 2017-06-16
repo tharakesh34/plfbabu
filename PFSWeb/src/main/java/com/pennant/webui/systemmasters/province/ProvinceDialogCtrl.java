@@ -516,6 +516,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.taxStateCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"), 
 					PennantRegularExpressions.REGEX_ALPHANUM, true,2,2));
 		}
+		if (!this.businessArea.isReadonly()){
+			this.businessArea.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), 
+					null, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -530,6 +534,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPCountry.setConstraint("");
 		this.bankRefNo.setConstraint("");
 		this.taxStateCode.setConstraint("");
+		this.businessArea.setConstraint("");
 		logger.debug("Leaving");
 	}
 

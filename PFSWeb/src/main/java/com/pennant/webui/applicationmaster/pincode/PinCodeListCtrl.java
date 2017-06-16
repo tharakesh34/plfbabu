@@ -84,6 +84,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 	// List headers
 	protected Listheader listheader_PinCode;
 	protected Listheader listheader_City;
+	protected Listheader listheader_AreaName;
 	protected Listheader listheader_Active;
 
 	// checkRights
@@ -92,11 +93,13 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 
 	// Search Fields
 	protected Textbox pinCode; // autowired
+	protected Textbox areaName; // autowired
 	protected Textbox city; // autowired
 	protected Checkbox active; // autowired
 	
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_City;
+	protected Listbox sortOperator_AreaName;
 	protected Listbox sortOperator_Active;
 	
 	private transient PinCodeService pinCodeService;
@@ -137,6 +140,7 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		registerField("pinCodeId");
 		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);
 		registerField("pCCityName", listheader_City, SortOrder.NONE, city, sortOperator_City, Operators.STRING);
+		registerField("areaName", listheader_AreaName, SortOrder.NONE, areaName, sortOperator_AreaName, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.

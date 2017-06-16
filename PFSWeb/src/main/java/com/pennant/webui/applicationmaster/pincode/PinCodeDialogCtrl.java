@@ -429,7 +429,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		if (!this.pinCodes.isReadonly()) {
 			this.pinCodes.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_PinCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true,6,20));
 		}
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(

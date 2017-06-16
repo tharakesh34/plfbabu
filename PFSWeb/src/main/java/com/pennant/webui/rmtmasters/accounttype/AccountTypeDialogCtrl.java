@@ -491,14 +491,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			}
 			this.gSTApplicable.setChecked(aAccountType.isTaxApplicable());
 			if (aAccountType.isTaxApplicable()) {
-				this.row_HSNNumber.setVisible(true);
+				this.hSNNumber.setReadonly(false);
 				this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
-				this.row_NatureService.setVisible(true);
+				this.natureService.setReadonly(false);
 				this.natureService.setValue(aAccountType.getaCCADDLVAR2());;
 
 			} else {
-				this.row_HSNNumber.setVisible(false);
-				this.row_NatureService.setVisible(false);
+				this.hSNNumber.setReadonly(true);
+				this.natureService.setReadonly(true);
 			}
 			this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 		
@@ -1350,14 +1350,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	public void gSTApplicableCheck() {
 		logger.debug("Entering");
 		if (this.gSTApplicable.isChecked()) {
-			this.row_HSNNumber.setVisible(true);
+			this.hSNNumber.setReadonly(false);
 			this.hSNNumber.setValue("");
-			this.row_NatureService.setVisible(true);
+			this.natureService.setReadonly(false);
 			this.natureService.setValue("");;
 
 		} else {
-			this.row_HSNNumber.setVisible(false);
-			this.row_NatureService.setVisible(false);
+			this.hSNNumber.setReadonly(true);
+			this.natureService.setReadonly(true);
 		}
 
 		logger.debug("Leaving");

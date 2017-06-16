@@ -159,7 +159,7 @@
 								<label id="label_ProvinceDialog_BusinessArea"
 									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px"  sclass="mandatory"/>
 									<textbox id="businessArea"
 										width="180px" />
 								</hbox>

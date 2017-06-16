@@ -976,4 +976,12 @@ FROM          WIFFinanceMain T1 INNER JOIN
                       BMTProduct T32 ON T7.FinCategory = T32.ProductCode
 					  </createView>
 		</changeSet>
+ <changeSet id="45" author="Irfan"> 
+     <dropPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes"/>   
+     <dropPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp"/>  
+</changeSet>
+<changeSet id="46" author="Irfan">
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes" constraintName="PK_LoanTypeStatusCodes" columnNames="StatusCode,FinType"/>
+ 	<addPrimaryKey tableName="LoanTypeStatusCodes_Temp" constraintName="PK_LoanTypeStatusCodes_Temp" columnNames="StatusCode,FinType"/>  
+</changeSet>    
 </databaseChangeLog>
