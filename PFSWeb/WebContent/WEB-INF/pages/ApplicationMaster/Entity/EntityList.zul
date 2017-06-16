@@ -59,10 +59,10 @@
 								<row>
 									<label id="label_EntityList_Country" value="${c:l('label_EntityList_Country.value')}" />
 									<listbox id="sortOperator_Country" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="country" width="18px" maxlength="2" />
+									<textbox id="country" width="120px" maxlength="2" />
 									<label id="label_EntityList_StateCode" value="${c:l('label_EntityList_StateCode.value')}" />
 									<listbox id="sortOperator_StateCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="stateCode" width="72px" maxlength="8" />
+									<textbox id="stateCode" width="120px" maxlength="8" />
 								</row>
 								<row>
 									<label id="label_EntityList_CityCode" value="${c:l('label_EntityList_CityCode.value')}" />

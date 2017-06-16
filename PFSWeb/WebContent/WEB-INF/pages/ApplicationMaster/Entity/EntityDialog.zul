@@ -81,7 +81,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="entityCode"
-										maxlength="8" width="72px" />
+										maxlength="8" width="120px" />
 								</hbox>
 								<label id="label_EntityDesc"
 									value="${c:l('label_EntityDialog_EntityDesc.value')}"
@@ -90,7 +90,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="entityDesc"
-										maxlength="50" width="450px" />
+										maxlength="50" width="300px" />
 								</hbox>
 							</row>
 							<row id="row1">
@@ -101,7 +101,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="pANNumber"
-										maxlength="10" width="90px" />
+										maxlength="10" width="120px" />
 								</hbox>
 								<label id="label_Country"
 									value="${c:l('label_EntityDialog_Country.value')}" />
