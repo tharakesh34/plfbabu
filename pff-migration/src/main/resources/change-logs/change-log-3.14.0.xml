@@ -2098,18 +2098,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 			constraintName="FK_ENTITYCODE_TAXDETAIL_TEMP" />
 	</changeSet>
 	
-	<changeSet id="100" author="Vinay">
-		<addUniqueConstraint columnNames="EntityCode"
-			constraintName="UK_EntityCode" 
-			 tableName="TAXDETAIL" />
-	</changeSet>
-	
-	<changeSet id="101" author="Vinay">
-		<addUniqueConstraint columnNames="EntityCode"
-			constraintName="UK_EntityCode_TEMP" 
-			 tableName="TAXDETAIL_TEMP" />
-	</changeSet>
-	
+		
 	<changeSet id="102" author="Vinay">
 		<addForeignKeyConstraint constraintName="FK_ENTITYCODE_TAXDETAIL"
 			referencedTableName="Entity" referencedColumnNames="EntityCode"
