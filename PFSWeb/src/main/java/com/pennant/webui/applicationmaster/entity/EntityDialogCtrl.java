@@ -60,8 +60,11 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Entity;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -235,6 +238,89 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	public void onFulfill$stateCode(Event event){
+		logger.debug("Entering" + event.toString());
+		Object dataObject = stateCode.getObject();
+		if(this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()){
+			fillCitydetails(this.stateCode.getValue());
+		}else{
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	private void fillCitydetails(String  id) {
+		logger.debug("Entering");
+
+		if (id != null) {
+			this.cityCode.setModuleName("City");
+			this.cityCode.setValueColumn("PCCity");
+			this.cityCode.setDescColumn("PCCityName");
+			this.cityCode.setValidateColumns(new String[] {"PCCity"});
+			Filter[] filters1 = new Filter[1];
+			filters1[0] = new Filter("PCProvince", id, Filter.OP_EQUAL);
+			this.cityCode.setFilters(filters1);
+		}
+	}
+	/**
+	 * onChanging Branch
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$cityCode(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = cityCode.getObject();
+
+		if (!(dataObject instanceof String)) {
+			City details = (City) dataObject;
+			if (details != null) {
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				fillPindetails(details.getPCCity());
+			}
+		}
+		logger.debug("Leaving");
+	}
+	 
+	private void fillPindetails(String  id) {
+		if (id != null) {
+			this.pinCode.setModuleName("PinCode");
+			this.pinCode.setValueColumn("PinCode");
+			this.pinCode.setDescColumn("AreaName");
+			this.pinCode.setValidateColumns(new String[] {"PinCode"});
+			Filter[] filters1 = new Filter[1];
+			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
+			this.pinCode.setFilters(filters1);
+		}
+	}
+	/**
+	 * onChanging Branch
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$pinCode(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = pinCode.getObject();
+
+		if (!(dataObject instanceof String)) {
+			PinCode details = (PinCode) dataObject;
+			if (details != null) {
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				this.cityCode.setValue(details.getCity());
+				this.cityCode.setDescription(details.getPCCityName());
+				
+			}
+		}
+		logger.debug("Leaving");
+	}
+
 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
