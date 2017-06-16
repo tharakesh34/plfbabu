@@ -2194,4 +2194,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 	
 	</changeSet>
 	
+	<changeSet id="111" author="Amit">
+		<modifyDataType tableName="gcdcustomers" columnName="FRAUDSCORE"
+			newDataType="number(10,0)" />
+	</changeSet>
+	
+	<changeSet id="112" author="Amit">
+		<modifyDataType tableName="gcdcustomers_test" columnName="FRAUDSCORE"
+			newDataType="number(10,0)" />
+	</changeSet>
+	
 </databaseChangeLog>
