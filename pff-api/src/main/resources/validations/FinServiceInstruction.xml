@@ -125,7 +125,7 @@
 					<value>com.pennant.validation.AddRateChangeGroup</value>
 				</groups>
 			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>schdMthd should have maximum 8 characters</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
@@ -137,7 +137,7 @@
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
 				</groups>
-			</constraint>
+			</constraint> -->
 		</field>
 		
 		<field name="amount">

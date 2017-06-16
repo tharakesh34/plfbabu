@@ -236,7 +236,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			//financeMain.setScheduleMethod(finServiceInst.getSchdMethod());
-			financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
+			//financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
+			finServiceInst.setSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGRPY);
 
 			financeMain.setRecalType(finServiceInst.getRecalType());
