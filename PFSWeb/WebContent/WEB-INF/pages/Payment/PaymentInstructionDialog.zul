@@ -78,6 +78,13 @@
 											<textbox id="status" width="150px" readonly="true" />
 										</hbox>
 									</row>
+									<row>
+									 <label value="${c:l('label_DisbInstructionsDialog_RejectReason.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="rejectReason" width="250px" readonly="true" />
+										</hbox>
+									</row>
 										
 								</rows>
 							</grid>
