@@ -75,6 +75,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.reports.cbil.CIBILReport;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -92,13 +93,16 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Paging pagingFileDownloadList;
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
+	protected Button btnexecute;
 	
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 
 	private Button downlaod;
-
-	String module = null;
+	private String module = null;
+	
+	@Autowired
+	private CIBILReport cibilReport;
 
 	/**
 	 * default constructor.<br>
@@ -183,6 +187,13 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
 		refresh();
+	}
+	
+	/**
+	 * Call the FileDownload dialog with a new empty entry. <br>
+	 */
+	public void onClick$btnexecute(Event event) throws Exception {
+		cibilReport.generateReport();
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
