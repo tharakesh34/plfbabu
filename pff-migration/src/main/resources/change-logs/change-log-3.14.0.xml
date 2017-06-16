@@ -2150,4 +2150,12 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 	  INSERT INTO REPORTLIST VALUES ('PaymentHeader','PaymentHeader','label_PaymentHeaderList_FinReference.value,label_PaymentHeaderList_PaymentType.value,label_PaymentHeaderList_ApprovedOn.value','finReference,paymentInstrType,approvedOn','String,String,Date',' ','ReportList03','Payment Instructions','Settlements',1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 	 </sql>
 	</changeSet>
+	
+	<changeSet id="107" author="Kesav">
+		 <sql>
+		  	Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'COOWNERDETAIL_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'COOWNERDETAIL_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		 </sql>
+	</changeSet>
+	
 </databaseChangeLog>
