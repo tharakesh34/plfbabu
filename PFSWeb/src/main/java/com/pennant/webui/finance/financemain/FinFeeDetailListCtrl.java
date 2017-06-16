@@ -285,7 +285,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			doSetFieldProperties();
 			doShowDialog(getFinanceDetail());
 		} catch (Exception e) {
-			createException(window_FeeDetailList, e);
+			MessageUtil.showError(e);
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving" + event.toString());
