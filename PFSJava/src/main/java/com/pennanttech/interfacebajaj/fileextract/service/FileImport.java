@@ -59,11 +59,16 @@ public class FileImport {
 
 	private void writeToFile() throws Exception {
 		BufferedWriter writer = null;
+		File filepath = new File(getFile().getParent());
+		if (!filepath.exists()) {
+			filepath.mkdirs();
+		}
+		
 		writer = new BufferedWriter(new FileWriter(getFile()));
 		Files.copy(writer, getMedia().getReaderData());
 		writer.close();
 	}
-
+	
 	private void validateFileData() throws Exception {
 		try {
 			BufferedReader br = null;
@@ -96,7 +101,6 @@ public class FileImport {
 		if (!backup.exists()) {
 			backup.mkdir();
 		}
-
 		FileUtils.copyFile(file, new File(backup.getPath() + "/" + file.getName()));
 		if (file.exists()) {
 			if (!file.delete()) {
