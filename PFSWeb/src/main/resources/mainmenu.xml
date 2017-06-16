@@ -256,7 +256,7 @@
 	 	<menuItem id="menu_Item_VASConfiguration" zulNavigation="/WEB-INF/pages/VASConfiguration/VASConfigurationList.zul"  rightName="menuItem_Solutionfactory_VASConfiguration" />
 	 	<menuItem id="menu_Item_VASReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=VAS&amp;event=Origination" rightName="menuItem_SolutionFactory_VASReferenceDetail"/>
 		<menuItem id="menu_Item_VASWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=VAS&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_VASWorkFlow" />
- 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  /> <!-- rightName="menuItem_SolutionFactory_WorkFlowDetail" -->
+ 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  rightName="menuItem_SolutionFactory_WorkFlowDetail"/>
 		
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
 		
