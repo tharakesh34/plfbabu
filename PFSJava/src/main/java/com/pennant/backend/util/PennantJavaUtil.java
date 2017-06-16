@@ -96,6 +96,7 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.Entities;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -739,6 +740,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("Entities", new ModuleMapping("Entities", Entities.class, new String[] { "Entities", "Entities_AView" },
 				masterWF, new String[] { "EntityCode", "EntityDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
+		
+		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
+		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","Country","StateCode","CPProvince","CPProvinceName","CityCode","pANNumber"},null, 600));
 
 		/************* Accounts *************/
 
