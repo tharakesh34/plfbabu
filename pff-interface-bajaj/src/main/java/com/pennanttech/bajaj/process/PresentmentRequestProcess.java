@@ -1,5 +1,6 @@
 package com.pennanttech.bajaj.process;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -92,7 +93,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
-		sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE FROM PRESENTMENTHEADER T0 ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
@@ -102,6 +103,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
 		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
+		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
 		sql.append(" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
 		return sql;
 	}
@@ -130,7 +132,13 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 			map.addValue("BFL_REF", rs.getString("BRANCHSWIFTBRNCDE"));
 		}
 		map.addValue("BATCHID", rs.getString("PresentmentRef"));
-		map.addValue("CHEQUEAMOUNT", rs.getString("PRESENTMENTAMT"));
+		
+		//Presentment amount convertion using currency minor units..
+		BigDecimal presentAmt = rs.getBigDecimal("PRESENTMENTAMT");
+		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
+		BigDecimal checqueAmt = presentAmt.divide(new BigDecimal(ccyMinorUnits));
+		
+		map.addValue("CHEQUEAMOUNT", checqueAmt);
 		map.addValue("PRESENTATIONDATE", rs.getDate("PRESENTMENTDATE"));
 		map.addValue("RESUB_FLAG", Status.N.name());
 		map.addValue("UMRN_NO", rs.getString("MANDATEREF"));
