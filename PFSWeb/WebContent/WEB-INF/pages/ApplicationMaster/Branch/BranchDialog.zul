@@ -149,6 +149,7 @@
 									<textbox id="branchAddrLine2"
 										maxlength="50" width="180px" />
 								</hbox>
+								
 								<label
 									id="label_BranchDialog_BranchPOBox"
 									value="${c:l('label_BranchDialog_BranchPOBox.value')}" />
@@ -157,6 +158,7 @@
 									<textbox id="branchPOBox"
 										maxlength="8" width="180px" />
 								</hbox>
+								
 							</row>
 							<row visible="true">
 
@@ -180,6 +182,12 @@
 									<textbox id="cityName"
 										width="180px" />
 								</hbox>
+								<label id="label_BranchDialog_PinCode"
+									value="${c:l('label_BranchDialog_PinCode.value')}" />
+								<extendedcombobox id="pinCode" />
+
+							</row>
+							<row visible="true">
 								<label id="label_BranchDialog_BranchFax"
 									value="${c:l('label_BranchDialog_BranchFax.value')}" />
 								<hbox>
@@ -196,9 +204,6 @@
 									<textbox id="branchFax"
 										width="80px" />
 								</hbox>
-							</row>
-							<row visible="true">
-
 								<label id="label_BranchDialog_BranchTel"
 									value="${c:l('label_BranchDialog_BranchTel.value')}" />
 								<hbox>
@@ -215,6 +220,9 @@
 									<textbox id="branchTel"
 										width="80px" />
 								</hbox>
+
+							</row>
+							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchSwiftBankCde"
 									value="${c:l('label_BranchDialog_BranchSwiftBankCde.value')}" />
@@ -223,14 +231,14 @@
 									<uppercasebox
 										id="branchSwiftBankCode" maxlength="4" width="180px" />
 								</hbox>
-							</row>
-							<row visible="true">
-
 								<label
 									id="label_BranchDialog_BranchSwiftCountry"
 									value="${c:l('label_BranchDialog_BranchSwiftCountry.value')}" />
 								<extendedcombobox
 									id="branchSwiftCountry" />
+
+							</row>
+							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchSwiftLocCode"
 									value="${c:l('label_BranchDialog_BranchSwiftLocCode.value')}" />
@@ -239,9 +247,6 @@
 									<uppercasebox
 										id="branchSwiftLocCode" maxlength="2" width="180px" />
 								</hbox>
-							</row>
-							<row visible="true">
-
 								<label
 									id="label_BranchDialog_BranchSwiftBrnCde"
 									value="${c:l('label_BranchDialog_BranchSwiftBrnCde.value')}" />
@@ -251,17 +256,17 @@
 									<uppercasebox id="branchSwiftBrnCde"
 										maxlength="3" width="180px" />
 								</hbox>
+
+							</row>
+							<row visible="true">
 								<label
 									id="label_BranchDialog_BranchSortCode"
 									value="${c:l('label_BranchDialog_BranchSortCode.value')}" />
 								<hbox>
-									<space spacing="2px"/>
+									<space spacing="2px" />
 									<uppercasebox id="branchSortCode"
 										maxlength="4" width="180px" />
 								</hbox>
-							</row>
-							<row visible="true">
-
 								<label
 									id="label_BranchDialog_BranchIsActive"
 									value="${c:l('label_BranchDialog_BranchIsActive.value')}" />
@@ -269,14 +274,14 @@
 									<checkbox id="branchIsActive"
 										checked="false" />
 								</hbox>
+
+							</row>
+							<row visible="true">
 								<label
 									id="label_BranchDialog_MiniBranch"
 									value="${c:l('label_BranchDialog_MiniBranch.value')}" />
 								<checkbox id="miniBranch"
 									checked="false" />
-							</row>
-							<row visible="true">
-
 								<label
 									id="label_BranchDialog_BranchType"
 									value="${c:l('label_BranchDialog_BranchType.value')}" />
@@ -286,18 +291,21 @@
 									<combobox id="branchType"
 										width="180px" />
 								</hbox>
+
+							</row>
+							<row visible="true">
 								<label
 									id="label_BranchDialog_ParentBranch"
 									value="${c:l('label_BranchDialog_ParentBranch.value')}" />
 								<extendedcombobox id="parentBranch" />
-							</row>
-							<row visible="true">
-
 								<label id="label_BranchDialog_Region"
 									value="${c:l('label_BranchDialog_Region.value')}" />
 								<hbox>
 									<combobox id="region" width="200px" />
 								</hbox>
+
+							</row>
+							<row visible="true">
 								<label id="label_BranchDialog_BankRefNo"
 									value="${c:l('label_BranchDialog_BankRefNo.value')}" />
 								<hbox>

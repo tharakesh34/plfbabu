@@ -44,6 +44,8 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -69,6 +71,8 @@ public class City extends AbstractWorkflowEntity {
 	private City befImage;
 	private LoggedInUser userDetails;
 	private boolean cityIsActive;
+	private String pinCode;
+	private String areaName;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -86,6 +90,13 @@ public class City extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+	
+	public Set<String> getExcludeFields(){
+		Set<String> excludeFields=new HashSet<String>();
+			excludeFields.add("pinCode");
+			excludeFields.add("areaName");
+	return excludeFields;
+	}
 	
 	public String getId() {
 		return pCCity;
@@ -189,5 +200,21 @@ public class City extends AbstractWorkflowEntity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getPinCode() {
+		return pinCode;
+	}
+
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 }

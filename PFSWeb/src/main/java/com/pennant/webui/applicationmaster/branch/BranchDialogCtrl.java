@@ -68,8 +68,10 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -130,7 +132,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	protected Textbox 		branchAddrHNbr; 
 	protected Textbox 		branchFlatNbr; 
 	protected Textbox 		branchAddrStreet; 
-
+	protected ExtendedCombobox		pinCode;
 	
 
 	// not autoWired Var's
@@ -144,6 +146,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private transient BranchService branchService;
 	private transient String sBranchCountry;
 	private transient String sBranchProvince;
+	private transient String sBranchCity;
 	
 	private final List<ValueLabel>			branchTypeList		= PennantStaticListUtil.getBranchTypeList();
 	private final List<ValueLabel>			regionList		= PennantStaticListUtil.getRegionList();
@@ -303,6 +306,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.parentBranch.setDescColumn("BranchDesc");
 		this.parentBranch.setValidateColumns(new String[]{"BranchCode","BranchDesc"});
 		
+		this.pinCode.setMaxlength(10);
+		this.pinCode.setMandatoryStyle(true);
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[]{"PinCode"});
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -454,6 +464,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.miniBranch.setChecked(aBranch.isMiniBranch());
 		fillComboBox(this.branchType,aBranch.getBranchType(),branchTypeList,"");
 		fillComboBox(this.region,aBranch.getRegion(),regionList,"");
+		this.pinCode.setValue(aBranch.getPinCode());
+		if (aBranch.getPinCode() != null) {
+			this.branchCity.setReadonly(true);
+			this.branchProvince.setReadonly(true);
+			this.branchCountry.setReadonly(true);
+		} else {
+			this.branchCity.setReadonly(false);
+			this.branchProvince.setReadonly(false);
+			this.branchCountry.setReadonly(false);
+		}
 		if(this.miniBranch.isChecked()){
 		this.parentBranch.setAttribute("branchCode", aBranch.getBranchCode());
 		this.parentBranch.setValue(aBranch.getBranchCode(),aBranch.getBranchDesc());
@@ -466,14 +486,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		   this.branchSwiftCountry.setDescription("");
 		   this.newBranchCode.setDescription("");
 		   this.parentBranch.setDescription("");
-			
+		   this.pinCode.setDescription("");
 	}else{
 		   this.branchCity.setDescription(aBranch.getLovDescBranchCityName());
 		   this.branchProvince.setDescription(aBranch.getLovDescBranchProvinceName());
 		   this.branchCountry.setDescription(aBranch.getLovDescBranchCountryName());
 		   this.branchSwiftCountry.setDescription(aBranch.getLovDescBranchSwiftCountryName());
 		   this.newBranchCode.setDescription(aBranch.getNewBranchDesc());
-	}
+		   this.pinCode.setDescription(aBranch.getPinAreaDesc());
+	}    
 		this.recordStatus.setValue(aBranch.getRecordStatus());
 		if(aBranch.isNew() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.branchIsActive.setChecked(true);
@@ -481,6 +502,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		sBranchCountry = this.branchCountry.getValue();
 		sBranchProvince = this.branchProvince.getValue();
+		sBranchCity = this.branchCity.getValue();
 		doSetProvProp();
 		doSetCityProp();
 		this.newBranchCode.setFilters(new Filter[]{new Filter("BranchCode", this.branchCode.getValue(), Filter.OP_NOT_EQUAL)});
@@ -536,6 +558,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				aBranch.setLovDescBranchCityName(StringUtils.trimToNull(this.branchCity.getDescription()));
 				aBranch.setBranchCity(StringUtils.trimToNull(this.branchCity.getValidatedValue()));
 			}
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aBranch.setLovDescBranchCityName(this.branchCity.getDescription());
+			aBranch.setBranchCity(this.branchCity.getValidatedValue());	
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -647,6 +675,11 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		try {
 			aBranch.setBranchAddrStreet(this.branchAddrStreet.getValue());
 		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+	 		aBranch.setPinCode(this.pinCode.getValidatedValue());	
+		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		
@@ -784,6 +817,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		if (!this.branchProvince.isReadonly()) {
 			this.branchProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchProvince.value"), null, true,true));
 		}
+		if (!this.branchCity.isReadonly()) {
+			this.branchCity.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchCity.value"), null, true,true));
+		}
 		if (PennantConstants.CITY_FREETEXT) {
 			if (!this.cityName.isReadonly()) {
 				this.cityName.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_CityName.value"),PennantRegularExpressions.REGEX_NAME, false));
@@ -823,6 +859,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		if (!this.branchAddrStreet.isReadonly()){
 			this.branchAddrStreet.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BranchAddrStreet.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
+		if (!this.pinCode.isReadonly()){
+			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_PinCode.value"),PennantRegularExpressions.REGEX_ADDRESS, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -861,6 +900,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchAddrHNbr.setConstraint("");
 		this.branchFlatNbr.setConstraint("");
 		this.branchAddrStreet.setConstraint("");
+		this.pinCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 	
@@ -899,6 +939,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchAddrHNbr.setErrorMessage("");
 		this.branchFlatNbr.setErrorMessage("");
 		this.branchAddrStreet.setErrorMessage("");
+		this.pinCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 	
@@ -962,9 +1003,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.btnCancel.setVisible(false);
 		}else{
 			this.branchCountry.setMandatoryStyle(true);
-			this.branchCity.setMandatoryStyle(false);
+			this.branchCity.setMandatoryStyle(true);
 			this.branchProvince.setMandatoryStyle(true);
-			this.branchCode.setReadonly(true);
+			this.pinCode.setMandatoryStyle(true);
+			this.branchCode.setReadonly(false);
 			this.btnCancel.setVisible(true);
 		}
 		
@@ -995,6 +1037,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 	this.branchAddrHNbr.setReadonly(isReadOnly("BranchDialog_BranchAddrHNbr"));
 	 	this.branchFlatNbr.setReadonly(isReadOnly("BranchDialog_BranchFlatNbr"));
 	 	this.branchAddrStreet.setReadonly(isReadOnly("BranchDialog_BranchAddrStreet"));
+	 	this.pinCode.setReadonly(isReadOnly("BranchDialog_PinCode"));
 	 	if(this.miniBranch.isChecked()){
 	 	this.parentBranch.setReadonly(isReadOnly("BranchDialog_ParentBranch"));
 	 	}else{
@@ -1059,7 +1102,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchAddrHNbr.setReadonly(true);
 		this.branchFlatNbr.setReadonly(true);
 		this.branchAddrStreet.setReadonly(true);
-		
+		this.pinCode.setReadonly(true);
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1111,6 +1154,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.region.setValue("");
 		this.bankRefNo.setValue("");
 		this.branchAddrStreet.setValue("");
+		this.pinCode.setValue("");
 		this.branchFlatNbr.setValue("");
 		this.branchAddrHNbr.setValue("");
 		this.parentBranch.setDescription("");
@@ -1359,15 +1403,25 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 public void onFulfill$branchCountry(Event event){
 		   logger.debug("Entering"+event.toString());
 		   doSetProvProp();
-		   doSetCityProp();
+//		   doSetCityProp();
+		   doSetPinProp();
 		   logger.debug("Leaving"+event.toString());
 	   }
 	 
 	 public void onFulfill$branchProvince(Event event){
 		   logger.debug("Entering"+event.toString());
+//		   doSetCityProp();
 		   doSetCityProp();
+		   doSetPinProp();
 		   logger.debug("Leaving"+event.toString());
 	   }
+	 
+	 public void onFulfill$branchCity(Event event){
+		   logger.debug("Entering"+event.toString());
+//		   doSetCityProp();
+		   doSetPinProp();
+		   logger.debug("Leaving"+event.toString());
+	 }
 
    private void doSetProvProp(){
 	   if (!StringUtils.trimToEmpty(sBranchCountry).equals(this.branchCountry.getValue())){
@@ -1377,6 +1431,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		   this.branchCity.setValue("");
 		   this.branchCity.setDescription("");
 		   this.branchCity.setObject("");
+		   this.pinCode.setValue("");
+		   this.pinCode.setDescription("");
+		   this.pinCode.setObject("");
 		   
 	   } 
 	   sBranchCountry = this.branchCountry.getValue();
@@ -1389,20 +1446,42 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		if (!StringUtils.trimToEmpty(sBranchProvince).equals(this.branchProvince.getValue())){
 			this.branchCity.setObject("");
 			this.branchCity.setValue("");
-			this.branchCity.setDescription("");   
+			this.branchCity.setDescription(""); 
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.pinCode.setObject("");
 		}
 		sBranchProvince= this.branchProvince.getValue();
 		
 		// Set filters for City extended combo box.
 		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("PCCountry", this.branchCountry.getValue(),
-				Filter.OP_EQUAL);
-		filters[1] = new Filter("PCProvince", this.branchProvince.getValue(),
-				Filter.OP_EQUAL);
+		filters[0] = new Filter("PCCountry", this.branchCountry.getValue(),Filter.OP_EQUAL);
+		filters[1] = new Filter("PCProvince", this.branchProvince.getValue(),Filter.OP_EQUAL);
 		
 		this.branchCity.setFilters(filters);
 		
 		filters = null;
+	}
+   
+   private void doSetPinProp(){
+		if (!StringUtils.trimToEmpty(sBranchCity).equals(this.branchCity.getValue())){
+			this.pinCode.setObject("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");   
+		}
+		sBranchCity= this.branchCity.getValue();
+		
+		// Set filters for PinCode extended combo box.
+		if(StringUtils.isNotEmpty(sBranchCity)){
+			Filter[] filters = new Filter[3];
+			filters[0] = new Filter("PCCountry", this.branchCountry.getValue(),Filter.OP_EQUAL);
+			filters[1] = new Filter("PCProvince", this.branchProvince.getValue(),Filter.OP_EQUAL);
+			filters[2] = new Filter("City", this.branchCity.getValue(),Filter.OP_EQUAL);
+
+			this.pinCode.setFilters(filters);
+		}else{
+			this.pinCode.setFilters(null);
+		}
 	}
    
    public void onFulfill$parentBranch(Event event) {
@@ -1426,6 +1505,92 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		logger.debug("Leaving");
 	
 	}
+   
+      
+   public void onFulfill$pinCode(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = pinCode.getObject();
+		if (dataObject instanceof String) {
+			this.pinCode.setValue(dataObject.toString());
+		} else {
+			PinCode details = (PinCode) dataObject;
+
+			if (details != null) {
+				
+				this.branchCity.setValue(details.getCity());
+				this.branchCity.setDescription(details.getPCCityName());
+				this.branchProvince.setValue(details.getPCProvince());
+				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
+				this.branchCountry.setValue(details.getpCCountry());
+				this.branchCountry.setDescription(details.getLovDescPCCountryName());
+			}
+		
+		}
+		logger.debug("Leaving");
+	
+	}
+   
+   
+   
+  /* public void onFulfill$branchCity(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = branchCity.getObject();
+
+		if (dataObject instanceof String) {
+			this.branchCity.setValue(dataObject.toString());
+			this.pinCode.setValue("");
+			this.pinCode.setDescColumn("");
+		} else {
+			City details = (City) dataObject;
+
+			if (details != null) {
+				this.branchCity.setAttribute("branchCity", details.getPCCity());
+				this.pinCode.setValue(details.getPinCode());
+				this.pinCode.setDescription(details.getAreaName());
+				
+				this.pinCode.setMandatoryStyle(true);
+				this.pinCode.setModuleName("PinCode");
+				this.pinCode.setValueColumn("PinCode");
+				this.pinCode.setDescColumn("AreaName");
+				this.pinCode.setValidateColumns(new String[]{"PinCode"});
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("PinCode", this.branchCity.getValue(),Filter.OP_EQUAL);
+				
+				this.pinCode.setFilters(filters);
+			}
+		
+		}
+		logger.debug("Leaving");
+	
+	}*/
+   
+  /* public void onFulfill$branchCity(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = branchCity.getObject();
+
+		if (!(dataObject instanceof String)) {
+			City details = (City) dataObject;
+			
+				fillPindetails(details.getPCCity());
+		}
+		logger.debug("Leaving");
+	}*/
+	 
+	private void fillPindetails(String  id) {
+		if (id != null) {
+			this.pinCode.setModuleName("PinCode");
+			this.pinCode.setValueColumn("PinCode");
+			this.pinCode.setDescColumn("AreaName");
+			this.pinCode.setValidateColumns(new String[] {"PinCode"});
+			Filter[] filters1 = new Filter[1];
+			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
+			this.pinCode.setFilters(filters1);
+		}
+	}
+   
    public void onCheck$miniBranch(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (this.miniBranch.isChecked()) {

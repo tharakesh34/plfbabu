@@ -63,6 +63,8 @@ private static final long serialVersionUID = 1L;
 	private String pCCityName;
 	private String areaName;
 	private String pCProvince;
+	private String pCCountry ;
+	private String lovDescPCCountryName;
 	private String lovDescPCProvinceName;
 	private boolean active;
 	private boolean newRecord=false;
@@ -76,6 +78,22 @@ private static final long serialVersionUID = 1L;
 
 	public PinCode() {
 		super();
+	}
+
+	public String getpCCityName() {
+		return pCCityName;
+	}
+
+	public void setpCCityName(String pCCityName) {
+		this.pCCityName = pCCityName;
+	}
+
+	public String getpCProvince() {
+		return pCProvince;
+	}
+
+	public void setpCProvince(String pCProvince) {
+		this.pCProvince = pCProvince;
 	}
 
 	public PinCode(long id) {
@@ -162,6 +180,14 @@ private static final long serialVersionUID = 1L;
 	}
 
 
+	public String getpCCountry() {
+		return pCCountry;
+	}
+
+	public void setpCCountry(String pCCountry) {
+		this.pCCountry = pCCountry;
+	}
+
 	public String getPCCityName() {
 		return pCCityName;
 	}
@@ -192,6 +218,16 @@ private static final long serialVersionUID = 1L;
 	public void setLovDescPCProvinceName(String lovDescPCProvinceName) {
 		this.lovDescPCProvinceName = lovDescPCProvinceName;
 	}
+
+	public String getLovDescPCCountryName() {
+		return lovDescPCCountryName;
+	}
+
+	public void setLovDescPCCountryName(String lovDescPCCountryName) {
+		this.lovDescPCCountryName = lovDescPCCountryName;
+	}
+
+	
 
 }
 

@@ -576,7 +576,7 @@ public class PennantJavaUtil {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
-		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName"},
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName","LovDescPCCountryName"},
 				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
