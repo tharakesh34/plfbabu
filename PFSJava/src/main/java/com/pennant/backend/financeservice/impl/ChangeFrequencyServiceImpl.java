@@ -76,12 +76,12 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 			
 			//Not Review Date
-			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq()) {
+			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
 				continue;
 			}
 			
 			// Only allowed if payment amount is greater than Zero
-			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 				continue;
 			}
 			
@@ -114,6 +114,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 						scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
 					}
 				}
+			}
+			
+			if(DateUtility.compare(oldDate, financeMain.getGrcPeriodEndDate()) == 0){
+				financeMain.setGrcPeriodEndDate(curSchd.getSchDate());
 			}
 			
 			if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){

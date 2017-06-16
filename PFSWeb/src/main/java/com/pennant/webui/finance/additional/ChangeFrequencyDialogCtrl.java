@@ -292,7 +292,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 
 		if (financeScheduleDetails != null) {
-			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			//Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
@@ -304,15 +304,16 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// Not Allowing Grace Period Dates
-				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
+				/*if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
 					if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
 						prvSchd = curSchd;
 					}
 					continue;
-				}
+				}*/
 				
 				// Not allow Before Current Business Date
 				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					prvSchd = curSchd;
 					continue;
 				}
 				
@@ -322,7 +323,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				//Not Review Date
-				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq() 
+						&& !curSchd.isPftOnSchDate()) {
 					continue;
 				}
 				
