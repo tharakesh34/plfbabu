@@ -48,12 +48,12 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Window;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.engine.WorkflowEngine;
 
 public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	private static final long serialVersionUID = -1351367303946249042L;
@@ -135,14 +135,13 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	 */
 	public void doWriteBeanToComponents(WorkFlowDetails aWorkFlowDetails) {
 		logger.debug("Entering ");
-		this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "&uuid="
-				+ WorkflowEngine.getPbpmPackage() + "_"
-				+ aWorkFlowDetails.getWorkFlowType());
+		
+		String url = SysParamUtil.getValueAsString("WF_DESIGNER_URL");
 		
 		if (aWorkFlowDetails.isNew()) {
-			this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "editor/#/processes");
+			this.iframe.setSrc(url + "editor/#/processes");
 		} else {
-			this.iframe.setSrc(WorkflowEngine.getPbpmUrl() + "editor/#/editor/" +aWorkFlowDetails.getId());
+			this.iframe.setSrc(url + "editor/#/editor/" +aWorkFlowDetails.getId());
 		}
 		
 		this.iframe.setAttribute("MYNAME", "SAI");
