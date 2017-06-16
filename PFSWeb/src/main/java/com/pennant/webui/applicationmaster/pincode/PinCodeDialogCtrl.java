@@ -319,7 +319,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		if (aPinCode.isNewRecord()) {
 			this.city.setDescription("");
 		} else {
-			this.city.setDescription(aPinCode.getpCCityName());
+			this.city.setDescription(aPinCode.getPCCityName());
 		}
 		if(aPinCode.isNew() || (aPinCode.getRecordType() != null ? aPinCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
 			this.active.setChecked(true);
