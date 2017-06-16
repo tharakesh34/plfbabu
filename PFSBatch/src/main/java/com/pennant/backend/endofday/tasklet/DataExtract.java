@@ -53,6 +53,7 @@ public class DataExtract implements Tasklet {
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
 			new DataMartRequest(new Long(1000), dataMartRequestService).start();
+			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
