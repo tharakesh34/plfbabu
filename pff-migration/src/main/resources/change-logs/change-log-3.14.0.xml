@@ -99,7 +99,7 @@
 
 </changeSet>
 	
-	 <changeSet id="05" author="Vinay">
+	<!--  <changeSet id="05" author="Vinay">
 		<createTable tableName="TAXDETAIL">
 			<column name="ID" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -140,7 +140,7 @@
 			<column name="Workflowid" type="NUMBER(19,0)" />
 			
 		</createTable>
-	</changeSet> 
+	</changeSet>  -->
 	
 	<changeSet id="02" author="Vinay">
 		<addUniqueConstraint columnNames="TAXCODE"
@@ -2086,6 +2086,40 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 		</createView>
+	</changeSet>
+	
+	<changeSet id="98" author="Vinay">
+		<dropForeignKeyConstraint baseTableName="TAXDETAIL"
+			constraintName="FK_ENTITYCODE_TAXDETAIL" />
+	</changeSet>
+	
+	<changeSet id="99" author="Vinay">
+		<dropForeignKeyConstraint baseTableName="TAXDETAIL_TEMP"
+			constraintName="FK_ENTITYCODE_TAXDETAIL_TEMP" />
+	</changeSet>
+	
+	<changeSet id="100" author="Vinay">
+		<addUniqueConstraint columnNames="EntityCode"
+			constraintName="UK_EntityCode" 
+			 tableName="TAXDETAIL" />
+	</changeSet>
+	
+	<changeSet id="101" author="Vinay">
+		<addUniqueConstraint columnNames="EntityCode"
+			constraintName="UK_EntityCode_TEMP" 
+			 tableName="TAXDETAIL_TEMP" />
+	</changeSet>
+	
+	<changeSet id="102" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_ENTITYCODE_TAXDETAIL"
+			referencedTableName="Entity" referencedColumnNames="EntityCode"
+			baseTableName="TAXDETAIL" baseColumnNames="EntityCode" />
+	</changeSet>
+	
+	<changeSet id="103" author="Vinay">
+		<addForeignKeyConstraint constraintName="FK_ENTITYCODE_TAXDETAIL_TEMP"
+			referencedTableName="Entity" referencedColumnNames="EntityCode"
+			baseTableName="TAXDETAIL_TEMP" baseColumnNames="EntityCode" />
 	</changeSet>
 	
 </databaseChangeLog>
