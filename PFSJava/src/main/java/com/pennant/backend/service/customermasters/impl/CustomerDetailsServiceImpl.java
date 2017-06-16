@@ -1516,15 +1516,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						if (empDetail.getCustEmpFrom().compareTo(empDetail.getCustEmpTo()) > 0) {
 							ErrorDetails errorDetail = new ErrorDetails();
 							String[] valueParm = new String[2];
-							valueParm[0] = DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
-							valueParm[1] = DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
+							valueParm[0] = "employment startDate:"+DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+							valueParm[1] = "employment endDate:" +DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}	
 						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
 							ErrorDetails errorDetail = new ErrorDetails();
 							String[] valueParm = new String[2];
-							valueParm[0] = "employment endDate" + DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
+							valueParm[0] = "employment endDate:" + DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -1534,7 +1534,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					if (empDetail.getCustEmpFrom() != null && empDetail.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpFrom()) >= 0) {
 						ErrorDetails errorDetail = new ErrorDetails();
 						String[] valueParm = new String[2];
-						valueParm[0] = "employment startDate" + DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+						valueParm[0] = "employment startDate:" + DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;

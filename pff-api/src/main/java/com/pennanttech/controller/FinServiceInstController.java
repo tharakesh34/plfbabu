@@ -803,8 +803,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			int adjRepayTerms = 0;
 			int totRepayTerms = 0;
 			boolean isFromDateFound = false;
-			Date fromDate = finServiceInst.getFromDate();
-
+			Date fromDate = DateUtility.getDBDate(DateUtility.formatDate(finServiceInst.getFromDate(),
+					PennantConstants.DBDateFormat));
+			finServiceInst.setFromDate(fromDate);
 			List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
