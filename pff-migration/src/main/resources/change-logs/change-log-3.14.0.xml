@@ -1002,6 +1002,12 @@ INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'EntityDi
 INSERT INTO SecRights SELECT (select (SeqNo+10+6) from SeqSecRights),3,'EntityDialog_CityCode','EntityDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 INSERT INTO SecRights SELECT (select (SeqNo+10+7) from SeqSecRights),3,'EntityDialog_PinCode','EntityDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 INSERT INTO SecRights SELECT (select (SeqNo+10+8) from SeqSecRights),3,'EntityDialog_Active','EntityDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+delete from SecGroupRights where rightid=(select rightid from SECRIGHTS where rightname='menuCat_applicationmaster');
+delete from SecGroupRights where rightid=(select rightid from SECRIGHTS where rightname='menuCat_applicationmasterEnquiry');
+delete from SECRIGHTS where RightName='menuCat_applicationmaster';
+delete from SECRIGHTS where RightName='menuCat_applicationmasterEnquiry';
+Insert into SECRIGHTS  values ((select max(rightid)+1 from secrights),0,'menuCat_applicationmaster','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+Insert into SECRIGHTS  values ((select max(rightid)+1 from secrights),0,'menuCat_applicationmasterEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmasterEnquiry'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
