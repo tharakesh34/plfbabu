@@ -2111,4 +2111,38 @@ WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode
 			baseTableName="TAXDETAIL_TEMP" baseColumnNames="EntityCode" />
 	</changeSet>
 	
+		<changeSet id="104" author="Ganesh">
+		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive, T4.PinCode PinCode,T4.AreaName AreaName
+				FROM         RMTProvinceVsCity  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+			                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince INNER JOIN
+                           		      PinCodes T4 ON T1.PCCity = T4.City
+		</createView>
+	</changeSet>
+	<changeSet id="105" author="Ganesh">
+		<createView viewName="RMTPROVINCEVSCITY_VIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,T4.PinCode PinCode,
+                      T4.AreaName AreaName
+				FROM         RMTProvinceVsCity_Temp  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+			                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince INNER JOIN
+                            PinCodes T4 ON T1.PCCity = T4.City
+				UNION ALL
+				SELECT     T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+				                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive, T4.PinCode PinCode,
+                      T4.AreaName AreaName
+				FROM         RMTProvinceVsCity  T1 INNER JOIN
+				                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+				                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince INNER JOIN
+                            PinCodes T4 ON T1.PCCity = T4.City
+				WHERE     NOT EXISTS
+				                          (SELECT     1
+	                            FROM          RMTProvinceVsCity_TEMP
+	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
+		</createView>
+		</changeSet>
+		
 </databaseChangeLog>
