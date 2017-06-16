@@ -576,7 +576,7 @@ public class PennantJavaUtil {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
-		"PinCodes_AView" }, masterWF, new String[] {"PinCode","City"},
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName"},
 				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
@@ -742,7 +742,7 @@ public class PennantJavaUtil {
 				masterWF, new String[] { "EntityCode", "EntityDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
-		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","Country","StateCode","CPProvince","CPProvinceName","CityCode","pANNumber"},null, 600));
+		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","pANNumber"},null, 600));
 
 		/************* Accounts *************/
 

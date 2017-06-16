@@ -58,9 +58,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.Entity;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -98,7 +101,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 	protected ExtendedCombobox 		pinCode; 
     protected ExtendedCombobox 		cityCode; 
 	private TaxDetail taxDetail; // overhanded per param
-	private transient String cityCountryTemp;
 
 
 	private transient TaxDetailListCtrl taxDetailListCtrl; // overhanded per param
@@ -198,7 +200,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 		this.stateCode.setValidateColumns(new String[]{"CPProvince"});
 
 		this.entityCode.setMandatoryStyle(true);
-		this.entityCode.setModuleName("EntityCodes");
+		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] {"EntityCode"});
@@ -206,7 +208,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
-		this.pinCode.setDescColumn("City");
+		this.pinCode.setDescColumn("AreaName");
 		this.pinCode.setValidateColumns(new String[] {"PinCode"});
 
 		this.cityCode.setMandatoryStyle(true);
@@ -260,32 +262,24 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 		
 	}
 
-	public void onFulfill$country(Event event){
-		logger.debug("Entering" + event.toString());
-		doSetProvProp();
-		logger.debug("Leaving" + event.toString());
-
-	}
-	private void doSetProvProp(){
-		if (!StringUtils.trimToEmpty(cityCountryTemp).equals(this.country.getValue())){
-			this.stateCode.setObject("");
-			this.stateCode.setValue("");
-			this.stateCode.setDescription("");
-		}
-		cityCountryTemp = this.country.getValue();
-		Filter[] filtersProvince = new Filter[1] ;
-		filtersProvince[0]= new Filter("CPCountry", this.country.getValue(), Filter.OP_EQUAL);
-		this.stateCode.setFilters(filtersProvince);
-	}
+	
 	
 	public void onFulfill$stateCode(Event event){
 		logger.debug("Entering" + event.toString());
-		fillModuledetails(this.stateCode.getValue());
+		this.taxCode.setValue(this.stateCode.getValue());
+		if(this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()){
+			fillCitydetails(this.stateCode.getValue());
+		}else{
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			/*if(!this.stateCode.getValue().isEmpty()){
+				fillModuledetails(this.stateCode.getValue());
+			}*/
+		}
 		logger.debug("Leaving" + event.toString());
-
 	}
 	
-	private void fillModuledetails(String  id) {
+	private void fillCitydetails(String  id) {
 		logger.debug("Entering");
 
 		if (id != null) {
@@ -296,6 +290,87 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 			Filter[] filters1 = new Filter[1];
 			filters1[0] = new Filter("PCProvince", id, Filter.OP_EQUAL);
 			this.cityCode.setFilters(filters1);
+		}
+	}
+	
+
+	/**
+	 * onChanging Branch
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$cityCode(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = cityCode.getObject();
+
+		if (!(dataObject instanceof String)) {
+			City details = (City) dataObject;
+			if (details != null) {
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				fillPindetails(details.getPCCity());
+			}
+			if(details==null){
+				if(this.stateCode.getValue().isEmpty()){
+					this.taxCode.setValue("");
+				}
+			}else{
+				this.taxCode.setValue(details.getPCProvince());
+			}
+		}
+		logger.debug("Leaving");
+	}
+	 
+	private void fillPindetails(String  id) {
+		if (id != null) {
+			this.pinCode.setModuleName("PinCode");
+			this.pinCode.setValueColumn("PinCode");
+			this.pinCode.setDescColumn("AreaName");
+			this.pinCode.setValidateColumns(new String[] {"PinCode"});
+			Filter[] filters1 = new Filter[1];
+			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
+			this.pinCode.setFilters(filters1);
+		}
+	}
+	/**
+	 * onChanging Branch
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$pinCode(Event event) throws InterruptedException {
+		logger.debug("Entering");
+
+		Object dataObject = pinCode.getObject();
+
+		if (!(dataObject instanceof String)) {
+			PinCode details = (PinCode) dataObject;
+			if (details != null) {
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				this.cityCode.setValue(details.getCity());
+				this.cityCode.setDescription(details.getPCCityName());
+				this.taxCode.setValue(details.getPCProvince());
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * onChanging Branch
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$entityCode(Event event) throws InterruptedException {
+		Object dataObject = entityCode.getObject();
+		if (!(dataObject instanceof String)) {
+			Entity details = (Entity) dataObject;
+			if (details != null) {
+				this.taxCode.setValue(this.stateCode.getValue()+details.getPANNumber());
+			}
 		}
 	}
 	/**
@@ -394,57 +469,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 	}
 	
 
-      public void onFulfillCountry(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.country.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-      public void onFulfillStateCode(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.stateCode.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
-
-
-
-
-
-      public void onFulfillCityCode(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.cityCode.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -466,7 +490,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 		   this.cityCode.setValue(aTaxDetail.getCityCode());
 		
 		if (aTaxDetail.isNewRecord()){
-			   this.country.setDescription("");
+				
+			   this.country.setValue("IN");
+			   this.country.setDescription("INDIAone");
 			   this.stateCode.setDescription("");
 			   this.cityCode.setDescription("");
 			   this.entityCode.setDescription("");
@@ -479,7 +505,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail>{
 			   this.pinCode.setDescription(aTaxDetail.getCityCode());
 		}
 		this.recordStatus.setValue(aTaxDetail.getRecordStatus());
-		cityCountryTemp = this.country.getValue();
 
 		logger.debug(Literal.LEAVING);
 	}
