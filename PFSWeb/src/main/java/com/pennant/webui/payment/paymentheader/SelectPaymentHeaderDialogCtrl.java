@@ -52,6 +52,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
@@ -212,6 +213,22 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		this.finReference.setConstraint("");
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Setting the amount formats based on currency
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$finReference(Event event) {
+		logger.debug("Entering " + event.toString());
+
+		Clients.clearWrongValue(this.finReference);
+		this.finReference.setConstraint("");
+		this.finReference.setErrorMessage("");
+
+		logger.debug("Leaving " + event.toString());
+	}
+
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
 	}
