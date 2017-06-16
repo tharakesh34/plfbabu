@@ -797,7 +797,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 																							.addDays(
 																									appDate,
 																									-SysParamUtil
-																											.getValueAsInt("BACKDAYS_STARTDATE"));
+																											.getValueAsInt("BACKDAYS_STARTDATE")+1);
 	Date													appEndDate				= SysParamUtil
 																							.getValueAsDate("APP_DFT_END_DATE");
 	Date													appStartDate			= SysParamUtil
@@ -4539,7 +4539,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.finStartDate.isVisible() && !this.finStartDate.isReadonly()) {
 			this.finStartDate.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_FinStartDate.value"), true, minReqFinStartDate, appEndDate,
-					false));
+					true));
 		}
 
 		if (financeDate != null) {
