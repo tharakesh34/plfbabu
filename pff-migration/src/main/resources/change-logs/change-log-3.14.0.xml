@@ -1666,7 +1666,7 @@ Delete from CUSTOMERS_TEMP ;
 			baseTableName="Entity" baseColumnNames="StateCode" />
 	</changeSet>
 	<changeSet id="68" author="Satya">
-		<addForeignKeyConstraint constraintName="FK_Country_Entity"
+		<addForeignKeyConstraint constraintName="FK_RMTPRVCITY_ENTITY"
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCITY"
 			baseTableName="Entity" baseColumnNames="CityCode" />
 	</changeSet>
@@ -1717,7 +1717,7 @@ Delete from CUSTOMERS_TEMP ;
 			baseTableName="Entity_Temp" baseColumnNames="StateCode" />
 	</changeSet>
 	<changeSet id="72" author="Satya">
-		<addForeignKeyConstraint constraintName="FK_Country_Entity_Temp"
+		<addForeignKeyConstraint constraintName="FK_RMTPRVCITY_ENTITY_Temp"
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCITY"
 			baseTableName="Entity_Temp" baseColumnNames="CityCode" />
 	</changeSet>

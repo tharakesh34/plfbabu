@@ -80,7 +80,6 @@
 </addColumn>
 </changeSet>
 <changeSet id="07" author="Irfan">
-<dropColumn tableName="ADTPINCODES" columnName="areaName"/>
 	<addColumn tableName="ADTPINCODES">
 		<column name="areaName" type="varchar(100)"/>
 	</addColumn>
