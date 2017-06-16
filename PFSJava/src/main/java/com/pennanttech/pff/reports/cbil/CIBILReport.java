@@ -4,34 +4,57 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CIBILReport {
-	protected final static Logger	logger	= LoggerFactory.getLogger(CIBILReport.class);
-	private String					CBIL_REPORT_PATH;
-	private String					CBIL_REPORT_MEMBER_ID;
-	private String					ADDRESS_TYPE_PERMANENT;
-	private String					ADDRESS_TYPE_RESIDENCE;
-	private String					ADDRESS_TYPE_OFFICE;
-	private String					PHONE_TYPE_MOBILE;
-	private String					PHONE_TYPE_HOME;
-	private String					PHONE_TYPE_OFFICE;
+	protected final static Logger		logger	= LoggerFactory.getLogger(CIBILReport.class);
+	private String						CBIL_REPORT_PATH;
+	private String						CBIL_REPORT_MEMBER_SHORT_NAME;
+	private String						CBIL_REPORT_MEMBER_PASSWORD;
+	private String						CBIL_REPORT_MEMBER_ID;
+	private String						ADDRESS_TYPE_PERMANENT;
+	private String						ADDRESS_TYPE_RESIDENCE;
+	private String						ADDRESS_TYPE_OFFICE;
+	private String						PHONE_TYPE_MOBILE;
+	private String						PHONE_TYPE_HOME;
+	private String						PHONE_TYPE_OFFICE;
+
+	private DataSource					dataSource;
+	private NamedParameterJdbcTemplate	namedJdbcTemplate;
+
+	@Autowired
+	private CustomerDetailsService		customerDetailsService;
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
+	}
 
 	public CIBILReport() {
 		super();
@@ -44,20 +67,36 @@ public class CIBILReport {
 
 		File reportName = createFile();
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
 
 		try {
 			new CBILHeader(writer).write();
-			
-			
-			
-			
-			new NameSegment(writer, new Customer()).write();
-			new IdentificationSegment(writer, new ArrayList<CustomerDocument>());
-			new TelephoneSegment(writer, new ArrayList<CustomerPhoneNumber>());
-			new EmailContactSegment(writer, new ArrayList<CustomerEMail>());
-			new AddressSegment(writer, new ArrayList<CustomerAddres>());
-			new AccountSegment(writer, new ArrayList<FinanceMain>());
+
+			//MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+			StringBuilder sql = new StringBuilder();
+
+			sql.append("select custid from customers where custid in (select distinct custid  from financemain)");
+
+			namedJdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
+
+				@Override
+				public void processRow(ResultSet rs) throws SQLException {
+					CustomerDetails customer = customerDetailsService.getApprovedCustomerById(rs.getLong("custid"));
+					try {
+						new NameSegment(writer, customer.getCustomer()).write();
+						new IdentificationSegment(writer, customer.getCustomerDocumentsList()).write();
+						new TelephoneSegment(writer, customer.getCustomerPhoneNumList()).write();
+						new AddressSegment(writer, customer.getAddressList()).write();
+						//new AccountSegment(writer, new ArrayList<FinanceMain>());
+						new EndofSubjectSegment(writer).write();
+					} catch (IOException e) {
+						logger.error(Literal.EXCEPTION, e);
+					}
+
+				}
+			});
+			new TrailerSegment(writer).write();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -106,19 +145,16 @@ public class CIBILReport {
 		}
 
 		public void write() throws IOException {
-			String userId = SysParamUtil.getValueAsString("CBIL_PROCESSOR_USER_ID");
-			String shortNmae = SysParamUtil.getValueAsString("CBIL_PROCESSOR_USER_SHORT_NAME");
-			String password = SysParamUtil.getValueAsString("CBIL_REPORTING_PASSWORD");
-
-			writer.write(StringUtils.rightPad("TUDF", 4, ""));
-			writer.write(StringUtils.rightPad("12", 2, ""));
-			writer.write(StringUtils.rightPad(userId, 30, ""));
-			writer.write(StringUtils.rightPad(shortNmae, 16, ""));
-			writer.write(StringUtils.rightPad("", 2, ""));
-			writer.write(DateUtil.getSysDate("ddMMYYYY"));
-			writer.write(StringUtils.rightPad(password, 20, ""));
-			writer.write(StringUtils.rightPad("L", 1, ""));
-			writer.write(StringUtils.rightPad("", 48, ""));
+			writer.write("TUDF");
+			writer.write("12");
+			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
+			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+			writer.write(StringUtils.rightPad("", 2, "")); //FIXME
+			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY));
+			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
+			writer.write("L");
+			writer.write("00000");
+			writer.write("C");
 		}
 	}
 
@@ -134,7 +170,7 @@ public class CIBILReport {
 		public void write() throws IOException {
 			writeValue(writer, "PN", "N01");
 			writeValue(writer, "01", customer.getCustShrtName());
-			writeValue(writer, "07", DateUtil.format(customer.getCustDOB(), "ddMMYYYY"));
+			writeValue(writer, "07", DateUtil.format(customer.getCustDOB(), DateFormat.ddMMYYYY));
 			writeValue(writer, "01", customer.getCustGenderCode());
 
 			if ("M".equals(customer.getCustGenderCode())) {
@@ -176,9 +212,8 @@ public class CIBILReport {
 				}
 
 				writeValue(writer, "02", document.getCustDocTitle());
-				writeValue(writer, "02", document.getCustDocTitle());
-				writeValue(writer, "03", DateUtil.format(document.getCustDocIssuedOn(), "ddMMYYYY"));
-				writeValue(writer, "04", DateUtil.format(document.getCustDocExpDate(), "ddMMYYYY"));
+				writeValue(writer, "03", DateUtil.format(document.getCustDocIssuedOn(), DateFormat.ddMMYYYY));
+				writeValue(writer, "04", DateUtil.format(document.getCustDocExpDate(), DateFormat.ddMMYYYY));
 			}
 
 		}
@@ -301,6 +336,31 @@ public class CIBILReport {
 			}
 		}
 	}
+	
+	public class EndofSubjectSegment {
+		private BufferedWriter	writer;
+
+		public EndofSubjectSegment(BufferedWriter writer) {
+			this.writer = writer;
+		}
+
+		public void write() throws IOException {
+			writer.write("ES02**");
+		}
+	}
+	
+	public class TrailerSegment {
+		private BufferedWriter	writer;
+
+		public TrailerSegment(BufferedWriter writer) {
+			this.writer = writer;
+		}
+
+		public void write() throws IOException {
+			writer.write("TRLR");
+		}
+	}
+	
 
 	private void writeValue(BufferedWriter writer, String fieldTag, String value) throws IOException {
 		int length = 0;
@@ -316,6 +376,8 @@ public class CIBILReport {
 	private void initlize() {
 		this.CBIL_REPORT_PATH = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
 		this.CBIL_REPORT_MEMBER_ID = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
+		this.CBIL_REPORT_MEMBER_SHORT_NAME = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_SHORT_NAME");
+		this.CBIL_REPORT_MEMBER_PASSWORD = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_PASSWORD");
 		this.ADDRESS_TYPE_PERMANENT = SysParamUtil.getValueAsString("ADDRESS_TYPE_PERMANENT");
 		this.ADDRESS_TYPE_RESIDENCE = SysParamUtil.getValueAsString("ADDRESS_TYPE_RESIDENCE");
 		this.ADDRESS_TYPE_OFFICE = SysParamUtil.getValueAsString("ADDRESS_TYPE_OFFICE");
