@@ -26,7 +26,7 @@ public class PinCodeListModelItemRenderer implements ListitemRenderer<PinCode>, 
 		Listcell lc;
 	  	lc = new Listcell(pinCode.getPinCode());
 		lc.setParent(item);
-	  	lc = new Listcell(pinCode.getpCCityName());
+	  	lc = new Listcell(pinCode.getPCCityName());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
