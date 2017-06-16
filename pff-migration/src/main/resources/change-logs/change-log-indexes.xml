@@ -207,21 +207,6 @@
 			'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<changeSet id="27" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_ASSTYPESAD_REF on ASSETTYPE_PROPERTY_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="28" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_ASSTYPESAD_T_REF on ASSETTYPE_PROPERTY_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
 	<changeSet id="29" author="pruthvi" dbms="oracle">
 		<sql>
 			DROP INDEX IDX_BANKBRANCHES_IFSC;
@@ -1196,118 +1181,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="164" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLED_REF on COLLATERAL_COLLTESS_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="165" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLED_T_REF on COLLATERAL_COLLTESS_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="166" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLTED_REF on COLLATERAL_COLLTEST_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="167" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLTED_T_REF on COLLATERAL_COLLTEST_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="168" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLHMED_REF on COLLATERAL_HOME_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="169" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLHMED_T_REF on COLLATERAL_HOME_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="170" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLLNDED_REF on COLLATERAL_LAND_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="171" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLLNDED_T_REF on COLLATERAL_LAND_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="172" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLPLTED_REF on COLLATERAL_PLOT_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="173" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLPLTED_T_REF on COLLATERAL_PLOT_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="174" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLPRPTYED_REF on COLLATERAL_PROPERTY_ED
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="175" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLPRPTYED_T_REF on COLLATERAL_PROPERTY_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="176" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLTSTED_REF on COLLATERAL_TEST_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="177" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLTSTED_T_REF on COLLATERAL_TEST_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="178" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLVHLED_REF on COLLATERAL_VECHICLE_ED (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="179" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_COLLVHLED_T_REF on COLLATERAL_VECHICLE_ED_TEMP
-			(nlssort(REFERENCE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
 	<changeSet id="180" author="pruthvi" dbms="oracle">
 		<sql>
 			create index ix_COMMRTS_CMTREFFRQ on COMMITMENTRATES (nlssort(CMTREFERENCE,
@@ -1814,14 +1687,6 @@
 			'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<changeSet id="262" author="pruthvi" dbms="oracle">
-		<sql>
-			create index ix_DETAB_NAME on DATA_ENGINE_TABLES (nlssort(NAME,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
 	<changeSet id="263" author="pruthvi" dbms="oracle">
 		<sql>
 			create index ix_CDEDFDS_FDNMQRYMDL on DEDUPFIELDS (nlssort(FIELDNAME,
@@ -2456,21 +2321,6 @@
 			(nlssort(FINREFERENCE, 'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<changeSet id="352" author="pruthvi" dbms="oracle">
-		<sql>
-			create index IX_FINASTTYP_ASTTYP on FINASSETTYPES (nlssort(ASSETTYPE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
-	<changeSet id="353" author="pruthvi" dbms="oracle">
-		<sql>
-			create index IX_FINASTTYP_REF on FINASSETTYPES (nlssort(REFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet>
-
 	<changeSet id="354" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IX_FINASTTYP_T_ASTTYP on FINASSETTYPES_TEMP
@@ -2639,27 +2489,12 @@
 			(nlssort(SUBCATEGORYCODE, 'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<!-- <changeSet id="378" author="pruthvi" dbms="oracle">
-		<sql>
-			create index IX_FINCRSC_SCC on FINCREDITREVSUBCATEGORY
-			(nlssort(SUBCATEGORYCODE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet> -->
-
 	<changeSet id="379" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IX_FCRSC_T_SCC on FINCREDITREVSUBCATEGORY_TEMP
 			(nlssort(SUBCATEGORYCODE, 'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<!-- <changeSet id="380" author="pruthvi" dbms="oracle">
-		<sql>
-			create index IX_FINCRSC_T_SCC on FINCREDITREVSUBCATEGORY_TEMP
-			(nlssort(SUBCATEGORYCODE, 'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet> -->
 
 	<changeSet id="381" author="pruthvi" dbms="oracle">
 		<sql>
@@ -2958,14 +2793,6 @@
 			(nlssort(FINREFERENCE, 'nls_sort=''BINARY_CI'''));
 		</sql>
 	</changeSet>
-
-	<!-- <changeSet id="423" author="pruthvi" dbms="oracle">
-		<sql>
-			create index IDX_FINODDTL_FINREF on FINODDETAILS (nlssort(FINREFERENCE,
-			'nls_sort=''BINARY_CI'''));
-		</sql>
-	</changeSet> -->
-
 	<changeSet id="424" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IDX_FINODDTL_PD_FINREF on FINODDETAILS_PD
@@ -3554,26 +3381,26 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="507" author="pruthvi" dbms="oracle">
+<!-- 	<changeSet id="507" author="pruthvi" dbms="oracle">
 		<sql>
 			drop index JCS_STORE_DELETE_IDX ;
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
-	<changeSet id="508" author="pruthvi" dbms="oracle">
+	<!-- <changeSet id="508" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IX_JCS_STORE_SETS on JCS_STORE (SYSTEM_EXPIRE_TIME_SECONDS);
 		</sql>
 	</changeSet>
-
-	<changeSet id="509" author="pruthvi" dbms="oracle">
+ -->
+<!-- 	<changeSet id="509" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IX_JCS_STORE_ISETRNL on JCS_STORE (nlssort(IS_ETERNAL,
 			'nls_sort=''BINARY_CI'''));
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
-	<changeSet id="510" author="pruthvi" dbms="oracle">
+	<!-- <changeSet id="510" author="pruthvi" dbms="oracle">
 		<sql>
 			create index IX_JCS_STORE_RGN on JCS_STORE (nlssort(REGION,
 			'nls_sort=''BINARY_CI'''));
@@ -3585,7 +3412,7 @@
 			create index IX_JCS_STORE_CK_RGN on JCS_STORE (nlssort(CACHE_KEY,
 			'nls_sort=''BINARY_CI'''),nlssort(REGION, 'nls_sort=''BINARY_CI'''));
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="512" author="pruthvi" dbms="oracle">
 		<sql>
 create index IX_LMTAPIDTLS_CUSTREF_LMTREF on LIMITAPIDETAILS (nlssort(CUSTOMERREFERENCE, 'nls_sort=''BINARY_CI'''),nlssort(LIMITREF, 'nls_sort=''BINARY_CI'''));
@@ -4809,101 +4636,6 @@ drop index IX_FIN_TYPE_DIVISION;
 <changeSet id="1456" author="pruthvi" dbms="oracle">
 	<sql>
 		create index IX_VASSTRUCT_PRDCOD on VASSTRUCTURE(nlssort(PRODUCTCODE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1457" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASSTRUCT_PRDCOD on VASSTRUCTURE_TEMP(nlssort(PRODUCTCODE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1458" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASBIKED_REF on VAS_BIKE_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1460" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASBIKED_REF on VAS_BIKE_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1462" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASCARED_REF    on VAS_CAR_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1464" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASCARED_REF on VAS_CAR_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1466" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASFAMED_REF    on VAS_FAMILY_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1468" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASFAMED_REF on VAS_FAMILY_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1470" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASHINSED_REF  on VAS_HINS_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1472" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASHINSED_REF on VAS_HINS_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1474" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_HOMINSED_REF on VAS_HOMEINS_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1476" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_HOMINSED_REF on VAS_HOMEINS_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1478" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASINDVIDED_REF    on VAS_INDIVID_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1480" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASINDVIDED_REF on VAS_INDIVID_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1482" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASTSTED_REF on VAS_TEST_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1484" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASTSTED_REF on VAS_TEST_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1486" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASTRAVLED_REf on VAS_TRAVEL_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1488" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASTRAVLED_REf on VAS_TRAVEL_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1490" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_VASZZZED_REf   on VAS_ZZZ_ED(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
-	</sql>
-</changeSet>
-<changeSet id="1492" author="pruthvi" dbms="oracle">
-	<sql>
-		create index IX_T_VASZZZED_REf on VAS_ZZZ_ED_TEMP(nlssort(REFERENCE,'nls_sort=''BINARY_CI'''));
 	</sql>
 </changeSet>
 <changeSet id="1494" author="pruthvi" dbms="oracle">
