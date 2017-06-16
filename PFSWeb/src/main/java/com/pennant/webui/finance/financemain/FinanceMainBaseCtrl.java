@@ -11380,6 +11380,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			BigDecimal feeWaived = BigDecimal.ZERO;
 
 			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				if(!finFeeDetail.isRcdVisible()){
+					continue;
+				}
+				
 				feeRule = new FeeRule();
 
 				feeRule.setFeeCode(finFeeDetail.getFeeTypeCode());

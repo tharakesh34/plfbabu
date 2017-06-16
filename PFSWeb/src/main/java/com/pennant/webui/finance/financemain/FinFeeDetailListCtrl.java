@@ -299,9 +299,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		
 		int divHeight = this.borderLayoutHeight - 80;
 		int semiBorderlayoutHeights = divHeight / 2;
-		// this.listBoxFeeDetail.setHeight(this.borderLayoutHeight - (listBoxFeeDetail.getItemCount() * 20) - 185 + "px");
-		//this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 + "px");
-		//this.listBoxFinFeeReceipts.setHeight(semiBorderlayoutHeights - 85 + "px");
 		this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
 		this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
 		
@@ -420,10 +417,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (financeDetail.isNewRecord()
 				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
-				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					finFeeDetail.setRecordType("");
-					finFeeDetail.setRecordStatus("");
-				}
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
@@ -456,9 +449,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			receiptAmount = finReceiptDetail.getAmount();
 			List<FinFeeReceipt> currentFeeReceipts = new ArrayList<FinFeeReceipt>();
 			
-			if(StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
+			if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
 				reference = finReceiptDetail.getTransactionRef();
-			} else if(StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
+			} else if (StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
 				reference = finReceiptDetail.getFavourNumber();
 			}
 
@@ -518,6 +511,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.btn_autoAllocate.setVisible(false);
 			this.gb_FinFeeReceipts.setVisible(false);
 		}
+		this.div_AutoAllocate.setVisible(this.btn_autoAllocate.isVisible());
 
 		List<FinFeeReceipt> finFeeReceipts;
 		this.listBoxFinFeeReceipts.getItems().clear();
@@ -752,8 +746,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
 					finFeeReceipt.setReceiptID(receiptid);
 					finFeeReceipt.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
-					//finFeeReceipt.setNewRecord(true);	//FIXME
-					//finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
 					finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
 					currentFeeReceipts.add(finFeeReceipt);
 					
