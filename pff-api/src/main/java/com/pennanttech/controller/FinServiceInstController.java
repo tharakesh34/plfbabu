@@ -1548,21 +1548,19 @@ public class FinServiceInstController extends SummaryDetailService {
 	 */
 	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate finODPenaltyRate) {
 		logger.debug("Enteing");
-		String finReference = null;
 		try {
 			// save the OdPenaltyDetais
-			finReference = finODPenaltyRateDAO.save(finODPenaltyRate, "");
+			FinODPenaltyRate oldFinODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finODPenaltyRate.getFinReference(), "");
+			finODPenaltyRateDAO.saveLog(oldFinODPenaltyRate, "_Log");
+			finODPenaltyRateDAO.update(finODPenaltyRate, "");
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-
 		logger.debug("Leaving");
-		if (StringUtils.equals(finODPenaltyRate.getFinReference(), finReference)) {
-			return APIErrorHandlerService.getSuccessStatus();
-		} else {
-			return APIErrorHandlerService.getFailedStatus();
-		}
+		return APIErrorHandlerService.getSuccessStatus();
+		
+		
 
 	}
 
