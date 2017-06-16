@@ -1155,7 +1155,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		}
 		if (aPaymentHeader.isNewRecord()) {
-			setPaymentDetailList(detailList);
+			for (PaymentDetail detail : detailList) {
+				if (BigDecimal.ZERO.compareTo(detail.getAvailableAmount()) == -1) {
+					getPaymentDetailList().add(detail);
+				}
+			}
 		} else {
 			updatePaybleAmounts(detailList, aPaymentHeader.getPaymentDetailList());
 		}
