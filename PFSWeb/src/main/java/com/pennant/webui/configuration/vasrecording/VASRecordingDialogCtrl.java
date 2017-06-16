@@ -1287,19 +1287,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (!this.dsaId.isButtonDisabled()) {
 			this.dsaId.setConstraint(new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DsaId.value"),
-					null, true));
+					null, false));
 		}
 		if (!this.dmaId.isButtonDisabled()) {
 			this.dmaId.setConstraint(new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_DmaId.value"),
-					null, true));
+					null, false));
 		}
 		if (!this.fulfilOfficerId.isButtonDisabled()) {
 			this.fulfilOfficerId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_FulfilOfficerId.value"), null, true));
+					.getLabel("label_VASRecordingDialog_FulfilOfficerId.value"), null, false));
 		}
 		if (!this.referralId.isButtonDisabled()) {
 			this.referralId.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_VASRecordingDialog_ReferralId.value"), null, true));
+					.getLabel("label_VASRecordingDialog_ReferralId.value"), null, false));
 		}
 	}
 
@@ -2219,10 +2219,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.recurringDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.productCode.setProperties("VASConfiguration", "ProductCode", "ProductDesc", true, 8);
 		this.primaryLinkRef.setWidth("180px");
-		this.dsaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
-		this.dmaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
-		this.fulfilOfficerId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
-		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
+		this.dsaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.dmaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.fulfilOfficerId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 		this.productCode.setTextBoxWidth(145);
 		this.dsaId.setTextBoxWidth(145);
 		this.dmaId.setTextBoxWidth(145);
