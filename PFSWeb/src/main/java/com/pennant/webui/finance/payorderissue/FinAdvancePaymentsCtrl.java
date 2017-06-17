@@ -478,7 +478,9 @@ public class FinAdvancePaymentsCtrl {
 			return false;
 		}
 
-		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
+		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus()) && (!StringUtils
+				.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
+				&& !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) {
 			return false;
 		}
 
