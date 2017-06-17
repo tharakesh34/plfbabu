@@ -42,28 +42,18 @@
 */
 package com.pennant.backend.model.applicationmaster;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>TaxDetail table</b>.<br>

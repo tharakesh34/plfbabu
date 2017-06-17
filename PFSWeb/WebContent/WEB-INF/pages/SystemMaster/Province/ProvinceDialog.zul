@@ -5,6 +5,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ProvinceDialog" border="normal"
@@ -68,6 +69,20 @@
 			</north>
 
 			<center border="none" autoscroll="true">
+				
+				<tabbox width="100%">
+					<tabs id="tabsIndexCenter">
+						<tab
+							label="${c:l('tab_ProvinceDialog_BasicDetails.value')}"
+							id="basicDetails" />
+						<tab
+							label="${c:l('tab_ProvinceDialog_GstDetails.value')}"
+							id="gb_gstdetails" sclass="gb_details" visible="false" />
+
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto"
+							ca:data-scrollable="true">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 					<grid sclass="GridLayoutNoBorder"
 						fixedLayout="true">
@@ -187,7 +202,11 @@
 							</row>
 						</rows>
 					</grid>
-					<groupbox id="gb_gstdetails" sclass="gb_details" visible="false">
+					</groupbox>
+					</tabpanel>
+					
+					<tabpanel>
+					<groupbox >
 						<div sclass="z-toolbar" style="padding:0">
 							<hbox pack="stretch"
 								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
@@ -211,26 +230,20 @@
 							height="100%" multiple="false" sizedByContent="true"
 							span="true" style="overflow:auto">
 							<listhead sizable="true">
-								<listheader id="listheader_Country"
-									label="${c:l('label.Country')}" sort="auto" hflex="min" />
-								<listheader id="listheader_StateCode"
-									label="${c:l('label.StateCode')}" sort="auto" hflex="min" />
-								<listheader id="listheader_EntityCode"
-									label="${c:l('label.EntityCode')}" sort="auto" hflex="min" />
-								<listheader id="listheader_TaxCode"
-									label="${c:l('label.TaxCode')}" sort="auto" hflex="min" />
-								<listheader id="listheader_PinCode"
-									label="${c:l('label.PinCode')}" sort="auto" hflex="min" />
-								<listheader id="listheader_CityCode"
-									label="${c:l('label.CityCode')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordStatus"
-									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType"
-									label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+							<listheader id="listheader_Country" label="${c:l('listheader_Country.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_StateCode" label="${c:l('listheader_StateCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_EntityCode" label="${c:l('listheader_EntityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_TaxCode" label="${c:l('listheader_TaxCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_PinCode" label="${c:l('listheader_PinCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_CityCode" label="${c:l('listheader_CityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordType"  label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min"  />
 							</listhead>
 						</listbox>
 					</groupbox>
-				</groupbox>
+					</tabpanel>
+					</tabpanels>
+					</tabbox>
 			</center>
 
 			<south sclass="south-dialog">

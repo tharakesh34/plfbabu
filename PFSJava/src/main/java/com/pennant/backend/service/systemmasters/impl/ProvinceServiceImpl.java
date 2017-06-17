@@ -59,14 +59,11 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.rmtmasters.AccountingSet;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -569,7 +566,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new TaxDetail());
+		TaxDetail detail = new TaxDetail();
+		String[] fields = PennantJavaUtil.getFieldDetails(detail,detail.getExcludeFields());
 
 		for (int i = 0; i < province.getTaxDetailList().size(); i++) {
 			TaxDetail taxDetail = province.getTaxDetailList().get(i);

@@ -58,6 +58,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.webui.systemmasters.province.model.ProvinceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -102,6 +103,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	protected Button button_ProvinceList_ProvinceSearchDialog;
 
 	private transient ProvinceService provinceService;
+	private transient TaxDetailService taxDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -276,4 +278,11 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	public void setProvinceService(ProvinceService provinceService) {
 		this.provinceService = provinceService;
 	}
+
+	public void setTaxDetailService(TaxDetailService taxDetailService) {
+		this.taxDetailService = taxDetailService;
+	}
+	
+	
+	
 }

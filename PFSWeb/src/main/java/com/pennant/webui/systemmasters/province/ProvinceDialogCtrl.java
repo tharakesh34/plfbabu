@@ -63,6 +63,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -112,10 +113,10 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	protected Textbox  taxStateCode; // autoWired
 	protected Checkbox taxAvailable; // autoWired
 	protected Textbox businessArea; // autoWired
-	protected Groupbox gb_gstdetails;// autoWired
+	protected Tab 	  gb_gstdetails;// autoWired
 	protected Groupbox gb_basicDetails;// autoWired
 	protected Listbox listBoxTaxDetails;// autoWired
-	
+	private List<TaxDetail>			taxMappingDetailList			= null;
 	private String old_BusineesArea = "";
 	
 
@@ -353,7 +354,17 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.businessArea.setValue(aProvince.getBusinessArea());
 		
 		old_BusineesArea = aProvince.getBusinessArea();
+		//Reneder GSTIN Mapping
+		doFillGSTINMappingDetails(aProvince.getTaxDetailList());
 		
+		int divKycHeight = this.borderLayoutHeight - 80;
+		int semiBorderlayoutHeights = divKycHeight / 2;
+		if(aProvince.isTaxAvailable()){
+			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
+			this.gb_gstdetails.setVisible(true);
+		}else{
+			this.gb_gstdetails.setVisible(false);
+		}
 		if (aProvince.isNewRecord()){
 			this.cPCountry.setDescription("");
 		}else{
@@ -367,6 +378,43 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
+	
+	//Mapping details like new button , list diaplay and double click.....
+
+		//Reneder the list
+		protected void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
+			logger.debug("Entering");
+			this.listBoxTaxDetails.getItems().clear();
+			setTaxDetailList(taxMappingDetailList);
+			if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
+				for (TaxDetail taxMappingDetail : taxMappingDetailList) {
+					Listitem item = new Listitem();
+					Listcell lc;
+
+				  	lc = new Listcell(taxMappingDetail.getCountryName());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getProvinceName());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getEntityDesc());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getTaxCode());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getPinCode());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getCityName());
+					lc.setParent(item);
+					lc = new Listcell(taxMappingDetail.getRecordStatus());
+					lc.setParent(item);
+					lc = new Listcell(PennantJavaUtil.getLabel(taxMappingDetail.getRecordType()));
+					lc.setParent(item);
+					item.setAttribute("id", taxMappingDetail.getId());
+					
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
+					this.listBoxTaxDetails.appendChild(item);
+				}
+			}
+			logger.debug("Leaving");
+		}
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -460,9 +508,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	
 	public void onCheck$taxAvailable(Event event){
 		logger.debug("Entring");
+		int divKycHeight = this.borderLayoutHeight - 80;
+		int semiBorderlayoutHeights = divKycHeight / 2;
 		if(taxAvailable.isChecked()){
+			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
 			this.gb_gstdetails.setVisible(true);
 		}else{
+			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
 			this.gb_gstdetails.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -1168,6 +1220,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 	public void setTaxDetailList(List<TaxDetail> taxDetailList) {
 		this.taxDetailList = taxDetailList;
+	}
+
+	public List<TaxDetail> getTaxMappingDetailList() {
+		return taxMappingDetailList;
+	}
+
+	public void setTaxMappingDetailList(List<TaxDetail> taxMappingDetailList) {
+		this.taxMappingDetailList = taxMappingDetailList;
 	}
 
 }
