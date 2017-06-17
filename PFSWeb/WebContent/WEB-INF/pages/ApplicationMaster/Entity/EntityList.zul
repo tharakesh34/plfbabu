@@ -51,29 +51,26 @@
 								<row>
 									<label id="label_EntityList_EntityCode" value="${c:l('label_EntityList_EntityCode.value')}" />
 									<listbox id="sortOperator_EntityCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="entityCode" width="120px" maxlength="8" />
+									<textbox id="entityCode" width="130px" maxlength="8" />
 									<label id="label_EntityList_EntityDesc" value="${c:l('label_EntityList_EntityDesc.value')}" />
 									<listbox id="sortOperator_EntityDesc" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="entityDesc" width="170px" maxlength="50" />
+									<textbox id="entityDesc" width="130px" maxlength="50" />
 								</row>
 								<row>
 									<label id="label_EntityList_Country" value="${c:l('label_EntityList_Country.value')}" />
 									<listbox id="sortOperator_Country" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="country" width="120px" maxlength="2" />
+									<textbox id="country" width="130px" maxlength="2" />
 									<label id="label_EntityList_StateCode" value="${c:l('label_EntityList_StateCode.value')}" />
 									<listbox id="sortOperator_StateCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="stateCode" width="120px" maxlength="8" />
+									<textbox id="stateCode" width="130px" maxlength="8" />
 								</row>
 								<row>
 									<label id="label_EntityList_CityCode" value="${c:l('label_EntityList_CityCode.value')}" />
 									<listbox id="sortOperator_CityCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="cityCode" width="200px" maxlength="50" />
+									<textbox id="cityCode" width="130px" maxlength="50" />
 									<label id="label_EntityList_PinCode" value="${c:l('label_EntityList_PinCode.value')}" />
 									<listbox id="sortOperator_PinCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="pinCode" width="120px" maxlength="10" />
-									<!-- <label id="label_EntityList_Active" value="${c:l('label_EntityList_Active.value')}" />
-									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<checkbox id="active" checked="false"/> -->
+									<textbox id="pinCode" width="130px" maxlength="10" />
 								</row>
 								
 								<row>
