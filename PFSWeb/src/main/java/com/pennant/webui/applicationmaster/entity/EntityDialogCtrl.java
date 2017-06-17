@@ -239,31 +239,35 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug(Literal.LEAVING);
 	}
 	
-	public void onFulfill$stateCode(Event event){
+	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		Object dataObject = stateCode.getObject();
-		if(this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()){
+
+		if (this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()) {
 			fillCitydetails(this.stateCode.getValue());
-		}else{
+		} else {
 			this.cityCode.setValue("");
 			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	private void fillCitydetails(String  id) {
+
+	private void fillCitydetails(String id) {
 		logger.debug("Entering");
 
 		if (id != null) {
 			this.cityCode.setModuleName("City");
 			this.cityCode.setValueColumn("PCCity");
 			this.cityCode.setDescColumn("PCCityName");
-			this.cityCode.setValidateColumns(new String[] {"PCCity"});
+			this.cityCode.setValidateColumns(new String[] { "PCCity" });
 			Filter[] filters1 = new Filter[1];
 			filters1[0] = new Filter("PCProvince", id, Filter.OP_EQUAL);
 			this.cityCode.setFilters(filters1);
 		}
 	}
+
 	/**
 	 * onChanging Branch
 	 * 
@@ -281,22 +285,27 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				fillPindetails(details.getPCCity());
+			}else{
+				/*this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+*/
 			}
 		}
 		logger.debug("Leaving");
 	}
-	 
-	private void fillPindetails(String  id) {
+
+	private void fillPindetails(String id) {
 		if (id != null) {
 			this.pinCode.setModuleName("PinCode");
 			this.pinCode.setValueColumn("PinCode");
 			this.pinCode.setDescColumn("AreaName");
-			this.pinCode.setValidateColumns(new String[] {"PinCode"});
+			this.pinCode.setValidateColumns(new String[] { "PinCode" });
 			Filter[] filters1 = new Filter[1];
 			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
 			this.pinCode.setFilters(filters1);
 		}
 	}
+
 	/**
 	 * onChanging Branch
 	 * 
@@ -307,20 +316,23 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug("Entering");
 
 		Object dataObject = pinCode.getObject();
-
-		if (!(dataObject instanceof String)) {
+		if (dataObject instanceof String) {
+			
+		} else {
 			PinCode details = (PinCode) dataObject;
+
 			if (details != null) {
-				this.stateCode.setValue(details.getPCProvince());
-				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				
 				this.cityCode.setValue(details.getCity());
 				this.cityCode.setDescription(details.getPCCityName());
-				
-			}
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+			} 
+		
 		}
 		logger.debug("Leaving");
 	}
-
+ 
 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
@@ -515,6 +527,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			   this.stateCode.setDescription("");
 			   this.cityCode.setDescription("");
 			   this.pinCode.setDescription("");
+			   this.country.setValue("IN");
+			   this.country.setDescription("INDIAone");
 		}else{
 			   this.country.setDescription(aEntity.getCountryName());
 			   this.stateCode.setDescription(aEntity.getStateCodeName());
