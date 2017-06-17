@@ -2472,4 +2472,12 @@ Insert into reportlist values('Entity','Entity','listheader_EntityCode.label,lis
 'Entity','Application Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 </sql>
 </changeSet>
+
+<changeSet id="122" author="satya">
+<sql>
+Insert into reportlist values('TaxDetail','TaxDetail','listheader_Country.label,listheader_StateCode.label,listheader_EntityCode.label,listheader_TaxCode.label,listheader_PinCode.label,listheader_CityCode.label','countryName,provinceName,entityDesc,taxCode,pinCode,cityName','String,String,String,String,String,String','','ReportList06',
+'TaxDetail','Application Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+
+</sql>
+</changeSet>
 </databaseChangeLog>
