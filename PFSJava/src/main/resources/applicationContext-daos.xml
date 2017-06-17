@@ -10033,6 +10033,8 @@
 
  	<bean name="taxDetailServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
        <property name="taxDetailDAO" ref="taxDetailDAO" />
+       <property name="provinceDAO" ref="provinceDAO" />
+       <property name="entityDAO" ref="entityDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    

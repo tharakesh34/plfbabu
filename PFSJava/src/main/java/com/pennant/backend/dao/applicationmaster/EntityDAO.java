@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.Entity;
+import com.pennanttech.pff.core.TableType;
 
 public interface EntityDAO extends BasicCrudDao<Entity> {
 	
@@ -58,5 +59,6 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	 * @return Entity
 	 */
 	Entity getEntity(String entityCode,String type);
+	boolean count(String panNumber,String entityCode, TableType tableType);
 	
 }

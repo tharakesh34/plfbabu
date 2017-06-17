@@ -424,10 +424,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	 */
 	public void onFulfill$entityCode(Event event) throws InterruptedException {
 		Object dataObject = entityCode.getObject();
+		Entity details = (Entity) dataObject;
 		Object dataObject1 = stateCode.getObject();
+		Province details1 = (Province) dataObject1;
 		if (!(dataObject instanceof String) && !(dataObject1 instanceof String)) {
-			Entity details = (Entity) dataObject;
-			Province details1 = (Province) dataObject1;
+			
+			
 			if (details != null && details1 != null) {
 				if(details1.getTaxStateCode()!=null){
 					this.taxCode.setValue(details1.getTaxStateCode() + details.getPANNumber());

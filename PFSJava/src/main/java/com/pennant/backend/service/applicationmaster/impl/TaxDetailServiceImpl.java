@@ -48,8 +48,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -70,6 +72,8 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private TaxDetailDAO taxDetailDAO;
+	private ProvinceDAO  provinceDAO;
+	private EntityDAO  entityDAO;
 
 
 	// ******************************************************//
@@ -364,6 +368,25 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 
+			if(!provinceDAO.count(taxDetail.getTaxCode().substring(0,2),taxDetail.getStateCode(),
+					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode();
+				parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode().substring(0,2);
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+			}
+			
+			if(!entityDAO.count(taxDetail.getTaxCode().substring(2,12),taxDetail.getEntityCode(),
+					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
+				String[] parameters = new String[2];
+				
+				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + taxDetail.getTaxCode();
+				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + taxDetail.getTaxCode().substring(2,12);
+				
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+			}
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
@@ -374,5 +397,22 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {
 			return getTaxDetailDAO().getTaxDetailbystateCode(Statecode, type);
 		}
+		
+		public ProvinceDAO getProvinceDAO() {
+			return provinceDAO;
+		}
+
+		public void setProvinceDAO(ProvinceDAO provinceDAO) {
+			this.provinceDAO = provinceDAO;
+		}
+
+		public EntityDAO getEntityDAO() {
+			return entityDAO;
+		}
+
+		public void setEntityDAO(EntityDAO entityDAO) {
+			this.entityDAO = entityDAO;
+		}
+
 
 }

@@ -322,6 +322,43 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public boolean count(String taxStateCode,String cPProvince, TableType tableType){
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "taxStateCode = :taxStateCode and cPProvince = :cPProvince" ;
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTCountryVsProvince", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTCountryVsProvince_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("taxStateCode", taxStateCode);
+		paramSource.addValue("cPProvince", cPProvince);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
 
 	@Override
 	public int getBusinessAreaCount(String businessAreaValue, String type) {
