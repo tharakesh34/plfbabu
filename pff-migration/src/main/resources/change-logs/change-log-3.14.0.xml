@@ -2466,4 +2466,10 @@ RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
 			WHERE     NOT EXISTS (SELECT 1 FROM PinCodes_TEMP WHERE PinCodeId = T1.PinCodeId)
 	</createView>
 	</changeSet>
+	<changeSet id="121" author="satya">
+<sql>
+Insert into reportlist values('Entity','Entity','listheader_EntityCode.label,listheader_EntityDesc.label,listheader_Country.label,listheader_StateCode.label,listheader_CityCode.label,listheader_PinCode.label,listheader_Active.label','entityCode,entityDesc,country,stateCode,cityCode,pinCode,active','String,String,String,String,String,String,boolean','','ReportList07',
+'Entity','Application Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
