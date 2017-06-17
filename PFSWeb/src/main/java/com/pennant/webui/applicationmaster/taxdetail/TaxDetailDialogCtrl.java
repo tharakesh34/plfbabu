@@ -430,6 +430,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				}else{
 					this.taxCode.setValue(details.getPANNumber());
 				}
+			}else{
+				this.taxCode.setValue(details.getPANNumber());
 			}
 		}
 	}
@@ -891,10 +893,10 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			readOnlyComponent(false, this.taxCode);
 		} else {
 			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.taxCode);
 
 		}
 
+		readOnlyComponent(isReadOnly("TaxDetailDialog_TaxCode"), this.taxCode);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_Country"), this.country);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_StateCode"), this.stateCode);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_EntityCode"), this.entityCode);

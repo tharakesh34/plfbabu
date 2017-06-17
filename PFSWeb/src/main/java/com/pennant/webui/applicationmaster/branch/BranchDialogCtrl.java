@@ -71,7 +71,6 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;

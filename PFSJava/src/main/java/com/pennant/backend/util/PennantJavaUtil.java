@@ -608,7 +608,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Branch", new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches",
 				"RMTBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc" }, new String[][] { {
-				"BranchIsActive", "0", "1" } }, 300));
+				"BranchIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("CheckList", new ModuleMapping("CheckList", CheckList.class, new String[] { "BMTCheckList",
 				"BMTCheckList_AView" }, masterWF, new String[] { "CheckListId", "CheckListDesc" }, null, 500));

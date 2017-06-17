@@ -354,7 +354,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			TaxDetail taxDetail = (TaxDetail) auditDetail.getModelData();
 
 			// Check the unique keys.
-			if (taxDetail.isNew() && taxDetailDAO.isDuplicateKey(taxDetail.getId(),taxDetail.getTaxCode(),
+			if (taxDetailDAO.isDuplicateKey(taxDetail.getId(),taxDetail.getTaxCode(),
 					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				String[] parameters = new String[2];
 				
