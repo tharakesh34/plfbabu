@@ -8568,7 +8568,7 @@
 	</bean>
 
 	<!-- Finance Tax Detail -->
-	<bean id="financeTaxDetailDAO"
+	<!-- <bean id="financeTaxDetailDAO"
 		class="com.pennant.backend.dao.finance.impl.FinanceTaxDetailDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -8596,7 +8596,7 @@
 		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
+	</bean> -->
 
 	<!-- CollateralStructure -->
 	<bean id="collateralStructureDAO"
