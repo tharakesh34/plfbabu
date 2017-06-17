@@ -129,6 +129,10 @@
 									label="${c:l('listheader_Disbursement_LoanType.label')}"
 									hflex="min" />
 								<listheader
+									id="listheader_Disbursement_AmountToBeReleased"
+									label="${c:l('listheader_Disbursement_AmountToBeReleased.label')}"
+									hflex="min" />	
+								<listheader
 									id="listheader_Disbursement_Custname"
 									label="${c:l('listheader_Disbursement_CustName.label')}"
 									hflex="min" />

@@ -44,6 +44,7 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,10 +80,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -217,6 +220,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("beneficiaryAccNo", listheader_Disbursement_BenAcctno, SortOrder.NONE);
 		registerField("branchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
 				Operators.STRING);
+		registerField("AMTTOBERELEASED");
+
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -343,6 +348,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			lc.setParent(item);
 
 			lc = new Listcell(payments.getFinType());
+			lc.setParent(item);
+			
+			lc = new Listcell(PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased().multiply(new BigDecimal(100)),
+					CurrencyUtil.getFormat(payments.getDisbCCy())));
 			lc.setParent(item);
 
 			lc = new Listcell(payments.getCustShrtName());
