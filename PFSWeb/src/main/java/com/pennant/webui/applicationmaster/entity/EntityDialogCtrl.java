@@ -90,16 +90,16 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 * component with the same 'id' in the zul-file are getting  by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_EntityDialog; 
-	protected Textbox 		entityCode; 
-	protected Textbox 		entityDesc; 
-	protected Textbox 		pANNumber; 
+	protected Window                window_EntityDialog; 
+	protected Textbox 		        entityCode; 
+	protected Textbox 		        entityDesc; 
+	protected Textbox 		        pANNumber; 
     protected ExtendedCombobox 		country; 
     protected ExtendedCombobox 		stateCode; 
     protected ExtendedCombobox 		cityCode; 
     protected ExtendedCombobox 		pinCode; 
-    protected Checkbox 		active; 
-	private Entity entity; // overhanded per param
+    protected Checkbox 		        active; 
+	private Entity                  entity; // overhanded per param
 
 	private transient EntityListCtrl entityListCtrl; // overhanded per param
 	private transient EntityService entityService;
@@ -117,11 +117,6 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		super.pageRightName = "EntityDialog";
 	}
 	
-	/*@Override
-	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(this.entity.getEntityCode());
-		return referenceBuffer.toString();
-	}*/
 	@Override
 	protected String getReference() {
 		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.entity.getEntityCode()));
