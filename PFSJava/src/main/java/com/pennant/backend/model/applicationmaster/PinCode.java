@@ -66,6 +66,7 @@ private static final long serialVersionUID = 1L;
 	private String pCCountry ;
 	private String lovDescPCCountryName;
 	private String lovDescPCProvinceName;
+	private String gstin;
 	private boolean active;
 	private boolean newRecord=false;
 	private String lovValue;
@@ -106,6 +107,8 @@ private static final long serialVersionUID = 1L;
 			excludeFields.add("pCCityName");
 			excludeFields.add("pCProvince");
 			excludeFields.add("lovDescPCProvinceName");
+			excludeFields.add("pCCountry");
+			excludeFields.add("gstin");
 	return excludeFields;
 	}
 
@@ -225,6 +228,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setLovDescPCCountryName(String lovDescPCCountryName) {
 		this.lovDescPCCountryName = lovDescPCCountryName;
+	}
+
+	public String getGstin() {
+		return gstin;
+	}
+
+	public void setGstin(String gstin) {
+		this.gstin = gstin;
 	}
 
 	

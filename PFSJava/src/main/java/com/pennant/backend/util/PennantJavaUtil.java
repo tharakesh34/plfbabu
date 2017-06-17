@@ -528,7 +528,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Province", new ModuleMapping("Province", Province.class, new String[] {
 				"RMTCountryVsProvince", "RMTCountryVsProvince_AView" }, masterWF, new String[] { "CPProvince",
-				"CPProvinceName" }, new String[][] { { "CPIsActive", "0", "1" } }, 350));
+				"CPProvinceName","TaxStateCode" }, new String[][] { { "CPIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("Salutation", new ModuleMapping("Salutation", Salutation.class, new String[] {
 				"BMTSalutations", "BMTSalutations_AView" }, masterWF, new String[] { "SalutationCode", "SaluationDesc" },
@@ -576,7 +576,7 @@ public class PennantJavaUtil {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
-		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName","LovDescPCCountryName"},
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName","Gstin","LovDescPCCountryName"},
 				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
