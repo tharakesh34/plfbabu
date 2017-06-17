@@ -66,6 +66,7 @@ import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -276,12 +277,30 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
-		this.taxCode.setValue(this.stateCode.getValue());
+		Object dataObject = stateCode.getObject();
+
+		if (!(dataObject instanceof String)) {
+			Province details = (Province) dataObject;
+			if (details != null) {
+				if(!this.taxCode.getValue().isEmpty() && this.taxCode.getValue()!=null){
+					this.taxCode.setValue(this.taxCode.getValue()+details.getTaxStateCode());
+				}
+			}else if(this.taxCode.getValue()==null){
+				this.taxCode.setValue("");
+			}else{
+				this.taxCode.setValue("");
+			}
+		}else{
+			this.taxCode.setValue("");
+		}
+		
 		if (this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()) {
 			fillCitydetails(this.stateCode.getValue());
 		} else {
 			this.cityCode.setValue("");
 			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			/*
 			 * if(!this.stateCode.getValue().isEmpty()){ fillModuledetails(this.stateCode.getValue()); }
 			 */
@@ -320,13 +339,17 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				fillPindetails(details.getPCCity());
+			}else{
+				this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+				
 			}
 			if (details == null) {
 				if (this.stateCode.getValue().isEmpty()) {
 					this.taxCode.setValue("");
 				}
 			} else {
-				this.taxCode.setValue(details.getPCProvince());
+				//this.taxCode.setValue(details.getPCProvince());
 			}
 		}
 		logger.debug("Leaving");
@@ -354,16 +377,37 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		logger.debug("Entering");
 
 		Object dataObject = pinCode.getObject();
-
-		if (!(dataObject instanceof String)) {
+		if (dataObject instanceof String) {
+			/*this.pinCode.setValue(dataObject.toString());
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.stateCode.setValue("");
+			this.stateCode.setDescription("");
+			this.taxCode.setValue("");*/
+			
+		} else {
 			PinCode details = (PinCode) dataObject;
+
 			if (details != null) {
-				this.stateCode.setValue(details.getPCProvince());
-				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				
 				this.cityCode.setValue(details.getCity());
 				this.cityCode.setDescription(details.getPCCityName());
-				this.taxCode.setValue(details.getPCProvince());
+				this.stateCode.setValue(details.getPCProvince());
+				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				//this.taxCode.setValue(details.getGstin());
+			} /*else {
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+				//this.taxCode.setValue("");
+			}*/
+			if(!this.taxCode.getValue().isEmpty() && this.taxCode.getValue()!=null){
+				this.taxCode.setValue(this.taxCode.getValue()+details.getGstin());
+			}else{
+				this.taxCode.setValue("");
 			}
+		
 		}
 		logger.debug("Leaving");
 	}
@@ -376,10 +420,16 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	 */
 	public void onFulfill$entityCode(Event event) throws InterruptedException {
 		Object dataObject = entityCode.getObject();
-		if (!(dataObject instanceof String)) {
+		Object dataObject1 = stateCode.getObject();
+		if (!(dataObject instanceof String) && !(dataObject1 instanceof String)) {
 			Entity details = (Entity) dataObject;
-			if (details != null) {
-				this.taxCode.setValue(this.stateCode.getValue() + details.getPANNumber());
+			Province details1 = (Province) dataObject1;
+			if (details != null && details1 != null) {
+				if(details1.getTaxStateCode()!=null){
+					this.taxCode.setValue(details1.getTaxStateCode() + details.getPANNumber());
+				}else{
+					this.taxCode.setValue(details.getPANNumber());
+				}
 			}
 		}
 	}
@@ -685,10 +735,13 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			this.entityCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_EntityCode.value"), null, true, true));
 		}
-		if (!this.taxCode.isReadonly()) {
+		if (!this.taxCode.isReadonly()){
+			this.taxCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_TaxCode.value"),PennantRegularExpressions.REGEX_GSTIN,true,15));
+		}
+		/*if (!this.taxCode.isReadonly()) {
 			this.taxCode.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_TaxCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
-		}
+		}*/
 		if (!this.addressLine1.isReadonly()) {
 			this.addressLine1
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_TaxDetailDialog_AddressLine1.value"),
