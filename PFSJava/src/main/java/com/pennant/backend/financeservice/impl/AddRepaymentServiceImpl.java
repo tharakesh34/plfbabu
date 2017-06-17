@@ -106,6 +106,12 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			return auditDetail;
 		}
 		
+		if(StringUtils.isNotBlank(finServiceInstruction.getSchdMethod())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Schedule method";
+			valueParm[1] = "Loan:"+finServiceInstruction.getFinReference();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90329", "", valueParm), lang));
+		}
 	/*	// validate schdMethod
 		if (StringUtils.isNotBlank(finServiceInstruction.getSchdMethod())) {
 			List<ValueLabel> schdMethods = PennantStaticListUtil.getScheduleMethods();
