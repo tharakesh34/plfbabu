@@ -117,14 +117,14 @@
 					<listbox id="listBoxTaxDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
 							multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-							<listheader id="listheader_Country" label="${c:l('label.Country')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_StateCode" label="${c:l('label.StateCode')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_EntityCode" label="${c:l('label.EntityCode')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_TaxCode" label="${c:l('label.TaxCode')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_PinCode" label="${c:l('label.PinCode')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_CityCode" label="${c:l('label.CityCode')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  />
-							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_Country" label="${c:l('listheader_Country.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_StateCode" label="${c:l('listheader_StateCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_EntityCode" label="${c:l('listheader_EntityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_TaxCode" label="${c:l('listheader_TaxCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_PinCode" label="${c:l('listheader_PinCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_CityCode" label="${c:l('listheader_CityCode.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min"  />
+							<listheader id="listheader_RecordType"  label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min"  />
 						</listhead>		
 					</listbox>
 				</div>	
