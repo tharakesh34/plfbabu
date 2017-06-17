@@ -208,7 +208,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	//protected Combobox ruleDecider;
 	protected Groupbox									gb_RuleCode;
 	private String										userRole			= "";
-	private boolean                                     validate=false;
+	private boolean                                     isGSTApplicable       = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -719,8 +719,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		
-		if(validate){
-			MessageUtil.showMessage("Account type is GST applicable make sure the Fee types mapped are correct");
+		if(isGSTApplicable){
+			MessageUtil.showMessage(Labels.getLabel("label_GstApplicable"));
 		}
 
 		if (!this.transOrder.isReadonly()) {
@@ -1351,7 +1351,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			AccountType details = (AccountType) dataObject;
 			if (details != null) {
 				if(details.isTaxApplicable()){
-					validate=true;
+					isGSTApplicable=true;
 				}
 				this.accountType.setValue(details.getAcType());
 				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
