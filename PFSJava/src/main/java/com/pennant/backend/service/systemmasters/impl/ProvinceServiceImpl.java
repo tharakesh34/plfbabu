@@ -411,16 +411,17 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Province province = (Province) auditHeader.getAuditDetail()
-				.getModelData();
+		Province province = (Province) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getProvinceDAO().delete(province, TableType.TEMP_TAB);
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
