@@ -2401,4 +2401,43 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	<changeSet id="117" author="Vinay">
+		<createView viewName="TAXDETAIL_VIEW" replaceIfExists="true">
+			SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL_TEMP  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entity T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+
+UNION ALL
+
+SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entity T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+
+WHERE     NOT EXISTS (SELECT 1 FROM TAXDETAIL_TEMP WHERE Id = T1.Id)
+		
+		</createView>
+	</changeSet>
+	<changeSet id="118" author="Vinay">
+	<createView viewName="TAXDETAIL_AVIEW" replaceIfExists="true">
+	SELECT		T1.Id, T1.Country,T2.CountryDesc CountryName, T1.StateCode, T3.CPProvinceName ProvinceName, T1.EntityCode, T4.EntityDesc EntityDesc ,T1.TaxCode, T1.AddressLine1, T1.AddressLine2, T1.AddressLine3, T1.AddressLine4, T1.PinCode, T1.CityCode,T6.PCCITYNAME CityName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	TAXDETAIL  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+Entity T4 ON T1.EntityCode = T4.EntityCode INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode INNER JOIN
+RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
+	
+	</createView>
+	</changeSet>
 </databaseChangeLog>
