@@ -2480,4 +2480,13 @@ Insert into reportlist values('TaxDetail','TaxDetail','listheader_Country.label,
 
 </sql>
 </changeSet>
+
+<changeSet id="123" author="Manoj.P">
+	<sql>
+		delete from DATA_ENGINE_CONFIG where name = 'DATA_MART_REQUEST';
+		INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DATA_MART_REQUEST', 
+		'Data Mart Request', 5, NULL, NULL, NULL, NULL, 0, 0, NULL,
+		NULL,  NULL, 'A', NULL, 'DBFILE', NULL, 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
+	</sql>
+</changeSet>
 </databaseChangeLog>
