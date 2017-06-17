@@ -43,21 +43,30 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -70,7 +79,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvinceDAO provinceDAO;
-
+	private TaxDetailDAO taxDetailDAO;
 	public ProvinceServiceImpl() {
 		super();
 	}
@@ -92,6 +101,9 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
 	}
+	public void setTaxDetailDAO(TaxDetailDAO taxDetailDAO) {
+		this.taxDetailDAO = taxDetailDAO;
+	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
@@ -111,33 +123,134 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
-
-		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		TableType tableType = TableType.MAIN_TAB;
-		Province province = (Province) auditHeader.getAuditDetail()
-				.getModelData();
+		Province province = (Province) auditHeader.getAuditDetail().getModelData();
 
 		if (province.isWorkflow()) {
-			tableType=TableType.TEMP_TAB;
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (province.isNew()) {
 			getProvinceDAO().save(province, tableType);
 			auditHeader.getAuditDetail().setModelData(province);
-			auditHeader.setAuditReference(province.getCPCountry() 
-					+PennantConstants.KEY_SEPERATOR+ province.getCPProvince());
+			auditHeader.setAuditReference(
+					province.getCPCountry() + PennantConstants.KEY_SEPERATOR + province.getCPProvince());
 		} else {
 			getProvinceDAO().update(province, tableType);
 		}
 
+		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
+			List<AuditDetail> details = province.getAuditDetailMap().get("TaxDetail");
+			details = processTaxDetails(details, tableType);
+			auditDetails.addAll(details);
+		}
+		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+
+	}
+	
+	
+	
+	/**
+	 * Method For Preparing List of AuditDetails for Customer Ratings
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	private List<AuditDetail> processTaxDetails(List<AuditDetail> auditDetails, TableType type) {
+		logger.debug("Entering");
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			TaxDetail taxDetail = (TaxDetail) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type.getSuffix())) {
+				approveRec = true;
+				taxDetail.setRoleCode("");
+				taxDetail.setNextRoleCode("");
+				taxDetail.setTaskId("");
+				taxDetail.setNextTaskId("");
+			}
+
+			if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (taxDetail.isNewRecord()) {
+				saveRecord = true;
+				if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					taxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					taxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					taxDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (taxDetail.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = taxDetail.getRecordType();
+				recordStatus = taxDetail.getRecordStatus();
+				taxDetail.setRecordType("");
+				taxDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				taxDetailDAO.save(taxDetail, type);
+			}
+
+			if (updateRecord) {
+				taxDetailDAO.update(taxDetail, type);
+			}
+
+			if (deleteRecord) {
+				taxDetailDAO.delete(taxDetail, type);
+			}
+
+			if (approveRec) {
+				taxDetail.setRecordType(rcdType);
+				taxDetail.setRecordStatus(recordStatus);
+			}
+
+			auditDetails.get(i).setModelData(taxDetail);
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
 
 	}
 
@@ -157,15 +270,16 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		Province province = (Province) auditHeader.getAuditDetail()
-				.getModelData();
+		Province province = (Province) auditHeader.getAuditDetail().getModelData();
 		getProvinceDAO().delete(province, TableType.MAIN_TAB);
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(province, TableType.MAIN_TAB, auditHeader.getAuditTranType())));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -224,26 +338,25 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader);
-		if (!auditHeader.isNextProcess()){
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		auditHeader = businessValidation(auditHeader, "Approve");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		Province province = new Province();
-		BeanUtils.copyProperties((Province) auditHeader.getAuditDetail()
-				.getModelData(), province);
-		
+		BeanUtils.copyProperties((Province) auditHeader.getAuditDetail().getModelData(), province);
+
 		getProvinceDAO().delete(province, TableType.TEMP_TAB);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					provinceDAO.getProvinceById(
-							province.getCPCountry(), province.getCPProvince(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(provinceDAO.getProvinceById(province.getCPCountry(), province.getCPProvince(), ""));
 		}
-		
 
 		if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
+			auditDetails.addAll(listDeletion(province, TableType.MAIN_TAB, auditHeader.getAuditTranType()));
 			getProvinceDAO().delete(province, TableType.MAIN_TAB);
 		} else {
 			province.setRoleCode("");
@@ -252,8 +365,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			province.setNextTaskId("");
 			province.setWorkflowId(0);
 
-			if (province.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				province.setRecordType("");
 				getProvinceDAO().save(province, TableType.MAIN_TAB);
@@ -262,10 +374,17 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				province.setRecordType("");
 				getProvinceDAO().update(province, TableType.MAIN_TAB);
 			}
+			
+			
+			if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
+				List<AuditDetail> details = province.getAuditDetailMap().get("TaxDetail");
+				details = processTaxDetails(details, TableType.MAIN_TAB);
+				auditDetails.addAll(details);
+			}
 		}
 
-		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(province, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
@@ -292,7 +411,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader);
+		auditHeader = businessValidation(auditHeader,"doReject");
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -318,15 +437,184 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader) {
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
 				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader=nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	
+	
+	/**
+	 * Common Method for Retrieving AuditDetails List
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @return
+	 */
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+		Province province = (Province) auditHeader.getAuditDetail().getModelData();
+
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (province.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
+			auditDetailMap.put("TaxDetail", setTaxDetailsData(province, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("TaxDetail"));
+		}
+
+		province.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(province);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+	
+	
+	/**
+	 * Common Method for Customers list validation
+	 * 
+	 * @param list
+	 * @param method
+	 * @param userDetails
+	 * @param lastMntON
+	 * @return
+	 */
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
+
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+
+				String transType = "";
+				String rcdType = "";
+				TaxDetail taxDetail = (TaxDetail) ((AuditDetail) list.get(i)).getModelData();
+
+				rcdType = taxDetail.getRecordType();
+
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
+					transType = PennantConstants.TRAN_ADD;
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType) || PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
+					transType = PennantConstants.TRAN_DEL;
+				} else {
+					transType = PennantConstants.TRAN_UPD;
+				}
+
+				if (StringUtils.isNotEmpty(transType)) {
+					// check and change below line for Complete code
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), taxDetail.getBefImage(), taxDetail));
+				}
+			}
+		}
+		
+		logger.debug("Leaving");
+		return auditDetailsList;
+	}
+	
+	
+	/**
+	 * Method deletion of feeTier list with existing fee type
+	 * 
+	 * @param province
+	 * @param tableType
+	 */
+	public List<AuditDetail> listDeletion(Province province, TableType tableType, String auditTranType) {
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		if (province.getTaxDetailList() != null && province.getTaxDetailList().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new TaxDetail());
+
+			for (int i = 0; i < province.getTaxDetailList().size(); i++) {
+				TaxDetail taxDetail = province.getTaxDetailList().get(i);
+				if (StringUtils.isNotEmpty(taxDetail.getRecordType()) || StringUtils.isEmpty(tableType.getSuffix())) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(),
+							taxDetail));
+				}
+				taxDetailDAO.delete(province.getTaxDetailList().get(i), tableType);
+			}
+
+		}
+
+		return auditList;
+	}
+	
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setTaxDetailsData(Province province, String auditTranType, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		String[] fields = PennantJavaUtil.getFieldDetails(new TaxDetail());
+
+		for (int i = 0; i < province.getTaxDetailList().size(); i++) {
+			TaxDetail taxDetail = province.getTaxDetailList().get(i);
+			
+			if (StringUtils.isEmpty(taxDetail.getRecordType())) {
+				continue;
+			}
+			
+			taxDetail.setWorkflowId(province.getWorkflowId());
+
+			boolean isRcdType = false;
+
+			if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				taxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				taxDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				taxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && isRcdType ) {
+				taxDetail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			taxDetail.setRecordStatus(province.getRecordStatus());
+			taxDetail.setUserDetails(province.getUserDetails());
+			taxDetail.setLastMntOn(province.getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+			        taxDetail.getBefImage(), taxDetail));
+		}
+		logger.debug("Leaving");
+		return auditDetails;
 	}
 
 	/**
@@ -407,4 +695,9 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		return businessArea;
 	}
+
+	
+	
+	
+	
 }

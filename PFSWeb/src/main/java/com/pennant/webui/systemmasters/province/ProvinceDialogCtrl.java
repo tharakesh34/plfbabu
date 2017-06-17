@@ -44,28 +44,38 @@ package com.pennant.webui.systemmasters.province;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Label;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
@@ -74,6 +84,8 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.Literal;
+import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the
@@ -100,6 +112,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	protected Textbox  taxStateCode; // autoWired
 	protected Checkbox taxAvailable; // autoWired
 	protected Textbox businessArea; // autoWired
+	protected Groupbox gb_gstdetails;// autoWired
+	protected Groupbox gb_basicDetails;// autoWired
+	protected Listbox listBoxTaxDetails;// autoWired
 	
 	private String old_BusineesArea = "";
 	
@@ -107,6 +122,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	// not auto wired variables
 	private Province  province; // overHanded per parameter
 	private transient ProvinceListCtrl provinceListCtrl; // overHanded per parameter
+	private List<TaxDetail>		taxDetailList	= new ArrayList<TaxDetail>();
 
 	private transient boolean validationOn;
 	
@@ -425,7 +441,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+		Cloner cloner = new Cloner();
+		aProvince.setTaxDetailList(cloner.deepClone(getTaxDetailList()));
 		doRemoveValidation();
 
 		if (wve.size()>0) {
@@ -439,7 +456,63 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		aProvince.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
+	
+	
+	public void onCheck$taxAvailable(Event event){
+		logger.debug("Entring");
+		if(taxAvailable.isChecked()){
+			this.gb_gstdetails.setVisible(true);
+		}else{
+			this.gb_gstdetails.setVisible(false);
+		}
+		logger.debug("Leaving");
+	}
 
+	
+	/**
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$btnNew_GstDetails(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		// Create a new entity.
+		TaxDetail taxdetail = new TaxDetail();
+		taxdetail.setNewRecord(true);
+		taxdetail.setWorkflowId(getWorkFlowId());
+		// Display the dialog page.
+		doShowDialogPage(taxdetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+	/**
+	 * Displays the dialog page with the required parameters as map.
+	 * 
+	 * @param taxdetail
+	 *            The entity that need to be passed to the dialog.
+	 */
+	private void doShowDialogPage(TaxDetail taxdetail) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> arg = new HashMap<String, Object>();
+		arg.put("moduleCode", moduleCode);
+		arg.put("enqiryModule", enqiryModule);
+		arg.put("taxdetail", taxdetail);
+		arg.put("provinceDialogCtrl", this);
+		arg.put("newRecord", taxdetail.isNew());
+		arg.put("roleCode", getRole());
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -1023,6 +1096,38 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 		logger.debug("Entering");
 	}
+	
+	
+	public void doFillTaxDetails(List<TaxDetail> taxDetails) {
+		this.listBoxTaxDetails.getItems().clear();
+		if (taxDetails != null) {
+			for (TaxDetail taxDetail : taxDetails) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(taxDetail.getCountryName());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getProvinceName());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getEntityDesc());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getTaxCode());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getPinCode());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getCityName());
+				lc.setParent(item);
+				lc = new Listcell(taxDetail.getRecordStatus());
+				lc.setParent(item);
+				lc = new Listcell(PennantJavaUtil.getLabel(taxDetail.getRecordType()));
+				lc.setParent(item);
+				item.setAttribute("id", taxDetail.getId());
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
+				this.listBoxTaxDetails.appendChild(item);
+
+			}
+			setTaxDetailList(taxDetails);
+		}
+	}
 
 	
 	// ******************************************************//
@@ -1055,6 +1160,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	}
 	public ProvinceListCtrl getProvinceListCtrl() {
 		return this.provinceListCtrl;
+	}
+
+	public List<TaxDetail> getTaxDetailList() {
+		return taxDetailList;
+	}
+
+	public void setTaxDetailList(List<TaxDetail> taxDetailList) {
+		this.taxDetailList = taxDetailList;
 	}
 
 }

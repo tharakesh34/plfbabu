@@ -44,8 +44,13 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -72,6 +77,9 @@ public class Province extends AbstractWorkflowEntity {
 	private String  taxStateCode;
 	private boolean taxAvailable;
 	private String businessArea;
+	
+	private List<TaxDetail> taxDetailList;
+	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
 	
 	
 	public boolean isNew() {
@@ -221,4 +229,21 @@ public class Province extends AbstractWorkflowEntity {
 	public void setBusinessArea(String businessArea) {
 		this.businessArea = businessArea;
 	}
+
+	public List<TaxDetail> getTaxDetailList() {
+		return taxDetailList;
+	}
+
+	public void setTaxDetailList(List<TaxDetail> taxDetailList) {
+		this.taxDetailList = taxDetailList;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+	
 }

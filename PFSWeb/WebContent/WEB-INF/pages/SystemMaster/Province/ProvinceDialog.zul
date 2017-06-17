@@ -18,23 +18,29 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" 
+							<button id="btnNew"
 								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnEdit" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
 								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnDelete" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
 								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnSave" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
 								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnCancel" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
 								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnNotes" 
-								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -47,13 +53,15 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" 
+							<button id="btnHelp" visible="false"
 								label="${c:l('label_Help')}"
 								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" 
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
 								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -72,7 +80,7 @@
 								<label
 									id="label_ProvinceDialog_CPCountry"
 									value="${c:l('label_ProvinceDialog_CPCountry.value')}" />
-										<extendedcombobox id="cPCountry" />
+								<extendedcombobox id="cPCountry" />
 							</row>
 							<row>
 								<label
@@ -96,19 +104,19 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
-						
+
 							<row visible="true">
 								<label
 									id="label_ProvinceDialog_SystemDefault"
 									value="${c:l('label_ProvinceDialog_SystemDefault.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<checkbox id="systemDefault"
-										/>
+									<checkbox id="systemDefault" />
 								</hbox>
 							</row>
 							<row>
-								<label id="label_ProvinceDialog_BankRefNo"
+								<label
+									id="label_ProvinceDialog_BankRefNo"
 									value="${c:l('label_ProvinceDialog_BankRefNo.value')}" />
 								<hbox>
 									<space spacing="2px" />
@@ -137,10 +145,12 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_ProvinceDialog_TaxStateCode"
+								<label
+									id="label_ProvinceDialog_TaxStateCode"
 									value="${c:l('label_ProvinceDialog_TaxStateCode.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
+									<space spacing="2px"
+										sclass="mandatory" />
 									<textbox id="taxStateCode"
 										width="50px" />
 								</hbox>
@@ -156,7 +166,8 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_ProvinceDialog_BusinessArea"
+								<label
+									id="label_ProvinceDialog_BusinessArea"
 									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
 								<hbox>
 									<space spacing="2px"  sclass="mandatory"/>
@@ -176,8 +187,52 @@
 							</row>
 						</rows>
 					</grid>
+					<groupbox id="gb_gstdetails" sclass="gb_details" visible="false">
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%">
+								<toolbar align="start"
+									style="border:none;">
+									<label value="${c:l('GstDetails')}"
+										sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button id="btnNew_GstDetails"
+										label="${c:l('label_New')}" autodisable="btnNew_GstDetails" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxTaxDetails"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true"
+							span="true" style="overflow:auto">
+							<listhead sizable="true">
+								<listheader id="listheader_Country"
+									label="${c:l('label.Country')}" sort="auto" hflex="min" />
+								<listheader id="listheader_StateCode"
+									label="${c:l('label.StateCode')}" sort="auto" hflex="min" />
+								<listheader id="listheader_EntityCode"
+									label="${c:l('label.EntityCode')}" sort="auto" hflex="min" />
+								<listheader id="listheader_TaxCode"
+									label="${c:l('label.TaxCode')}" sort="auto" hflex="min" />
+								<listheader id="listheader_PinCode"
+									label="${c:l('label.PinCode')}" sort="auto" hflex="min" />
+								<listheader id="listheader_CityCode"
+									label="${c:l('label.CityCode')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
 				</groupbox>
 			</center>
+
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />

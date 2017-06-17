@@ -1379,6 +1379,7 @@
 		class="com.pennant.backend.service.systemmasters.impl.ProvinceServiceImpl">
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="taxDetailDAO" ref="taxDetailDAO" />
 	</bean>
 
 	<!--============ Salutation Details ============== -->
