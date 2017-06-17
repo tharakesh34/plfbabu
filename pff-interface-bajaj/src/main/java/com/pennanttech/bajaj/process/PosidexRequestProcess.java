@@ -312,6 +312,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 							save(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate);
 							loanInsertCount++;
 						}
+						successCount++;
 					} catch (Exception e) {
 						throw e;
 					}
