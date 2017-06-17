@@ -2627,5 +2627,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Leaving");
 		return collaterals;
 	}
+	
+	@Override
+	public boolean isThirdPartyUsed(String collateralRef, long custId) {
+		logger.debug("Entering");
+		boolean isThirdPartyUsed = getCollateralThirdPartyDAO().isThirdPartyUsed(collateralRef, custId);
+		logger.debug("Leaving");
+		return isThirdPartyUsed;
+	}
 
 }

@@ -183,7 +183,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private List<CoOwnerDetail>			coOwnerDetailList;
 	private String						primaryCustCif;
 	private boolean						newCoOwnerDetails	= false;
-
+	
 	public CoOwnerDetailDialogCtrl() {
 		super();
 	}
@@ -1221,7 +1221,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ (aCoOwnerDetail.isBankCustomer() ? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value")
 						+ " : " + this.coOwnerCIF.getValue() : Labels .getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")
-						+ " : " + aCoOwnerDetail.getCoOwnerIDTypeName());
+						+ " : " + aCoOwnerDetail.getCoOwnerIDType());
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCoOwnerDetail.getRecordType())) {

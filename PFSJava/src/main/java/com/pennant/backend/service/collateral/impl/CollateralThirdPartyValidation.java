@@ -112,6 +112,16 @@ public class CollateralThirdPartyValidation {
 				}
 			}
 		}
+		
+		if ((StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_DEL) ||
+				StringUtils.equals(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) && collateralThirdParty.getCustomerId() > 0) {
+			boolean exist = getCollateralThirdPartyDAO().isThirdPartyUsed(collateralThirdParty.getCollateralRef(),
+					collateralThirdParty.getCustomerId());
+
+			if (exist) {
+				auditDetail.setErrorDetail(new ErrorDetails("90338", null));
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

@@ -28,6 +28,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -69,6 +70,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	private boolean							newThirdParty	= false;
 	
 	private CustomerDetailsService 			customerDetailsService;
+	private CollateralSetupService			collateralSetupService;
 
 	public CollateralThirdPartyDialogCtrl() {
 		super();
@@ -567,7 +569,19 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				+ (collateralThirdParty.getCustCIF());
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			
 			if (StringUtils.isBlank(collateralThirdParty.getRecordType())) {
+				
+				if (collateralThirdParty.getCustomerId() > 0) {
+					boolean exist = this.collateralSetupService.isThirdPartyUsed(collateralThirdParty.getCollateralRef(),
+							collateralThirdParty.getCustomerId());
+
+					if (exist) {
+						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("90338", null)));
+						return;
+					}
+				}
+				
 				collateralThirdParty.setVersion(collateralThirdParty.getVersion() + 1);
 				collateralThirdParty.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				collateralThirdParty.setNewRecord(true);
@@ -853,5 +867,14 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	}
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+	
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 }

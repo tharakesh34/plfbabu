@@ -18,4 +18,6 @@ public interface CollateralThirdPartyDAO {
 
 	void deleteList(CollateralThirdParty collateralThirdParty, String tableType);
 
+	boolean isThirdPartyUsed(String collateralRef, long custId);
+
 }

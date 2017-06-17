@@ -4349,6 +4349,7 @@
 		class="com.pennant.webui.collateral.collateralsetup.CollateralThirdPartyDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<!-- Cancel Disbursment -->
