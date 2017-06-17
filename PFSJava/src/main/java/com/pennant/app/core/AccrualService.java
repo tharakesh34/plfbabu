@@ -54,6 +54,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 
@@ -506,7 +507,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
 
 		//NEXT Schedule Details
-		if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (!isHoliday(curSchd.getBpiOrHoliday()))) {
 			if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 				pftDetail.setNSchdDate(curSchd.getSchDate());
 				pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
@@ -527,6 +528,16 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	private static boolean isHoliday(String bpiOrHoliday){
+		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY) || 
+				StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE) || 
+				StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)) {
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	private void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp, Date valueDate) {
