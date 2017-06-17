@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -366,6 +368,11 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		@Override
+		public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {
+			return getTaxDetailDAO().getTaxDetailbystateCode(Statecode, type);
 		}
 
 }

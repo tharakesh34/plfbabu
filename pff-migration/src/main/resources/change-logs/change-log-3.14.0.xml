@@ -2493,6 +2493,17 @@ Insert into reportlist values('TaxDetail','TaxDetail','listheader_Country.label,
 <changeSet id="124" author="Manoj.P">
 	<modifyDataType columnName="KEYID" newDataType="varchar(500)" tableName="data_engine_log" />
 </changeSet>
+<changeSet id="125" author="Madhubabu.P">
+	<sql>
+	 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_ProvinceDialog_btnNew_gstDetails','ProvinceDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+    Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROVINCE_MAKER'), (Select RightID from SecRights where RightName = 'button_ProvinceDialog_btnNew_gstDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
 
 
 </databaseChangeLog>

@@ -241,6 +241,15 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		this.addressLine3.setMaxlength(100);
 		this.addressLine4.setMaxlength(100);
 
+		if (getProvinceDialogCtrl() != null && isNewRecord()) {
+			this.country.setValue(this.taxDetail.getCountry(), this.taxDetail.getCountryName());
+			this.stateCode.setValue(this.taxDetail.getStateCode(), this.taxDetail.getProvinceName());
+			
+			Filter[] filters1 = new Filter[1];
+			filters1[0] = new Filter("PCProvince", this.taxDetail.getStateCode(), Filter.OP_EQUAL);
+			this.cityCode.setFilters(filters1);
+		}
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -554,10 +563,11 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 			this.country.setValue("IN");
 			this.country.setDescription("INDIAone");
-			this.stateCode.setDescription("");
+			this.stateCode.setValue(aTaxDetail.getStateCode(),aTaxDetail.getProvinceName());
 			this.cityCode.setDescription("");
 			this.entityCode.setDescription("");
 			this.pinCode.setDescription("");
+			
 		} else {
 			this.country.setDescription(aTaxDetail.getCountryName());
 			this.stateCode.setDescription(aTaxDetail.getProvinceName());
@@ -907,6 +917,11 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
+		}
+		
+		if (getProvinceDialogCtrl() != null && isNewRecord()) {
+			this.country.setReadonly(true);
+			this.stateCode.setReadonly(true);
 		}
 
 		logger.debug(Literal.LEAVING);

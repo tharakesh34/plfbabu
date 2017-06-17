@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.systemmasters.province;
 
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,17 +53,22 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -89,48 +95,47 @@ import com.pennanttech.pff.core.Literal;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/Province/provinceDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/Province/provinceDialog.zul file.
  */
 public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
-	private static final long serialVersionUID = 8900134469414443671L;
-	private final static Logger logger = Logger.getLogger(ProvinceDialogCtrl.class);
+	private static final long			serialVersionUID		= 8900134469414443671L;
+	private final static Logger			logger					= Logger.getLogger(ProvinceDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ProvinceDialog;
-	protected ExtendedCombobox cPCountry;
-	protected Uppercasebox cPProvince;
-	protected Textbox cPProvinceName;
-	protected Checkbox systemDefault;
-	protected Textbox bankRefNo;
-	protected Checkbox cPIsActive; // autoWired
-	protected Checkbox taxExempted; // autoWired
-	protected Checkbox unionTerritory; // autoWired
-	protected Textbox  taxStateCode; // autoWired
-	protected Checkbox taxAvailable; // autoWired
-	protected Textbox businessArea; // autoWired
-	protected Tab 	  gb_gstdetails;// autoWired
-	protected Groupbox gb_basicDetails;// autoWired
-	protected Listbox listBoxTaxDetails;// autoWired
-	private List<TaxDetail>			taxMappingDetailList			= null;
-	private String old_BusineesArea = "";
-	
+	protected Window					window_ProvinceDialog;
+	protected ExtendedCombobox			cPCountry;
+	protected Uppercasebox				cPProvince;
+	protected Textbox					cPProvinceName;
+	protected Checkbox					systemDefault;
+	protected Textbox					bankRefNo;
+	protected Checkbox					cPIsActive;																// autoWired
+	protected Checkbox					taxExempted;															// autoWired
+	protected Checkbox					unionTerritory;															// autoWired
+	protected Textbox					taxStateCode;															// autoWired
+	protected Checkbox					taxAvailable;															// autoWired
+	protected Textbox					businessArea;															// autoWired
+	protected Tab						tab_gstdetails;															// autoWired
+	protected Tab						tab_basicDetails;															// autoWired
+	protected Groupbox					gb_basicDetails;														// autoWired
+	protected Listbox					listBoxTaxDetails;														// autoWired
+	private List<TaxDetail>				taxMappingDetailList	= null;
+	private String						old_BusineesArea		= "";
 
 	// not auto wired variables
-	private Province  province; // overHanded per parameter
-	private transient ProvinceListCtrl provinceListCtrl; // overHanded per parameter
-	private List<TaxDetail>		taxDetailList	= new ArrayList<TaxDetail>();
+	private Province					province;																// overHanded per parameter
+	private transient ProvinceListCtrl	provinceListCtrl;														// overHanded per parameter
+	private List<TaxDetail>				taxDetailList			= new ArrayList<TaxDetail>();
 
-	private transient boolean validationOn;
-	
+	private transient boolean			validationOn;
+
 	// ServiceDAOs / Domain Classes
-	private transient ProvinceService  provinceService;
-	private Country sysDefaultCountry;
-
+	private transient ProvinceService	provinceService;
+	private Country						sysDefaultCountry;
+	protected Button					btnNew_gstDetails;
+	protected Row						row_taxAvailable;
 	/**
 	 * default constructor.<br>
 	 */
@@ -146,9 +151,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Province object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Province object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -174,15 +178,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				setProvince(null);
 			}
 
-			doLoadWorkFlow(this.province.isWorkflow(),
-					this.province.getWorkflowId(),
-					this.province.getNextTaskId());
+			doLoadWorkFlow(this.province.isWorkflow(), this.province.getWorkflowId(), this.province.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"ProvinceDialog");
-			}else{
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "ProvinceDialog");
+			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
@@ -191,9 +192,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			// to it and can synchronize the shown data when we do insert, edit
 			// or
 			// delete province here.
+			ComponentsCtrl.applyForward(tab_gstdetails, ("onSelect=" + "onSelectTab"));
 			if (arguments.containsKey("provinceListCtrl")) {
-				setProvinceListCtrl((ProvinceListCtrl) arguments
-						.get("provinceListCtrl"));
+				setProvinceListCtrl((ProvinceListCtrl) arguments.get("provinceListCtrl"));
 			} else {
 				setProvinceListCtrl(null);
 			}
@@ -225,8 +226,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPCountry.setModuleName("Country");
 		this.cPCountry.setValueColumn("CountryCode");
 		this.cPCountry.setDescColumn("CountryDesc");
-		this.cPCountry.setValidateColumns(new String[]{"CountryCode"} );
+		this.cPCountry.setValidateColumns(new String[] { "CountryCode" });
 		
+		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
+			this.row_taxAvailable.setVisible(true);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -235,8 +240,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -245,6 +249,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnSave"));
+		this.btnNew_gstDetails.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnNew_gstDetails"));
+		
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -352,25 +358,24 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxStateCode.setValue(aProvince.getTaxStateCode());
 		this.taxAvailable.setChecked(aProvince.isTaxAvailable());
 		this.businessArea.setValue(aProvince.getBusinessArea());
-		
+
 		old_BusineesArea = aProvince.getBusinessArea();
 		//Reneder GSTIN Mapping
 		doFillGSTINMappingDetails(aProvince.getTaxDetailList());
-		
+
 		int divKycHeight = this.borderLayoutHeight - 80;
 		int semiBorderlayoutHeights = divKycHeight / 2;
-		if(aProvince.isTaxAvailable()){
+		if (aProvince.isTaxAvailable()) {
 			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
-			this.gb_gstdetails.setVisible(true);
-		}else{
-			this.gb_gstdetails.setVisible(false);
-		}
-		if (aProvince.isNewRecord()){
+			this.tab_gstdetails.setVisible(true);
+		} 
+		if (aProvince.isNewRecord()) {
 			this.cPCountry.setDescription("");
-		}else{
+		} else {
 			this.cPCountry.setDescription(aProvince.getLovDescCPCountryName());
 		}
-		if(aProvince.isNew() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+		if (aProvince.isNew() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.cPIsActive.setChecked(true);
 			this.cPIsActive.setDisabled(true);
 		}
@@ -378,43 +383,43 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-	
 	//Mapping details like new button , list diaplay and double click.....
 
-		//Reneder the list
-		protected void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
-			logger.debug("Entering");
-			this.listBoxTaxDetails.getItems().clear();
-			setTaxDetailList(taxMappingDetailList);
-			if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
-				for (TaxDetail taxMappingDetail : taxMappingDetailList) {
-					Listitem item = new Listitem();
-					Listcell lc;
+	//Reneder the list
+	protected void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
+		logger.debug("Entering");
+		this.listBoxTaxDetails.getItems().clear();
+		setTaxDetailList(taxMappingDetailList);
+		if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
+			for (TaxDetail taxMappingDetail : taxMappingDetailList) {
+				Listitem item = new Listitem();
+				Listcell lc;
 
-				  	lc = new Listcell(taxMappingDetail.getCountryName());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getProvinceName());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getEntityDesc());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getTaxCode());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getPinCode());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getCityName());
-					lc.setParent(item);
-					lc = new Listcell(taxMappingDetail.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(PennantJavaUtil.getLabel(taxMappingDetail.getRecordType()));
-					lc.setParent(item);
-					item.setAttribute("id", taxMappingDetail.getId());
-					
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
-					this.listBoxTaxDetails.appendChild(item);
-				}
+				lc = new Listcell(taxMappingDetail.getCountryName());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getProvinceName());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getEntityDesc());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getTaxCode());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getPinCode());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getCityName());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getRecordStatus());
+				lc.setParent(item);
+				lc = new Listcell(PennantJavaUtil.getLabel(taxMappingDetail.getRecordType()));
+				lc.setParent(item);
+				item.setAttribute("id", taxMappingDetail.getId());
+
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
+				this.listBoxTaxDetails.appendChild(item);
 			}
-			logger.debug("Leaving");
 		}
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -427,20 +432,20 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		try {
 			aProvince.setLovDescCPCountryName(this.cPCountry.getDescription());
-			aProvince.setCPCountry(this.cPCountry.getValidatedValue());	
-		}catch (WrongValueException we ) {
+			aProvince.setCPCountry(this.cPCountry.getValidatedValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aProvince.setCPProvince(this.cPProvince.getValue().toUpperCase());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aProvince.setCPProvinceName(this.cPProvinceName.getValue());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -452,7 +457,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		try {
 			aProvince.setBankRefNo(this.bankRefNo.getValue());
 
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
@@ -493,10 +498,19 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		aProvince.setTaxDetailList(cloner.deepClone(getTaxDetailList()));
 		doRemoveValidation();
 
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			this.tab_basicDetails.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
+				if (i == 0) {
+					Component comp = wvea[i].getComponent();
+					if (comp instanceof HtmlBasedComponent) {
+						Clients.scrollIntoView(comp);
+					}
+				}
+				logger.debug(wvea[i]);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -504,41 +518,42 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		aProvince.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-	
-	
-	public void onCheck$taxAvailable(Event event){
-		logger.debug("Entring");
-		int divKycHeight = this.borderLayoutHeight - 80;
-		int semiBorderlayoutHeights = divKycHeight / 2;
-		if(taxAvailable.isChecked()){
-			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
-			this.gb_gstdetails.setVisible(true);
-		}else{
-			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
-			this.gb_gstdetails.setVisible(false);
-		}
-		logger.debug("Leaving");
-	}
 
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnNew_GstDetails(Event event) {
+	public void onSelectTab(Event event) {
+		doSetValidation();
+		doWriteComponentsToBean(getProvince());
+		if (this.cPCountry.getValue() != null && this.cPProvince.getValue() != null && this.taxAvailable.isChecked()) {
+			this.btnNew_gstDetails.setVisible(true);
+		} else {
+			this.btnNew_gstDetails.setVisible(false);
+		}
+	}
+
+	public void onClick$btnNew_gstDetails(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Create a new entity.
 		TaxDetail taxdetail = new TaxDetail();
 		taxdetail.setNewRecord(true);
 		taxdetail.setWorkflowId(getWorkFlowId());
+		taxdetail.setCountry(this.cPCountry.getValue());
+		taxdetail.setCountryName(this.cPCountry.getDescription());
+		taxdetail.setStateCode(this.cPProvince.getValue());
+		taxdetail.setProvinceName(this.cPProvinceName.getValue());
+		
 		// Display the dialog page.
 		doShowDialogPage(taxdetail);
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -555,6 +570,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		arg.put("provinceDialogCtrl", this);
 		arg.put("newRecord", taxdetail.isNew());
 		arg.put("roleCode", getRole());
+		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
@@ -565,11 +581,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProvince
 	 * @throws Exception
@@ -585,12 +601,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.cPCountry.focus();
 		} else {
 			this.cPProvinceName.focus();
-			if (isWorkFlowEnabled()){
-				if (StringUtils.isNotBlank(aProvince.getRecordType())){
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aProvince.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			}else{
+			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
@@ -600,13 +616,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aProvince);
-			
+
 			if (aProvince.isNew() || isWorkFlowEnabled()) {
 				doCheckSystemDefault();
 			}
 
 			setDialog(DialogType.EMBEDDED);
-		} catch (UiException e){
+		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ProvinceDialog.onClose();
 		} catch (Exception e) {
@@ -622,28 +638,32 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.cPProvince.isReadonly()){
-			this.cPProvince.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvince.value"), 
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
-		}	
-		if (!this.cPProvinceName.isReadonly()){
-			this.cPProvinceName.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvinceName.value"), 
-					PennantRegularExpressions.REGEX_NAME, true));
-		}	
-		if (!this.cPCountry.isReadonly()) {
-			this.cPCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPCountry.value"), null, true,true));
+		if (!this.cPProvince.isReadonly()) {
+			this.cPProvince
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvince.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
-		if (!this.bankRefNo.isReadonly()){
-			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BankRefNo.value"), 
+		if (!this.cPProvinceName.isReadonly()) {
+			this.cPProvinceName
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvinceName.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.cPCountry.isReadonly()) {
+			this.cPCountry.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPCountry.value"), null, true, true));
+		}
+		if (!this.bankRefNo.isReadonly()) {
+			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BankRefNo.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
 		}
-		if (!this.taxStateCode.isReadonly()){
-			this.taxStateCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"), 
-					PennantRegularExpressions.REGEX_ALPHANUM, true,2,2));
+		if (!this.taxStateCode.isReadonly()) {
+			this.taxStateCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true, 2, 2));
 		}
-		if (!this.businessArea.isReadonly()){
-			this.businessArea.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), 
-					null, true));
+		if (!this.businessArea.isReadonly()) {
+			this.businessArea.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), null, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -677,14 +697,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.businessArea.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
 		getProvinceListCtrl().search();
-	} 
-
+	}
 
 	// CRUD operations
 
@@ -697,31 +716,31 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Entering");
 		final Province aProvince = new Province();
 		BeanUtils.copyProperties(getProvince(), aProvince);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
-				Labels.getLabel("label_ProvinceDialog_CPCountry.value")+" : "+aProvince.getCPCountry()+","+
-				Labels.getLabel("label_ProvinceDialog_CPProvince.value")+" : "+aProvince.getCPProvince();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_ProvinceDialog_CPCountry.value") + " : " + aProvince.getCPCountry() + ","
+				+ Labels.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + aProvince.getCPProvince();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aProvince.getRecordType())){
-				aProvince.setVersion(aProvince.getVersion()+1);
+			if (StringUtils.isBlank(aProvince.getRecordType())) {
+				aProvince.setVersion(aProvince.getVersion() + 1);
 				aProvince.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aProvince.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aProvince,tranType)){
+				if (doProcess(aProvince, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			}catch (Exception e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -733,11 +752,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-		if (getProvince().isNewRecord()){
+		if (getProvince().isNewRecord()) {
 			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.cPProvince.setReadonly(false);
-		}else{
+		} else {
 			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
@@ -751,19 +770,19 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
 		this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
-//		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
-		if (isWorkFlowEnabled()){
+		//		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.province.isNewRecord()){
+			if (this.province.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -787,13 +806,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxAvailable.setDisabled(true);
 		this.businessArea.setDisabled(true);
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
 
-		if(isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
@@ -835,38 +854,37 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		doSetValidation();
 		// fill the Province object with the components data
 		doWriteComponentsToBean(aProvince);
-		
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
 		isNew = aProvince.isNew();
-		String tranType="";
+		String tranType = "";
 
-		if(isWorkFlowEnabled()){
-			tranType =PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aProvince.getRecordType())){
-				aProvince.setVersion(aProvince.getVersion()+1);
-				if(isNew){
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aProvince.getRecordType())) {
+				aProvince.setVersion(aProvince.getVersion() + 1);
+				if (isNew) {
 					aProvince.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else{
+				} else {
 					aProvince.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aProvince.setNewRecord(true);
 				}
 			}
-		}else{
-			aProvince.setVersion(aProvince.getVersion()+1);
-			if(isNew){
-				tranType =PennantConstants.TRAN_ADD;
-			}else{
-				tranType =PennantConstants.TRAN_UPD;
+		} else {
+			aProvince.setVersion(aProvince.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
 		// save it to database
 		try {
-			if(doProcess(aProvince,tranType)){
+			if (doProcess(aProvince, tranType)) {
 				refreshList();
 				// Close the Existing Dialog
 				closeDialog();
@@ -877,24 +895,25 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-	/**	
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aProvince (Province)
+	 * @param aProvince
+	 *            (Province)
 	 * 
-	 * @param tranType (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Province aProvince,String tranType){
+	private boolean doProcess(Province aProvince, String tranType) {
 		logger.debug("Leaving");
-		boolean processCompleted=false;
-		AuditHeader auditHeader =  null;
-		String nextRoleCode="";
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
-		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
+		aProvince.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		aProvince.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aProvince.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -922,19 +941,19 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			}
 
 			if (!StringUtils.isBlank(nextTaskId)) {
-				nextRoleCode= getFirstTaskOwner();
-				
+				nextRoleCode = getFirstTaskOwner();
+
 				String[] nextTasks = nextTaskId.split(";");
 
-				if (nextTasks!=null && nextTasks.length>0){
+				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 
-						if(nextRoleCode.length()>1){
+						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
 						nextRoleCode = getTaskOwner(nextTasks[i]);
 					}
-				}else{
+				} else {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
@@ -944,95 +963,93 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			aProvince.setRoleCode(getRole());
 			aProvince.setNextRoleCode(nextRoleCode);
 
-			auditHeader =  getAuditHeader(aProvince, tranType);
+			auditHeader = getAuditHeader(aProvince, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aProvince);
 
 			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader,null);
+				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader =  getAuditHeader(aProvince, PennantConstants.TRAN_WF);
-					processCompleted  = doSaveProcess(auditHeader, list[i]);
-					if(!processCompleted){
+					auditHeader = getAuditHeader(aProvince, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
 						break;
 					}
 				}
 			}
-		}else{
-			auditHeader =  getAuditHeader(aProvince, tranType);
-			processCompleted = doSaveProcess(auditHeader,null);
+		} else {
+			auditHeader = getAuditHeader(aProvince, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-	
-	/**	
-	 * Get the result after processing DataBase Operations 
+
+	/**
+	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader,String method){
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		boolean processCompleted=false;
-		int retValue=PennantConstants.porcessOVERIDE;
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
 		Province aProvince = (Province) auditHeader.getAuditDetail().getModelData();
-		boolean deleteNotes=false;
-		
-		try {
-			while(retValue==PennantConstants.porcessOVERIDE){
+		boolean deleteNotes = false;
 
-				if (StringUtils.isBlank(method)){
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+		try {
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getProvinceService().delete(auditHeader);
 
-						deleteNotes=true;
-					}else{
-						auditHeader = getProvinceService().saveOrUpdate(auditHeader);	
+						deleteNotes = true;
+					} else {
+						auditHeader = getProvinceService().saveOrUpdate(auditHeader);
 					}
-				}else{
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = getProvinceService().doApprove(auditHeader);
 
-						if(aProvince.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)){
-							deleteNotes=true;	
+						if (aProvince.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
 						}
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = getProvinceService().doReject(auditHeader);
-						if(aProvince.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-							deleteNotes=true;
+						if (aProvince.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
-					}else{
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,Labels.getLabel("InvalidWorkFlowMethod"),null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_ProvinceDialog, auditHeader);
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_ProvinceDialog, auditHeader);
 						logger.debug("Leaving");
-						return processCompleted; 
+						return processCompleted;
 					}
 				}
 
-				retValue = ErrorControl.showErrorControl(
-						this.window_ProvinceDialog, auditHeader);
+				retValue = ErrorControl.showErrorControl(this.window_ProvinceDialog, auditHeader);
 
-				if (retValue==PennantConstants.porcessCONTINUE){
-					processCompleted=true;
-					
-					if(deleteNotes){
-						deleteNotes(getNotes(this.province),true);
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.province), true);
 					}
 				}
 
-				if (retValue==PennantConstants.porcessOVERIDE){
+				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
 					auditHeader.setInfoMessage(null);
@@ -1047,33 +1064,35 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		return processCompleted;
 	}
 
-	
 	// WorkFlow Details	
-	
+
 	/**
 	 * Get Audit Header Details
-	 * @param aProvince (Province)
-	 * @param tranType (String)
+	 * 
+	 * @param aProvince
+	 *            (Province)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(Province aProvince, String tranType){
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aProvince.getBefImage(), aProvince);
-		return new AuditHeader(getReference(), null, null,
-				null, auditDetail, aProvince.getUserDetails(),getOverideMap());
+	private AuditHeader getAuditHeader(Province aProvince, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aProvince.getBefImage(), aProvince);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aProvince.getUserDetails(),
+				getOverideMap());
 	}
 
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
-	private void showMessage(Exception e){
+	private void showMessage(Exception e) {
 		logger.debug("Entering");
-		AuditHeader auditHeader= new AuditHeader();
+		AuditHeader auditHeader = new AuditHeader();
 		try {
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF,e.getMessage(),null));
+			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_ProvinceDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
@@ -1082,74 +1101,75 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	}
 
 	/**
-	 *  Get the window for entering Notes
-	 * @param event (Event)
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		doShowNotes(this.province);
 	}
-	
+
 	/**
 	 * Get the Reference value
 	 */
 	@Override
 	protected String getReference() {
-		return getProvince().getCPCountry()+PennantConstants.KEY_SEPERATOR +
-				getProvince().getCPProvince();
+		return getProvince().getCPCountry() + PennantConstants.KEY_SEPERATOR + getProvince().getCPProvince();
 	}
-	
-	
-	public void setCountrySystemDefault(){
-		Filter[] systemDefault=new Filter[1];
-		systemDefault[0]=new Filter("SystemDefault", "1",Filter.OP_EQUAL);
-		Object countrydef=	PennantAppUtil.getSystemDefault("Country","", systemDefault);
-		if (countrydef!=null) {
-			sysDefaultCountry=(Country) countrydef;
+
+	public void setCountrySystemDefault() {
+		Filter[] systemDefault = new Filter[1];
+		systemDefault[0] = new Filter("SystemDefault", "1", Filter.OP_EQUAL);
+		Object countrydef = PennantAppUtil.getSystemDefault("Country", "", systemDefault);
+		if (countrydef != null) {
+			sysDefaultCountry = (Country) countrydef;
 		}
 	}
-	
-	public void onFulfill$cPCountry(Event event){
+
+	public void onFulfill$cPCountry(Event event) {
 		logger.debug("Entering");
 		doCheckSystemDefault();
 		logger.debug("Leaving");
 	}
+
 	
-	public void onChange$businessArea(Event event){
+
+	public void onChange$businessArea(Event event) {
 		logger.debug("Entering");
-	
+
 		String businessAreaValue = this.businessArea.getValue();
 		if (StringUtils.isNotBlank(businessAreaValue)) {
 			if (!StringUtils.equals(old_BusineesArea, businessAreaValue)) {
 				boolean businessAreaExist = this.provinceService.getBusinessAreaExist(businessAreaValue, "_View");
 				if (businessAreaExist) {
-					this.businessArea.setErrorMessage("Already Exist" + " "
-							+ Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
+					this.businessArea.setErrorMessage(
+							"Already Exist" + " " + Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
-	public void doCheckSystemDefault(){
+
+	public void doCheckSystemDefault() {
 		logger.debug("Entering");
-		if (StringUtils.isNotBlank(this.cPCountry.getValue()) ) {
-			if (sysDefaultCountry!=null && sysDefaultCountry.getCountryCode().equals(this.cPCountry.getValue())) {
+		if (StringUtils.isNotBlank(this.cPCountry.getValue())) {
+			if (sysDefaultCountry != null && sysDefaultCountry.getCountryCode().equals(this.cPCountry.getValue())) {
 				this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
-			}else{
+			} else {
 				this.systemDefault.setDisabled(true);
 				this.systemDefault.setChecked(false);
 			}
-		}else{
+		} else {
 			this.systemDefault.setDisabled(true);
 			this.systemDefault.setChecked(false);
 		}
 		logger.debug("Entering");
 	}
-	
-	
+
 	public void doFillTaxDetails(List<TaxDetail> taxDetails) {
 		this.listBoxTaxDetails.getItems().clear();
 		if (taxDetails != null) {
@@ -1181,7 +1201,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 	}
 
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1189,6 +1208,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
@@ -1196,6 +1216,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public Province getProvince() {
 		return this.province;
 	}
+
 	public void setProvince(Province province) {
 		this.province = province;
 	}
@@ -1203,6 +1224,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public void setProvinceService(ProvinceService provinceService) {
 		this.provinceService = provinceService;
 	}
+
 	public ProvinceService getProvinceService() {
 		return this.provinceService;
 	}
@@ -1210,6 +1232,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	public void setProvinceListCtrl(ProvinceListCtrl provinceListCtrl) {
 		this.provinceListCtrl = provinceListCtrl;
 	}
+
 	public ProvinceListCtrl getProvinceListCtrl() {
 		return this.provinceListCtrl;
 	}

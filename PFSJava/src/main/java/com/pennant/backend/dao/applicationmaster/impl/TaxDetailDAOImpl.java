@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -58,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -199,7 +202,7 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :Id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
 	
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -223,7 +226,7 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		StringBuilder sql = new StringBuilder("delete from TAXDETAIL");
 		sql.append(tableType.getSuffix());
 		sql.append(" where id = :Id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		/*sql.append(QueryUtil.getConcurrencyCondition(tableType));*/
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -236,10 +239,10 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
+		/*// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
-		}
+		}*/
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -252,6 +255,35 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	@Override
+	public List<TaxDetail> getTaxDetailbystateCode(String statecode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select id, country, stateCode, entityCode, taxCode, addressLine1, ");
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
+		if (type.contains("View")) {
+			sql.append(
+					"addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc,");
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From TAXDETAIL");
+		sql.append(type);
+		sql.append(" Where StateCode = :StateCode");
+
+		source.addValue("StateCode", statecode);
+		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+
+		logger.debug("selectSql: " + sql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+
 	}
 	
 }	

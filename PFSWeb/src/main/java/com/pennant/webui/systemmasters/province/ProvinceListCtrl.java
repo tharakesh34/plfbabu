@@ -225,6 +225,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 			if (isWorkFlowEnabled() && province.getWorkflowId() == 0) {
 				province.setWorkflowId(getWorkFlowId());
 			}
+			province.setTaxDetailList(taxDetailService.getTaxDetailbystateCode(province.getCPProvince(), "_View"));
 			doShowDialogPage(province);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));

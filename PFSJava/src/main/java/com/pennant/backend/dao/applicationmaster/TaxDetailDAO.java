@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennanttech.pff.core.TableType;
@@ -70,6 +72,8 @@ public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String taxCode, TableType tableType);	
+	boolean isDuplicateKey(long id, String taxCode, TableType tableType);
+	
+	List<TaxDetail> getTaxDetailbystateCode(String Statecode,String type);
 	
 }
