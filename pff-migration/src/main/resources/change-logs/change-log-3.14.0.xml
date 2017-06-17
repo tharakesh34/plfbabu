@@ -2440,4 +2440,30 @@ RMTProvinceVsCity T6 ON T1.CityCode = T6.PCCITY
 	
 	</createView>
 	</changeSet>
+	<changeSet id="119" author="Vinay">
+	<createView viewName="PINCODES_AVIEW" replaceIfExists="true">
+	SELECT		T1.PinCodeId, T1.PinCode, T1.City, T2.PCCityName,T2.PCCountry,T2.LOVDESCPCCOUNTRYNAME,T2.PCProvince,T2.LOVDESCPCPROVINCENAME,T1.AreaName, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T3.TaxStateCode GSTIN
+			FROM    	PinCodes  T1 INNER JOIN
+                RMTPROVINCEVSCITY_Aview  T2 ON T1.City=T2.PCCity inner join
+                RMTCOUNTRYVSPROVINCE T3 ON T2.PcProvince = T3.CpProvince 
+	</createView>
+	</changeSet>
+	<changeSet id="120" author="Vinay">
+	<createView viewName="PINCODES_VIEW" replaceIfExists="true">
+	 SELECT		T1.PinCodeId, T1.PinCode, T1.City, T2.PCCITYNAME, T2.PCCountry,T2.LOVDESCPCCOUNTRYNAME,T2.PCProvince,T2.LOVDESCPCPROVINCENAME,T1.AreaName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T3.TaxStateCode GSTIN
+			FROM    	PinCodes_Temp  T1 INNER JOIN
+                RMTPROVINCEVSCITY_view  T2 ON T1.City=T2.PCCity inner join
+                RMTCOUNTRYVSPROVINCE T3 ON T2.PcProvince = T3.CpProvince 
+			UNION ALL
+			
+			SELECT		T1.PinCodeId, T1.PinCode, T1.City, T2.PCCityName,T2.PCCountry,T2.LOVDESCPCCOUNTRYNAME,T2.PCProvince,T2.LOVDESCPCPROVINCENAME,T1.AreaName, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T3.TaxStateCode GSTIN
+			FROM    	PinCodes  T1 INNER JOIN
+                RMTPROVINCEVSCITY_view  T2 ON T1.City=T2.PCCity inner join
+                RMTCOUNTRYVSPROVINCE T3 ON T2.PcProvince = T3.CpProvince 
+			WHERE     NOT EXISTS (SELECT 1 FROM PinCodes_TEMP WHERE PinCodeId = T1.PinCodeId)
+	</createView>
+	</changeSet>
 </databaseChangeLog>
