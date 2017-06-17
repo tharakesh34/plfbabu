@@ -39,4 +39,6 @@ public interface FinExcessAmountDAO {
 
 	void updateExcessAmount(long excessID, BigDecimal advanceAmount);
 
+	void updateUtiliseOnly(long excessID, BigDecimal amount);
+
 }
