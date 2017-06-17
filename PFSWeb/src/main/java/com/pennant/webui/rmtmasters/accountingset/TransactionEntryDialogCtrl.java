@@ -208,7 +208,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	//protected Combobox ruleDecider;
 	protected Groupbox									gb_RuleCode;
 	private String										userRole			= "";
-
+	private boolean                                     validate=false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -718,6 +718,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
+		
+		if(validate){
+			MessageUtil.showMessage("Account type is GST applicable make sure the Fee types mapped are correct");
+		}
 
 		if (!this.transOrder.isReadonly()) {
 			this.transOrder.setConstraint(new PTNumberValidator(Labels
@@ -1346,6 +1350,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		} else {
 			AccountType details = (AccountType) dataObject;
 			if (details != null) {
+				if(details.isTaxApplicable()){
+					validate=true;
+				}
 				this.accountType.setValue(details.getAcType());
 				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
 
