@@ -708,7 +708,13 @@ public class RepaymentProcessUtil {
 
 				// Excess Amount make utilization
 				if (payAgainstID != 0) {
-					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					
+					if (receiptDetail.isNoReserve()) {
+						//update only utilization
+						getFinExcessAmountDAO().updateUtiliseOnly(payAgainstID, receiptDetail.getAmount());
+					}else{
+						getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					}
 
 					// Delete Reserved Log against Excess and Receipt ID
 					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);

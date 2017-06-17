@@ -116,7 +116,7 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 
 				// Presentment Required
-				if (curSchd.getDefSchdDate().compareTo(businessDate) == 0 && curSchd.getPresentmentId() != 0) {
+				if (curSchd.getDefSchdDate().compareTo(businessDate) == 0) {
 					finEODEvent.setIdxPresentment(i);
 					custEODEvent.setCheckPresentment(true);
 				}
