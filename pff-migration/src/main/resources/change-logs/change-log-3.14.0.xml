@@ -2489,4 +2489,10 @@ Insert into reportlist values('TaxDetail','TaxDetail','listheader_Country.label,
 		NULL,  NULL, 'A', NULL, 'DBFILE', NULL, 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
 	</sql>
 </changeSet>
+
+<changeSet id="124" author="Manoj.P">
+	<modifyDataType columnName="KEYID" newDataType="varchar(500)" tableName="data_engine_log" />
+</changeSet>
+
+
 </databaseChangeLog>
