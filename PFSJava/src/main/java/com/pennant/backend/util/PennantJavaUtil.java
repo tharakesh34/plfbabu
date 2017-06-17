@@ -228,6 +228,7 @@ import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
@@ -1376,6 +1377,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("HoldEMI", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
+		
+		ModuleUtil.register("FinanceTaxDetail", new ModuleMapping("FinanceTaxDetail", FinanceTaxDetail.class, new String[] { "FinTaxDetail",
+				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
 		
 		/************ Finance Related Module Details *************/
 

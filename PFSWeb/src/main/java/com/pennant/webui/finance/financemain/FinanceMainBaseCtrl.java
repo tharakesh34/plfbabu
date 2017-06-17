@@ -1482,6 +1482,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// Finance Tax Details
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			//appendTaxDetailTab(onLoad);
+		}
+
 		//Eligibility Details Tab Adding
 		if (StringUtils.isEmpty(moduleDefiner) || isFinPreApproved) {
 			appendEligibilityDetailTab(onLoad);
@@ -2342,6 +2347,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("fromLoan", true);
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Appending tab for GST Details in Finance Origination
+	 */
+	protected void appendTaxDetailTab(boolean onLoad) {
+		logger.debug("Entering");
+		if (onLoad) {
+			createTab(AssetConstants.UNIQUE_ID_TAX, false);
+		} else {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
+			map.put("fromLoan", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_TAX), map);
 		}
 		logger.debug("Leaving");
 	}

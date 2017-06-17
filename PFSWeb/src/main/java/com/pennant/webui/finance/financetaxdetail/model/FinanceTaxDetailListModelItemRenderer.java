@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PaymentHeaderService.java                                                   * 	  
+ * FileName    		:  FinanceTaxDetailListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  27-05-2017    														*
+ * Creation Date    :  17-06-2017    														*
  *                                                                  						*
- * Modified Date    :  27-05-2017    														*
+ * Modified Date    :  17-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
+ * 17-06-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,34 +39,60 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
+*/
+package com.pennant.webui.finance.financetaxdetail.model;
+
+import java.io.Serializable;
+
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.util.PennantJavaUtil;
+
+
+/**
+ * Item renderer for listitems in the listbox.
+ * 
  */
-package com.pennant.backend.service.payment;
+public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<FinanceTaxDetail>, Serializable {
 
-import java.util.List;
+	private static final long serialVersionUID = 1L;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.payment.PaymentHeader;
+	public FinanceTaxDetailListModelItemRenderer() {
+		super();
+	}
 
-public interface PaymentHeaderService {
+	
+	@Override
+	public void render(Listitem item, FinanceTaxDetail financeTaxDetail, int count) throws Exception {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	PaymentHeader getPaymentHeader(long paymentId);
-
-	PaymentHeader getApprovedPaymentHeader(long paymentId);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	FinanceMain getFinanceDetails(String finReference);
-
-	List<FinExcessAmount> getfinExcessAmount(String finReference);
-
-	List<ManualAdvise> getManualAdvise(String finReference);
+		Listcell lc;
+	  	lc = new Listcell(financeTaxDetail.getFinReference());
+		lc.setParent(item);
+		lc = new Listcell(financeTaxDetail.getApplicableForName());
+	  	lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox cbTaxExempted = new Checkbox();
+		cbTaxExempted.setDisabled(true);
+		cbTaxExempted.setChecked(financeTaxDetail.isTaxExempted());
+		lc.appendChild(cbTaxExempted);
+		lc.setParent(item);
+	  	lc = new Listcell(financeTaxDetail.getTaxNumber());
+		lc.setParent(item);
+	  	lc = new Listcell(financeTaxDetail.getCity());
+		lc.setParent(item);
+	  	lc = new Listcell(financeTaxDetail.getPinCode());
+		lc.setParent(item);
+	  	lc = new Listcell(financeTaxDetail.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(financeTaxDetail.getRecordType()));
+		lc.setParent(item);
+		item.setAttribute("finReference", financeTaxDetail.getFinReference());
+		
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceTaxDetailItemDoubleClicked");
+	}
 }

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  TaxDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  FinanceTaxDetailDAOImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  14-06-2017    														*
+ * Creation Date    :  17-06-2017    														*
  *                                                                  						*
- * Modified Date    :  14-06-2017    														*
+ * Modified Date    :  17-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 14-06-2017       PENNANT	                 0.1                                            * 
+ * 17-06-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,7 +40,7 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-package com.pennant.backend.dao.applicationmaster.impl;
+package com.pennant.backend.dao.finance.impl;
 
 import javax.sql.DataSource;
 
@@ -50,14 +50,13 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
-import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -65,114 +64,72 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>TaxDetail</code> with set of CRUD operations.
+ * Data access layer implementation for <code>FinanceTaxDetail</code> with set of CRUD operations.
  */
-public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements TaxDetailDAO {
-	private static Logger				logger	= Logger.getLogger(TaxDetailDAOImpl.class);
+public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> implements FinanceTaxDetailDAO {
+	private static Logger				logger	= Logger.getLogger(FinanceTaxDetailDAOImpl.class);
 
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
-	public TaxDetailDAOImpl() {
+	public FinanceTaxDetailDAOImpl() {
 		super();
 	}
 	
 	@Override
-	public TaxDetail getTaxDetail(long id,String type) {
+	public FinanceTaxDetail getFinanceTaxDetail(String finReference,String type) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
+		sql.append(" finReference, applicableFor, taxExempted, taxNumber, addrLine1, addrLine2, ");
+		sql.append(" addrLine3, addrLine4, country, province, city, pinCode, ");
 		if(type.contains("View")){
-			sql.append("addressLine2, addressLine3, addressLine4, pinCode, cityName, countryName,provinceName,entityDesc,");
+			sql.append("applicableFor,country,province,city,pinCode,");
 		}	
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
-		sql.append(" From TAXDETAIL");
+		sql.append(" From FinTaxDetail");
 		sql.append(type);
-		sql.append(" Where id = :Id");
+		sql.append(" Where finReference = :finReference");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		TaxDetail taxDetail = new TaxDetail();
-		taxDetail.setId(id);
+		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
+		financeTaxDetail.setFinReference(finReference);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
-		RowMapper<TaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
+		RowMapper<FinanceTaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceTaxDetail.class);
 
 		try {
-			taxDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			financeTaxDetail = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
-			taxDetail = null;
+			financeTaxDetail = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return taxDetail;
+		return financeTaxDetail;
 	}		
 	
 	@Override
-	public boolean isDuplicateKey(long id,String taxCode, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		String sql;
-		String whereClause = "taxCode = :taxCode AND id != :id";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("TAXDETAIL", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("TAXDETAIL_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "TAXDETAIL_Temp", "TAXDETAIL" }, whereClause);
-			break;
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("id", id);
-		paramSource.addValue("taxCode", taxCode);
-		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
-	
-	@Override
-	public String save(TaxDetail taxDetail,TableType tableType) {
+	public String save(FinanceTaxDetail financeTaxDetail,TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into TAXDETAIL");
+		StringBuilder sql =new StringBuilder(" insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append("(id, country, stateCode, entityCode, taxCode, addressLine1, ");
-		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode, ");
+		sql.append("(finReference, applicableFor, taxExempted, taxNumber, addrLine1, addrLine2, ");
+		sql.append("addrLine3, addrLine4, country, province, city, pinCode, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :Id, :Country, :StateCode, :EntityCode, :TaxCode, :AddressLine1, ");
-		sql.append(" :AddressLine2, :AddressLine3, :AddressLine4, :PinCode, :CityCode, ");
+		sql.append(" :finReference, :applicableFor, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
+		sql.append(" :addrLine3, :addrLine4, :country, :province, :city, :pinCode, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
-		// Get the identity sequence number.
-		if (taxDetail.getId() <= 0) {
-			taxDetail.setId(getNextidviewDAO().getNextId("SeqTaxDetail"));
-		}
-
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 
 		try {
 			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
@@ -181,30 +138,30 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		}
 
 		logger.debug(Literal.LEAVING);
-		return String.valueOf(taxDetail.getId());
+		return String.valueOf(financeTaxDetail.getFinReference());
 	}	
 
 	@Override
-	public void update(TaxDetail taxDetail,TableType tableType) {
+	public void update(FinanceTaxDetail financeTaxDetail,TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update TAXDETAIL" );
+		StringBuilder	sql =new StringBuilder("update FinTaxDetail" );
 		sql.append(tableType.getSuffix());
-		sql.append("  set country = :Country, stateCode = :StateCode, entityCode = :EntityCode, ");
-		sql.append(" taxCode = :TaxCode, addressLine1 = :AddressLine1, addressLine2 = :AddressLine2, ");
-		sql.append(" addressLine3 = :AddressLine3, addressLine4 = :AddressLine4, pinCode = :PinCode, ");
-		sql.append(" cityCode = :CityCode, ");
+		sql.append("  set applicableFor = :applicableFor, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
+		sql.append(" addrLine1 = :addrLine1, addrLine2 = :addrLine2, addrLine3 = :addrLine3, ");
+		sql.append(" addrLine4 = :addrLine4, country = :country, province = :province, ");
+		sql.append(" city = :city, pinCode = :pinCode, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where id = :Id ");
+		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
@@ -216,18 +173,18 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 	}
 
 	@Override
-	public void delete(TaxDetail taxDetail, TableType tableType) {
+	public void delete(FinanceTaxDetail financeTaxDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from TAXDETAIL");
+		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :Id ");
+		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 		int recordCount = 0;
 
 		try {

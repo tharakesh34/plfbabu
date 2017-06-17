@@ -4803,7 +4803,6 @@
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />
 	  	<property name="dataSource" ref="pfsDatasource" />
 	  </bean> -->
-	  
 	  	
 	<!-- TaxDetail -->
 	<bean id="taxDetailListCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailListCtrl"
@@ -4813,7 +4812,18 @@
 	<bean id="taxDetailDialogCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="taxDetailService" ref="taxDetailService"/>
 	</bean>
-	
+
+	<!-- Finance Tax Detail -->
+	<bean id="financeTaxDetailListCtrl"
+		class="com.pennant.webui.finance.financemain.FinanceTaxDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+	</bean>
+	<bean id="financeTaxDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinanceTaxDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl"
 		parent="basisListCtrl" scope="prototype">

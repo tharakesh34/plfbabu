@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PaymentHeaderService.java                                                   * 	  
+ * FileName    		:  FinanceTaxDetailDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  27-05-2017    														*
+ * Creation Date    :  17-06-2017    														*
  *                                                                  						*
- * Modified Date    :  27-05-2017    														*
+ * Modified Date    :  17-06-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
+ * 17-06-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,34 +39,24 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
-package com.pennant.backend.service.payment;
+*/
+package com.pennant.backend.dao.finance;
 
-import java.util.List;
+import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.payment.PaymentHeader;
-
-public interface PaymentHeaderService {
-
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	PaymentHeader getPaymentHeader(long paymentId);
-
-	PaymentHeader getApprovedPaymentHeader(long paymentId);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	FinanceMain getFinanceDetails(String finReference);
-
-	List<FinExcessAmount> getfinExcessAmount(String finReference);
-
-	List<ManualAdvise> getManualAdvise(String finReference);
+public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
+	
+	
+	/**
+	 * Fetch the Record Academic Details details by key field
+	 * 
+	 * @param finReference
+	 *            finReference of the FinanceTaxDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return FinanceTaxDetail
+	 */
+	FinanceTaxDetail getFinanceTaxDetail(String finReference,String type);
+	
 }
