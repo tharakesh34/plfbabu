@@ -174,4 +174,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet author="Siva" id="6">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90338','EN','E','Collateral already used against Loan for this Co-Owner. Not allowed to Delete Co-Owner.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet author="Siva" id="7">
+		<sql>
+			Update ErrorDetails SET errormessage = 'Collateral already used against Loan for this Third Party. Not allowed to Delete Third Party.'  where ErrorCode = '90338';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
