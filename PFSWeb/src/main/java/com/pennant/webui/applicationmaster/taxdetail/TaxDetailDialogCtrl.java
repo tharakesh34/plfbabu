@@ -282,10 +282,19 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		if (!(dataObject instanceof String)) {
 			Province details = (Province) dataObject;
 			if (details != null) {
-				if(!this.taxCode.getValue().isEmpty() && details.getTaxStateCode()!=null){
+				//if(!this.taxCode.getValue().isEmpty() && details.getTaxStateCode()!=null){
+				if(details.getTaxStateCode()!=null){
 					this.taxCode.setValue(details.getTaxStateCode()+this.taxCode.getValue());
 				}
 			}else if(this.taxCode.getValue()==null){
+				this.taxCode.setValue("");
+			}else if(this.entityCode.getValue()!=null && !this.entityCode.getValue().isEmpty()){
+				Object dataObject1 = entityCode.getObject();
+				Entity details1 = (Entity) dataObject1;
+				if(details1!=null){
+					this.taxCode.setValue(details1.getPANNumber());
+				}
+			}else{
 				this.taxCode.setValue("");
 			}
 		}else{
@@ -383,10 +392,16 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 			} 
 			if(details!=null){
-				if(!this.taxCode.getValue().isEmpty() && details.getGstin()!=null){
+				if(this.taxCode.getValue().isEmpty() && details.getGstin()!=null){
+					this.taxCode.setValue(details.getGstin()+this.taxCode.getValue());
+				}else if(!this.taxCode.getValue().isEmpty() && details.getGstin()!=null){
 					this.taxCode.setValue(details.getGstin()+this.taxCode.getValue());
 				}
-			}
+			}/*else{
+				Object dataObject1 = entityCode.getObject();
+				Entity details1 = (Entity) dataObject1;
+				this.taxCode.setValue(details1.getPANNumber());
+			}*/
 			
 		}
 		logger.debug("Leaving");
@@ -411,7 +426,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 					this.taxCode.setValue(details.getPANNumber());
 				}
 			}else if(details !=null && this.entityCode!=null){
-				this.taxCode.setValue(details.getPANNumber());
+				this.taxCode.setValue(this.taxCode.getValue()+details.getPANNumber());
+			}else if(this.stateCode.getValue()!=null && !this.stateCode.getValue().isEmpty() && details1!=null){
+				this.taxCode.setValue(details1.getTaxStateCode());
 			}else{
 				this.taxCode.setValue("");
 			}
