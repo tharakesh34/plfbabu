@@ -655,7 +655,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
 		}
 		if (!this.entityDesc.isReadonly()){
-			this.entityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityDesc.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+			this.entityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
 		}
 		if (!this.pANNumber.isReadonly()){
 			this.pANNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_PANNumber.value"),PennantRegularExpressions.REGEX_PANNUMBER,true));
