@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.util.DateUtility;
@@ -25,7 +26,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
@@ -88,7 +88,7 @@ public class CIBILReport {
 						new IdentificationSegment(writer, customer.getCustomerDocumentsList()).write();
 						new TelephoneSegment(writer, customer.getCustomerPhoneNumList()).write();
 						new AddressSegment(writer, customer.getAddressList()).write();
-						//new AccountSegment(writer, new ArrayList<FinanceMain>());
+						new AccountSegment(writer, customer.getCustID());
 						new EndofSubjectSegment(writer).write();
 					} catch (IOException e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -149,12 +149,12 @@ public class CIBILReport {
 			writer.write("12");
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
-			writer.write(StringUtils.rightPad("", 2, "")); //FIXME
-			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY));
+			writer.write(StringUtils.rightPad("", 2, ""));
+			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY)); //FIXME SHOULD BE Month End Date
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
 			writer.write("L");
 			writer.write("00000");
-			writer.write("C");
+			writer.write("");
 		}
 	}
 
@@ -321,19 +321,16 @@ public class CIBILReport {
 
 	public class AccountSegment {
 		private BufferedWriter		writer;
-		private List<FinanceMain>	loans;
+		private  long customerId;
 
-		public AccountSegment(BufferedWriter writer, List<FinanceMain> loans) {
+		
+		public AccountSegment(BufferedWriter writer, long customerId) {
 			this.writer = writer;
-			this.loans = loans;
+			this.customerId = customerId;
 		}
 
 		public void write() throws IOException {
-			int i = 0;
 
-			for (FinanceMain loan : loans) {
-				writeValue(writer, "PA", "T" + StringUtils.leftPad(String.valueOf(i++), 2, "0"));
-			}
 		}
 	}
 	
@@ -385,5 +382,66 @@ public class CIBILReport {
 		this.PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
 		this.PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
+	
+	
+	
+	public class CustomerLoanExtracter {
+		private BufferedWriter writer;
+		private long customerId;
+
+		public CustomerLoanExtracter(BufferedWriter writer, long customerId) {
+			this.writer = writer;
+			this.customerId = customerId;
+		}
+
+		private void extract() throws SQLException {
+			MapSqlParameterSource parmMap = new MapSqlParameterSource();
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * from CUSTOMER_LOANS where CUSTID = :CUSTID");
+			parmMap.addValue("CUSTID", customerId);
+
+			namedJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+				@Override
+				public void processRow(ResultSet rs) throws SQLException {
+					try {
+						writeValue(writer, "PA", "T001");
+						writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
+						writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+						writeValue(writer, "03", StringUtils.trimToEmpty(rs.getString("FINREFERENCE")));
+						// Account Type FIXME
+						writeValue(writer, "05", StringUtils.trimToEmpty(rs.getString("OWNERSHIP")));
+						writeValue(writer, "08", DateUtil.format(rs.getDate("FINSTARTDATE"), DateFormat.ddMMYYYY));
+						writeValue(writer, "09", DateUtil.format(rs.getDate("LASTREPAYDATE"), DateFormat.ddMMYYYY));
+						writeValue(writer, "10", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY)); 
+						writeValue(writer, "11", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY)); 
+						writeValue(writer, "12",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "13",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "14",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "15",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "16",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "17",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "18",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "19",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "20",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "21",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "22",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "26",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "34",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "35",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "36",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "37",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "38",  StringUtils.trimToEmpty(rs.getString(""))); 
+						writeValue(writer, "39",  StringUtils.trimToEmpty(rs.getString(""))); 
+						
+					} catch (IOException e) {
+					}
+				}
+			});
+
+		}
+
+	}
+	
 
 }
