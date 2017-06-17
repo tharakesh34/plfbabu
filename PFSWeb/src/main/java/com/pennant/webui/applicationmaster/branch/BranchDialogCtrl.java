@@ -1523,6 +1523,19 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
 				this.branchCountry.setValue(details.getpCCountry());
 				this.branchCountry.setDescription(details.getLovDescPCCountryName());
+				this.branchCity.setReadonly(true);
+				this.branchCity.setButtonDisabled(true);
+				this.branchProvince.setReadonly(true);
+				this.branchProvince.setButtonDisabled(true);
+				this.branchCountry.setReadonly(true);
+				this.branchCountry.setButtonDisabled(true);
+			}else{
+				this.branchCity.setReadonly(false);
+				this.branchCity.setButtonDisabled(false);
+				this.branchProvince.setReadonly(false);
+				this.branchProvince.setButtonDisabled(false);
+				this.branchCountry.setReadonly(false);
+				this.branchCountry.setButtonDisabled(false);
 			}
 		
 		}

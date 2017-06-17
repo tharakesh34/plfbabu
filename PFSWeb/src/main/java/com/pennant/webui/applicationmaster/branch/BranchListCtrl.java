@@ -88,6 +88,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 	protected Textbox branchProvince;
 	protected Textbox branchCountry;
 	protected Textbox branchSwiftBrnCde;
+	protected Textbox branchArea;
 	protected Checkbox branchIsActive;
 
 	protected Listbox sortOperator_branchCode;
@@ -96,6 +97,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 	protected Listbox sortOperator_branchProvince;
 	protected Listbox sortOperator_branchCountry;
 	protected Listbox sortOperator_branchSwiftBankCde;
+	protected Listbox sortOperator_branchArea;
 	protected Listbox sortOperator_branchIsActive;
 
 	// List headers
@@ -105,6 +107,7 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 	protected Listheader listheader_BranchProvince;
 	protected Listheader listheader_BranchCountry;
 	protected Listheader listheader_BranchSwiftBankCde;
+	protected Listheader listheader_BranchArea;
 	protected Listheader listheader_BranchIsActive;
 
 	// checkRights
@@ -160,6 +163,8 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 				sortOperator_branchCountry, Operators.STRING);
 		registerField("branchSwiftBrnCde", listheader_BranchSwiftBankCde, SortOrder.NONE, branchSwiftBrnCde,
 				sortOperator_branchSwiftBankCde, Operators.STRING);
+		registerField("pinAreaDesc", listheader_BranchArea, SortOrder.NONE, branchArea,
+				sortOperator_branchArea, Operators.STRING);
 		registerField("branchIsActive", listheader_BranchIsActive, SortOrder.NONE, branchIsActive,
 				sortOperator_branchIsActive, Operators.SIMPLE);
 
