@@ -30,7 +30,7 @@ import com.pennanttech.model.DedupCustomerResponse;
 
 public class CustomerDedupService {
 
-	private final static Logger logger = Logger.getLogger(CustomerDedupService.class);
+	private static final Logger logger = Logger.getLogger(CustomerDedupService.class);
 
 	public CustomerDedupService() {
 		super();
