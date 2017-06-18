@@ -80,7 +80,7 @@ import com.rits.cloning.Cloner;
 
 public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHeader> implements
 		ReceiptCancellationService {
-	private final static Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;

@@ -107,7 +107,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
-	private final static Logger		logger	= Logger.getLogger(CommitmentServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(CommitmentServiceImpl.class);
 
 	private PostingsPreparationUtil				postingsPreparationUtil;
 

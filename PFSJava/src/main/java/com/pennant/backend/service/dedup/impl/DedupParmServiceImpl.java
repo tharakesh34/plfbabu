@@ -90,7 +90,7 @@ import com.pennanttech.service.CustomerDedupService;
  * 
  */
 public class DedupParmServiceImpl extends GenericService<DedupParm> implements DedupParmService {
-	private final static Logger logger = Logger.getLogger(DedupParmServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DedupParmServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DedupParmDAO dedupParmDAO;

@@ -132,7 +132,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
-	private final static Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
+	private static final Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 

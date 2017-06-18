@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class FinAssetEvaluationServiceImpl extends GenericService<FinAssetEvaluation>
 		implements FinAssetEvaluationService {
 	
-	private final static Logger logger = Logger.getLogger(FinAssetEvaluationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinAssetEvaluationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinAssetEvaluationDAO finAssetEvaluationDAO;

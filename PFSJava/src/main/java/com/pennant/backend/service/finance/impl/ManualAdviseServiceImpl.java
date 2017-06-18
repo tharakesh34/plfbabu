@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
  */
 public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implements ManualAdviseService {
-	private final static Logger logger = Logger.getLogger(ManualAdviseServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ManualAdviseServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;

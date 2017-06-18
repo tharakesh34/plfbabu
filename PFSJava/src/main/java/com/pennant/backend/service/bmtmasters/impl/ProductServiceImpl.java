@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ProductServiceImpl extends GenericService<Product> implements ProductService {
-	private final static Logger logger = Logger.getLogger(ProductServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ProductServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProductDAO productDAO;

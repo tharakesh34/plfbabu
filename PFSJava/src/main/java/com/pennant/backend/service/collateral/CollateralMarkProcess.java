@@ -20,7 +20,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CollateralMarkProcess {
 
-	private final static Logger logger = Logger.getLogger(CollateralMarkProcess.class);
+	private static final Logger logger = Logger.getLogger(CollateralMarkProcess.class);
 
 	public CollateralMarkProcess() {
 		//empty constructor

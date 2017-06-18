@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PinCode</b>.<br>
  */
 public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCodeService {
-	private final static Logger logger = Logger.getLogger(PinCodeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PinCodeServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private PinCodeDAO pinCodeDAO;

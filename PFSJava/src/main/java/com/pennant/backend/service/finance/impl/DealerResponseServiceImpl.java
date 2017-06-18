@@ -8,7 +8,7 @@ import com.pennant.backend.service.finance.DealerResponseService;
 
 public class DealerResponseServiceImpl implements DealerResponseService {
 
-	private final static Logger logger = Logger.getLogger(DealerResponseServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DealerResponseServiceImpl.class);
 
 	private DealerResponseDAO dealerResponseDAO;
 

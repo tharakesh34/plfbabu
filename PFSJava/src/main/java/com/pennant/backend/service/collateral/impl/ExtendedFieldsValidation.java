@@ -18,7 +18,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class ExtendedFieldsValidation {
 
-	private final static Logger		logger	= Logger.getLogger(ExtendedFieldsValidation.class);
+	private static final Logger		logger	= Logger.getLogger(ExtendedFieldsValidation.class);
 
 	private ExtendedFieldDetailDAO	extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO	extendedFieldHeaderDAO;

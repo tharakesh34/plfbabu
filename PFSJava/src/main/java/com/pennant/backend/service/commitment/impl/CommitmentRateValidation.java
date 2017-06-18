@@ -16,7 +16,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
 public class CommitmentRateValidation {
-	private final static Logger logger = Logger.getLogger(CommitmentRateValidation.class);
+	private static final Logger logger = Logger.getLogger(CommitmentRateValidation.class);
 
 	private CommitmentRateDAO commitmentRateDAO;
 

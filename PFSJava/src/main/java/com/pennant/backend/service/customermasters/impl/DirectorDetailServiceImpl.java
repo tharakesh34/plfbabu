@@ -62,7 +62,7 @@ import com.pennant.backend.util.PennantConstants;
 public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> 
 				implements DirectorDetailService {
 	
-	private final static Logger logger = Logger.getLogger(DirectorDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DirectorDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private DirectorDetailDAO directorDetailDAO;

@@ -114,7 +114,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> implements CollateralSetupService {
-	private final static Logger				logger	= Logger.getLogger(CollateralSetupServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(CollateralSetupServiceImpl.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 	private CollateralSetupDAO				collateralSetupDAO;

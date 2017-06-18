@@ -59,7 +59,7 @@ import com.rits.cloning.Cloner;
 
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
 
-	private final static Logger			logger	= Logger.getLogger(FinanceMaintenanceServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(FinanceMaintenanceServiceImpl.class);
 
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
 	private FinanceWriteoffDAO			financeWriteoffDAO;

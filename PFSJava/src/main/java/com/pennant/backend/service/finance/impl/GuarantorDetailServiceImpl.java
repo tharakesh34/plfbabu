@@ -55,7 +55,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> implements  GuarantorDetailService {
-	private final static Logger logger = Logger.getLogger(GuarantorDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(GuarantorDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;

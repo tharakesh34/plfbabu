@@ -74,7 +74,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class CustomerServiceImpl extends GenericService<Customer> implements
 		CustomerService {
 
-	private final static Logger logger = Logger.getLogger(CustomerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;

@@ -144,7 +144,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class VASRecordingServiceImpl extends GenericService<VASRecording> implements VASRecordingService {
-	private final static Logger				logger	= Logger.getLogger(VASRecordingServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(VASRecordingServiceImpl.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 	private VASRecordingDAO					vASRecordingDAO;

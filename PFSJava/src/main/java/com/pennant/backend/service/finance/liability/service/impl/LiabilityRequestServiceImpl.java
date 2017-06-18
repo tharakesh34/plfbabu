@@ -85,7 +85,7 @@ import com.pennanttech.pff.core.InterfaceException;
  * 
  */
 public class LiabilityRequestServiceImpl extends GenericFinanceDetailService implements LiabilityRequestService {
-	private final static Logger logger = Logger.getLogger(LiabilityRequestServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LiabilityRequestServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceSuspHeadDAO financeSuspHeadDAO;

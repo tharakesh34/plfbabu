@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class TakafulProviderServiceImpl extends GenericService<TakafulProvider> implements TakafulProviderService {
-	private final static Logger logger = Logger.getLogger(TakafulProviderServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(TakafulProviderServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

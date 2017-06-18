@@ -59,7 +59,7 @@ import com.rits.cloning.Cloner;
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain> implements
 		RepaymentCancellationService {
 
-	private final static Logger logger = Logger.getLogger(RepaymentCancellationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(RepaymentCancellationServiceImpl.class);
 	
 	private AuditHeaderDAO 					auditHeaderDAO;
 	

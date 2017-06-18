@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantConstants;
  */
 public class CorporateCustomerDetailServiceImpl extends GenericService<CorporateCustomerDetail> implements
 		CorporateCustomerDetailService {
-	private final static Logger logger = Logger.getLogger(CorporateCustomerDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CorporateCustomerDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CorporateCustomerDetailDAO corporateCustomerDetailDAO;

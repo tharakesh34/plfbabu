@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class SukukBondServiceImpl extends GenericService<SukukBond> implements SukukBondService {
-	private final static Logger logger = Logger.getLogger(SukukBondServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SukukBondServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private SukukBondDAO sukukBondDAO;

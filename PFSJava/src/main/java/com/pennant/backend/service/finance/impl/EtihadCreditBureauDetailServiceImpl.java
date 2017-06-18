@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class EtihadCreditBureauDetailServiceImpl extends GenericService<EtihadCreditBureauDetail>
 		implements EtihadCreditBureauDetailService {
 	
-	private final static Logger logger = Logger.getLogger(EtihadCreditBureauDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO;

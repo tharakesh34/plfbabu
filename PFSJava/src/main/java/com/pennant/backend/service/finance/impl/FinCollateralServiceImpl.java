@@ -24,7 +24,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class FinCollateralServiceImpl extends GenericService<FinanceDetail> implements
         FinCollateralService {
 
-	private final static Logger logger = Logger.getLogger(FinCollateralServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinCollateralServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinCollateralsDAO finCollateralsDAO;

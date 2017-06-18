@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class QueryServiceImpl extends GenericService<Query> implements QueryService {
-	private final static Logger logger = Logger.getLogger(QueryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(QueryServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

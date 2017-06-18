@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>FinanceTaxDetail</b>.<br>
  */
 public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail> implements FinanceTaxDetailService {
-	private final static Logger logger = Logger.getLogger(FinanceTaxDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceTaxDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;

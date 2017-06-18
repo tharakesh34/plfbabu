@@ -64,7 +64,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class DedupFieldsServiceImpl implements DedupFieldsService {
-	private final static Logger logger = Logger.getLogger(DedupFieldsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DedupFieldsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

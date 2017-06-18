@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepayPriority> implements FinanceRepayPriorityService {
-	private final static Logger logger = Logger.getLogger(FinanceRepayPriorityServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceRepayPriorityServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

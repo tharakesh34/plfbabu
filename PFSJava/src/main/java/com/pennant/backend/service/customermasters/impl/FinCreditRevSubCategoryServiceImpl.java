@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCreditRevSubCategory> implements FinCreditRevSubCategoryService {
-	private final static Logger logger = Logger.getLogger(FinCreditRevSubCategoryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinCreditRevSubCategoryServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

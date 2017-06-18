@@ -89,7 +89,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implements FinFeeDetailService {
-	private final static Logger logger = Logger.getLogger(FinFeeDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinFeeDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

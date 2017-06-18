@@ -86,7 +86,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService implements TreasuaryFinanceService {
-	private final static Logger logger = Logger.getLogger(TreasuaryFinanceServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(TreasuaryFinanceServiceImpl.class);
 	
 	private TreasuaryFinHeaderDAO treasuaryFinHeaderDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
-	private final static Logger logger = Logger.getLogger(FinCovenantTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinCovenantTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

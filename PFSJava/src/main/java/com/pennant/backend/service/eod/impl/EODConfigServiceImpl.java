@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>EODConfig</b>.<br>
  */
 public class EODConfigServiceImpl extends GenericService<EODConfig> implements EODConfigService {
-	private final static Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private EODConfigDAO eODConfigDAO;

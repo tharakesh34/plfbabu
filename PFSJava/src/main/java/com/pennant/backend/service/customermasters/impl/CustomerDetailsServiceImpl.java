@@ -118,7 +118,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
 import com.rits.cloning.Cloner;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {
-	private final static Logger logger = Logger.getLogger(CustomerDetailsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;

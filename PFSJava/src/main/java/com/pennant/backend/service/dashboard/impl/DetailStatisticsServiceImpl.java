@@ -13,7 +13,7 @@ import com.pennant.backend.service.dashboard.DetailStatisticsService;
 
 public class DetailStatisticsServiceImpl implements DetailStatisticsService {
 
-	private final static Logger logger = Logger.getLogger(DetailStatisticsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DetailStatisticsServiceImpl.class);
 
 	DetailStatisticsDAO detailStatisticsDAO;
 	DetailStatisticsHeaderDAO detailStatisticsHeaderDAO;

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class CommodityBrokerDetailServiceImpl extends GenericService<CommodityBrokerDetail> implements CommodityBrokerDetailService {
-	private final static Logger logger = Logger.getLogger(CommodityBrokerDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CommodityBrokerDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

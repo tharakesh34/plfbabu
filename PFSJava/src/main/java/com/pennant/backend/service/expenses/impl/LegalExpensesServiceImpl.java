@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> implements LegalExpensesService {
-	private final static Logger logger = Logger.getLogger(LegalExpensesServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LegalExpensesServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

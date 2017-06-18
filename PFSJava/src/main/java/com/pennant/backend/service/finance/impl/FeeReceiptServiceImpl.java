@@ -37,7 +37,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  implements FeeReceiptService {
-	private final static Logger				logger	= Logger.getLogger(FeeReceiptServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(FeeReceiptServiceImpl.class);
 
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;

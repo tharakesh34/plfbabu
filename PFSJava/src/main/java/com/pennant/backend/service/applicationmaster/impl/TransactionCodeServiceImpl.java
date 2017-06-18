@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class TransactionCodeServiceImpl extends GenericService<TransactionCode> implements TransactionCodeService {
 	
-	private final static Logger logger = Logger.getLogger(TransactionCodeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(TransactionCodeServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private TransactionCodeDAO transactionCodeDAO;

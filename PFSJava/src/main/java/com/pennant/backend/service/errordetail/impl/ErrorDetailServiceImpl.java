@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implements ErrorDetailService {
-	private final static Logger logger = Logger.getLogger(ErrorDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ErrorDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

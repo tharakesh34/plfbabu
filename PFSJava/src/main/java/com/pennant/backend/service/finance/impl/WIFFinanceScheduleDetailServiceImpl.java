@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceScheduleDetail> implements WIFFinanceScheduleDetailService {
-	private final static Logger logger = Logger.getLogger(WIFFinanceScheduleDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(WIFFinanceScheduleDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

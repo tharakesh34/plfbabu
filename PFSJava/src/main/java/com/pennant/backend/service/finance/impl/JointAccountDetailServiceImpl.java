@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class JointAccountDetailServiceImpl extends GenericService<JointAccountDetail> implements JointAccountDetailService {
-	private final static Logger logger = Logger.getLogger(JointAccountDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(JointAccountDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private JountAccountDetailDAO jountAccountDetailDAO;

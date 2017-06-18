@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implements SplRateCodeService {
 
-	private final static Logger logger = Logger.getLogger(SplRateCodeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SplRateCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SplRateCodeDAO splRateCodeDAO;

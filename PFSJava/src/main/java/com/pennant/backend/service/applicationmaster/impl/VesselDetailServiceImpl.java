@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class VesselDetailServiceImpl extends GenericService<VesselDetail> implements VesselDetailService {
-	private final static Logger logger = Logger.getLogger(VesselDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VesselDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private VesselDetailDAO vesselDetailDAO;

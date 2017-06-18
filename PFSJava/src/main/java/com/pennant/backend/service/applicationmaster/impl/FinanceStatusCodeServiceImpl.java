@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>FinanceStatusCode</b>.<br>
  */
 public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCode> implements FinanceStatusCodeService {
-	private final static Logger		logger	= Logger.getLogger(FinanceStatusCodeServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(FinanceStatusCodeServiceImpl.class);
 
 	private AuditHeaderDAO			auditHeaderDAO;
 	private FinanceStatusCodeDAO	financeStatusCodeDAO;

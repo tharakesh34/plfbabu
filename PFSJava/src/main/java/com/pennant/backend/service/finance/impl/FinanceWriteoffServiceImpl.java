@@ -51,7 +51,7 @@ import com.rits.cloning.Cloner;
 
 public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService implements FinanceWriteoffService {
 
-	private final static Logger			logger	= Logger.getLogger(FinanceWriteoffServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(FinanceWriteoffServiceImpl.class);
 
 	private FinanceWriteoffDAO			financeWriteoffDAO;
 	private ProvisionDAO				provisionDAO;

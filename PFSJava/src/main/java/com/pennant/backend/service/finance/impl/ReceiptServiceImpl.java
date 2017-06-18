@@ -80,7 +80,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
-	private final static Logger				logger	= Logger.getLogger(ReceiptServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(ReceiptServiceImpl.class);
 
 	private FinanceRepayPriorityDAO			financeRepayPriorityDAO;
 	private AccountingSetDAO				accountingSetDAO;

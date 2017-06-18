@@ -29,7 +29,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> implements
         FinanceFlagsService {
 
-	private final static Logger logger = Logger.getLogger(FinanceFlagsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceFlagsServiceImpl.class);
 
 	private AuditHeaderDAO 				auditHeaderDAO;
 	private FinFlagsHeaderDAO 			finFlagsHeaderDAO;

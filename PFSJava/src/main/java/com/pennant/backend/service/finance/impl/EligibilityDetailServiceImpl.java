@@ -75,7 +75,7 @@ import com.pennant.backend.util.RuleReturnType;
 
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
 	
-	private final static Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

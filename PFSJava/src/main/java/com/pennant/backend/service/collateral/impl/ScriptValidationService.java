@@ -13,7 +13,7 @@ import com.pennant.backend.model.ScriptErrors;
 
 public class ScriptValidationService {
 
-	private final static Logger logger = Logger.getLogger(ScriptValidationService.class);
+	private static final Logger logger = Logger.getLogger(ScriptValidationService.class);
 
 	private ScriptEngine scriptEngine;
 

@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ContractorAssetDetailServiceImpl extends GenericService<ContractorAssetDetail> implements ContractorAssetDetailService {
-	private final static Logger logger = Logger.getLogger(ContractorAssetDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ContractorAssetDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

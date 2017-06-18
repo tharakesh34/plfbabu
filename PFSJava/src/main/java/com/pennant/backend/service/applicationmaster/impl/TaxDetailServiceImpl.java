@@ -68,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>TaxDetail</b>.<br>
  */
 public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements TaxDetailService {
-	private final static Logger logger = Logger.getLogger(TaxDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(TaxDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private TaxDetailDAO taxDetailDAO;

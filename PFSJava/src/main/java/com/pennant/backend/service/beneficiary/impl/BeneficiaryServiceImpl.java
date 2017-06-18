@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implements BeneficiaryService {
-	private final static Logger logger = Logger.getLogger(BeneficiaryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BeneficiaryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BeneficiaryDAO beneficiaryDAO;
