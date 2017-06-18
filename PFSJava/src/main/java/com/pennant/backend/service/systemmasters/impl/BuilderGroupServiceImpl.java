@@ -65,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BuilderGroup</b>.<br>
  */
 public class BuilderGroupServiceImpl extends GenericService<BuilderGroup> implements BuilderGroupService {
-	private final static Logger logger = Logger.getLogger(BuilderGroupServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BuilderGroupServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private BuilderGroupDAO builderGroupDAO;

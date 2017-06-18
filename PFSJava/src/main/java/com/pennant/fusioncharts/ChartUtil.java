@@ -19,7 +19,7 @@ import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 
 public class ChartUtil {
-	private final static Logger logger = Logger.getLogger(ChartUtil.class);
+	private static final Logger logger = Logger.getLogger(ChartUtil.class);
 
 	/**
 	 * This is basic XML content string formation method 

@@ -90,7 +90,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PaymentHeader</b>.<br>
  */
 public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> implements PaymentHeaderService {
-	private final static Logger logger = Logger.getLogger(PaymentHeaderServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PaymentHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;

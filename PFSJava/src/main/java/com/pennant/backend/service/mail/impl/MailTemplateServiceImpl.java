@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class MailTemplateServiceImpl extends GenericService<MailTemplate> implements MailTemplateService {
-	private final static Logger logger = Logger.getLogger(MailTemplateServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MailTemplateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MailTemplateDAO mailTemplateDAO;

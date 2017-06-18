@@ -70,7 +70,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class PartnerBankServiceImpl extends GenericService<PartnerBank> implements PartnerBankService {
-	private final static Logger	logger	= Logger.getLogger(PartnerBankServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(PartnerBankServiceImpl.class);
 
 	private AuditHeaderDAO		auditHeaderDAO;
 

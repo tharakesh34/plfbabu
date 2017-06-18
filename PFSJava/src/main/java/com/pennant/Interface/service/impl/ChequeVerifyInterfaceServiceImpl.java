@@ -9,7 +9,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class ChequeVerifyInterfaceServiceImpl implements ChequeVerifyInterfaceService {
 
-	private final static Logger logger = Logger.getLogger(ChequeVerifyInterfaceServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ChequeVerifyInterfaceServiceImpl.class);
 	
 	public ChequeVerifyInterfaceServiceImpl() {
 		

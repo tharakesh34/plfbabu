@@ -24,7 +24,7 @@ import com.northconcepts.datapipeline.core.Record;
 import com.pennant.app.util.DateUtility;
 
 public class FileImport {
-	private final static Logger logger = LoggerFactory.getLogger(FileImport.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileImport.class);
 
 	private String contentType = "text/plain";
 	private File directory;

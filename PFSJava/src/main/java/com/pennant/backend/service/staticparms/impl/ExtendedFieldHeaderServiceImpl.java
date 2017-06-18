@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedFieldHeader> implements ExtendedFieldHeaderService {
-	private final static Logger logger = Logger.getLogger(ExtendedFieldHeaderServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> implements EmployerDetailService {
-	private final static Logger logger = Logger.getLogger(EmployerDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(EmployerDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class DispatchModeServiceImpl extends GenericService<DispatchMode>
 		implements DispatchModeService {
 
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(DispatchModeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;

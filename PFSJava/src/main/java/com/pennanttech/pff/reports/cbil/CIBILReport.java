@@ -33,7 +33,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CIBILReport {
-	protected final static Logger		logger	= LoggerFactory.getLogger(CIBILReport.class);
+	protected static final Logger		logger	= LoggerFactory.getLogger(CIBILReport.class);
 	private String						CBIL_REPORT_PATH;
 	private String						CBIL_REPORT_MEMBER_SHORT_NAME;
 	private String						CBIL_REPORT_MEMBER_PASSWORD;

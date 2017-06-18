@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> implements DivisionDetailService {
-	private final static Logger logger = Logger.getLogger(DivisionDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DivisionDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

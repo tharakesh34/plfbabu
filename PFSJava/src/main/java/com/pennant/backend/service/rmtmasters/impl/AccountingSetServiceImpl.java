@@ -74,7 +74,7 @@ import com.pennant.cache.util.AccountingConfigCache;
  * 
  */
 public class AccountingSetServiceImpl extends GenericService<AccountingSet> implements AccountingSetService {
-	private final static Logger logger = Logger.getLogger(AccountingSetServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AccountingSetServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountingSetDAO accountingSetDAO;

@@ -46,7 +46,7 @@ import com.pennant.backend.ws.dao.APIChannelDAO;
 import com.pennant.ws.exception.APIException;
 
 public class APIChannelServiceImpl  extends GenericService<APIChannel> implements APIChannelService {
-	private final static Logger logger = Logger.getLogger(APIChannelServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(APIChannelServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;	
 	private APIChannelDAO apiChannelDAO;

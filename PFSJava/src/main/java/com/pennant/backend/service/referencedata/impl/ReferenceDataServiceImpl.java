@@ -28,7 +28,7 @@ import com.pennant.webservice.model.ReferenceData;
 
 public class ReferenceDataServiceImpl implements ReferenceDataService {
 
-	private final static Logger logger = Logger.getLogger(ReferenceDataServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ReferenceDataServiceImpl.class);
 
 	private ReferenceDataDAO referenceDataDAO;
 

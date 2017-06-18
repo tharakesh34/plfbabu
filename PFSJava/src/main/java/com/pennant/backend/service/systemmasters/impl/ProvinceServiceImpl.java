@@ -72,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ProvinceServiceImpl extends GenericService<Province> implements ProvinceService {
 
-	private final static Logger logger = Logger.getLogger(ProvinceServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ProvinceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvinceDAO provinceDAO;

@@ -24,7 +24,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class PennantApplicationUtil {
 	
-	private final static Logger logger = Logger.getLogger(PennantApplicationUtil.class);
+	private static final Logger logger = Logger.getLogger(PennantApplicationUtil.class);
 	
 	public static boolean matches(BigDecimal val1, BigDecimal val2) {
 		if (val1 == null) {

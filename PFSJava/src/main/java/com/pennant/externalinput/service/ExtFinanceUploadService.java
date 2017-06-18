@@ -69,7 +69,7 @@ import com.pennant.externalinput.ExtFinanceData;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class ExtFinanceUploadService {
-	private final static Logger		logger				= Logger.getLogger(ExtFinanceUploadService.class);
+	private static final Logger		logger				= Logger.getLogger(ExtFinanceUploadService.class);
 
 	private boolean					isError				= false;
 

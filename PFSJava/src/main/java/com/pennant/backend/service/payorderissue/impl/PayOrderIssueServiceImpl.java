@@ -79,7 +79,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader> implements PayOrderIssueService {
-	private final static Logger		logger	= Logger.getLogger(PayOrderIssueServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(PayOrderIssueServiceImpl.class);
 
 	private AuditHeaderDAO			auditHeaderDAO;
 	private PayOrderIssueHeaderDAO	payOrderIssueHeaderDAO;

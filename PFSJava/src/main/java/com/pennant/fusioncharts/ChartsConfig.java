@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class ChartsConfig extends ChartUtil{
-	private final static Logger logger = Logger.getLogger(ChartsConfig.class);
+	private static final Logger logger = Logger.getLogger(ChartsConfig.class);
 	private String caption;
 	private String subCaption;
 	private String yAxisName;

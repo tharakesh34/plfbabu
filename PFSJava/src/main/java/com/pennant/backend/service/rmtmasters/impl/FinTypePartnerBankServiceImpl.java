@@ -68,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartnerBank> implements
 		FinTypePartnerBankService {
-	private final static Logger logger = Logger.getLogger(FinTypePartnerBankServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinTypePartnerBankServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;

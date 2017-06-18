@@ -55,7 +55,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class DelegationDeviationServiceImpl implements DelegationDeviationService {
-	private final static Logger logger = Logger.getLogger(DelegationDeviationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DelegationDeviationServiceImpl.class);
 
 	
 	private LoggedInUser userDetails;

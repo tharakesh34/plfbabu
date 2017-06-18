@@ -14,7 +14,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 
-	private final static Logger logger = Logger.getLogger(DDAInterfaceServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DDAInterfaceServiceImpl.class);
 	
 	public DDAInterfaceServiceImpl() {
 		

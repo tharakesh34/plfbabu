@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class DeviationParamServiceImpl extends GenericService<DeviationParam> implements DeviationParamService {
-	private final static Logger logger = Logger.getLogger(DeviationParamServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DeviationParamServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	
