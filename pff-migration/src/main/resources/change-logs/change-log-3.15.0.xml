@@ -185,4 +185,40 @@
 		</sql>
 	</changeSet>
 	
+		<changeSet author="Siva" id="8">
+		<createView viewName="FinTaxDetail_AView" replaceIfExists="true">
+		SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1 LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Siva" id="9">
+		<createView viewName="FinTaxDetail_View" replaceIfExists="true">
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+             T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail_Temp T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			UNION ALL
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+             T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
