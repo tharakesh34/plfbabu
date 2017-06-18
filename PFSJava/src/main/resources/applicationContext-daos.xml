@@ -6353,9 +6353,6 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
-	<bean name="reportGenerationUtil" class="com.pennant.app.util.ReportGenerationUtil"
-		scope="prototype" />
-
 	<!-- ====================================================== -->
 	<!-- Dash Board Details Configuration -->
 	<!-- ====================================================== -->
