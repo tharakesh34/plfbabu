@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class EndOfDaySimulator {
-	private final static Logger logger = Logger.getLogger(EndOfDaySimulator.class);
+	private static final Logger logger = Logger.getLogger(EndOfDaySimulator.class);
 	
 	public static void main(String[] args) throws Exception {
 

@@ -61,7 +61,7 @@ import com.pennant.app.util.DateUtility;
 public class PFSBatchAdmin implements Serializable {
 
 	private static final long serialVersionUID = -1648550888126596125L;
-	private final static Logger logger = Logger.getLogger(PFSBatchAdmin.class);
+	private static final Logger logger = Logger.getLogger(PFSBatchAdmin.class);
 	
 	private static PFSBatchAdmin instance = null;
 	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;	

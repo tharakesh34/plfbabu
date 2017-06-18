@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 
 public class BatchMonitor {
-	private final static Logger logger = Logger.getLogger(BatchMonitor.class);
+	private static final Logger logger = Logger.getLogger(BatchMonitor.class);
 	private static BatchMonitor instance = null;
 	
 	private static ClassPathXmlApplicationContext jobMonitorContext;	
