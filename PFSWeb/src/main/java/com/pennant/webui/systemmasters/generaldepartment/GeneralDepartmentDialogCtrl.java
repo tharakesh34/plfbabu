@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> {
 	private static final long serialVersionUID = 4896504189951469996L;
-	private final static Logger logger = Logger.getLogger(GeneralDepartmentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(GeneralDepartmentDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

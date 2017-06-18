@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	private static final long serialVersionUID = -1342725619715502773L;
-	private final static Logger logger = Logger.getLogger(LanguageDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LanguageDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

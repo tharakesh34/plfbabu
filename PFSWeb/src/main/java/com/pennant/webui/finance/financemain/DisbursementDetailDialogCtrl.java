@@ -87,7 +87,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursement> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(DisbursementDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DisbursementDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

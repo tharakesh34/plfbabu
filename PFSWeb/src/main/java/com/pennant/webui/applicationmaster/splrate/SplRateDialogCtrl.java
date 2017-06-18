@@ -84,7 +84,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	private static final long serialVersionUID = -6395413534622055634L;
-	private final static Logger logger = Logger.getLogger(SplRateDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SplRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

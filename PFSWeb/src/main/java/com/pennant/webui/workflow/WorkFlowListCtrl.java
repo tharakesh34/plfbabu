@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	private static final long serialVersionUID = -1635165456608902454L;
-	private final static Logger logger = Logger.getLogger(WorkFlowListCtrl.class);
+	private static final Logger logger = Logger.getLogger(WorkFlowListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

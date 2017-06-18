@@ -101,7 +101,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FacilityDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityDetailDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

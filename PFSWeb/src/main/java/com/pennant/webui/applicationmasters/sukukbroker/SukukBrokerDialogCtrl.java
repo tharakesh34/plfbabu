@@ -92,7 +92,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(SukukBrokerDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SukukBrokerDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

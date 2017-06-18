@@ -77,7 +77,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	private static final long serialVersionUID = 8242094102118374753L;
 	
-	private final static Logger logger = Logger.getLogger(WelcomeCtrl.class);
+	private static final Logger logger = Logger.getLogger(WelcomeCtrl.class);
 	protected Window window_Welcome;
 	protected Button addbtn;
 	protected Radiogroup columnSelect;

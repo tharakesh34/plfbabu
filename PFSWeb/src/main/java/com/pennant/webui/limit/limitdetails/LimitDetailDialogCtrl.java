@@ -121,7 +121,7 @@ import com.pennant.webui.util.ScreenCTL;
 public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements Serializable {
 
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(LimitDetailDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitDetailDialogCtrl.class);
 
 	/*
 	 * ************************************************************************ All the components that are defined here

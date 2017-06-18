@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	private static final long serialVersionUID = 3743543079732961048L;
-	private final static Logger logger = Logger.getLogger(ScoringSlabDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScoringSlabDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

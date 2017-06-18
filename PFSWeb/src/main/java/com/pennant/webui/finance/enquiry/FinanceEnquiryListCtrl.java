@@ -105,7 +105,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private final static Logger logger = Logger.getLogger(FinanceEnquiryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceEnquiryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

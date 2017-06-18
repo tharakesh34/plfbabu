@@ -81,7 +81,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long			serialVersionUID				= 4157448822555239535L;
-	private final static Logger			logger							= Logger.getLogger(FinAdvancePaymentsListCtrl.class);
+	private static final Logger			logger							= Logger.getLogger(FinAdvancePaymentsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ChequePurposeListCtrl extends GFCBaseListCtrl<ChequePurpose> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ChequePurposeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ChequePurposeListCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

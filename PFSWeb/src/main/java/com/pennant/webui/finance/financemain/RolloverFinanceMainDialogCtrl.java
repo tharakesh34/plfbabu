@@ -65,7 +65,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RolloverFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(RolloverFinanceMainDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RolloverFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

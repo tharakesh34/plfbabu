@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -7603242416503761389L;
-	private final static Logger logger = Logger.getLogger(ReportConfigurationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportConfigurationListCtrl.class);
 
 	protected Window 		window_ReportConfigurationList; 				
 	protected Borderlayout 	borderLayout_ReportConfigurationList; 			

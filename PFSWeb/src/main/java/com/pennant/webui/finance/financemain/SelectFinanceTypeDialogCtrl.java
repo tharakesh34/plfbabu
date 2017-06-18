@@ -130,7 +130,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long					serialVersionUID	= 8556168885363682933L;
-	private final static Logger					logger				= Logger.getLogger(SelectFinanceTypeDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(SelectFinanceTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

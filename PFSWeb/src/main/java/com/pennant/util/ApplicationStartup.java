@@ -21,7 +21,7 @@ import com.pennant.app.util.SysParamUtil;
  */
 @Deprecated
 public class ApplicationStartup implements ServletContextListener {
-	private final static Logger logger = Logger.getLogger(ApplicationStartup.class);
+	private static final Logger logger = Logger.getLogger(ApplicationStartup.class);
 	
 	Map<String, Object> contextMap = new HashMap<String, Object>();
 

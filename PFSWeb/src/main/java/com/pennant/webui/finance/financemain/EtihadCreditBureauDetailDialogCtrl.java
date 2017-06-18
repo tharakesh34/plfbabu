@@ -93,7 +93,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCreditBureauDetail> {
 	private static final long serialVersionUID = 3141943554064485540L;
-	private final static Logger logger = Logger.getLogger(EtihadCreditBureauDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -16,7 +16,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class FetchPoliceCaseDetails {
-	private final static Logger logger = Logger.getLogger(FetchPoliceCaseDetails.class);
+	private static final Logger logger = Logger.getLogger(FetchPoliceCaseDetails.class);
 	
 	private int userAction= -1;
 	private static DedupParmService dedupParmService;

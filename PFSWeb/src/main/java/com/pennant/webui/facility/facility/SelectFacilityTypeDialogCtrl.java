@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private final static Logger logger = Logger.getLogger(SelectFacilityTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectFacilityTypeDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

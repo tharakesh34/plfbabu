@@ -71,7 +71,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(QuestionSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(QuestionSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

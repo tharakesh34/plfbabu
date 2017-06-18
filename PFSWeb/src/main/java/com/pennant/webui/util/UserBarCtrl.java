@@ -76,7 +76,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(UserBarCtrl.class);
+	private static final Logger logger = Logger.getLogger(UserBarCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

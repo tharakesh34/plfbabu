@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanceSheet> {
 	private static final long serialVersionUID = 7572807238518910341L;
-	private final static Logger logger = Logger.getLogger(CustomerBalanceSheetListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerBalanceSheetListCtrl.class);
 
 	protected Window window_CustomerBalanceSheetList;
 	protected Borderlayout borderLayout_CustomerBalanceSheetList;

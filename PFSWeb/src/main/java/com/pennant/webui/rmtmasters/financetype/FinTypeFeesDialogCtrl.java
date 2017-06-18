@@ -91,7 +91,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FinTypeFeesDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeFeesDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

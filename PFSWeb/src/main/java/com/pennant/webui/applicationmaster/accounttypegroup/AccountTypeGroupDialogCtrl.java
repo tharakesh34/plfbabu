@@ -32,7 +32,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	private static final long					serialVersionUID	= -210929672381582779L;
-	private final static Logger					logger				= Logger.getLogger(AccountTypeGroupDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(AccountTypeGroupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

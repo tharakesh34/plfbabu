@@ -75,7 +75,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	private static final long serialVersionUID = 8019703083764768044L;
-	private final static Logger logger = Logger.getLogger(IdentityDetailsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(IdentityDetailsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

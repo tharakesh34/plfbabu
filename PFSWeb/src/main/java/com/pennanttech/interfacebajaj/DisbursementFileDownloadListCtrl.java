@@ -83,7 +83,7 @@ import com.pennanttech.pff.core.Literal;
  */
 public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod>  {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DisbursementFileDownloadListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DisbursementFileDownloadListCtrl.class);
 
 	private Window window_DisbursementFileDownloadList;
 	private Borderlayout borderLayout_DisbursementFileDownloadList;

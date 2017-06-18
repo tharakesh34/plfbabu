@@ -75,7 +75,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(FeePostingsListCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(FeePostingsListCtrl.class);
 
 	protected Window					window_FeePostingList;
 	protected Borderlayout				borderLayout_FeePostingList;

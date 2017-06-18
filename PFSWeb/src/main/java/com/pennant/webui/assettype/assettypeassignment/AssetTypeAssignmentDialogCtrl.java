@@ -52,7 +52,7 @@ import com.pennant.webui.util.MessageUtil;
 public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 
 	private static final long serialVersionUID 	= 4558487274958745612L;
-	private final static Logger		logger		= Logger.getLogger(AssetTypeAssignmentDialogCtrl.class);
+	private static final Logger		logger		= Logger.getLogger(AssetTypeAssignmentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

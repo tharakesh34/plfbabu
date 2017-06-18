@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -5231127902551957898L;
-	private final static Logger logger = Logger.getLogger(AccountEngineEventDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AccountEngineEventDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	private static final long serialVersionUID = -4076107431620047108L;
-	private final static Logger logger = Logger.getLogger(FrequencyDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FrequencyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

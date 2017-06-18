@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNumber> {
 	private static final long serialVersionUID = 5073003999430539385L;
-	private final static Logger logger = Logger.getLogger(CustomerPhoneNumberListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerPhoneNumberListCtrl.class);
 
 	protected Window window_CustomerPhoneNumberList;
 	protected Borderlayout borderLayout_CustomerPhoneNumberList;

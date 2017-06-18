@@ -45,7 +45,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private static final long	serialVersionUID		= 2290501784830847866L;
-	private final static Logger	logger					= Logger.getLogger(DeviationDetailDialogCtrl.class);
+	private static final Logger	logger					= Logger.getLogger(DeviationDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerTypeListCtrl extends GFCBaseListCtrl<CustomerType> {
 	private static final long serialVersionUID = 5954194788863085861L;
-	private final static Logger logger = Logger.getLogger(CustomerTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerTypeListCtrl.class);
 
 	protected Window window_CustomerTypeList;
 	protected Borderlayout borderLayout_CustomerTypeList;

@@ -91,7 +91,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private final static Logger logger = Logger.getLogger(SelectFinReferenceDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectFinReferenceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

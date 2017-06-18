@@ -20,7 +20,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchFinCustomerDedupDetails {
 
-	private final static Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);	
+	private static final Logger logger = Logger.getLogger(FetchFinCustomerDedupDetails.class);	
 	
 	
 	private static  String CUSTOMERDEDUP_LABELS =  "custCIF,custDOB,custFName,custLName,custCRCPR,"

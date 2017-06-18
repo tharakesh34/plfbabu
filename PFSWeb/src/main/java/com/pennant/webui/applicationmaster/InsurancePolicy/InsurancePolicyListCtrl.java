@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class InsurancePolicyListCtrl extends GFCBaseListCtrl<InsurancePolicy> implements Serializable {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(InsurancePolicyListCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(InsurancePolicyListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

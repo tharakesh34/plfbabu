@@ -73,7 +73,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class ProvisionSearchCtrl extends GFCBaseCtrl<Provision>  {
 	private static final long serialVersionUID = 1933806562160029723L;
-	private final static Logger logger = Logger.getLogger(ProvisionSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProvisionSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -76,7 +76,7 @@ import com.pennant.webui.util.PTListReportUtils;
  */
 public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	private static final long serialVersionUID = 8118174179738209910L;
-	private final static Logger logger = Logger.getLogger(ScoringTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScoringTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

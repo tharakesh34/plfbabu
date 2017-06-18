@@ -104,7 +104,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long							serialVersionUID		= -8421583705358772016L;
-	private final static Logger							logger					= Logger.getLogger(PayOrderIssueDialogCtrl.class);
+	private static final Logger							logger					= Logger.getLogger(PayOrderIssueDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

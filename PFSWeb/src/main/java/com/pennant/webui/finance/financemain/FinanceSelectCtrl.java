@@ -124,7 +124,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private final static Logger logger = Logger.getLogger(FinanceSelectCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> {
 	private static final long serialVersionUID = 3085856113492519328L;
-	private final static Logger logger = Logger.getLogger(DispatchModeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DispatchModeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

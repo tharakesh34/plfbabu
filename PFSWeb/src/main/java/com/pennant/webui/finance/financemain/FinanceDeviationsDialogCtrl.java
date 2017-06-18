@@ -82,7 +82,7 @@ import com.pennanttech.pff.core.util.ModuleUtil;
 
 public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private static final long			serialVersionUID	= 2290501784830847866L;
-	private final static Logger			logger				= Logger.getLogger(FinanceDeviationsDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(FinanceDeviationsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

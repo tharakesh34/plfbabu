@@ -99,7 +99,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
  */
 public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperation> {
 	private static final long serialVersionUID = 4149506032336052235L;
-	private final static Logger logger = Logger.getLogger(SecurityUserOperationsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityUserOperationsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

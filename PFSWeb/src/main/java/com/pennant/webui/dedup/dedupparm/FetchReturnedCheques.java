@@ -12,7 +12,7 @@ import com.pennant.backend.service.applicationmaster.ReturnedChequeService;
 
 public class FetchReturnedCheques {
 
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(FetchReturnedCheques.class);
 
 	private int userAction = -1;

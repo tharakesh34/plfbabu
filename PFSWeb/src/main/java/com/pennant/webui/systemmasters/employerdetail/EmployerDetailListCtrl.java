@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(EmployerDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(EmployerDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

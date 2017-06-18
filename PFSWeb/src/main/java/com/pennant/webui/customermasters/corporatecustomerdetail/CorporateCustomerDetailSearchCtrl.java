@@ -73,7 +73,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCustomerDetail>  {
 	private static final long serialVersionUID = -6934733332123850099L;
-	private final static Logger logger = Logger.getLogger(CorporateCustomerDetailSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(CorporateCustomerDetailSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

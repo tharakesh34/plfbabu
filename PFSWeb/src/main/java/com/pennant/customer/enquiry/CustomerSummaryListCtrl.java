@@ -91,7 +91,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private final static Logger logger = Logger.getLogger(CustomerSummaryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerSummaryListCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

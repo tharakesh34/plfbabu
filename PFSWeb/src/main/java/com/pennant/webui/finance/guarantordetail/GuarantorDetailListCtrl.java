@@ -68,7 +68,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class GuarantorDetailListCtrl extends GFCBaseListCtrl<GuarantorDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(GuarantorDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(GuarantorDetailListCtrl.class);
 
 	protected Window window_GuarantorDetailList;
 	protected Borderlayout borderLayout_GuarantorDetailList;

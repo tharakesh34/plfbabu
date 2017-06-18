@@ -20,7 +20,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 	private static final long serialVersionUID = 2338460659547934642L;
-	private final static Logger logger = Logger.getLogger(RepayEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RepayEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -139,7 +139,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ManagerChequeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ManagerChequeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

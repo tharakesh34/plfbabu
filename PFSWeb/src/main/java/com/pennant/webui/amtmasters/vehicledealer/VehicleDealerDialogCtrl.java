@@ -94,7 +94,7 @@ import com.pennant.webui.util.constraint.PTListValidator;
  */
 public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(VehicleDealerDialogCtrl.class);
 
 	/*

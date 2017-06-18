@@ -92,7 +92,7 @@ import com.rits.cloning.Cloner;
  */
 public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -4882190027181576764L;
-	private final static Logger logger = Logger.getLogger(RepayCancellationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RepayCancellationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

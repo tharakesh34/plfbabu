@@ -73,7 +73,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 	private static final long serialVersionUID = 8749922359221017261L;
-	private final static Logger logger = Logger.getLogger(ScoringTypeSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScoringTypeSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

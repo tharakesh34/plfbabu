@@ -99,7 +99,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfiguration> {
 	private static final long serialVersionUID = 8579170086287103990L;
-	private final static Logger logger = Logger.getLogger(DashboardConfigurationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DashboardConfigurationDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

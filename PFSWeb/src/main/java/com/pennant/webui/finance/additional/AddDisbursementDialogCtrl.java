@@ -102,7 +102,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
-	private final static Logger logger = Logger.getLogger(AddDisbursementDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AddDisbursementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	private static final long serialVersionUID = -2229794581795422226L;
-	private final static Logger logger = Logger.getLogger(RejectDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RejectDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

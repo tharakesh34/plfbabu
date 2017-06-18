@@ -70,7 +70,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class AccountEngineEventSearchCtrl extends GFCBaseCtrl<AccountEngineEvent>  {
 	private static final long serialVersionUID = -5457162932741884160L;
-	private final static Logger logger = Logger.getLogger(AccountEngineEventSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(AccountEngineEventSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

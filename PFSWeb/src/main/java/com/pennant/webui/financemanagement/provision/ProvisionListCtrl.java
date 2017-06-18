@@ -104,7 +104,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long serialVersionUID = 4481377123949925578L;
-	private final static Logger logger = Logger.getLogger(ProvisionListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProvisionListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

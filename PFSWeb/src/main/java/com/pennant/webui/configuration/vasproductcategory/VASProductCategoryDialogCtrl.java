@@ -81,7 +81,7 @@ import com.pennant.webui.util.MessageUtil;
 public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory> {
 
 	private static final long						serialVersionUID	= 1L;
-	private final static Logger						logger				= Logger.getLogger(VASProductCategoryDialogCtrl.class);
+	private static final Logger						logger				= Logger.getLogger(VASProductCategoryDialogCtrl.class);
 
 	
 	protected Window								window_VASProductCategoryDialog;

@@ -112,7 +112,7 @@ import freemarker.template.Template;
  */
 public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private static final long serialVersionUID = 4140622258920094017L;
-	private final static Logger logger = Logger.getLogger(MailTemplateDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(MailTemplateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

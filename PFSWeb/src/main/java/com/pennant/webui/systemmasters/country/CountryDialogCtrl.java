@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	private static final long serialVersionUID = 223801324705386693L;
-	private final static Logger logger = Logger.getLogger(CountryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CountryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

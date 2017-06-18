@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 	private static final long serialVersionUID = 1237735044265585362L;
-	private final static Logger logger = Logger.getLogger(BranchListCtrl.class);
+	private static final Logger logger = Logger.getLogger(BranchListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

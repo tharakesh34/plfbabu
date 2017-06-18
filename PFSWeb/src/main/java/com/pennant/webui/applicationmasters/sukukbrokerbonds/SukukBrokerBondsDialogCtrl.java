@@ -90,7 +90,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 	private static final long			serialVersionUID		= 1L;
-	private final static Logger			logger					= Logger.getLogger(SukukBrokerBondsDialogCtrl.class);
+	private static final Logger			logger					= Logger.getLogger(SukukBrokerBondsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

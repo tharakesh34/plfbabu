@@ -84,7 +84,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	private static final long serialVersionUID = -4852924198816837755L;
-	private final static Logger logger = Logger.getLogger(QuestionDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(QuestionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

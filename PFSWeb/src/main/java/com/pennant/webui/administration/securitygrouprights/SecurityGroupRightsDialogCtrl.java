@@ -50,7 +50,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	private static final long serialVersionUID = -7625144242180775016L;
-	private final static Logger logger = Logger.getLogger(SecurityGroupRightsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityGroupRightsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

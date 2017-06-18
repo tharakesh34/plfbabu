@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOfficer> {
 	private static final long serialVersionUID = -7675063106991743780L;
-	private final static Logger logger = Logger.getLogger(RelationshipOfficerDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RelationshipOfficerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

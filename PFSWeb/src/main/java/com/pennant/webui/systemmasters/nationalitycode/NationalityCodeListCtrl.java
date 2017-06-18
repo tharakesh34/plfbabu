@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode> {
 	private static final long serialVersionUID = 1844331787045784573L;
-	private final static Logger logger = Logger.getLogger(NationalityCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(NationalityCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

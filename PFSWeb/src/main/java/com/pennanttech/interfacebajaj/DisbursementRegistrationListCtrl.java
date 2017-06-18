@@ -109,7 +109,7 @@ import com.pennanttech.pff.core.Literal;
 public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvancePayments> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DisbursementRegistrationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DisbursementRegistrationListCtrl.class);
 
 	protected Window window_DisbursementRegistrationList;
 	protected Borderlayout borderLayout_DisbursementList;

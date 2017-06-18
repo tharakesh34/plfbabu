@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long			serialVersionUID	= -2437455376763752382L;
-	private final static Logger			logger				= Logger.getLogger(CoreProvisionListCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(CoreProvisionListCtrl.class);
 
 	protected Window					window_CoreProvisionList;
 	protected Borderlayout				borderLayout_CoreProvisionList;

@@ -75,7 +75,7 @@ import com.pennanttech.pff.core.Literal;
  */
 public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private final static Logger logger = Logger.getLogger(FinFeeReceiptDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinFeeReceiptDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

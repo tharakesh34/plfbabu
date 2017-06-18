@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantConstants;
 public class FrequencyBox extends Hbox {
 	private static final long serialVersionUID = 1L;
 
-	private final static Logger logger = Logger.getLogger(FrequencyBox.class);
+	private static final Logger logger = Logger.getLogger(FrequencyBox.class);
 
 	private Space space;
 	private Textbox frqValue;

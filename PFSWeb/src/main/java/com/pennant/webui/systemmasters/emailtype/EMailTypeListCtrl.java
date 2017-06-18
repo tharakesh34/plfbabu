@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 	private static final long serialVersionUID = 2308954215935933494L;
-	private final static Logger logger = Logger.getLogger(EMailTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(EMailTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

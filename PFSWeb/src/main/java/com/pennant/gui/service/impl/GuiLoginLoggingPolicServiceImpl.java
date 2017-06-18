@@ -43,7 +43,7 @@ import com.pennant.gui.service.GuiLoginLoggingPolicService;
 
 public class GuiLoginLoggingPolicServiceImpl implements GuiLoginLoggingPolicService {
 
-	private final static Logger logger = Logger.getLogger(GuiLoginLoggingPolicServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(GuiLoginLoggingPolicServiceImpl.class);
 	private transient LoginLoggingService loginLoggingService;
 
 	public GuiLoginLoggingPolicServiceImpl() {

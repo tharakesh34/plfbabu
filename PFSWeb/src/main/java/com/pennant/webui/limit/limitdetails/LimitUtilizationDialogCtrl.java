@@ -42,7 +42,7 @@ import com.pennant.webui.util.ScreenCTL;
 public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(LimitUtilizationDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitUtilizationDialogCtrl.class);
 
 	/*
 	 * ************************************************************************

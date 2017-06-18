@@ -74,7 +74,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long			serialVersionUID	= -4863495235148249386L;
-	private final static Logger			logger				= Logger.getLogger(SubscheduleDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(SubscheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

@@ -52,7 +52,7 @@ import org.zkoss.zk.ui.util.DesktopCleanup;
 import com.pennant.app.util.SessionUtil;
 
 public class UserDesktopCleanup  implements DesktopCleanup{
-	private final static Logger logger = Logger.getLogger(UserDesktopCleanup.class);
+	private static final Logger logger = Logger.getLogger(UserDesktopCleanup.class);
 	
 	public UserDesktopCleanup() {
 		

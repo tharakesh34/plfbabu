@@ -88,7 +88,7 @@ import com.pennant.webui.util.constraint.PTListValidator;
 public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ErrorDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ErrorDetailDialogCtrl.class);
 	
 	/*
 	 * ************************************************************************

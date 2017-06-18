@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 	private static final long serialVersionUID = -5018975982654527543L;
-	private final static Logger logger = Logger.getLogger(CustomerIncomeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerIncomeListCtrl.class);
 
 	protected Window window_CustomerIncomeList;
 	protected Borderlayout borderLayout_CustomerIncomeList;

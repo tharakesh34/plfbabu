@@ -83,7 +83,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SuspenseDetailEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSuspDetails> {
 	private static final long serialVersionUID = -1620412127444337321L;
-	private final static Logger logger = Logger.getLogger(SuspenseDetailEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SuspenseDetailEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

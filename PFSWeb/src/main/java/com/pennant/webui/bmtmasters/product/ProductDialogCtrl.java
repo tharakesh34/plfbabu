@@ -94,7 +94,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private static final long serialVersionUID = -8421583705358772016L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(ProductDialogCtrl.class);
 
 	/*

@@ -90,7 +90,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private final static Logger logger = Logger.getLogger(FinanceDeviationsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceDeviationsListCtrl.class);
 
 	protected Window window_FinanceDeviationsList;
 	protected Borderlayout borderLayout_FinanceMainList;

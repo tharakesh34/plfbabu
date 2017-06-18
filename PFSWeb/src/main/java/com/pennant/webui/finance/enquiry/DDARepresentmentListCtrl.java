@@ -80,7 +80,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 	private static final long serialVersionUID = 2808357374960437326L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(DDARepresentmentListCtrl.class);
 
 	/*

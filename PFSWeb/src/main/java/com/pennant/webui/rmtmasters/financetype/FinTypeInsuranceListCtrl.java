@@ -74,7 +74,7 @@ public class FinTypeInsuranceListCtrl  extends GFCBaseCtrl<FinTypeInsurances> {
 	
 	private static final long serialVersionUID = 4521079241535245640L;
 
-	private final static Logger logger = Logger.getLogger(FinTypeInsuranceListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeInsuranceListCtrl.class);
 
 	protected Window window_FinTypeInsuranceList;
 	

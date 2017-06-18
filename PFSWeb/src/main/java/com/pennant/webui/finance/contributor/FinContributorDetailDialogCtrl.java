@@ -108,7 +108,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDetail> {
 	private static final long serialVersionUID = -6959194080451993569L;
-	private final static Logger logger = Logger.getLogger(FinContributorDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinContributorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

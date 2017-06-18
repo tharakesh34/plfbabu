@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 	private static final long serialVersionUID = 3163745278891119377L;
-	private final static Logger logger = Logger.getLogger(GroupStatusCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(GroupStatusCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

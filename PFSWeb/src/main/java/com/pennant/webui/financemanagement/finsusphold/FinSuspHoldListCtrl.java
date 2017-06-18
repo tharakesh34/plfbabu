@@ -79,7 +79,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	private static final long serialVersionUID = -3571720185247491921L;
-	private final static Logger logger = Logger.getLogger(FinSuspHoldListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinSuspHoldListCtrl.class);
 
 	protected Window window_FinSuspHoldList;
 	protected Borderlayout borderLayout_FinSuspHoldList;

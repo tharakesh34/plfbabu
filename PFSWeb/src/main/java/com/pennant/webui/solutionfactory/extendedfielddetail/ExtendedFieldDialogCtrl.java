@@ -57,7 +57,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 
 public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail>{
 	private static final long						serialVersionUID			= -3249715883200188080L;
-	private final static Logger						logger						= Logger.getLogger(ExtendedFieldDialogCtrl.class);
+	private static final Logger						logger						= Logger.getLogger(ExtendedFieldDialogCtrl.class);
 
 	protected Window								window_ExtendedFieldDialog;	
 	protected Label									moduleDesc;														

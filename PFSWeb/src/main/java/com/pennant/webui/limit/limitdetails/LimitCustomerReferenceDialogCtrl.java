@@ -31,7 +31,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> {
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
 
 	/*
 	 * ************************************************************************

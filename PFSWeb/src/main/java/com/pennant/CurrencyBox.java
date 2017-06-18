@@ -23,7 +23,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 
 public class CurrencyBox extends Hbox {
 	private static final long	serialVersionUID	= -4246285143621221275L;
-	private final static Logger	logger				= Logger.getLogger(CurrencyBox.class);
+	private static final Logger	logger				= Logger.getLogger(CurrencyBox.class);
 
 	private Space				space;
 	private Space				spaceBtwComp;

@@ -70,7 +70,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DedupFieldsSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(DedupFieldsSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

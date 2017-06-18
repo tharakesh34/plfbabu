@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	private static final long serialVersionUID = -2259811281710327276L;
-	private final static Logger logger = Logger.getLogger(IndustryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(IndustryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

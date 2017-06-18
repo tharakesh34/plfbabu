@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	private static final long serialVersionUID = 3184249234920071313L;
-	private final static Logger logger = Logger.getLogger(AddressTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AddressTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -114,7 +114,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private final static Logger logger = Logger.getLogger(AvailmentTicketDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AvailmentTicketDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

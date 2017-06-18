@@ -57,7 +57,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 
 public class PTDecimalValidator implements Constraint{
-	private final static Logger logger = Logger.getLogger(PTDecimalValidator.class);
+	private static final Logger logger = Logger.getLogger(PTDecimalValidator.class);
 
 	private String fieldParm;
 	private boolean mandatory=false;

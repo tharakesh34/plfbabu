@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode> {
 	private static final long serialVersionUID = -8496246844446191225L;
-	private final static Logger logger = Logger.getLogger(MaritalStatusCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(MaritalStatusCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

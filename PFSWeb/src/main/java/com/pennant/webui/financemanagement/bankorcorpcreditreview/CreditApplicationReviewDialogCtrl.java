@@ -110,7 +110,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditReviewSummary> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationReviewDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationReviewDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

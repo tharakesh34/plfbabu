@@ -123,7 +123,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements Constraint {
 	private static final long serialVersionUID = 952561911227552664L;
-	private final static Logger logger = Logger.getLogger(SecurityUserDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityUserDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

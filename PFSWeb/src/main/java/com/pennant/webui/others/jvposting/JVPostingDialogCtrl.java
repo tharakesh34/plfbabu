@@ -117,7 +117,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(JVPostingDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(JVPostingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FacilityListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityListCtrl.class);
 
 	protected Window window_FacilityList;
 	protected Borderlayout borderLayout_FacilityList;

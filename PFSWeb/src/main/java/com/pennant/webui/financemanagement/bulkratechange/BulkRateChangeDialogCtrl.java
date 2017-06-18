@@ -117,7 +117,7 @@ import com.rits.cloning.Cloner;
  */
 public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(BulkRateChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

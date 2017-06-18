@@ -46,7 +46,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 	private static final long serialVersionUID = -446102445582419907L;
-	private final static Logger logger = Logger.getLogger(SqlViewResultCtrl.class);
+	private static final Logger logger = Logger.getLogger(SqlViewResultCtrl.class);
 	
 	protected Window window_SqlViewResult;
 	protected Button button_SqlViewResult;

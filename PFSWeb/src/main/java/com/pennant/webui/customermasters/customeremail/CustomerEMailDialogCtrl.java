@@ -93,7 +93,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	private static final long serialVersionUID = -7522534300621535097L;
-	private final static Logger logger = Logger.getLogger(CustomerEMailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerEMailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

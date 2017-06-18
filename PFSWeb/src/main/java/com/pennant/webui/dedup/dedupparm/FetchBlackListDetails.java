@@ -16,7 +16,7 @@ import com.pennant.backend.util.PennantConstants;
 
 public class FetchBlackListDetails {
 	
-	private final static Logger logger = Logger.getLogger(FetchBlackListDetails.class);
+	private static final Logger logger = Logger.getLogger(FetchBlackListDetails.class);
 	private static DedupParmService dedupParmService;
 	private List<BlackListCustomers> blackListCustomers;
 	private List<FinBlacklistCustomer> finBlacklistCustomer;

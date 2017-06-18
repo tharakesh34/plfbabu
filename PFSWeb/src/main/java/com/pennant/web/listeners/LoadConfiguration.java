@@ -18,7 +18,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import com.pennant.app.util.PathUtil;
 
 public class LoadConfiguration implements ServletContextListener {
-	private final static Logger logger = Logger.getLogger(LoadConfiguration.class);
+	private static final Logger logger = Logger.getLogger(LoadConfiguration.class);
 
 	public String envVariable;
 	public final String log4j = "/log4j.xml";

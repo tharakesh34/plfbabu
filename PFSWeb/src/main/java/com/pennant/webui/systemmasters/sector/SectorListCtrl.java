@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SectorListCtrl extends GFCBaseListCtrl<Sector> {
 	private static final long serialVersionUID = -4561944744750744817L;
-	private final static Logger logger = Logger.getLogger(SectorListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SectorListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

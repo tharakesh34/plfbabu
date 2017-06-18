@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class GeneralDepartmentListCtrl extends GFCBaseListCtrl<GeneralDepartment> {
 	private static final long serialVersionUID = -8782007567428187225L;
-	private final static Logger logger = Logger.getLogger(GeneralDepartmentListCtrl.class);
+	private static final Logger logger = Logger.getLogger(GeneralDepartmentListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

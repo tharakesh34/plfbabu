@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster> {
 	private static final long serialVersionUID = 5550212164288969546L;
-	private final static Logger logger = Logger.getLogger(HolidayMasterListCtrl.class);
+	private static final Logger logger = Logger.getLogger(HolidayMasterListCtrl.class);
 
 	protected Window window_HolidayMasterList;
 	protected Borderlayout borderLayout_HolidayMasterList;

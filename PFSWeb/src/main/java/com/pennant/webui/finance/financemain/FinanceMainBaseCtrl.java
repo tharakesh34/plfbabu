@@ -273,7 +273,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long								serialVersionUID		= -1171206258809472640L;
-	private final static Logger								logger					= Logger.getLogger(FinanceMainBaseCtrl.class);
+	private static final Logger								logger					= Logger.getLogger(FinanceMainBaseCtrl.class);
 
 	protected Label											windowTitle;
 

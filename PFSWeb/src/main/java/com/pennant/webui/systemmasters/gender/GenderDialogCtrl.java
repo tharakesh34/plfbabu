@@ -75,7 +75,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	private static final long serialVersionUID = -4484270347916527133L;
-	private final static Logger logger = Logger.getLogger(GenderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(GenderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

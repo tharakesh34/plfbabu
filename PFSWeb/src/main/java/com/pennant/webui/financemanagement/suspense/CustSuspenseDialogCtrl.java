@@ -96,7 +96,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 7798200490595650451L;
-	private final static Logger logger = Logger.getLogger(CustSuspenseDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustSuspenseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -132,7 +132,7 @@ import com.rits.cloning.Cloner;
  */
 public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private static final long serialVersionUID = -8931742880858169171L;
-	private final static Logger logger = Logger.getLogger(CustomerDocumentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerDocumentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

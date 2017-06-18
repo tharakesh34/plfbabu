@@ -51,7 +51,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class AdditionalDetailValidation implements Serializable {
 
 	private static final long	serialVersionUID	= 7801946116526475384L;
-	private final static Logger logger = Logger.getLogger(AdditionalDetailValidation.class);
+	private static final Logger logger = Logger.getLogger(AdditionalDetailValidation.class);
 
 	public AdditionalDetailValidation() {
 		

@@ -83,7 +83,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(CancelDisbursementDialogCtrl.class);
 
 	/*

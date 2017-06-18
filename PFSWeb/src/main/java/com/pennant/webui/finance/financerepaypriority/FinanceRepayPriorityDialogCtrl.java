@@ -80,7 +80,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPriority> {
 	private static final long serialVersionUID = 2259700048994840972L;
-	private final static Logger logger = Logger.getLogger(FinanceRepayPriorityDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceRepayPriorityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

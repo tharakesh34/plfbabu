@@ -113,7 +113,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(BulkDefermentChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkDefermentChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

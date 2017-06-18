@@ -98,7 +98,7 @@ import net.sf.jasperreports.engine.util.JRSwapFile;
 
 public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(DailyDownloadReportCtrl.class);
+	private static final Logger logger = Logger.getLogger(DailyDownloadReportCtrl.class);
 
 	protected Window        window_DialyDownloadReport;
 	protected Combobox      moduleName;

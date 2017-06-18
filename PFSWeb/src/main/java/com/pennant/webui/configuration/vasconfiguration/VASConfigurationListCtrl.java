@@ -90,7 +90,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(VASConfigurationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(VASConfigurationListCtrl.class);
 
 	protected Window window_VASConfigurationList;
 	protected Borderlayout borderLayout_VASConfigurationList;

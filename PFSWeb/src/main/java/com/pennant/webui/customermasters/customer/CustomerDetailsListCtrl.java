@@ -79,7 +79,7 @@ import com.pennant.webui.util.PTListReportUtils;
  */
 public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private final static Logger logger = Logger.getLogger(CustomerDetailsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerDetailsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

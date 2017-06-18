@@ -93,7 +93,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiability> {
 	private static final long serialVersionUID = -7522534300621535097L;
-	private final static Logger logger = Logger.getLogger(CustomerExtLiabilityDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerExtLiabilityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 	private static final long serialVersionUID = -3571720185247491921L;
-	private final static Logger logger = Logger.getLogger(BankDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(BankDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

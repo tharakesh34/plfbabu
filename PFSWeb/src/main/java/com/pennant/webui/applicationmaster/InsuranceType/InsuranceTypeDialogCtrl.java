@@ -101,7 +101,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 	private static final long				serialVersionUID			= 1L;
-	private final static Logger				logger						= Logger.getLogger(InsuranceTypeDialogCtrl.class);
+	private static final Logger				logger						= Logger.getLogger(InsuranceTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

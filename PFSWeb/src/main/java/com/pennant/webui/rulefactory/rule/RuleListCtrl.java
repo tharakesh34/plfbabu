@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	private static final long serialVersionUID = -6345351842301484405L;
-	private final static Logger logger = Logger.getLogger(RuleListCtrl.class);
+	private static final Logger logger = Logger.getLogger(RuleListCtrl.class);
 
 	protected Window window_RuleList;
 	protected Borderlayout borderLayout_RuleList;

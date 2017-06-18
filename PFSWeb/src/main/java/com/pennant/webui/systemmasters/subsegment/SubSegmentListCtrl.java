@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SubSegmentListCtrl extends GFCBaseListCtrl<SubSegment> {
 	private static final long serialVersionUID = -4802249076746862609L;
-	private final static Logger logger = Logger.getLogger(SubSegmentListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SubSegmentListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

@@ -97,7 +97,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	private static final long serialVersionUID = 4149506032336052235L;
-	private final static Logger logger = Logger.getLogger(QueueAssignmentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(QueueAssignmentDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our

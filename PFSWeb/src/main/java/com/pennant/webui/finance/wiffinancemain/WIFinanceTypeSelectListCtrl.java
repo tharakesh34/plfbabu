@@ -107,7 +107,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = 3257569537441008225L;
-	private final static Logger logger = Logger.getLogger(WIFinanceTypeSelectListCtrl.class);
+	private static final Logger logger = Logger.getLogger(WIFinanceTypeSelectListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class GenderListCtrl extends GFCBaseListCtrl<Gender> {
 	private static final long serialVersionUID = 3226455931949186314L;
-	private final static Logger logger = Logger.getLogger(GenderListCtrl.class);
+	private static final Logger logger = Logger.getLogger(GenderListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

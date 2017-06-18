@@ -114,7 +114,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private final static Logger logger = Logger.getLogger(SelectRolloverFinanceDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectRolloverFinanceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

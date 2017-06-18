@@ -136,7 +136,7 @@ import com.rits.cloning.Cloner;
  */
 public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = -1600733082543197594L;
-	private final static Logger logger = Logger.getLogger(FacilityDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

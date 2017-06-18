@@ -35,7 +35,7 @@ import com.pennant.webui.util.MessageUtil;
 public class FinStepPolicyDetailDialogCtrl extends
 		GFCBaseCtrl<FinanceStepPolicyDetail> {
 	private static final long serialVersionUID = -4626382073313654611L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(FinStepPolicyDetailDialogCtrl.class);
 
 	/*

@@ -107,7 +107,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private static final long serialVersionUID = -3541636402188022162L;
-	private final static Logger logger = Logger.getLogger(DedupParmDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DedupParmDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -65,7 +65,7 @@ import javassist.NotFoundException;
 
 public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	private static final long				serialVersionUID	= 9031340167587772517L;
-	private final static Logger				logger				= Logger.getLogger(MMAgreementsDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(MMAgreementsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

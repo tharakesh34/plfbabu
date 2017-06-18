@@ -82,7 +82,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ChequePurposeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ChequePurposeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

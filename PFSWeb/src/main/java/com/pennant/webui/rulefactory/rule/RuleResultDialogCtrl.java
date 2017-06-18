@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	private static final long serialVersionUID = -2393925908398735705L;
-	private final static Logger logger = Logger.getLogger(RuleResultDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RuleResultDialogCtrl.class);
 
 	protected Window window_RuleResultDialog;
 	public Codemirror formula; // FIXME change the modifier into protected

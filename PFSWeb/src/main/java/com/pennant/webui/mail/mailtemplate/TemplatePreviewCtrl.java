@@ -45,7 +45,7 @@ import freemarker.template.TemplateException;
 
 public class TemplatePreviewCtrl  extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 8221803565044061531L;
-	private final static Logger logger = Logger.getLogger(TemplatePreviewCtrl.class);
+	private static final Logger logger = Logger.getLogger(TemplatePreviewCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

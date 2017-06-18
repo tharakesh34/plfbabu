@@ -29,7 +29,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private final static Logger logger = Logger.getLogger(TransactionEntryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

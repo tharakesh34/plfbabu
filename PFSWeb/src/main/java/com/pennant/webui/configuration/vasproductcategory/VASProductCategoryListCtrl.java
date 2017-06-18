@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCategory> {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(VASProductCategoryListCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(VASProductCategoryListCtrl.class);
 
 	protected Window							window_VASProductCategoryList;
 	protected Borderlayout						borderLayout_VASProductCategoryList;

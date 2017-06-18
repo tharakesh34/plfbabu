@@ -83,7 +83,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacilityType> {
 	private static final long serialVersionUID = 5574042632591594715L;
-	private final static Logger logger = Logger.getLogger(FacilityReferenceDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -72,7 +72,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class MandateStatusListCtrl extends GFCBaseCtrl<MandateStatus> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(MandateStatusListCtrl.class);
+	private static final Logger logger = Logger.getLogger(MandateStatusListCtrl.class);
 
 	protected Window window_MandateStatusList;
 	protected Borderlayout borderLayout_MandateStatusList;

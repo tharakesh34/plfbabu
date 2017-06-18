@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 	private static final long serialVersionUID = 1690558052025431845L;
-	private final static Logger logger = Logger.getLogger(SalutationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SalutationListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

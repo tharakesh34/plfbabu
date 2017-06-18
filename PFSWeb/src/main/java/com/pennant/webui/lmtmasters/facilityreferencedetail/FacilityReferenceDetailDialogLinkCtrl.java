@@ -100,7 +100,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityReferenceDetail> {
 	private static final long serialVersionUID = -2872130825329784644L;
-	private final static Logger logger = Logger.getLogger(FacilityReferenceDetailDialogLinkCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailDialogLinkCtrl.class);
 
 	/*
 	 * All the components that are defined here

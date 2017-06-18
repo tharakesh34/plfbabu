@@ -77,7 +77,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ErrorDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ErrorDetailListCtrl.class);
 
 	protected Window window_ErrorDetailList;
 	protected Borderlayout borderLayout_ErrorDetailList;

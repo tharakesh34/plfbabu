@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
 public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FinTypeFeesListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeFeesListCtrl.class);
 
 	protected Window window_FinTypeFeesList;
 	

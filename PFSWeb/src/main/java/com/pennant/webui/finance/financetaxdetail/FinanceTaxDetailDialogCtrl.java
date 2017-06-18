@@ -95,7 +95,7 @@ import com.pennanttech.pff.core.Literal;
 public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FinanceTaxDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceTaxDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

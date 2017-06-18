@@ -86,7 +86,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
  */
 public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	private static final long serialVersionUID = 7403304686538288944L;
-	private final static Logger logger = Logger.getLogger(FieldsListSelectCtrl.class);
+	private static final Logger logger = Logger.getLogger(FieldsListSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

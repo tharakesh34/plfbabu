@@ -75,7 +75,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	private static final long serialVersionUID = 2856434917203365995L;
-	private final static Logger logger = Logger.getLogger(NationalityCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(NationalityCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

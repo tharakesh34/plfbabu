@@ -83,7 +83,7 @@ import com.pennanttech.pff.core.Literal;
 public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 
 	private static final long	serialVersionUID	= 1L;
-	private final static Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
+	private static final Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
 
 	protected Window			window_FleDownloadList;
 	protected Borderlayout		borderLayout_FileDownloadList;

@@ -40,7 +40,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long				serialVersionUID	= 454600127282110738L;
-	private final static Logger				logger				= Logger.getLogger(HoldEMIDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(HoldEMIDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

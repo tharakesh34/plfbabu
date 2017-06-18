@@ -102,7 +102,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	private static final long	serialVersionUID	= -5800673813892917464L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

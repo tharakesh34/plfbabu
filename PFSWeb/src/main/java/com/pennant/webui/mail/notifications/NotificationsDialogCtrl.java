@@ -90,7 +90,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	private static final long serialVersionUID = -6945930303723518608L;
-	private final static Logger logger = Logger.getLogger(NotificationsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(NotificationsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

@@ -89,7 +89,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long				serialVersionUID	= 454600127282110738L;
-	private final static Logger				logger				= Logger.getLogger(AddRepaymentDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(AddRepaymentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

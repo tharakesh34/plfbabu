@@ -72,7 +72,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class EarlypayEffectOnScheduleDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(EarlypayEffectOnScheduleDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EarlypayEffectOnScheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

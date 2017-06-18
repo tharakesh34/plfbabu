@@ -75,7 +75,7 @@ import com.pennanttech.pff.core.App.Database;
 
 public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private final static Logger logger = Logger.getLogger(FinanceFlagsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceFlagsListCtrl.class);
 
 	protected Window window_FinanceFlagsList;
 	protected Borderlayout borderlayout_FinanceFlags;

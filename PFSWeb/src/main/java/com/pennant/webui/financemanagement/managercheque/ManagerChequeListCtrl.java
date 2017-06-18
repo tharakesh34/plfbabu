@@ -94,7 +94,7 @@ import com.pennanttech.framework.web.components.SearchFilterControl;
 public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ManagerChequeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ManagerChequeListCtrl.class);
 
 	protected Window window_ManagerChequeList;
 	protected Borderlayout borderLayout_ManagerChequeList;

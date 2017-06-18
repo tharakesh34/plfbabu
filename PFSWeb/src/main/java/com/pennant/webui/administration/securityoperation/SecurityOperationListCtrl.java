@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class SecurityOperationListCtrl extends GFCBaseListCtrl<SecurityOperation> {
 
 	private static final long serialVersionUID = -418890474385890182L;
-	private final static Logger logger = Logger.getLogger(SecurityOperationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityOperationListCtrl.class);
 
 	protected Window window_SecurityOperationList;
 	protected Borderlayout borderLayout_SecurityOperationList;

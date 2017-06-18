@@ -133,7 +133,7 @@ import com.rits.cloning.Cloner;
  */
 public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long								serialVersionUID					= 966281186831332116L;
-	private final static Logger								logger								= Logger.getLogger(FeeReceiptDialogCtrl.class);
+	private static final Logger								logger								= Logger.getLogger(FeeReceiptDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

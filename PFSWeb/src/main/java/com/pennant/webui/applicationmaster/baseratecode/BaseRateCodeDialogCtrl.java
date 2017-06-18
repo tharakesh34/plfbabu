@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	private static final long serialVersionUID = 190631304555025244L;
-	private final static Logger logger = Logger.getLogger(BaseRateCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BaseRateCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

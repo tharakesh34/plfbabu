@@ -46,7 +46,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private final static Logger logger = Logger.getLogger(AgreementGenerationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AgreementGenerationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

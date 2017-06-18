@@ -83,7 +83,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	private static final long serialVersionUID = -6289141323349585417L;
-	private final static Logger logger = Logger.getLogger(RatingCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RatingCodeDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

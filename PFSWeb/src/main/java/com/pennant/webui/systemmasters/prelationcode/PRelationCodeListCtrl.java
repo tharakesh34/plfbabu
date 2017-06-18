@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> {
 	private static final long serialVersionUID = -6390654977697169073L;
-	private final static Logger logger = Logger.getLogger(PRelationCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PRelationCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

@@ -70,7 +70,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 	private static final long serialVersionUID = -7966467989874119940L;
-	private final static Logger logger = Logger.getLogger(ExtFinanceUploadDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtFinanceUploadDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

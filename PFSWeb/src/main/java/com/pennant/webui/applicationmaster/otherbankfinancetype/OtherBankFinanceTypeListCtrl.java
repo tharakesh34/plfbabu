@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class OtherBankFinanceTypeListCtrl extends GFCBaseListCtrl<OtherBankFinanceType> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(OtherBankFinanceTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(OtherBankFinanceTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

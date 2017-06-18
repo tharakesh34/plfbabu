@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 	private static final long serialVersionUID = -1491703348215991538L;
-	private final static Logger logger = Logger.getLogger(StepPolicyListCtrl.class);
+	private static final Logger logger = Logger.getLogger(StepPolicyListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

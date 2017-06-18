@@ -78,7 +78,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FlagDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FlagDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

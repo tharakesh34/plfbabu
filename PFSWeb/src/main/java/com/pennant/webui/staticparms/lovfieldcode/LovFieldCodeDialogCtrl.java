@@ -89,7 +89,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 	private static final long serialVersionUID = 4551720052100965368L;
-	private final static Logger logger = Logger.getLogger(LovFieldCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LovFieldCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

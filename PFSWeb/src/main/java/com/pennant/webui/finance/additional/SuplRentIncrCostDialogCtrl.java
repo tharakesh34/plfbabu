@@ -75,7 +75,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private final static Logger logger = Logger.getLogger(SuplRentIncrCostDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SuplRentIncrCostDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

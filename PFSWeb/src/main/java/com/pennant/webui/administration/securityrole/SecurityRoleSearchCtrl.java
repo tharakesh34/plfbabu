@@ -80,7 +80,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class SecurityRoleSearchCtrl extends GFCBaseCtrl<SecurityRole>  {
 	private static final long serialVersionUID = 2864504890948057555L;
-	private final static Logger logger = Logger.getLogger(SecurityRoleSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityRoleSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

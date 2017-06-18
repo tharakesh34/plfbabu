@@ -58,7 +58,7 @@ import com.pennant.backend.util.PennantConstants;
 public class RateBox extends Hbox{
 	private static final long serialVersionUID = 1L;
 
-	private final static Logger logger = Logger.getLogger(RateBox.class);
+	private static final Logger logger = Logger.getLogger(RateBox.class);
 
 	private Space space;
 	private ExtendedCombobox baseRateBox;

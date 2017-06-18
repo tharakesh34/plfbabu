@@ -101,7 +101,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class JavaScriptBuilder extends Groupbox {
-	private final static Logger logger = Logger.getLogger(JavaScriptBuilder.class);
+	private static final Logger logger = Logger.getLogger(JavaScriptBuilder.class);
 
 	private static final long 	serialVersionUID = 1L;
 	

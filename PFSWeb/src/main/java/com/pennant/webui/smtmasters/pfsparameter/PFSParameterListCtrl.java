@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 	private static final long serialVersionUID = 8002179731510010018L;
-	private final static Logger logger = Logger.getLogger(PFSParameterListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PFSParameterListCtrl.class);
 
 	protected Window window_PFSParameterList;
 	protected Borderlayout borderLayout_PFSParameterList;

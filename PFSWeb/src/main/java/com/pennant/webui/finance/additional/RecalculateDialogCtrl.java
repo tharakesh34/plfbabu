@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long				serialVersionUID	= -6125624350998749280L;
-	private final static Logger				logger				= Logger.getLogger(RecalculateDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(RecalculateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

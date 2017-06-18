@@ -77,7 +77,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 
 	private static final long serialVersionUID = -1495995793043106184L;
-	private final static Logger logger = Logger.getLogger(SecurityGroupSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityGroupSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

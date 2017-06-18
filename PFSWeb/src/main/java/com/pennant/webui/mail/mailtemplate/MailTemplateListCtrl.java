@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> {
 	private static final long serialVersionUID = 7079846100434942353L;
-	private final static Logger logger = Logger.getLogger(MailTemplateListCtrl.class);
+	private static final Logger logger = Logger.getLogger(MailTemplateListCtrl.class);
 
 	protected Window window_MailTemplateList;
 	protected Borderlayout borderLayout_MailTemplateList;

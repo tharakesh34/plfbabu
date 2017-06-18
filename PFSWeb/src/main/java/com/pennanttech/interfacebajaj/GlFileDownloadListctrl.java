@@ -86,7 +86,7 @@ import com.pennanttech.pff.reports.cbil.CIBILReport;
 public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
+	private static final Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
 
 	protected Window window_GlFileDownloadList;
 	protected Borderlayout borderLayout_GlFileDownloadList;

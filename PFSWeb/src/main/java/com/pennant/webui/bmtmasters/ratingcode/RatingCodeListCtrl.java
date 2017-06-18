@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class RatingCodeListCtrl extends GFCBaseListCtrl<RatingCode> {
 	private static final long serialVersionUID = 6738264839727215072L;
-	private final static Logger logger = Logger.getLogger(RatingCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(RatingCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

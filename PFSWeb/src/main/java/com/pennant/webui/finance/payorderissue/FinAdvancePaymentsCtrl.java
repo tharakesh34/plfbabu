@@ -86,7 +86,7 @@ import com.pennant.webui.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssueHeader/PayOrderIssueDialog.zul file.
  */
 public class FinAdvancePaymentsCtrl {
-	private final static Logger			logger				= Logger.getLogger(FinAdvancePaymentsCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(FinAdvancePaymentsCtrl.class);
 	private Listbox						listbox;
 	private String						ccy;
 	private int							ccyFormat;

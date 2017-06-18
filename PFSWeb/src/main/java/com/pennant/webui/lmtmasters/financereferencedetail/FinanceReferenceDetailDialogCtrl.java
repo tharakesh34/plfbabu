@@ -110,7 +110,7 @@ import com.pennanttech.pff.core.engine.WorkflowEngine;
  */
 public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferenceDetail> {
 	private static final long serialVersionUID = 4224402842313630803L;
-	private final static Logger logger = Logger.getLogger(FinanceReferenceDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

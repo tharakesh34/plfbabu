@@ -108,7 +108,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(LimitGroupDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(LimitGroupDialogCtrl.class);
 
 	/*
 	 * ************************************************************************

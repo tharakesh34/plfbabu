@@ -91,7 +91,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private static final long serialVersionUID = -4832204841676720745L;
-	private final static Logger logger = Logger.getLogger(BranchDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BranchDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

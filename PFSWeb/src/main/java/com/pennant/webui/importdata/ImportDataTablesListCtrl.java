@@ -25,7 +25,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -886667223042963669L;
-	private final static Logger logger = Logger.getLogger(ImportDataTablesListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ImportDataTablesListCtrl.class);
 
 	protected Window     window_ImportData;          // autowired
 	protected Listbox 	listBoxcoreBanking;          // autowired

@@ -80,7 +80,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class AdvPftRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private final static Logger logger = Logger.getLogger(AdvPftRateChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AdvPftRateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

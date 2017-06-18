@@ -75,7 +75,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class QueryListCtrl extends GFCBaseListCtrl<Query> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(QueryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(QueryListCtrl.class);
 
 	protected Window window_QueryList;
 	protected Borderlayout borderLayout_QueryList;

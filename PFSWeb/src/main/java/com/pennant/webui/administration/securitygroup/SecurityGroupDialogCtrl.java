@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	private static final long serialVersionUID = 1709997819133952587L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(SecurityGroupDialogCtrl.class);
 
 	/*

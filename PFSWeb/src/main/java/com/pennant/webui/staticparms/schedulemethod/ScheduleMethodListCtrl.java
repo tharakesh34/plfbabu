@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> {
 	private static final long serialVersionUID = -7332745886128746110L;
-	private final static Logger logger = Logger.getLogger(ScheduleMethodListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScheduleMethodListCtrl.class);
 
 	protected Window window_ScheduleMethodList;
 	protected Borderlayout borderLayout_ScheduleMethodList;

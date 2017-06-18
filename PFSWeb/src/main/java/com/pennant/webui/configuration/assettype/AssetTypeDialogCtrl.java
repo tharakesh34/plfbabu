@@ -104,7 +104,7 @@ import com.pennant.webui.util.MessageUtil;
 public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(AssetTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AssetTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

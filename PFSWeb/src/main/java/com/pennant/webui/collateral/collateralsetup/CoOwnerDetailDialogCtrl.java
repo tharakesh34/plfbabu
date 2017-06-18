@@ -102,7 +102,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(CoOwnerDetailDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(CoOwnerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

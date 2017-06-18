@@ -84,7 +84,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	private static final long serialVersionUID = -5990530952612454146L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(BaseRateDialogCtrl.class);
 
 	/*

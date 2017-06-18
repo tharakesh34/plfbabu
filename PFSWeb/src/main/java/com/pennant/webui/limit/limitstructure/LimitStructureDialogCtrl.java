@@ -106,7 +106,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implements Serializable {
 	private static final long						serialVersionUID				= 1L;
-	private final static Logger						logger							= Logger.getLogger(LimitStructureDialogCtrl.class);
+	private static final Logger						logger							= Logger.getLogger(LimitStructureDialogCtrl.class);
 
 	/*
 	 * ************************************************************************

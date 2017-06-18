@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	private static final long serialVersionUID = -3109779707000635809L;
-	private final static Logger logger = Logger.getLogger(ProvinceListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProvinceListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

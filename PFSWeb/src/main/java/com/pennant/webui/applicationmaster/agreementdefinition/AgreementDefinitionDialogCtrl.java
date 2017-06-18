@@ -93,7 +93,7 @@ import com.pennant.webui.util.MessageUtil;
 public class AgreementDefinitionDialogCtrl extends
 		GFCBaseCtrl<AgreementDefinition> {
 	private static final long serialVersionUID = 675917331534316816L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(AgreementDefinitionDialogCtrl.class);
 
 	/*

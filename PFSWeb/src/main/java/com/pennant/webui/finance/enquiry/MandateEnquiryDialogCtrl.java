@@ -94,7 +94,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private static final long				serialVersionUID				= 1L;
-	private final static Logger				logger							= Logger.getLogger(MandateEnquiryDialogCtrl.class);
+	private static final Logger				logger							= Logger.getLogger(MandateEnquiryDialogCtrl.class);
 
 	protected Window						window_FinMandateEnquiryDialog;
 	protected ExtendedCombobox				custID;

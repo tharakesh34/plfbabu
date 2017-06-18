@@ -87,7 +87,7 @@ import com.pennanttech.pff.core.InterfaceException;
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
 
-	private final static Logger				logger				= Logger.getLogger(SelectCollateralTypeDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(SelectCollateralTypeDialogCtrl.class);
 
 	protected Window						window_SelectCollateralDialog;
 	protected ExtendedCombobox				collateralType;

@@ -13,7 +13,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 
 public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 7219917076107821148L;
-	private final static Logger logger = Logger.getLogger(ReportViewCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportViewCtrl.class);
 	private Window window_Report;
 
 	protected Tabbox         tabbox;

@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> {
 	private static final long serialVersionUID = -6951358943287040101L;
-	private final static Logger logger = Logger.getLogger(PayOrderIssueListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PayOrderIssueListCtrl.class);
 
 	protected Window window_PayOrderIssueList;
 	protected Borderlayout borderLayout_PayOrderIssueList;

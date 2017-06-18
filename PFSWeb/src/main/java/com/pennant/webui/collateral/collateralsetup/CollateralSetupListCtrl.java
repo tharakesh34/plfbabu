@@ -89,7 +89,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 	private static final long serialVersionUID = -6298187334342045748L;
-	private final static Logger					logger				= Logger.getLogger(CollateralSetupListCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(CollateralSetupListCtrl.class);
 
 	protected Window							window_CollateralSetupList;
 	protected Borderlayout						borderLayout_CollateralSetupList;

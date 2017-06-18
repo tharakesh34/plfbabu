@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 	private static final long serialVersionUID = 1817958653208633892L;
-	private final static Logger logger = Logger.getLogger(AddressTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(AddressTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

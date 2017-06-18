@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 	private static final long serialVersionUID = -5634641691791820344L;
-	private final static Logger logger = Logger.getLogger(DirectorDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DirectorDetailListCtrl.class);
 
 	protected Window window_DirectorDetailList; 
 	protected Borderlayout borderLayout_DirectorDetailList; 

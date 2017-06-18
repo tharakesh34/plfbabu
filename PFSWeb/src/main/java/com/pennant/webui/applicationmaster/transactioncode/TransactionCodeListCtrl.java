@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> {
 	private static final long serialVersionUID = 8484399111058985206L;
-	private final static Logger logger = Logger.getLogger(TransactionCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(TransactionCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

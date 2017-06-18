@@ -79,7 +79,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(JVPostingListCtrl.class);
+	private static final Logger logger = Logger.getLogger(JVPostingListCtrl.class);
 
 	protected Window window_JVPostingList;
 	protected Borderlayout borderLayout_JVPostingList;

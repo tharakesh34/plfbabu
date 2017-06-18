@@ -124,7 +124,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private static final long						serialVersionUID	= 1L;
-	private final static Logger						logger				= Logger.getLogger(FeePostingsDialogCtrl.class);
+	private static final Logger						logger				= Logger.getLogger(FeePostingsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

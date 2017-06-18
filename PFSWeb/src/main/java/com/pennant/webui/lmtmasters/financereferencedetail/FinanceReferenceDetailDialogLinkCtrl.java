@@ -108,7 +108,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceReferenceDetail> {
 	private static final long serialVersionUID = -2872130825329784644L;
-	private final static Logger logger = Logger.getLogger(FinanceReferenceDetailDialogLinkCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailDialogLinkCtrl.class);
 
 	/*
 	 * All the components that are defined here

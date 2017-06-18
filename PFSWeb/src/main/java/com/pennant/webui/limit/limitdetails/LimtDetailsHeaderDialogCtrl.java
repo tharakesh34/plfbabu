@@ -26,7 +26,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LimtDetailsHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LimtDetailsHeaderDialogCtrl.class);
 
 	/*
 	 * ************************************************************************

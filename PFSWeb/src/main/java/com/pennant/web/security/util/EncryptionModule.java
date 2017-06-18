@@ -9,7 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 
 public class EncryptionModule {
-	private final static Logger logger = Logger.getLogger(EncryptionModule.class);
+	private static final Logger logger = Logger.getLogger(EncryptionModule.class);
 
 	public EncryptionModule(){
 		super();

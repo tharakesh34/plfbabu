@@ -92,7 +92,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityReferenceDetail> {
 	private static final long serialVersionUID = 4224402842313630803L;
-	private final static Logger logger = Logger.getLogger(FacilityReferenceDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

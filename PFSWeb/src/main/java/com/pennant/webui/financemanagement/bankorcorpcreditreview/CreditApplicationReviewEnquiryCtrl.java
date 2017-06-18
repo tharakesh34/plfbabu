@@ -96,7 +96,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
 	protected Window 			window_CreditApplicationReviewDialog;  // autowired
 	protected Borderlayout		borderlayout_CreditApplicationReview;  // autowired

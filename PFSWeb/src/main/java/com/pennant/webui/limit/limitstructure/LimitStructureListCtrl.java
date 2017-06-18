@@ -78,7 +78,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LimitStructureListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LimitStructureListCtrl.class);
 
 	/*
 	 * ************************************************************************

@@ -81,7 +81,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class ExtendedFieldsGenerator {
-	private final static Logger logger = Logger.getLogger(ExtendedFieldsGenerator.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldsGenerator.class);
 
 	private Window window;
 	private Tabs tabs;

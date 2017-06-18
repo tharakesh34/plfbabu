@@ -97,7 +97,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(EmployerDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EmployerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

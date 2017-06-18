@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class NotificationsListCtrl extends GFCBaseListCtrl<Notifications> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private final static Logger logger = Logger.getLogger(NotificationsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(NotificationsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

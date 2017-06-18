@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> {
 	private static final long serialVersionUID = -2685575893028486510L;
-	private final static Logger logger = Logger.getLogger(SplRateListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SplRateListCtrl.class);
 
 	protected Window window_SplRateList;
 	protected Borderlayout borderLayout_SplRateList;

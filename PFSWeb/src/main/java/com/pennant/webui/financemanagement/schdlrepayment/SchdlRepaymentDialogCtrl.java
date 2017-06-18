@@ -74,7 +74,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class SchdlRepaymentDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(SchdlRepaymentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SchdlRepaymentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

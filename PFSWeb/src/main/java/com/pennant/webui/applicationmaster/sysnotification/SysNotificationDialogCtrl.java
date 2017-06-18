@@ -99,7 +99,7 @@ import freemarker.template.TemplateException;
  */
 public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(SysNotificationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SysNotificationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

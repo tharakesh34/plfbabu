@@ -141,7 +141,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(ReportGenerationPromptDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportGenerationPromptDialogCtrl.class);
 
 	protected Window         window_ReportPromptFilterCtrl;
 	protected Borderlayout   borderlayout;

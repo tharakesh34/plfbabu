@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	private static final long serialVersionUID = -8184469529624754015L;
-	private final static Logger logger = Logger.getLogger(SplRateCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SplRateCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

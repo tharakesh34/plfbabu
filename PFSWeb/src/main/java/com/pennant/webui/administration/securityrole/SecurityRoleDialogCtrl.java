@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	private static final long serialVersionUID = 8969578420575594907L;
-	private final static Logger logger = Logger.getLogger(SecurityRoleDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityRoleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -43,7 +43,7 @@ public class  TemplateEngine {
 	protected DocumentBuilder builder;
 	protected String documentPath;
 	private Document masterDocument;
-	private final static Logger logger = Logger.getLogger(TemplateEngine.class);
+	private static final Logger logger = Logger.getLogger(TemplateEngine.class);
 	
 	public TemplateEngine() throws Exception {
 		loadLicence();

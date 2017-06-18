@@ -34,7 +34,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private final static Logger logger = Logger.getLogger(RuleResultViewCtrl.class);
+	private static final Logger logger = Logger.getLogger(RuleResultViewCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

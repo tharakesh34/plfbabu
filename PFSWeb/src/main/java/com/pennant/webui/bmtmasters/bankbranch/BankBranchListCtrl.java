@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class BankBranchListCtrl extends GFCBaseListCtrl<BankBranch> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(BankBranchListCtrl.class);
+	private static final Logger logger = Logger.getLogger(BankBranchListCtrl.class);
 
 	protected Window window_BankBranchList;
 	protected Borderlayout borderLayout_BankBranchList;

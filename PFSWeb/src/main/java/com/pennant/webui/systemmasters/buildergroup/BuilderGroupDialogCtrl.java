@@ -78,7 +78,7 @@ import com.pennanttech.pff.core.Literal;
  */
 public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

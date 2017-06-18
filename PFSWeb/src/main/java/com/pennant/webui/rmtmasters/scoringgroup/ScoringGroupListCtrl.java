@@ -80,7 +80,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> {
 	private static final long serialVersionUID = -2983341258706724321L;
-	private final static Logger logger = Logger.getLogger(ScoringGroupListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScoringGroupListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

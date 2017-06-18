@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	private static final long serialVersionUID = -210929672381582779L;
-	private final static Logger logger = Logger.getLogger(CityDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

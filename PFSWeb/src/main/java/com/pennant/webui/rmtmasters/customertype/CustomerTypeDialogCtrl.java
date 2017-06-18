@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	private static final long serialVersionUID = 8514232721532245700L;
-	private final static Logger logger = Logger.getLogger(CustomerTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerTypeDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

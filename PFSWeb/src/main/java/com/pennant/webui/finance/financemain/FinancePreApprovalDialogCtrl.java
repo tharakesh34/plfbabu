@@ -66,7 +66,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(FinancePreApprovalDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinancePreApprovalDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

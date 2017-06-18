@@ -28,7 +28,7 @@ import com.pennanttech.pff.core.Literal;
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
-	private final static Logger logger = Logger.getLogger(ImportPresentmentDetailCtrl.class);
+	private static final Logger logger = Logger.getLogger(ImportPresentmentDetailCtrl.class);
 
 	protected Window window_ImportPresentmentDetails;
 	protected Button btnUpload;

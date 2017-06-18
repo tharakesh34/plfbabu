@@ -81,7 +81,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	private static final long serialVersionUID = -3545695595801290469L;
-	private final static Logger logger = Logger.getLogger(SalutationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SalutationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

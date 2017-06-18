@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class AccountingSetListCtrl extends GFCBaseListCtrl<AccountingSet> {
 	private static final long serialVersionUID = 4322539879503951300L;
-	private final static Logger logger = Logger.getLogger(AccountingSetListCtrl.class);
+	private static final Logger logger = Logger.getLogger(AccountingSetListCtrl.class);
 
 	protected Window window_AccountingSetList;
 	protected Borderlayout borderLayout_AccountingSetList;

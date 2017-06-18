@@ -33,7 +33,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private final static Logger logger = Logger.getLogger(PoliceCaseListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PoliceCaseListCtrl.class);
 
 	protected Window window_PoliceCaseList;
 	protected Borderlayout borderLayout_PoliceCaseList;

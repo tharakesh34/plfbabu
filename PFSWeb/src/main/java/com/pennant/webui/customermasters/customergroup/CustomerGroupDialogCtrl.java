@@ -80,7 +80,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	private static final long serialVersionUID = 4865083782879144591L;
-	private final static Logger logger = Logger.getLogger(CustomerGroupDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerGroupDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

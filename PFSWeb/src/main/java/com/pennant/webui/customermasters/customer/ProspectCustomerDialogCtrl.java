@@ -80,7 +80,7 @@ import com.rits.cloning.Cloner;
  */
 public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private final static Logger logger = Logger.getLogger(ProspectCustomerDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProspectCustomerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

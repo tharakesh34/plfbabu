@@ -92,7 +92,7 @@ import com.pennanttech.pff.core.util.ModuleUtil;
  */
 public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields> {
 	private static final long serialVersionUID = -2843265056714842214L;
-	private final static Logger logger = Logger.getLogger(ReportFilterFieldsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportFilterFieldsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

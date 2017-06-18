@@ -64,7 +64,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DealWiseIncomeReportCtrl extends  GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(DealWiseIncomeReportCtrl.class);
+	private static final Logger logger = Logger.getLogger(DealWiseIncomeReportCtrl.class);
 
 	protected Window window_DealWiseIncomeReportCtrl;
 	

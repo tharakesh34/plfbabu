@@ -120,7 +120,7 @@ import com.pennant.webui.util.MessageUtil;
 public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(VASConfigurationDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(VASConfigurationDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 

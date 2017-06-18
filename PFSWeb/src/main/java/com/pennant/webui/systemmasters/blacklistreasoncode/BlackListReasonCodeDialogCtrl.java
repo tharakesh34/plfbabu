@@ -77,7 +77,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCode> {
 	private static final long serialVersionUID = 374144767782969911L;
-	private final static Logger logger = Logger.getLogger(BlackListReasonCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BlackListReasonCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
