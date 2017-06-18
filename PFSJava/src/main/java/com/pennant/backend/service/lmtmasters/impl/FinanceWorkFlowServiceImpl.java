@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> implements FinanceWorkFlowService {
 	
-	private final static Logger logger = Logger.getLogger(FinanceWorkFlowServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceWorkFlowServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;

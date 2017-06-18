@@ -24,7 +24,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class FinJointAccountDetailValidation {
 
-	private final static Logger logger = Logger.getLogger(FinJointAccountDetailValidation.class);
+	private static final Logger logger = Logger.getLogger(FinJointAccountDetailValidation.class);
 	private JountAccountDetailDAO jountAccountDetailDAO;
 
 	public FinJointAccountDetailValidation(JountAccountDetailDAO jountAccountDetailDAO) {

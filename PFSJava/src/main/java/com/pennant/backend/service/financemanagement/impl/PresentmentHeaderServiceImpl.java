@@ -83,7 +83,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PresentmentHeader</b>.<br>
  */
 public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHeader> implements PresentmentHeaderService {
-	private final static Logger logger = Logger.getLogger(PresentmentHeaderServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PresentmentHeaderDAO presentmentHeaderDAO;

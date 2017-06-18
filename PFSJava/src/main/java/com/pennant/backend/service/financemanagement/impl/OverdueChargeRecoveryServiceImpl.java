@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChargeRecovery> implements OverdueChargeRecoveryService {
-	private final static Logger logger = Logger.getLogger(OverdueChargeRecoveryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(OverdueChargeRecoveryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private OverdueChargeRecoveryDAO overdueChargeRecoveryDAO;

@@ -14,7 +14,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class HandlingInstructionService {
 
-	private final static Logger logger = Logger.getLogger(HandlingInstructionService.class);
+	private static final Logger logger = Logger.getLogger(HandlingInstructionService.class);
 	
 	private FinanceMaintenanceProcess 		financeMaintenanceProcess;
 	private FinanceReferenceDetailDAO 		financeReferenceDetailDAO;

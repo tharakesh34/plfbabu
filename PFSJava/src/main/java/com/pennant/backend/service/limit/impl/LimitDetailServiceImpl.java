@@ -103,7 +103,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class LimitDetailServiceImpl extends GenericService<LimitDetails> implements LimitDetailService {
-	private final static Logger logger = Logger.getLogger(LimitDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LimitDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LimitHeaderDAO limitHeaderDAO;

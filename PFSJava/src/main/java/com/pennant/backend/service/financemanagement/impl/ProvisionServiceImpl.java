@@ -81,7 +81,7 @@ import com.pennanttech.pff.core.InterfaceException;
  * 
  */
 public class ProvisionServiceImpl extends  GenericFinanceDetailService implements ProvisionService {
-	private final static Logger logger = Logger.getLogger(ProvisionServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ProvisionServiceImpl.class);
 
 	private ProvisionDAO provisionDAO;
 	private ProvisionMovementDAO provisionMovementDAO;

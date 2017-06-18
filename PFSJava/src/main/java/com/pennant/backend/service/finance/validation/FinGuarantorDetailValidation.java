@@ -17,7 +17,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinGuarantorDetailValidation {
 
-	private final static Logger logger = Logger.getLogger(FinGuarantorDetailValidation.class);
+	private static final Logger logger = Logger.getLogger(FinGuarantorDetailValidation.class);
 	private GuarantorDetailDAO guarantorDetailDAO;
 
 	public FinGuarantorDetailValidation(GuarantorDetailDAO guarantorDetailDAO) {

@@ -61,7 +61,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinContractAssetDetailValidation {
 	
-	private final static Logger logger = Logger.getLogger(FinContractAssetDetailValidation.class);
+	private static final Logger logger = Logger.getLogger(FinContractAssetDetailValidation.class);
 	private ContractorAssetDetailDAO contractorAssetDetailDAO;
 	
 	public FinContractAssetDetailValidation(ContractorAssetDetailDAO contractorAssetDetailDAO) {

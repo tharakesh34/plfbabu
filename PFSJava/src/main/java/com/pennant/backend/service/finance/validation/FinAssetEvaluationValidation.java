@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinAssetEvaluationValidation {
 	
-	private final static Logger logger = Logger.getLogger(FinAssetEvaluationValidation.class);	
+	private static final Logger logger = Logger.getLogger(FinAssetEvaluationValidation.class);	
 	private FinAssetEvaluationDAO finAssetEvaluationDAO;
 	
 	public FinAssetEvaluationValidation(FinAssetEvaluationDAO finAssetEvaluationDAO) {

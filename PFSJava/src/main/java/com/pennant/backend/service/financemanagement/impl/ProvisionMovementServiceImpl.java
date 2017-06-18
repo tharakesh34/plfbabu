@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ProvisionMovementServiceImpl extends GenericService<ProvisionMovement> implements ProvisionMovementService {
-	private final static Logger logger = Logger.getLogger(ProvisionMovementServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ProvisionMovementServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvisionMovementDAO provisionMovementDAO;

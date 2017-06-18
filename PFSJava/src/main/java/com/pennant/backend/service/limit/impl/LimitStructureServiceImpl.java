@@ -72,7 +72,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class LimitStructureServiceImpl extends GenericService<LimitStructure> implements LimitStructureService {
-	private final static Logger logger = Logger.getLogger(LimitStructureServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LimitStructureServiceImpl.class);
 
 	
 	
