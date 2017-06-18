@@ -4821,16 +4821,16 @@
 	</bean>
 
 	<!-- Finance Tax Detail -->
-	<!-- <bean id="financeTaxDetailListCtrl"
-		class="com.pennant.webui.finance.financemain.FinanceTaxDetailListCtrl"
+	<bean id="financeTaxDetailListCtrl"
+		class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 	</bean>
 	<bean id="financeTaxDetailDialogCtrl"
-		class="com.pennant.webui.finance.financemain.FinanceTaxDetailDialogCtrl"
+		class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
-	</bean> -->
+	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl"
 		parent="basisListCtrl" scope="prototype">

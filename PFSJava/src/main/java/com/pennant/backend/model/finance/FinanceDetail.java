@@ -66,6 +66,7 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -211,6 +212,7 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	@XmlElement(name="mandateDetail")
 	private Mandate mandate;
+	private FinanceTaxDetail taxDetail;
 	
 	@XmlElementWrapper(name="financeFlags")
 	@XmlElement(name="financeFlag")
@@ -822,6 +824,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setForeClosureDetails(List<ForeClosure> foreClosureDetails) {
 		this.foreClosureDetails = foreClosureDetails;
+	}
+
+	public FinanceTaxDetail getTaxDetail() {
+		return taxDetail;
+	}
+
+	public void setTaxDetail(FinanceTaxDetail taxDetail) {
+		this.taxDetail = taxDetail;
 	}
 
 

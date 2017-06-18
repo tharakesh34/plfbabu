@@ -42,17 +42,23 @@
 */
 package com.pennant.backend.service.finance.impl;
 
+import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -250,8 +256,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			financeTaxDetail.setNextTaskId("");
 			financeTaxDetail.setWorkflowId(0);
 
-			if (financeTaxDetail.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (financeTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				financeTaxDetail.setRecordType("");
 				getFinanceTaxDetailDAO().save(financeTaxDetail, TableType.MAIN_TAB);
@@ -322,7 +327,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
 			logger.debug(Literal.ENTERING);
 			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 			auditHeader.setAuditDetail(auditDetail);
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader=nextProcess(auditHeader);
@@ -341,11 +346,72 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		 * @return
 		 */
 		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 			logger.debug(Literal.ENTERING);
 			
-			// Write the required validation over hear.
-			
+			auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
+			FinanceTaxDetail taxDetail = (FinanceTaxDetail) auditDetail.getModelData();
+
+			FinanceTaxDetail tempMandate = null;
+			if (taxDetail.isWorkflow()) {
+				tempMandate = getFinanceTaxDetailDAO().getFinanceTaxDetail(taxDetail.getId(), "_Temp");
+			}
+			FinanceTaxDetail befMandate = getFinanceTaxDetailDAO().getFinanceTaxDetail(taxDetail.getId(), "");
+			FinanceTaxDetail oldMandate = taxDetail.getBefImage();
+
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(taxDetail.getId());
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			if (taxDetail.isNew()) { // for New record or new record into work flow
+
+				if (!taxDetail.isWorkflow()) {// With out Work flow only new records  
+					if (befMandate != null) { // Record Already Exists in the table then error  
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					}
+				} else { // with work flow
+					if (taxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+						if (befMandate != null || tempMandate != null) { // if records already exists in the main table
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+						}
+					} else { // if records not exists in the Main flow table				
+						if (befMandate == null || tempMandate != null) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						}
+					}
+				}
+			} else {
+				// for work flow process records or (Record to update or Delete with out work flow)
+				if (!taxDetail.isWorkflow()) { // With out Work flow for update and delete
+
+					if (befMandate == null) { // if records not exists in the main table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					} else {
+						if (oldMandate != null && !oldMandate.getLastMntOn().equals(befMandate.getLastMntOn())) {
+							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+							} else {
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							}
+						}
+					}
+				} else {
+
+					if (tempMandate == null) { // if records not exists in the Work flow table 
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					}
+
+					if (tempMandate != null && oldMandate != null && !oldMandate.getLastMntOn().equals(tempMandate.getLastMntOn())) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					}
+				}
+			}
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+			if (StringUtils.trimToEmpty(method).equals("doApprove") || !taxDetail.isWorkflow()) {
+				auditDetail.setBefImage(befMandate);
+			}
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;

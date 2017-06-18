@@ -70,6 +70,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceRejectDetailDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
@@ -142,6 +143,7 @@ import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -240,6 +242,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
 	private PromotionDAO					promotionDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
+	private FinanceTaxDetailDAO				financeTaxDetailDAO;
 
 	
 	public FinanceDetailServiceImpl() {
@@ -414,6 +417,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeMain.getMandateID() != 0) {
 			financeDetail.setMandate(getFinMandateService().getMnadateByID(financeMain.getMandateID()));
 		}
+		
+		// Finance Tax Detail
+		financeDetail.setTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_View"));
 
 		//Contributor Details
 		if (scheduleData.getFinanceType().isAllowRIAInvestment()) {
@@ -1814,7 +1820,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						.saveDetailList(financeDetail.getRolledoverFinanceHeader().getRolledoverFinanceDetails(),
 								tableType.getSuffix());
 			}
-
+			
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, isWIF);
 
@@ -1851,6 +1857,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getRolledoverFinanceDAO()
 						.saveDetailList(financeDetail.getRolledoverFinanceHeader().getRolledoverFinanceDetails(),
 								tableType.getSuffix());
+			}
+			
+		}
+		
+		// Save or Update FInance Tax Details
+		if (financeDetail.getTaxDetail() != null) {
+			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+			taxDetail.setFinReference(finReference);
+			if(taxDetail.isNew()){
+				getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
+			}else{
+				getFinanceTaxDetailDAO().update(financeDetail.getTaxDetail(), tableType);
 			}
 		}
 
@@ -3148,7 +3166,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 					}
 				}
-
+				
 				//Schedule Details
 				//=======================================
 				listSave(financeDetail.getFinScheduleData(), "", isWIF, 0);
@@ -3170,6 +3188,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//===========================================
 				saveSecondaryAccountList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF,
 						"");
+				
+				// Save FInance Tax Details
+				if (financeDetail.getTaxDetail() != null) {
+					financeDetail.getTaxDetail().setRecordType("");
+					financeDetail.getTaxDetail().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), TableType.MAIN_TAB);
+				}
 
 				//Indicative Term Sheet Details Maintenance
 				//=======================================
@@ -3602,6 +3627,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getRolledoverFinanceDAO().deleteListByRef(financeMain.getFinReference(), "_Temp");
 			}
 
+			// Save FInance Tax Details
+			if (financeDetail.getTaxDetail() != null) {
+				getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+			}
+			
 			// ScheduleDetails delete
 			//=======================================
 			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
@@ -4550,6 +4580,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else if (StringUtils.equals(befFinMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
 				getFinPlanEmiHolidayDAO().deletePlanEMIHDates(financeMain.getFinReference(), "_Temp");
 			}
+		}
+		
+		// Delete Tax Details
+		if(financeDetail.getTaxDetail() != null){
+			getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
 		}
 
 		// Finance Main Details Deletion
@@ -8472,6 +8507,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 }

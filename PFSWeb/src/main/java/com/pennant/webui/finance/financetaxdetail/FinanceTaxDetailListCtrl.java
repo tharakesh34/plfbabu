@@ -62,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financetaxdetail.model.FinanceTaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -136,8 +137,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	public void onCreate$window_FinanceTaxDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_FinanceTaxDetailList, borderLayout_FinanceTaxDetailList, listBoxFinanceTaxDetail,
-				pagingFinanceTaxDetailList);
+		setPageComponents(window_FinanceTaxDetailList, borderLayout_FinanceTaxDetailList, listBoxFinanceTaxDetail, pagingFinanceTaxDetailList);
 		setItemRender(new FinanceTaxDetailListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -146,25 +146,17 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
 		registerField("applicableFor", listheader_ApplicableFor, SortOrder.NONE, applicableFor, sortOperator_ApplicableFor, Operators.STRING);
-		registerField("applicableForName");
 		registerField("taxExempted", listheader_TaxExempted, SortOrder.NONE, taxExempted, sortOperator_TaxExempted, Operators.BOOLEAN);
 		registerField("taxNumber", listheader_TaxNumber, SortOrder.NONE, taxNumber, sortOperator_TaxNumber, Operators.STRING);
-		registerField("addrLine1");		
-		registerField("addrLine2");		
-		registerField("addrLine3");		
-		registerField("addrLine4");		
-		registerField("country");		
-		registerField("countryName");
-		registerField("province");		
-		registerField("provinceName");
 		registerField("city", listheader_City, SortOrder.NONE, city, sortOperator_City, Operators.STRING);
-		registerField("cityName");
 		registerField("pinCode", listheader_PinCode, SortOrder.NONE, pinCode, sortOperator_PinCode, Operators.STRING);
-		registerField("pinCodeName");
+		
+		fillComboBox(applicableFor, "", PennantStaticListUtil.getTaxApplicableFor(), "");
 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -217,7 +209,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	 */
 
 	public void onFinanceTaxDetailItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinanceTaxDetail.getSelectedItem();
@@ -258,11 +250,11 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("financetaxdetail", financetaxdetail);
-		arg.put("financetaxdetailListCtrl", this);
+		arg.put("financeTaxDetail", financetaxdetail);
+		arg.put("financeTaxDetailListCtrl", this);
 		
 		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);

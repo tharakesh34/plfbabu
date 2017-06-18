@@ -52,7 +52,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.util.PennantJavaUtil;
-
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -65,7 +66,6 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 	public FinanceTaxDetailListModelItemRenderer() {
 		super();
 	}
-
 	
 	@Override
 	public void render(Listitem item, FinanceTaxDetail financeTaxDetail, int count) throws Exception {
@@ -73,7 +73,7 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 		Listcell lc;
 	  	lc = new Listcell(financeTaxDetail.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(financeTaxDetail.getApplicableForName());
+		lc = new Listcell(PennantAppUtil.getlabelDesc(financeTaxDetail.getApplicableFor(), PennantStaticListUtil.getTaxApplicableFor()));
 	  	lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbTaxExempted = new Checkbox();
@@ -92,7 +92,6 @@ public class FinanceTaxDetailListModelItemRenderer implements ListitemRenderer<F
 		lc = new Listcell(PennantJavaUtil.getLabel(financeTaxDetail.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("finReference", financeTaxDetail.getFinReference());
-		
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinanceTaxDetailItemDoubleClicked");
 	}
 }

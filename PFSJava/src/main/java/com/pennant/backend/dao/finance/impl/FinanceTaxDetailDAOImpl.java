@@ -84,7 +84,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		sql.append(" finReference, applicableFor, taxExempted, taxNumber, addrLine1, addrLine2, ");
 		sql.append(" addrLine3, addrLine4, country, province, city, pinCode, ");
 		if(type.contains("View")){
-			sql.append("applicableFor,country,province,city,pinCode,");
+			sql.append("countryName,provinceName,cityName,pinCodeName,");
 		}	
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );

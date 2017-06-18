@@ -189,6 +189,7 @@ import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.TATDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -253,6 +254,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.dedup.dedupparm.DedupValidation;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
+import com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -710,6 +712,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient DisbursementDetailDialogCtrl			disbursementDetailDialogCtrl;
 	private transient DeviationDetailDialogCtrl				deviationDetailDialogCtrl;
 	private transient MandateDialogCtrl						mandateDialogCtrl;
+	private transient FinanceTaxDetailDialogCtrl			financeTaxDetailDialogCtrl;
 	private transient EtihadCreditBureauDetailDialogCtrl	etihadCreditBureauDetailDialogCtrl;
 	private transient BundledProductsDetailDialogCtrl		bundledProductsDetailDialogCtrl;
 	private transient FinAssetEvaluationDialogCtrl			finAssetEvaluationDialogCtrl;
@@ -2362,6 +2365,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
+			FinanceTaxDetail financetaxdetail = getFinanceDetail().getTaxDetail();
+			if(financetaxdetail == null){
+				financetaxdetail = new FinanceTaxDetail();
+				financetaxdetail.setNewRecord(true);
+			}
+			map.put("financeTaxDetail", financetaxdetail);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_TAX), map);
 		}
@@ -2487,6 +2496,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_MANDATE:
 			mandateDialogCtrl.doSetLabels(getFinBasicDetails());
+			break;
+		case AssetConstants.UNIQUE_ID_TAX:
+			financeTaxDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_CONTRIBUTOR:
 			contributorDetailsDialogCtrl.doSetLabels(getFinBasicDetails());
@@ -5871,6 +5883,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
 		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
 			mandateDialogCtrl.doSave_Mandate(aFinanceDetail, mandateTab, recSave);
+		}
+		
+		// Tax Detail
+		Tab taxTab = getTab(AssetConstants.UNIQUE_ID_TAX);
+		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
+			financeTaxDetailDialogCtrl.doSave_Tax(aFinanceDetail, taxTab, recSave);
+		}else{
+			aFinanceDetail.setTaxDetail(null);
 		}
 
 		// Finance Additional Details Tab ----> For Saving The Additional Fields
@@ -16059,6 +16079,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
+	}
+
+	public FinanceTaxDetailDialogCtrl getFinanceTaxDetailDialogCtrl() {
+		return financeTaxDetailDialogCtrl;
+	}
+
+	public void setFinanceTaxDetailDialogCtrl(FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl) {
+		this.financeTaxDetailDialogCtrl = financeTaxDetailDialogCtrl;
 	}
 
 }
