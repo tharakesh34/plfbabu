@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class CourseTypeServiceImpl extends GenericService<CourseType> implements CourseTypeService {
-	private final static Logger logger = Logger.getLogger(CourseTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CourseTypeServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private CourseTypeDAO courseTypeDAO;
 

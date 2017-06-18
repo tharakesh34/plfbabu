@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class VehicleManufacturerServiceImpl extends GenericService<VehicleManufacturer> implements VehicleManufacturerService {
-	private final static Logger logger = Logger.getLogger(VehicleManufacturerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VehicleManufacturerServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleManufacturerDAO vehicleManufacturerDAO;
 

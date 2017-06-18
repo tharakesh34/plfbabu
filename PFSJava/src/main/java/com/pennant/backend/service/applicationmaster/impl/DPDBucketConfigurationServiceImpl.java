@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketConfiguration> implements
 		DPDBucketConfigurationService {
-	private final static Logger			logger	= Logger.getLogger(DPDBucketConfigurationServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(DPDBucketConfigurationServiceImpl.class);
 
 	private AuditHeaderDAO				auditHeaderDAO;
 	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;

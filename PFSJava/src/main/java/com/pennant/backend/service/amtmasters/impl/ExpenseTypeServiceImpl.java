@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implements ExpenseTypeService {
-	private final static Logger logger = Logger.getLogger(ExpenseTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ExpenseTypeServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private ExpenseTypeDAO expenseTypeDAO;
 

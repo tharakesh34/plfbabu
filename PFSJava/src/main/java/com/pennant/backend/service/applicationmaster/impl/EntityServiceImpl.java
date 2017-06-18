@@ -61,7 +61,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Entity</b>.<br>
  */
 public class EntityServiceImpl extends GenericService<Entity> implements EntityService {
-	private final static Logger logger = Logger.getLogger(EntityServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(EntityServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private EntityDAO entityDAO;

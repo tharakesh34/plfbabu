@@ -56,7 +56,7 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantConstants;
 
 public class AuditHeader implements java.io.Serializable,Entity {
-	//private final static Logger logger = Logger.getLogger(AuditHeader.class);
+	//private static final Logger logger = Logger.getLogger(AuditHeader.class);
 	private static final long serialVersionUID = -53442181146054373L;
 
 	private long auditId = Long.MIN_VALUE;

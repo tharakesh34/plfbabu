@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 public class CommitmentRuleData {
-	private final static Logger logger = Logger.getLogger(CommitmentRuleData.class);
+	private static final Logger logger = Logger.getLogger(CommitmentRuleData.class);
 	private BigDecimal cmtAmount;
 	private BigDecimal cmtAmountOther;
 	private BigDecimal cmtUtilized;

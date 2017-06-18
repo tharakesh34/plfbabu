@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>ChequePurpose</b>.<br>
  */
 public class ChequePurposeServiceImpl extends GenericService<ChequePurpose> implements ChequePurposeService {
-	private final static Logger logger = Logger.getLogger(ChequePurposeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ChequePurposeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

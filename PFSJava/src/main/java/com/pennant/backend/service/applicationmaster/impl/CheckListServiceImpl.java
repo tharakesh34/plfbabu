@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class CheckListServiceImpl extends GenericService<CheckList> implements CheckListService {
-	private final static Logger logger = Logger.getLogger(CheckListServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CheckListServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

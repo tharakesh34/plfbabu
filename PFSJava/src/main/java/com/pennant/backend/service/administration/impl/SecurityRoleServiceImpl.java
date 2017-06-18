@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implements SecurityRoleService {
-	private final static Logger logger = Logger.getLogger(SecurityRoleServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SecurityRoleServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 
 	private SecurityRoleDAO securityRoleDAO;

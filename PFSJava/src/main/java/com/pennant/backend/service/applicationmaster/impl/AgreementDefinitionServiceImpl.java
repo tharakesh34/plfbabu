@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefinition> implements AgreementDefinitionService {
-	private final static Logger logger = Logger.getLogger(AgreementDefinitionServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AgreementDefinitionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

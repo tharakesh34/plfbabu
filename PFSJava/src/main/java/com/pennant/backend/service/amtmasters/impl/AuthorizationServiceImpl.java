@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class AuthorizationServiceImpl extends GenericService<Authorization> implements AuthorizationService {
-	private final static Logger logger = Logger.getLogger(AuthorizationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AuthorizationServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	
