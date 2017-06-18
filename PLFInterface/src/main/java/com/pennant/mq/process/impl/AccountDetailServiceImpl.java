@@ -16,7 +16,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDetailServiceImpl implements AccountDetailProcess {
 
-	private final static Logger logger = Logger.getLogger(AccountDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AccountDetailServiceImpl.class);
 
 	private FetchAllAccountsProcess fetchAllAccountsProcess;
 	private FetchAccountDetailProcess fetchAccountDetailProcess;

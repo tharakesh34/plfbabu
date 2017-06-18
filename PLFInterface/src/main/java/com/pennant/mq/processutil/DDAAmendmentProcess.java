@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAAmendmentProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(DDAAmendmentProcess.class);
+	private static final Logger logger = Logger.getLogger(DDAAmendmentProcess.class);
 
 	public DDAAmendmentProcess() {
 		super();

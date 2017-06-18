@@ -18,7 +18,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitDetailProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(CustomerLimitDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(CustomerLimitDetailProcess.class);
 
 	public CustomerLimitDetailProcess() {
 		super();

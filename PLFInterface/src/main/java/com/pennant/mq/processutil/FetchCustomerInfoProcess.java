@@ -36,7 +36,7 @@ enum ADDRESSTYPES {
 
 public class FetchCustomerInfoProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(FetchCustomerInfoProcess.class);
+	private static final Logger logger = Logger.getLogger(FetchCustomerInfoProcess.class);
 
 	public FetchCustomerInfoProcess() {
 		super();

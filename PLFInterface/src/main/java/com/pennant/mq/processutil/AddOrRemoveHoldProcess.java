@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class AddOrRemoveHoldProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(AddOrRemoveHoldProcess.class);
+	private static final Logger logger = Logger.getLogger(AddOrRemoveHoldProcess.class);
 
 	public AddOrRemoveHoldProcess() {
 		super();

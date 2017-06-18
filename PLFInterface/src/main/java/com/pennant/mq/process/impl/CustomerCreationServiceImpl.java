@@ -20,7 +20,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 
-	private final static Logger logger = Logger.getLogger(CustomerCreationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerCreationServiceImpl.class);
 	
 	private AddNewCustomerProcess addNewCustomerProcess;
 	private CustomerDedupProcess customerDedupProcess;

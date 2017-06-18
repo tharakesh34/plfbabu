@@ -13,7 +13,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
-	private final static Logger logger = Logger.getLogger(NationalBondProcessImpl.class);
+	private static final Logger logger = Logger.getLogger(NationalBondProcessImpl.class);
 
 	public NationalBondProcessImpl() {
 		super();

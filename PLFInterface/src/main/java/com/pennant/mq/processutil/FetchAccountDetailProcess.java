@@ -21,7 +21,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchAccountDetailProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(FetchAccountDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(FetchAccountDetailProcess.class);
 
 	public FetchAccountDetailProcess() {
 		super();

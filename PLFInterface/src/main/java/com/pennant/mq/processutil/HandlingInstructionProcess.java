@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class HandlingInstructionProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(HandlingInstructionProcess.class);
+	private static final Logger logger = Logger.getLogger(HandlingInstructionProcess.class);
 
 	public HandlingInstructionProcess() {
 		super();

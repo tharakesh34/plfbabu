@@ -17,7 +17,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDataServiceImpl implements CustomerDataProcess {
-	private final static Logger logger = Logger.getLogger(CustomerDataServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerDataServiceImpl.class);
 	
 	private FetchCustomerInfoProcess fetchCustomerInfoProcess;
 	private FinCustomerDetailProcess finCustomerDetailProcess;

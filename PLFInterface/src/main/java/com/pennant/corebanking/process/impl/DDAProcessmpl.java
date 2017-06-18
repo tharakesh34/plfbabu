@@ -12,7 +12,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAProcessmpl implements DDAProcess {
 
-	private final static Logger logger = Logger.getLogger(DDAProcessmpl.class);
+	private static final Logger logger = Logger.getLogger(DDAProcessmpl.class);
 	
 	public DDAProcessmpl() {
 		

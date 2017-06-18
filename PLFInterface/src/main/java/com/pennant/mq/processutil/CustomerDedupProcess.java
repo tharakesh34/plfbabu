@@ -23,7 +23,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDedupProcess extends MQProcess  {
 
-	private final static Logger logger = Logger.getLogger(CustomerDedupProcess.class);
+	private static final Logger logger = Logger.getLogger(CustomerDedupProcess.class);
 
 	public CustomerDedupProcess() {
 		super();

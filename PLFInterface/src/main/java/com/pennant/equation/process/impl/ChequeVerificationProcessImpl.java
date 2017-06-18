@@ -12,7 +12,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class ChequeVerificationProcessImpl implements ChequeVerificationProcess {
 	
-	private final static Logger logger = Logger.getLogger(ChequeVerificationProcessImpl.class);
+	private static final Logger logger = Logger.getLogger(ChequeVerificationProcessImpl.class);
 
 	public ChequeVerificationProcessImpl() {
 		super();

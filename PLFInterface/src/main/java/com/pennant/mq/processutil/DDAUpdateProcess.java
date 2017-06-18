@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAUpdateProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(DDAUpdateProcess.class);
+	private static final Logger logger = Logger.getLogger(DDAUpdateProcess.class);
 
 	public DDAUpdateProcess() {
 		super();

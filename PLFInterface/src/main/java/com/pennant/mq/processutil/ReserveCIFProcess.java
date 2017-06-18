@@ -17,7 +17,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class ReserveCIFProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(ReserveCIFProcess.class);
+	private static final Logger logger = Logger.getLogger(ReserveCIFProcess.class);
 
 	public ReserveCIFProcess() {
 		super();

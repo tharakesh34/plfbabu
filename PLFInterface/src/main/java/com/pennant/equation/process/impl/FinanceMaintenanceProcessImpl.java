@@ -8,7 +8,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 
-private final static Logger logger = Logger.getLogger(FinanceMaintenanceProcessImpl.class);
+private static final Logger logger = Logger.getLogger(FinanceMaintenanceProcessImpl.class);
 	
 	public FinanceMaintenanceProcessImpl() {
 		
