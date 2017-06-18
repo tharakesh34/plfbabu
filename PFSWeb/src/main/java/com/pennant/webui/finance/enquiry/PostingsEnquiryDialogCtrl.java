@@ -59,7 +59,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -68,6 +67,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;

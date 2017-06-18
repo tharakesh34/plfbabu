@@ -72,7 +72,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -112,6 +111,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
