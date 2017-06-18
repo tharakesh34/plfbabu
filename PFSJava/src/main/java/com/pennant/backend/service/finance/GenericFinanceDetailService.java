@@ -1288,7 +1288,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
 		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner()) ?  FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
-		if(StringUtils.isEmpty(financeDetail.getModuleDefiner())){
+		if(financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)){
 			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
 		}else{
 			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
