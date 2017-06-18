@@ -83,8 +83,6 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 		super.pageRightName = "WorkFlowDialog";
 	}
 
-	// Component Events
-
 	/**
 	 * Before binding the data and calling the dialog window we check, if the
 	 * ZUL-file is called with a parameter for a selected WorkFlow object in a
@@ -160,10 +158,9 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	public void doShowDialog(WorkFlowDetails aWorkFlowDetails) throws Exception {
 		logger.debug("Entering");
 		try {
-			// fill the components with the data
 			doWriteBeanToComponents(aWorkFlowDetails);
 
-			setDialog(DialogType.EMBEDDED); // open the dialog in modal
+			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e){
 			logger.error("Exception: ", e);
 			this.window_workflowDesign.onClose();
