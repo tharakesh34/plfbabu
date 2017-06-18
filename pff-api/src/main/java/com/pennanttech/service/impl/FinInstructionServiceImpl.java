@@ -62,7 +62,7 @@ import com.pennanttech.ws.service.FinanceValidationService;
 @Service
 public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
 
-	private final static Logger			logger	= Logger.getLogger(FinInstructionServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController	finServiceInstController;
 	private AddRepaymentService			addRepaymentService;

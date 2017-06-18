@@ -34,7 +34,7 @@ import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class VASController {
-	private final static Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
 	private VASRecordingService		vASRecordingService;
 	private VASConfigurationService	vASConfigurationService;
 

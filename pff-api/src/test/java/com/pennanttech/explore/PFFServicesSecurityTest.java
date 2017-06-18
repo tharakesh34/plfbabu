@@ -24,10 +24,10 @@ import org.testng.annotations.Test;
 
 public class PFFServicesSecurityTest {
 
-	private final static String ENDPOINT_ADDRESS = "http://localhost:8080/pff-api/services/academicRest";
-	private final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
-	private final static String ACADEMIC_SERVICE_PATH = "academicService/";
-	private final static String ACADEMIC_SERVICE_ID3_DETAILS = ACADEMIC_SERVICE_PATH + "getAcademicDetailsRequest/3";
+	private static final String ENDPOINT_ADDRESS = "http://localhost:8080/pff-api/services/academicRest";
+	private static final String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
+	private static final String ACADEMIC_SERVICE_PATH = "academicService/";
+	private static final String ACADEMIC_SERVICE_ID3_DETAILS = ACADEMIC_SERVICE_PATH + "getAcademicDetailsRequest/3";
 
 	@BeforeClass
 	public static void initialize() throws Exception {

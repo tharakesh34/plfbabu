@@ -31,7 +31,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class VASWebServiceImpl implements VASSoapService, VASRestService {
 
-	private final static Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(VASWebServiceImpl.class);
 
 	private ValidationUtility		validationUtility;
 	private VASConfigurationService	vASConfigurationService;

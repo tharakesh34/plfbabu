@@ -28,16 +28,16 @@ import org.testng.annotations.Test;
 
 public class BeneficiaryServiceTestCases {
 
-	private final static String ENDPOINT_ADDRESS = "http://192.168.1.146:8080/pff-api/services/beneficiaryRest";
-	private final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
-	private final static String BENEFICIARY_SERVICE_PATH = "/beneficiaryService";
-	private final static String BENEFICIARY_SERVICE_BENEFICIARY_DETAILS = BENEFICIARY_SERVICE_PATH
+	private static final String ENDPOINT_ADDRESS = "http://192.168.1.146:8080/pff-api/services/beneficiaryRest";
+	private static final String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
+	private static final String BENEFICIARY_SERVICE_PATH = "/beneficiaryService";
+	private static final String BENEFICIARY_SERVICE_BENEFICIARY_DETAILS = BENEFICIARY_SERVICE_PATH
 			+ "/getBeneficiary/1";
-	private final static String BENEFICIARY_SERVICE_BENEFICIARIES_DETAILS = BENEFICIARY_SERVICE_PATH
+	private static final String BENEFICIARY_SERVICE_BENEFICIARIES_DETAILS = BENEFICIARY_SERVICE_PATH
 			+ "/getBeneficiaries/000002";
-	private final static String BENEFICIARY_SERVICE_CREATION = BENEFICIARY_SERVICE_PATH + "/createBeneficiary";
-	private final static String BENEFICIARY_SERVICE_UPDATE = BENEFICIARY_SERVICE_PATH + "/updateBeneficiary";
-	private final static String BENEFICIARY_SERVICE_DELETE = BENEFICIARY_SERVICE_PATH + "/deleteBeneficiary/16";
+	private static final String BENEFICIARY_SERVICE_CREATION = BENEFICIARY_SERVICE_PATH + "/createBeneficiary";
+	private static final String BENEFICIARY_SERVICE_UPDATE = BENEFICIARY_SERVICE_PATH + "/updateBeneficiary";
+	private static final String BENEFICIARY_SERVICE_DELETE = BENEFICIARY_SERVICE_PATH + "/deleteBeneficiary/16";
 
 	private String createBeneficiaryReq = "{\"cif\": \"000157\",\"bankCode\": \"\",\"branchCode\": \"\",\"ifsc\": \"AB869347\",\"accountNo\": \"10102001\",\"acHolderName\": \"Ramu\",\"phoneCountryCode\": \"\",\"phoneAreaCode\": \"\",\"phoneNumber\": \"\" }";
 	private String updateBeneficiaryReq = "{\"beneficiaryId\":16,\"cif\": \"000157\",\"bankCode\": \"\",\"branchCode\": \"\",\"ifsc\": \"AB869347\",\"accountNo\": \"10102001\",\"acHolderName\": \"Krishna\",\"phoneCountryCode\": \"\",\"phoneAreaCode\": \"\",\"phoneNumber\": \"\" }";

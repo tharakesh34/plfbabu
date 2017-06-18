@@ -36,7 +36,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, CreateFinanceRestService {
 
-	private final static Logger		logger	= Logger.getLogger(CreateFinanceWebServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(CreateFinanceWebServiceImpl.class);
 
 	private CreateFinanceController	createFinanceController;
 	private CustomerDetailsService	customerDetailsService;

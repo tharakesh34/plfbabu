@@ -83,7 +83,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
 
-	private final static Logger			logger	= Logger.getLogger(CreateFinanceController.class);
+	private static final Logger			logger	= Logger.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private CustomerDetailsService		customerDetailsService;

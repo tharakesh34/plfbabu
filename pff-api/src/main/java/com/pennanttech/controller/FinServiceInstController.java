@@ -100,7 +100,7 @@ import com.rits.cloning.Cloner;
 
 public class FinServiceInstController extends SummaryDetailService {
 
-	private final static Logger			logger	= Logger.getLogger(FinServiceInstController.class);
+	private static final Logger			logger	= Logger.getLogger(FinServiceInstController.class);
 
 	private FinanceDetailService		financeDetailService;
 	private RateChangeService			rateChangeService;

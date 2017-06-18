@@ -26,7 +26,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPService {
-	private final static Logger logger = Logger.getLogger(WorkFlowWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(WorkFlowWebServiceImpl.class);
 	@Autowired
 	WorkFlowDetailsService workFlowDetailsService;
 	private  final String Create = "create";
