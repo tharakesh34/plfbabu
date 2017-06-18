@@ -10,7 +10,7 @@ import org.quartz.SchedulerException;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 
 public class ApplicationStartup implements ServletContextListener {
-	private final static Logger logger = Logger.getLogger(ApplicationStartup.class);
+	private static final Logger logger = Logger.getLogger(ApplicationStartup.class);
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {

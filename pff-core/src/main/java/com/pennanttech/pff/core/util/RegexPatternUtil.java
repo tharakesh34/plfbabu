@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.Literal;
  * </p>
  */
 public class RegexPatternUtil {
-	private final static Logger			logger			= Logger.getLogger(RegexPatternUtil.class);
+	private static final Logger			logger			= Logger.getLogger(RegexPatternUtil.class);
 
 	private static Map<String, String>	regExPatterns	= new HashMap<String, String>();
 

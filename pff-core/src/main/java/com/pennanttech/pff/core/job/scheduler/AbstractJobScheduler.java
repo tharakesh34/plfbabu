@@ -13,7 +13,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
 public abstract class AbstractJobScheduler {
-	public final static Logger logger = Logger.getLogger(AbstractJobScheduler.class);
+	public static final Logger logger = Logger.getLogger(AbstractJobScheduler.class);
 	public static Map<String, JobSchedulerDetails> JOB_SCHEDULER_MAP = new HashMap<String, JobSchedulerDetails>();
 	public static Map<String, Object> contextMap = new HashMap<String, Object>();
 	

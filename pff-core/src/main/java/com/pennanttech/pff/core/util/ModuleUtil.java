@@ -25,7 +25,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
  * </p>
  */
 public final class ModuleUtil {
-	private final static Logger logger = Logger.getLogger(ModuleUtil.class);
+	private static final Logger logger = Logger.getLogger(ModuleUtil.class);
 
 	private static Map<String, ModuleMapping> moduleMappings = new HashMap<String, ModuleMapping>();
 
