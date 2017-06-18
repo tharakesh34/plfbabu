@@ -25,7 +25,7 @@ import freemarker.template.Template;
 
 public class PrepareMailData implements Serializable {
 	private static final long serialVersionUID = -4293213317229057447L;
-	private final static Logger logger = Logger.getLogger(PrepareMailData.class);
+	private static final Logger logger = Logger.getLogger(PrepareMailData.class);
 
 	private DataSource dataSource;
 	private MailUtility mailUtility;

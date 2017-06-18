@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
-	private final static Logger			logger	= Logger.getLogger(RepaymentProcessUtil.class);
+	private static final Logger			logger	= Logger.getLogger(RepaymentProcessUtil.class);
 
 	private RepaymentPostingsUtil		repayPostingUtil;
 	private FinODDetailsDAO				finODDetailsDAO;

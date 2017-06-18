@@ -57,7 +57,7 @@ import com.pennanttech.pff.core.util.DateUtil;
  * </p>
  */
 public final class DateUtility extends DateUtil {
-	private final static Logger logger = Logger.getLogger(DateUtility.class);
+	private static final Logger logger = Logger.getLogger(DateUtility.class);
 
 	
 	private DateUtility(){

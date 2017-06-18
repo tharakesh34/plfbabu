@@ -34,7 +34,7 @@ import com.pennant.backend.model.mail.MailTemplate;
 
 public class MailUtility implements Serializable {
     private static final long serialVersionUID = 7959183655705303553L;
-	private final static Logger logger = Logger.getLogger(MailUtility.class);
+	private static final Logger logger = Logger.getLogger(MailUtility.class);
 
 	// Outgoing Mail Properties
 	private String outgoingHost;

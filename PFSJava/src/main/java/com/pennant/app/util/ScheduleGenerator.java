@@ -71,7 +71,7 @@ public class ScheduleGenerator {
 	public ScheduleGenerator() {
 	}
 
-	private final static Logger	logger	= Logger.getLogger(ScheduleGenerator.class);
+	private static final Logger	logger	= Logger.getLogger(ScheduleGenerator.class);
 
 	private FinScheduleData		finScheduleData;
 

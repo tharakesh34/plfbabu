@@ -52,7 +52,7 @@ import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.PennantConstants;
 
 public class UploadProfitDetailProcess extends Thread {
-	private final static Logger logger = Logger.getLogger(UploadProfitDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(UploadProfitDetailProcess.class);
 
 	private static UploadProfitDetailProcess me = null;
 	private  ExecutionStatus status = new ExecutionStatus();

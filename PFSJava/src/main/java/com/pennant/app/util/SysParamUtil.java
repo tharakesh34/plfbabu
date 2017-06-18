@@ -61,7 +61,7 @@ import com.pennanttech.pff.core.App.Database;
  * the system.
  */
 public class SysParamUtil {
-	private final static Logger logger = Logger.getLogger(SysParamUtil.class);
+	private static final Logger logger = Logger.getLogger(SysParamUtil.class);
 	public static String dbQueryConcat = "";
 
 	/**

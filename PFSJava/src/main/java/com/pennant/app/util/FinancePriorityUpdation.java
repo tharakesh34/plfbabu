@@ -13,7 +13,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 public class FinancePriorityUpdation extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 4480912264156310688L;
-	private final static Logger	logger	= Logger.getLogger(FinancePriorityUpdation.class);
+	private static final Logger	logger	= Logger.getLogger(FinancePriorityUpdation.class);
 	private FinanceDetailService  financeDetailService;
 	static String status = "";
 

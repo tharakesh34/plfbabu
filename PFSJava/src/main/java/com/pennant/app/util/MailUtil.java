@@ -50,7 +50,7 @@ import freemarker.template.TemplateException;
 
 public class MailUtil extends MailUtility {
 	private static final long				serialVersionUID	= -2543427090845637670L;
-	private final static Logger				logger				= Logger.getLogger(MailUtil.class);
+	private static final Logger				logger				= Logger.getLogger(MailUtil.class);
 
 	private Configuration					freemarkerMailConfiguration;
 	private MailTemplateService				mailTemplateService;

@@ -29,7 +29,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class LimitCheckDetails {
 
-	private final static Logger logger = Logger.getLogger(LimitCheckDetails.class);
+	private static final Logger logger = Logger.getLogger(LimitCheckDetails.class);
 
 	private DedupParmService 				dedupParmService;
 	private CustomerLimitIntefaceService 	customerLimitIntefaceService;
