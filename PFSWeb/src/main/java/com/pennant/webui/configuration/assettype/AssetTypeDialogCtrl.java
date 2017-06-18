@@ -218,8 +218,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 			doCheckRights();
 			doShowDialog(getAssetType());
 		} catch (Exception e) {
-			createException(window_AssetTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" +event.toString());
@@ -1061,8 +1060,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_AssetTypeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
