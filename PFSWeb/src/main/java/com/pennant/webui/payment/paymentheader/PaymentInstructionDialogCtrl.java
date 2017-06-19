@@ -299,7 +299,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		this.favouringName.setMaxlength(100);
 		this.acctHolderName.setMaxlength(100);
-		this.chequeOrDDumber.setMaxlength(50);
+		this.chequeOrDDumber.setMaxlength(6);
 		this.remarks.setMaxlength(500);
 
 		this.paymentAmount.setMandatory(true);
