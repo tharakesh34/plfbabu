@@ -520,8 +520,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_ProfitCenterDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

@@ -541,8 +541,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_VASRecordingDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

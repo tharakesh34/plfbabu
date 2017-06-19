@@ -789,8 +789,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_ManualAdviseDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -512,8 +512,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_LocalityDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

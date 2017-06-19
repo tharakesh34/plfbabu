@@ -934,8 +934,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_TreasuaryFinHeaderDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -1218,8 +1217,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_TreasuaryFinHeaderDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

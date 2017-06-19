@@ -1428,8 +1428,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 						closeDialog();
 					}
 				} catch (DataAccessException e) {
-					logger.debug("Exception: ", e);
-					showErrorMessage(this.window_LimitStructureDialog, e);
+					MessageUtil.showError(e);
 				}
 			} else {
 				MessageUtil.showError(
@@ -1515,8 +1514,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_LimitStructureDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

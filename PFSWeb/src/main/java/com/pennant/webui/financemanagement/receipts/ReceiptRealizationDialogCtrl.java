@@ -456,8 +456,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ReceiptRealizationDialog, e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

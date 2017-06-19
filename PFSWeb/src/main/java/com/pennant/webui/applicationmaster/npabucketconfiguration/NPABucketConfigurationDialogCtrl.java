@@ -551,8 +551,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_NPABucketConfigurationDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -610,8 +610,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_SegmentDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

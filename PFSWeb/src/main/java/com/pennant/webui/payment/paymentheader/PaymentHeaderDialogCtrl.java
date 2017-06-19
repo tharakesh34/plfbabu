@@ -716,8 +716,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					}
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_PaymentHeaderDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -608,8 +608,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 					
 
 				} catch (final DataAccessException e) {
-					logger.error("Exception: ", e);
-					showErrorMessage(win_SecurityUserOperationsDialog, e);
+			MessageUtil.showError(e);
 				}
 
 				logger.debug("Leaving ");

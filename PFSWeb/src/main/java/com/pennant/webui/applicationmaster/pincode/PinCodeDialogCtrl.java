@@ -528,8 +528,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_PinCodeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
