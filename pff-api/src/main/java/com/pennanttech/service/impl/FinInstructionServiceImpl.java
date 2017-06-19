@@ -1211,8 +1211,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
 			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
-				String[] valueParm = new String[1];
-				return getErrorDetails("90315", valueParm);
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODMaxWaiverPerc";
+				valueParm[1] = "ODAllowWaiver is disabled";
+				return getErrorDetails("90329", valueParm);
 			}
 		} else {
 			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) <= 0) {

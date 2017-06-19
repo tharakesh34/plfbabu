@@ -753,8 +753,10 @@ public class FinanceDataValidation {
 
 			if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
 				if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
-					String[] valueParm = new String[1];
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90315", valueParm)));
+					String[] valueParm = new String[2];
+					valueParm[0] = "ODMaxWaiverPerc";
+					valueParm[1] = "ODAllowWaiver is disabled";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
 				}
 			} else {
 				if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) <= 0) {
@@ -773,15 +775,15 @@ public class FinanceDataValidation {
 			}
 			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
 				StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
-							FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+			 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
 					valueParm[1] = "100";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-				finODPenaltyRate.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+				finODPenaltyRate.setODChargeAmtOrPerc(
+						PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
 			} 
 			
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {

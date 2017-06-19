@@ -1788,7 +1788,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if (!StringUtils.equals(vASConfiguration.getRecAgainst(), vasRecording.getPostingAgainst())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "PostingAgainst";
-				valueParm[1] = vasRecording.getProductCode();
+				valueParm[1] = vasRecording.getPostingAgainst();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
