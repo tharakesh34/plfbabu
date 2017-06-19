@@ -268,4 +268,10 @@
 			<modifyDataType tableName="gcdcustomers_test" columnName="branchId"
 			newDataType="number(19,0)" />
 	</changeSet>
+	<changeSet author="Satya" id="14">
+		<sql>
+		update secrights set rightname ='menuCat_ApplicationMaster' where rightname ='menuCat_applicationmaster';
+        update secrights set rightname ='menuCat_ApplicationMasterEnquiry' where rightname ='menuCat_applicationmasterEnquiry';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
