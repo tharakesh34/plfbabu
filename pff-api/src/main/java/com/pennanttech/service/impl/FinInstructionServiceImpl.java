@@ -97,6 +97,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 
@@ -167,6 +170,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -227,6 +233,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		validationUtility.validate(finServiceInstruction, DefermentsGroup.class);
 		FinanceDetail financeDetail = null;
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -291,6 +300,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
 		FinanceDetail financeDetail = null;
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -357,6 +369,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// service level validations
 		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -428,6 +443,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -493,6 +511,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -554,6 +575,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		FinanceDetail financeDetail = null;
 		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -634,6 +661,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -696,6 +726,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ReSchedulingGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -762,6 +795,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return returnStatus;
 		}
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// call service level validations which include business validations
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finServiceInstruction.getFinReference());
@@ -880,6 +916,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, EarlySettlementGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -958,6 +997,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, PartialSettlementGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -1045,6 +1087,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		if(StringUtils.isBlank(finServiceInstruction.getFinReference())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -1282,6 +1327,43 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		detail.setCollateralAssignmentList(null);
 	}
 
+	/**
+	 * Set Default date formats for calculation purpose.
+	 * 
+	 * @param finServInst
+	 */
+	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
+		if(finServInst.getFromDate() != null) {
+			finServInst.setFromDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getFromDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		
+		if(finServInst.getToDate() != null){
+			finServInst.setToDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getToDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getRecalFromDate() != null){
+			finServInst.setRecalFromDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getRecalFromDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getRecalToDate() != null){
+			finServInst.setRecalToDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getRecalToDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getGrcPeriodEndDate()!= null){
+			finServInst.setGrcPeriodEndDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getGrcPeriodEndDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getNextGrcRepayDate()!= null){
+			finServInst.setNextGrcRepayDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getNextGrcRepayDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getNextRepayDate()!= null){
+			finServInst.setNextRepayDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getNextRepayDate(),
+					PennantConstants.DBDateFormat)));
+		}
+	}
+	
 	@Autowired
 	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
 		this.finServiceInstController = finServiceInstController;

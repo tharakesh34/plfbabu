@@ -678,7 +678,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				int seqNo = finScheduleData.getDisbursementDetails().size() + 1;
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 				disbursementDetails.setDisbDate(finServiceInst.getFromDate());
-				disbursementDetails.setDisbAmount(finServiceInst.getAmount());
+				disbursementDetails.setDisbAmount(amount);
 				disbursementDetails.setDisbSeq(seqNo);
 				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
