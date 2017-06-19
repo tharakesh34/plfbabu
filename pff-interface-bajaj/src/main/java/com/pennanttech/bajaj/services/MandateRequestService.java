@@ -19,7 +19,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
