@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
@@ -50,7 +49,6 @@ import java.util.List;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -58,7 +56,6 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  *
  */
 public class Province extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -3563961020581268151L;
 
 	private String cPCountry;
