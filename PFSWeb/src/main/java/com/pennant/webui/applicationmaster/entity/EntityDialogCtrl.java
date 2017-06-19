@@ -533,6 +533,10 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			   this.pinCode.setDescription(aEntity.getPinCodeName());
 		}
 		
+		if(aEntity.isNew() || (aEntity.getRecordType() != null ? aEntity.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -836,7 +840,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		public void doReadOnly() {
 			logger.debug(Literal.LEAVING);
 			
-	
+			this.active.setDisabled(true);
 			readOnlyComponent(true, this.entityCode);
 			readOnlyComponent(true, this.entityDesc);
 			readOnlyComponent(true, this.pANNumber);
@@ -844,7 +848,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			readOnlyComponent(true, this.stateCode);
 			readOnlyComponent(true, this.cityCode);
 			readOnlyComponent(true, this.pinCode);
-			readOnlyComponent(true, this.active);
+			//readOnlyComponent(true, this.active);
 
 			if (isWorkFlowEnabled()) {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
