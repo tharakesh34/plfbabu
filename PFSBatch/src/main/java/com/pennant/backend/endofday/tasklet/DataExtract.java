@@ -172,7 +172,7 @@ public class DataExtract implements Tasklet {
 
 		public void run() {
 			try {
-				logger.debug("DataMart Request Service started...");
+				logger.debug("Trail Balance Request Service started...");
 				this.trailBalanceReportservice.generateReport(userId);
 
 			} catch (Exception e) {
