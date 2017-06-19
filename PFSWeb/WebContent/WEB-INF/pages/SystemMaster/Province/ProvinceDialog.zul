@@ -170,7 +170,7 @@
 										width="50px" />
 								</hbox>
 							</row>
-							<row id="row_taxAvailable" visible="false">
+							<row id="row_taxAvailable">
 								<label
 									id="label_ProvinceDialog_TaxAvailable"
 									value="${c:l('label_ProvinceDialog_TaxAvailable.value')}" />

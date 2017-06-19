@@ -228,10 +228,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPCountry.setDescColumn("CountryDesc");
 		this.cPCountry.setValidateColumns(new String[] { "CountryCode" });
 		
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
-			this.row_taxAvailable.setVisible(true);
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -768,7 +764,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
 		this.unionTerritory.setDisabled(isReadOnly("ProvinceDialog_unionTerritory"));
 		this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
-		this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
+		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
+			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
+		}else{
+			this.taxAvailable.setDisabled(true);
+		}
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
 		//		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
 		if (isWorkFlowEnabled()) {
@@ -803,9 +803,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.taxExempted.setDisabled(true);
 		this.unionTerritory.setDisabled(true);
 		this.taxStateCode.setDisabled(true);
-		this.taxAvailable.setDisabled(true);
 		this.businessArea.setDisabled(true);
-
+		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
+			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
+		}else{
+			this.taxAvailable.setDisabled(true);
+		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -855,6 +858,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		// fill the Province object with the components data
 		doWriteComponentsToBean(aProvince);
 
+		if (this.userAction.getSelectedItem() != null && "save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+				|| this.userAction.getSelectedItem().getLabel().contains("Submit")) {
+			if(this.listBoxTaxDetails.getItems().size()<=0 &&this.row_taxAvailable.isVisible() && this.taxAvailable.isChecked()){
+				MessageUtil.showError(Labels.getLabel("label_GstinMap"));
+				return;
+			}
+		}
+		
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
