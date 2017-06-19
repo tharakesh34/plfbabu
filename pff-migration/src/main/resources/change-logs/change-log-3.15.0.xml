@@ -254,4 +254,18 @@
 	        update RMTFINANCETYPES set EQUALREPAYMENT = 1;
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="12" author="Amit">
+		<modifyDataType tableName="gcdcustomers" columnName="industryId"
+			newDataType="number(19,0)" />
+			<modifyDataType tableName="gcdcustomers" columnName="branchId"
+			newDataType="number(19,0)" />
+	</changeSet>
+	
+	<changeSet id="13" author="Amit">
+		<modifyDataType tableName="gcdcustomers_test" columnName="industryId"
+			newDataType="number(19,0)" />
+			<modifyDataType tableName="gcdcustomers_test" columnName="branchId"
+			newDataType="number(19,0)" />
+	</changeSet>
 </databaseChangeLog>
