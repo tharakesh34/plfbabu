@@ -113,6 +113,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -130,6 +131,7 @@ import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -181,8 +183,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private RelationshipOfficerDAO			relationshipOfficerDAO;
 	private ScriptValidationService 		scriptValidationService;
 	private PostingsPreparationUtil			postingsPreparationUtil;
-
-
+	private FinanceWorkFlowService			financeWorkFlowService;
+	
+	
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -1774,7 +1777,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-
+			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+			if(financeWorkFlow == null){
+				String[] valueParm = new String[2];
+				valueParm[0] = vasRecording.getProductCode();
+				valueParm[1] = "workflow";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
 			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
 					.getProductCode());
 			if (vASConfiguration == null || !vASConfiguration.isActive()) {
@@ -2370,6 +2382,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
+	public FinanceWorkFlowService getFinanceWorkFlowService() {
+		return financeWorkFlowService;
+	}
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
 
 }

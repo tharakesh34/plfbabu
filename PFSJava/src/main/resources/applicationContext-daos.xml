@@ -8719,6 +8719,7 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
 
 	<!-- Beneficiary -->
