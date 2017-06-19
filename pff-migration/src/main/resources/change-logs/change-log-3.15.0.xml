@@ -274,7 +274,11 @@
         update secrights set rightname ='menuCat_ApplicationMasterEnquiry' where rightname ='menuCat_applicationmasterEnquiry';
 		</sql>
 	</changeSet>
-	
+	<changeSet id="15" author="Jayant">
+	    <sql>
+	        update pincodes set WorkFlowId = 0 ;
+	    </sql>
+	</changeSet>
 	<changeSet id="15" author="Durgaprasad G">
 	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 		 	SELECT   
