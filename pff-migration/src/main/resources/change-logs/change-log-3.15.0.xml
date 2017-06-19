@@ -449,4 +449,8 @@
 		<modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="REJECTREASON" newDataType="VARCHAR(200)"/>
 	</changeSet>
 	
+	<changeSet id="18" author="Durgaprasad.g">
+	 <modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="REJECT_REASON" newDataType="VARCHAR(200)"/>
+	</changeSet>
+	
 </databaseChangeLog>
