@@ -171,7 +171,7 @@
 	</menu>
 	
 	<menu id="menu_Category_EOD"  rightName="menuCat_eod" >
-		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/Eod/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
+		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/EOD/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
 	</menu>
 
 	<!-- Interface bajaj Upload and downloads -->
