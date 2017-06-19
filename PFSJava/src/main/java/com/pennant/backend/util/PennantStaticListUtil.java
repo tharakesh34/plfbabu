@@ -196,6 +196,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> authTypes;
 	private static ArrayList<ValueLabel> presentmentsStatusList;
 	private static ArrayList<ValueLabel> taxApplicableFor;
+	private static ArrayList<ValueLabel> channelTypes;
 
 	
 
@@ -2713,6 +2714,15 @@ public class PennantStaticListUtil {
 			taxApplicableFor.add(new ValueLabel("B", Labels.getLabel("label_TaxApplicableFor_Borrower")));
 		}
 		return taxApplicableFor;
+	}
+	
+	public static ArrayList<ValueLabel> getChannelTypes() {
+		if (channelTypes == null) {
+			channelTypes = new ArrayList<ValueLabel>(2);
+			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_PAYMENT, Labels.getLabel("label_Disbursement_Payment.label")));
+			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT, Labels.getLabel("label_Disbursement_Disbursement.label")));
+		}
+		return channelTypes;
 	}
 }
 

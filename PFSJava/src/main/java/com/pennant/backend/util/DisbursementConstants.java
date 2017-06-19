@@ -62,5 +62,6 @@ public class DisbursementConstants {
 	
 	//Payment Channels 
 	public static final String	CHANNEL_PAYMENT				= "P";
+	public static final String	CHANNEL_DISBURSEMENT		= "D";
 
 }
