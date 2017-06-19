@@ -383,21 +383,35 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall, String string) {
 		
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-		
+		FinanceType financeType = finScheduleData.getFinanceType();
+		//fetch the vasProduct list based on the FinanceType
+		financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
+		int mandatoryVasCount = 0;
+		if (financeType.getFinTypeVASProductsList() != null) {
+			for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
+				if (vasProduct.isMandatory()) {
+					mandatoryVasCount++;
+				}
+			}
+		}
+		if (financeType.getFinTypeVASProductsList() != null && mandatoryVasCount > 0) {
+			if (finScheduleData.getVasRecordingList() == null || finScheduleData.getVasRecordingList().isEmpty()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "VAS";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				return errorDetails;
+			}
+		}
 		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
-			FinanceType financeType = finScheduleData.getFinanceType();
-			//fetch the vasProduct list based on the FinanceType
-			financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
-			int mandatoryVasCount = 0;
 			int userVasCount = 0;
 
 			boolean isVasProduct = false;
 			if (financeType.getFinTypeVASProductsList() != null) {
-				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
+				/*for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
 					if (vasProduct.isMandatory()) {
 						mandatoryVasCount++;
 					}
-				}
+				}*/
 				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
 					for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 						if (StringUtils.equals(detail.getProductCode(), vasProduct.getVasProduct())) {
@@ -613,7 +627,7 @@ public class FinanceDataValidation {
 						}
 					}
 				}
-				if (detail.getExtendedDetails() != null || !detail.getExtendedDetails().isEmpty()) {
+				if (detail.getExtendedDetails() != null && !detail.getExtendedDetails().isEmpty()) {
 					for (ExtendedField details : detail.getExtendedDetails()) {
 						if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
 								.getExtendedFieldDataList().size()) {
@@ -668,10 +682,12 @@ public class FinanceDataValidation {
 
 				}
 				Map<String, Object> mapValues = new HashMap<String, Object>();
+				if(detail.getExtendedDetails() != null){
 				for (ExtendedField details : detail.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 					}
+				}
 				}
 
 				// do script pre validation and post validation
@@ -746,16 +762,28 @@ public class FinanceDataValidation {
 					valueParm[0] = "ODMaxWaiverPerc";
 					valueParm[1] = "Zero";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				} else {
+					if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(new BigDecimal(100)) > 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "ODChargeAmtOrPerc";
+						valueParm[1] = "100";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
+					}
 				}
 			}
-			/*if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
-				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(99)) > 0) {
+			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+				StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+							FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
-					valueParm[1] = "99";
+					valueParm[1] = "100";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-			}*/
+				finODPenaltyRate.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+			} 
+			
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
 				List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
 				boolean finODChargeTypeSts = false;
@@ -1885,10 +1913,10 @@ public class FinanceDataValidation {
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
 		// Application number
-		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > 20) {
+		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > 17) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Application Number";
-			valueParm[1] = "20 characters";
+			valueParm[1] = "17 characters";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 		}
 		// Finance start date

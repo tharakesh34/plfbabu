@@ -54,7 +54,7 @@
 				<element name="value">999999999999999999</element>
 			</constraint>
 		</field>
-		<field name="oDMaxWaiverPerc">
+		 <field name="oDMaxWaiverPerc">
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>odMaxWaiverPerc allow 3 digits only</message>
 				<groups>

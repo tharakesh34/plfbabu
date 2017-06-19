@@ -40,6 +40,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -895,11 +896,11 @@ public class FinanceValidationService {
 			}
 
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
-				relationshipOfficer = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(financeMain.getSalesDepartment());
-				if (relationshipOfficer == null) {
+				GeneralDepartment generalDepartment = generalDepartmentService
+						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
+				if (generalDepartment == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getAccountsOfficer();
+					valueParm[0] = financeMain.getSalesDepartment();
 					return getErrorDetails("90501", valueParm);
 				}
 			}
@@ -908,7 +909,7 @@ public class FinanceValidationService {
 						.getDmaCode());
 				if (dmaCode == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getDsaCode();
+					valueParm[0] = financeMain.getDmaCode();
 					return getErrorDetails("90501", valueParm);
 				}
 			}
@@ -917,7 +918,7 @@ public class FinanceValidationService {
 						.getApprovedRelationshipOfficerById(financeMain.getReferralId());
 				if (referralId == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getDsaCode();
+					valueParm[0] = financeMain.getReferralId();
 					return getErrorDetails("90501", valueParm);
 				}
 			}

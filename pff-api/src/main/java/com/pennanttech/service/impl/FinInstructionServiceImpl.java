@@ -34,6 +34,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.AddDisbursementGroup;
@@ -821,11 +822,14 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					}
 				}
 			} else {
-				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() > 0
+				if (finServiceInstruction.getFinODPenaltyRate().isODIncGrcDays()
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())
-						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0) {
-					return APIErrorHandlerService.getFailedStatus("9999", "Overdue details only applicable for applyODPenalty.");
+						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc()
+								.compareTo(BigDecimal.ZERO) > 0
+						|| finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver()) {
+					String[] valueParm = new String[1];
+					return APIErrorHandlerService.getFailedStatus("90315", valueParm);
 				}
 			}
 		} else {
@@ -1114,18 +1118,21 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
-			List<ValueLabel> odChargeType = PennantStaticListUtil.getODCChargeType();
-			boolean odChargeTypeSts = false;
-			for (ValueLabel value : odChargeType) {
+			List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
+			boolean finODChargeTypeSts = false;
+			for (ValueLabel value : finODChargeType) {
 				if (StringUtils.equals(value.getValue(), finODPenaltyRate.getODChargeType())) {
-					odChargeTypeSts = true;
+					finODChargeTypeSts = true;
 					break;
 				}
 			}
-			if (!odChargeTypeSts) {
-				String[] valueParm = new String[1];
+			if (!finODChargeTypeSts) {
+				String[] valueParm = new String[2];
 				valueParm[0] = finODPenaltyRate.getODChargeType();
-				return getErrorDetails("90501", valueParm);
+				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
+						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+				return getErrorDetails("90316", valueParm);
 			}
 		}
 
@@ -1142,6 +1149,37 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				String[] valueParm = new String[1];
 				valueParm[0] = finODPenaltyRate.getODChargeCalOn();
 				return getErrorDetails("90501", valueParm);
+			}
+		}
+		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+			if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODChargeAmtOrPerc";
+				valueParm[1] = "100";
+				return getErrorDetails("30565", valueParm);
+			}
+			finODPenaltyRate.setODChargeAmtOrPerc(
+					PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+		}
+		if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
+			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
+				String[] valueParm = new String[1];
+				return getErrorDetails("90315", valueParm);
+			}
+		} else {
+			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODMaxWaiverPerc";
+				valueParm[1] = "Zero";
+				return getErrorDetails("91121", valueParm);
+			} else if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(new BigDecimal(100)) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODChargeAmtOrPerc";
+				valueParm[1] = "100";
+				return getErrorDetails("30565", valueParm);
 			}
 		}
 		logger.debug("Leaving");

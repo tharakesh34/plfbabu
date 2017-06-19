@@ -389,7 +389,18 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}else {
-				vasRecording.setExtendedFieldRender(null);
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(vasRecording.getVasReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setSeqNo(0);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}
 		}
 		// process finance flags
