@@ -154,8 +154,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			doSetFieldProperties();
 			doShowDialog(getLimitHeader());
 		} catch (Exception e) {
-			createException(window_LimitUtilizationDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

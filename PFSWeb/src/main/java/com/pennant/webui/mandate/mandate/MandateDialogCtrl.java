@@ -327,8 +327,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doSetFieldProperties();
 			doShowDialog(getMandate());
 		} catch (Exception e) {
-			createException(window_MandateDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1491,8 +1490,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_MandateDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1595,8 +1593,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_MandateDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

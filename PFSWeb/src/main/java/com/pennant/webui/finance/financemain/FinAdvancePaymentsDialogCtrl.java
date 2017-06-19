@@ -345,8 +345,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			doSetFieldProperties();
 			doShowDialog(this.finAdvancePayments);
 		} catch (Exception e) {
-			createException(window_FinAdvancePaymentsDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1332,8 +1331,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FinAdvancePaymentsDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -1461,9 +1459,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-
-			showErrorMessage(this.window_FinAdvancePaymentsDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

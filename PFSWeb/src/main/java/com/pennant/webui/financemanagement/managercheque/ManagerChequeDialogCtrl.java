@@ -448,8 +448,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			doShowDialog(managerCheque);
 			
 		} catch (Exception e) {
-			createException(window_ManagerChequeDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2255,8 +2254,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_ManagerChequeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -2414,8 +2412,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ManagerChequeDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

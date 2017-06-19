@@ -169,8 +169,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			doSetFieldProperties();
 			doShowDialog(this.financeDetail);
 		} catch (Exception e) {
-			createException(this.window_FinFeeReceiptDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

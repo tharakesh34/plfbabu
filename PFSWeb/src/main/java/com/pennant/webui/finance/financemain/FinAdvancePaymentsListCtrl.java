@@ -198,8 +198,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			doCheckRights();
 			doShowDialog();
 		} catch (Exception e) {
-			createException(window_FinAdvancePaymentsList, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

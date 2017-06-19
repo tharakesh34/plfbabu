@@ -192,8 +192,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			createException(window_FinCovenantTypeList, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

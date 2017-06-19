@@ -224,8 +224,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doSetFieldProperties();
 			doShowDialog(getMandate());
 		} catch (Exception e) {
-			createException(window_FinMandateEnquiryDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

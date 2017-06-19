@@ -309,8 +309,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doShowDialog(getJountAccountDetail());
 			
 		} catch (Exception e) {
-			createException(window_JountAccountDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

@@ -183,8 +183,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			doSetFieldProperties();
 			doShowDialog(getFlag());
 		} catch (Exception e) {
-			createException(window_FlagDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());

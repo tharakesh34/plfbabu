@@ -270,8 +270,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 			doSetFieldProperties();
 			doShowDialog(getLegalExpenses());
 		} catch (Exception e) {
-			createException(window_LegalExpensesDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());
@@ -890,8 +889,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_LegalExpensesDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}
@@ -980,8 +978,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_LegalExpensesDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

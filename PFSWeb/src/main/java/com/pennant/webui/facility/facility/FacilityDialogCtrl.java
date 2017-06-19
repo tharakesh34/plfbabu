@@ -386,8 +386,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			}
 			doShowDialog(getFacility());
 		} catch (Exception e) {
-			createException(window_FacilityDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1335,8 +1334,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FacilityDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1573,8 +1571,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FacilityDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

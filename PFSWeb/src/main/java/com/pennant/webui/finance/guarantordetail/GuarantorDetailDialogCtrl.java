@@ -355,8 +355,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			doSetFieldProperties();
 			doShowDialog(getGuarantorDetail());
 		} catch (Exception e) {
-			createException(window_GuarantorDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

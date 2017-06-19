@@ -216,8 +216,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			doSetFieldProperties();
 			doShowDialog(getFeeType());
 		} catch (Exception e) {
-			createException(window_FeeTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

@@ -236,8 +236,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			doSetFieldProperties();
 			doShowDialog(getFinCovenantType());
 		} catch (Exception e) {
-			createException(window_FinCovenantTypeDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -736,8 +735,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FinCovenantTypeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -843,9 +841,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-
-			showErrorMessage(this.window_FinCovenantTypeDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

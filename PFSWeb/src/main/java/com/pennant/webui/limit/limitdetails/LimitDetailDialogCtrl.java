@@ -266,8 +266,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			doSetFieldProperties();
 			doShowDialog(getLimitHeader());
 		} catch (Exception e) {
-			createException(window_LimitHeaderDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1134,8 +1133,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_LimitHeaderDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1212,8 +1210,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_LimitHeaderDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

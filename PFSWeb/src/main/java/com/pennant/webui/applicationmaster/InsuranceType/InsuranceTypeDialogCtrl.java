@@ -214,8 +214,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 					.getVisibleItemCount() + 3));
 			doShowDialog(getInsuranceType());
 		} catch (Exception e) {
-			createException(window_InsuranceTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -717,8 +716,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_InsuranceTypeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -877,8 +875,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_InsuranceTypeDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
