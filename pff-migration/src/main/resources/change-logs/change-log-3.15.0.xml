@@ -463,4 +463,9 @@
    <column name="IsSuccess" type="Number(2,0)" defaultValue="0"/>
   </addColumn>
 	</changeSet>
+	<changeSet id="21" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90339','EN','E','Workflow configuration not defined for product: {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
