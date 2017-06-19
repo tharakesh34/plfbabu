@@ -104,9 +104,16 @@
 								</row>
 
 								<row>
-									<label
-										value="${c:l('label_DisbursementList_QDP.value')}" />
+									<label value="${c:l('label_DisbursementList_QDP.value')}" />
 									<checkbox id="qdp" width="171px" />
+									<label></label>
+									
+									<label value="${c:l('listheader_Disbursement_Channel.label')}" />
+									<listbox id="sortOperator_Channel" width="43px" mold="select" rows="1" />
+									<hbox>
+										<space spacing="2px"/>
+										<combobox id="channelTypes" width="171px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
@@ -147,6 +154,10 @@
 								<listheader
 									id="listheader_Disbursement_Branch"
 									label="${c:l('listheader_Disbursement_Branch.label')}"
+									hflex="min" />
+								<listheader 
+								    id="listheader_Disbursement_Channel"
+								    label="${c:l('listheader_Disbursement_Channel.label')}"
 									hflex="min" />
 							</listhead>
 						</listbox>
