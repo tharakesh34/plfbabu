@@ -656,8 +656,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_BankBranchDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -824,8 +823,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_BankBranchDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

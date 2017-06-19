@@ -537,8 +537,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BuilderProjcetDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

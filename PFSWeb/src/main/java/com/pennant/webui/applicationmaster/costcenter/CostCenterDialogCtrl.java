@@ -520,8 +520,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_CostCenterDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

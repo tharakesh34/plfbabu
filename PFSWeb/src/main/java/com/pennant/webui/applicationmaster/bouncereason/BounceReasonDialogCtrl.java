@@ -629,8 +629,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BounceReasonDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

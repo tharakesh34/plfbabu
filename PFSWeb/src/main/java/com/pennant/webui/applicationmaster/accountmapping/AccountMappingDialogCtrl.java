@@ -714,8 +714,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_AccountMappingDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

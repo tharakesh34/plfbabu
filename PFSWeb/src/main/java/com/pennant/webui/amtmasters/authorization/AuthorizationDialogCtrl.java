@@ -790,8 +790,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_AuthorizationDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

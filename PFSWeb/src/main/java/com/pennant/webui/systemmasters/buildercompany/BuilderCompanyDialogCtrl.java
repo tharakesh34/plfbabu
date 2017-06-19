@@ -544,8 +544,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BuilderCompanyDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

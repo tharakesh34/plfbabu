@@ -2777,8 +2777,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CustomerDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

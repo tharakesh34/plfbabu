@@ -536,8 +536,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BuilderGroupDialog,e);
+				MessageUtil.showError(e);
 			}
 
 		}
