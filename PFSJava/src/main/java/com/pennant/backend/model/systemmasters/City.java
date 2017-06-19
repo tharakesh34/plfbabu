@@ -73,6 +73,7 @@ public class City extends AbstractWorkflowEntity {
 	private boolean cityIsActive;
 	private String pinCode;
 	private String areaName;
+	private String taxStateCode;	//Added for GSTIN
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -95,6 +96,7 @@ public class City extends AbstractWorkflowEntity {
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("pinCode");
 			excludeFields.add("areaName");
+			excludeFields.add("taxStateCode");
 	return excludeFields;
 	}
 	
@@ -216,5 +218,13 @@ public class City extends AbstractWorkflowEntity {
 
 	public void setAreaName(String areaName) {
 		this.areaName = areaName;
+	}
+
+	public String getTaxStateCode() {
+		return taxStateCode;
+	}
+
+	public void setTaxStateCode(String taxStateCode) {
+		this.taxStateCode = taxStateCode;
 	}
 }
