@@ -225,8 +225,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			doCheckRights();
 			doShowDialog(this.promotion);
 		} catch (Exception e) {
-			createException(window_PromotionDialog, e);
-			logger.error("Exception", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1199,8 +1198,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					closeDialog();
 				}
 			} catch (Exception e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_PromotionDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -1401,8 +1399,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception", e);
-			showErrorMessage(this.window_PromotionDialog, e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving");

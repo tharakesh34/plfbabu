@@ -963,25 +963,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 	}
 
-	/**
-	 * @deprecated Instead use MessageUtil.showError(Exception)
-	 * @param window
-	 * @param e
-	 */
-	@Deprecated
-	public void createException(Window window, Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetails("", PennantConstants.ERR_UNDEF,
-					PennantConstants.ERR_SEV_ERROR, ErrorCode.PPS_900.getMessage(), null, null));
-			ErrorControl.showErrorControl(window, auditHeader);
-			logger.error("Exception: ", e);
-			window.onClose();
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
 	public void setExtAccess(String rightName, boolean isReadOnly, ExtendedCombobox extendedCombobox, Row row) {
 		setExtAccess(rightName, isReadOnly, extendedCombobox, row, true);
 	}

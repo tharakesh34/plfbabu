@@ -44,6 +44,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -183,8 +184,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			doShowDialog(this.paymentInstruction);
 
 		} catch (Exception e) {
-			createException(window_DisbursementsInstructionsDialog, e);
-			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}

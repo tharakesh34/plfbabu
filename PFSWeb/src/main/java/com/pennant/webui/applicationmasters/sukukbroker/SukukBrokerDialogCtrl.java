@@ -198,8 +198,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 			doSetFieldProperties();
 			doShowDialog(getSukukBroker());
 		} catch (Exception e) {
-			createException(window_SukukBrokerDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());
@@ -593,8 +592,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_SukukBrokerDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}
@@ -673,8 +671,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_SukukBrokerDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

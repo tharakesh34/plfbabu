@@ -177,8 +177,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 			doSetFieldProperties();
 			doShowDialog(getVASProductCategory());
 		} catch (Exception e) {
-			createException(window_VASProductCategoryDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

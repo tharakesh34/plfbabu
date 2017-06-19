@@ -265,8 +265,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			doCheckRights();
 			doShowDialog(getVASConfiguration());
 		} catch (Exception e) {
-			createException(window_VASConfigurationDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1515,8 +1514,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_VASConfigurationDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

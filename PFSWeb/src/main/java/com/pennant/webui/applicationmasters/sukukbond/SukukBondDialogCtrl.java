@@ -189,8 +189,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			doSetFieldProperties();
 			doShowDialog(getSukukBond());
 		} catch (Exception e) {
-			createException(window_SukukBondDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());
@@ -620,8 +619,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_SukukBondDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
