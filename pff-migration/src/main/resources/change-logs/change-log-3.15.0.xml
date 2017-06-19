@@ -452,12 +452,7 @@
 	<changeSet id="18" author="Durgaprasad.g">
 	 <modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="REJECT_REASON" newDataType="VARCHAR(200)"/>
 	</changeSet>
-	<changeSet id="19" author="pruthvi">
-	<sql>
-	update reportfilterfields set mandatory=0 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings');
-	</sql>
-	</changeSet>
-	
+
 	 <changeSet id="20" author="Amit">
   <addColumn tableName="gcdcustomers">
    <column name="IsSuccess" type="Number(2,0)" defaultValue="0"/>
@@ -474,5 +469,4 @@
 	<addColumn tableName="gcdcustomers">
 		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
 	</addColumn>
-</changeSet>
 </databaseChangeLog>
