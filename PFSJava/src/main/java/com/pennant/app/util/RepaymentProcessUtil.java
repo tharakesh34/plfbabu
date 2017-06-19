@@ -313,6 +313,21 @@ public class RepaymentProcessUtil {
 
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate);
+		
+		FinanceScheduleDetail curSchd = null;
+		
+		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
+			Date schdDate = financeScheduleDetail.getSchDate();
+			// Skip if Repayment date after Current Business date
+			if (schdDate.compareTo(valuedate) != 0) {
+				continue;
+			}
+			curSchd = financeScheduleDetail;
+			financeScheduleDetailDAO.updateForRpy(curSchd);
+			break;
+		}
+		
+		
 		doSaveReceipts(receiptHeader, null);
 		financeMainDAO.updatePaymentInEOD(financeMain);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
