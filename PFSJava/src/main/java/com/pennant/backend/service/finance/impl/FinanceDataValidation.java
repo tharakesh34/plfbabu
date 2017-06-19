@@ -207,10 +207,12 @@ public class FinanceDataValidation {
 		}
 		
 		// Vas Fee validations
-		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		if(finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
+			errorDetails = vasFeeValidations(vldGroup, finScheduleData);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
 		}
 		
 		// Fee validations
@@ -343,8 +345,10 @@ public class FinanceDataValidation {
 			}
 		}
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+			boolean isVasFeeProduct = false;
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
 				if (StringUtils.equals(feeDetail.getFeeTypeCode(), "{" + vasRecording.getProductCode() + "}")) {
+					isVasFeeProduct = true;
 					// validate negative values
 					if (feeDetail.getActualAmount().compareTo(BigDecimal.ZERO) < 0
 							|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
@@ -376,6 +380,11 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
+			}
+			
+			if(!isVasFeeProduct && StringUtils.contains(feeDetail.getFeeTypeCode(), "{")) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90326", null)));
+				return errorDetails;
 			}
 		}
 		return errorDetails;
