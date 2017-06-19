@@ -443,4 +443,10 @@
 	<changeSet id="16" author="Durgaprasad .g">
 	<dropColumn tableName="INT_DSBIMPS_RESPONSE" columnName="CHANNEL"/>
 	</changeSet>
+	
+	<changeSet id="17" author="Durgaprasad.g">
+		<modifyDataType tableName="FINADVANCEPAYMENTS" columnName="REJECTREASON" newDataType="VARCHAR(200)"/>
+		<modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="REJECTREASON" newDataType="VARCHAR(200)"/>
+	</changeSet>
+	
 </databaseChangeLog>
