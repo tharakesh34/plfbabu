@@ -1551,7 +1551,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					}
 					
 				}
-				return auditDetail;
 			}
 		} else {
 			if (customerDetails.getEmploymentDetailsList() != null && customerDetails.getEmploymentDetailsList().size() > 0) {

@@ -20,6 +20,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -1915,10 +1916,10 @@ public class FinanceDataValidation {
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
 		// Application number
-		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > 17) {
+		if(StringUtils.isNotBlank(finMain.getApplicationNo()) && finMain.getApplicationNo().length() > LengthConstants.LEN_REF) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Application Number";
-			valueParm[1] = "17 characters";
+			valueParm[1] = LengthConstants.LEN_REF+ " characters";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 		}
 		// Finance start date
