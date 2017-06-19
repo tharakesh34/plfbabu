@@ -77,7 +77,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	private static final long serialVersionUID = -3760682176867299742L;
-	private final static Logger logger = Logger.getLogger(LovFieldDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LovFieldDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

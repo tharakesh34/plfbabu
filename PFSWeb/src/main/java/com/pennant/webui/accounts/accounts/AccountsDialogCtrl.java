@@ -96,7 +96,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final long serialVersionUID = -485666646629753355L;
-	private final static Logger logger = Logger.getLogger(AccountsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AccountsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

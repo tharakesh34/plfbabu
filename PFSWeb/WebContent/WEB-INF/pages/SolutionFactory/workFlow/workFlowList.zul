@@ -101,7 +101,7 @@
 							<listheader id="listheader_workFlowDesc"
 								label="${c:l('listheader_workFlowDesc.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_workFlowStatus"
+							<listheader id="listheader_workFlowStatus" visible="false"
 								label="${c:l('listheader_workFlowStatus.label')}" sort="auto"
 								hflex="min" />
 						</listhead>

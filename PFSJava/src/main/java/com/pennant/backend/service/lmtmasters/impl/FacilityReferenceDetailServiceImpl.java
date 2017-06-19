@@ -77,7 +77,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityReferenceDetail> implements FacilityReferenceDetailService {
-	private final static Logger logger = Logger.getLogger(FacilityReferenceDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FacilityReferenceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;

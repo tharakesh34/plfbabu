@@ -402,15 +402,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		}else{
 			
 			//Event Based Accounting on Final Stage
-			try {
-				getPostingsPreparationUtil().postReveralsByFinreference(finReference);
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			getPostingsPreparationUtil().postReveralsByFinreference(finReference);
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 				return auditHeader;
 			}

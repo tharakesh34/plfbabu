@@ -79,7 +79,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> {
 	private static final long serialVersionUID = -7057719949392212414L;
-	private final static Logger logger = Logger.getLogger(CustomerNotesTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerNotesTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

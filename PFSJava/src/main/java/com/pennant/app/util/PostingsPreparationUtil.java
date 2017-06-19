@@ -644,11 +644,8 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param aeEvent
 	 * @param dataMap
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
 	 */
-	public AEEvent postAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public AEEvent postAccounting(AEEvent aeEvent) {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {
@@ -756,7 +753,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
@@ -780,7 +777,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);

@@ -76,7 +76,7 @@ import com.pennant.webui.util.PTListReportUtils;
  */
 public class AccountEngineEventListCtrl extends GFCBaseListCtrl<AccountEngineEvent> {
 	private static final long serialVersionUID = -3818155098220806436L;
-	private final static Logger logger = Logger.getLogger(AccountEngineEventListCtrl.class);
+	private static final Logger logger = Logger.getLogger(AccountEngineEventListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

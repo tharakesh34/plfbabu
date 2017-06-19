@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class RejectDetailListCtrl extends GFCBaseListCtrl<RejectDetail> {
 	private static final long serialVersionUID = 858161292428279969L;
-	private final static Logger logger = Logger.getLogger(RejectDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(RejectDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

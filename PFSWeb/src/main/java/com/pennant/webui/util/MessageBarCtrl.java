@@ -76,7 +76,7 @@ import com.pennanttech.pff.core.App;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;
-	private final static Logger logger = Logger.getLogger(MessageBarCtrl.class);
+	private static final Logger logger = Logger.getLogger(MessageBarCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

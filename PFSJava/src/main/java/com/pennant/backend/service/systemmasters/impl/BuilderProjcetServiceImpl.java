@@ -61,7 +61,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BuilderProjcet</b>.<br>
  */
 public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> implements BuilderProjcetService {
-	private final static Logger logger = Logger.getLogger(BuilderProjcetServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BuilderProjcetServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BuilderProjcetDAO builderProjcetDAO;

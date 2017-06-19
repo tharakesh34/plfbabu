@@ -104,7 +104,7 @@ import com.pennant.webui.util.MessageUtil;
 public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(AssetTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AssetTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -218,8 +218,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 			doCheckRights();
 			doShowDialog(getAssetType());
 		} catch (Exception e) {
-			createException(window_AssetTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" +event.toString());
@@ -1061,8 +1060,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl <AssetType> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_AssetTypeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -42,7 +42,7 @@ import com.pennant.webui.util.ScreenCTL;
 public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(LimitUtilizationDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitUtilizationDialogCtrl.class);
 
 	/*
 	 * ************************************************************************
@@ -95,7 +95,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	private BigDecimal						THOUSANDS			= new BigDecimal(1000);
 	private BigDecimal						LAKHS				= new BigDecimal(100000);
 	private BigDecimal						MILLIONS			= new BigDecimal(1000000);
-	private BigDecimal						CRORES				= new BigDecimal(1000000);
+	private BigDecimal						CRORES				= new BigDecimal(10000000);
 	private BigDecimal						BILLIONS			= new BigDecimal(1000000000);
 	private int								ccyFormat			= 0;
 
@@ -154,8 +154,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			doSetFieldProperties();
 			doShowDialog(getLimitHeader());
 		} catch (Exception e) {
-			createException(window_LimitUtilizationDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

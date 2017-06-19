@@ -79,7 +79,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 	private static final long serialVersionUID = -3976608317795122426L;
-	private final static Logger logger = Logger.getLogger(SubSegmentDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SubSegmentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

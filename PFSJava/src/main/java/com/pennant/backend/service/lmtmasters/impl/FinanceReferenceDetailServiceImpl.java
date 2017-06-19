@@ -82,7 +82,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceReferenceDetail> implements FinanceReferenceDetailService {
-	private final static Logger logger = Logger.getLogger(FinanceReferenceDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;

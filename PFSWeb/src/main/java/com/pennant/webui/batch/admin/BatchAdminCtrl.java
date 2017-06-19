@@ -56,7 +56,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static final long		serialVersionUID	= 4309463490869641570L;
-	private final static Logger		logger				= Logger.getLogger(BatchAdminCtrl.class);
+	private static final Logger		logger				= Logger.getLogger(BatchAdminCtrl.class);
 
 	protected Window				window_BatchAdmin;
 	protected Textbox				lable_LastBusiness_Date;

@@ -99,10 +99,10 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		selectSql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
 		selectSql.append(" BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry," );
 		selectSql.append(" BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo," );
-		selectSql.append(" BranchAddrHNbr,BranchFlatNbr,BranchAddrStreet,");
+		selectSql.append(" BranchAddrHNbr,BranchFlatNbr,BranchAddrStreet, PinCode,");
 		if(type.contains("View")){
 			selectSql.append(" lovDescBranchCityName,lovDescBranchProvinceName,lovDescBranchCountryName," );
-			selectSql.append("lovDescBranchSwiftCountryName,NewBranchDesc,parentBranchDesc,");
+			selectSql.append("lovDescBranchSwiftCountryName,NewBranchDesc,parentBranchDesc, pinAreaDesc,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
@@ -175,14 +175,14 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		sql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel," );
 		sql.append(" BranchSwiftBankCde, BranchSwiftCountry, BranchSwiftLocCode," );
 		sql.append(" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo," );
-		sql.append(" BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet,");
+		sql.append(" BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2,");
 		sql.append(" :BranchPOBox, :BranchCity, :BranchProvince, :BranchCountry, :BranchFax," );
 		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode," );
 		sql.append(" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch, :BranchType, :ParentBranch, :Region, :BankRefNo,");
-		sql.append(" :BranchAddrHNbr, :BranchFlatNbr, :BranchAddrStreet,");
+		sql.append(" :BranchAddrHNbr, :BranchFlatNbr, :BranchAddrStreet, :PinCode,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," ); 
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -217,7 +217,7 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		sql.append(" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchIsActive = :BranchIsActive, NewBranchCode = :NewBranchCode,");
 		sql.append(" BranchAddrHNbr = :BranchAddrHNbr, BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet,");
 		sql.append(" MiniBranch = :MiniBranch,BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region, BankRefNo = :BankRefNo,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" PinCode = :PinCode, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

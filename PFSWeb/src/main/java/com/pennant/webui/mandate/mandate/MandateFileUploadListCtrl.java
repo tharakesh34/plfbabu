@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
 public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(MandateFileUploadListCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(MandateFileUploadListCtrl.class);
 
 	protected Window					window_MandateFileUploadList;
 	protected Borderlayout				borderLayout_MandateList;

@@ -75,6 +75,14 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 
 		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", isWIF);
 		
+		if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), DateUtility.getAppDate()) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Recal From date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm)));
+			return auditDetail;
+		}
+		
 		// validate RecalType
 		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
 			if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL) 

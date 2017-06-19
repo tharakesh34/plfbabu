@@ -17,7 +17,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class ReleaseCIFProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(ReleaseCIFProcess.class);
+	private static final Logger logger = Logger.getLogger(ReleaseCIFProcess.class);
 
 	public ReleaseCIFProcess() {
 		super();

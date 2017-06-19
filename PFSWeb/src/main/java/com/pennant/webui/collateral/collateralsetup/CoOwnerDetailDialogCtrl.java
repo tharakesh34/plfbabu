@@ -102,7 +102,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
 public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(CoOwnerDetailDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(CoOwnerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -183,7 +183,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private List<CoOwnerDetail>			coOwnerDetailList;
 	private String						primaryCustCif;
 	private boolean						newCoOwnerDetails	= false;
-
+	
 	public CoOwnerDetailDialogCtrl() {
 		super();
 	}
@@ -255,8 +255,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			doSetFieldProperties();
 			doShowDialog(getCoOwnerDetail());
 		} catch (Exception e) {
-			createException(window_CoOwnerDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1221,7 +1220,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ (aCoOwnerDetail.isBankCustomer() ? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value")
 						+ " : " + this.coOwnerCIF.getValue() : Labels .getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")
-						+ " : " + aCoOwnerDetail.getCoOwnerIDTypeName());
+						+ " : " + aCoOwnerDetail.getCoOwnerIDType());
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCoOwnerDetail.getRecordType())) {

@@ -87,7 +87,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> implements Serializable {
 	private static final long					serialVersionUID		= 1L;
-	private final static Logger					logger					= Logger.getLogger(InsurancePolicyDialogCtrl.class);
+	private static final Logger					logger					= Logger.getLogger(InsurancePolicyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -182,8 +182,7 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 			doSetFieldProperties();
 			doShowDialog(getInsurancePolicy());
 		} catch (Exception e) {
-			createException(window_InsurancePolicyDialog, e);
-			logger.error("Exception", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -668,8 +667,7 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 				}
 
 			} catch (Exception e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_InsurancePolicyDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -792,8 +790,7 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception", e);
-			showErrorMessage(this.window_InsurancePolicyDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

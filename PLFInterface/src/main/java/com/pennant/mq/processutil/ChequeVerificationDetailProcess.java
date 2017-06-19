@@ -23,7 +23,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class ChequeVerificationDetailProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(ChequeVerificationDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(ChequeVerificationDetailProcess.class);
 
 	public ChequeVerificationDetailProcess() {
 		super();

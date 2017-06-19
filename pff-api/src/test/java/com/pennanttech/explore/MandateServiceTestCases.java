@@ -28,15 +28,15 @@ import org.testng.annotations.Test;
 
 public class MandateServiceTestCases {
 
-	private final static String ENDPOINT_ADDRESS = "http://192.168.1.40:8080/pff-api/services/mandateRest";
-	private final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
-	private final static String MANDATE_SERVICE_PATH = "/mandateService";
-	private final static String MANDATE_SERVICE_MANDATE_DETAILS = MANDATE_SERVICE_PATH + "/getMandate/1";
-	private final static String MANDATE_SERVICE_MANDATES_DETAILS = MANDATE_SERVICE_PATH + "/getMandates/200000";
-	private final static String MANDATE_SERVICE_CREATION = MANDATE_SERVICE_PATH + "/createMandate";
-	private final static String MANDATE_SERVICE_UPDATE = MANDATE_SERVICE_PATH + "/updateMandate";
-	private final static String MANDATE_SERVICE_DELETE = MANDATE_SERVICE_PATH + "/deleteMandate/6";
-	private final static String MANDATE_SERVICE_LOANSWAPING = MANDATE_SERVICE_PATH + "/loanMandateSwapping";
+	private static final String ENDPOINT_ADDRESS = "http://192.168.1.40:8080/pff-api/services/mandateRest";
+	private static final String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
+	private static final String MANDATE_SERVICE_PATH = "/mandateService";
+	private static final String MANDATE_SERVICE_MANDATE_DETAILS = MANDATE_SERVICE_PATH + "/getMandate/1";
+	private static final String MANDATE_SERVICE_MANDATES_DETAILS = MANDATE_SERVICE_PATH + "/getMandates/200000";
+	private static final String MANDATE_SERVICE_CREATION = MANDATE_SERVICE_PATH + "/createMandate";
+	private static final String MANDATE_SERVICE_UPDATE = MANDATE_SERVICE_PATH + "/updateMandate";
+	private static final String MANDATE_SERVICE_DELETE = MANDATE_SERVICE_PATH + "/deleteMandate/6";
+	private static final String MANDATE_SERVICE_LOANSWAPING = MANDATE_SERVICE_PATH + "/loanMandateSwapping";
 
 	private String createMandateReq = "{\"cif\":\"200000\",\"useExisting\":true,\"mandateRef\":\"\",\"mandateType\":\"ECS\",\"bankCode\":\"\",\"branchCode\":\"\",\"ifsc\":\"SBIN0012831\",\"micr\":\"206002025\",\"accType\":\"29\",\"accNumber\":\"1010200500001\",\"accHolderName\":\"Rishi\",\"jointAccHolderName\":\"\",\"openMandate\":false,\"startDate\":\"2016-12-07T00:00:00\",\"expiryDate\":\"2016-12-30T00:00:00\",\"maxLimit\":10000000,\"periodicity\":\"M0001\",\"status\":\"NEW\"}";
 	private String updateMandateReq = "{\"mandateID\":7,\"cif\":\"200000\",\"useExisting\":true,\"mandateRef\":\"\",\"mandateType\":\"ECS\",\"bankCode\":\"\",\"branchCode\":\"\",\"ifsc\":\"SBIN0012831\",\"micr\":\"206002025\",\"accType\":\"29\",\"accNumber\":\"1010200500001\",\"accHolderName\":\"Krish\",\"jointAccHolderName\":\"\",\"openMandate\":false,\"startDate\":\"2016-12-07T00:00:00\",\"expiryDate\":\"2016-12-30T00:00:00\",\"maxLimit\":10000000,\"periodicity\":\"M0001\",\"status\":\"NEW\"}";

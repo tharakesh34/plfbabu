@@ -92,7 +92,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceSheet> {
 	private static final long serialVersionUID = 2360247056482972784L;
-	private final static Logger logger = Logger.getLogger(CustomerBalanceSheetDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerBalanceSheetDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

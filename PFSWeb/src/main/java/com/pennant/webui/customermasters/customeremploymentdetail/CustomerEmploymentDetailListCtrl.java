@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEmploymentDetail> {
 	private static final long serialVersionUID = 5652445153118844873L;
-	private final static Logger logger = Logger.getLogger(CustomerEmploymentDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerEmploymentDetailListCtrl.class);
 
 	protected Window window_CustomerEmploymentDetailList;
 	protected Borderlayout borderLayout_CustomerEmploymentDetailList;

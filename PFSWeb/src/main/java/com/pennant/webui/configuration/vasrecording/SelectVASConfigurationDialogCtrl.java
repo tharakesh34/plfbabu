@@ -93,7 +93,7 @@ import com.pennanttech.pff.core.InterfaceException;
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;
 
-	private final static Logger				logger				= Logger.getLogger(SelectVASConfigurationDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(SelectVASConfigurationDialogCtrl.class);
 
 	protected Window						window_SelectVASConfiguration;
 	protected ExtendedCombobox				productType;

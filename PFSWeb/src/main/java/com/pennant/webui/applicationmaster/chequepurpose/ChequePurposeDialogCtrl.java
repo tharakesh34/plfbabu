@@ -82,7 +82,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ChequePurposeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ChequePurposeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -194,8 +194,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 			doSetFieldProperties();
 			doShowDialog(getChequePurpose());
 		} catch (Exception e) {
-			createException(window_ChequePurposeDialog, e);
-			logger.warn("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" +event.toString());
@@ -567,8 +566,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 				}
 
 			}catch (DataAccessException e){
-				logger.warn("Exception: ", e);
-				showErrorMessage(this.window_ChequePurposeDialog,e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -650,8 +648,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ChequePurposeDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

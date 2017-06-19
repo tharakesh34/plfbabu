@@ -17,7 +17,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.model.DataEngineLog;
 
 public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
-	private final static Logger logger = Logger.getLogger(ExceptionLogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExceptionLogCtrl.class);
 	private static final long serialVersionUID = 1L;
 
 	protected Window window_ExceptionLog;

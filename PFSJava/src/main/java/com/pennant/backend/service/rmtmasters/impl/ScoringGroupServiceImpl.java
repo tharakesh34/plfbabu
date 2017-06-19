@@ -74,7 +74,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implements ScoringGroupService {
-	private final static Logger logger = Logger.getLogger(ScoringGroupServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ScoringGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

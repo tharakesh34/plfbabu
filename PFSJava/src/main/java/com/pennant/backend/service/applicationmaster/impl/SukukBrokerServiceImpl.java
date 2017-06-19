@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class SukukBrokerServiceImpl extends GenericService<SukukBroker> implements SukukBrokerService {
-	private final static Logger logger = Logger.getLogger(SukukBrokerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SukukBrokerServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private SukukBrokerDAO sukukBrokerDAO;

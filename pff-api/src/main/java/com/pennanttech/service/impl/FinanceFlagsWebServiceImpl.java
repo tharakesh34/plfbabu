@@ -28,7 +28,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,FinanceFlagsRestService {
 
-	private final static Logger logger = Logger.getLogger(FinanceFlagsWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceFlagsWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private FinanceMainDAO financeMainDAO;

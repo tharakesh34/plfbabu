@@ -29,4 +29,5 @@ public class BajajInterfaceConstants {
 	public static DataEngineStatus POSIDEX_RESPONSE_STATUS = new DataEngineStatus("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
 	public static DataEngineStatus POSIDEX_REQUEST_STATUS = new DataEngineStatus("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 	public static DataEngineStatus DATA_MART_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
+	public static DataEngineStatus TRAIL_BALANCE_EXPORT_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
 }

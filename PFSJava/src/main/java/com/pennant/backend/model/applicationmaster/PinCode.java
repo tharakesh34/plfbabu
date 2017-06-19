@@ -61,6 +61,12 @@ private static final long serialVersionUID = 1L;
 	private String pinCode;
 	private String city;
 	private String pCCityName;
+	private String areaName;
+	private String pCProvince;
+	private String pCCountry ;
+	private String lovDescPCCountryName;
+	private String lovDescPCProvinceName;
+	private String gstin;
 	private boolean active;
 	private boolean newRecord=false;
 	private String lovValue;
@@ -75,6 +81,22 @@ private static final long serialVersionUID = 1L;
 		super();
 	}
 
+	public String getpCCityName() {
+		return pCCityName;
+	}
+
+	public void setpCCityName(String pCCityName) {
+		this.pCCityName = pCCityName;
+	}
+
+	public String getpCProvince() {
+		return pCProvince;
+	}
+
+	public void setpCProvince(String pCProvince) {
+		this.pCProvince = pCProvince;
+	}
+
 	public PinCode(long id) {
 		super();
 		this.setId(id);
@@ -83,6 +105,10 @@ private static final long serialVersionUID = 1L;
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("pCCityName");
+			excludeFields.add("pCProvince");
+			excludeFields.add("lovDescPCProvinceName");
+			excludeFields.add("pCCountry");
+			excludeFields.add("gstin");
 	return excludeFields;
 	}
 
@@ -157,12 +183,62 @@ private static final long serialVersionUID = 1L;
 	}
 
 
-	public String getpCCityName() {
-		return pCCityName;
+	public String getpCCountry() {
+		return pCCountry;
 	}
 
-	public void setpCCityName(String pCCityName) {
+	public void setpCCountry(String pCCountry) {
+		this.pCCountry = pCCountry;
+	}
+
+	public String getPCCityName() {
+		return pCCityName;
+	}
+	public void setPCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
 	}
 
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
+	public String getPCProvince() {
+		return pCProvince;
+	}
+
+	public void setPCProvince(String pCProvince) {
+		this.pCProvince = pCProvince;
+	}
+
+	public String getLovDescPCProvinceName() {
+		return lovDescPCProvinceName;
+	}
+
+	public void setLovDescPCProvinceName(String lovDescPCProvinceName) {
+		this.lovDescPCProvinceName = lovDescPCProvinceName;
+	}
+
+	public String getLovDescPCCountryName() {
+		return lovDescPCCountryName;
+	}
+
+	public void setLovDescPCCountryName(String lovDescPCCountryName) {
+		this.lovDescPCCountryName = lovDescPCCountryName;
+	}
+
+	public String getGstin() {
+		return gstin;
+	}
+
+	public void setGstin(String gstin) {
+		this.gstin = gstin;
+	}
+
+	
+
 }
+

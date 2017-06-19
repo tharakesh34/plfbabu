@@ -26,7 +26,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 
 public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentReasonCode> {
 	private static final long serialVersionUID = 3226455931949186314L;
-	private final static Logger logger = Logger.getLogger(PresentmentReasonCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentReasonCodeListCtrl.class);
 
 	protected Window window_PresentmentReasonCodeList;
 	protected Borderlayout borderLayout_PresentmentReasonCodeList;

@@ -81,7 +81,7 @@ import com.pennanttech.pff.core.Literal;
 public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfiguration> {
 
 	private static final long							serialVersionUID	= 1L;
-	private final static Logger							logger				= Logger.getLogger(NPABucketConfigurationDialogCtrl.class);
+	private static final Logger							logger				= Logger.getLogger(NPABucketConfigurationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -551,8 +551,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_NPABucketConfigurationDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

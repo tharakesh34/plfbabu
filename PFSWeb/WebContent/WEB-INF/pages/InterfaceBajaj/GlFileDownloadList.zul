@@ -19,6 +19,7 @@
 					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />
+					<button id="btnexecute" label="execute" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -32,6 +33,7 @@
 						<listhead sizable="true">
 							<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}"  hflex="min" />
 							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
+							<listheader label="${c:l('listheader_ProcessedDate.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Downlaod.label')}"  hflex="min" />
 						</listhead>

@@ -77,7 +77,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 
 public class DashboardCreate extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = -4201689911130684236L;
-	private final static Logger logger = Logger.getLogger(DashboardCreate.class);
+	private static final Logger logger = Logger.getLogger(DashboardCreate.class);
 	protected Fusionchart fusionchart;
 	public ChartDetail chartDetail;
 	private int height = getContentAreaHeight() * 85/100 /2;

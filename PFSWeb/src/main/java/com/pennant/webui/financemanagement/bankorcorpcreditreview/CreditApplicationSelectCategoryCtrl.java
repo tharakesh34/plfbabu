@@ -88,7 +88,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 3257569537441008225L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationSelectCategoryCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationSelectCategoryCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

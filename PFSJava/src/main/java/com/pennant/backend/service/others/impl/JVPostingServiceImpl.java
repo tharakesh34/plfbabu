@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.InterfaceException;
  * 
  */
 public class JVPostingServiceImpl extends GenericService<JVPosting> implements JVPostingService {
-	private final static Logger logger = Logger.getLogger(JVPostingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(JVPostingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private JVPostingDAO jVPostingDAO;

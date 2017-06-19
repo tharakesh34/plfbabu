@@ -113,6 +113,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -130,6 +131,7 @@ import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -144,7 +146,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class VASRecordingServiceImpl extends GenericService<VASRecording> implements VASRecordingService {
-	private final static Logger				logger	= Logger.getLogger(VASRecordingServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(VASRecordingServiceImpl.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 	private VASRecordingDAO					vASRecordingDAO;
@@ -181,8 +183,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private RelationshipOfficerDAO			relationshipOfficerDAO;
 	private ScriptValidationService 		scriptValidationService;
 	private PostingsPreparationUtil			postingsPreparationUtil;
-
-
+	private FinanceWorkFlowService			financeWorkFlowService;
+	
+	
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -1692,16 +1695,19 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
-			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
-				Customer customer = getCustomerDAO().getCustomerByCIF(getVASRecording().getPrimaryLinkRef(),"");
+			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())){
+				Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(),"");
 				aeEvent.setBranch(customer.getCustDftBranch());
 				aeEvent.setCcy(customer.getCustBaseCcy());
 				aeEvent.setCustID(customer.getCustID());
-			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
+			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())){
 				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
-						getVASRecording().getPrimaryLinkRef(),"");
+						vASRecording.getPrimaryLinkRef(),"");
+				//TODO:Need to modify for getting branch as per performance
+				Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(),"");
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
+				aeEvent.setBranch(customer.getCustDftBranch());
 			}
 
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -1771,7 +1777,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-
+			
 			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
 					.getProductCode());
 			if (vASConfiguration == null || !vASConfiguration.isActive()) {
@@ -1782,10 +1788,20 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
+			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+			if(financeWorkFlow == null){
+				String[] valueParm = new String[2];
+				valueParm[0] = vasRecording.getProductCode();
+				valueParm[1] = "workflow";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
 			if (!StringUtils.equals(vASConfiguration.getRecAgainst(), vasRecording.getPostingAgainst())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "PostingAgainst";
-				valueParm[1] = vasRecording.getProductCode();
+				valueParm[1] = vasRecording.getPostingAgainst();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
@@ -2367,6 +2383,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
+	public FinanceWorkFlowService getFinanceWorkFlowService() {
+		return financeWorkFlowService;
+	}
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
 
 }

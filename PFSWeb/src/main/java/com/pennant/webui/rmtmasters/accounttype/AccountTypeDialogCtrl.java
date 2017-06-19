@@ -88,7 +88,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	private static final long serialVersionUID = 8382447556859137171L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(AccountTypeDialogCtrl.class);
 
 	/*
@@ -113,7 +113,12 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected ExtendedCombobox	acTypeGrpId;
 	protected ExtendedCombobox	profitCenter;
 	protected ExtendedCombobox	costCenter;
-	
+	protected Checkbox gSTApplicable; // autoWired
+	protected Checkbox revChargeApplicable; // autoWired
+	protected Textbox hSNNumber;
+	protected Textbox natureService;
+	protected Row row_HSNNumber;
+	protected Row row_NatureService;
 	protected Row row_headcode;
 
 	// not autoWired Var's
@@ -250,6 +255,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.costCenter.setDisplayStyle(2);
 		this.costCenter.setValidateColumns(new String[] {"CostCenterCode" });
 		this.costCenter.setMandatoryStyle(true);
+		
+		this.hSNNumber.setMaxlength(50);
+		this.natureService.setMaxlength(50);
 		
 		if ("Y".equals(CBI_Available)) {
 			this.acHeadCode.setValue("0000");
@@ -480,7 +488,19 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			if(aAccountType.getCostCenterID() != null ){
 				this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
 				this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
-			}	
+			}
+			this.gSTApplicable.setChecked(aAccountType.isTaxApplicable());
+			if (aAccountType.isTaxApplicable()) {
+				this.hSNNumber.setReadonly(false);
+				this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
+				this.natureService.setReadonly(false);
+				this.natureService.setValue(aAccountType.getaCCADDLVAR2());;
+
+			} else {
+				this.hSNNumber.setReadonly(true);
+				this.natureService.setReadonly(true);
+			}
+			this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 		
 		logger.debug("Leaving");
 	}
@@ -661,6 +681,33 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 				wve.add(we);
 			}
 		}
+		
+		//GST Applicable
+		try {
+			aAccountType.setTaxApplicable(this.gSTApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// HSN/SAC Number
+		try {
+			aAccountType.setaCCADDLVAR1(this.hSNNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// Nature Of Service
+		try {
+			aAccountType.setaCCADDLVAR2(this.natureService.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//GST Applicable
+		try {
+			aAccountType.setaCCADDLCHAR1(this.revChargeApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -765,6 +812,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 					.getLabel("label_AccountTypeDialog_CostCenter.value"), null,
 					true, true));
 		}
+		if (!this.hSNNumber.isReadonly()) {
+			this.hSNNumber.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountTypeDialog_HSNNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM,true));
+		}
+		if (!this.natureService.isReadonly()) {
+			this.natureService.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountTypeDialog_NatureService.value"), null,	true));
+		}
 		
 		logger.debug("Leaving");
 	}
@@ -784,6 +839,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setConstraint("");
 		this.profitCenter.setConstraint("");
 		this.costCenter.setConstraint("");
+		this.hSNNumber.setConstraint("");
+		this.natureService.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -814,6 +871,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setErrorMessage("");
 		this.profitCenter.setErrorMessage("");
 		this.costCenter.setErrorMessage("");
+		this.hSNNumber.setErrorMessage("");
+		this.natureService.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -894,6 +953,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setReadonly(isReadOnly("AccountTypeDialog_acTypeGrpId"));
 		this.profitCenter.setReadonly(isReadOnly("AccountTypeDialog_profitCenter"));
 		this.costCenter.setReadonly(isReadOnly("AccountTypeDialog_costCenter"));
+		this.gSTApplicable.setDisabled(isReadOnly("AccountTypeDialog_gSTApplicable"));
+		this.hSNNumber.setReadonly(isReadOnly("AccountTypeDialog_hSNNumber"));
+		this.natureService.setReadonly(isReadOnly("AccountTypeDialog_natureService"));
+		this.revChargeApplicable.setDisabled(isReadOnly("AccountTypeDialog_revChrgApplicable"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -932,6 +995,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setReadonly(true);
 		this.profitCenter.setReadonly(true);
 		this.costCenter.setReadonly(true);
+		this.gSTApplicable.setDisabled(true);
+		this.hSNNumber.setReadonly(true);
+		this.natureService.setReadonly(true);
+		this.revChargeApplicable.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -966,6 +1033,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeGrpId.setValue("");;
 		this.profitCenter.setValue("");;
 		this.costCenter.setValue("");;
+		this.gSTApplicable.setChecked(false);
+		this.hSNNumber.setValue("");;
+		this.natureService.setValue("");;
+		this.revChargeApplicable.setChecked(false);
 		logger.debug("Leaving");
 	}
 
@@ -1258,6 +1329,35 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		} else {
 			this.custSysAc.setDisabled(false);
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method to be called after checking GST Applicable checkBox
+	 */
+	public void onCheck$gSTApplicable(Event event) {
+		logger.debug("Entering");
+		gSTApplicableCheck();
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Check Whether  GST Applicable  is checked or not
+	 * 
+	 */
+	public void gSTApplicableCheck() {
+		logger.debug("Entering");
+		if (this.gSTApplicable.isChecked()) {
+			this.hSNNumber.setReadonly(false);
+			this.hSNNumber.setValue("");
+			this.natureService.setReadonly(false);
+			this.natureService.setValue("");;
+
+		} else {
+			this.hSNNumber.setReadonly(true);
+			this.natureService.setReadonly(true);
 		}
 
 		logger.debug("Leaving");

@@ -32,7 +32,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
 public class CheckListDetailServiceImpl implements CheckListDetailService{
-	private final static Logger logger = Logger.getLogger(CheckListDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CheckListDetailServiceImpl.class);
 	
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;

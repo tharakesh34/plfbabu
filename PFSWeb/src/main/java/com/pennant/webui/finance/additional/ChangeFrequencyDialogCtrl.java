@@ -82,7 +82,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long					serialVersionUID	= 454600127282110738L;
-	private final static Logger					logger				= Logger.getLogger(ChangeFrequencyDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(ChangeFrequencyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -292,7 +292,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 
 		if (financeScheduleDetails != null) {
-			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			//Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
@@ -304,15 +304,16 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// Not Allowing Grace Period Dates
-				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
+				/*if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
 					if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
 						prvSchd = curSchd;
 					}
 					continue;
-				}
+				}*/
 				
 				// Not allow Before Current Business Date
 				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					prvSchd = curSchd;
 					continue;
 				}
 				
@@ -322,7 +323,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				//Not Review Date
-				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq() 
+						&& !curSchd.isPftOnSchDate()) {
 					continue;
 				}
 				

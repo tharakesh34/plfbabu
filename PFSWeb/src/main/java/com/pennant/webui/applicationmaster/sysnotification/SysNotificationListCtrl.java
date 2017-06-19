@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SysNotificationListCtrl extends GFCBaseListCtrl<SysNotification> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(SysNotificationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SysNotificationListCtrl.class);
 
 	protected Window window_SysNotificationList;
 	protected Borderlayout borderLayout_SysNotificationList;

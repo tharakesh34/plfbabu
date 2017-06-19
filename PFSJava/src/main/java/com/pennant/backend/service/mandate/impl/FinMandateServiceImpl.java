@@ -79,7 +79,7 @@ import com.pennanttech.pff.core.util.ModuleUtil;
  * 
  */
 public class FinMandateServiceImpl implements FinMandateService {
-	private final static Logger	logger	= Logger.getLogger(FinMandateServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(FinMandateServiceImpl.class);
 
 	private AuditHeaderDAO		auditHeaderDAO;
 	private MandateDAO			mandateDAO;

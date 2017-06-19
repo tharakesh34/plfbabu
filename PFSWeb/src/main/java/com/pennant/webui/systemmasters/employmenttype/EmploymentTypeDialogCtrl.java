@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	private static final long serialVersionUID = -6632169221044686005L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(EmploymentTypeDialogCtrl.class);
 
 	/*

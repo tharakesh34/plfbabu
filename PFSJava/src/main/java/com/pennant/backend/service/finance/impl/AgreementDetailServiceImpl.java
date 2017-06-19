@@ -22,7 +22,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class AgreementDetailServiceImpl extends GenericService<AgreementDetail> implements AgreementDetailService{
 
-	private final static Logger logger = Logger.getLogger(AgreementDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AgreementDetailServiceImpl.class);
 
 	private FinAgreementDetailDAO finAgreementDetailDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

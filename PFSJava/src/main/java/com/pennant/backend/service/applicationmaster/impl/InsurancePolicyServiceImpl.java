@@ -70,7 +70,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class InsurancePolicyServiceImpl extends GenericService<InsurancePolicy> implements InsurancePolicyService {
-	private final static Logger	logger	= Logger.getLogger(InsurancePolicyServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(InsurancePolicyServiceImpl.class);
 
 	private AuditHeaderDAO		auditHeaderDAO;
 

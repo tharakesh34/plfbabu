@@ -155,6 +155,30 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		}
 		logger.debug("Leaving");
 	}
+	/**
+	 * Method for Update utilization amount after amounts Approval
+	 */
+	@Override
+	public void updateUtiliseOnly(long excessID, BigDecimal amount) {
+		logger.debug("Entering");
+		
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExcessID", excessID);
+		source.addValue("PaidNow", amount);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow ,  BalanceAmt = BalanceAmt - :PaidNow  ");
+		updateSql.append(" Where ExcessID =:ExcessID");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
 	
 	/**
 	 * Method for Update Excess Balance amount after amounts Approval

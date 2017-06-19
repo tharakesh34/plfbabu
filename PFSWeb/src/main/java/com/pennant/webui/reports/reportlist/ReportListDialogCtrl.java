@@ -88,7 +88,7 @@ import com.pennant.webui.util.PTListReportUtils;
  */
 public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	private static final long serialVersionUID = 7403304686538288944L;
-	private final static Logger logger = Logger.getLogger(ReportListDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportListDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

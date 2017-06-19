@@ -71,11 +71,11 @@ import com.pennant.policy.model.UserImpl;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;
-	private final static Logger		logger				= Logger.getLogger(AgreementGeneration.class);
+	private static final Logger		logger				= Logger.getLogger(AgreementGeneration.class);
 
-	public final static String		refField			= "SmartForm[0].LPOForm[0].txtrefno[0]";
-	public final static String		statusField			= "SmartForm[0].LPOForm[0].ddlIsActive[0]";
-	public final static String		dealerId			= "SmartForm[0].LPOForm[0].txtdealerid[0]";
+	public static final String		refField			= "SmartForm[0].LPOForm[0].txtrefno[0]";
+	public static final String		statusField			= "SmartForm[0].LPOForm[0].ddlIsActive[0]";
+	public static final String		dealerId			= "SmartForm[0].LPOForm[0].txtdealerid[0]";
 
 	private NotesService			notesService;
 	private FinanceDetailService	financeDetailService;

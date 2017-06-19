@@ -19,7 +19,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class HandlingInstructionProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(HandlingInstructionProcess.class);
+	private static final Logger logger = Logger.getLogger(HandlingInstructionProcess.class);
 
 	public HandlingInstructionProcess() {
 		super();
@@ -34,8 +34,8 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat) 
-			throws InterfaceException, JaxenException  {
+	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (handlingInstruction == null) {

@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> implements VehicleDealerService {
-	private final static Logger logger = Logger.getLogger(VehicleDealerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VehicleDealerServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 

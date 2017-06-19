@@ -59,7 +59,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements
         QueueAssignmentService {
-	private final static Logger logger = Logger.getLogger(QueueAssignmentServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(QueueAssignmentServiceImpl.class);
 
 	private QueueAssignmentDAO queueAssignmentDAO;
 	private TaskOwnersDAO taskOwnersDAO;

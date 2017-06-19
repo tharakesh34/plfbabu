@@ -11,6 +11,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
@@ -43,13 +44,14 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(PaymentInstructionDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PaymentInstructionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -62,6 +64,9 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected CurrencyBox paymentAmount;
 	protected ExtendedCombobox partnerBankID;
 	protected Textbox remarks;
+	protected Textbox tranReference;
+	protected Textbox status;
+	protected Textbox rejectReason;
 
 	// IMPS Details
 	protected ExtendedCombobox issuingBank;
@@ -179,8 +184,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			doShowDialog(this.paymentInstruction);
 
 		} catch (Exception e) {
-			createException(window_DisbursementsInstructionsDialog, e);
-			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -295,7 +299,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		this.favouringName.setMaxlength(100);
 		this.acctHolderName.setMaxlength(100);
-		this.chequeOrDDumber.setMaxlength(50);
+		this.chequeOrDDumber.setMaxlength(6);
 		this.remarks.setMaxlength(500);
 
 		this.paymentAmount.setMandatory(true);
@@ -366,6 +370,9 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		
 		this.paymentAmount.setValue(PennantAppUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
 		this.remarks.setValue(paymentInstruction.getRemarks());
+		this.tranReference.setValue(paymentInstruction.getTransactionRef());
+		this.status.setValue(paymentInstruction.getStatus());
+		this.rejectReason.setValue(paymentInstruction.getRejectReason());
 
 		if (paymentInstruction.getBankBranchId() != Long.MIN_VALUE && paymentInstruction.getBankBranchId() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", paymentInstruction.getBankBranchId());
@@ -408,6 +415,9 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 		
 		try {
+			if (DateUtility.compare(this.postDate.getValue(), DateUtility.getAppDate()) < 0) {
+				throw new WrongValueException(this.postDate, "Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
+			}
 			paymentInstruction.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -549,10 +559,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (!this.postDate.isDisabled()) {
-			this.postDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_DisbInstructionsDialog_DisbDate.value"), true));
-		}
 
 		if (!this.paymentType.isDisabled()) {
 			this.paymentType.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),  PennantStaticListUtil.getPaymentTypes(false) ,true));
@@ -629,13 +635,14 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
 
+		Clients.clearWrongValue(this.postDate);
+		this.postDate.setConstraint("");
 		this.favouringName.setConstraint("");
 		this.paymentAmount.setConstraint("");
 		this.acctNumber.setConstraint("");
 		this.paymentType.setConstraint("");
 		this.acctHolderName.setConstraint("");
 		this.chequeOrDDumber.setConstraint("");
-		this.postDate.setConstraint("");
 		this.remarks.setConstraint("");
 		this.issuingBank.setConstraint("");
 		this.payableLoc.setConstraint("");
@@ -655,13 +662,13 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
 
+		this.postDate.setErrorMessage("");
 		this.favouringName.setErrorMessage("");
 		this.paymentAmount.setErrorMessage("");
 		this.acctNumber.setErrorMessage("");
 		this.paymentType.setErrorMessage("");
 		this.acctHolderName.setErrorMessage("");
 		this.chequeOrDDumber.setErrorMessage("");
-		this.postDate.setErrorMessage("");
 		this.issuingBank.setErrorMessage("");
 		this.payableLoc.setErrorMessage("");
 		this.printingLoc.setErrorMessage("");

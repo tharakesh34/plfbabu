@@ -58,6 +58,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.webui.systemmasters.province.model.ProvinceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -70,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	private static final long serialVersionUID = -3109779707000635809L;
-	private final static Logger logger = Logger.getLogger(ProvinceListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProvinceListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -102,6 +103,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	protected Button button_ProvinceList_ProvinceSearchDialog;
 
 	private transient ProvinceService provinceService;
+	private transient TaxDetailService taxDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -223,6 +225,7 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 			if (isWorkFlowEnabled() && province.getWorkflowId() == 0) {
 				province.setWorkflowId(getWorkFlowId());
 			}
+			province.setTaxDetailList(taxDetailService.getTaxDetailbystateCode(province.getCPProvince(), "_View"));
 			doShowDialogPage(province);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
@@ -276,4 +279,11 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 	public void setProvinceService(ProvinceService provinceService) {
 		this.provinceService = provinceService;
 	}
+
+	public void setTaxDetailService(TaxDetailService taxDetailService) {
+		this.taxDetailService = taxDetailService;
+	}
+	
+	
+	
 }

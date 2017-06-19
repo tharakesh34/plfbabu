@@ -23,30 +23,24 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class PosidexRequestProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(PosidexRequestProcess.class);
+	private static final Logger	logger					= Logger.getLogger(PosidexRequestProcess.class);
 
-	private Date lastRunDate;
-	private long headerId;
-	private long totalLoans;
+	private Date				lastRunDate;
+	private long				headerId;
 
-	private int loanSuccessCount;
-	private int loanFailedCount;
-	private int loanInsertCount;
-	private int loanUpdateCount;
+	private String				SOURCE_SYSTEM_ID;
+	private String				SOURCE_SYSTEM;
 
-	private String SOURCE_SYSTEM_ID;
-	private String SOURCE_SYSTEM;
+	private String[]			customerKey				= new String[] { "CUSTOMER_NO" };
+	private String[]			customerLoanKey			= new String[] { "CUSTOMER_NO", "LAN_NO", "CUSTOMER_TYPE" };
+	private String[]			reportKey				= new String[] { "FILLER_STRING_1" };
 
-	private String[] customerKey = new String[] { "CUSTOMER_NO" };
-	private String[] customerLoanKey = new String[] { "CUSTOMER_NO", "LAN_NO", "CUSTOMER_TYPE" };
-	private String[] reportKey = new String[] { "FILLER_STRING_1" };
+	private static final String	CUSTOMER_DETAILS		= "PSX_DEDUP_EOD_CUST_DEMO_DTL";
+	private static final String	CUSTOMER_ADDR_DETAILS	= "PSX_DEDUP_EOD_CUST_ADDR_DTL";
+	private static final String	CUSTOMER_LOAN_DETAILS	= "PSX_DEDUP_EOD_CUST_LOAN_DTL";
+	private static final String	CUSTOMER_REPORT_DETAILS	= "DEDUP_EOD_CUST_REP_DTL";
 
-	private static final String CUSTOMER_DETAILS = "PSX_DEDUP_EOD_CUST_DEMO_DTL";
-	private static final String CUSTOMER_ADDR_DETAILS = "PSX_DEDUP_EOD_CUST_ADDR_DTL";
-	private static final String CUSTOMER_LOAN_DETAILS = "PSX_DEDUP_EOD_CUST_LOAN_DTL";
-	private static final String CUSTOMER_REPORT_DETAILS = "DEDUP_EOD_CUST_REP_DTL";
-
-	private String summary = null;
+	private String				summary					= null;
 
 	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
@@ -61,7 +55,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		headerId = logHeader();
 
 		loadCount();
-		
+
 		loaddefaults();
 
 		try {
@@ -169,16 +163,15 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
-			TransactionStatus txnStatus = null;
+			TransactionStatus	txnStatus	= null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				processedCount++;
 				executionStatus.setProcessedRecords(processedCount);
-				
+
 				long customerId = 0;
 				boolean isExist = false;
-
 
 				customerId = rs.getLong("CUSTOMER_NO");
 				try {
@@ -211,7 +204,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					txnStatus.flush();
 					txnStatus = null;
 				}
-			
+
 			}
 		});
 
@@ -293,7 +286,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			public void processRow(ResultSet rs) throws SQLException {
 				processedCount++;
 				executionStatus.setProcessedRecords(processedCount);
-				
+
 				boolean isExist;
 				String finreferenceNo = null;
 				try {
@@ -306,21 +299,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						if (isExist) {
 							loanMap.addValue("PROCESS_TYPE", "U");
 							update(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate, customerLoanKey);
-							loanUpdateCount++;
 						} else {
 							loanMap.addValue("PROCESS_TYPE", "I");
 							save(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate);
-							loanInsertCount++;
 						}
+						successCount++;
 					} catch (Exception e) {
 						throw e;
 					}
 
-					loanSuccessCount++;
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					failedCount++;
-					loanFailedCount++;
 					saveBatchLog(finreferenceNo, "F", e.getMessage());
 				}
 			}
@@ -328,25 +318,24 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	}
 
-	
 	private void loadCount() {
 		StringBuilder sql = new StringBuilder();
 
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		sql.append("select sum(count) from (");
 		sql.append(" SELECT count(*) count from INT_POSIDEX_CUST_VIEW");
-		
+
 		if (lastRunDate != null) {
 			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 		}
-		
+
 		sql.append(" union all ");
 		sql.append("SELECT count(*) count from INT_POSIDEX_CUST_LOAN_VIEW");
-		
+
 		if (lastRunDate != null) {
 			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 		}
-		
+
 		sql.append(") T ");
 
 		if (lastRunDate != null) {
@@ -354,53 +343,13 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(),parmMap, Integer.class);
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
 			executionStatus.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}
-	
-	/*private int getUpdatedCustomerCount() {
-		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
-		sql.append(" SELECT count(*) from INT_POSIDEX_CUST_VIEW");
-
-		if (lastRunDate != null) {
-			sql.append(" WHERE LASTMNTON > :LASTMNTON");
-			parmMap.addValue("LASTMNTON", lastRunDate);
-		}
-
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return 0;
-	}
-
-	private int getLoanCount() {
-		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
-		sql.append("SELECT count(*) from INT_POSIDEX_CUST_LOAN_VIEW");
-
-		if (lastRunDate != null) {
-			sql.append(" WHERE LASTMNTON > :LASTMNTON");
-			parmMap.addValue("LASTMNTON", lastRunDate);
-		}
-
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return 0;
-	}*/
 
 	private Date getLatestRunDate() {
 		StringBuilder sql = new StringBuilder();
@@ -455,27 +404,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-
-	/*@Override
-	public void updateRemarks(StringBuilder remarks) {
-		StringBuilder builder = new StringBuilder();
-		if (failedCount > 0 || loanFailedCount > 0) {
-			builder.append("Completed with exceptions");
-			builder.append(" total customers: " + totalRecords + ", total loans : " + totalLoans);
-			builder.append(". Success[customers: " + successCount + ", loans: " + loanSuccessCount);
-			builder.append("][customers inserted: " + insertCount + ", updated: " + updateCount);
-			builder.append("][loans inserted: " + loanInsertCount + ", updated: " + loanUpdateCount);
-			builder.append(". Failed[customers: " + failedCount + ", loans: " + loanFailedCount);
-		} else {
-			builder.append("Completed succesfully total customers: " + totalRecords + ", total loans : " + totalLoans);
-			builder.append(".Success[customers: " + successCount + ", loans: " + loanSuccessCount);
-			builder.append("][customers inserted: " + insertCount + ", updated: " + updateCount);
-			builder.append("][loans inserted: " + loanInsertCount + ", updated: " + loanUpdateCount);
-		}
-
-		remarks.append(builder.toString());
-		summary = remarks.toString();
-	}*/
 
 	private MapSqlParameterSource mapLoanMapData(ResultSet rs) throws SQLException {
 		MapSqlParameterSource map = new MapSqlParameterSource();

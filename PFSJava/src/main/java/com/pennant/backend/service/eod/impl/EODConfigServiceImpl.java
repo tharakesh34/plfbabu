@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.eod.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -61,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>EODConfig</b>.<br>
  */
 public class EODConfigServiceImpl extends GenericService<EODConfig> implements EODConfigService {
-	private final static Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private EODConfigDAO eODConfigDAO;
@@ -200,7 +202,12 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 	public EODConfig getApprovedEODConfig(long eodConfigId) {
 		return getEODConfigDAO().getEODConfig(eodConfigId,"_AView");
 	}	
-		
+	
+	@Override
+	public List<EODConfig> getEODConfig() {
+		return getEODConfigDAO().getEODConfig();
+	}	
+	
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by
 	 * using businessValidation(auditHeader) method if there is any error or

@@ -78,7 +78,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(PartnerBankListCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(PartnerBankListCtrl.class);
 
 	protected Window						window_PartnerBankList;
 	protected Borderlayout					borderLayout_PartnerBankList;

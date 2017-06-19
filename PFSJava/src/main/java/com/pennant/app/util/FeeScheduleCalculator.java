@@ -54,7 +54,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 
 public class FeeScheduleCalculator {
-	private final static Logger	logger	= Logger.getLogger(FeeScheduleCalculator.class);
+	private static final Logger	logger	= Logger.getLogger(FeeScheduleCalculator.class);
 
 	private FeeScheduleCalculator() {
 		super();

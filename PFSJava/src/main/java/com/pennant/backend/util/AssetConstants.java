@@ -68,6 +68,7 @@ public class AssetConstants {
 	public static final String 	UNIQUE_ID_DOCUMENTDETAIL    = "DOCDETAIL";
 	public static final String 	UNIQUE_ID_DEVIATION         = "DEVIATION";
 	public static final String 	UNIQUE_ID_MANDATE         	= "MANDATE";
+	public static final String 	UNIQUE_ID_TAX         		= "TAX";
 	public static final String 	UNIQUE_ID_COLLATERAL        = "COLLATERAL";
 	public static final String 	UNIQUE_ID_VAS        		= "VAS";
 	public static final String 	UNIQUE_ID_ETIHADCB          = "ETIHADCB";

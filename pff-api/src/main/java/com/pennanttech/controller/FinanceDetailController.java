@@ -16,6 +16,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -36,6 +37,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -62,7 +64,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceDetailController extends SummaryDetailService {
 
-	private final static Logger logger = Logger.getLogger(FinanceDetailController.class);
+	private static final Logger logger = Logger.getLogger(FinanceDetailController.class);
 
 	private FinanceDetailService financeDetailService;
 	private StepPolicyDetailDAO stepPolicyDetailDAO;
@@ -255,7 +257,18 @@ public class FinanceDetailController extends SummaryDetailService {
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}else {
-				vasRecording.setExtendedFieldRender(null);
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(vasRecording.getVasReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setSeqNo(0);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}
 		}
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -286,6 +299,22 @@ public class FinanceDetailController extends SummaryDetailService {
 			financeDetail.setCustomerDetails(custDetails);
 		}
 		
+		// Set VAS reference as feeCode for VAS related fees
+		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
+			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
+				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
+					feeDetail.setVasReference(vasRecording.getVasReference());
+					feeDetail.setCalculatedAmount(vasRecording.getFee());
+					feeDetail.setFixedAmount(vasRecording.getFee());
+					feeDetail.setAlwDeviation(true);
+					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+					//feeDetail.setAlwModifyFee(true);
+					feeDetail.setAlwModifyFeeSchdMthd(true);
+					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+				}
+			}
+		}
 		// fetch finType fees details
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
@@ -298,7 +327,6 @@ public class FinanceDetailController extends SummaryDetailService {
 						stepPolicyCode, "_AView");
 				
 				// reset step policy details
-				
 				finScheduleData.resetStepPolicyDetails(stepPolicyList);
 				
 				finScheduleData.getFinanceMain().setStepFinance(true);

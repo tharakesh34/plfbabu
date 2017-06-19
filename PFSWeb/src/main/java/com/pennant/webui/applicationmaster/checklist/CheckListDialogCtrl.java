@@ -103,7 +103,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	private static final long serialVersionUID = 3545862467364688600L;
-	private final static Logger logger = Logger.getLogger(CheckListDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CheckListDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

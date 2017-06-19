@@ -85,7 +85,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DedupFieldsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DedupFieldsDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

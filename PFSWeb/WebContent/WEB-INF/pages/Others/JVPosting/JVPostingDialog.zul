@@ -186,6 +186,13 @@
 										</hlayout>
 									</row>
 									<row id="row5" valign="top">
+										<label
+											id="label_PostingDivision"
+											value="${c:l('label_JVPostingDialog_PostingDivision.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="postingDivision" />
+										</hbox>
 										<label id="label_BatchPurpose"
 											value="${c:l('label_JVPostingDialog_BatchPurpose.value')}" />
 										<hlayout
@@ -195,17 +202,6 @@
 											<textbox id="batchPurpose"
 												maxlength="35" multiline="true" rows="3" width="250px"
 												style="resize: none;" />
-										</hlayout>
-										<label id="label_Upload"
-											value="${c:l('label_Upload.value')}" visible="false" />
-										<hlayout id="hlayout_Upload"
-											visible="false">
-											<space id="space_Upload"
-												spacing="2px" />
-											<textbox id="fileName"
-												readonly="true" width="150px" />
-											<button id="btn_Upload"
-												label="Upload" upload="true" />
 										</hlayout>
 									</row>
 								</rows>

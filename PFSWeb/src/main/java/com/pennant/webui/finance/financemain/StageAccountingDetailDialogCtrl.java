@@ -73,7 +73,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -90,6 +89,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.InterfaceException;
@@ -99,7 +99,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final long		serialVersionUID			= 6004939933729664895L;
-	private final static Logger		logger						= Logger.getLogger(StageAccountingDetailDialogCtrl.class);
+	private static final Logger		logger						= Logger.getLogger(StageAccountingDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

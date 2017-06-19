@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class VehicleModelListCtrl extends GFCBaseListCtrl<VehicleModel> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(VehicleModelListCtrl.class);
+	private static final Logger logger = Logger.getLogger(VehicleModelListCtrl.class);
 
 	protected Window window_VehicleModelList;
 	protected Borderlayout borderLayout_VehicleModelList;

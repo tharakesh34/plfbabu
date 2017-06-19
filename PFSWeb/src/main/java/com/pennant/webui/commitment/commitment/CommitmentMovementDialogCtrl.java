@@ -10,7 +10,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class CommitmentMovementDialogCtrl extends GFCBaseCtrl<CommitmentMovement> {
 
 	private static final long serialVersionUID = 2164774289694537365L;
-	private final static Logger logger = Logger.getLogger(CommitmentMovementDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CommitmentMovementDialogCtrl.class);
 	private CommitmentMovement commitmentMovement; // overHanded per parameter
 	
 	/**

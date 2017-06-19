@@ -50,7 +50,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
 public class PTNumberValidator implements Constraint{
-	private final static Logger logger = Logger.getLogger(PTNumberValidator.class);
+	private static final Logger logger = Logger.getLogger(PTNumberValidator.class);
 
 	private String fieldParm;
 	private boolean mandatory=false;

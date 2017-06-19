@@ -25,7 +25,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class AddNewCustomerProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(AddNewCustomerProcess.class);
+	private static final Logger logger = Logger.getLogger(AddNewCustomerProcess.class);
 	String preferedMailId = "";
 	String createCIFError = "";
 

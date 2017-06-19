@@ -74,7 +74,7 @@ import com.pennant.backend.util.VASConsatnts;
  * 
  */
 public class VASConfigurationServiceImpl extends GenericService<VASConfiguration> implements VASConfigurationService {
-	private final static Logger logger = Logger.getLogger(VASConfigurationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VASConfigurationServiceImpl.class);
 	
 	private AuditHeaderDAO				auditHeaderDAO;
 	private ExtendedFieldsValidation	extendedFieldsValidation;

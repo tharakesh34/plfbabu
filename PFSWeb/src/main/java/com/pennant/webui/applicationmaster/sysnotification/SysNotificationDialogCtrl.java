@@ -99,7 +99,7 @@ import freemarker.template.TemplateException;
  */
 public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(SysNotificationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SysNotificationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -215,8 +215,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 							getListBoxHeight(grid_SysNotification.getRows().getVisibleItemCount()).indexOf("px"))) - 70);
 
 		} catch (Exception e) {
-			createException(window_SysNotificationDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -422,8 +421,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 			closeDialog();
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_SysNotificationDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

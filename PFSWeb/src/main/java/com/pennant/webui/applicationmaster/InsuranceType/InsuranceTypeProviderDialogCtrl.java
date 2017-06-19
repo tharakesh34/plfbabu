@@ -29,7 +29,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypeProvider> {
 	private static final long			serialVersionUID	= -6945930303723518608L;
-	private final static Logger			logger				= Logger.getLogger(InsuranceTypeProviderDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(InsuranceTypeProviderDialogCtrl.class);
 
 	protected Window					window_InsuranceTypeProviderDialog;
 	protected ExtendedCombobox			provider;

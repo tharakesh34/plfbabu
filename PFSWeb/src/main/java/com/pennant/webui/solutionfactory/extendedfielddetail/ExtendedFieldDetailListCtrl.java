@@ -79,7 +79,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader> {
 	private static final long serialVersionUID = 7866684540841299572L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailListCtrl.class);
 
 	protected Window window_ExtendedFieldDetailList;
 	protected Borderlayout borderLayout_ExtendedFieldDetailList;

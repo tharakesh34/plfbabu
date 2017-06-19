@@ -27,7 +27,7 @@ import net.sf.jasperreports.engine.util.JRSwapFile;
 
 public class ReportUtil implements Serializable {
     private static final long serialVersionUID = 7959183655705303553L;
-	private final static Logger logger = Logger.getLogger(ReportUtil.class);
+	private static final Logger logger = Logger.getLogger(ReportUtil.class);
 
 
 	/**

@@ -61,7 +61,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -90,13 +89,14 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
 	protected Window 			window_CreditApplicationReviewDialog;  // autowired
 	protected Borderlayout		borderlayout_CreditApplicationReview;  // autowired

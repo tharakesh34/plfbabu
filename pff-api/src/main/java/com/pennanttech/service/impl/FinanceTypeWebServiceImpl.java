@@ -23,7 +23,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService,FinanceTypeRestService {
 
-	private final static Logger logger = Logger.getLogger(FinanceTypeWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceTypeWebServiceImpl.class);
 
 	private FinanceTypeController financeTypeController;
 	private ValidationUtility validationUtility;

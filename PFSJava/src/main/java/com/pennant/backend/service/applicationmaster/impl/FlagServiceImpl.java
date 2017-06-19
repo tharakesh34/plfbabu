@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FlagServiceImpl extends GenericService<Flag> implements FlagService {
-	private final static Logger logger = Logger.getLogger(FlagServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FlagServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

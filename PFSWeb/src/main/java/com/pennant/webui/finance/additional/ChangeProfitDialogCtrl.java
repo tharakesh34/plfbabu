@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -686158342325561513L;
-	private final static Logger logger = Logger.getLogger(ChangeProfitDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ChangeProfitDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

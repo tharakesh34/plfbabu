@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 	private static final long serialVersionUID = -6345351842301484405L;
-	private final static Logger logger = Logger.getLogger(LimitRuleListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LimitRuleListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

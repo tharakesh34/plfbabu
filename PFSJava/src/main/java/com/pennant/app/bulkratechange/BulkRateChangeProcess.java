@@ -49,7 +49,7 @@ import com.pennant.backend.service.finance.BulkRateChangeProcessService;
 
 public class BulkRateChangeProcess extends Thread {
 
-	private final static Logger logger = Logger.getLogger(BulkRateChangeProcess.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeProcess.class);
 
 	private BulkRateChangeProcessService bulkRateChangeProcessService;
 	private BulkRateChangeHeader bulkRateChangeHeader = null;

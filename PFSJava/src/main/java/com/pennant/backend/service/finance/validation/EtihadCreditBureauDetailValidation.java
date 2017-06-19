@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class EtihadCreditBureauDetailValidation {
 	
-	private final static Logger logger = Logger.getLogger(EtihadCreditBureauDetailValidation.class);	
+	private static final Logger logger = Logger.getLogger(EtihadCreditBureauDetailValidation.class);	
 	private EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO;
 	
 	public EtihadCreditBureauDetailValidation(EtihadCreditBureauDetailDAO etihadCreditBureauDetailDAO) {

@@ -72,7 +72,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.rits.cloning.Cloner;
 
 public class ScheduleCalculator {
-	private final static Logger	logger					= Logger.getLogger(ScheduleCalculator.class);
+	private static final Logger	logger					= Logger.getLogger(ScheduleCalculator.class);
 
 	private FinScheduleData		finScheduleData;
 	private static BaseRateDAO	baseRateDAO;

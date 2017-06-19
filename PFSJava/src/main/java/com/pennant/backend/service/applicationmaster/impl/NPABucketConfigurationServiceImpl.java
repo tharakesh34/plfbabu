@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketConfiguration> implements
 		NPABucketConfigurationService {
-	private final static Logger			logger	= Logger.getLogger(NPABucketConfigurationServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(NPABucketConfigurationServiceImpl.class);
 
 	private AuditHeaderDAO				auditHeaderDAO;
 	private NPABucketConfigurationDAO	nPABucketConfigurationDAO;

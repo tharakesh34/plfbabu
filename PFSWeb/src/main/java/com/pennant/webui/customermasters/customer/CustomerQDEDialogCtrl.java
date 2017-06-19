@@ -98,7 +98,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 398317712417132602L;
-	private final static Logger logger = Logger.getLogger(CustomerQDEDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerQDEDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

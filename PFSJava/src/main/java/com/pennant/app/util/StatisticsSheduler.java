@@ -56,7 +56,7 @@ import com.pennant.backend.service.dashboard.DetailStatisticsService;
 
 public class StatisticsSheduler  extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = 4716466545490087546L;
-	private final static Logger logger = Logger.getLogger(StatisticsSheduler.class);
+	private static final Logger logger = Logger.getLogger(StatisticsSheduler.class);
 	
 	private static DetailStatisticsService detailStatisticsService;
 

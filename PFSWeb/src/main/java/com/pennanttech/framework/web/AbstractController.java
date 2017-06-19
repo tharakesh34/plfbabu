@@ -58,7 +58,6 @@ import com.pennant.UserWorkspace;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -68,13 +67,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
-import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.web.components.ButtonControl;
-import com.pennanttech.pff.core.ErrorCode;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
 
 /**
@@ -943,43 +940,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 		setOperationRefs(getServiceOperations(getTaskId(), beanObject));
 		setValidation(true);
-	}
-
-	/**
-	 * @deprecated Instead use MessageUtil.showError(Exception)
-	 * @param window
-	 * @param e
-	 */
-	@Deprecated
-	public void showErrorMessage(Window window, Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetails("", PennantConstants.ERR_UNDEF,
-					PennantConstants.ERR_SEV_ERROR, ErrorCode.PPS_900.getMessage(), null, null));
-			ErrorControl.showErrorControl(window, auditHeader);
-			logger.error("Exception: ", e);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
-	}
-
-	/**
-	 * @deprecated Instead use MessageUtil.showError(Exception)
-	 * @param window
-	 * @param e
-	 */
-	@Deprecated
-	public void createException(Window window, Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetails("", PennantConstants.ERR_UNDEF,
-					PennantConstants.ERR_SEV_ERROR, ErrorCode.PPS_900.getMessage(), null, null));
-			ErrorControl.showErrorControl(window, auditHeader);
-			logger.error("Exception: ", e);
-			window.onClose();
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
-		}
 	}
 
 	public void setExtAccess(String rightName, boolean isReadOnly, ExtendedCombobox extendedCombobox, Row row) {

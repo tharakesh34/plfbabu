@@ -77,7 +77,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CommodityInventoryListCtrl extends GFCBaseListCtrl<CommodityInventory> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CommodityInventoryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CommodityInventoryListCtrl.class);
 
 	protected Window window_CommodityInventoryList;
 	protected Borderlayout borderLayout_CommodityInventoryList;

@@ -111,7 +111,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	private static final long serialVersionUID = 6496923785082021678L;
-	private final static Logger logger = Logger.getLogger(ScoringGroupDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScoringGroupDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(VesselDetailDialogCtrl.class);
 
 	/*
@@ -182,8 +182,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			doSetFieldProperties();
 			doShowDialog(getVesselDetail());
 		} catch (Exception e) {
-			createException(window_VesselDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -618,8 +617,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_VesselDetailDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -704,8 +702,7 @@ public class VesselDetailDialogCtrl extends GFCBaseCtrl<VesselDetail> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_VesselDetailDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

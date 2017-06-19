@@ -37,7 +37,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  implements FeeReceiptService {
-	private final static Logger				logger	= Logger.getLogger(FeeReceiptServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(FeeReceiptServiceImpl.class);
 
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
@@ -273,16 +273,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingSetID);
-
-		try {
-			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterfaceException e) {
-			e.printStackTrace();
-		}
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		// Receipt Header Updation
 		//=======================================

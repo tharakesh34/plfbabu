@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	private static final long serialVersionUID = 8452766351018963227L;
-	private final static Logger logger = Logger.getLogger(ScheduleMethodDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScheduleMethodDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

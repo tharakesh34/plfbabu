@@ -9,7 +9,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 
-	private final static Logger logger = Logger.getLogger(DepositDetailProcessImpl.class);
+	private static final Logger logger = Logger.getLogger(DepositDetailProcessImpl.class);
 	
 	public DepositDetailProcessImpl() {
 		

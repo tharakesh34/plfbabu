@@ -92,7 +92,7 @@ import com.pennant.cache.util.FinanceConfigCache;
  */
 public class FinanceTypeServiceImpl extends GenericService<FinanceType> implements FinanceTypeService {
 
-	private final static Logger logger = Logger.getLogger(FinanceTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTypeDAO financeTypeDAO;

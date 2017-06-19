@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class TakafulProviderListCtrl extends GFCBaseListCtrl<TakafulProvider> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(TakafulProviderListCtrl.class);
+	private static final Logger logger = Logger.getLogger(TakafulProviderListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

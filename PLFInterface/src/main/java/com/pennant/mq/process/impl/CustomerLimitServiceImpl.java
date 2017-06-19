@@ -18,7 +18,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitServiceImpl implements CustomerLimitProcess {
-	private final static Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);
 
 	private CustomerLimitDetailProcess customerLimitDetailProcess;
 	private CustomerLimitPositionProcess customerLimitPositionProcess;

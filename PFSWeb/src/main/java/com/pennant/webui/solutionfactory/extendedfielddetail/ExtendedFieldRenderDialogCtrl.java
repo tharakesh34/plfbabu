@@ -46,7 +46,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * 
 	 */
 	private static final long serialVersionUID = -995824171042829810L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldRenderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldRenderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

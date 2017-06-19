@@ -27,7 +27,7 @@ public class AccountingConfigCache {
 	private static FinTypeAccountingDAO finTypeAccountingDAO;
 	private static TransactionEntryDAO transactionEntryDAO;
 	private static RuleDAO ruleDAO;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(AccountingConfigCache.class);
 
 	private static LoadingCache<String, AccountType> accountTypeCache = CacheBuilder

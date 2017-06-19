@@ -94,7 +94,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 4028305737293383251L;
-	private final static Logger logger = Logger.getLogger(FacilityCheckListReferenceDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityCheckListReferenceDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

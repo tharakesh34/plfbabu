@@ -76,12 +76,12 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 			
 			//Not Review Date
-			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq()) {
+			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
 				continue;
 			}
 			
 			// Only allowed if payment amount is greater than Zero
-			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 				continue;
 			}
 			
@@ -114,6 +114,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 						scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
 					}
 				}
+			}
+			
+			if(DateUtility.compare(oldDate, financeMain.getGrcPeriodEndDate()) == 0){
+				financeMain.setGrcPeriodEndDate(curSchd.getSchDate());
 			}
 			
 			if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
@@ -350,6 +354,15 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			return auditDetail;
 		}
 
+		// It shouldn't be past date when compare to appdate
+		if(DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "From date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			return auditDetail;
+		}
+		
 		// validate from date with finStart date and maturity date
 		if(fromDate.compareTo(financeMain.getFinStartDate()) < 0 || fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[3];
@@ -358,13 +371,6 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			valueParm[2] = "maturity date:"+DateUtility.formatToShortDate(financeMain.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), lang));
 			return auditDetail;
-		}
-
-		// It shouldn't be past date when compare to appdate
-		if(fromDate.compareTo(DateUtility.getAppDate()) < 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:"+DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
 		}
 
 		boolean isValidFromDate = false;

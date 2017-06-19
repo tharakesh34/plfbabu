@@ -30,7 +30,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.framework.component.dataengine.ConfigUtil;
+import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.file.service.FileService;
@@ -170,7 +170,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(true);
-		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
+		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION,
+				uploadLoc)) {
 			setComponentsVisibility(false);
 			serverFiles = new ArrayList<ValueLabel>();
 			File file = new File(path);

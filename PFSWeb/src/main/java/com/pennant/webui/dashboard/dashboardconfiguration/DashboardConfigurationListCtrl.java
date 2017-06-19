@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardConfiguration> {
 	private static final long serialVersionUID = 3577100345663196590L;
-	private final static Logger logger = Logger.getLogger(DashboardConfigurationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DashboardConfigurationListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

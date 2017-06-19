@@ -76,7 +76,7 @@ import com.pennant.webui.util.PTListReportUtils;
  */
 public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DedupFieldsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DedupFieldsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

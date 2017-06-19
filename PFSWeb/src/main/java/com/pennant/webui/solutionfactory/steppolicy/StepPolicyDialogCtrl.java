@@ -99,7 +99,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private final static Logger logger = Logger.getLogger(StepPolicyDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(StepPolicyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

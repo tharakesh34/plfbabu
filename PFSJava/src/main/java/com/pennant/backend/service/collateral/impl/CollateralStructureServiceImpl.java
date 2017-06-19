@@ -73,7 +73,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class CollateralStructureServiceImpl extends GenericService<CollateralStructure> implements CollateralStructureService {
-	private final static Logger			logger	= Logger.getLogger(CollateralStructureServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(CollateralStructureServiceImpl.class);
 
 	private AuditHeaderDAO				auditHeaderDAO;
 	private CollateralStructureDAO		collateralStructureDAO;

@@ -86,7 +86,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(IjarahBulkRateChangeCtrl.class);
+	private static final Logger logger = Logger.getLogger(IjarahBulkRateChangeCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -67,7 +67,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(JointAccountDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(JointAccountDetailListCtrl.class);
 
 	protected Window window_JointAccountDetailList;
 	protected Borderlayout borderLayout_JointAccountDetailList;

@@ -151,7 +151,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long								serialVersionUID			= 1L;
-	private final static Logger								logger						= Logger.getLogger(CollateralSetupDialogCtrl.class);
+	private static final Logger								logger						= Logger.getLogger(CollateralSetupDialogCtrl.class);
 
 	protected Window										window_CollateralSetupDialog;
 
@@ -1537,8 +1537,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_CollateralSetupDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -2042,8 +2041,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CollateralSetupDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

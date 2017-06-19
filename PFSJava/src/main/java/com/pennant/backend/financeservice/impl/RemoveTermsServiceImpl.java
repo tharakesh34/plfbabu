@@ -62,6 +62,14 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 		
 		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", isWIF);
 		
+		if(DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "From date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			return auditDetail;
+		}
+		
 		// validate from date with finStart date and maturity date
 		if(finServiceInstruction.getFromDate().compareTo(financeMain.getFinStartDate()) < 0
 				|| finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) >= 0) {

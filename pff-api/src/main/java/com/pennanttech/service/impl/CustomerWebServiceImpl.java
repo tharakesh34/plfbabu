@@ -61,7 +61,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAPService {
-	private final static Logger logger = Logger.getLogger(CustomerWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController				customerController;
 	private CustomerDetailsController		customerDetailsController;

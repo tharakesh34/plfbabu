@@ -17,7 +17,7 @@ import com.pennant.mqconnection.InterfacePropertiesUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class MQProcess {
-	private final static Logger logger = Logger.getLogger(MQProcess.class);
+	private static final Logger logger = Logger.getLogger(MQProcess.class);
 	private String[] configDetails = null; 
 
 	public MQProcess() {

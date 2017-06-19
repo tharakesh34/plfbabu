@@ -99,7 +99,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;
-	private final static Logger logger = Logger.getLogger(ReScheduleDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReScheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

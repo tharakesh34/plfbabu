@@ -73,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> {
 	private static final long serialVersionUID = -5818545488371155444L;
-	private final static Logger logger = Logger.getLogger(CustomerEMailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerEMailListCtrl.class);
 
 	protected Window window_CustomerEMailList;
 	protected Borderlayout borderLayout_CustomerEMailList;

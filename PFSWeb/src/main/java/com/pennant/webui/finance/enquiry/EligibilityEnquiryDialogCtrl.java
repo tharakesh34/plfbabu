@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibilityDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(EligibilityEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(EligibilityEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

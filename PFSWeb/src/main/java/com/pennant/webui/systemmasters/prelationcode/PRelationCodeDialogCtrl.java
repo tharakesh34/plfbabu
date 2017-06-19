@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	private static final long serialVersionUID = -6648670330847809858L;
-	private final static Logger logger = Logger.getLogger(PRelationCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PRelationCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

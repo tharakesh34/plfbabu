@@ -86,7 +86,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMovement> {
 	private static final long serialVersionUID = -1620412127444337321L;
-	private final static Logger logger = Logger.getLogger(ProvisionMovementEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProvisionMovementEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

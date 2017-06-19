@@ -44,6 +44,7 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -116,7 +117,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(MandateRegistrationListCtrl.class);
+	private static final Logger logger = Logger.getLogger(MandateRegistrationListCtrl.class);
 
 	protected Window window_MandateRegistrationList;
 	protected Borderlayout borderLayout_MandateList;
@@ -342,8 +343,14 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+			if(mandate.getMaxLimit()!= null){
+			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit().multiply(new BigDecimal(100)),
 					CurrencyUtil.getFormat(mandate.getMandateCcy())));
+			} else {
+				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+						CurrencyUtil.getFormat(mandate.getMandateCcy())));
+			}
+			
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);

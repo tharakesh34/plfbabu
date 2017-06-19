@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 
 
 public class RateCalculation {
-	private final static Logger	logger					= Logger.getLogger(ScheduleCalculator.class);
+	private static final Logger	logger					= Logger.getLogger(ScheduleCalculator.class);
 
 	/**
 	 * http://stackoverflow.com/questions/36789967/java-program-to-calculate-xirr-without-using-excel-or-any-other-library

@@ -16,7 +16,7 @@ import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAServiceImpl implements DDAProcess {
-	private final static Logger logger = Logger.getLogger(DDAServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DDAServiceImpl.class);
 	
 	private DDARequestProcess ddaRequestProcess;
 	private DDAAmendmentProcess ddaAmendmentProcess;

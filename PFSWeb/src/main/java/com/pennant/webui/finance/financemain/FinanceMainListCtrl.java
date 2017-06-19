@@ -117,7 +117,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long				serialVersionUID	= -5901195042041627750L;
-	private final static Logger				logger				= Logger.getLogger(FinanceMainListCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(FinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

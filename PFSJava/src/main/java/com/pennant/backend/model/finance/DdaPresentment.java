@@ -56,7 +56,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class DdaPresentment implements java.io.Serializable {
 	private static final long serialVersionUID = -3026443763391506067L;
-	private final static Logger logger = Logger.getLogger(DdaPresentment.class);
+	private static final Logger logger = Logger.getLogger(DdaPresentment.class);
 
 	private String ddaReference;
 	private Date ddaDate;

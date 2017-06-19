@@ -21,13 +21,13 @@ import org.testng.annotations.Test;
 
 public class ScheduleServiceTestCases {
 
-	private final static String ENDPOINT_ADDRESS = "http://192.168.1.40:8080/pff-api/services/financeScheduleRest";
-	private final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
-	private final static String LOANSCHEDULE_SERVICE_PATH = "/loanSchedule";
-	private final static String LOANSCHEDULE_SERVICE_FINREFERENCE_DETAILS = LOANSCHEDULE_SERVICE_PATH
+	private static final String ENDPOINT_ADDRESS = "http://192.168.1.40:8080/pff-api/services/financeScheduleRest";
+	private static final String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
+	private static final String LOANSCHEDULE_SERVICE_PATH = "/loanSchedule";
+	private static final String LOANSCHEDULE_SERVICE_FINREFERENCE_DETAILS = LOANSCHEDULE_SERVICE_PATH
 			+ "/getLoanInquiry/PB1509901290";
 
-	private final static String LOANSCHEDULE_SERVICE_CREATION = LOANSCHEDULE_SERVICE_PATH + "/createLoanSchedule";
+	private static final String LOANSCHEDULE_SERVICE_CREATION = LOANSCHEDULE_SERVICE_PATH + "/createLoanSchedule";
 
 	private final String createLoanSucessReq = "{\"financeDetail\": {\"cif\": \"\",\"finType\": \"PL001\",\"finCcy\": \"INR\",\"finBranch\": \"\",\"profitDaysBasis\": \"A/A_365F\",\"finAmount\": 10000000,\"finAssetValue\": 10000000,\"downPayBank\": 0,\"downPaySupl\": 0,\"finStartDate\": \"2015-04-05T00:00:00\",\"allowGrcPeriod\": true,\"tdsApplicable\": false,\"manualSchedule\": false,\"planDeferCount\": 0,\"stepFinance\": false,\"alwManualSteps\": false,\"grcTerms\": 6,\"grcPeriodEndDate\": \"2015-04-05T00:00:00\",\"grcRateBasis\": \"R\",\"grcPftRate\": 21,\"grcMargin\": 0,\"grcProfitDaysBasis\": \"A/A_365F\",\"grcPftFrq\": \"M0005\",\"nextGrcPftDate\": \"2015-04-05T00:00:00\",\"grcPftRvwFrq\": \"\",\"nextGrcPftRvwDate\": \"2015-04-05T00:00:00\",\"grcCpzFrq\": \"\",\"nextGrcCpzDate\": \"2015-09-05T00:00:00\",\"allowGrcRepay\": true,\"grcSchdMthd\": \"PFT\",\"grcMinRate\": 0,\"grcMaxRate\": 0,\"grcAdvPftRate\": 0,\"grcAdvMargin\": 0,\"numberOfTerms\": 12,\"reqRepayAmount\": 0,\"repayRateBasis\": \"R\",\"repayPftRate\": 21,\"repayMargin\": 0,\"scheduleMethod\": \"EQUAL\",\"repayFrq\": \"M0005\",\"nextRepayDate\": \"2015-06-05T00:00:00\",\"repayPftFrq\": \"M0005\",\"nextRepayPftDate\": \"2015-05-05T00:00:00\",\"repayRvwFrq\": \"\",\"nextRepayRvwDate\": \"2015-10-05T00:00:00\",\"repayCpzFrq\": \"\",\"nextRepayCpzDate\": \"2015-12-05T00:00:00\",\"maturityDate\": \"2016-04-05T00:00:00\",\"finRepayPftOnFrq\": false,\"repayMinRate\": 0,\"repayMaxRate\": 0,\"repayAdvPftRate\": 0,\"repayAdvMargin\": 0,\"supplementRent\": 0,\"increasedCost\": 0},\"fees\": [{\"feeCode\": \"PROCFEE\",\"feeAmount\": 750,\"waiverAmount\": 0,\"paidAmount\": 0}] }";
 

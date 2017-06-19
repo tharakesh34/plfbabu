@@ -46,7 +46,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHeader> {
 
 	private static final long serialVersionUID = -8108473227202001840L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldCaptureDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldCaptureDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

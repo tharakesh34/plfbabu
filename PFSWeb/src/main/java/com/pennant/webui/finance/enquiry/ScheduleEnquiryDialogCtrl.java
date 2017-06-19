@@ -89,7 +89,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(ScheduleEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ScheduleEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

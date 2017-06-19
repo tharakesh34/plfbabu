@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class RepayInstructionServiceImpl extends GenericService<RepayInstruction> implements RepayInstructionService {
-	private final static Logger logger = Logger.getLogger(RepayInstructionServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(RepayInstructionServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

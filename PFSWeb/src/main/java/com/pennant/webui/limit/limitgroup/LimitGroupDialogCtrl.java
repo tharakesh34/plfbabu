@@ -108,7 +108,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(LimitGroupDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(LimitGroupDialogCtrl.class);
 
 	/*
 	 * ************************************************************************
@@ -1356,8 +1356,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 						closeDialog();
 					}
 				} catch (DataAccessException e) {
-					logger.debug("Exception: ", e);
-					showErrorMessage(this.window_LimitGroupDialog, e);
+					MessageUtil.showError(e);
 				}
 			} else {
 				MessageUtil.showError(
@@ -1438,8 +1437,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_LimitGroupDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

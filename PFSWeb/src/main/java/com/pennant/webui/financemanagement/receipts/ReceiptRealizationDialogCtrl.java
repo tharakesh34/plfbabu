@@ -92,7 +92,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long								serialVersionUID					= 966281186831332116L;
-	private final static Logger								logger								= Logger.getLogger(ReceiptRealizationDialogCtrl.class);
+	private static final Logger								logger								= Logger.getLogger(ReceiptRealizationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -456,8 +456,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ReceiptRealizationDialog, e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

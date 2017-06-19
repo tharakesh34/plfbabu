@@ -82,7 +82,7 @@ import com.rits.cloning.Cloner;
  */
 public class TakafulPremiumExcludeDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(TakafulPremiumExcludeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(TakafulPremiumExcludeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

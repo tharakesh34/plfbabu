@@ -120,7 +120,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long							serialVersionUID	= 4345607610334573882L;
-	private final static Logger							logger				= Logger.getLogger(TransactionEntryDialogCtrl.class);
+	private static final Logger							logger				= Logger.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -208,7 +208,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	//protected Combobox ruleDecider;
 	protected Groupbox									gb_RuleCode;
 	private String										userRole			= "";
-
+	private boolean                                     isGSTApplicable       = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -718,7 +718,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-
+		
 		if (!this.transOrder.isReadonly()) {
 			this.transOrder.setConstraint(new PTNumberValidator(Labels
 					.getLabel("label_TransactionEntryDialog_TransOrder.value"), true));
@@ -1091,15 +1091,21 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			AuditHeader auditHeader = newTranEntryProcess(aTransactionEntry, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_TransactionEntryDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
+			if(isGSTApplicable){
+				MessageUtil.showMessage(Labels.getLabel("label_GstApplicable"));
+				isGSTApplicable=false;
+			}
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getAccountingSetDialogCtrl().doFilllistbox(this.transactionEntryList);
 				window_TransactionEntryDialog.onClose();
 				getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
 			}
+			
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1346,6 +1352,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		} else {
 			AccountType details = (AccountType) dataObject;
 			if (details != null) {
+				if(details.isTaxApplicable()){
+					isGSTApplicable=true;
+				}
 				this.accountType.setValue(details.getAcType());
 				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
 

@@ -31,7 +31,7 @@ import com.pennanttech.pff.core.Literal;
 public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Serializable   {
 
 	private static final long	serialVersionUID	= 1L;
-	private final static Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
+	private static final Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
 	
 	protected Window			window_ReloadConfig;
 	protected Borderlayout		borderLayout_ReloadConfig;

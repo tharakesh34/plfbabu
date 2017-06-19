@@ -60,6 +60,9 @@
 									<textbox id="city" width="72px" maxlength="8" />
 								</row>
 								<row>
+									<label id="label_PinCodeList_AreaName" value="${c:l('label_PinCodeList_AreaName.value')}" />
+									<listbox id="sortOperator_AreaName" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="areaName" width="90px" maxlength="10" />
 									<label id="label_PinCodeList_Active" value="${c:l('label_PinCodeList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<checkbox id="active" checked="false"/>
@@ -82,6 +85,8 @@
 							<listheader id="listheader_PinCode" label="${c:l('listheader_PinCode.label')}" sort="auto" 
 								hflex="min"  />
 							<listheader id="listheader_City" label="${c:l('listheader_City.label')}" sort="auto" 
+								hflex="min"  />
+							<listheader id="listheader_AreaName" label="${c:l('listheader_AreaName.label')}" sort="auto" 
 								hflex="min"  />
 							<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" 
 								hflex="min"  />

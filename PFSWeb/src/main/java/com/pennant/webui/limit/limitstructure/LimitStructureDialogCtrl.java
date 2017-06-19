@@ -106,7 +106,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implements Serializable {
 	private static final long						serialVersionUID				= 1L;
-	private final static Logger						logger							= Logger.getLogger(LimitStructureDialogCtrl.class);
+	private static final Logger						logger							= Logger.getLogger(LimitStructureDialogCtrl.class);
 
 	/*
 	 * ************************************************************************
@@ -1428,8 +1428,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 						closeDialog();
 					}
 				} catch (DataAccessException e) {
-					logger.debug("Exception: ", e);
-					showErrorMessage(this.window_LimitStructureDialog, e);
+					MessageUtil.showError(e);
 				}
 			} else {
 				MessageUtil.showError(
@@ -1515,8 +1514,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_LimitStructureDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

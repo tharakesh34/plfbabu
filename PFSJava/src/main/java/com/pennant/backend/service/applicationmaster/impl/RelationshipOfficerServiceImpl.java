@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class RelationshipOfficerServiceImpl extends	GenericService<RelationshipOfficer> implements
 										RelationshipOfficerService {
-	private final static Logger logger = Logger.getLogger(RelationshipOfficerServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(RelationshipOfficerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RelationshipOfficerDAO relationshipOfficerDAO;

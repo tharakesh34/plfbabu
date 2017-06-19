@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CostCenter</b>.<br>
  */
 public class CostCenterServiceImpl extends GenericService<CostCenter> implements CostCenterService {
-	private final static Logger logger = Logger.getLogger(CostCenterServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CostCenterServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private CostCenterDAO costCenterDAO;

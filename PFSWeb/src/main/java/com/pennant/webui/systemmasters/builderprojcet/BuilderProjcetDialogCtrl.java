@@ -79,7 +79,7 @@ import com.pennanttech.pff.core.Literal;
 public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(BuilderProjcetDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BuilderProjcetDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -537,8 +537,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BuilderProjcetDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

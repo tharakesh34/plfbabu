@@ -57,7 +57,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 public class PTReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
-	private final static Logger logger = Logger.getLogger(PTReportUtils.class);
+	private static final Logger logger = Logger.getLogger(PTReportUtils.class);
 	@SuppressWarnings("rawtypes")
 	public static void getPTReport(String model, List searchObj, int maxResults) throws InterruptedException {
 		logger.debug("Entering ");

@@ -74,7 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class TargetDetailListCtrl extends GFCBaseListCtrl<TargetDetail> {
 	private static final long serialVersionUID = 3226455931949186314L;
-	private final static Logger logger = Logger.getLogger(TargetDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(TargetDetailListCtrl.class);
 
 	protected Window window_TargetDetailList;
 	protected Borderlayout borderLayout_TargetDetailList;

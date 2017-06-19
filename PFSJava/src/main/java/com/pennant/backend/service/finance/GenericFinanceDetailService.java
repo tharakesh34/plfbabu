@@ -132,7 +132,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
-	private final static Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
+	private static final Logger				logger	= Logger.getLogger(GenericFinanceDetailService.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 
@@ -1243,9 +1243,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private AEEvent prepareAccountingData(
-			FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail, Date valueDate) throws InterruptedException,
-			IllegalAccessException, InvocationTargetException {
+	private AEEvent prepareAccountingData(FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail, Date valueDate) {
 
 		Date curBDay = DateUtility.getAppDate();
 		if(valueDate == null){
@@ -1290,7 +1288,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
 		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner()) ?  FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
-		if(StringUtils.isEmpty(financeDetail.getModuleDefiner())){
+		if(financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)){
 			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
 		}else{
 			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
@@ -1307,9 +1305,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param aeEvent
 	 * @param vasRecordingList
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
 	 */
 	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList, boolean doPostings) {
 
@@ -1324,14 +1319,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeEvent.setFinReference(recording.getVasReference());
 
 				aeEvent.setLinkedTranId(0);
-				try {
-					if(doPostings){
-						aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-					}else{
-						aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
-					}
-				} catch (IllegalAccessException | InvocationTargetException | InterfaceException e) {
-					e.printStackTrace();
+				if(doPostings){
+					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+				}else{
+					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 				}
 				datasetList.addAll(aeEvent.getReturnDataSet());
 			}
@@ -1465,10 +1456,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param auditHeader
 	 * @param curBDay
 	 * @return
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
 	 */
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
 		logger.debug("Entering");
@@ -1480,8 +1467,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		AEEvent aeEvent = new AEEvent();
 		Date valueDate = null;
+		
+		boolean isNew = false;
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
 			pftDetail = new FinanceProfitDetail();
+			isNew = true;
 			
 			// Added Value date as Finance Start Date in case of origination Disbursement
 			valueDate = financeMain.getFinStartDate();
@@ -1489,16 +1479,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
 		}
 
-		try {
-			aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
-			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
@@ -1506,49 +1488,34 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
-		try {
-			//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
-			getPostingsPreparationUtil().postAccounting(aeEvent);
+		// Prepared Postings execution 
+		//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
+		getPostingsPreparationUtil().postAccounting(aeEvent);
 
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterfaceException e) {
-			e.printStackTrace();
-		}
-
-		//Disb Instruction Posting
+		//Disbursement Instruction Posting
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
-			try {
-				Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
-						financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());
-				 
-				List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
 
-				//loop through the disbursements.
-				if (advPayList != null && !advPayList.isEmpty()) {
+			Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
+					financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());
 
-					for (int i = 0; i < advPayList.size(); i++) {
-						FinAdvancePayments advPayment = advPayList.get(i);
-						if(finAdvanceMap.containsKey(advPayment.getPaymentId())){
-							advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentId()));
-						}
+			List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+
+			//loop through the disbursements.
+			if (advPayList != null && !advPayList.isEmpty()) {
+
+				for (int i = 0; i < advPayList.size(); i++) {
+					FinAdvancePayments advPayment = advPayList.get(i);
+					if(finAdvanceMap.containsKey(advPayment.getPaymentId())){
+						advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentId()));
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
-		boolean isNew = false;
-		if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			isNew = true;
-		}
 		
-		// Vas Recording Accounting Entries
+		// VAS Recording Accounting Entries
 		if(isNew){
 			if(financeDetail.getFinScheduleData().getVasRecordingList() != null && 
 					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
@@ -1571,8 +1538,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	protected AuditHeader executeStageAccounting(AuditHeader auditHeader, List<ReturnDataSet> list)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	protected AuditHeader executeStageAccounting(AuditHeader auditHeader, List<ReturnDataSet> list){
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = null;
@@ -1752,7 +1718,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws AccountNotFoundException
 	 */
 	protected boolean prvStageAccountingCheck(List<ReturnDataSet> curStageAccEntries, String finReference,
-			String finEvent, String roleCode) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			String finEvent, String roleCode) {
 		logger.debug("Entering");
 
 		// Check Previously Executed Stage Accounting Entries

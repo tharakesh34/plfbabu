@@ -85,7 +85,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.QueryBuilder;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Query;
@@ -99,6 +98,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkChangeDialoglItemRenderer;
@@ -113,7 +113,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(BulkDefermentChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkDefermentChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

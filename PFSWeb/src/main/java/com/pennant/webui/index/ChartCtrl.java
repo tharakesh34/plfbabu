@@ -61,7 +61,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class ChartCtrl extends GFCBaseCtrl<ChartDetail> {
 	private static final long serialVersionUID = 5012323906026616623L;
-	private final static Logger logger = Logger.getLogger(ChartCtrl.class);
+	private static final Logger logger = Logger.getLogger(ChartCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

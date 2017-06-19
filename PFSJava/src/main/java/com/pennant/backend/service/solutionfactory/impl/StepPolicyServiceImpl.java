@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>StepPolicyHeader</b>.<br>
  */
 public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> implements StepPolicyService {
-	private final static Logger logger = Logger.getLogger(StepPolicyServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(StepPolicyServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;

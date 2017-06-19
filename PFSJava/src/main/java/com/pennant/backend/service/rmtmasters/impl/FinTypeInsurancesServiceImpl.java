@@ -66,7 +66,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FinTypeInsurancesServiceImpl extends GenericService<FinTypeInsurances> implements FinTypeInsurancesService {
-	private final static Logger logger = Logger.getLogger(FinTypeInsurancesServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeInsurancesServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

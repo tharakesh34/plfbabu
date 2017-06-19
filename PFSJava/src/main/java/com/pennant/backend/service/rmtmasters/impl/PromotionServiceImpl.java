@@ -74,7 +74,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class PromotionServiceImpl extends GenericService<Promotion> implements PromotionService {
-	private final static Logger logger = Logger.getLogger(PromotionServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PromotionServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private PromotionDAO promotionDAO;

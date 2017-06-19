@@ -109,10 +109,10 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		StringBuilder sql = null;
 
 		sql = new StringBuilder(
-				"Select PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,");
+				"Select PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,PostingDivision,");
 		sql.append(" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", partnerBankName,partnerBankAc,partnerBankAcType,accountSetId");
+			sql.append(", partnerBankName,partnerBankAc,partnerBankAcType,accountSetId,DivisionCodeDesc");
 		}
 		sql.append(" From FeePostings");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -147,10 +147,10 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		StringBuilder insertSql =new StringBuilder();
 		insertSql.append("Insert Into FeePostings");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,");
+		insertSql.append(" (PostId, PostAgainst, Reference, FeeTyeCode, PostingAmount, PostDate, ValueDate,Remarks,PartnerBankId,PostingDivision,");
 		insertSql.append("  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append("  Values(:PostId, :PostAgainst, :Reference, :FeeTyeCode, :PostingAmount, :PostDate, :ValueDate,:Remarks,:PartnerBankId,");
+		insertSql.append("  Values(:PostId, :PostAgainst, :Reference, :FeeTyeCode, :PostingAmount, :PostDate, :ValueDate,:Remarks,:PartnerBankId,:PostingDivision,");
 		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
@@ -168,7 +168,7 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		StringBuilder	updateSql =new StringBuilder("Update FeePostings");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" Set PostId = :PostId, PostAgainst = :PostAgainst, Reference = :Reference, FeeTyeCode = :FeeTyeCode, PostingAmount = :PostingAmount, PostDate = :PostDate, ");
-		updateSql.append(" ValueDate = :ValueDate, Remarks = :Remarks, PartnerBankId = :PartnerBankId,");
+		updateSql.append(" ValueDate = :ValueDate, Remarks = :Remarks, PartnerBankId = :PartnerBankId, PostingDivision =:PostingDivision,");
 		updateSql.append(" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where PostId= :PostId");

@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> implements ScheduleMethodService {
 
-	private final static Logger logger = Logger.getLogger(ScheduleMethodServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ScheduleMethodServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ScheduleMethodDAO scheduleMethodDAO;

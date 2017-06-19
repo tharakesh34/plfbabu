@@ -116,7 +116,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(GuarantorDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(GuarantorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -355,8 +355,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			doSetFieldProperties();
 			doShowDialog(getGuarantorDetail());
 		} catch (Exception e) {
-			createException(window_GuarantorDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

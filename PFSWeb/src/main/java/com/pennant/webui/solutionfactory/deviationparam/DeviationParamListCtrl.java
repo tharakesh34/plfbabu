@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DeviationParamListCtrl extends GFCBaseListCtrl<DeviationParam> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DeviationParamListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DeviationParamListCtrl.class);
 
 	protected Window window_DeviationParamList;
 	protected Borderlayout borderLayout_DeviationParamList;

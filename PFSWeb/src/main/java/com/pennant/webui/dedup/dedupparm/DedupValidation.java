@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class DedupValidation implements Serializable {
 	private static final long serialVersionUID = -4728201973665323130L;
-	private final static Logger logger = Logger.getLogger(DedupValidation.class);
+	private static final Logger logger = Logger.getLogger(DedupValidation.class);
 
 	private NorkamCheckService	norkamCheckService;
 	private FinanceReferenceDetailService  financeReferenceDetailService;

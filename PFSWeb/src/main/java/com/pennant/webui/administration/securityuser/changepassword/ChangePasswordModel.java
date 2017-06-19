@@ -61,7 +61,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantRegularExpressions;
 
 public class ChangePasswordModel {
-	private final static Logger logger = Logger	.getLogger(ChangePasswordModel.class);
+	private static final Logger logger = Logger	.getLogger(ChangePasswordModel.class);
 	private static SecurityUserPasswordsDAO securityUserPasswordsDAO;
 
 	/**

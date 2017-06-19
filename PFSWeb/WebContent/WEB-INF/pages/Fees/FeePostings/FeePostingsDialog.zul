@@ -154,6 +154,12 @@
 										</hbox>
 									</row>
 									<row>
+									<label id="label_PostingDivision"
+											value="${c:l('label_feePostingsDialog_PostingDivision.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="postingDivision" />
+										</hbox>
 									<label id="label_Remarks"
 											value="${c:l('label_feePostingsDialog_Remarks.value')}" />
 									<hbox id="hbox_Remarks"
@@ -162,7 +168,7 @@
 												spacing="2px" />
 											<textbox id="remarks" maxlength="100" multiline="true" rows="3" width="250px"
 												style="resize: none;" />
-										</hbox>
+									</hbox>
 									
 									</row>
 								</rows>

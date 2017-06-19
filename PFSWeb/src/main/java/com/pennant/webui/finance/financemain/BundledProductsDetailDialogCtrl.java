@@ -96,7 +96,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProductsDetail> {
 	private static final long serialVersionUID = 3141943554064485540L;
-	private final static Logger logger = Logger.getLogger(BundledProductsDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BundledProductsDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

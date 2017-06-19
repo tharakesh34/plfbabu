@@ -43,6 +43,7 @@
 
 package com.pennant.webui.eod.eodconfig;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -139,7 +140,10 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-		if (this.listBoxEODConfig.getItemCount()>0) {
+		
+		List<EODConfig> list = eODConfigService.getEODConfig();
+		
+		if (list.size() > 0) {
 			this.button_EODConfigList_NewEODConfig.setVisible(false);
 		}
 	}

@@ -117,7 +117,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	private static final long						serialVersionUID		= 1L;
-	private final static Logger						logger					= Logger.getLogger(MandateDialogCtrl.class);
+	private static final Logger						logger					= Logger.getLogger(MandateDialogCtrl.class);
 
 	protected Window								window_MandateDialog;
 	protected ExtendedCombobox						custID;
@@ -327,8 +327,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doSetFieldProperties();
 			doShowDialog(getMandate());
 		} catch (Exception e) {
-			createException(window_MandateDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1491,8 +1490,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_MandateDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1595,8 +1593,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_MandateDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

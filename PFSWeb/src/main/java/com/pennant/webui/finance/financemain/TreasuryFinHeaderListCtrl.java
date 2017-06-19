@@ -81,7 +81,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHeader> {
 	private static final long serialVersionUID = -5901195042041627750L;
-	private final static Logger logger = Logger.getLogger(TreasuryFinHeaderListCtrl.class);
+	private static final Logger logger = Logger.getLogger(TreasuryFinHeaderListCtrl.class);
 
 	protected Window window_TreasuaryFinHeaderList;
 	protected Borderlayout borderLayout_TreasuaryFinHeaderList;

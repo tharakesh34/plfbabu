@@ -26,7 +26,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class BondDetailProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(BondDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(BondDetailProcess.class);
 
 	public BondDetailProcess() {
 		super();

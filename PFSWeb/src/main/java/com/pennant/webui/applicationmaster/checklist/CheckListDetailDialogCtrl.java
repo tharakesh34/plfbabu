@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	private static final long serialVersionUID = 2164774289694537365L;
-	private final static Logger logger = Logger.getLogger(CheckListDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CheckListDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

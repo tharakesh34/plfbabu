@@ -17,7 +17,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDACancelProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(DDACancelProcess.class);
+	private static final Logger logger = Logger.getLogger(DDACancelProcess.class);
 
 	public DDACancelProcess() {
 		super();

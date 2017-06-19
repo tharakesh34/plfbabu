@@ -99,7 +99,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfiguration> {
 	private static final long serialVersionUID = 8579170086287103990L;
-	private final static Logger logger = Logger.getLogger(DashboardConfigurationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DashboardConfigurationDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -820,8 +820,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(window_DashboardConfigurationDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -977,8 +976,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(window_DashboardConfigurationDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

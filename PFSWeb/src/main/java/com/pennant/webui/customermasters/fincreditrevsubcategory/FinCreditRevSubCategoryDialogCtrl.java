@@ -106,7 +106,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevSubCategory> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FinCreditRevSubCategoryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinCreditRevSubCategoryDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

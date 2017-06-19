@@ -34,6 +34,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.AddDisbursementGroup;
@@ -62,7 +63,7 @@ import com.pennanttech.ws.service.FinanceValidationService;
 @Service
 public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
 
-	private final static Logger			logger	= Logger.getLogger(FinInstructionServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController	finServiceInstController;
 	private AddRepaymentService			addRepaymentService;
@@ -96,6 +97,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 
@@ -166,6 +170,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -226,6 +233,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		validationUtility.validate(finServiceInstruction, DefermentsGroup.class);
 		FinanceDetail financeDetail = null;
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -290,6 +300,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// bean validations
 		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
 		FinanceDetail financeDetail = null;
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -356,6 +369,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// service level validations
 		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -427,6 +443,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -492,6 +511,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -553,6 +575,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		FinanceDetail financeDetail = null;
 		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
 		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -633,6 +661,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -695,6 +726,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, ReSchedulingGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -761,6 +795,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return returnStatus;
 		}
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// call service level validations which include business validations
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finServiceInstruction.getFinReference());
@@ -821,11 +858,14 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					}
 				}
 			} else {
-				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() > 0
+				if (finServiceInstruction.getFinODPenaltyRate().isODIncGrcDays()
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())
-						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0) {
-					return APIErrorHandlerService.getFailedStatus("9999", "Overdue details only applicable for applyODPenalty.");
+						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc()
+								.compareTo(BigDecimal.ZERO) > 0
+						|| finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver()) {
+					String[] valueParm = new String[1];
+					return APIErrorHandlerService.getFailedStatus("90315", valueParm);
 				}
 			}
 		} else {
@@ -876,6 +916,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, EarlySettlementGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -954,6 +997,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		validationUtility.validate(finServiceInstruction, PartialSettlementGroup.class);
 		FinanceDetail financeDetail = null;
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
@@ -1041,6 +1087,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstruction);
+		
 		if(StringUtils.isBlank(finServiceInstruction.getFinReference())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -1114,18 +1163,21 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
-			List<ValueLabel> odChargeType = PennantStaticListUtil.getODCChargeType();
-			boolean odChargeTypeSts = false;
-			for (ValueLabel value : odChargeType) {
+			List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
+			boolean finODChargeTypeSts = false;
+			for (ValueLabel value : finODChargeType) {
 				if (StringUtils.equals(value.getValue(), finODPenaltyRate.getODChargeType())) {
-					odChargeTypeSts = true;
+					finODChargeTypeSts = true;
 					break;
 				}
 			}
-			if (!odChargeTypeSts) {
-				String[] valueParm = new String[1];
+			if (!finODChargeTypeSts) {
+				String[] valueParm = new String[2];
 				valueParm[0] = finODPenaltyRate.getODChargeType();
-				return getErrorDetails("90501", valueParm);
+				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
+						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+				return getErrorDetails("90316", valueParm);
 			}
 		}
 
@@ -1142,6 +1194,39 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				String[] valueParm = new String[1];
 				valueParm[0] = finODPenaltyRate.getODChargeCalOn();
 				return getErrorDetails("90501", valueParm);
+			}
+		}
+		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+			if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODChargeAmtOrPerc";
+				valueParm[1] = "100";
+				return getErrorDetails("30565", valueParm);
+			}
+			finODPenaltyRate.setODChargeAmtOrPerc(
+					PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+		}
+		if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
+			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODMaxWaiverPerc";
+				valueParm[1] = "ODAllowWaiver is disabled";
+				return getErrorDetails("90329", valueParm);
+			}
+		} else {
+			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODMaxWaiverPerc";
+				valueParm[1] = "Zero";
+				return getErrorDetails("91121", valueParm);
+			} else if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(new BigDecimal(100)) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODChargeAmtOrPerc";
+				valueParm[1] = "100";
+				return getErrorDetails("30565", valueParm);
 			}
 		}
 		logger.debug("Leaving");
@@ -1244,6 +1329,43 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		detail.setCollateralAssignmentList(null);
 	}
 
+	/**
+	 * Set Default date formats for calculation purpose.
+	 * 
+	 * @param finServInst
+	 */
+	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
+		if(finServInst.getFromDate() != null) {
+			finServInst.setFromDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getFromDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		
+		if(finServInst.getToDate() != null){
+			finServInst.setToDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getToDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getRecalFromDate() != null){
+			finServInst.setRecalFromDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getRecalFromDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getRecalToDate() != null){
+			finServInst.setRecalToDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getRecalToDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getGrcPeriodEndDate()!= null){
+			finServInst.setGrcPeriodEndDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getGrcPeriodEndDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getNextGrcRepayDate()!= null){
+			finServInst.setNextGrcRepayDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getNextGrcRepayDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(finServInst.getNextRepayDate()!= null){
+			finServInst.setNextRepayDate(DateUtility.getDBDate(DateUtility.formatDate(finServInst.getNextRepayDate(),
+					PennantConstants.DBDateFormat)));
+		}
+	}
+	
 	@Autowired
 	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
 		this.finServiceInstController = finServiceInstController;

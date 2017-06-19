@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	private static final long serialVersionUID = -2314266107249438945L;
-	private final static Logger logger = Logger.getLogger(SecurityUserChangePasswordDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityUserChangePasswordDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

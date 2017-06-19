@@ -140,14 +140,10 @@
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
 	</bean>
 
-	<bean id="workFlowDialogCtrl" class="com.pennant.webui.workflow.WorkFlowDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
-	</bean>
-
 	<bean id="workflowDesignCtrl" class="com.pennant.webui.workflow.WorkflowDesignCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
+		<property name="designerUrl" value="${process.designer.url}" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -532,6 +528,7 @@
 		class="com.pennant.webui.systemmasters.province.ProvinceListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="provinceService" ref="provinceService" />
+		<property name="taxDetailService" ref="taxDetailService" />
 	</bean>
 
 	<bean id="provinceDialogCtrl"
@@ -4169,6 +4166,11 @@
 	</bean>
 	<bean id="glFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.GlFileDownloadListctrl"
 		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="cibilReport" class="com.pennanttech.pff.reports.cbil.CIBILReport">
+		  	<property name="dataSource" ref="pfsDatasource" />
+		  	</bean>
+		
 
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"
@@ -4353,6 +4355,7 @@
 		class="com.pennant.webui.collateral.collateralsetup.CollateralThirdPartyDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<!-- Cancel Disbursment -->
@@ -4807,4 +4810,35 @@
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />
 	  	<property name="dataSource" ref="pfsDatasource" />
 	  </bean> -->
+	  	
+	<!-- TaxDetail -->
+	<bean id="taxDetailListCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="taxDetailService" ref="taxDetailService" />
+	</bean>
+	<bean id="taxDetailDialogCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="taxDetailService" ref="taxDetailService"/>
+	</bean>
+
+	<!-- Finance Tax Detail -->
+	<bean id="financeTaxDetailListCtrl"
+		class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+	</bean>
+	<bean id="financeTaxDetailDialogCtrl"
+		class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+	</bean>
+	<!-- Entity -->
+	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="entityService" ref="entityService" />
+	</bean>
+	<bean id="entityDialogCtrl" class="com.pennant.webui.applicationmaster.entity.EntityDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="entityService" ref="entityService"/>
+	</bean>
+	
+	
 </beans>

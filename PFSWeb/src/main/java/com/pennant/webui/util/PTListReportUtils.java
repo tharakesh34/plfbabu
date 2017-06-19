@@ -69,7 +69,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public class PTListReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
-	private final static Logger logger = Logger.getLogger(PTListReportUtils.class);
+	private static final Logger logger = Logger.getLogger(PTListReportUtils.class);
 	
 	private static ReportListService reportListService;
 

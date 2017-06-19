@@ -71,7 +71,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 
 public class SuspenseSearchCtrl extends GFCBaseCtrl<FinanceSuspHead>  {
 	private static final long serialVersionUID = 1933806562160029723L;
-	private final static Logger logger = Logger.getLogger(SuspenseSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(SuspenseSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -65,6 +65,27 @@
 											<textbox id="remarks"  rows="2" cols="2" width="150px"/>
 										</hbox>
 									</row>
+									
+									<row>
+										<label value="${c:l('label_DisbInstructionsDialog_TranReference.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="tranReference" width="150px" readonly="true" />
+										</hbox>
+										<label value="${c:l('label_DisbInstructionsDialog_Status.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="status" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+									 <label value="${c:l('label_DisbInstructionsDialog_RejectReason.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="rejectReason" width="250px" readonly="true" />
+										</hbox>
+									</row>
+										
 								</rows>
 							</grid>
 						</groupbox>

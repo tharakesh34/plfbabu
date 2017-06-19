@@ -17,6 +17,7 @@ import com.pennanttech.bajaj.services.ControlDumpRequestService;
 import com.pennanttech.bajaj.services.DataMartRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
 
 public class DataExtract implements Tasklet {
 	private Logger						logger	= Logger.getLogger(DataExtract.class);
@@ -31,6 +32,9 @@ public class DataExtract implements Tasklet {
 	private PosidexRequestService		posidexRequestService;
 	@Autowired
 	private DataMartRequestService		dataMartRequestService;
+	@Autowired
+	private TrailBalanceReportService	trailBalanceReportService;
+	
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -49,6 +53,7 @@ public class DataExtract implements Tasklet {
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
 			new DataMartRequest(new Long(1000), dataMartRequestService).start();
+			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -156,4 +161,24 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
+	public class TrailBalanceReport extends Thread {
+		private long							userId;
+		private TrailBalanceReportService   	trailBalanceReportservice;
+
+		public TrailBalanceReport(long userId,TrailBalanceReportService trailBalanceReportService) {
+			this.userId = userId;
+			this.trailBalanceReportservice = trailBalanceReportService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Trail Balance Request Service started...");
+				this.trailBalanceReportservice.generateReport(userId);
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+	
 }

@@ -77,7 +77,7 @@ import com.pennanttech.pff.core.Literal;
 public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(NPABucketDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(NPABucketDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -506,8 +506,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_NPABucketDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

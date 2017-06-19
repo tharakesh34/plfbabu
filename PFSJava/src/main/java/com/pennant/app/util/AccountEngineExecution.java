@@ -117,12 +117,8 @@ public class AccountEngineExecution implements Serializable {
 	 * @param createNow
 	 * @param dataMap
 	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
 	 */
-	public AEEvent getAccEngineExecResults(AEEvent aeEvent)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AEEvent getAccEngineExecResults(AEEvent aeEvent) {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent);
@@ -470,12 +466,8 @@ public class AccountEngineExecution implements Serializable {
 	 * @param dataMap
 	 * @param aeCommitment
 	 * @return
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
 		
@@ -753,11 +745,9 @@ public class AccountEngineExecution implements Serializable {
 	 * @param ruleResultMap
 	 * @param dataMap
 	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
 	private IAccounts getAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> accountsMap,
-			HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
+			HashMap<String, Object> dataMap) {
 		logger.debug("Entering");
 
 		String txnOrder = String.valueOf(txnEntry.getTransOrder());
@@ -799,7 +789,7 @@ public class AccountEngineExecution implements Serializable {
 	 *             BigDecimal
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,
-			HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
+			HashMap<String, Object> dataMap) {
 		logger.debug("Entering");
 
 		// Execute Transaction Entry Rule

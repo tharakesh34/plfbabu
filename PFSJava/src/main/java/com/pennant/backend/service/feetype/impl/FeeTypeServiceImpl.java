@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTypeService {
-	private final static Logger	logger	= Logger.getLogger(FeeTypeServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(FeeTypeServiceImpl.class);
 
 	private AuditHeaderDAO		auditHeaderDAO;
 	private FeeTypeDAO			feeTypeDAO;

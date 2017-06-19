@@ -85,7 +85,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 4322539879503951300L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationReviewListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationReviewListCtrl.class);
 
 	protected Window window_CreditApplicationReviewList;
 	protected Borderlayout borderLayout_CreditApplicationReviewList;

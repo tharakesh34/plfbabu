@@ -72,7 +72,7 @@ import com.pennant.cache.util.AccountingConfigCache;
  * 
  */
 public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> implements OverdueChargeService {
-	private final static Logger logger = Logger.getLogger(OverdueChargeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(OverdueChargeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private OverdueChargeDAO overdueChargeDAO;

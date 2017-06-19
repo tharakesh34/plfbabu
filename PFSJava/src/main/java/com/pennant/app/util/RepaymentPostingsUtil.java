@@ -180,7 +180,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				.add(rpyQueueHeader.getSuplRent()).add(rpyQueueHeader.getIncrCost());
 
 		if (totalPayAmount.compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doSchedulePostings(rpyQueueHeader, valuedate, valuedate, financeMain, scheduleDetails,
+			actReturnList = doSchedulePostings(rpyQueueHeader, valuedate, financeMain, scheduleDetails,
 					finFeeDetailList,financeProfitDetail, eventCode, linkedTranId);
 		} else {
 			if (actReturnList == null) {
@@ -256,7 +256,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private List<Object> doSchedulePostings(FinRepayQueueHeader rpyQueueHeader, Date valueDate, Date dateValueDate,
+	private List<Object> doSchedulePostings(FinRepayQueueHeader rpyQueueHeader, Date valueDate,
 			FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,List<FinFeeDetail> finFeeDetailList,
 			FinanceProfitDetail financeProfitDetail, String eventCode, long linkedTranId) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
@@ -265,7 +265,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		List<Object> actReturnList = new ArrayList<Object>();
 
 		//Method for Postings Process
-		AEEvent aeEvent = postingEntryProcess(valueDate, dateValueDate, valueDate, false, financeMain,
+		AEEvent aeEvent = postingEntryProcess(valueDate, valueDate, false, financeMain,
 				scheduleDetails, financeProfitDetail, rpyQueueHeader, linkedTranId, eventCode, finFeeDetailList);
 
 		if (!aeEvent.isPostingSucess()) {
@@ -277,7 +277,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// Schedule updations
-		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, aeEvent.getLinkedTranId());
+		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, aeEvent.getLinkedTranId(),valueDate);
 
 		actReturnList.add(aeEvent.isPostingSucess());
 		actReturnList.add(aeEvent.getLinkedTranId());
@@ -299,6 +299,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @param financeProfitDetail
 	 * @param finRepayQueueList
 	 * @param linkedTranId
+	 * @param valueDate 
 	 * @param isPartialRepay
 	 * @return
 	 * @throws InvocationTargetException
@@ -306,11 +307,10 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	private List<FinanceScheduleDetail> scheduleUpdate(FinanceMain financeMain,
-			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader rpyQueueHeader, long linkedTranId)
+			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader rpyQueueHeader, long linkedTranId, Date valueDate)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		Date dateValueDate = DateUtility.getAppValueDate();
 
 		// Total Payment Amount
 		BigDecimal rpyTotal = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getFee()).add(rpyQueueHeader.getLateProfit())
@@ -336,7 +336,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				scheduleDetail = scheduleMap.get(DateUtility.getSqlDate(repayQueue.getRpyDate()));
 			}
 
-			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId,
+			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, valueDate, linkedTranId,
 					rpyTotal);
 			scheduleMap.remove(scheduleDetail.getSchDate());
 			scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
@@ -403,6 +403,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
+		String oldFinStatus = financeMain.getFinStatus();
 		pftDetail = accrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
 		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate, financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
@@ -424,12 +425,14 @@ public class RepaymentPostingsUtil implements Serializable {
 		getProfitDetailsDAO().update(pftDetail, true);
 
 		//Get Customer Status
-		CustEODEvent custEODEvent = new CustEODEvent();
-		custEODEvent.setEodDate(dateValueDate);
-		custEODEvent.setEodValueDate(dateValueDate);
-		Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
-		custEODEvent.setCustomer(customer);
-		latePayMarkingService.processCustomerStatus(custEODEvent);
+		if(!StringUtils.equals(oldFinStatus, financeMain.getFinStatus())){
+			CustEODEvent custEODEvent = new CustEODEvent();
+			custEODEvent.setEodDate(dateValueDate);
+			custEODEvent.setEodValueDate(dateValueDate);
+			Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
+			custEODEvent.setCustomer(customer);
+			latePayMarkingService.processCustomerStatus(custEODEvent);
+		}
 
 		logger.debug("Leaving");
 		return financeMain;
@@ -521,7 +524,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private AEEvent postingEntryProcess(Date valueDate, Date dateValueDate, Date dateSchdDate,
+	private AEEvent postingEntryProcess(Date valueDate, Date dateSchdDate,
 			boolean isEODProcess, FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail financeProfitDetail, FinRepayQueueHeader rpyQueueHeader, long linkedTranId,
 			String eventCode, List<FinFeeDetail> finFeeDetailList) throws InterfaceException, IllegalAccessException, InvocationTargetException {
@@ -530,7 +533,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// AmountCodes Preparation
 		// EOD Repayments should pass the value date as schedule for which Repayments are processing
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail, eventCode,
-				dateValueDate, dateSchdDate);
+				valueDate, dateSchdDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
 		amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
@@ -823,7 +826,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Schedule Principal and Profit payments
 		BigDecimal totRpyAmt = totalsMap.get("totRpyTot");
 		if (totRpyAmt.compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doSchedulePostings(null, valueDate, dateValueDate, financeMain, scheduleDetails,null,
+			actReturnList = doSchedulePostings(null, valueDate, financeMain, scheduleDetails,null,
 					financeProfitDetail, eventCode, Long.MIN_VALUE);
 		} else {
 			if (actReturnList == null) {

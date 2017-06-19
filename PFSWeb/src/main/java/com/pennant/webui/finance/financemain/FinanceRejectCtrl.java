@@ -69,7 +69,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinanceRejectCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -210929672381582779L;
-	private final static Logger logger = Logger.getLogger(FinanceRejectCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceRejectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

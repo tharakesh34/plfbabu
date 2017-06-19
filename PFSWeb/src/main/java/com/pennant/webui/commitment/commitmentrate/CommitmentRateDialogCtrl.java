@@ -94,7 +94,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CommitmentRateDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CommitmentRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -208,8 +208,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			doShowDialog(getCommitmentRate());
 
 		} catch (Exception e) {
-			createException(window_CommitmentRateDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

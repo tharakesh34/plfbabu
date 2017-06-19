@@ -75,7 +75,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 	private static final long serialVersionUID = -2577445041575201178L;
-	private final static Logger logger = Logger.getLogger(DedupParmListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DedupParmListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

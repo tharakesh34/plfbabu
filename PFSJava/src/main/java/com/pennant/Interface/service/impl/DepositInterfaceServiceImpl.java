@@ -11,7 +11,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 
-	private final static Logger logger = Logger.getLogger(DepositInterfaceServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(DepositInterfaceServiceImpl.class);
 	
 	public DepositInterfaceServiceImpl() {
 		

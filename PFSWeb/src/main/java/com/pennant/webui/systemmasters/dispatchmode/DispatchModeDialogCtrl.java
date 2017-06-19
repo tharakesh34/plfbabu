@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 	private static final long serialVersionUID = 6974163751783013342L;
-	private final static Logger logger = Logger.getLogger(DispatchModeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DispatchModeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 	private static final long serialVersionUID = -6628823752111176539L;
-	private final static Logger logger = Logger.getLogger(CustomerRatingListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerRatingListCtrl.class);
 
 	protected Window window_CustomerRatingList;
 	protected Borderlayout borderLayout_CustomerRatingList;

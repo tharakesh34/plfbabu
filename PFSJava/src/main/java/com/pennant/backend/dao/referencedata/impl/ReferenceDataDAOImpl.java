@@ -33,7 +33,7 @@ import com.pennant.webservice.model.ReferenceData;
 
 public class ReferenceDataDAOImpl implements ReferenceDataDAO {
 
-	private final static Logger logger = Logger.getLogger(ReferenceDataDAOImpl.class);
+	private static final Logger logger = Logger.getLogger(ReferenceDataDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;

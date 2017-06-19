@@ -85,7 +85,7 @@ import com.pennanttech.pff.core.Literal;
 public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(BounceReasonDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BounceReasonDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -629,8 +629,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception",  e);
-				showErrorMessage(this.window_BounceReasonDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}

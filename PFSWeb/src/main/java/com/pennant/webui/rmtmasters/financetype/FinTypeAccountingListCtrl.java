@@ -81,7 +81,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	
 	private static final long serialVersionUID = 4521079241535245640L;
 
-	private final static Logger logger = Logger.getLogger(FinTypeAccountingListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeAccountingListCtrl.class);
 
 	protected Window window_FinTypeAccountingList;
 	

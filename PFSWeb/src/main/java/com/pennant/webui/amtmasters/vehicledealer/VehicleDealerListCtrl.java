@@ -76,7 +76,7 @@ import com.pennanttech.framework.web.components.SearchFilterControl;
  */
 public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	private static final long serialVersionUID = 259921702952389829L;
-	private final static Logger logger = Logger.getLogger(VehicleDealerListCtrl.class);
+	private static final Logger logger = Logger.getLogger(VehicleDealerListCtrl.class);
 
 	protected Window window_VehicleDealerList;
 	protected Borderlayout borderLayout_VehicleDealerList;

@@ -34,7 +34,7 @@ import net.sf.jasperreports.engine.JasperRunManager;
 public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(AuditReportCtrl.class);
+	private static final Logger logger = Logger.getLogger(AuditReportCtrl.class);
 
 	protected Window  		window_AuditReport;
 	protected Borderlayout  borderlayout;

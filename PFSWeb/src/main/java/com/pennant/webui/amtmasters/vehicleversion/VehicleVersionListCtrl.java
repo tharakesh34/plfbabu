@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> {
 	private static final long serialVersionUID = 8007121399442577547L;
-	private final static Logger logger = Logger.getLogger(VehicleVersionListCtrl.class);
+	private static final Logger logger = Logger.getLogger(VehicleVersionListCtrl.class);
 
 	protected Window window_VehicleVersionList;
 	protected Borderlayout borderLayout_VehicleVersionList;

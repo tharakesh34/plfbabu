@@ -62,7 +62,7 @@ import com.pennant.backend.util.PennantConstants;
 public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBalanceSheet> 
 				implements CustomerBalanceSheetService {
 	
-	private final static Logger logger = Logger.getLogger(CustomerBalanceSheetServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(CustomerBalanceSheetServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerBalanceSheetDAO customerBalanceSheetDAO;

@@ -37,17 +37,17 @@ import com.pennant.UserWorkspace;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private final static Logger logger = Logger.getLogger(CustomerEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerEnquiryDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

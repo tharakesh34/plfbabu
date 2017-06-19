@@ -26,7 +26,7 @@ import com.aspose.words.RelativeVerticalPosition;
 import com.aspose.words.WrapType;
 
 public class PDFConversion implements IFieldMergingCallback{
-	private final static Logger logger = Logger.getLogger(PDFConversion.class);
+	private static final Logger logger = Logger.getLogger(PDFConversion.class);
 	
 	public static void generatePDFFromWord(byte[] inputByteData,
 			String destinationPDFDocPath) throws Exception {

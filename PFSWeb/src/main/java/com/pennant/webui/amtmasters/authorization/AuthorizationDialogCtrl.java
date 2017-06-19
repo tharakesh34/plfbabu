@@ -89,7 +89,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
  */
 public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(AuthorizationDialogCtrl.class);
 
 	/*
@@ -790,8 +790,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_AuthorizationDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

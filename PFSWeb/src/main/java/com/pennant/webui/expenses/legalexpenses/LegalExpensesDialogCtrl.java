@@ -107,7 +107,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LegalExpensesDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LegalExpensesDialogCtrl.class);
 	
 	/*
 	 * ************************************************************************
@@ -270,8 +270,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 			doSetFieldProperties();
 			doShowDialog(getLegalExpenses());
 		} catch (Exception e) {
-			createException(window_LegalExpensesDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());
@@ -890,8 +889,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_LegalExpensesDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}
@@ -980,8 +978,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_LegalExpensesDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

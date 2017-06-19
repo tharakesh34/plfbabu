@@ -13,7 +13,7 @@ import org.zkoss.zul.Constraint;
 import com.pennant.backend.util.PennantRegularExpressions;
 
 public class PTStringValidator implements Constraint{
-	private final static Logger logger = Logger.getLogger(PTStringValidator.class);
+	private static final Logger logger = Logger.getLogger(PTStringValidator.class);
 
 	private String fieldParm;
 	private String regExp;

@@ -59,7 +59,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -68,6 +67,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(PostingsEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PostingsEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -224,7 +224,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private void doFillPostings() {
 		logger.debug("Entering");
 		fillComboBox(this.postingGroup, PennantConstants.EVENTBASE, PennantStaticListUtil.getPostingGroupList(), "");
-		StringBuilder events = new StringBuilder("'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE'");
+		StringBuilder events = new StringBuilder("'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS'");
 		
 		if(this.showAccrual.isChecked()) {
 			events.append(",'AMZ','AMZSUSP'");

@@ -93,7 +93,7 @@ import com.pennant.webui.util.MessageUtil;
 public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(FeeTypeDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(FeeTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -216,8 +216,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			doSetFieldProperties();
 			doShowDialog(getFeeType());
 		} catch (Exception e) {
-			createException(window_FeeTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

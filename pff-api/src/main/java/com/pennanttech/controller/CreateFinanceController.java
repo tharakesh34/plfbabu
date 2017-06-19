@@ -83,7 +83,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
 
-	private final static Logger			logger	= Logger.getLogger(CreateFinanceController.class);
+	private static final Logger			logger	= Logger.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private CustomerDetailsService		customerDetailsService;
@@ -210,7 +210,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// Finance detail object
 			financeDetail.setUserAction("");
 			financeDetail.setExtSource(false);
-			financeDetail.setAccountingEventCode("");
+			financeDetail.setAccountingEventCode(PennantApplicationUtil.getEventCode(financeMain.getFinStartDate()));
 			financeDetail.setFinReference(financeMain.getFinReference());
 			financeDetail.setFinScheduleData(finScheduleData);
 
@@ -389,7 +389,18 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}else {
-				vasRecording.setExtendedFieldRender(null);
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(vasRecording.getVasReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
+				exdFieldRender.setSeqNo(0);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}
 		}
 		// process finance flags
@@ -514,6 +525,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
 					feeDetail.setVasReference(vasRecording.getVasReference());
+					feeDetail.setCalculatedAmount(vasRecording.getFee());
+					feeDetail.setFixedAmount(vasRecording.getFee());
+					feeDetail.setAlwDeviation(true);
+					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+					//feeDetail.setAlwModifyFee(true);
+					feeDetail.setAlwModifyFeeSchdMthd(true);
+					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
 				}
 			}
 		}

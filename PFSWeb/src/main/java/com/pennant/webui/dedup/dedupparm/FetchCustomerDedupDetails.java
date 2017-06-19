@@ -21,7 +21,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchCustomerDedupDetails {
 
-	private final static Logger		logger					= Logger.getLogger(FetchCustomerDedupDetails.class);
+	private static final Logger		logger					= Logger.getLogger(FetchCustomerDedupDetails.class);
 
 	private static final String		CUSTOMERDEDUP_LABELS	= "custCIF,custDOB,custShrtName,custCRCPR,mobileNumber,appScore,override";
 

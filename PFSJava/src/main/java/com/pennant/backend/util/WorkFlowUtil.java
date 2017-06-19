@@ -71,7 +71,7 @@ public class WorkFlowUtil {
 			loadWorkFlowData();
 		}
 
-		return workFlowMap.get(workFlowType);
+		return workFlowDetailsService.getWorkFlowDetailsByFlowType(workFlowType);
 	}
 
 

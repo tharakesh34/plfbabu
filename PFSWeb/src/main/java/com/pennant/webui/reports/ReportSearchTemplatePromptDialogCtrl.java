@@ -62,7 +62,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSearchTemplate> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(ReportSearchTemplatePromptDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportSearchTemplatePromptDialogCtrl.class);
 
 	protected Window     window_ReportSearchTemplateDialog;
 	protected Textbox    templateName;

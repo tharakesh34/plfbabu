@@ -125,7 +125,7 @@ import com.rits.cloning.Cloner;
  */
 public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long				serialVersionUID	= 6004939933729664895L;
-	private final static Logger				logger				= Logger.getLogger(QDEFinanceMainDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(QDEFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -1270,8 +1270,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_QDEFinanceMainDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1591,9 +1590,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			// updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
-			showErrorMessage(this.window_QDEFinanceMainDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

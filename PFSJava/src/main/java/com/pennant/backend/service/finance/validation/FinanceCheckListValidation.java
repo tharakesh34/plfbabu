@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class FinanceCheckListValidation {
 
-	private final static Logger logger = Logger.getLogger(FinanceCheckListValidation.class);
+	private static final Logger logger = Logger.getLogger(FinanceCheckListValidation.class);
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 
 

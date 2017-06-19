@@ -115,7 +115,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(PaymentHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PaymentHeaderDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
@@ -479,7 +479,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			final HashMap<String, Object> map = new HashMap<>();
 				map.put("paymentInstruction", paymentInstruction);
 				map.put("acSetID", accountsetId);
-				map.put("enqModule", true);
+				map.put("enqModule", enqiryModule);
 				map.put("dialogCtrl", this);
 				map.put("isNotFinanceProcess", true);
 				map.put("postAccReq", false);
@@ -716,8 +716,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					}
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_PaymentHeaderDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -1155,7 +1154,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		}
 		if (aPaymentHeader.isNewRecord()) {
-			setPaymentDetailList(detailList);
+			for (PaymentDetail detail : detailList) {
+				if (BigDecimal.ZERO.compareTo(detail.getAvailableAmount()) == -1) {
+					getPaymentDetailList().add(detail);
+				}
+			}
 		} else {
 			updatePaybleAmounts(detailList, aPaymentHeader.getPaymentDetailList());
 		}

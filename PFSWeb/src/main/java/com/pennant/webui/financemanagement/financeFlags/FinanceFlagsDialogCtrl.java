@@ -107,7 +107,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(FinanceFlagsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceFlagsDialogCtrl.class);
 	
 	protected Window 				window_FinanceFlagsDialog; 		// autoWired
 	protected Borderlayout 			borderlayoutFinanceFlags; 		// autoWired
@@ -366,8 +366,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FinanceFlagsDialog,e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -444,8 +443,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FinanceFlagsDialog, e);
+			MessageUtil.showError(e);
 		}
 
 		// User Notifications Message/Alert

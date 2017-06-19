@@ -9,7 +9,7 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 
 public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquiryService{
-	private final static Logger logger = Logger.getLogger(ApprovalStatusEnquiryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryServiceImpl.class);
 
 	protected ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	protected NotesDAO      notesDAO;

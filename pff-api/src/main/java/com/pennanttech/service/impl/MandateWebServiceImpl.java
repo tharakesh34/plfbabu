@@ -38,7 +38,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class MandateWebServiceImpl implements MandateRestService,MandateSoapService {
-	private final static Logger logger = Logger.getLogger(MandateWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(MandateWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private MandateController mandateController;

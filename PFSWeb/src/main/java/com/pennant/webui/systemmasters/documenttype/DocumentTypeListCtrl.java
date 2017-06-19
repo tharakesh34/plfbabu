@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 	private static final long serialVersionUID = -2450046413192453914L;
-	private final static Logger logger = Logger.getLogger(DocumentTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(DocumentTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

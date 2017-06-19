@@ -54,7 +54,7 @@ import com.pennant.backend.service.applicationmaster.SysNotificationService;
  * 
  */
 public class SysNotificationServiceImpl extends GenericService<SysNotification> implements SysNotificationService {
-	private final static Logger logger = Logger.getLogger(SysNotificationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SysNotificationServiceImpl.class);
 
 	private SysNotificationDAO sysNotificationDAO;
 

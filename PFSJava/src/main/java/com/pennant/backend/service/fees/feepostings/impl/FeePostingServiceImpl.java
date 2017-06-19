@@ -93,7 +93,7 @@ import com.pennanttech.pff.core.Literal;
 import com.rits.cloning.Cloner;
 
 public class FeePostingServiceImpl extends GenericService<FeePostings> implements FeePostingService {
-	private final static Logger		logger	= Logger.getLogger(FeePostingServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(FeePostingServiceImpl.class);
 
 	private AuditHeaderDAO			auditHeaderDAO;
 	private FeePostingsDAO			feePostingsDAO;

@@ -103,7 +103,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ManualAdviseDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ManualAdviseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -789,8 +789,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_ManualAdviseDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

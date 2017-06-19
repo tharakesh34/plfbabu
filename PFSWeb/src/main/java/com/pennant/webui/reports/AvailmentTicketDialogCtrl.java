@@ -82,7 +82,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -103,6 +102,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.InterfaceException;
@@ -114,7 +114,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private final static Logger logger = Logger.getLogger(AvailmentTicketDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AvailmentTicketDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

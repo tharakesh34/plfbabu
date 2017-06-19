@@ -178,6 +178,52 @@
 							</row>
 							<row visible="true">
 								<label
+									id="label_AccountTypeDialog_GSTApplicable"
+									value="${c:l('label_AccountTypeDialog_GSTApplicable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="gSTApplicable"
+										checked="false" />
+								</hbox>
+							</row>
+							<row visible="true" id="row_HSNNumber">
+								<label
+									id="label_AccountTypeDialog_HSNNumber"
+									value="${c:l('label_AccountTypeDialog_HSNNumber.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="hSNNumber"
+										maxlength="50" width="200px" />
+								</hbox>
+							</row>
+							
+							<row visible="true" id="row_NatureService">
+								<label
+									id="label_AccountTypeDialog_NatureService"
+									value="${c:l('label_AccountTypeDialog_NatureService.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="natureService"
+										maxlength="50" width="200px" />
+								</hbox>
+							</row>
+							
+							<row visible="true">
+								<label
+									id="label_AccountTypeDialog_RevChargeApplicable"
+									value="${c:l('label_AccountTypeDialog_RevChargeApplicable.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="revChargeApplicable"
+										checked="false" />
+								</hbox>
+							</row>
+							
+							
+							<row visible="true">
+								<label
 									id="label_AccountTypeDialog_AcTypeIsActive"
 									value="${c:l('label_AccountTypeDialog_AcTypeIsActive.value')}" />
 								<hbox>

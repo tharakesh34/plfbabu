@@ -632,7 +632,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodCon
 			<column name="SeqNo" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="30" author="Amit">
+	<changeSet id="30" author="Amit" dbms="oracle">
 		<sql>
 
 			UPDATE SEQSECRIGHTS SET SEQNO=
@@ -834,6 +834,176 @@ WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodCon
 
 		</sql>
 	</changeSet>
+	<changeSet id="30" author="Amit" dbms="mssql">
+		<sql>
+
+			UPDATE SEQSECRIGHTS SET SEQNO=
+			(SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET
+			SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE
+			SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE
+			SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID)
+			FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT
+			MAX(menuId) FROM
+			PTMenuDetails);
+
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups),
+			'EODCONFIG_VIEW', 'Allow to view EODConfig', 0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups),
+			'EODCONFIG_MAKER', 'WF Maker for EODConfig', 0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups),
+			'EODCONFIG_APPROVER', 'WF Approver for EODConfig', 0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),0,'menuCat_eod','MENU',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+2) from
+			SeqSecRights),0,'menuCat_eodEnquiry','MENU',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from
+			SeqSecRights),0,'menuItem_eod_EODConfig','MENU',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from
+			SeqSecRights),0,'menuItem_eod_EODConfigEnquiry','MENU',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from
+			SeqSecRights),2,'button_EODConfigList_PrintList','EODConfigList',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from
+			SeqSecRights),2,'button_EODConfigList_NewEODConfig','EODConfigList',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from
+			SeqSecRights),2,'button_EODConfigDialog_btnNew','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from
+			SeqSecRights),2,'button_EODConfigDialog_btnEdit','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from
+			SeqSecRights),2,'button_EODConfigDialog_btnDelete','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from
+			SeqSecRights),2,'button_EODConfigDialog_btnSave','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from
+			SeqSecRights),3,'EODConfigDialog_EodConfigId','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from
+			SeqSecRights),3,'EODConfigDialog_ExtMnthRequired','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from
+			SeqSecRights),3,'EODConfigDialog_MnthExtTo','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from
+			SeqSecRights),3,'EODConfigDialog_Active','EODConfigDialog',0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_eodEnquiry'),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from
+			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
+			(SeqNo+4) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48',' ','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_eod'),1,0,10000,'2017-05-24 07:26:48',' ',' ','
+			',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+6) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+9) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+4) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_eod'),1,0,10000,'2017-05-24 07:26:48','Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+4) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+4) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			update SeqSecGroupRights set SeqNo = (SeqNo+26+4) ;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),
+			(select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles
+			where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
+			WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),
+			(select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles
+			where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
+			WHERE 0=0;
+			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from
+			SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE
+			AppCode='PFS'),'EODConfig','menu_Item_EODConfig','/WEB-INF/pages/eod/EODConfig/EODConfigList.zul',0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0,'menuItem_eod_EODConfig'
+			FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from
+			SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE
+			AppCode='PFS'),'EODConfigEnquiry','menu_Item_EODConfigEnquiry?enqiryModule=Y"
+			','/WEB-INF/pages/eod/EODConfig/EODConfigEnquiryList.zul',0,10000,'2017-05-24T07:26:48','Approved',' ',' ',' ',' ',' ',0,'menuItem_eod_EODConfig'
+			FROM SeqPTMenuDetails WHERE 0=0;
+			update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+			update SeqSecGroups set SeqNo = (SeqNo+3) ;
+			update SeqSecRights set SeqNo = (SeqNo+10+4) ;
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET
+			SEQNO=(SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO=(SELECT MAX(ROLEGRPID)
+			FROM SECROLEGROUPS);
+			UPDATE
+			SeqPTMenuDetails SET SEQNO= (SELECT
+			MAX(menuId) FROM PTMenuDetails);
+
+		</sql>
+	</changeSet>
 	<changeSet id="31" author="Surekha">
 		<modifyDataType tableName="RMTTRANSACTIONENTRY"
 			columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)" />
@@ -963,7 +1133,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodCon
 			',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet>
-	<changeSet id="50" author="ahmad">
+	<changeSet id="50" author="ahmad" dbms="oracle">
 		<sql>
 			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups),
 			'LOCALITY_VIEW', 'Allow to view Locality', 0,1000,'2017-05-22
@@ -1123,7 +1293,135 @@ WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodCon
 			update SeqSecRights set SeqNo = (SeqNo+10+3) ;
 		</sql>
 	</changeSet>
-
+	<changeSet id="50" author="ahmad" dbms="mssql">
+		<sql>
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups),
+			'LOCALITY_VIEW', 'Allow to view Locality', 0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups),
+			'LOCALITY_MAKER', 'WF Maker for Locality', 0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups),
+			'LOCALITY_APPROVER', 'WF Approver for Locality', 0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),0,'menuCat_masters','MENU',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+2) from
+			SeqSecRights),0,'menuCat_mastersEnquiry','MENU',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from
+			SeqSecRights),0,'menuItem_masters_Locality','MENU',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from
+			SeqSecRights),0,'menuItem_masters_LocalityEnquiry','MENU',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from
+			SeqSecRights),2,'button_LocalityList_PrintList','LocalityList',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from
+			SeqSecRights),2,'button_LocalityList_NewLocality','LocalityList',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from
+			SeqSecRights),2,'button_LocalityDialog_btnNew','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from
+			SeqSecRights),2,'button_LocalityDialog_btnEdit','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from
+			SeqSecRights),2,'button_LocalityDialog_btnDelete','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from
+			SeqSecRights),2,'button_LocalityDialog_btnSave','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from
+			SeqSecRights),3,'LocalityDialog_id','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from
+			SeqSecRights),3,'LocalityDialog_name','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from
+			SeqSecRights),3,'LocalityDialog_city','LocalityDialog',0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE
+			0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_mastersEnquiry'),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from
+			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
+			(SeqNo+4) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37',' ','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_masters'),1,0,10000,'2017-05-22 09:32:37',' ','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+6) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+9) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from
+			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			(SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+3) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			max(RightID) from SecRights WHERE
+			RightName='menuCat_masters'),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+3) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			(SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+3) from
+			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
+			(SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
+			update SeqSecGroupRights set SeqNo = (SeqNo+26+3) ;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),
+			(select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles
+			where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
+			WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),
+			(select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles
+			where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups
+			WHERE 0=0;
+			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from
+			SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE
+			AppCode='PFF'),'Locality','menu_Item_Locality','/WEB-INF/pages/masters/Locality/LocalityList.zul',0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ','
+			',0,'menuItem_masters_Locality' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from
+			SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE
+			AppCode='PFF'),'LocalityEnquiry','menu_Item_LocalityEnquiry?enqiryModule=Y"
+			','/WEB-INF/pages/masters/Locality/LocalityEnquiryList.zul',0,10000,'2017-05-22T09:32:37','Approved',' ',' ',' ',' ','
+			',0,'menuItem_masters_Locality' FROM SeqPTMenuDetails WHERE 0=0;
+			update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+			update SeqSecGroups set SeqNo = (SeqNo+3) ;
+			update SeqSecRights set SeqNo = (SeqNo+10+3) ;
+		</sql>
+	</changeSet>
 	<changeSet id="51" author="ahmad">
 		<createTable tableName="Locality">
 			<column name="id" type="bigint" />
@@ -1196,7 +1494,7 @@ FROM    	Locality  T1
 			SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	<changeSet id="57" author="Prasad">
+	<changeSet id="57" author="Prasad" dbms="oracle">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW"
 			replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
@@ -1255,7 +1553,7 @@ FROM    	Locality  T1
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
-	<changeSet id="58" author="Prasad">
+	<changeSet id="58" author="Prasad" dbms="oracle">
 		<createView viewName="RPT_SOA_FINSMRY_VIEW"
 			replaceIfExists="true">
 		  <![CDATA[ Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
@@ -1280,6 +1578,107 @@ FROM    	Locality  T1
   from FinScheduleDetails T1 
   Inner Join financeMain T2 on T1.FinReference = T2.FinReference
   where schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 
+  from FinPftDetails union all
+	Select t1.Finreference,finccy,'Bounce Charges' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where Bounceid>0 group by t1.Finreference,finccy union all
+  Select t1.Finreference,finccy,'Other Receivables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=1 
+  group by t1.Finreference,finccy union all
+   Select t1.Finreference,finccy,'Unadjusted Amount' comp,SUM(Amount)due,sum(utilisedamt) from finexcessamount t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference
+   group by t1.Finreference,finccy union all
+    Select t1.Finreference,finccy,'Other Payables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=2
+  group by t1.Finreference,finccy
+ )T inner join RMTCURRENCIES C on C.ccycode= T.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="57" author="Prasad" dbms="mssql">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW"
+			replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,3 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 	
+	union	
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,3 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	
+	union	
+		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+PAYMENTREF +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C','B')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,5 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc+'- Due ('+T1.Finreference+')', RemainingFee Debit, 0 credit,6 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,7 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="58" author="Prasad" dbms="mssql">
+		<createView viewName="RPT_SOA_FINSMRY_VIEW"
+			replaceIfExists="true">
+		  <![CDATA[ Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
+  (Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
+  
+  Select T1.FinReference,T2.finccy,'Instalment Amount' comp,SUM(ProfitSchd + PrincipalSchd + Feeschd) due,
+  SUM(SchdPriPaid+SchdPftPaid+Schdfeepaid) Receipt 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+ union all
+	 Select T1.FinReference,T2.finccy,'Principal Component' comp,SUM(PrincipalSchd) due,
+  SUM(SchdPriPaid) Receipt 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+ union all
+	 Select T1.FinReference,T2.finccy,'Interest Component' comp,SUM(ProfitSchd) due,
+  SUM(SchdPftPaid) Receipt 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
   group by T1.Finreference, T2.FinCcy 
   union all
 	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 

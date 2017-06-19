@@ -118,7 +118,7 @@ import com.rits.cloning.Cloner;
  */
 public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeader> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(TreasuaryFinHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(TreasuaryFinHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -934,8 +934,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_TreasuaryFinHeaderDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -1218,8 +1217,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_TreasuaryFinHeaderDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

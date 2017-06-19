@@ -98,7 +98,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueChargeRecovery> {
 	private static final long serialVersionUID = -4562972510077651582L;
-	private final static Logger logger = Logger.getLogger(OverdueChargeRecoveryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(OverdueChargeRecoveryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

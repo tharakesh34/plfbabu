@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	private static final long serialVersionUID = -5966260372580930309L;
-	private final static Logger logger = Logger.getLogger(PhoneTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PhoneTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -94,7 +94,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	private static final long serialVersionUID = -4145707224044632347L;
-	private final static Logger logger = Logger.getLogger(WeekendMasterDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(WeekendMasterDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

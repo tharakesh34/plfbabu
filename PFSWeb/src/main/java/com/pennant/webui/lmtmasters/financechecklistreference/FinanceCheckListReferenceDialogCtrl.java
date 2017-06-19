@@ -108,7 +108,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long						serialVersionUID		= 4028305737293383251L;
-	private final static Logger						logger					= Logger.getLogger(FinanceCheckListReferenceDialogCtrl.class);
+	private static final Logger						logger					= Logger.getLogger(FinanceCheckListReferenceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -65,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BuilderCompany</b>.<br>
  */
 public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> implements BuilderCompanyService {
-	private final static Logger logger = Logger.getLogger(BuilderCompanyServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BuilderCompanyServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private BuilderCompanyDAO builderCompanyDAO;

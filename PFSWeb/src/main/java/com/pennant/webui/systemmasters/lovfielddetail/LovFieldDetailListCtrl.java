@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class LovFieldDetailListCtrl extends GFCBaseListCtrl<LovFieldDetail> {
 	private static final long serialVersionUID = 3047814941939865707L;
-	private final static Logger logger = Logger.getLogger(LovFieldDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LovFieldDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

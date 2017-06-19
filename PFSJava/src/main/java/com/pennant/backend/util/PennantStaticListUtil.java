@@ -195,6 +195,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> postingPurposeList;
 	private static ArrayList<ValueLabel> authTypes;
 	private static ArrayList<ValueLabel> presentmentsStatusList;
+	private static ArrayList<ValueLabel> taxApplicableFor;
+	private static ArrayList<ValueLabel> channelTypes;
 
 	
 
@@ -2702,6 +2704,25 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
 		}
 		return presentmentsStatusList;
+	}
+	
+	public static ArrayList<ValueLabel> getTaxApplicableFor() {
+		if (taxApplicableFor == null) {
+			taxApplicableFor = new ArrayList<ValueLabel>(3);
+			taxApplicableFor.add(new ValueLabel("P", Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
+			taxApplicableFor.add(new ValueLabel("C", Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
+			taxApplicableFor.add(new ValueLabel("B", Labels.getLabel("label_TaxApplicableFor_Borrower")));
+		}
+		return taxApplicableFor;
+	}
+	
+	public static ArrayList<ValueLabel> getChannelTypes() {
+		if (channelTypes == null) {
+			channelTypes = new ArrayList<ValueLabel>(2);
+			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_PAYMENT, Labels.getLabel("label_Disbursement_Payment.label")));
+			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT, Labels.getLabel("label_Disbursement_Disbursement.label")));
+		}
+		return channelTypes;
 	}
 }
 

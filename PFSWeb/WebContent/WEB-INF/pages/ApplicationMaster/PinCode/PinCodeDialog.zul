@@ -91,6 +91,14 @@
 								<extendedcombobox id="city" />
 							</row>
 							<row id="row1">
+								<label id="label_AreaName"
+									value="${c:l('label_PinCodeDialog_AreaName.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="areaName"
+										maxlength="100" width="200px" />
+								</hbox>
 								<label id="label_Active"
 									value="${c:l('label_PinCodeDialog_Active.value')}" />
 								<checkbox id="active" checked="false" />

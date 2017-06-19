@@ -15,7 +15,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class JSONClient {
 	
-	private final static Logger	logger	= Logger.getLogger(JSONClient.class);
+	private static final Logger	logger	= Logger.getLogger(JSONClient.class);
 	
 	public Object postProcess(String url, String service,Object requestData, Class<?> responseClass) throws Exception {		
 		Response response 	= getClient(url, service, requestData);

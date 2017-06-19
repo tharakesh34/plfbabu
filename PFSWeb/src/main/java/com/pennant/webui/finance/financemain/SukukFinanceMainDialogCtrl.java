@@ -92,7 +92,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(SukukFinanceMainDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SukukFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -98,7 +98,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
  */
 public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperation> {
 	private static final long serialVersionUID = 4149506032336052235L;
-	private final static Logger logger = Logger.getLogger(SecurityOperationRolesDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityOperationRolesDialogCtrl.class);
 	
 	protected Window win_Operation_Roles_Dialog;
 

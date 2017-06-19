@@ -74,7 +74,7 @@ import com.rits.cloning.Cloner;
 
 public class AddSecondaryAccountDialogCtrl extends GFCBaseCtrl<SecondaryAccount> {
 	private static final long serialVersionUID = 6004939933729664896L;
-	private final static Logger logger = Logger.getLogger(AddSecondaryAccountDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(AddSecondaryAccountDialogCtrl.class);
 
 	protected Window window_SecondaryAccountDialog; // autoWired
 	protected AccountSelectionBox secondaryAccountId;

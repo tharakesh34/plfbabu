@@ -72,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>AccountMapping</b>.<br>
  */
 public class AccountMappingServiceImpl extends GenericService<AccountMapping> implements AccountMappingService {
-	private final static Logger	logger	= Logger.getLogger(AccountMappingServiceImpl.class);
+	private static final Logger	logger	= Logger.getLogger(AccountMappingServiceImpl.class);
 
 	private AuditHeaderDAO		auditHeaderDAO;
 	private AccountMappingDAO	accountMappingDAO;

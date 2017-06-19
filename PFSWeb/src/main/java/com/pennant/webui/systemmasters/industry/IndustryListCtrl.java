@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class IndustryListCtrl extends GFCBaseListCtrl<Industry> {
 	private static final long serialVersionUID = -5021713706640652581L;
-	private final static Logger logger = Logger.getLogger(IndustryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(IndustryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

@@ -136,7 +136,7 @@ import com.rits.cloning.Cloner;
  */
 public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private static final long serialVersionUID = -1600733082543197594L;
-	private final static Logger logger = Logger.getLogger(FacilityDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FacilityDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -386,8 +386,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			}
 			doShowDialog(getFacility());
 		} catch (Exception e) {
-			createException(window_FacilityDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1335,8 +1334,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FacilityDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1573,8 +1571,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FacilityDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

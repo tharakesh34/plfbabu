@@ -22,7 +22,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDARequestProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(DDARequestProcess.class);
+	private static final Logger logger = Logger.getLogger(DDARequestProcess.class);
 
 	//private String DDA_REQ_TYPE = "REGISTRATION";
 			

@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ProfitCenter</b>.<br>
  */
 public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implements ProfitCenterService {
-	private final static Logger logger = Logger.getLogger(ProfitCenterServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ProfitCenterServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProfitCenterDAO profitCenterDAO;

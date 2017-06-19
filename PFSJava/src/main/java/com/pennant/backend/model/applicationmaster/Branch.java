@@ -92,6 +92,8 @@ public class Branch extends AbstractWorkflowEntity {
 	private String lovValue;
 	private Branch befImage;
 	private LoggedInUser userDetails;
+    private String pinCode;
+    private String pinAreaDesc;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -110,6 +112,7 @@ public class Branch extends AbstractWorkflowEntity {
 		Set<String> excludeFields=new HashSet<String>();
 		excludeFields.add("newBranchDesc");
 		excludeFields.add("parentBranchDesc");
+		excludeFields.add("pinAreaDesc");
 		return excludeFields;
 	}
 	
@@ -382,4 +385,20 @@ public class Branch extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public String getPinCode() {
+		return pinCode;
+	}
+
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
+	}
+	public String getPinAreaDesc() {
+		return pinAreaDesc;
+	}
+
+	public void setPinAreaDesc(String pinAreaDesc) {
+		this.pinAreaDesc = pinAreaDesc;
+	}
+
 }

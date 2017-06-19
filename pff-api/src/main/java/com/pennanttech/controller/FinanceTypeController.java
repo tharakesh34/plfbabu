@@ -31,7 +31,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceTypeController {
 
-	private final static Logger logger = Logger.getLogger(FinanceTypeController.class);
+	private static final Logger logger = Logger.getLogger(FinanceTypeController.class);
 
 	private FinanceTypeService financeTypeService;
 	private StepPolicyService stepPolicyService;

@@ -27,11 +27,12 @@ import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> {
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitCustomerReferenceDialogCtrl.class);
 
 	/*
 	 * ************************************************************************
@@ -99,8 +100,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 			// fill the components with the data
 			doWriteBeanToComponents(limitDetails, limitReferences);
 		} catch (Exception e) {
-			createException(window_LimitCustomerReferenceDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

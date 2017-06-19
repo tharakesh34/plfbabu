@@ -84,6 +84,8 @@ public class BranchListModelItemRenderer implements ListitemRenderer<Branch>, Se
 		lc.setParent(item);
 		lc = new Listcell(branch.getBranchSwiftBrnCde());
 		lc.setParent(item);
+		lc = new Listcell(branch.getPinAreaDesc());
+		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox cbBranchIsActive = new Checkbox();
 		cbBranchIsActive.setDisabled(true);

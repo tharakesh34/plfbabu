@@ -73,7 +73,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class AssetTypeServiceImpl extends GenericService<AssetType> implements AssetTypeService {
-	private final static Logger logger = Logger.getLogger(AssetTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AssetTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

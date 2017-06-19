@@ -96,7 +96,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -123,6 +122,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -139,7 +139,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(ManagerChequeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ManagerChequeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -448,8 +448,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			doShowDialog(managerCheque);
 			
 		} catch (Exception e) {
-			createException(window_ManagerChequeDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2255,8 +2254,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_ManagerChequeDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -2414,8 +2412,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ManagerChequeDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

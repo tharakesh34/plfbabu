@@ -174,6 +174,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_UPPBOX_ALPHANUM_FL3="REGEX_UPPBOX_ALPHANUM_FL3";
 	public static final String REGEX_ACCOUNTNUMBER="REGEX_ACCOUNTNUMBER";
 	public static final String REGEX_PANNUMBER="REGEX_PANNUMBER";
+	public static final String REGEX_GSTIN="REGEX_GSTIN";
 	
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -235,6 +236,7 @@ public class PennantRegularExpressions {
 			put(REGEX_UPPBOX_ALPHANUM_FL3, "[A-z0-9]{3}");
 			put(REGEX_ACCOUNTNUMBER, "^(?![a-zA-Z]*$)+[a-zA-Z0-9]+$");
 			put(REGEX_PANNUMBER, "[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+			put(REGEX_GSTIN, "[A-Za-z]{2}[A-Za-z]{5}\\d{4}[A-Za-z]{1}[A-z0-9]{3}");
 		}
 	};
 

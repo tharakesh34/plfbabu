@@ -80,7 +80,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 
 	private static final long serialVersionUID = -1189739186571603178L;
 
-	private final static Logger logger = Logger.getLogger(SecurityOperationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityOperationDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

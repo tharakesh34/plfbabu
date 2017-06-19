@@ -52,7 +52,7 @@ import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.PennantConstants;
 
 public class AccrualProcess extends Thread {
-	private final static Logger logger = Logger.getLogger(AccrualProcess.class);
+	private static final Logger logger = Logger.getLogger(AccrualProcess.class);
 
 	private static AccrualProcess me = null;
 	private  ExecutionStatus calculation = new ExecutionStatus();

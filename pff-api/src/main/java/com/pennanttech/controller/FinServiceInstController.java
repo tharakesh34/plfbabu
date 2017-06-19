@@ -100,7 +100,7 @@ import com.rits.cloning.Cloner;
 
 public class FinServiceInstController extends SummaryDetailService {
 
-	private final static Logger			logger	= Logger.getLogger(FinServiceInstController.class);
+	private static final Logger			logger	= Logger.getLogger(FinServiceInstController.class);
 
 	private FinanceDetailService		financeDetailService;
 	private RateChangeService			rateChangeService;
@@ -236,7 +236,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			//financeMain.setScheduleMethod(finServiceInst.getSchdMethod());
-			financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
+			//financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
+			finServiceInst.setSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGRPY);
 
 			financeMain.setRecalType(finServiceInst.getRecalType());
@@ -677,7 +678,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				int seqNo = finScheduleData.getDisbursementDetails().size() + 1;
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 				disbursementDetails.setDisbDate(finServiceInst.getFromDate());
-				disbursementDetails.setDisbAmount(finServiceInst.getAmount());
+				disbursementDetails.setDisbAmount(amount);
 				disbursementDetails.setDisbSeq(seqNo);
 				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
@@ -802,8 +803,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			int adjRepayTerms = 0;
 			int totRepayTerms = 0;
 			boolean isFromDateFound = false;
-			Date fromDate = finServiceInst.getFromDate();
-
+			Date fromDate = DateUtility.getDBDate(DateUtility.formatDate(finServiceInst.getFromDate(),
+					PennantConstants.DBDateFormat));
+			finServiceInst.setFromDate(fromDate);
 			List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -1546,21 +1548,19 @@ public class FinServiceInstController extends SummaryDetailService {
 	 */
 	public WSReturnStatus updateLoanPenaltyDetails(FinODPenaltyRate finODPenaltyRate) {
 		logger.debug("Enteing");
-		String finReference = null;
 		try {
 			// save the OdPenaltyDetais
-			finReference = finODPenaltyRateDAO.save(finODPenaltyRate, "");
+			FinODPenaltyRate oldFinODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finODPenaltyRate.getFinReference(), "");
+			finODPenaltyRateDAO.saveLog(oldFinODPenaltyRate, "_Log");
+			finODPenaltyRateDAO.update(finODPenaltyRate, "");
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-
 		logger.debug("Leaving");
-		if (StringUtils.equals(finODPenaltyRate.getFinReference(), finReference)) {
-			return APIErrorHandlerService.getSuccessStatus();
-		} else {
-			return APIErrorHandlerService.getFailedStatus();
-		}
+		return APIErrorHandlerService.getSuccessStatus();
+		
+		
 
 	}
 

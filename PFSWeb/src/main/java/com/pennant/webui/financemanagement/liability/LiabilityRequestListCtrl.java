@@ -98,7 +98,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LiabilityRequestListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LiabilityRequestListCtrl.class);
 
 	protected Window window_LiabilityRequestList; 
 	protected Borderlayout borderLayout_LiabilityRequestList; 

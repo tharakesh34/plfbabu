@@ -69,7 +69,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class BundledProductsDetailServiceImpl extends GenericService<BundledProductsDetail>
 		implements BundledProductsDetailService {
 	
-	private final static Logger logger = Logger.getLogger(BundledProductsDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BundledProductsDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BundledProductsDetailDAO bundledProductsDetailDAO;

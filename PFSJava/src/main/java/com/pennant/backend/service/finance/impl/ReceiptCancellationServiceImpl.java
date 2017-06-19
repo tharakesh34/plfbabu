@@ -80,7 +80,7 @@ import com.rits.cloning.Cloner;
 
 public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHeader> implements
 		ReceiptCancellationService {
-	private final static Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ReceiptCancellationServiceImpl.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
@@ -548,7 +548,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptDetail finReceiptDetail = null;
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
-				if (item.getPaymentType().equals(presentmentDetail.getMandateType())) {
+				if (item.getPaymentType().equals(RepayConstants.PAYTYPE_PRESENTMENT)) {
 					finReceiptDetail = item;
 					break;
 				}

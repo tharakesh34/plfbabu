@@ -18,7 +18,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class NorkamCheckUtilProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(NorkamCheckUtilProcess.class);
+	private static final Logger logger = Logger.getLogger(NorkamCheckUtilProcess.class);
 
 	public NorkamCheckUtilProcess() {
 		super();

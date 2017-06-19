@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CommodityDetailDialogCtrl extends GFCBaseCtrl<CommodityDetail> {
 	private static final long   serialVersionUID = 5409464429980669752L;
-	private final static Logger logger = Logger.getLogger(CommodityDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CommodityDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

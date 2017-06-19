@@ -70,7 +70,7 @@ public class SecurityRoleGroupsServiceImpl extends GenericService<SecurityRoleGr
 	private NextidviewDAO 		   nextidviewDAO;
 
 
-	private final static Logger logger = Logger.getLogger(SecurityRoleGroupsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(SecurityRoleGroupsServiceImpl.class);
 
 	public SecurityRoleGroupsServiceImpl() {
 		super();

@@ -29,19 +29,19 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.search.Filter;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private final static Logger logger = Logger.getLogger(CustomerAccountDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerAccountDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

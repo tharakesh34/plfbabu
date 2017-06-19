@@ -60,7 +60,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 public class BundledProductsDetailValidation {
 	
-	private final static Logger logger = Logger.getLogger(BundledProductsDetailValidation.class);	
+	private static final Logger logger = Logger.getLogger(BundledProductsDetailValidation.class);	
 	private BundledProductsDetailDAO bundledProductsDetailDAO;
 	
 	public BundledProductsDetailValidation(BundledProductsDetailDAO bundledProductsDetailDAO) {

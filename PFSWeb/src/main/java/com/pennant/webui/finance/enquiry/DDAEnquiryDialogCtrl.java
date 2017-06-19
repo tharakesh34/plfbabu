@@ -66,7 +66,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DDAEnquiryDialogCtrl extends GFCBaseCtrl<DDAProcessData> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(DDAEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DDAEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

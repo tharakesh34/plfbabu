@@ -90,7 +90,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(AssetTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(AssetTypeListCtrl.class);
 
 	protected Window 		window_AssetTypeList; 
 	protected Borderlayout 	borderLayout_AssetTypeList; 

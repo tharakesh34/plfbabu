@@ -881,15 +881,14 @@ public class FinanceValidationService {
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (financeMain != null) {
-			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(financeMain
-					.getAccountsOfficer());
-			if (generalDepartment == null) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(financeMain.getAccountsOfficer());
+			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getAccountsOfficer();
 				return getErrorDetails("90501", valueParm);
 			}
-			RelationshipOfficer relationshipOfficer = relationshipOfficerService
-					.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
+			relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
@@ -897,11 +896,11 @@ public class FinanceValidationService {
 			}
 
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
-				GeneralDepartment salesDepartment = generalDepartmentService
+				GeneralDepartment generalDepartment = generalDepartmentService
 						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
-				if (salesDepartment == null) {
+				if (generalDepartment == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getAccountsOfficer();
+					valueParm[0] = financeMain.getSalesDepartment();
 					return getErrorDetails("90501", valueParm);
 				}
 			}
@@ -910,7 +909,7 @@ public class FinanceValidationService {
 						.getDmaCode());
 				if (dmaCode == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getDsaCode();
+					valueParm[0] = financeMain.getDmaCode();
 					return getErrorDetails("90501", valueParm);
 				}
 			}
@@ -919,7 +918,7 @@ public class FinanceValidationService {
 						.getApprovedRelationshipOfficerById(financeMain.getReferralId());
 				if (referralId == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getDsaCode();
+					valueParm[0] = financeMain.getReferralId();
 					return getErrorDetails("90501", valueParm);
 				}
 			}

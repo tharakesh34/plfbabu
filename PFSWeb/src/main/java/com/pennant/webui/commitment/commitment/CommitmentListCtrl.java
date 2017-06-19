@@ -93,7 +93,7 @@ import com.pennanttech.framework.web.components.SearchFilterControl;
  */
 public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(CommitmentListCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(CommitmentListCtrl.class);
 
 	protected Window							window_CommitmentList;
 	protected Borderlayout						borderLayout_CommitmentList;

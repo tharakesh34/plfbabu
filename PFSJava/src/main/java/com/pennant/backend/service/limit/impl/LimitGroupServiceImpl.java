@@ -75,7 +75,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * Service implementation for methods that depends on <b>LimitGroup</b>.<br>
  */
 public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements LimitGroupService {
-	private final static Logger			logger	= Logger.getLogger(LimitGroupServiceImpl.class);
+	private static final Logger			logger	= Logger.getLogger(LimitGroupServiceImpl.class);
 
 	private AuditHeaderDAO				auditHeaderDAO;
 	private Set<String>					excludeFields;

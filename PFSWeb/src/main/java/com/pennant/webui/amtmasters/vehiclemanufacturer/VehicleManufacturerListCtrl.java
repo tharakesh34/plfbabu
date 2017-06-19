@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufacturer> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(VehicleManufacturerListCtrl.class);
+	private static final Logger logger = Logger.getLogger(VehicleManufacturerListCtrl.class);
 
 	protected Window window_VehicleManufacturerList;
 	protected Borderlayout borderLayout_VehicleManufacturerList;

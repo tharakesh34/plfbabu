@@ -125,8 +125,7 @@ public class DisbursementPostings {
 	
 	
 	
-	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch) 
-			throws IllegalAccessException, InvocationTargetException, InterfaceException{
+	public Map<Long, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain, String usrBranch) {
 		logger.debug("Entering");
 
 		String finRef = finMain.getFinReference();

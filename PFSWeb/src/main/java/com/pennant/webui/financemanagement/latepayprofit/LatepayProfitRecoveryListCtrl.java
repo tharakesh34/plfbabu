@@ -55,7 +55,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private static final long serialVersionUID = 5175151702906234829L;
 
-	private final static Logger logger = Logger.getLogger(LatepayProfitRecoveryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LatepayProfitRecoveryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

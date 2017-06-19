@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplicationCode> {
 	private static final long serialVersionUID = -2489293301745014852L;
-	private final static Logger logger = Logger.getLogger(FinanceApplicationCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceApplicationCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

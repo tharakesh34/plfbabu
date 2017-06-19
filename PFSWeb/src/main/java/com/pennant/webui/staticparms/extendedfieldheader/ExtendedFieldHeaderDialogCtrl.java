@@ -84,7 +84,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 	private static final long serialVersionUID = -4892656164017054696L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

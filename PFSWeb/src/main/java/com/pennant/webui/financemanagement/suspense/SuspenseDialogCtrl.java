@@ -125,7 +125,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private static final long							serialVersionUID	= 7798200490595650451L;
-	private final static Logger							logger				= Logger.getLogger(SuspenseDialogCtrl.class);
+	private static final Logger							logger				= Logger.getLogger(SuspenseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

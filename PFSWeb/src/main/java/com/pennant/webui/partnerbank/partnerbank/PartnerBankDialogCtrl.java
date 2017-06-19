@@ -95,7 +95,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private static final long				serialVersionUID	= 1L;
-	private final static Logger				logger				= Logger.getLogger(PartnerBankDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(PartnerBankDialogCtrl.class);
 
 	protected Window						window_PartnerBankDialog;
 

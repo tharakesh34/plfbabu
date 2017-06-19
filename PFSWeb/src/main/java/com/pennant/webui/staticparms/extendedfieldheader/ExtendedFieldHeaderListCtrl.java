@@ -81,7 +81,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader> {
 	private static final long serialVersionUID = -1751614637216289000L;
-	private final static Logger logger = Logger.getLogger(ExtendedFieldHeaderListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ExtendedFieldHeaderListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

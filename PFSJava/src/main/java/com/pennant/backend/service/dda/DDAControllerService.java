@@ -30,7 +30,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAControllerService {
 
-	private final static Logger logger = Logger.getLogger(DDAControllerService.class);
+	private static final Logger logger = Logger.getLogger(DDAControllerService.class);
 	
 	private DDAInterfaceService ddaInterfaceService;
 	private DDAProcessService ddaProcessService;

@@ -50,7 +50,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 	private static final long		serialVersionUID	= -6945930303723518608L;
-	private final static Logger		logger				= Logger.getLogger(FinInsuranceDialogCtrl.class);
+	private static final Logger		logger				= Logger.getLogger(FinInsuranceDialogCtrl.class);
 
 	protected Window				window_FinInsurnaceDialog;
 	protected ExtendedCombobox		insuranceType;

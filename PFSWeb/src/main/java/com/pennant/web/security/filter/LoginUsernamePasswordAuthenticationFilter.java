@@ -12,7 +12,7 @@ import com.pennant.crypto.AESCipher;
  * {@code encrypt.js}, called {@code AESCipher}
  */
 public class LoginUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-	private final static Logger logger = Logger.getLogger(LoginUsernamePasswordAuthenticationFilter.class);
+	private static final Logger logger = Logger.getLogger(LoginUsernamePasswordAuthenticationFilter.class);
 
 	public LoginUsernamePasswordAuthenticationFilter() {
 		super();

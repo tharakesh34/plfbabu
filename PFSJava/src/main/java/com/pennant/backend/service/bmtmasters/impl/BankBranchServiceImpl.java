@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class BankBranchServiceImpl extends GenericService<BankBranch> implements BankBranchService {
-	private final static Logger logger = Logger.getLogger(BankBranchServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BankBranchServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankBranchDAO bankBranchDAO;

@@ -165,7 +165,7 @@ import com.rits.cloning.Cloner;
  */
 public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long					serialVersionUID				= 9031340167587772517L;
-	private final static Logger					logger							= Logger.getLogger(CustomerDialogCtrl.class);
+	private static final Logger					logger							= Logger.getLogger(CustomerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -2777,8 +2777,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CustomerDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

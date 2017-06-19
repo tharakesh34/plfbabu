@@ -22,7 +22,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,PromotionTypeSoapService {
 
-	private final static Logger logger = Logger.getLogger(PromotionTypeWebServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PromotionTypeWebServiceImpl.class);
 
 	private FinanceTypeController financeTypeController;
 	private ValidationUtility validationUtility;

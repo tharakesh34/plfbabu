@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	private static final long serialVersionUID = -9084247536503236438L;
-	private final static Logger logger = Logger.getLogger(SectorDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SectorDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

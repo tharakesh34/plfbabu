@@ -23,7 +23,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceFlagsController {
-	private final static Logger logger = Logger.getLogger(FinanceFlagsController.class);
+	private static final Logger logger = Logger.getLogger(FinanceFlagsController.class);
 	private FinanceFlagsService financeFlagsService;
 
 	/**

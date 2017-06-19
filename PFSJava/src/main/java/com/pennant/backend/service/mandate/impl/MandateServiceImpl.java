@@ -75,7 +75,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class MandateServiceImpl extends GenericService<Mandate> implements MandateService {
-	private final static Logger		logger	= Logger.getLogger(MandateServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(MandateServiceImpl.class);
 
 	private AuditHeaderDAO			auditHeaderDAO;
 

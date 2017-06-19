@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(BankBranchDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BankBranchDialogCtrl.class);
 
 	protected Window window_BankBranchDialog;
 
@@ -656,8 +656,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				showErrorMessage(this.window_BankBranchDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -824,8 +823,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
-			showErrorMessage(this.window_BankBranchDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

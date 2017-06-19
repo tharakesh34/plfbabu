@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
@@ -546,25 +547,25 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	}
 
 	private void generateTransactionReport() throws Exception {
+		DataEngineExport dataEngine = null;
 		logger.info("Generating Transaction Detail Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
-				getValueDate());
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
 
 	private void generateTransactionSummaryReport() throws Exception {
 		logger.info("Generating Transaction Summary Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
-				getValueDate());
+		DataEngineExport dataEngine = null;
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
 	private void generateTrailBalanceReport() throws Exception {
 		logger.info("Generating Trail Balance Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
-				getValueDate());
+		DataEngineExport dataEngine = null;
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("HEADERID", headerId);

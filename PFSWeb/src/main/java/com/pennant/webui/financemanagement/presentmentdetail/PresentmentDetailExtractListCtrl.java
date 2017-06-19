@@ -223,8 +223,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
-			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > diffentDays) {
-				throw new WrongValueException(this.toDate, " From Date and To Date difference should be less than are equal to " + diffentDays);
+			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
+				throw new WrongValueException(this.toDate, " From Date and To Date difference should be less than or equal to " + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

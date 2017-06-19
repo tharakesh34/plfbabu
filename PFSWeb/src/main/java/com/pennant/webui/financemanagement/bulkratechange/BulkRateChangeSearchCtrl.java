@@ -74,7 +74,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>  {
 
 	private static final long serialVersionUID = -4647934832219925649L;
-	private final static Logger logger = Logger.getLogger(BulkRateChangeSearchCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeSearchCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

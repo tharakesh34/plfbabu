@@ -75,7 +75,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
  */
 public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -7028973478971693678L;
-	private final static Logger logger = Logger.getLogger(SendMessageDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SendMessageDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

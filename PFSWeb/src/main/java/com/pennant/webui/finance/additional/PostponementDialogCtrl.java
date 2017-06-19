@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -7778031557272602004L;
-	private final static Logger logger = Logger.getLogger(PostponementDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PostponementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

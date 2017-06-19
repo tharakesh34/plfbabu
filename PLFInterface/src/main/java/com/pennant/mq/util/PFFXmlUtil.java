@@ -18,7 +18,7 @@ import com.pennant.mq.model.AHBMQHeader;
 import com.pennanttech.pff.core.InterfaceException;
 
 public class PFFXmlUtil {
-	private final static Logger logger = Logger.getLogger(PFFXmlUtil.class);
+	private static final Logger logger = Logger.getLogger(PFFXmlUtil.class);
 	
 	private static int curdate=0;
 	private static int seqNumber=0;

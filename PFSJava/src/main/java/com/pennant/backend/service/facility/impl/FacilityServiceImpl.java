@@ -86,7 +86,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class FacilityServiceImpl extends GenericService<Facility> implements FacilityService {
-	private final static Logger logger = Logger.getLogger(FacilityServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FacilityServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

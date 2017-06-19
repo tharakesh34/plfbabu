@@ -83,7 +83,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePayments> implements
 		FinAdvancePaymentsService {
-	private final static Logger		logger	= Logger.getLogger(FinAdvancePaymentsServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(FinAdvancePaymentsServiceImpl.class);
 
 	private AuditHeaderDAO			auditHeaderDAO;
 

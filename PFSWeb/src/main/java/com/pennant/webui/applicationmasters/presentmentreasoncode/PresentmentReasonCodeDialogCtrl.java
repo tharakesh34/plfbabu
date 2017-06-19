@@ -29,7 +29,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReasonCode> {
 	private static final long serialVersionUID = -2229794581795422226L;
-	private final static Logger logger = Logger.getLogger(PresentmentReasonCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentReasonCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -55,7 +55,7 @@ import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.model.SecLoginlog;
 
 public class SecLoginlogDAOImpl extends BasisNextidDaoImpl<SecLoginlog> implements SecLoginlogDAO {
-	private final static Logger logger = Logger.getLogger(SecLoginlogDAOImpl.class);
+	private static final Logger logger = Logger.getLogger(SecLoginlogDAOImpl.class);
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

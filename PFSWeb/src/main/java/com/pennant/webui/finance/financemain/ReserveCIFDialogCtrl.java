@@ -32,7 +32,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final long serialVersionUID = 6162919410852377636L;
 
-	private final static Logger logger = Logger.getLogger(ReserveCIFDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReserveCIFDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

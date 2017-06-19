@@ -83,7 +83,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private static final long serialVersionUID = -1251394215522173737L;
-	private final static Logger logger = Logger.getLogger(ProductAssetDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ProductAssetDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

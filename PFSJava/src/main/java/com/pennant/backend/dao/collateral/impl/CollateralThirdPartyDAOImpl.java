@@ -205,4 +205,42 @@ public class CollateralThirdPartyDAOImpl implements CollateralThirdPartyDAO {
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	
+	/**
+	 * Get version of co-Owner details
+	 * 
+	 * @param collateralRef
+	 * @param tableType
+	 * @return Integer
+	 */
+	@Override
+	public boolean isThirdPartyUsed(String collateralRef, long custId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("Select count(*) from (Select T1.CollateralRef from CollateralAssignment_Temp t1");
+		selectSql.append(" inner Join Financemain_Temp T3 on T3.Finreference = T1.Reference ");
+		selectSql.append(" where T1.CollateralRef='" + collateralRef + "' and T3.custid=' " + custId + "'");
+		selectSql.append(" union ");
+		selectSql.append(" Select T1.CollateralRef");
+		selectSql.append(" from CollateralAssignment t1 ");
+		selectSql.append(" inner Join Financemain T3 on T3.Finreference = T1.Reference ");
+		selectSql.append(" where T1.CollateralRef='" + collateralRef + "' and T3.custid=' " + custId + "')T");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.info(dae);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		
+		return recordCount > 0 ? true : false;
+	}
 }

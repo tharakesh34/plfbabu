@@ -18,7 +18,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class UploadFinPftDetailsCtrl  extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 1L;
-	public final static Logger logger = Logger.getLogger(UploadFinPftDetailsCtrl.class);
+	public static final Logger logger = Logger.getLogger(UploadFinPftDetailsCtrl.class);
 
 	protected Window window_UploadFinPftDetails;
 	protected Button    btnUpload;      //autowire

@@ -584,7 +584,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
 			return auditDetail;
 		}
-
+		// It shouldn't be past date when compare to appdate
+		if(DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "From date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			return auditDetail;
+		}
+		
 		boolean isValidFromDate = false;
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
 		if(schedules != null) {

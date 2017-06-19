@@ -83,9 +83,8 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank, ");
-		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, status,");
-		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, ");
-		sql.append(" active, paymentCCy, ");
+		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, status, transactionRef,");
+		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, active, paymentCCy, ");
 		if (type.contains("View")) {
 			sql.append(" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, branchDesc, bankName, ");
 		}
@@ -121,7 +120,7 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT  paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
 		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, ");
-		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status,");
+		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status, transactionRef, ");
 		sql.append(" active, paymentCCy, ");
 		if (type.contains("View")) {
 			sql.append(" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, ");

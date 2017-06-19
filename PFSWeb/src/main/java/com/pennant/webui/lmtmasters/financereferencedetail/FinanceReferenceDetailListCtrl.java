@@ -91,7 +91,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 	private static final long serialVersionUID = 5574042632591594715L;
-	private final static Logger logger = Logger.getLogger(FinanceReferenceDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

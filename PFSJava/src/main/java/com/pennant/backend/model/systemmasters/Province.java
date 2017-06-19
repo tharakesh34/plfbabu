@@ -40,12 +40,15 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -53,7 +56,6 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  *
  */
 public class Province extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -3563961020581268151L;
 
 	private String cPCountry;
@@ -67,6 +69,15 @@ public class Province extends AbstractWorkflowEntity {
 	private boolean systemDefault;
 	private String bankRefNo;
 	private boolean cPIsActive;
+	private boolean taxExempted;
+	private boolean unionTerritory;
+	private String  taxStateCode;
+	private boolean taxAvailable;
+	private String businessArea;
+	
+	private List<TaxDetail> taxDetailList;
+	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
+	
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -175,4 +186,61 @@ public class Province extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public boolean isTaxExempted() {
+		return taxExempted;
+	}
+
+	public void setTaxExempted(boolean taxExempted) {
+		this.taxExempted = taxExempted;
+	}
+
+	public boolean isUnionTerritory() {
+		return unionTerritory;
+	}
+
+	public void setUnionTerritory(boolean unionTerritory) {
+		this.unionTerritory = unionTerritory;
+	}
+
+	public String getTaxStateCode() {
+		return taxStateCode;
+	}
+
+	public void setTaxStateCode(String taxStateCode) {
+		this.taxStateCode = taxStateCode;
+	}
+
+	public boolean isTaxAvailable() {
+		return taxAvailable;
+	}
+
+	public void setTaxAvailable(boolean taxAvailable) {
+		this.taxAvailable = taxAvailable;
+	}
+
+	public String getBusinessArea() {
+		return businessArea;
+	}
+
+	public void setBusinessArea(String businessArea) {
+		this.businessArea = businessArea;
+	}
+
+	public List<TaxDetail> getTaxDetailList() {
+		return taxDetailList;
+	}
+
+	public void setTaxDetailList(List<TaxDetail> taxDetailList) {
+		this.taxDetailList = taxDetailList;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+	
 }

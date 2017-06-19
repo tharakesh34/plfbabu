@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode> {
 	private static final long serialVersionUID = -7665708224082701621L;
-	private final static Logger logger = Logger.getLogger(CustomerStatusCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerStatusCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

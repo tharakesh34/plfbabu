@@ -91,7 +91,7 @@ import com.pennant.util.PennantAppUtil;
 public class FinScheduleListItemRenderer implements Serializable{
 
 	private static final long serialVersionUID = 598041940390030115L;
-	private final static Logger logger = Logger.getLogger(FinScheduleListItemRenderer.class);
+	private static final Logger logger = Logger.getLogger(FinScheduleListItemRenderer.class);
 
 	protected FinScheduleData finScheduleData;
 	protected FinanceScheduleDetail financeScheduleDetail;

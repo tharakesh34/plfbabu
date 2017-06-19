@@ -25,7 +25,7 @@ import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
 import com.pennanttech.pff.core.Literal;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
-	private final static Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
+	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
 
 	private PresentmentHeaderService presentmentHeaderService;
 

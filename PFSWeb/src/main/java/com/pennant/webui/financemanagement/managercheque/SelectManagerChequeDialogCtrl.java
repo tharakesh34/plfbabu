@@ -77,7 +77,7 @@ public class SelectManagerChequeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private final static Logger logger = Logger.getLogger(SelectManagerChequeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SelectManagerChequeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

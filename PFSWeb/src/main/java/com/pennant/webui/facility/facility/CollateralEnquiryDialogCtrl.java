@@ -60,7 +60,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CollateralDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CollateralDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -17,7 +17,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class PoliceAcceptanceUtilProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(PoliceAcceptanceUtilProcess.class);
+	private static final Logger logger = Logger.getLogger(PoliceAcceptanceUtilProcess.class);
 
 	public PoliceAcceptanceUtilProcess() {
 		super();

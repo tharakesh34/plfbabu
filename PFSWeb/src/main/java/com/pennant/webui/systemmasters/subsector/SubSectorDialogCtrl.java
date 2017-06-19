@@ -76,7 +76,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 	private static final long serialVersionUID = 6126940774535492694L;
-	private final static Logger logger = Logger.getLogger(SubSectorDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SubSectorDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

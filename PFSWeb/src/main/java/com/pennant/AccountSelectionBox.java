@@ -74,7 +74,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
-	private final static Logger logger = Logger.getLogger(AccountSelectionBox.class);
+	private static final Logger logger = Logger.getLogger(AccountSelectionBox.class);
 	
 	// Constants for the Manager Cheques 
 	public static final String MGRCHQ_CR_FIN_EVENT = "MGRCHQCR";

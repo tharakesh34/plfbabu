@@ -10,7 +10,7 @@ import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
 
 public class GenericProcess {
-	private final static Logger logger = Logger.getLogger(GenericProcess.class);
+	private static final Logger logger = Logger.getLogger(GenericProcess.class);
 	
 	public static final String DEFAULT_COUNTRY 	 					= "971";
 	public static final String PHONE_AREACODE 	 			 		= "50";

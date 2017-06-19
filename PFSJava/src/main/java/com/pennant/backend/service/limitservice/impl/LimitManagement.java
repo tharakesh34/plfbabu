@@ -111,6 +111,14 @@ public class LimitManagement {
 			allowOverride = false;
 		}
 
+		Date dateToValidate=DateUtility.getAppDate();
+		
+		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
+			if (disbursement.getDisbDate().compareTo(dateToValidate) > 0) {
+				dateToValidate = disbursement.getDisbDate();
+			}
+		}
+		
 		BigDecimal tranAmt = BigDecimal.ZERO;
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();
@@ -135,7 +143,7 @@ public class LimitManagement {
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
 				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly));
+						validateOnly,dateToValidate));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
@@ -159,7 +167,7 @@ public class LimitManagement {
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
 				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly));
+						validateOnly,dateToValidate));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -189,7 +197,7 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly) {
+			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly,Date disbDate) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
@@ -218,7 +226,7 @@ public class LimitManagement {
 
 			if (!override) {
 				errors.addAll(
-						validate(limitDetails, limitAmount, blockAmount, allowOverride, DateUtility.getAppDate()));
+						validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -227,7 +235,7 @@ public class LimitManagement {
 		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
 			if (!override) {
 				errors.addAll(
-						validate(limitDetails, limitAmount, blockAmount, allowOverride, DateUtility.getAppDate()));
+						validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}

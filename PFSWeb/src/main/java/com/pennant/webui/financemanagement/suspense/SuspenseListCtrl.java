@@ -80,7 +80,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 	private static final long serialVersionUID = 4481377123949925578L;
-	private final static Logger logger = Logger.getLogger(SuspenseListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SuspenseListCtrl.class);
 
 	protected Window window_SuspenseList;
 	protected Borderlayout borderLayout_SuspenseList;

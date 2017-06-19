@@ -77,7 +77,7 @@ import com.pennanttech.pff.core.Literal;
 public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(EODConfigDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(EODConfigDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -512,8 +512,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_EODConfigDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

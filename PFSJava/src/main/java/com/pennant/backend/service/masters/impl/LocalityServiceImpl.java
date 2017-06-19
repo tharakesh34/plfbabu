@@ -60,7 +60,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>Locality</b>.<br>
  */
 public class LocalityServiceImpl extends GenericService<Locality> implements LocalityService {
-	private final static Logger logger = Logger.getLogger(LocalityServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LocalityServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LocalityDAO localityDAO;

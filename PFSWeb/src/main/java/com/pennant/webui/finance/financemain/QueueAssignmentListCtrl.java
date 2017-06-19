@@ -29,7 +29,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHeader> {
 	private static final long serialVersionUID = -727353070679277569L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(QueueAssignmentListCtrl.class);
 
 	/*

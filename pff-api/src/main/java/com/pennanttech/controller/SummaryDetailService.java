@@ -33,7 +33,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService {
-	private final static Logger		logger	= Logger.getLogger(SummaryDetailService.class);
+	private static final Logger		logger	= Logger.getLogger(SummaryDetailService.class);
 
 	private FinanceDisbursementDAO	financeDisbursementDAO;
 	protected FinODDetailsDAO		finODDetailsDAO;

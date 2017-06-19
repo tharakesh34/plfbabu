@@ -61,7 +61,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -116,7 +115,7 @@ import com.rits.cloning.Cloner;
  */
 public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(LiabilityRequestDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(LiabilityRequestDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -613,16 +612,10 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				}
 			}
 
-		} catch (EmptyResultDataAccessException e) {
-			showErrorMessage(getMainWindow(), e);
-			e = null;
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(getMainWindow(), e);
-		} catch (InterfaceException pfe) {
-			showErrorMessage(getMainWindow(), pfe);
-			pfe = null;
+		} catch (DataAccessException | InterfaceException e) {
+			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 	/**

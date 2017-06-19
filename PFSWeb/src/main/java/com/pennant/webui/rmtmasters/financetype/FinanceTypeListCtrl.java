@@ -90,7 +90,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = -1491703348215991538L;
-	private final static Logger logger = Logger.getLogger(FinanceTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceTypeListCtrl.class);
 
 	protected Window window_FinanceTypeList;
 	protected Borderlayout borderLayout_FinanceTypeList;

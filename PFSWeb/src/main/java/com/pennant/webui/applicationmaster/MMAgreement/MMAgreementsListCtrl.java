@@ -28,7 +28,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class MMAgreementsListCtrl extends GFCBaseListCtrl<MMAgreement> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(MMAgreement.class);
+	private static final Logger logger = Logger.getLogger(MMAgreement.class);
 
 	protected Window window_MMAgreementsList;
 	protected Borderlayout borderLayout_MMAgreementsList;

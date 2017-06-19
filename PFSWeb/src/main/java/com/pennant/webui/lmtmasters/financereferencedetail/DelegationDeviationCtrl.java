@@ -82,7 +82,7 @@ import com.pennant.util.PennantAppUtil;
 
 public class DelegationDeviationCtrl {
 
-	private final static Logger						logger				= Logger.getLogger(DelegationDeviationCtrl.class);
+	private static final Logger						logger				= Logger.getLogger(DelegationDeviationCtrl.class);
 
 	// Variables
 	private String									fintype;

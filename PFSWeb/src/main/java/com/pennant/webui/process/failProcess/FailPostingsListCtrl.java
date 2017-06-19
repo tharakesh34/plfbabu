@@ -75,7 +75,7 @@ import com.pennanttech.pff.core.InterfaceException;
  */
 public class FailPostingsListCtrl extends GFCBaseListCtrl<DDAFTransactionLog> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FailPostingsListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FailPostingsListCtrl.class);
 
 	protected Window window_DDADDAFailPostingsList;
 	protected Borderlayout borderLayout_DDAFailPostingsList;

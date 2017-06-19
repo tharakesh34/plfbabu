@@ -15,7 +15,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 public class FinanceWorkflowRoleUtil {
 	
 	private static FinanceWorkFlowDAO financeWorkFlowDAO;
-	private final static Logger logger = Logger.getLogger(FinanceWorkflowRoleUtil.class);
+	private static final Logger logger = Logger.getLogger(FinanceWorkflowRoleUtil.class);
 	
 	
 	private static LoadingCache<String, Set<String>> financeRoleCache = CacheBuilder.newBuilder().

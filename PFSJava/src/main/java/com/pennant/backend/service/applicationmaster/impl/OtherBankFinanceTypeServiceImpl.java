@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFinanceType> implements
 		OtherBankFinanceTypeService {
-	private final static Logger logger = Logger.getLogger(OtherBankFinanceTypeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(OtherBankFinanceTypeServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private OtherBankFinanceTypeDAO otherBankFinanceTypeDAO;

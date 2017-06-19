@@ -84,7 +84,6 @@ import com.pennant.QueryBuilder;
 import com.pennant.app.bulkratechange.BulkRateChangeProcess;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
@@ -102,6 +101,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeDialogModelItemRenderer;
@@ -117,7 +117,7 @@ import com.rits.cloning.Cloner;
  */
 public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private final static Logger logger = Logger.getLogger(BulkRateChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

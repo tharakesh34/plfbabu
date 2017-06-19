@@ -67,7 +67,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
@@ -99,6 +98,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -110,7 +110,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditReviewSummary> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private final static Logger logger = Logger.getLogger(CreditApplicationReviewDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CreditApplicationReviewDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

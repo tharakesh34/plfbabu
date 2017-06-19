@@ -118,6 +118,13 @@
 									width="100px" maxlength="4" />
 							</row>
 							<row>
+							<label
+									id="label_BranchSearch_Area"
+									value="${c:l('label_BranchSearch_Area.value')}" />
+								<listbox id="sortOperator_branchArea"
+									width="43px" mold="select" rows="1" />
+								<textbox id="branchArea" width="320px"
+									maxlength="50" />
 								<label
 									id="label_BranchSearch_BranchIsActive"
 									value="${c:l('label_BranchSearch_BranchIsActive.value')}" />
@@ -168,6 +175,10 @@
 							<listheader
 								id="listheader_BranchSwiftBankCde"
 								label="${c:l('listheader_BranchSwiftBankCde.label')}"
+								sort="auto" hflex="min" />
+								<listheader
+								id="listheader_BranchArea"
+								label="${c:l('listheader_BranchArea.label')}"
 								sort="auto" hflex="min" />
 							<listheader id="listheader_BranchIsActive"
 								label="${c:l('listheader_BranchIsActive.label')}" sort="auto"

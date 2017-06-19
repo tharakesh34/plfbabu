@@ -99,7 +99,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 	private static final long serialVersionUID = -2843265056714842214L;
-	private final static Logger logger = Logger.getLogger(ReportConfigurationDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReportConfigurationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

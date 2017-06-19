@@ -124,7 +124,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private final static Logger logger = Logger.getLogger(FinanceSelectCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -1016,8 +1016,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND NextRolloverDate IS NOT NULL "); 
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
-			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails where DisbDate >= '"+appDate+ "') "); 
-			whereClause.append(" AND ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"' )"); 
+			whereClause.append(" AND FinReference IN (select FinReference from FinDisbursementDetails where DisbDate >= '"+appDate+ "') "); 
 		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
 			whereClause.append(" AND FinStartDate < '" + appDate+"' AND MaturityDate > '"+ appDate+"'" );
 			whereClause.append(" AND ProductCategory = '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 

@@ -76,6 +76,14 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 		
 		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", isWIF);
 		
+		if(DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "From date";
+			valueParm[1] = "application date:"+DateUtility.formatToLongDate(DateUtility.getAppDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30509", "", valueParm), lang));
+			return auditDetail;
+		}
+		
 		// validate from date with finStart date and maturity date
 		if(finServiceInstruction.getFromDate().compareTo(financeMain.getFinStartDate()) < 0
 				|| finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) >= 0) {
@@ -98,7 +106,13 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			return auditDetail;
 		}
 		
-		// validate schdMethod
+		if(StringUtils.isNotBlank(finServiceInstruction.getSchdMethod())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Schedule method";
+			valueParm[1] = "Loan:"+finServiceInstruction.getFinReference();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90329", "", valueParm), lang));
+		}
+	/*	// validate schdMethod
 		if (StringUtils.isNotBlank(finServiceInstruction.getSchdMethod())) {
 			List<ValueLabel> schdMethods = PennantStaticListUtil.getScheduleMethods();
 			boolean schdMethodSts = false;
@@ -113,7 +127,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 				valueParm[0] = finServiceInstruction.getSchdMethod();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91110", "", valueParm), lang));
 			}
-		}
+		}*/
 		
 		// validate recalType
 		if(StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
@@ -137,7 +151,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			String[] valueParm = new String[2];
 			valueParm[0] = "Amount:"+finServiceInstruction.getAmount();
 			valueParm[1] = "Loan Amount:"+finServiceInstruction.getRecalType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), lang));
 		}
 		// validate reCalFromDate
 		if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT) 

@@ -60,7 +60,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FeeListItemRenderer.class);
+	private static final Logger logger = Logger.getLogger(FeeListItemRenderer.class);
 	
 	public FeeListItemRenderer() {
 		

@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implements LovFieldCodeService {
-	private final static Logger logger = Logger.getLogger(LovFieldCodeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LovFieldCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;	
 	private LovFieldCodeDAO lovFieldCodeDAO;

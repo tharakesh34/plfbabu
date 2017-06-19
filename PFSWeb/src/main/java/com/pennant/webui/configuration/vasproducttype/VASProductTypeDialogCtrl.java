@@ -84,7 +84,7 @@ import com.pennant.webui.util.MessageUtil;
 public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(VASProductTypeDialogCtrl.class);
+	private static final Logger					logger				= Logger.getLogger(VASProductTypeDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -184,8 +184,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 			doSetFieldProperties();
 			doShowDialog(getVASProductType());
 		} catch (Exception e) {
-			createException(window_VASProductTypeDialog, e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

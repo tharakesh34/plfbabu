@@ -114,7 +114,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> implements CollateralSetupService {
-	private final static Logger				logger	= Logger.getLogger(CollateralSetupServiceImpl.class);
+	private static final Logger				logger	= Logger.getLogger(CollateralSetupServiceImpl.class);
 
 	private AuditHeaderDAO					auditHeaderDAO;
 	private CollateralSetupDAO				collateralSetupDAO;
@@ -2626,6 +2626,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		logger.debug("Leaving");
 		return collaterals;
+	}
+	
+	@Override
+	public boolean isThirdPartyUsed(String collateralRef, long custId) {
+		logger.debug("Entering");
+		boolean isThirdPartyUsed = getCollateralThirdPartyDAO().isThirdPartyUsed(collateralRef, custId);
+		logger.debug("Leaving");
+		return isThirdPartyUsed;
 	}
 
 }

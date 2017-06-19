@@ -19,16 +19,16 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(FinanceProfitEnquiryDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceProfitEnquiryDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -70,7 +70,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CourseTypeListCtrl extends GFCBaseListCtrl<CourseType> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CourseTypeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CourseTypeListCtrl.class);
 
 	protected Window window_CourseTypeList;
 	protected Borderlayout borderLayout_CourseTypeList;

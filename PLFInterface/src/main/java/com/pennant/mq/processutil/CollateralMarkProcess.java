@@ -23,7 +23,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CollateralMarkProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(CollateralMarkProcess.class);
+	private static final Logger logger = Logger.getLogger(CollateralMarkProcess.class);
 
 	private final String COLLATERAL_MARKREQ = "CollateralBlockingRequest";
 	private final String COLLATERAL_MARKREPLY = "CollateralBlockingReply";

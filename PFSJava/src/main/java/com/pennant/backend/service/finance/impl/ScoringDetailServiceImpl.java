@@ -33,7 +33,7 @@ import com.pennant.backend.util.RuleReturnType;
 
 public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> implements ScoringDetailService{
 	
-	private final static Logger logger = Logger.getLogger(ScoringDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ScoringDetailServiceImpl.class);
 	
 	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;

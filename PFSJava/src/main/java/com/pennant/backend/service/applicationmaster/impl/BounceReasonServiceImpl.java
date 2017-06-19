@@ -64,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BounceReason</b>.<br>
  */
 public class BounceReasonServiceImpl extends GenericService<BounceReason> implements BounceReasonService {
-	private final static Logger logger = Logger.getLogger(BounceReasonServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BounceReasonServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private BounceReasonDAO bounceReasonDAO;

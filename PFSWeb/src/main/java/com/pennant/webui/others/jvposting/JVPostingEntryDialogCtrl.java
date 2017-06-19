@@ -104,7 +104,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(JVPostingEntryDialogCtrl.class);
 
 	/*

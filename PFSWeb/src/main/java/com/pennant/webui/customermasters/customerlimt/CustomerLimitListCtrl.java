@@ -71,7 +71,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private final static Logger logger = Logger.getLogger(CustomerLimitListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerLimitListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -78,7 +78,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 4481377123949925578L;
-	private final static Logger logger = Logger.getLogger(CustSuspenseListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustSuspenseListCtrl.class);
 
 	protected Window window_CustSuspenseList;
 	protected Borderlayout borderLayout_CustSuspenseList;

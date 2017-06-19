@@ -87,7 +87,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FeePaymentDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(FeePaymentDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -221,8 +221,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 			doSetFieldProperties();
 			doShowDialog(getFeePaymentDetail());
 		} catch (Exception e) {
-			createException(window_FeePaymentDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" +event.toString());
@@ -656,8 +655,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 					}	
 				}
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FeePaymentDetailDialog,e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -763,9 +761,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-
-			showErrorMessage(this.window_FeePaymentDetailDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

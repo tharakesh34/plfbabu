@@ -67,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>NPABucket</b>.<br>
  */
 public class NPABucketServiceImpl extends GenericService<NPABucket> implements NPABucketService {
-	private final static Logger logger = Logger.getLogger(NPABucketServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(NPABucketServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private NPABucketDAO nPABucketDAO;

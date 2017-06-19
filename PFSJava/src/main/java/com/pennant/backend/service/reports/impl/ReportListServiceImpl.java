@@ -65,7 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class ReportListServiceImpl extends GenericService<ReportList> implements ReportListService {
-	private final static Logger logger = Logger.getLogger(ReportListServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(ReportListServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReportListDAO reportListDAO;

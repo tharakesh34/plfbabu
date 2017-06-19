@@ -86,9 +86,11 @@
  -->		
  		<!-- <menuItem id="menu_Item_CorpRelationCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeList.zul"  rightName="menuItem_ApplicationMaster_CorpRelationCode"/> -->
 		<menuItem id="menu_Item_Currency" zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul"  rightName="menuItem_ApplicationMaster_Currency"/>
+		<menuItem id="menu_Item_Entity" zulNavigation="/WEB-INF/pages/ApplicationMaster/Entity/EntityList.zul" rightName="menuItem_applicationmaster_Entity"/>
 <!-- 		<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetail/ErrorDetailList.zul" rightName="menuItem_ErrorDetail_ErrorDetail" /> -->
 		<menuItem id="menu_Item_FeeType" zulNavigation="/WEB-INF/pages/FeeType/FeeType/FeeTypeList.zul"  rightName=""/>
 		<menuItem id="menu_Item_Flag" zulNavigation="/WEB-INF/pages/ApplicationMaster/Flag/FlagList.zul" rightName="menuItem_ApplicationMaster_Flags"/>
+		<menuItem id="menu_Item_TaxDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul" rightName="menuItem_applicationmaster_TaxDetail"/>
 		<!-- <menuItem id="menu_Item_CustomerCategory" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerCategory/CustomerCategoryList.zul"  rightName="menuItem_ApplicationMaster_CustomerCategory"/>
 		<menuItem id="menu_Item_CustomerNotesType" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerNotesType/CustomerNotesTypeList.zul"  rightName="menuItem_ApplicationMaster_CustomerNotesType"/>
 		 -->
@@ -98,7 +100,7 @@
 		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
-		<!-- <menuItem id="menu_Item_PinCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"  rightName="menuItem_master_PinCode"/> -->
+		<menuItem id="menu_Item_PinCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"  rightName="menuItem_master_PinCode"/>
 		<menuItem id="menu_Item_RejectDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"  rightName="menuItem_ApplicationMaster_RejectDetail"/>
 		<menuItem id="menu_Item_RelationshipOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"  rightName="menuItem_ApplicationMaster_RelationshipOfficer"/>
 		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" rightName="menuItem_ApplicationMaster_ReturnedCheque" /> -->
@@ -168,9 +170,9 @@
 		<menuItem id="menu_Item_CustomerRating" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingList.zul" rightName="menuItem_CustomerMasters_CustomerRating"/> -->
 	</menu>
 	
-	<!-- <menu id="menu_Category_EOD"  rightName="menuCat_eod" >
-		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/Eod/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
-	</menu> -->
+	<menu id="menu_Category_EOD"  rightName="menuCat_eod" >
+		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/EOD/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
+	</menu>
 
 	<!-- Interface bajaj Upload and downloads -->
 	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
@@ -255,7 +257,7 @@
 	 	<menuItem id="menu_Item_VASConfiguration" zulNavigation="/WEB-INF/pages/VASConfiguration/VASConfigurationList.zul"  rightName="menuItem_Solutionfactory_VASConfiguration" />
 	 	<menuItem id="menu_Item_VASReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=VAS&amp;event=Origination" rightName="menuItem_SolutionFactory_VASReferenceDetail"/>
 		<menuItem id="menu_Item_VASWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=VAS&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_VASWorkFlow" />
- 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  /> <!-- rightName="menuItem_SolutionFactory_WorkFlowDetail" -->
+ 		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  rightName="menuItem_SolutionFactory_WorkFlowDetail"/>
 		
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
 		
@@ -416,7 +418,8 @@
 	   <!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
 	   <!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_SubSchedule"/> -->	   
 	   <!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
-	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/> 
+	   <menuItem id="menuItem_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
+	   <menuItem id="menu_Item_FinanceTaxDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/> 
  	</menu>
  
 	<!-- Finance Inquiry Details -->
@@ -466,6 +469,7 @@
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
 		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=R"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
 		<menuItem id="menu_Item_FeeReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=F"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
+		<menuItem id="menu_Item_FinanceTaxDetailEnquiry" zulNavigation="/WEB-INF/pages/tax/FinanceTaxDetail/FinanceTaxDetailEnquiryList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinanceTaxDetailEnquiry"/>
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry"  rightName="menuCat_CustomerEnquiry">

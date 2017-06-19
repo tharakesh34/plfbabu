@@ -75,7 +75,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -7630878240134112225L;
-	private final static Logger logger = Logger.getLogger(SecuritySearchDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecuritySearchDialogCtrl.class);
 	protected Window window_SecuritySearchDialog; // autowired
 	protected Listbox sortOperator_Name; // autowired
 	protected Listbox sortOperator_rightType; // autowired

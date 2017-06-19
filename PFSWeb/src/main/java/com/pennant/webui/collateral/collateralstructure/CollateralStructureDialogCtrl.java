@@ -115,7 +115,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructure> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(CollateralStructureDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CollateralStructureDialogCtrl.class);
 
 	protected Window window_CollateralStructureDialog;
 	protected Textbox collateralType;

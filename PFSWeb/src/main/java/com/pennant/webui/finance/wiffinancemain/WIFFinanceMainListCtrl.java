@@ -90,7 +90,7 @@ import com.pennant.webui.util.searching.SearchOperators;
  */
 public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = 2808357374960437326L;
-	private final static Logger logger = Logger.getLogger(WIFFinanceMainListCtrl.class);
+	private static final Logger logger = Logger.getLogger(WIFFinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

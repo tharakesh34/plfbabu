@@ -38,7 +38,7 @@
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnNotes"
-								tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>

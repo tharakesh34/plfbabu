@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PaymentInstruction</b>.<br>
  */
 public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruction> implements PaymentInstructionService {
-	private final static Logger logger = Logger.getLogger(PaymentInstructionServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(PaymentInstructionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;

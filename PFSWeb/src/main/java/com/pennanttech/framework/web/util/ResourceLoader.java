@@ -12,7 +12,7 @@ import com.pennanttech.framework.web.util.resource.LabelLocator;
 import com.pennanttech.pff.core.util.RegexPatternUtil;
 
 public class ResourceLoader implements WebAppInit {
-	private final static Logger	logger	= Logger.getLogger(ResourceLoader.class);
+	private static final Logger	logger	= Logger.getLogger(ResourceLoader.class);
 
 	/*
 	 * (non-Javadoc)

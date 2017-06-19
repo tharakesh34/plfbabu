@@ -67,7 +67,7 @@ import com.pennant.cache.util.AccountingConfigCache;
  * 
  */
 public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounting> implements FinTypeAccountingService {
-	private final static Logger logger = Logger.getLogger(FinTypeAccountingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinTypeAccountingServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	

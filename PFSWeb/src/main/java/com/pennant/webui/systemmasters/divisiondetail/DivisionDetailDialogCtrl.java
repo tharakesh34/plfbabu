@@ -84,7 +84,7 @@ import com.pennant.webui.util.ScreenCTL;
  */
 public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DivisionDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DivisionDetailDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

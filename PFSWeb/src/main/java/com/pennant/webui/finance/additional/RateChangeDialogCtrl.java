@@ -97,7 +97,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private final static Logger logger = Logger.getLogger(RateChangeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

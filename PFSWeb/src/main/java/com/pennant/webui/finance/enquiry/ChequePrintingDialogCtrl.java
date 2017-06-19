@@ -32,7 +32,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.ChequeDetails;
@@ -42,6 +41,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -51,7 +51,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long				serialVersionUID				= -2919106187676267998L;
-	private final static Logger				logger							= Logger.getLogger(ChequePrintingDialogCtrl.class);
+	private static final Logger				logger							= Logger.getLogger(ChequePrintingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

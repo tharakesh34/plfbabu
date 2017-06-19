@@ -97,6 +97,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		province.setCPProvince(cPProvince);
 
 		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive," );
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescCPCountryName, ");
 		}
@@ -188,9 +189,11 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCountryVsProvince");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
+		insertSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
 		insertSql.append(" Values(:CPCountry, :CPProvince, :CPProvinceName,:SystemDefault,:BankRefNo, :CPIsActive," );
+		insertSql.append(" :TaxExempted, :UnionTerritory, :TaxStateCode, :TaxAvailable, :BusinessArea," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -229,6 +232,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		StringBuilder updateSql = new StringBuilder("Update RMTCountryVsProvince");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo,CPIsActive=:CPIsActive," );
+		updateSql.append(" TaxExempted = :TaxExempted, UnionTerritory = :UnionTerritory, TaxStateCode = :TaxStateCode, TaxAvailable = :TaxAvailable, BusinessArea = :BusinessArea," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
@@ -317,6 +321,95 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+	
+	@Override
+	public boolean count(String taxStateCode,String cPProvince, TableType tableType){
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "taxStateCode = :taxStateCode and cPProvince = :cPProvince" ;
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTCountryVsProvince", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTCountryVsProvince_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTCountryVsProvince_Temp", "RMTCountryVsProvince" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("taxStateCode", taxStateCode);
+		paramSource.addValue("cPProvince", cPProvince);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+
+	@Override
+	public int getBusinessAreaCount(String businessAreaValue, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From RMTCountryVsProvince");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BusinessArea = :BusinessArea");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("BusinessArea", businessAreaValue);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+
+	@Override
+	public int geStateCodeCount(String taxStateCode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(TaxStateCode) From RMTCountryVsProvince");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where TaxStateCode = :TaxStateCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("TaxStateCode", taxStateCode);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
 	}
 	
 }

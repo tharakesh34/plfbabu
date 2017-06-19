@@ -20,7 +20,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class HostStatusUtil extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = -9200852008893081678L;
-	private final static Logger logger = Logger.getLogger(HostStatusUtil.class);
+	private static final Logger logger = Logger.getLogger(HostStatusUtil.class);
 
 	private static HostStatusEnquiryService hostStatusEnquiryService;
 	static String status = "";

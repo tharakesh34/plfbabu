@@ -16,7 +16,7 @@ import org.zkoss.calendar.impl.SimpleCalendarModel;
  */
 public class HolidayCalendarModelRenderer extends SimpleCalendarModel implements Serializable {
 	private static final long	serialVersionUID	= -2365559110743187158L;
-	private final static Logger	logger				= Logger.getLogger(HolidayCalendarModelRenderer.class);
+	private static final Logger	logger				= Logger.getLogger(HolidayCalendarModelRenderer.class);
 
 	private String				filterText			= "";
 

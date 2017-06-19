@@ -112,7 +112,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -161,6 +160,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -183,7 +183,7 @@ import com.rits.cloning.Cloner;
  */
 public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long							serialVersionUID			= 6004939933729664895L;
-	private final static Logger							logger						= Logger.getLogger(RetailWIFFinanceMainDialogCtrl.class);
+	private static final Logger							logger						= Logger.getLogger(RetailWIFFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -4077,8 +4077,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_RetailWIFFinanceMainDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -4530,8 +4529,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_RetailWIFFinanceMainDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

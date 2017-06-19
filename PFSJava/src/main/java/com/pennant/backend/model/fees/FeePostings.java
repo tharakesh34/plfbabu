@@ -74,6 +74,8 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	private String				partnerBankName;
 	private String				partnerBankAc;
     private String 			    partnerBankAcType;
+    private String				postingDivision;
+    private String				divisionCodeDesc;
     
     //API Specific
     @XmlElement
@@ -113,6 +115,7 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("sourceId");
 		excludeFields.add("validateFeePostings");
 		excludeFields.add("collateralRef");
+		excludeFields.add("divisionCodeDesc");
 		return excludeFields;
 	}
 
@@ -332,6 +335,22 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
+	}
+
+	public String getPostingDivision() {
+		return postingDivision;
+	}
+
+	public void setPostingDivision(String postingDivision) {
+		this.postingDivision = postingDivision;
+	}
+
+	public String getDivisionCodeDesc() {
+		return divisionCodeDesc;
+	}
+
+	public void setDivisionCodeDesc(String divisionCodeDesc) {
+		this.divisionCodeDesc = divisionCodeDesc;
 	}
 
 }

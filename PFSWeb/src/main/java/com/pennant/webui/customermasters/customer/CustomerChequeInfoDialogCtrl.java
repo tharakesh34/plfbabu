@@ -92,7 +92,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo> {
 	private static final long serialVersionUID = -7522534300621535097L;
-	private final static Logger logger = Logger.getLogger(CustomerChequeInfoDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerChequeInfoDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

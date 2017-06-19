@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class CorpRelationCodeListCtrl extends GFCBaseListCtrl<CorpRelationCode> {
 	private static final long serialVersionUID = -2566872901248774242L;
-	private final static Logger logger = Logger.getLogger(CorpRelationCodeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(CorpRelationCodeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

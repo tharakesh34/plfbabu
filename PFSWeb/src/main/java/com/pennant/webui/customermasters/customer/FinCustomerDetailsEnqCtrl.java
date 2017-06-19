@@ -79,7 +79,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private final static Logger logger = Logger.getLogger(FinCustomerDetailsEnqCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinCustomerDetailsEnqCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

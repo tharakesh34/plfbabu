@@ -49,7 +49,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 
 	private static final long serialVersionUID = 1L;
-	public final static Logger logger = Logger.getLogger(ProjectedProfitDetailsCtrl.class);
+	public static final Logger logger = Logger.getLogger(ProjectedProfitDetailsCtrl.class);
 
 	protected Window window_ProjectedProfitDetails;
 	protected Datebox   valueDate;       //autowire

@@ -24,7 +24,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantStaticListUtil;
 
 public class RateChangeServiceImpl extends GenericService<FinServiceInstruction> implements RateChangeService {
-	private final static Logger logger = Logger.getLogger(RateChangeServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(RateChangeServiceImpl.class);
 	
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;

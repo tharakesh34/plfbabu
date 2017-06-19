@@ -26,7 +26,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 @Service
 public class FinStatementWebServiceImpl implements FinStatementRestService, FinStatementSoapService {
 
-	private final static Logger		logger	= Logger.getLogger(FinStatementWebServiceImpl.class);
+	private static final Logger		logger	= Logger.getLogger(FinStatementWebServiceImpl.class);
 
 	private FinStatementController	finStatementController;
 	private CustomerDetailsService	customerDetailsService;

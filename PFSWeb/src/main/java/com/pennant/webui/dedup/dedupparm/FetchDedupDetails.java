@@ -22,7 +22,7 @@ import com.pennant.backend.util.PennantConstants;
 
 public class FetchDedupDetails {
 
-	private final static Logger logger = Logger.getLogger(FetchDedupDetails.class);	
+	private static final Logger logger = Logger.getLogger(FetchDedupDetails.class);	
 	protected Window window_CustomerQDEDialog; 
 	private static DedupParmService dedupParmService;
 	private int userAction= -1;

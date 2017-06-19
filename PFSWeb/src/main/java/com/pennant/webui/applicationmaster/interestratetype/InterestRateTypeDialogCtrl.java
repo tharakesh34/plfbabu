@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	private static final long serialVersionUID = 7844319112268758225L;
-	private final static Logger logger = Logger.getLogger(InterestRateTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(InterestRateTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

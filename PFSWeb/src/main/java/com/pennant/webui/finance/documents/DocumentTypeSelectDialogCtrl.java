@@ -83,7 +83,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = -6959194080451993569L;
-	private final static Logger logger = Logger.getLogger(DocumentTypeSelectDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(DocumentTypeSelectDialogCtrl.class);
 
 	protected Window	                  window_DocumentTypeSelectDialog;	
 	//protected Combobox	                  docCategory;	                                                                 // autowired

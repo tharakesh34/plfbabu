@@ -34,7 +34,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
-	private final static Logger logger = Logger.getLogger(FinanceDeviationsServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(FinanceDeviationsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceDeviationsDAO deviationDetailsDAO;

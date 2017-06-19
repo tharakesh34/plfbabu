@@ -78,7 +78,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 	private static final long serialVersionUID = 3938682418831790487L;
-	private final static Logger logger = Logger.getLogger(FinanceWorkFlowListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceWorkFlowListCtrl.class);
 
 	protected Window window_FinanceWorkFlowList;
 	protected Borderlayout borderLayout_FinanceWorkFlowList;

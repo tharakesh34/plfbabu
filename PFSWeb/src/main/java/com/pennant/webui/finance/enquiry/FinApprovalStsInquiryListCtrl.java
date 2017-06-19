@@ -77,7 +77,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinanceDetail> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FinApprovalStsInquiryListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinApprovalStsInquiryListCtrl.class);
 
 	protected Window window_FinApprovalStsInquiryList;
 	protected Borderlayout borderLayout_FinApprovalStsInquiryList;

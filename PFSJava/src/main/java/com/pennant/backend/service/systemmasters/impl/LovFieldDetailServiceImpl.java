@@ -66,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
 public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail> 
 		implements LovFieldDetailService {
 	
-	private final static Logger logger = Logger.getLogger(LovFieldDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LovFieldDetailServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;

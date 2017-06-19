@@ -40,7 +40,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	private static final long serialVersionUID = 5058430665774376406L;
-	private final static Logger logger = Logger.getLogger(PoliceCaseDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PoliceCaseDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

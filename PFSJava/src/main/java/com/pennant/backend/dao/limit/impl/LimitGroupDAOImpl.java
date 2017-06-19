@@ -229,7 +229,6 @@ public class LimitGroupDAOImpl extends BasisCodeDAO<LimitGroup> implements Limit
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LimitGroup limitGroup,String type) {
 		int recordCount = 0;

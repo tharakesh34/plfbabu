@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	private static final long serialVersionUID = 8645816104609479355L;
-	private final static Logger logger = Logger.getLogger(RatingTypeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(RatingTypeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

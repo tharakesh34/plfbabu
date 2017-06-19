@@ -65,7 +65,7 @@ public class FinanceConstants {
 	public static final String	PRODUCT_DISCOUNT				= "DISCOUNT";
 
 	// Finance Division Details
-	public static final String	FIN_DIVISION_RETAIL				= "PBG";
+	public static final String	FIN_DIVISION_RETAIL				= "BFSD";
 	public static final String	FIN_DIVISION_CORPORATE			= "CL";
 	public static final String	FIN_DIVISION_COMMERCIAL			= "COM";
 	public static final String	FIN_DIVISION_FACILITY			= "FACILITY";

@@ -76,7 +76,7 @@ import com.pennanttech.pff.core.Literal;
 public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(DPDBucketDialogCtrl.class);
+	private static final Logger			logger				= Logger.getLogger(DPDBucketDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -489,8 +489,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_DPDBucketDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -71,7 +71,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private final static Logger logger = Logger.getLogger(BulkRateChangeCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

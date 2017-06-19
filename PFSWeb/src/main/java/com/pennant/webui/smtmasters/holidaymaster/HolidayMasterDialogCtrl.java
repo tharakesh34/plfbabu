@@ -96,7 +96,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	private static final long serialVersionUID = -6497477637239109557L;
-	private final static Logger logger = Logger.getLogger(HolidayMasterDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(HolidayMasterDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -26,7 +26,7 @@
 			<listbox id="listBox_ExceptionLog" span="true" tooltiptext="listbox Exception Log"  multiple="false" mold="paging" autopaging="true" vflex="true">
 				<listhead sizable="true">
 					<listheader id="listheader_Id" label="ID" hflex="min" />
-					<listheader id="listheader_KeyId" label="Key Id" hflex="min" />
+					<listheader id="listheader_KeyId" label="Reference" hflex="min" />
 					<listheader id="listheader_Status" label="Status" hflex="min" />
 					<listheader id="Reason" label="Reason" hflex="min" />
 				</listhead>

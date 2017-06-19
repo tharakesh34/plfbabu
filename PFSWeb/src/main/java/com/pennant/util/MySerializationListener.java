@@ -55,7 +55,7 @@ public class MySerializationListener implements EventListener<Event>, EventInter
 		ComponentSerializationListener {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(MySerializationListener.class);
+	private static final Logger logger = Logger.getLogger(MySerializationListener.class);
 
 	public MySerializationListener() {
 	}

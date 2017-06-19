@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  * 
  */
 public class VASProductCategoryServiceImpl extends GenericService<VASProductCategory> implements VASProductCategoryService {
-	private final static Logger logger = Logger.getLogger(VASProductCategoryServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(VASProductCategoryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

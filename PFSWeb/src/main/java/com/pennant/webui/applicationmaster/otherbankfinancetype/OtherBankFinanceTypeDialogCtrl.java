@@ -79,7 +79,7 @@ import com.pennant.webui.util.MessageUtil;
 public class OtherBankFinanceTypeDialogCtrl extends
 		GFCBaseCtrl<OtherBankFinanceType> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(OtherBankFinanceTypeDialogCtrl.class);
 
 	/*

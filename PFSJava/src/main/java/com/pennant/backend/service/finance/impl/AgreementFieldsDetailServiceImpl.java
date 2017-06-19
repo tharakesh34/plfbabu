@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantJavaUtil;
  */
 public class AgreementFieldsDetailServiceImpl extends GenericService<AgreementFieldDetails>
 		implements AgreementFieldsDetailService {
-	private final static Logger logger = Logger.getLogger(AgreementFieldsDetailServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(AgreementFieldsDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AgreementFieldsDetailDAO agreementFieldsDetailDAO;

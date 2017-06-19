@@ -27,7 +27,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class FinanceConfigCache {
 	
-	private final static Logger logger = Logger.getLogger(FinanceConfigCache.class);
+	private static final Logger logger = Logger.getLogger(FinanceConfigCache.class);
 
 	private static FinanceTypeDAO financeTypeDAO;
 	private static DPDBucketDAO dPDBucketDAO;

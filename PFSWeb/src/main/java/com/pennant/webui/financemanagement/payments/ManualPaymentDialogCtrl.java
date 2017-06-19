@@ -108,7 +108,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RepayCalculator;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -164,6 +163,7 @@ import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.TemplateEngine;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -184,7 +184,7 @@ import com.rits.cloning.Cloner;
  */
 public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long								serialVersionUID					= 966281186831332116L;
-	private final static Logger								logger								= Logger.getLogger(ManualPaymentDialogCtrl.class);
+	private static final Logger								logger								= Logger.getLogger(ManualPaymentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -1962,8 +1962,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ManualPaymentDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet author="Siva" id="1">
+		<createTable tableName="FinTaxDetail">
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="TaxNumber" type="varchar(100)" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Siva" id="2">
+		<createTable tableName="FinTaxDetail_Temp">
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="TaxNumber" type="varchar(100)" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Siva" id="3">
+		<createView viewName="FinTaxDetail_AView" replaceIfExists="true">
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	FinTaxDetail T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Siva" id="4">
+		<createView viewName="FinTaxDetail_View" replaceIfExists="true">
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	FinTaxDetail_Temp T1 
+			UNION ALL
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	FinTaxDetail T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Siva" id="5">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINANCETAXDETAIL_VIEW', 'Loan GST Details View', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINANCETAXDETAIL_MAKER', 'Loan GST Details Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINANCETAXDETAIL_APPROVER', 'Loan GST Details Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_FinanceTaxDetail','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Enquiry_FinanceTaxDetailEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailList_PrintList','FinanceTaxDetailList',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailList_NewFinanceTaxDetail','FinanceTaxDetailList',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailDialog_btnEdit','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailDialog_btnNew','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailDialog_btnDelete','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceTaxDetailDialog_btnSave','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_FinReference','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_ApplicableFor','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_TaxExempted','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_TaxNumber','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_AddrLine1','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_AddrLine2','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_AddrLine3','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_AddrLine4','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_Country','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_Province','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_City','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceTaxDetailDialog_PinCode','FinanceTaxDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailList_NewFinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_FinReference'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Country'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Province'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_City'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINANCETAXDETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINANCETAXDETAIL_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Siva" id="6">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90338','EN','E','Collateral already used against Loan for this Co-Owner. Not allowed to Delete Co-Owner.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet author="Siva" id="7">
+		<sql>
+			Update ErrorDetails SET errormessage = 'Collateral already used against Loan for this Third Party. Not allowed to Delete Third Party.'  where ErrorCode = '90338';
+		</sql>
+	</changeSet>
+	
+		<changeSet author="Siva" id="8">
+		<createView viewName="FinTaxDetail_AView" replaceIfExists="true">
+		SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1 LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Siva" id="9">
+		<createView viewName="FinTaxDetail_View" replaceIfExists="true">
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+             T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail_Temp T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			UNION ALL
+			SELECT		T1.FinReference, T1.ApplicableFor, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+             T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Siva" id="10">
+		<sql>
+		
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINANCETAXDETAIL_ORG', 'Loan GST Details Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Country'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Province'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_City'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETAXDETAIL_ORG') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINANCETAXDETAIL_ORG'), (Select  RoleID  From SecRoles Where RoleCd='BFSD_DISB_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		 
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	<changeSet id="11" author="Jayant">
+	    <sql>
+	        update RMTFINANCETYPES set EQUALREPAYMENT = 1;
+	    </sql>
+	</changeSet>
+	
+	<changeSet id="12" author="Amit">
+		<modifyDataType tableName="gcdcustomers" columnName="industryId"
+			newDataType="number(19,0)" />
+			<modifyDataType tableName="gcdcustomers" columnName="branchId"
+			newDataType="number(19,0)" />
+	</changeSet>
+	
+	<changeSet id="13" author="Amit">
+		<modifyDataType tableName="gcdcustomers_test" columnName="industryId"
+			newDataType="number(19,0)" />
+			<modifyDataType tableName="gcdcustomers_test" columnName="branchId"
+			newDataType="number(19,0)" />
+	</changeSet>
+	<changeSet author="Satya" id="14">
+		<sql>
+		update secrights set rightname ='menuCat_ApplicationMaster' where rightname ='menuCat_applicationmaster';
+        update secrights set rightname ='menuCat_ApplicationMasterEnquiry' where rightname ='menuCat_applicationmasterEnquiry';
+		</sql>
+	</changeSet>
+	<changeSet id="15" author="Jayant">
+	    <sql>
+	        update pincodes set WorkFlowId = 0 ;
+	    </sql>
+	</changeSet>
+	<changeSet id="15" author="Durgaprasad G">
+	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		 	SELECT   
+				   FA. PAYMENTID,
+				   FA.FINREFERENCE,
+				   'D' CHANNEL, 
+				   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   FA.DISBDATE,
+	               FA.LLDATE,
+				   FA.PAYABLELOC,
+				   FA.PRINTINGLOC,
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+	              BD.BANKNAME BANKNAME,
+	              BB.BRANCHCODE,
+	              BB.BRANCHDESC BRANCHDESC,
+				  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR             MICR_CODE,
+				   BB.IFSC             IFSC_CODE,
+				   FA.BENEFICIARYACCNO,
+				   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+				   FA.PHONECOUNTRYCODE||FA.PHONEAREACODE||FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+				   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   FA.STATUS           STATUS,
+				   FA.DESCRIPTION      REMARKS,
+				     FA.PAYMENTTYPE      PAYMENTTYPE,
+				     FM.FINTYPE,
+				     PB.PARTNERBANKID,
+				     PB.PARTNERBANKCODE,
+				     FA.INPUTDATE,
+				     PB.ALWFILEDOWNLOAD,
+	                PB.FILENAME,
+				     FM.FINISACTIVE
+				   FROM FINADVANCEPAYMENTS FA
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+	               INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+	         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+				   
+				   UNION ALL
+				   
+				   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+				   PH.FINREFERENCE,
+				   PH.PAYMENTTYPE CHANNEL, 
+				   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   PI.POSTDATE DISBDATE, 
+				   PI.POSTDATE LLDATE, 
+				   PI.PAYABLELOC, 
+				   PI.PRINTINGLOC, 
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+				   BD.BANKNAME,
+				   BB.BRANCHCODE,
+				   BB.BRANCHDESC,
+				   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR              MICR_CODE,
+				   BB.IFSC              IFSC_CODE,
+				   PI.ACCOUNTNO BENEFICIARYACCNO,
+				   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+				   PI.PHONECOUNTRYCODE||PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+				   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   PI.STATUS           STATUS, 
+				   PI.REMARKS          REMARKS,
+				   PI.PAYMENTTYPE      PAYMENTTYPE,
+				   FM.FINTYPE,
+				   PB.PARTNERBANKID,
+				   PB.PARTNERBANKCODE,
+				   PI.POSTDATE INPUTDATE, 
+				   PB.ALWFILEDOWNLOAD,
+				   PB.FILENAME,
+				   FM.FINISACTIVE
+				   FROM PAYMENTINSTRUCTIONS PI 
+				   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+	 </createView>
+	
+	</changeSet>
+	
+	<changeSet id="16" author="Durgaprasad .g">
+	<dropColumn tableName="INT_DSBIMPS_RESPONSE" columnName="CHANNEL"/>
+	</changeSet>
+	
+	<changeSet id="17" author="Durgaprasad.g">
+		<modifyDataType tableName="FINADVANCEPAYMENTS" columnName="REJECTREASON" newDataType="VARCHAR(200)"/>
+		<modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="REJECTREASON" newDataType="VARCHAR(200)"/>
+	</changeSet>
+	
+	<changeSet id="18" author="Durgaprasad.g">
+	 <modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="REJECT_REASON" newDataType="VARCHAR(200)"/>
+	</changeSet>
+
+	 <changeSet id="20" author="Amit">
+  <addColumn tableName="gcdcustomers">
+   <column name="IsSuccess" type="Number(2,0)" defaultValue="0"/>
+  </addColumn>
+	</changeSet>
+	<changeSet id="21" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90339','EN','E','Workflow configuration not defined for product: {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="22" author="Amit">
+	<dropColumn tableName="gcdcustomers" columnName="IsSuccess" />
+
+	<addColumn tableName="gcdcustomers">
+		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
+	</addColumn>
+	</changeSet>
+	
+	<changeSet author="Vinay" id="23">
+		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Vinay" id="24">
+		<createView viewName="RMTPROVINCEVSCITY_VIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity_Temp  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+			UNION ALL
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+			WHERE     NOT EXISTS
+				                          (SELECT     1
+	                            FROM          RMTProvinceVsCity_TEMP
+	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
+		</createView>
+	</changeSet>
+</databaseChangeLog>

@@ -88,7 +88,7 @@ import com.pennanttech.pff.core.Literal;
 public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(PresentmentHeaderDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PresentmentHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -415,7 +415,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		try {
 			if (StringUtils.trimToNull(this.partnerBank.getValue()) == null) {
-				throw new WrongValueException(this.partnerBank, "Partner Bank id is mandatory.");
+				throw new WrongValueException(this.partnerBank, "Partner Bank is mandatory.");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -462,6 +462,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 		this.partnerBank.setConstraint("");
+		this.partnerBank.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -88,7 +88,7 @@ import com.pennanttech.framework.web.AbstractDialogController;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private static final long serialVersionUID = -1351367303946249042L;
-	private final static Logger logger = Logger.getLogger(NotesCtrl.class);
+	private static final Logger logger = Logger.getLogger(NotesCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -585,6 +585,16 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		logger.debug("Entering");
 		this.remarksText.setErrorMessage("");
 		Clients.clearWrongValue(this.remarks);
+		logger.debug("Leaving");
+		
+	}
+	
+	/**
+	 * Method for clear Error messages to Fields
+	 */
+	public  void onFulfill$remarks(){
+		logger.debug("Entering");
+		 doClearMessage();
 		logger.debug("Leaving");
 		
 	}

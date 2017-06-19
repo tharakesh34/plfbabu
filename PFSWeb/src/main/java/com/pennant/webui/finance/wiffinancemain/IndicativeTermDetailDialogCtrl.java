@@ -114,7 +114,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
  */
 public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDetail> {
 	private static final long serialVersionUID = 5058430665774376406L;
-	private final static Logger logger = Logger.getLogger(IndicativeTermDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(IndicativeTermDetailDialogCtrl.class);
 	
 	/*
 	 * All the components that are defined here and have a corresponding

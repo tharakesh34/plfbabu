@@ -78,7 +78,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long				serialVersionUID	= 2623911832045017662L;
-	private final static Logger				logger				= Logger.getLogger(AddRmvTermsDialogCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(AddRmvTermsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

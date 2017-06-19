@@ -179,7 +179,7 @@ import com.rits.cloning.Cloner;
 public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	private static final long								serialVersionUID					= -1171206258809472640L;
-	private final static Logger								logger								= Logger.getLogger(FinanceBaseCtrl.class);
+	private static final Logger								logger								= Logger.getLogger(FinanceBaseCtrl.class);
 
 	protected Datebox										finStartDate;																			// autoWireda
 	protected Textbox										promotionProduct;																		// autoWired
@@ -777,7 +777,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.dsaCode.setDescColumn("ROfficerDesc");
 		this.dsaCode.setValidateColumns(new String[] { "ROfficerCode" });
 
-		this.applicationNo.setMaxlength(17);
+		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 		this.dmaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false, 8);

@@ -96,7 +96,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
  */
 public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	private static final long serialVersionUID = 2544107887397060565L;
-	private final static Logger logger = Logger.getLogger(SecurityRoleGroupsDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityRoleGroupsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

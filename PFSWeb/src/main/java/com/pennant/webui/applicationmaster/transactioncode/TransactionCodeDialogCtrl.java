@@ -80,7 +80,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	private static final long serialVersionUID = -5775295643429759088L;
-	private final static Logger logger = Logger.getLogger(TransactionCodeDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(TransactionCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

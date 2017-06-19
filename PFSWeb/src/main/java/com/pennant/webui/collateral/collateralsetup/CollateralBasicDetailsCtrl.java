@@ -18,7 +18,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final long serialVersionUID = -4843661930948561711L;
-	private final static Logger logger = Logger.getLogger(CollateralBasicDetailsCtrl.class);
+	private static final Logger logger = Logger.getLogger(CollateralBasicDetailsCtrl.class);
 	
 	protected Window window_CollateralBasicDetails; 				// autowired
 	protected Label colBasic_depositerCif; 							// autoWired

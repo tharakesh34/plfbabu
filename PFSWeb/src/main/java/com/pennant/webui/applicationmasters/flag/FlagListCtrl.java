@@ -71,7 +71,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class FlagListCtrl extends GFCBaseListCtrl<Flag> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(FlagListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FlagListCtrl.class);
 
 	protected Window window_FlagList;
 	protected Borderlayout borderLayout_FlagList;

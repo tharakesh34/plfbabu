@@ -60,7 +60,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 public class HolidayMaster extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 7047561032260705575L;
-	private final static Logger logger = Logger.getLogger(HolidayMaster.class);
+	private static final Logger logger = Logger.getLogger(HolidayMaster.class);
 
 	private String holidayCode;
 	private String holidayCodeDesc;

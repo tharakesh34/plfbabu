@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -49,6 +51,7 @@ public class FinReceiptDetail implements Entity {
 	private String						partnerBankAcType;
 	private String						reference;					// only for Fees
 	private String						feeTypeDesc;
+	private boolean 					noReserve;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
@@ -69,6 +72,13 @@ public class FinReceiptDetail implements Entity {
 	
 	public FinReceiptDetail() {
 
+	}
+	
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("noReserve");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -336,6 +346,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
+	}
+
+	public boolean isNoReserve() {
+		return noReserve;
+	}
+
+	public void setNoReserve(boolean noReserve) {
+		this.noReserve = noReserve;
 	}
 
 }

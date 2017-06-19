@@ -22,7 +22,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 	protected Iframe			document;
 	protected Label				label_RefId;
 
-	private final static Logger	logger				= Logger.getLogger(ImageViewCtrl.class);
+	private static final Logger	logger				= Logger.getLogger(ImageViewCtrl.class);
 
 	public ImageViewCtrl() {
 		super();

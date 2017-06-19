@@ -71,7 +71,7 @@ import com.pennanttech.pff.core.Literal;
  */
 public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(ConvFinanceMainDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ConvFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

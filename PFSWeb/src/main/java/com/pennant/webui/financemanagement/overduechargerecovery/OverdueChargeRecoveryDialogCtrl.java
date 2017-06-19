@@ -104,7 +104,7 @@ import com.pennanttech.pff.core.InterfaceException;
 public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRecovery> {
 
 	private static final long							serialVersionUID	= 728436178283801925L;
-	private final static Logger							logger				= Logger.getLogger(OverdueChargeRecoveryDialogCtrl.class);
+	private static final Logger							logger				= Logger.getLogger(OverdueChargeRecoveryDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here

@@ -66,7 +66,7 @@ import com.pennant.webui.util.MessageUtil;
  */
 public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCategoryBreakdown> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private final static Logger logger = Logger.getLogger(CustomerLimitCategoryEnquiryCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerLimitCategoryEnquiryCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -82,7 +82,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -99,6 +98,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -110,7 +110,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private final static Logger logger = Logger.getLogger(ManualScheduleDetailDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(ManualScheduleDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

@@ -80,7 +80,7 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private final static Logger logger = Logger.getLogger(ReinstateFinanceListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReinstateFinanceListCtrl.class);
 
 	protected Window 			window_ReinstateFinanceList; 			
 	protected Borderlayout 		borderLayout_ReinstateFinanceList; 		

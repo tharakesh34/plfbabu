@@ -296,7 +296,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[2];
 				valueParm[0] = "Disbursement amount:" + actualDisbAmount;
 				valueParm[1] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
 			}
 		}
 		

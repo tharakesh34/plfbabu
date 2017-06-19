@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -96,6 +96,7 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.Entities;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -119,6 +120,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.applicationmaster.SysNotification;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.applicationmaster.TargetDetail;
+import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.applicationmaster.VesselDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
@@ -226,6 +228,7 @@ import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
@@ -526,7 +529,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Province", new ModuleMapping("Province", Province.class, new String[] {
 				"RMTCountryVsProvince", "RMTCountryVsProvince_AView" }, masterWF, new String[] { "CPProvince",
-				"CPProvinceName" }, new String[][] { { "CPIsActive", "0", "1" } }, 350));
+				"CPProvinceName","TaxStateCode" }, new String[][] { { "CPIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("Salutation", new ModuleMapping("Salutation", Salutation.class, new String[] {
 				"BMTSalutations", "BMTSalutations_AView" }, masterWF, new String[] { "SalutationCode", "SaluationDesc" },
@@ -574,7 +577,7 @@ public class PennantJavaUtil {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
 		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
-		"PinCodes_AView" }, masterWF, new String[] {"PinCode","City",},
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","AreaName","City","PCCityName","PCProvince","LovDescPCProvinceName","Gstin","LovDescPCCountryName"},
 				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
@@ -606,7 +609,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Branch", new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches",
 				"RMTBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc" }, new String[][] { {
-				"BranchIsActive", "0", "1" } }, 300));
+				"BranchIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("CheckList", new ModuleMapping("CheckList", CheckList.class, new String[] { "BMTCheckList",
 				"BMTCheckList_AView" }, masterWF, new String[] { "CheckListId", "CheckListDesc" }, null, 500));
@@ -738,6 +741,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("Entities", new ModuleMapping("Entities", Entities.class, new String[] { "Entities", "Entities_AView" },
 				masterWF, new String[] { "EntityCode", "EntityDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
+		
+		ModuleUtil.register("Entity", new ModuleMapping("Entity", Entity.class, new String[] { "Entity",
+		"Entity_AView" }, masterWF, new String[] {"EntityCode","EntityDesc","pANNumber"},null, 600));
 
 		/************* Accounts *************/
 
@@ -1011,7 +1017,7 @@ public class PennantJavaUtil {
 				"SICCodes" }, masterWF, new String[] { "SicCode", "SicDesc" }, null, 300));
 
 		ModuleUtil.register("EntityCodes", new ModuleMapping("EntityCodes", EntityCodes.class, new String[] {
-				"EntityCodes", "EntityCodes" }, masterWF, new String[] { "EntityCode", "EntityDesc" }, null, 300));
+				"EntityCodes", "Entities_View" }, masterWF, new String[] { "EntityCode", "EntityDesc" }, null, 300));
 
 		ModuleUtil.register("StepPolicyHeader", new ModuleMapping("StepPolicyHeader", StepPolicyHeader.class,
 				new String[] { "StepPolicyHeader", "StepPolicyHeader_AView" }, masterWF, new String[] { "PolicyCode",
@@ -1371,6 +1377,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("HoldEMI", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
+		
+		ModuleUtil.register("FinanceTaxDetail", new ModuleMapping("FinanceTaxDetail", FinanceTaxDetail.class, new String[] { "FinTaxDetail",
+				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
 		
 		/************ Finance Related Module Details *************/
 
@@ -1980,7 +1989,9 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("PaymentInstruction", new ModuleMapping("PaymentInstruction", PaymentInstruction.class, new String[] { "PaymentInstructions",
 		"PaymentInstructions_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","BankCode","PaymentCCy"},null, 600));
-
+		
+		ModuleUtil.register("TaxDetail", new ModuleMapping("TaxDetail", TaxDetail.class, new String[] { "TAXDETAIL",
+		"TAXDETAIL_AView" }, masterWF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

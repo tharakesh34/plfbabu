@@ -54,7 +54,7 @@ import com.pennant.policy.model.UserImpl;
 
 public class SessionUserDetails implements Serializable {
 	private static final long serialVersionUID = 1116443283350618246L;
-	private final static Logger logger = Logger.getLogger(SessionUserDetails.class);
+	private static final Logger logger = Logger.getLogger(SessionUserDetails.class);
 
 	public static Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();

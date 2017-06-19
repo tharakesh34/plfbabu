@@ -29,7 +29,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 
 public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader> {
 	private static final long serialVersionUID = 9086034736503097868L;
-	private final static Logger logger = Logger.getLogger(BulkRateChangeListCtrl.class);
+	private static final Logger logger = Logger.getLogger(BulkRateChangeListCtrl.class);
 
 	protected Window window_BulkRateChangeList;
 	protected Borderlayout borderLayout_BulkRateChangeList;

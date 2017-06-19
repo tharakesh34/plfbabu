@@ -55,7 +55,7 @@ import com.rits.cloning.Cloner;
 
 public class FinStatementController extends SummaryDetailService {
 
-	private final static Logger			logger	= Logger.getLogger(FinStatementController.class);
+	private static final Logger			logger	= Logger.getLogger(FinStatementController.class);
 
 	private FinanceDetailService		financeDetailService;
 	private PostingsDAO					postingsDAO;

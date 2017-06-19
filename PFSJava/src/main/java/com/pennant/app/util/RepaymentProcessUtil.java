@@ -23,6 +23,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
-	private final static Logger			logger	= Logger.getLogger(RepaymentProcessUtil.class);
+	private static final Logger			logger	= Logger.getLogger(RepaymentProcessUtil.class);
 
 	private RepaymentPostingsUtil		repayPostingUtil;
 	private FinODDetailsDAO				finODDetailsDAO;
@@ -84,6 +85,7 @@ public class RepaymentProcessUtil {
 	private LimitManagement				limitManagement;
 	private ReceiptAllocationDetailDAO	allocationDetailDAO;	
 	private PostingsPreparationUtil		postingsPreparationUtil;
+	private FinanceMainDAO				financeMainDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -311,7 +313,23 @@ public class RepaymentProcessUtil {
 
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
 				valuedate);
+		
+		FinanceScheduleDetail curSchd = null;
+		
+		for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
+			Date schdDate = financeScheduleDetail.getSchDate();
+			// Skip if Repayment date after Current Business date
+			if (schdDate.compareTo(valuedate) != 0) {
+				continue;
+			}
+			curSchd = financeScheduleDetail;
+			financeScheduleDetailDAO.updateForRpy(curSchd);
+			break;
+		}
+		
+		
 		doSaveReceipts(receiptHeader, null);
+		financeMainDAO.updatePaymentInEOD(financeMain);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
 	}
@@ -705,7 +723,13 @@ public class RepaymentProcessUtil {
 
 				// Excess Amount make utilization
 				if (payAgainstID != 0) {
-					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					
+					if (receiptDetail.isNoReserve()) {
+						//update only utilization
+						getFinExcessAmountDAO().updateUtiliseOnly(payAgainstID, receiptDetail.getAmount());
+					}else{
+						getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					}
 
 					// Delete Reserved Log against Excess and Receipt ID
 					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
@@ -1481,6 +1505,14 @@ public class RepaymentProcessUtil {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

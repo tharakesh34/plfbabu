@@ -69,7 +69,7 @@ import com.pennanttech.pff.core.App.AuthenticationType;
  */
 public class LoginLoggingPolicyService implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LoginLoggingPolicyService.class);
+	private static final Logger logger = Logger.getLogger(LoginLoggingPolicyService.class);
 
 	private PolicyManager policyManager;
 	private UserImpl userDetails;

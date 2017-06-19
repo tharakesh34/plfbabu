@@ -123,7 +123,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private final static Logger logger = Logger.getLogger(FinFeeDetailListCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinFeeDetailListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -285,7 +285,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			doSetFieldProperties();
 			doShowDialog(getFinanceDetail());
 		} catch (Exception e) {
-			createException(window_FeeDetailList, e);
+			MessageUtil.showError(e);
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving" + event.toString());
@@ -299,9 +299,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		
 		int divHeight = this.borderLayoutHeight - 80;
 		int semiBorderlayoutHeights = divHeight / 2;
-		// this.listBoxFeeDetail.setHeight(this.borderLayoutHeight - (listBoxFeeDetail.getItemCount() * 20) - 185 + "px");
-		//this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 + "px");
-		//this.listBoxFinFeeReceipts.setHeight(semiBorderlayoutHeights - 85 + "px");
 		this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
 		this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
 		
@@ -420,10 +417,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (financeDetail.isNewRecord()
 				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
-				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					finFeeDetail.setRecordType("");
-					finFeeDetail.setRecordStatus("");
-				}
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
@@ -456,9 +449,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			receiptAmount = finReceiptDetail.getAmount();
 			List<FinFeeReceipt> currentFeeReceipts = new ArrayList<FinFeeReceipt>();
 			
-			if(StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
+			if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
 				reference = finReceiptDetail.getTransactionRef();
-			} else if(StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
+			} else if (StringUtils.isNotBlank(finReceiptDetail.getFavourNumber())) {
 				reference = finReceiptDetail.getFavourNumber();
 			}
 
@@ -518,6 +511,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.btn_autoAllocate.setVisible(false);
 			this.gb_FinFeeReceipts.setVisible(false);
 		}
+		this.div_AutoAllocate.setVisible(this.btn_autoAllocate.isVisible());
 
 		List<FinFeeReceipt> finFeeReceipts;
 		this.listBoxFinFeeReceipts.getItems().clear();
@@ -752,8 +746,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
 					finFeeReceipt.setReceiptID(receiptid);
 					finFeeReceipt.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
-					//finFeeReceipt.setNewRecord(true);	//FIXME
-					//finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
 					finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
 					currentFeeReceipts.add(finFeeReceipt);
 					

@@ -25,7 +25,7 @@ import com.pennant.webui.util.MessageUtil;
 
 public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long				serialVersionUID	= -546886879998950467L;
-	private final static Logger				logger				= Logger.getLogger(VASConfigurationResultCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(VASConfigurationResultCtrl.class);
 
 	protected Window						window_VASConfigurationResult;
 

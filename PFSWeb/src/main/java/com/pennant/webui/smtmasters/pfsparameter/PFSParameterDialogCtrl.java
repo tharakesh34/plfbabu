@@ -96,7 +96,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	private static final long serialVersionUID = 5922960172101690001L;
-	private final static Logger logger = Logger.getLogger(PFSParameterDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(PFSParameterDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding

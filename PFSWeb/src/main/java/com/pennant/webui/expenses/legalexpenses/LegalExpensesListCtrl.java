@@ -76,7 +76,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class LegalExpensesListCtrl extends GFCBaseListCtrl<LegalExpenses> {
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LegalExpensesListCtrl.class);
+	private static final Logger logger = Logger.getLogger(LegalExpensesListCtrl.class);
 
 	protected Window window_LegalExpensesList;
 	protected Borderlayout borderLayout_LegalExpensesList;

@@ -21,7 +21,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchAccountDetailProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(FetchAccountDetailProcess.class);
+	private static final Logger logger = Logger.getLogger(FetchAccountDetailProcess.class);
 
 	public FetchAccountDetailProcess() {
 		super();
@@ -35,8 +35,8 @@ public class FetchAccountDetailProcess extends MQProcess {
 	 * @throws JaxenException
 	 * @throws InterfaceException
 	 */
-	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail, String msgFormat) 
-			throws InterfaceException, JaxenException {
+	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 		
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getAccountNumber())) {
@@ -75,8 +75,8 @@ public class FetchAccountDetailProcess extends MQProcess {
 	 * @throws JaxenException 
 	 * @throws InterfaceException
 	 */
-	private List<CoreBankAccountDetail> prepareAccountDetails(OMElement responseElement, AHBMQHeader header) 
-			throws InterfaceException, JaxenException {
+	private List<CoreBankAccountDetail> prepareAccountDetails(OMElement responseElement, AHBMQHeader header)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

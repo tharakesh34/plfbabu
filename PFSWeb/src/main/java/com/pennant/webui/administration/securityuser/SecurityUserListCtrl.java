@@ -72,7 +72,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
  */
 public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	private static final long serialVersionUID = 3104549665882133520L;
-	private final static Logger logger = Logger.getLogger(SecurityUserListCtrl.class);
+	private static final Logger logger = Logger.getLogger(SecurityUserListCtrl.class);
 
 	protected Window window_SecurityUserList;
 	protected Borderlayout borderLayout_SecurityUserList;

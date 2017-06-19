@@ -42,8 +42,10 @@
 */
 package com.pennant.backend.service.eod;
 
-import com.pennant.backend.model.eod.EODConfig;
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.eod.EODConfig;
 
 public interface EODConfigService {
 
@@ -53,4 +55,5 @@ public interface EODConfigService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	List<EODConfig> getEODConfig();
 }

@@ -18,7 +18,7 @@ import com.pennanttech.pff.core.InterfaceException;
 
 public class CreateAccountProcess extends MQProcess {
 
-	private final static Logger logger = Logger.getLogger(CreateAccountProcess.class);
+	private static final Logger logger = Logger.getLogger(CreateAccountProcess.class);
 
 	public CreateAccountProcess() {
 		super();
