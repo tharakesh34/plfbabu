@@ -468,4 +468,11 @@
 	INSERT INTO ErrorDetails VALUES('90339','EN','E','Workflow configuration not defined for product: {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="22" author="Amit">
+	<dropColumn tableName="gcdcustomers" columnName="IsSuccess" />
+
+	<addColumn tableName="gcdcustomers">
+		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
