@@ -34,8 +34,8 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat) 
-			throws InterfaceException, JaxenException  {
+	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (handlingInstruction == null) {

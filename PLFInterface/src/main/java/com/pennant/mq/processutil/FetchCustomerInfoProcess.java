@@ -43,16 +43,17 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	}
 
 	private MQInterfaceDAO mqInterfaceDAO;
+	
 	/**
 	 * Process the GetCustomerDetails based on the given CIF and Message format and send response
 	 * 
 	 * @param custCIF
 	 * @param msgFormat
 	 * @return
-	 * @throws JaxenException 
-	 * @throws Exception
+	 * @throws JaxenException
+	 * @throws InterfaceException
 	 */
-	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String msgFormat) throws InterfaceException, JaxenException {
+	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF, String msgFormat) throws JaxenException {
 		logger.debug("Entering");
 
 		if (custCIF == null || "".equals(custCIF)) {
@@ -115,11 +116,11 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws JaxenException 
-	 * @throws Exception
+	 * @throws JaxenException
+	 * @throws InterfaceException
 	 */
 	private InterfaceCustomerDetail setCustomerDetails(OMElement responseElement, AHBMQHeader header)
-			throws InterfaceException, JaxenException {
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -964,11 +965,11 @@ public class FetchCustomerInfoProcess extends MQProcess {
 	 * @param path
 	 * @param type
 	 * @return
-	 * @throws JaxenException 
-	 * @throws Exception
+	 * @throws JaxenException
+	 * @throws InterfaceException
 	 */
-	private List<InterfaceCustomerEMail> setCustomerEmailByType(OMElement element, String path, String tagname, String[] type, String custCIF)
-			throws InterfaceException, JaxenException {
+	private List<InterfaceCustomerEMail> setCustomerEmailByType(OMElement element, String path, String tagname,
+			String[] type, String custCIF) throws JaxenException {
 		logger.debug("Entering");
 
 		if (element == null) {
