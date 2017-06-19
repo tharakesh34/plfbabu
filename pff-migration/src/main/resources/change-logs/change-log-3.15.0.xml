@@ -469,4 +469,44 @@
 	<addColumn tableName="gcdcustomers">
 		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
 	</addColumn>
+	</changeSet>
+	
+	<changeSet author="Vinay" id="23">
+		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Vinay" id="24">
+		<createView viewName="RMTPROVINCEVSCITY_VIEW" replaceIfExists="true">
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity_Temp  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+			UNION ALL
+			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
+        T1.PCCityClassification, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+        T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive,
+        T2.CountryDesc LovDescPCCountryName,
+        T3.CPProvinceName LovDescPCProvinceName, T3.TAXSTATECODE
+		FROM    RMTProvinceVsCity  T1 INNER JOIN
+        BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+        RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+			WHERE     NOT EXISTS
+				                          (SELECT     1
+	                            FROM          RMTProvinceVsCity_TEMP
+	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
