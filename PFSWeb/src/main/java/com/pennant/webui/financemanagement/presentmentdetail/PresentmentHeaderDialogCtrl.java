@@ -415,7 +415,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		try {
 			if (StringUtils.trimToNull(this.partnerBank.getValue()) == null) {
-				throw new WrongValueException(this.partnerBank, "Partner Bank id is mandatory.");
+				throw new WrongValueException(this.partnerBank, "Partner Bank is mandatory.");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -462,6 +462,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 		this.partnerBank.setConstraint("");
+		this.partnerBank.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
