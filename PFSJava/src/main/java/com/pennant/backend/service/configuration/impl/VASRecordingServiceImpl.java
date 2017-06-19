@@ -1777,16 +1777,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
-			if(financeWorkFlow == null){
-				String[] valueParm = new String[2];
-				valueParm[0] = vasRecording.getProductCode();
-				valueParm[1] = "workflow";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			}
+			
 			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
 					.getProductCode());
 			if (vASConfiguration == null || !vASConfiguration.isActive()) {
@@ -1794,6 +1785,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				valueParm[0] = "Product";
 				valueParm[1] = vasRecording.getProductCode();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+			if(financeWorkFlow == null){
+				String[] valueParm = new String[2];
+				valueParm[0] = vasRecording.getProductCode();
+				valueParm[1] = "workflow";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
