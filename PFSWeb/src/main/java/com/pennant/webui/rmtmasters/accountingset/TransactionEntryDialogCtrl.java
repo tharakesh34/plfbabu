@@ -719,10 +719,6 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		
-		if(isGSTApplicable){
-			MessageUtil.showMessage(Labels.getLabel("label_GstApplicable"));
-		}
-
 		if (!this.transOrder.isReadonly()) {
 			this.transOrder.setConstraint(new PTNumberValidator(Labels
 					.getLabel("label_TransactionEntryDialog_TransOrder.value"), true));
@@ -1095,15 +1091,21 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			AuditHeader auditHeader = newTranEntryProcess(aTransactionEntry, tranType);
 			auditHeader = ErrorControl.showErrorDetails(this.window_TransactionEntryDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
+			if(isGSTApplicable){
+				MessageUtil.showMessage(Labels.getLabel("label_GstApplicable"));
+				isGSTApplicable=false;
+			}
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				getAccountingSetDialogCtrl().doFilllistbox(this.transactionEntryList);
 				window_TransactionEntryDialog.onClose();
 				getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
 			}
+			
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
