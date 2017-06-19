@@ -168,7 +168,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		source.addValue("PaidNow", amount);
 		
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow ");
+		updateSql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow ,  BalanceAmt = BalanceAmt - :PaidNow  ");
 		updateSql.append(" Where ExcessID =:ExcessID");
 		
 		logger.debug("updateSql: " + updateSql.toString());
