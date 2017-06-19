@@ -208,8 +208,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 			doSetFieldProperties();
 			doShowDialog(getDeviationParam());
 		} catch (Exception e) {
-			createException(window_DeviationParamDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -618,8 +617,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_DeviationParamDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -701,8 +699,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_DeviationParamDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

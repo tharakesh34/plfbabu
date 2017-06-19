@@ -137,8 +137,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			doSetFieldProperties();
 			doShowDialog(getCollateralThirdParty());
 		} catch (Exception e) {
-			createException(window_CollateralThirdPartyDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

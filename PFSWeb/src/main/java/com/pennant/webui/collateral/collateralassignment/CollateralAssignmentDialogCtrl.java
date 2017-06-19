@@ -129,8 +129,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			doSetFieldProperties();
 			doShowDialog(getCollateralAssignment());
 		} catch (Exception e) {
-			createException(window_CollateralAssignmentDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

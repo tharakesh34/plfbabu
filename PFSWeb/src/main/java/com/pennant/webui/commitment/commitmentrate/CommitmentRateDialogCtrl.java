@@ -208,8 +208,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			doShowDialog(getCommitmentRate());
 
 		} catch (Exception e) {
-			createException(window_CommitmentRateDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

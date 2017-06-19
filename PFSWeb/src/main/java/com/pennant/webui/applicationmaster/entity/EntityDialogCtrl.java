@@ -64,7 +64,6 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -74,14 +73,12 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.Literal;
-	
 
 /**
  * This is the controller class for the
  * /WEB-INF/pages/applicationmaster/Entity/entityDialog.zul file. <br>
  */
 public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(EntityDialogCtrl.class);
 	

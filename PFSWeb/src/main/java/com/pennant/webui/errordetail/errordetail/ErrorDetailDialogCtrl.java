@@ -212,8 +212,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 			doSetFieldProperties();
 			doShowDialog(getErrorDetail());
 		} catch (Exception e) {
-			createException(window_ErrorDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving" +event.toString());
@@ -656,8 +655,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_ErrorDetailDialog,e);
+				MessageUtil.showError(e);
 			}
 			
 		}
@@ -740,8 +738,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ErrorDetailDialog,e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

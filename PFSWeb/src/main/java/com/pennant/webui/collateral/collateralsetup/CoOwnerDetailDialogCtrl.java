@@ -255,8 +255,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			doSetFieldProperties();
 			doShowDialog(getCoOwnerDetail());
 		} catch (Exception e) {
-			createException(window_CoOwnerDetailDialog, e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
