@@ -106,8 +106,6 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 			map.addValue("AGREEMENTID", BigDecimal.ZERO);
 
 		}
-		map.addValue("CHANNEL", rs.getString("CHANNEL"));
-
 		return map;
 	}
 
