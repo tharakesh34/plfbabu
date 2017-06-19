@@ -457,4 +457,10 @@
 	update reportfilterfields set mandatory=0 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings');
 	</sql>
 	</changeSet>
+	
+	 <changeSet id="20" author="Amit">
+  <addColumn tableName="gcdcustomers">
+   <column name="IsSuccess" type="Number(2,0)" defaultValue="0"/>
+  </addColumn>
+	</changeSet>
 </databaseChangeLog>
