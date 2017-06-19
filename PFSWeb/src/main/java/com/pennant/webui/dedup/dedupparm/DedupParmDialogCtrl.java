@@ -878,7 +878,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 
 		final String msg = Labels.getLabel("message.information.only6Rows");
-		final String title = Labels.getLabel("message.Information");
+
 		// TODO Here 6 is hard coded to Restrict the No of Conditions which has
 		// to be Parameterized
 		if (parent.getChildren().size() < 6) {
@@ -937,7 +937,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		boolean childReq = false;
 		List<Component> treeChild = cmp.getChildren();
 		final String msg = Labels.getLabel("message.information.only3Rows");
-		final String title = Labels.getLabel("message.Information");
 
 		for (int i = 0; i < treeChild.size(); i++) {
 			if (treeChild.get(i) instanceof Treechildren) {

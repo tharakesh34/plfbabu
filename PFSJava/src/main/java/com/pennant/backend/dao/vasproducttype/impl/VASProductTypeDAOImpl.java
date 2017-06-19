@@ -231,7 +231,6 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(VASProductType vASProductType, String type) {
 		int recordCount = 0;
