@@ -100,7 +100,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="pANNumber"
+									<uppercasebox id="pANNumber"
 										maxlength="10" width="120px" />
 								</hbox>
 								<label id="label_Country"

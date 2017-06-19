@@ -67,6 +67,7 @@ import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -90,7 +91,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	protected Window                window_EntityDialog; 
 	protected Textbox 		        entityCode; 
 	protected Textbox 		        entityDesc; 
-	protected Textbox 		        pANNumber; 
+	protected Uppercasebox 		    pANNumber; 
     protected ExtendedCombobox 		country; 
     protected ExtendedCombobox 		stateCode; 
     protected ExtendedCombobox 		cityCode; 
@@ -278,9 +279,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				fillPindetails(details.getPCCity());
 			}else{
-				/*this.stateCode.setValue("");
-				this.stateCode.setDescription("");
-*/
+				this.cityCode.setValue("");
+				
+
 			}
 		}
 		logger.debug("Leaving");
@@ -319,9 +320,13 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 				this.cityCode.setDescription(details.getPCCityName());
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				this.cityCode.setErrorMessage("");
+				this.stateCode.setErrorMessage("");;
 			} 
+				
+			}
 		
-		}
+		
 		logger.debug("Leaving");
 	}
  
