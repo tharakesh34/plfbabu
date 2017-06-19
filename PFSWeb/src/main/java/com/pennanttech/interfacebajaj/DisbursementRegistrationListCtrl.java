@@ -82,6 +82,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -123,6 +124,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listheader listheader_Disbursement_BenName;
 	protected Listheader listheader_Disbursement_BenAcctno;
 	protected Listheader listheader_Disbursement_Branch;
+	protected Listheader listheader_Disbursement_Channel;
 
 	protected Combobox disbTypes;
 	protected ExtendedCombobox partnerBank;
@@ -131,6 +133,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected ExtendedCombobox finType;
 	protected ExtendedCombobox branch;
 	protected Checkbox qdp;
+	protected Combobox channelTypes;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -138,6 +141,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_ToDate;
 	protected Listbox sortOperator_FinType;
 	protected Listbox sortOperator_Branch;
+	protected Listbox sortOperator_Channel;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -149,6 +153,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Button btnDownload;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
+	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
 
 	@Autowired
 	private DisbursementRequestService disbursementRequestService;
@@ -221,6 +226,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("branchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
 				Operators.STRING);
 		registerField("AMTTOBERELEASED");
+		registerField("channel", listheader_Disbursement_Channel, SortOrder.NONE, channelTypes,
+				sortOperator_Channel, Operators.STRING);
 
 
 		// Render the page and display the data.
@@ -257,6 +264,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finType.setMandatoryStyle(true);
 
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(false), "");
+		fillComboBox(this.channelTypes, "",channelTypesList, "");
 
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setDisplayStyle(2);
@@ -365,9 +373,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 			lc = new Listcell(payments.getBranchDesc());
 			lc.setParent(item);
+			
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getChannel(), channelTypesList));
+			 
+			lc.setParent(item);
 
 			item.setAttribute("finAdvancePayments", payments);
-
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onDisbursementDoubleClicked");
 		}
 	}
