@@ -1962,8 +1962,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ManualPaymentDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

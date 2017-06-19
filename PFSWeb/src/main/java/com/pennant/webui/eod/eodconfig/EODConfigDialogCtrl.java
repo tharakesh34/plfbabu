@@ -512,8 +512,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_EODConfigDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

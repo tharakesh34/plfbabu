@@ -61,7 +61,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -613,16 +612,10 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				}
 			}
 
-		} catch (EmptyResultDataAccessException e) {
-			showErrorMessage(getMainWindow(), e);
-			e = null;
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(getMainWindow(), e);
-		} catch (InterfaceException pfe) {
-			showErrorMessage(getMainWindow(), pfe);
-			pfe = null;
+		} catch (DataAccessException | InterfaceException e) {
+			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 	/**

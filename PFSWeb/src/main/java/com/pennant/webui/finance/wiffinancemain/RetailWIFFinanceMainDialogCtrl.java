@@ -4077,8 +4077,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_RetailWIFFinanceMainDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -4530,8 +4529,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_RetailWIFFinanceMainDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

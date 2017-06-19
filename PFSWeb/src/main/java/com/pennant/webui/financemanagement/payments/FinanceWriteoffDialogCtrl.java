@@ -1497,8 +1497,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FinWriteoffDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

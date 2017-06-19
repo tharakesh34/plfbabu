@@ -1270,8 +1270,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_QDEFinanceMainDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1591,9 +1590,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			// updateFailedRecordCount(aFinanceDetail.getFinScheduleData().getFinanceMain().getLovDescNextUsersRolesMap());
-			showErrorMessage(this.window_QDEFinanceMainDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

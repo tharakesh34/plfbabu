@@ -6145,13 +6145,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-		} catch (EmptyResultDataAccessException e) {
-			showErrorMessage(getMainWindow(), e);
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(getMainWindow(), e);
-		} catch (InterfaceException pfe) {
-			MessageUtil.showError(pfe);
+		} catch (DataAccessException | InterfaceException e) {
+			MessageUtil.showError(e);
 		}
 
 		if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {

@@ -366,8 +366,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_FinanceFlagsDialog,e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -444,8 +443,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_FinanceFlagsDialog, e);
+			MessageUtil.showError(e);
 		}
 
 		// User Notifications Message/Alert

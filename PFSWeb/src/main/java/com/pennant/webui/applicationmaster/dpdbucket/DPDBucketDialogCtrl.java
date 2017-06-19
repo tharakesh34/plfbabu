@@ -489,8 +489,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception", e);
-				showErrorMessage(this.window_DPDBucketDialog, e);
+				MessageUtil.showError(e);
 			}
 
 		}

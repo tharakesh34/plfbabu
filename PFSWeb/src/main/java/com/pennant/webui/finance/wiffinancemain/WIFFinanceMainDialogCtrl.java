@@ -3730,8 +3730,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showErrorMessage(this.window_WIFFinanceMainDialog, e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -4128,8 +4127,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_WIFFinanceMainDialog, e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
