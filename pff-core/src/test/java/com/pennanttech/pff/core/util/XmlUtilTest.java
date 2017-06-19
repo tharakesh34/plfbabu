@@ -33,7 +33,7 @@ public class XmlUtilTest {
 
 		// Load the sample process to test.
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		byte[] buffer = Files.readAllBytes(Paths.get(loader.getResource("SampleProcess.xml").toURI()));
+		byte[] buffer = Files.readAllBytes(Paths.get(loader.getResource("process.xml").toURI()));
 
 		ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
 		XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
