@@ -192,19 +192,8 @@
 	<!-- SERVICE Beans Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl"
-		parent="basisNextidDao">
+	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="secDatasource" />
-	</bean>
-
-	<bean name="loginLoggingService"
-		class="com.pennant.backend.service.impl.LoginLoggingServiceImpl">
-		<property name="secLoginlogDAO" ref="secLoginlogDAO" />
-		<property name="userDAO" ref="userDAO" />
-	</bean>
-
-	<bean name="loginService" class="com.pennant.backend.service.impl.LoginServiceImpl">
-		<property name="userDAO" ref="userDAO" />
 	</bean>
 
 	<bean name="pagedListService" class="com.pennant.backend.service.impl.PagedListServiceImpl"
@@ -223,10 +212,7 @@
 
 	<!--================== Use Login Details ================== -->
 
-	<bean name="userService" class="com.pennant.backend.service.impl.UserServiceImpl">
-		<property name="userDAO" ref="userDAO" />
-		<property name="securityRightDAO" ref="securityRightDAO" />
-	</bean>
+	<bean id="userService" class="com.pennanttech.framework.security.core.service.UserServiceImpl"/>
 
 	<bean id="userDAO" class="com.pennant.backend.dao.impl.UserDAOImpl"
 		parent="basisNextidDao">

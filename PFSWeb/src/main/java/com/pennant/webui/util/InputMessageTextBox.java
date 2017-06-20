@@ -59,7 +59,7 @@ import org.zkoss.zul.Separator;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.User;
 
 
 /**
@@ -106,7 +106,7 @@ public class InputMessageTextBox extends Window {
 		setParent(parent);
 
 		try {
-			userName = ((UserImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+			userName = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}

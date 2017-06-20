@@ -76,7 +76,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
@@ -84,6 +83,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.framework.security.core.User;
 
 /**
  * This is the controller class for the
@@ -1673,10 +1673,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	
 	private String getLoggedInUsers() {
 		StringBuilder builder = new StringBuilder();
-		List<UserImpl> users = SessionUtil.getLoggedInUsers();
+		List<User> users = SessionUtil.getLoggedInUsers();
 		SecurityUser secUser = null;
 		if(!users.isEmpty()) {			
-			for (UserImpl user : users) {
+			for (User user : users) {
 				if(user.getUserId() != getUserWorkspace().getLoggedInUser().getLoginUsrID()){
 					if(builder.length() > 0){
 						builder.append("</br>");

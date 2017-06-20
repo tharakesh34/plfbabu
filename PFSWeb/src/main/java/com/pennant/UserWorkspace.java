@@ -53,6 +53,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.zkoss.spring.SpringUtil;
@@ -66,10 +67,9 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
-import com.pennant.backend.service.LoginLoggingService;
-import com.pennant.backend.service.UserService;
-import com.pennant.policy.model.AuthenticationDetails;
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.AuthenticationManager;
+import com.pennanttech.framework.security.core.User;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pff.core.App;
 
 /**
@@ -85,10 +85,8 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private static final long serialVersionUID = -3936210543827830197L;
 	private static final Logger logger = Logger.getLogger(UserWorkspace.class);
 
-	private UserImpl userDetails;
-	private transient UserService userService;
+	private User userDetails;
 	private HashMap<String, String> hasMenuRights;
-	private LoginLoggingService loginLoggingService;
 	private Set<String> grantedAuthoritySet = null;
 	private LoggedInUser loggedInUser;
 	private Set<String> userRoleSet = new HashSet<String>();
@@ -97,15 +95,18 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
 	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<>();
-
+	
+	@Autowired
+	private transient UserService userService;
+	
 	/**
 	 * Default Constructor
 	 */
 	@SuppressWarnings("deprecation")
 	public UserWorkspace() {
-		loggedInUser = AuthenticationDetails.getLogiedInUser();
-		grantedAuthorities = AuthenticationDetails.getGrantedAuthorities();
-		securityRoles = AuthenticationDetails.getSecurityRoles();
+		loggedInUser = AuthenticationManager.getLoggedInUser();
+		grantedAuthorities = AuthenticationManager.getGrantedAuthorities();
+		securityRoles = AuthenticationManager.getSecurityRoles();
 
 		Sessions.getCurrent().setAttribute(org.zkoss.web.Attributes.PREFERRED_LOCALE,
 				org.zkoss.util.Locales.getLocale(loggedInUser.getUsrLanguage()));
@@ -143,7 +144,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 		if (this.grantedAuthoritySet == null) {
 			Authentication currentUser = SessionUserDetails.getAuthentication();
 
-			userDetails = (UserImpl) currentUser.getPrincipal();
+			userDetails = (User) currentUser.getPrincipal();
 			grantedAuthoritySet = new HashSet<String>(grantedAuthorities.size());
 
 			for (final GrantedAuthority grantedAuthority : grantedAuthorities) {
@@ -200,8 +201,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 	@Override
 	public void destroy() {
-		loginLoggingService.logLogOut(loggedInUser.getLoginLogId());
-
+		userService.logLogOut(loggedInUser.getLoginLogId());
 		logger.debug(loggedInUser.getUserName() + " logged out.");
 	}
 
@@ -246,7 +246,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 			secRight.setRoleCd(roleCode);
 			secRight.setPage(page);
 			secRight.setMenuRight(menuRightName);
-			Collection<SecurityRight> rights  = getUserService().getPageRights(secRight);
+			Collection<SecurityRight> rights  = userService.getPageRights(secRight);
 			rightsMap.put(rightKey.toString(), rights);
 			return rights;
 		}
@@ -333,32 +333,16 @@ public class UserWorkspace implements Serializable, DisposableBean {
 		this.userRoleSet = userRoleSet;
 	}
 
-	public UserImpl getUserDetails() {
+	public User getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails(UserImpl userDetails) {
+	public void setUserDetails(User userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public UserService getUserService() {
-		return this.userService;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
 	}
 
 	public String getUserLanguage() {
 		return getLoggedInUser().getUsrLanguage();
-	}
-
-	public LoginLoggingService getLoginLoggingService() {
-		return loginLoggingService;
-	}
-
-	public void setLoginLoggingService(LoginLoggingService loginLoggingService) {
-		this.loginLoggingService = loginLoggingService;
 	}
 
 	public List<SecurityUserDivBranch> getDivisionBranches() {

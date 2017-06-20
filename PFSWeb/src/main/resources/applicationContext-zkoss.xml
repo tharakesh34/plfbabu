@@ -2218,9 +2218,7 @@
 
 	<!--================== Use Login Details ================== -->
 
-	<bean id="userWorkspace" class="com.pennant.UserWorkspace" scope="session">
-		<property name="loginLoggingService" ref="loginLoggingService" />
-	</bean>
+	<bean id="userWorkspace" class="com.pennant.UserWorkspace" scope="session"/>
 
 	<!--================ Security User Details ================ -->
 
@@ -3454,7 +3452,7 @@
 		class="com.pennant.webui.reports.ReportGenerationPromptDialogCtrl"
 		scope="prototype" parent="basisListCtrl">
 		<property name="reportConfigurationService" ref="reportConfigurationService" />
-		<property name="unitName" value="${pffEquation.UnitName}" />
+		<property name="unitName" value="PFF" />
 	</bean>
 
 	<!-- Reports Search Template -->

@@ -59,7 +59,6 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.NotesService;
-import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -71,6 +70,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.web.components.ButtonControl;
 import com.pennanttech.pff.core.engine.WorkflowEngine;
 
@@ -418,7 +418,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public void setUserService(UserService userService) {
-		this.userWorkspace.setUserService(userService);
 		this.userService = userService;
 	}
 

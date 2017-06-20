@@ -42,8 +42,8 @@
  */
 package com.pennant.common.menu;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -84,13 +84,14 @@ import com.pennant.UserWorkspace;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.MenuDetails;
 import com.pennant.backend.service.MenuDetailsService;
-import com.pennant.backend.service.UserService;
 import com.pennant.common.menu.tree.TreeMenuFactory;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * 
@@ -156,7 +157,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	 * @throws InterruptedException
 	 */
 	private void createMenu() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.trace(Literal.ENTERING);
 
 		Image image;
 		final Groupbox gb = (Groupbox) getMainMenuWindow().getFellowIfAny("groupbox_menu");
@@ -238,37 +239,35 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		doCollapseExpandAll(getMainMenuWindow(), false);
 		
 		/* as standard, call the welcome page */
-		if ("NO".equals(homePageDisplayed)) {
-			if (App.AUTH_TYPE.equals(AuthenticationType.SSO)) {
-				if (getUserService().getUserByLogin(loggedInUser.getUserName()) == null) {
-					Window win = (Window) Executions.createComponents("/logout.zul", null, null);
-					win.setWidth("100%");
-					win.setHeight("100%");
-					win.doModal();
-					return;
-				}
-			}
-			
-			if(!App.AUTH_TYPE.equals(AuthenticationType.DAO)) {
-			        showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");	
-			} else if (loggedInUser.getAccountExpiredOn() == null) {
-				showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
-			} else if (loggedInUser.getAccountExpiredOn() != null) {
-				if("admin".equals(loggedInUser.getUserName())){
-					showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
-				}
-				if (loggedInUser.getAccountExpiredOn().before(new Date(System.currentTimeMillis()))) {
-					Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
-					win.setWidth("98%");
-					win.setHeight("98%");
-					win.doModal();
-				} else {
-					showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
-				}
+		if (!"NO".equals(homePageDisplayed)) {
+			return;
+		}
+		
+		String authType = StringUtils.trimToEmpty(userWorkspace.getLoggedInUser().getAuthType());
+		Date expiredDate = loggedInUser.getAccountExpiredOn();
+
+		if (AuthenticationType.SSO.name().equals(authType)) {
+			if (getUserService().getUserByLogin(loggedInUser.getUserName()) == null) {
+				Window win = (Window) Executions.createComponents("/logout.zul", null, null);
+				win.setWidth("100%");
+				win.setHeight("100%");
+				win.doModal();
+				return;
 			}
 		}
-		logger.debug("Leaving ");
 
+		if (!AuthenticationType.DAO.name().equals(authType) || expiredDate == null) {
+			showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
+		} else if (expiredDate.before(DateUtil.getSysDate())) {
+			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
+			win.setWidth("98%");
+			win.setHeight("98%");
+			win.doModal();
+		} else {
+			showPage("/WEB-INF/pages/welcome.zul", "menu_Item_Home");
+		}
+	
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**

@@ -70,7 +70,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.service.MenuDetailsService;
 import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
@@ -141,12 +140,13 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			}
 		});
 		
-		switch (App.AUTH_TYPE) {
-		case SSO:
+		
+		switch (user.getAuthType()) {
+		case "SSO":
 			menuitem_logout.setVisible(false);
 			menuitem_changePasssword.setVisible(false);
 			break;
-		case LDAP:
+		case "LDAP":
 			menuitem_logout.setVisible(true);
 			menuitem_changePasssword.setVisible(false);
 			break;

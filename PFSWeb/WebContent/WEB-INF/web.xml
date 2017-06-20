@@ -15,9 +15,8 @@
 			classpath:applicationContext-db.xml,
 			classpath:applicationContext-daos.xml,
 			classpath:eod-batch-config-service.xml,
- 			classpath:applicationContext-guiservices.xml,
  			classpath:customize-applicationContext.xml,
- 			classpath:springSecurityContext-dao.xml,
+ 			classpath:securityContext.xml,
  			<!-- classpath:applicationContext-mq-interface.xml,  -->
  			<!-- classpath:applicationContext-equation-interface.xml, -->
  			classpath:applicationContext-core-interface.xml,

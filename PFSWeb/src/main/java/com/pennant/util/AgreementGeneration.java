@@ -67,7 +67,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.User;
 
 public class AgreementGeneration implements Serializable {
 	private static final long		serialVersionUID	= -2030216591697935342L;
@@ -274,7 +274,7 @@ public class AgreementGeneration implements Serializable {
 	 * @param detail
 	 * @return
 	 */
-	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, UserImpl userDetails) {
+	public AgreementDetail getAggrementData(FinanceDetail detail, String aggModuleDetails, User userDetails) {
 		logger.debug("Entering");
 
 		// Create New Object For The Agreement Detail
@@ -1141,7 +1141,7 @@ public class AgreementGeneration implements Serializable {
 	 * @param userId
 	 * @param usrName
 	 */
-	public void prepareAgreementDataJoinsCust(FinanceDetail detail, FinanceReferenceDetail data, UserImpl userDetails) {
+	public void prepareAgreementDataJoinsCust(FinanceDetail detail, FinanceReferenceDetail data, User userDetails) {
 		logger.debug(" Entering ");
 		try {
 
@@ -1206,7 +1206,7 @@ public class AgreementGeneration implements Serializable {
 	 * @param usrName
 	 */
 	public void prepareAdvancePaymentAgreementData(FinanceDetail detail, FinanceReferenceDetail data,
-			UserImpl userDetails) {
+			User userDetails) {
 		logger.debug(" Entering ");
 		try {
 

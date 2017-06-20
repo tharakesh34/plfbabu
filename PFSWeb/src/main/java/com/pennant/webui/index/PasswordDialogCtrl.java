@@ -70,14 +70,14 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuser.changepassword.ChangePasswordModel;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.framework.security.core.User;
+import com.pennanttech.framework.security.core.service.UserService;
 
 /**
  * This is the controller class for the
@@ -134,7 +134,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser>  {
 		doSetFieldProperties();//set field properties
 		//getting security user details
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		UserImpl userDetails = (UserImpl) currentUser.getPrincipal();		
+		User userDetails = (User) currentUser.getPrincipal();		
 		this.securityUser = userDetails.getSecurityUser();
 		SecurityUser befImage =new SecurityUser();
 		BeanUtils.copyProperties(	this.securityUser, befImage);
@@ -180,7 +180,6 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser>  {
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
 			getSecurityUser().setUsrPwd(pwdEncoder.encode(getSecurityUser().getUsrPwd()));
-
 			
 			//update the password by calling securityUserService's changePassword method.
 			auditHeader =  getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);

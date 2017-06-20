@@ -56,13 +56,13 @@
 		</listener-class>
 	</listener>
 	<listener>
-		<description>UserSessionInit</description>
-		<listener-class>com.pennant.framework.web.util.UserSessionInit
+		<description>Initialize a session</description>
+		<listener-class>com.pennanttech.framework.security.filter.SessionInit
 		</listener-class>
 	</listener>
 	<listener>
-		<description>Adding csrf meta tag for page</description>
-		<listener-class>com.pennant.web.security.util.CsrfMetaAppender
+		<description>Append CSRF token for each page</description>
+		<listener-class>com.pennanttech.framework.security.filter.CsrfTokenAppender
 		</listener-class>
 	</listener>
 
@@ -99,10 +99,11 @@
 	<session-config>
 		<device-type>ajax</device-type>
 		<automatic-timeout />
+		<!-- <timeout-uri>/timeout.zul</timeout-uri>
 		<max-requests-per-session>1</max-requests-per-session>
-		<max-desktops-per-session>1</max-desktops-per-session>
+		<max-desktops-per-session>1</max-desktops-per-session> -->
 	</session-config>
-
+	
 	<!-- ====================================================== -->
 	<!-- Displays the wait indicator on every user action -->
 	<!-- ====================================================== -->
