@@ -50,7 +50,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.User;
 
 public class SessionUserDetails implements Serializable {
 	private static final long serialVersionUID = 1116443283350618246L;
@@ -60,16 +60,16 @@ public class SessionUserDetails implements Serializable {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
-	public static UserImpl getLogiedInUser() {
+	public static User getLogiedInUser() {
 		Authentication currentUser = getAuthentication();
 		if (currentUser == null) {
 			return null;
 		}
 
-		return (UserImpl) currentUser.getPrincipal();
+		return (User) currentUser.getPrincipal();
 	}
 
-	public static LoggedInUser getUserDetails(UserImpl userDetails) {
+	public static LoggedInUser getUserDetails(User userDetails) {
 		LoggedInUser user = new LoggedInUser();
 		user.setLoginUsrID(userDetails.getUserId());
 		user.setBranchCode(userDetails.getSecurityUser().getUsrBranchCode());
@@ -83,14 +83,14 @@ public class SessionUserDetails implements Serializable {
 
 	public static String getUserLanguage() {
 
-		UserImpl userDetails = getLogiedInUser();
+		User userDetails = getLogiedInUser();
 		if (userDetails == null) {
 			return SysParamUtil.getValueAsString("APP_LNG");
 		}
 		return userDetails.getSecurityUser().getUsrLanguage();
 	}
 
-	public static String convertClientAddress(Authentication authentication) {
+	private static String convertClientAddress(Authentication authentication) {
 		try {
 			WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
 			return details.getRemoteAddress();
@@ -100,7 +100,7 @@ public class SessionUserDetails implements Serializable {
 		}
 	}
 
-	public static String convertClientSessionId(Authentication authentication) {
+	private static String convertClientSessionId(Authentication authentication) {
 		try {
 			WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
 			return details.getSessionId();
