@@ -48,5 +48,9 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="02" author="Irfan">
+		<addColumn tableName="ADTFINSCHEDULEDETAILS">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
