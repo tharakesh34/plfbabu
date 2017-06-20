@@ -620,4 +620,30 @@
 			<column name="DocReceived" type="boolean" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="32" author="Vinay">
+	<createView viewName="DOCUMENTDETAILS_TVIEW" replaceIfExists="true">
+	SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+		   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+		   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+		   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM   DocumentDetails_temp T1
+			WHERE      NOT EXISTS (SELECT 1 FROM DocumentDetails_temp WHERE DocId = T1.DocId)
+	</createView>
+</changeSet>
+	<changeSet id="33" author="Vinay">
+		<createView viewName="DOCUMENTDETAILS_VIEW" replaceIfExists="true">
+		SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+					   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+					   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM       DocumentDetails_temp T1
+			UNION ALL
+			SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+					   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+					   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM       DocumentDetails T1
+			WHERE      NOT EXISTS (SELECT 1 FROM DocumentDetails_temp WHERE DocId = T1.DocId)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
