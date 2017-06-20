@@ -472,35 +472,32 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.onBalanceSheet.setChecked(aAccountType.isOnBalanceSheet());
 		this.allowOverDraw.setChecked(aAccountType.isAllowOverDraw());
 
+		this.gSTApplicable.setChecked(aAccountType.isTaxApplicable());
 		this.recordStatus.setValue(aAccountType.getRecordStatus());
-		if (aAccountType.isNew()
-				|| PennantConstants.RECORD_TYPE_NEW.equals(aAccountType
-						.getRecordType())) {
+		if (aAccountType.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aAccountType.getRecordType())) {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
-		}
-			this.acTypeGrpId.setObject(new AccountTypeGroup(aAccountType.getAcTypeGrpId()));
-			this.acTypeGrpId.setValue(aAccountType.getGroupCode(),aAccountType.getGroupDescription());
-		
-			this.profitCenter.setObject(new ProfitCenter(aAccountType.getProfitCenterID()));
-			this.profitCenter.setValue(aAccountType.getProfitCenterCode(),aAccountType.getProfitCenterDesc());
-			
-			if(aAccountType.getCostCenterID() != null ){
-				this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
-				this.costCenter.setValue(aAccountType.getCostCenterCode(),aAccountType.getCostCenterDesc());
-			}
-			this.gSTApplicable.setChecked(aAccountType.isTaxApplicable());
-			if (aAccountType.isTaxApplicable()) {
-				this.hSNNumber.setReadonly(false);
-				this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
-				this.natureService.setReadonly(false);
-				this.natureService.setValue(aAccountType.getaCCADDLVAR2());;
+			this.gSTApplicable.setChecked(true);
+			this.gSTApplicable.setDisabled(true);
 
-			} else {
-				this.hSNNumber.setReadonly(true);
-				this.natureService.setReadonly(true);
-			}
-			this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
+		}
+		this.acTypeGrpId.setObject(new AccountTypeGroup(aAccountType.getAcTypeGrpId()));
+		this.acTypeGrpId.setValue(aAccountType.getGroupCode(), aAccountType.getGroupDescription());
+
+		this.profitCenter.setObject(new ProfitCenter(aAccountType.getProfitCenterID()));
+		this.profitCenter.setValue(aAccountType.getProfitCenterCode(), aAccountType.getProfitCenterDesc());
+			
+		if (aAccountType.getCostCenterID() != null) {
+			this.costCenter.setObject(new CostCenter(aAccountType.getCostCenterID()));
+			this.costCenter.setValue(aAccountType.getCostCenterCode(), aAccountType.getCostCenterDesc());
+		}
+		this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
+		this.natureService.setValue(aAccountType.getaCCADDLVAR2());
+		if (!this.gSTApplicable.isChecked()) {
+			this.hSNNumber.setReadonly(true);
+			this.natureService.setReadonly(true);
+		}
+		this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 		
 		logger.debug("Leaving");
 	}
@@ -814,7 +811,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 		if (!this.hSNNumber.isReadonly()) {
 			this.hSNNumber.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_AccountTypeDialog_HSNNumber.value"), PennantRegularExpressions.REGEX_ALPHANUM,true));
+					.getLabel("label_AccountTypeDialog_HSNNumber.value"), null,true));
 		}
 		if (!this.natureService.isReadonly()) {
 			this.natureService.setConstraint(new PTStringValidator(Labels
@@ -1353,11 +1350,13 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.hSNNumber.setReadonly(false);
 			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(false);
-			this.natureService.setValue("");;
+			this.natureService.setValue("");
 
 		} else {
 			this.hSNNumber.setReadonly(true);
+			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(true);
+			this.natureService.setValue("");
 		}
 
 		logger.debug("Leaving");

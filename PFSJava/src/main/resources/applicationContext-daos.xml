@@ -538,6 +538,7 @@
 	<bean name="cityServiceTarget"
 		class="com.pennant.backend.service.systemmasters.impl.CityServiceImpl">
 		<property name="cityDAO" ref="cityDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -9995,6 +9996,7 @@
 
  	<bean name="pinCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.PinCodeServiceImpl">
        <property name="pinCodeDAO" ref="pinCodeDAO" />
+       <property name="branchDAO" ref="branchDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    

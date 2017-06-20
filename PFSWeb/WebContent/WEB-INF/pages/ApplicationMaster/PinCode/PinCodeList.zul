@@ -54,10 +54,10 @@
 								<row>
 									<label id="label_PinCodeList_PinCode" value="${c:l('label_PinCodeList_PinCode.value')}" />
 									<listbox id="sortOperator_PinCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="pinCode" width="90px" maxlength="10" />
+									<textbox id="pinCode" width="150px" maxlength="20" />
 									<label id="label_PinCodeList_City" value="${c:l('label_PinCodeList_City.value')}" />
 									<listbox id="sortOperator_City" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="city" width="72px" maxlength="8" />
+									<textbox id="city" width="150px" maxlength="8" />
 								</row>
 								<row>
 									<label id="label_PinCodeList_AreaName" value="${c:l('label_PinCodeList_AreaName.value')}" />

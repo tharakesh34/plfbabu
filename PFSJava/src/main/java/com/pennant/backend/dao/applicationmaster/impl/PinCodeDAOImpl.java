@@ -247,5 +247,22 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
+	@Override
+	public boolean isCityCodeExists(String pcCity) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("City", pcCity);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(City)");
+		selectSql.append(" From PinCodes_View ");
+		selectSql.append(" Where City=:City");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
 	
 }	
