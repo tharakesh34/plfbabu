@@ -709,4 +709,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet author="PrasadRaju" id="33" dbms="oracle">
+    <sqlFile path="UDF_CONVERTCURRENCY.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
+	</changeSet>  
 </databaseChangeLog>
