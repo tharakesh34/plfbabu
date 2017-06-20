@@ -20,7 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
-	<changeSet author="Siva" id="1">
+	 <changeSet author="Siva" id="1">
 		<createTable tableName="FinTaxDetail">
 			<column name="FinReference" type="nvarchar(20)">
 				<constraints primaryKey="true" nullable="false" />
@@ -711,5 +711,492 @@
 	</changeSet>
 	<changeSet author="PrasadRaju" id="33" dbms="oracle">
     <sqlFile path="UDF_CONVERTCURRENCY.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
-	</changeSet>  
+	</changeSet>
+	<changeSet id="34.1" author="Jayant">
+	    <sql>
+		Delete from extendedfieldheader where modulename='Vas' and submodulename in ('VASFFR01','VASPD01','VASEC01','VASCC01','ETOUCHLI','GCPPLI','GPGI','CCPGI','IHGI','STGI','TMGI','FWGI');
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASFFR01','Financial Fitness Report','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASPD01','Property Dossier','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASEC01','Gold EMI Card','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASCC01','Super Card 499','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','ETOUCHLI','eTouch Online Term','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','GCPPLI','Group Credit Protection Plan','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','GPGI','Global Personal Guard Policy','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','CCPGI','Comprehensive Care Plan','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','IHGI','Health Guard Policy','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','STGI','Travel Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','TMGI','Two Wheeler Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','FWGI','Car Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+		Update seqextendedfieldheader set seqno=(Select max(moduleid) from extendedfieldheader);
+	    </sql>
+	</changeSet>
+	<changeSet id="34" author="Jayant">
+		<createTable tableName="VAS_VASFFR01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="35" author="Jayant">
+		<createTable tableName="VAS_VASPD01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="36" author="Jayant">
+		<createTable tableName="VAS_VASEC01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="37" author="Jayant">
+		<createTable tableName="VAS_VASCC01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="38" author="Jayant">
+		<createTable tableName="VAS_ETOUCHLI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="39" author="Jayant">
+		<createTable tableName="VAS_GCPPLI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="40" author="Jayant">
+		<createTable tableName="VAS_GPGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="41" author="Jayant">
+		<createTable tableName="VAS_CCPGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="42" author="Jayant">
+		<createTable tableName="VAS_IHGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="43" author="Jayant">
+		<createTable tableName="VAS_STGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="44" author="Jayant">
+		<createTable tableName="VAS_TMGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="45" author="Jayant">
+		<createTable tableName="VAS_FWGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="46" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED" tableName="VAS_VASFFR01_ED"/>
+	</changeSet>
+<changeSet id="47" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED" tableName="VAS_VASPD01_ED"/>
+	</changeSet>
+<changeSet id="48" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED" tableName="VAS_VASEC01_ED"/>
+	</changeSet>
+<changeSet id="49" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED" tableName="VAS_VASCC01_ED"/>
+	</changeSet>
+<changeSet id="50" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED" tableName="VAS_ETOUCHLI_ED"/>
+	</changeSet>
+<changeSet id="51" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED" tableName="VAS_GCPPLI_ED"/>
+	</changeSet>
+<changeSet id="52" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED" tableName="VAS_GPGI_ED"/>
+	</changeSet>
+<changeSet id="53" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED" tableName="VAS_CCPGI_ED"/>
+	</changeSet>
+<changeSet id="54" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED" tableName="VAS_IHGI_ED"/>
+	</changeSet>
+<changeSet id="55" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED" tableName="VAS_STGI_ED"/>
+	</changeSet>
+<changeSet id="56" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED" tableName="VAS_TMGI_ED"/>
+	</changeSet>
+<changeSet id="57" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED" tableName="VAS_FWGI_ED"/>
+	</changeSet>
+<changeSet id="58" author="Jayant">
+		<createTable tableName="VAS_VASFFR01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="59" author="Jayant">
+		<createTable tableName="VAS_VASPD01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="60" author="Jayant">
+		<createTable tableName="VAS_VASEC01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="61" author="Jayant">
+		<createTable tableName="VAS_VASCC01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="62" author="Jayant">
+		<createTable tableName="VAS_ETOUCHLI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="63" author="Jayant">
+		<createTable tableName="VAS_GCPPLI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="64" author="Jayant">
+		<createTable tableName="VAS_GPGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="65" author="Jayant">
+		<createTable tableName="VAS_CCPGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="66" author="Jayant">
+		<createTable tableName="VAS_IHGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="67" author="Jayant">
+		<createTable tableName="VAS_STGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="68" author="Jayant">
+		<createTable tableName="VAS_TMGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="69" author="Jayant">
+		<createTable tableName="VAS_FWGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="clob" />
+			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+			<column name="TASKID" type="datetime2" />
+			<column name="NEXTTASKID" type="decimal(18,2)" />
+			<column name="RECORDTYPE" type="float" />
+			<column name="WORKFLOWID" type="nclob" />
+		</createTable>
+	</changeSet>
+<changeSet id="70" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED_TEMP" tableName="VAS_VASFFR01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="71" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED_TEMP" tableName="VAS_VASPD01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="72" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED_TEMP" tableName="VAS_VASEC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="73" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED_TEMP" tableName="VAS_VASCC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="74" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED_TEMP" tableName="VAS_ETOUCHLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="75" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED_TEMP" tableName="VAS_GCPPLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="76" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED_TEMP" tableName="VAS_GPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="77" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED_TEMP" tableName="VAS_CCPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="78" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED_TEMP" tableName="VAS_IHGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="79" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED_TEMP" tableName="VAS_STGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="80" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED_TEMP" tableName="VAS_TMGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="81" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED_TEMP" tableName="VAS_FWGI_ED_TEMP"/>
+	</changeSet>
 </databaseChangeLog>
