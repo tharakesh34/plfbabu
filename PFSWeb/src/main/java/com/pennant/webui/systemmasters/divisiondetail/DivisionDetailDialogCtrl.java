@@ -492,7 +492,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.divisionCodeDesc.setMaxlength(50);
 		this.row_Suspremarks.setVisible(false);
 		
-		this.entityCode.setModuleName("Entities");
+		this.entityCode.setModuleName("Entity");
 		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
