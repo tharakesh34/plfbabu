@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  LoginService.java													*                           
+ * FileName    		:  UserService.java														*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -39,13 +39,41 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.service;
+ */
+package com.pennanttech.framework.security.core.service;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.pennant.backend.model.SecLoginlog;
+import com.pennant.backend.model.administration.SecurityRight;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 
-public interface LoginService {
-	
-	SecurityUser getLoginUser(String usrLoginName, String usrPassword);
-	
+public interface UserService {
+	SecurityUser getNewUser();
+
+	int getCountAllSecUser();
+
+	SecurityUser getUserByLogin(final String userName);
+
+	List<SecurityUser> getUserLikeLoginname(String value);
+
+	List<SecurityUser> getUserLikeLastname(String value);
+
+	List<SecurityUser> getUserLikeEmail(String value);
+
+	List<SecurityUser> getUserListByLogin(String userName);
+
+	Collection<SecurityRight> getMenuRightsByUser(SecurityUser user);
+
+	Collection<SecurityRight> getPageRights(SecurityRight secRight);
+
+	List<SecurityRole> getUserRolesByUserID(long userID);
+
+	List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles);
+
+	long logLoginAttempt(SecLoginlog logingLog);
+
+	void logLogOut(long loginId);
 }
