@@ -609,4 +609,15 @@
 		
 		</sql>
 	</changeSet>
+	<changeSet id="30" author="Satya">
+		<addColumn tableName="DocumentDetails">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+<changeSet id="31" author="Satya">
+		<addColumn tableName="DocumentDetails_Temp">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
