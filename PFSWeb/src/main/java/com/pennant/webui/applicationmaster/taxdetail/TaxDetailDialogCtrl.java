@@ -1114,7 +1114,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				auditHeader = ErrorControl.showErrorDetails(this.window_TaxDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getProvinceDialogCtrl().doFillTaxDetails(this.listTaxDetails);
+					getProvinceDialogCtrl().doFillGSTINMappingDetails(this.listTaxDetails);
 					// send the data back to customer
 					closeDialog();
 				}

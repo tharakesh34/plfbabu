@@ -77,7 +77,7 @@
 							id="tab_basicDetails" />
 						<tab
 							label="${c:l('tab_ProvinceDialog_GstDetails.value')}"
-							id="tab_gstdetails"  />
+							id="tab_gstdetails" visible="false" />
 
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
@@ -219,7 +219,7 @@
 								</toolbar>
 								<toolbar align="end"
 									style="float:right; border-style: none; padding:0px;">
-									<button id="btnNew_gstDetails" visible="false"
+									<button id="btnNew_gstDetails"
 										label="${c:l('label_New')}" autodisable="btnNew_GstDetails" />
 								</toolbar>
 							</hbox>

@@ -359,16 +359,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		//Reneder GSTIN Mapping
 		doFillGSTINMappingDetails(aProvince.getTaxDetailList());
 
-		int divKycHeight = this.borderLayoutHeight - 80;
-		int semiBorderlayoutHeights = divKycHeight / 2;
-		if (aProvince.isTaxAvailable()) {
-			this.listBoxTaxDetails.setHeight(semiBorderlayoutHeights - 125 + "px");
-			this.tab_gstdetails.setVisible(true);
-		} 
+		
 		if (aProvince.isNewRecord()) {
 			this.cPCountry.setDescription("");
+			this.tab_gstdetails.setVisible(false);
 		} else {
 			this.cPCountry.setDescription(aProvince.getLovDescCPCountryName());
+			this.tab_gstdetails.setVisible(true);
+			this.listBoxTaxDetails.setHeight(this.borderLayoutHeight - 125 + "px");
 		}
 		if (aProvince.isNew() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -382,7 +380,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	//Mapping details like new button , list diaplay and double click.....
 
 	//Reneder the list
-	protected void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
+	public void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
 		logger.debug("Entering");
 		this.listBoxTaxDetails.getItems().clear();
 		setTaxDetailList(taxMappingDetailList);
@@ -407,13 +405,39 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(taxMappingDetail.getRecordType()));
 				lc.setParent(item);
-				item.setAttribute("id", taxMappingDetail.getId());
+				item.setAttribute("data", taxMappingDetail);
 
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
 				this.listBoxTaxDetails.appendChild(item);
 			}
 		}
 		logger.debug("Leaving");
+	}
+	
+	//Double click GSTIN Mapping Details list
+	public void onTaxDetailItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		final Listitem item = this.listBoxTaxDetails.getSelectedItem();
+		if (item != null) {
+			final TaxDetail taxDetail = (TaxDetail) item.getAttribute("data");
+			if (StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+				MessageUtil.showError("Not Allowed to maintain This Record");
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("taxdetail", taxDetail);
+				map.put("provinceDialogCtrl", this);
+
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul",
+							window_ProvinceDialog, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -752,13 +776,15 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.cPProvince.setReadonly(false);
+			this.cPProvinceName.setReadonly(false);
 		} else {
 			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
+			this.cPProvinceName.setReadonly(true);
 		}
 
-		this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
+		//this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
 		this.cPIsActive.setDisabled(isReadOnly("ProvinceDialog_CPIsActive"));
 		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
@@ -770,7 +796,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.taxAvailable.setDisabled(true);
 		}
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
-		//		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
+		//this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1181,36 +1207,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Entering");
 	}
 
-	public void doFillTaxDetails(List<TaxDetail> taxDetails) {
-		this.listBoxTaxDetails.getItems().clear();
-		if (taxDetails != null) {
-			for (TaxDetail taxDetail : taxDetails) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(taxDetail.getCountryName());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getProvinceName());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getEntityDesc());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getTaxCode());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getPinCode());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getCityName());
-				lc.setParent(item);
-				lc = new Listcell(taxDetail.getRecordStatus());
-				lc.setParent(item);
-				lc = new Listcell(PennantJavaUtil.getLabel(taxDetail.getRecordType()));
-				lc.setParent(item);
-				item.setAttribute("id", taxDetail.getId());
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onTaxDetailItemDoubleClicked");
-				this.listBoxTaxDetails.appendChild(item);
-
-			}
-			setTaxDetailList(taxDetails);
-		}
-	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
