@@ -60,6 +60,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
 	private Timestamp docReceivedDate;
+	private boolean docReceived;
 
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
@@ -338,6 +339,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocReceivedDate(Timestamp docReceivedDate) {
 		this.docReceivedDate = docReceivedDate;
+	}
+
+	public boolean isDocReceived() {
+		return docReceived;
+	}
+
+	public void setDocReceived(boolean docReceived) {
+		this.docReceived = docReceived;
 	}
 
 }
