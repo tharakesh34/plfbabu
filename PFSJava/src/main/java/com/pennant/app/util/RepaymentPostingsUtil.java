@@ -62,6 +62,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.CustEODEvent;
+import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -112,6 +113,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private OverdueChargeRecoveryDAO	recoveryDAO;
 	private FinODDetailsDAO				finODDetailsDAO;
 	private LatePayMarkingService		latePayMarkingService;
+	private LatePayBucketService		latePayBucketService;
 	private AccrualService 				accrualService;
 
 	public RepaymentPostingsUtil() {
@@ -405,7 +407,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		//Finance Profit Details Updation
 		String oldFinStatus = financeMain.getFinStatus();
 		pftDetail = accrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
-		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate, financeMain);
+		latePayBucketService.updateDPDBuketing(scheduleDetails, financeMain, dateValueDate);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
@@ -1252,6 +1254,10 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
+	}
+
+	public void setLatePayBucketService(LatePayBucketService latePayBucketService) {
+		this.latePayBucketService = latePayBucketService;
 	}
 
 }

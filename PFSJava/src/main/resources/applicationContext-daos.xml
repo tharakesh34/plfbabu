@@ -6521,6 +6521,7 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 
@@ -9424,6 +9425,11 @@
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
+	
+	<!-- Late Pay Buckets-->
+	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
+	</bean>
+	
 	<!-- AccountTypeGroup -->
 	<bean id="accountTypeGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

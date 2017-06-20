@@ -474,6 +474,7 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!--============ Finance Excess Amounts Details ============== -->
