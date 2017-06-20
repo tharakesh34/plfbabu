@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
@@ -64,6 +64,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -235,30 +236,48 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		if (this.cityCode.getValue().isEmpty() && !this.stateCode.getValue().isEmpty()) {
-			fillCitydetails(this.stateCode.getValue());
-		} else {
-			this.cityCode.setValue("");
-			this.cityCode.setDescription("");
-			this.pinCode.setValue("");
-			this.pinCode.setDescription("");
-
+		Object dataObject = stateCode.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			fillPindetails(null, null);
+		}else if (!(dataObject instanceof String)) {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.stateCode.setErrorMessage("");
+				pcProvince = this.stateCode.getValue();
+				fillPindetails(null, pcProvince);
+			}else{
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
 		}
+		fillCitydetails(pcProvince);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void fillCitydetails(String id) {
+	private void fillCitydetails(String state) {
 		logger.debug("Entering");
 
-		if (id != null) {
-			this.cityCode.setModuleName("City");
-			this.cityCode.setValueColumn("PCCity");
-			this.cityCode.setDescColumn("PCCityName");
-			this.cityCode.setValidateColumns(new String[] { "PCCity" });
-			Filter[] filters1 = new Filter[1];
-			filters1[0] = new Filter("PCProvince", id, Filter.OP_EQUAL);
-			this.cityCode.setFilters(filters1);
+		this.cityCode.setModuleName("City");
+		this.cityCode.setValueColumn("PCCity");
+		this.cityCode.setDescColumn("PCCityName");
+		this.cityCode.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters1 = new Filter[1];
+		
+		if (state == null) {
+			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
 		}
+		
+		this.cityCode.setFilters(filters1);
 	}
 
 	/**
@@ -271,32 +290,45 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug("Entering");
 
 		Object dataObject = cityCode.getObject();
-
+		String cityValue = null;
 		if (!(dataObject instanceof String)) {
 			City details = (City) dataObject;
 			if (details != null) {
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
-				fillPindetails(details.getPCCity());
+				cityValue = details.getPCCity();
+				fillPindetails(cityValue,this.stateCode.getValue());
 			}else{
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
 				this.cityCode.setValue("");
-				
-
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				fillPindetails(null,this.stateCode.getValue());
 			}
+		} else if("".equals(dataObject)) {
+			this.stateCode.setObject("");
 		}
 		logger.debug("Leaving");
 	}
 
-	private void fillPindetails(String id) {
+	private void fillPindetails(String id,String province) {
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+		Filter[] filters1 = new Filter[1];
+		
 		if (id != null) {
-			this.pinCode.setModuleName("PinCode");
-			this.pinCode.setValueColumn("PinCode");
-			this.pinCode.setDescColumn("AreaName");
-			this.pinCode.setValidateColumns(new String[] { "PinCode" });
-			Filter[] filters1 = new Filter[1];
 			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
-			this.pinCode.setFilters(filters1);
+		} else if(province != null && !province.isEmpty()) {
+			filters1[0] = new Filter("PCProvince", province, Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
+		
+		this.pinCode.setFilters(filters1);
 	}
 
 	/**
@@ -439,68 +471,6 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug(Literal.LEAVING);
 	}
 	
-
-
-
-      public void onFulfillCountry(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.country.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-      public void onFulfillStateCode(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.stateCode.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-      public void onFulfillCityCode(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.cityCode.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-      public void onFulfillPinCode(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.pinCode.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
