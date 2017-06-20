@@ -372,8 +372,8 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
 				String[] parameters = new String[2];
 
-				parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode();
 				parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode().substring(0,2);
+				parameters[1] = PennantJavaUtil.getLabel("label_StateCode") + ": " + taxDetail.getStateCode();
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
 			}
@@ -382,8 +382,8 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
 				String[] parameters = new String[2];
 				
-				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + taxDetail.getTaxCode();
 				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + taxDetail.getTaxCode().substring(2,12);
+				parameters[1] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + taxDetail.getEntityCode();
 				
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
 			}
