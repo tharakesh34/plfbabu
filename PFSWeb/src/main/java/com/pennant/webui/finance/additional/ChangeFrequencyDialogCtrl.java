@@ -329,7 +329,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 				
 				// Only allowed if payment amount is greater than Zero
-				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 					continue;
 				}
 
