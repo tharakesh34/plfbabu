@@ -123,18 +123,6 @@
 		<property name="lookupOnStartup" value="true"/>
 	</bean>
 
-	<!-- LDAP Environment -->
-	<bean id="ldapEnvironment"
-		class="com.pennant.backend.model.administration.LDAPEnvironment"
-		scope="prototype">
-		<property name="contextFactory" value="${ladp.contextFactory}" />
-		<property name="authentication" value="${ldap.authentication}" />
-		<property name="principal" value="${ldap.principal}" />
-		<property name="credentials" value="${ldap.credentials}" />
-		<property name="providerURL" value="${ldap.provider.url}" />
-		<property name="base" value="${ldap.base}" />
-	</bean>
-	
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="extDataSource" ref="pfsExtDatasource" />
