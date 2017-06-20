@@ -48,7 +48,7 @@ import java.util.Map;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -223,7 +223,7 @@ public class ReportList extends AbstractWorkflowEntity {
 	}
 	
 	public Map<String, Object> getMainHeaderDetails(Map<String, Object> mainHeaders){
-		UserImpl userImpl =  SessionUserDetails.getLogiedInUser();
+		User userImpl =  SessionUserDetails.getLogiedInUser();
 
 		mainHeaders.put("reportHeading", getReportHeading());
 		mainHeaders.put("moduleType", getModuleType());
