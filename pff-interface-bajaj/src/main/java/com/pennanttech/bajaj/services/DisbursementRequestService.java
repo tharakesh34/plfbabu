@@ -2,6 +2,7 @@ package com.pennanttech.bajaj.services;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -298,17 +299,19 @@ public class DisbursementRequestService extends BajajService implements Disburse
 	}
 
 	private String getSTPFileSequence() {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" select COALESCE(FILESEQUENCENO, 0) +1 from DATA_ENGINE_CONFIG");
-		sql.append(" where Name = :Name AND LASTPROCESSEDON = :LASTPROCESSEDON");
+		sql.append(" where Name = :Name");
+		sql.append(" and LASTPROCESSEDON >= :TODAY and LASTPROCESSEDON <= :NEXTDAY");
 
-		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
-		paramMap.addValue("LASTPROCESSEDON", DateUtil.getSysDate());
-
+		parmMap.addValue("Name", "DISB_HDFC_EXPORT");
+		parmMap.addValue("TODAY", new java.sql.Date(DateUtil.getSysDate().getTime()));
+		parmMap.addValue("NEXTDAY", new java.sql.Date(DateUtil.addDays(DateUtil.getSysDate(), 1).getTime()));
+		
 		try {
-			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);
+			return namedJdbcTemplate.queryForObject(sql.toString(), parmMap, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
