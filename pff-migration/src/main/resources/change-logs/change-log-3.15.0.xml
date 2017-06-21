@@ -1382,4 +1382,145 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<renameTable newTableName="CIBIL_CUSTOMER_EXTRACT"
 			oldTableName="CIBIL_DETAILS" />
 	</changeSet>
+	<changeSet id="98" author="Madhubabu">
+	<dropTable tableName="FinTaxDetailUpload_temp"/>
+	<dropTable tableName="FinTaxDetailUpload"/>
+	</changeSet>
+<changeSet author="Madhubabu" id="99">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+
+<changeSet author="Madhubabu" id="100">
+		<createTable tableName="FinTaxUploadDetail">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Madhubabu" id="101">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="102" author="Madhubabu">
+	<dropTable tableName="FinTaxUploadDetail_temp"/>
+	</changeSet>
+	<changeSet author="Madhubabu" id="103">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="104" author="Madhubabu">
+	<dropTable tableName="FinTaxDetailUploadHeader"/>
+	</changeSet>
+	<changeSet author="Madhubabu" id="105">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
