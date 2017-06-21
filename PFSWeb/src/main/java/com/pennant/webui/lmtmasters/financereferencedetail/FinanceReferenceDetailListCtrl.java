@@ -462,6 +462,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "CommitmentTypeDesc");
 			}else if(isVAS){
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "VasProductDesc");
+			}else if(isPromotion){
+				searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "LovDescPromotionName");
 			}else{
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finTypeDesc.getSelectedItem(), this.finTypeDesc.getValue(), "LovDescFinTypeName");
 			}
