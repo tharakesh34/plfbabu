@@ -69,7 +69,7 @@ public class FinanceFlagsController {
 		List<FinFlagsDetail> flagseList = financeFlag.getFinFlagDetailList();
 		for(FinFlagsDetail detail: flagseList){
 			detail.setLastMntBy(userDetails.getLoginUsrID());
-			detail.setModuleName(FinanceConstants.FINSER_EVENT_FINFLAGS);
+			detail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
 		
 		financeFlag.setUserDetails(userDetails);
@@ -119,7 +119,7 @@ public class FinanceFlagsController {
 		
 		for (FinFlagsDetail flagDetail : financeFlag.getFinFlagDetailList()) {
 			flagDetail.setLastMntBy(userDetails.getLoginUsrID());
-			flagDetail.setModuleName(FinanceConstants.FINSER_EVENT_FINFLAGS);
+			flagDetail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
 		
 		//get the header details from the request

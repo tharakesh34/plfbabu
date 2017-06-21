@@ -157,7 +157,7 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService,Finan
 		List<FinFlagsDetail> finFlagDetailsList= financeFlag.getFinFlagDetailList();
 		for (FinFlagsDetail detail : finFlagDetailsList) {
 			FinFlagsDetail aFinFlag = finFlagDetailsDAO.getFinFlagsByRef(financeFlag.getFinReference(),
-					detail.getFlagCode(), FinanceConstants.FINSER_EVENT_FINFLAGS, "_AView");
+					detail.getFlagCode(), FinanceConstants.MODULE_NAME, "_AView");
 			if (aFinFlag == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = financeFlag.getFinReference();

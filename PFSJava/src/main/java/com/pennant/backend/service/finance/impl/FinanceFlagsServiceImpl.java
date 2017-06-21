@@ -311,7 +311,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			for (FinFlagsDetail flagDetail : financeFlag.getFinFlagDetailList()) {
 				String finReference = financeFlag.getFinReference();
 				String flagCode = flagDetail.getFlagCode();
-				String moduleName = FinanceConstants.FINSER_EVENT_FINFLAGS;
+				String moduleName = FinanceConstants.MODULE_NAME;
 
 				// delete particular flag code
 				getFinFlagDetailsDAO().delete(finReference, flagCode, moduleName, "");
