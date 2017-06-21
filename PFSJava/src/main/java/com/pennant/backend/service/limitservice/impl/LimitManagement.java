@@ -490,7 +490,7 @@ public class LimitManagement {
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
 				break;
-			// loan rejected
+			// add disbursement rejected
 			case LimitConstants.CANCIL:
 
 				if (prvblock != null) {
@@ -501,6 +501,9 @@ public class LimitManagement {
 						limitDetailDAO.updateReserveUtilise(details, "");
 					}
 					limitTransactionDetailDAO.updateSeq(prvblock.getTransactionId(), 0);
+				}else{
+					//if there is no block now then nothing to cancel. Log not required
+					mapping.setProceeed(false);
 				}
 				break;
 
