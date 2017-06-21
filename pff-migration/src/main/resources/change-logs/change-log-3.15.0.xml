@@ -1351,4 +1351,9 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Manoj.P" id="94">
+		<renameColumn columnDataType="VARCHAR(30)" newColumnName="MEMBER_ID"
+		oldColumnName="MEMBERID" tableName="CIBIL_FILE_INFO" />
+	</changeSet>
 </databaseChangeLog>
