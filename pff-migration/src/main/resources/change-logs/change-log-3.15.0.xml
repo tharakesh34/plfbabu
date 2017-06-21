@@ -1356,4 +1356,9 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<renameColumn columnDataType="VARCHAR(30)" newColumnName="MEMBER_ID"
 		oldColumnName="MEMBERID" tableName="CIBIL_FILE_INFO" />
 	</changeSet>
+	
+	<changeSet author="Manoj.P" id="95">
+		<renameColumn columnDataType="VARCHAR(16)" newColumnName="MEMBER_NAME"
+		oldColumnName="MEMBER_SHORTNAME" tableName="CIBIL_FILE_INFO" />
+	</changeSet>
 </databaseChangeLog>
