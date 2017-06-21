@@ -624,6 +624,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		logger.debug(Literal.ENTERING);
 
 		this.country.setValue(aTaxDetail.getCountry());
+		this.country.setDescription(aTaxDetail.getCountryName());
 		this.stateCode.setValue(aTaxDetail.getStateCode());
 		this.entityCode.setValue(aTaxDetail.getEntityCode());
 		this.taxCode.setValue(aTaxDetail.getTaxCode());
@@ -633,23 +634,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		this.addressLine4.setValue(aTaxDetail.getAddressLine4());
 		this.pinCode.setValue(aTaxDetail.getPinCode());
 		this.cityCode.setValue(aTaxDetail.getCityCode());
+		this.cityCode.setDescription(aTaxDetail.getCityName());
+		this.stateCode.setDescription(aTaxDetail.getProvinceName());
+		this.entityCode.setDescription(aTaxDetail.getEntityDesc());
+		this.pinCode.setDescription(aTaxDetail.getCityName());
 
-		if (aTaxDetail.isNewRecord()) {
-
-			this.country.setValue("IN");
-			this.country.setDescription("INDIAone");
-			this.stateCode.setValue(aTaxDetail.getStateCode(),aTaxDetail.getProvinceName());
-			this.cityCode.setDescription("");
-			this.entityCode.setDescription("");
-			this.pinCode.setDescription("");
-			
-		} else {
-			this.country.setDescription(aTaxDetail.getCountryName());
-			this.stateCode.setDescription(aTaxDetail.getProvinceName());
-			this.cityCode.setDescription(aTaxDetail.getCityName());
-			this.entityCode.setDescription(aTaxDetail.getEntityDesc());
-			this.pinCode.setDescription(aTaxDetail.getCityCode());
-		}
+		
 		this.recordStatus.setValue(aTaxDetail.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
