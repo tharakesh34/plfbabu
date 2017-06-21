@@ -2731,13 +2731,18 @@ public class ScheduleCalculator {
 		List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
 
 		BigDecimal feeAmount = BigDecimal.ZERO;
+		//CH - In case of Fee Added to Loan Amount - fee should be added to the finance amount and subtracted from the Fee amount which means it is zero. 
+		//Hence not including it in the calculation 
 		for (FinFeeDetail finFeeDetail : finFeeDList) {
 			if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
 					finFeeDetail.getFeeScheduleMethod())
 					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
 							finFeeDetail.getFeeScheduleMethod())
 					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
-							finFeeDetail.getFeeScheduleMethod())) {
+							finFeeDetail.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
+							finFeeDetail.getFeeScheduleMethod())
+			) {
 				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
 			}
 		}

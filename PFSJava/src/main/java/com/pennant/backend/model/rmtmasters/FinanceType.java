@@ -71,7 +71,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String finDftStmtFrq;
 	private boolean finIsAlwMD;
 	private int finHistRetension;
-	private boolean equalRepayment;
+	private boolean equalRepayment = true;
 	private String finAssetType;
 	private boolean finIsDwPayRequired;
 	private long downPayRule;
