@@ -256,34 +256,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	}
 
-//	/**
-//	 * @param connection
-//	 * @param custId
-//	 * @param date
-//	 * @throws Exception
-//	 */
-//	public CustEODEvent processDPDBuketing(CustEODEvent custEODEvent) throws Exception {
-//		logger.debug(" Entering ");
-//		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-//		Date valueDate = custEODEvent.getEodValueDate();
-//
-//		for (FinEODEvent finEODEvent : finEODEvents) {
-//			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinProfitDetail(), valueDate,
-//					finEODEvent.getFinanceMain());
-//
-//			if (isFinStsChanged) {
-//				finEODEvent.setUpdFinMain(true);
-//				finEODEvent.addToFinMianUpdate("FinStatus");
-//				finEODEvent.addToFinMianUpdate("DueBucket");
-//				finEODEvent.getFinProfitDetail().setFinStatus(finEODEvent.getFinanceMain().getFinStatus());
-//				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
-//			}
-//		}
-//
-//		logger.debug(" Leaving ");
-//		return custEODEvent;
-//	}
-
 	public CustEODEvent processCustomerStatus(CustEODEvent custEODEvent) {
 		logger.debug(" Entering ");
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -314,90 +286,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		return custEODEvent;
 
 	}
-
-//	/**
-//	 * @param connection
-//	 * @param custId
-//	 * @param valueDate
-//	 * @throws Exception
-//	 */
-//	public boolean updateDPDBuketing(FinanceProfitDetail pftDetail, Date valueDate, FinanceMain financeMain) {
-//
-//		int dueDays = pftDetail.getCurODDays();
-//		int newDueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
-//		int dueBucket = financeMain.getDueBucket();
-//		BigDecimal minDuePerc = BigDecimal.ZERO;
-//
-//		String newFinStatus = FinanceConstants.FINSTSRSN_SYSTEM;
-//		String finStatus = StringUtils.trimToEmpty(financeMain.getFinStatus());
-//		String productCode = pftDetail.getFinCategory();
-//
-//		BigDecimal duePercentage = BigDecimal.ZERO;
-//
-//		//No current OD Days and No change in the Bucket Status and Number of Buckets
-//		if (pftDetail.getCurODDays() == 0) {
-//			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-//				return false;
-//			}
-//		}
-//
-//		//No current OD Buckets and No change in the Bucket Status and Number of Buckets
-//		if (newDueBucket == 0) {
-//			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-//				return false;
-//			}
-//		}
-//
-//		BigDecimal netSchdAmount = pftDetail.getTdSchdPri().add(pftDetail.getTdSchdPft());
-//		BigDecimal netDueAmount = netSchdAmount.subtract(pftDetail.getTdSchdPriPaid())
-//				.subtract(pftDetail.getTdSchdPftPaid()).subtract(pftDetail.getEmiInAdvanceBal())
-//				.subtract(pftDetail.getExcessAmtBal());
-//
-//		if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
-//			duePercentage = (netDueAmount.divide(netSchdAmount, 0, RoundingMode.HALF_DOWN))
-//					.multiply(new BigDecimal(100));
-//		}
-//
-//		//get ignore bucket configuration from SMT parameter
-//		Object object = SysParamUtil.getValue(SMTParameterConstants.IGNORING_BUCKET);
-//		if (object != null) {
-//			minDuePerc = (BigDecimal) object;
-//		}
-//
-//		if (duePercentage.compareTo(minDuePerc) <= 0) {
-//			newDueBucket = 0;
-//		}
-//
-//		//No change in the Bucket Status and Number of Buckets
-//		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-//			return false;
-//		}
-//
-//		long bucketID = 0;
-//		List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
-//		sortBucketConfig(list);
-//		for (DPDBucketConfiguration dpdBucketConfiguration : list) {
-//
-//			if (dpdBucketConfiguration.getDueDays() > newDueBucket) {
-//				break;
-//			}
-//
-//			bucketID = dpdBucketConfiguration.getBucketID();
-//		}
-//
-//		if (bucketID != 0) {
-//			newFinStatus = getBucket(bucketID);
-//		}
-//
-//		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
-//			return false;
-//		}
-//
-//		financeMain.setFinStatus(newFinStatus);
-//		financeMain.setDueBucket(newDueBucket);
-//
-//		return true;
-//	}
 
 	private FinODDetails createODDetails(FinanceScheduleDetail curSchd, FinanceMain finMain,
 			FinODPenaltyRate penaltyRate, Date valueDate) {
