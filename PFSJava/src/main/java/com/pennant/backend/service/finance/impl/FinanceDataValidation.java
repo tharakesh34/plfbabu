@@ -1428,12 +1428,23 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					return errorDetails;
 				}
-				if (mandate.getExpiryDate() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "expiryDate";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-					return errorDetails;
+				if (!mandate.isOpenMandate()) {
+					if (mandate.getExpiryDate() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "expiryDate";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						return errorDetails;
+					}
+				} else {
+					if (mandate.getExpiryDate() != null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "expiryDate";
+						valueParm[1] = "open mandate";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+						return errorDetails;
+					}
 				}
+				
 				if(mandate.getMaxLimit() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "maxLimit"; 
@@ -1448,15 +1459,17 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
 					return errorDetails;
 				}
+				if(mandate.getExpiryDate() != null){
 				if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
 						|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "Mandate ExpiryDate";
-					valueParm[1] = DateUtility.formatToLongDate(mandate.getStartDate());
+					valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
 					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
 					return errorDetails;
 				}	
+				}
 				if(mandate.getStartDate() != null){
 					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 					if (mandate.getStartDate().before(mandbackDate)

@@ -412,22 +412,31 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("30570", valueParm);
 			}
 		}
+		if (!mandate.isOpenMandate()) {
+			if (mandate.getExpiryDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "expiryDate";
+				return getErrorDetails("90502", valueParm);
+			}
+		} else {
+			if (mandate.getExpiryDate() != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "expiryDate";
+				valueParm[1] = "open mandate";
+				return getErrorDetails("90329", valueParm);
+			}
+		}
 		//validate Dates
+		if(mandate.getExpiryDate() !=null){
 		if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
 				|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "ExpiryDate";
-			valueParm[1] = DateUtility.formatToLongDate(mandate.getStartDate());
+			valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
 			valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 			return getErrorDetails("90318", valueParm);
 		}	
-		
-		/*if(mandate.getStartDate().compareTo(mandate.getExpiryDate())>= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "ExpiryDate: "+DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
-			valueParm[1] = "StartDate: "+DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
-			return getErrorDetails("91121", valueParm);
-		}*/
+		}
 		if(mandate.getStartDate() != null){
 			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 			if (mandate.getStartDate().before(mandbackDate)
