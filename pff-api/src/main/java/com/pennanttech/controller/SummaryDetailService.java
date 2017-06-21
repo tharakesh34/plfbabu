@@ -55,26 +55,23 @@ public class SummaryDetailService {
 			summary.setFeeChargeAmt(financeMain.getFeeChargeAmt());
 
 			// fetch summary details from FinPftDetails
-			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
-			if (finPftDetail == null) {
-				finPftDetail = new FinanceProfitDetail();
-				financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
-						.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
-			} 
+			FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
+			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
+					.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
 			summary.setNumberOfTerms(finPftDetail.getNOInst());
-			summary.setLoanTenor(DateUtility.getMonthsBetween(finPftDetail.getFinStartDate(), finPftDetail.getMaturityDate()));
+			summary.setLoanTenor(finPftDetail.getTotalTenor());
 			summary.setMaturityDate(finPftDetail.getMaturityDate());
 			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
 			summary.setNextSchDate(finPftDetail.getNSchdDate());
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
-			summary.setFutureInst(futureInst);
+			//int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
 					finPftDetail.getMaturityDate()));
 			summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
