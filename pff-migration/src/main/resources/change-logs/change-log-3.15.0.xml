@@ -1343,14 +1343,14 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
 		</sql>
 	</changeSet>
-			<changeSet author="pruthvi" id="93">
+			<!-- <changeSet author="pruthvi" id="93">
 	<sql>
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet author="Manoj.P" id="94">
 		<renameColumn columnDataType="VARCHAR(30)" newColumnName="MEMBER_ID"
@@ -1376,5 +1376,10 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 	<changeSet author="Manoj.P" id="98">
 		<renameColumn columnDataType="smallint" newColumnName="OWNERSHIP"
 		oldColumnName="OWNERSHIP_INDICATOR" tableName="CIBIL_DETAILS" />
+	</changeSet>
+
+	<changeSet author="Manoj.P" id="99">
+		<renameTable newTableName="CIBIL_CUSTOMER_EXTRACT"
+			oldTableName="CIBIL_DETAILS" />
 	</changeSet>
 </databaseChangeLog>
