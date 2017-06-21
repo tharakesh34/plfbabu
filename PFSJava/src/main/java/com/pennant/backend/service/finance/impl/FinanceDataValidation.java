@@ -1462,12 +1462,22 @@ public class FinanceDataValidation {
 					}
 				}*/
 				//validate Dates
-				if (mandate.getStartDate().compareTo(mandate.getExpiryDate()) > 0) {
+				/*if (mandate.getStartDate().compareTo(mandate.getExpiryDate()) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
 					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
-				}
+				}*/
+				
+				if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+						|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "ExpiryDate";
+					valueParm[1] = DateUtility.formatToLongDate(mandate.getStartDate());
+					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+					return errorDetails;
+				}	
 				if(mandate.getStartDate() != null){
 					Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 					if (mandate.getStartDate().before(mandbackDate)
