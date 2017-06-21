@@ -378,7 +378,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
 			}
 			
-			if(!entityDAO.count(taxDetail.getTaxCode().substring(2,12),taxDetail.getEntityCode(),
+			if(taxDetail.isNew() && !entityDAO.count(taxDetail.getTaxCode().substring(2,12),taxDetail.getEntityCode(),
 					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
 				String[] parameters = new String[2];
 				
