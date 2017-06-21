@@ -98,413 +98,413 @@
 		<addColumn tableName="AdtDocumentDetails">
 			<column name="DocReceived" type="boolean" />
 		</addColumn>
-	</changeSet> -->
+	</changeSet> 
 	<changeSet id="05" author="Jayant">
 		<createTable tableName="ADTVAS_VASFFR01_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="06" author="Jayant">
 		<createTable tableName="ADTVAS_VASPD01_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="07" author="Jayant">
 		<createTable tableName="ADTVAS_VASEC01_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="08" author="Jayant">
 		<createTable tableName="ADTVAS_VASCC01_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="09" author="Jayant">
 		<createTable tableName="ADTVAS_ETOUCHLI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="10" author="Jayant">
 		<createTable tableName="ADTVAS_GCPPLI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="11" author="Jayant">
 		<createTable tableName="ADTVAS_GPGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/>  
 	</createTable>
 </changeSet>
 <changeSet id="12" author="Jayant">
 		<createTable tableName="ADTVAS_CCPGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="13" author="Jayant">
 		<createTable tableName="ADTVAS_IHGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="14" author="Jayant">
 		<createTable tableName="ADTVAS_STGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="15" author="Jayant">
 		<createTable tableName="ADTVAS_TMGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="16" author="Jayant">
 		<createTable tableName="ADTVAS_FWGI_ED">
-			<column name="AUDITID" type="NUMBER(19,0)">
+			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITDATE" type="DATETIME">
 				<constraints nullable="false" />
 			</column>
-			<column name="AUDITSEQ" type="NUMBER(10,0)">
+			<column name="AUDITSEQ" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="AUDITIMAGE" type="CHAR(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="REFERENCE" type="VARCHAR2(20)">
+			<column name="REFERENCE" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="SEQNO" type="NUMBER(10,0)">
+			<column name="SEQNO" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="VERSION" type="NUMBER(10,0)">
+			<column name="VERSION" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="LASTMNTBY" type="NUMBER(19,0)"/>
+			<column name="LASTMNTBY" type="bigint"/>
 			<column name="LASTMNTON" type="DATETIME"/>
-			<column name="RECORDSTATUS" type="VARCHAR2(50)"/>
-			<column name="ROLECODE" type="VARCHAR2(100)"/>
-			<column name="NEXTROLECODE" type="VARCHAR2(200)"/>
-			<column name="TASKID" type="VARCHAR2(50)"/>
-			<column name="NEXTTASKID" type="VARCHAR2(200)"/>
-			<column name="RECORDTYPE" type="VARCHAR2(50)"/>
-			<column name="WORKFLOWID" type="NUMBER(19,0)"/> 
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="bigint"/> 
 	</createTable>
 </changeSet>
 <changeSet id="17" author="Jayant">

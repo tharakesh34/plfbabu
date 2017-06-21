@@ -712,7 +712,7 @@
 	<changeSet author="PrasadRaju" id="33" dbms="oracle">
     <sqlFile path="UDF_CONVERTCURRENCY.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
 	</changeSet>
-	 <!--<changeSet id="34.1" author="Jayant">
+	<changeSet id="34.1" author="Jayant">
 	    <sql>
 		Delete from extendedfieldheader where modulename='Vas' and submodulename in ('VASFFR01','VASPD01','VASEC01','VASCC01','ETOUCHLI','GCPPLI','GPGI','CCPGI','IHGI','STGI','TMGI','FWGI');
 		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
@@ -751,12 +751,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="35" author="Jayant">
@@ -767,12 +767,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="36" author="Jayant">
@@ -783,12 +783,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="37" author="Jayant">
@@ -799,12 +799,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="38" author="Jayant">
@@ -815,12 +815,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="39" author="Jayant">
@@ -831,12 +831,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="40" author="Jayant">
@@ -847,12 +847,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="41" author="Jayant">
@@ -863,12 +863,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="42" author="Jayant">
@@ -879,12 +879,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="43" author="Jayant">
@@ -895,12 +895,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="44" author="Jayant">
@@ -911,12 +911,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="45" author="Jayant">
@@ -927,12 +927,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="46" author="Jayant">
@@ -979,12 +979,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="59" author="Jayant">
@@ -995,12 +995,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="60" author="Jayant">
@@ -1011,12 +1011,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="61" author="Jayant">
@@ -1027,12 +1027,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="62" author="Jayant">
@@ -1043,12 +1043,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="63" author="Jayant">
@@ -1059,12 +1059,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="64" author="Jayant">
@@ -1075,12 +1075,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="65" author="Jayant">
@@ -1091,12 +1091,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="66" author="Jayant">
@@ -1107,12 +1107,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="67" author="Jayant">
@@ -1123,12 +1123,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="68" author="Jayant">
@@ -1139,12 +1139,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="69" author="Jayant">
@@ -1155,12 +1155,12 @@
 			<column name="LASTMNTBY" type="bigint" />
 			<column name="LASTMNTON" type="Datetime" />
 			<column name="RECORDSTATUS" type="varchar(50)" />
-			<column name="ROLECODE" type="clob" />
-			<column name="NEXTROLECODE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-			<column name="TASKID" type="datetime2" />
-			<column name="NEXTTASKID" type="decimal(18,2)" />
-			<column name="RECORDTYPE" type="float" />
-			<column name="WORKFLOWID" type="nclob" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
 <changeSet id="70" author="Jayant">
@@ -1198,7 +1198,7 @@
 	</changeSet>
 <changeSet id="81" author="Jayant">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED_TEMP" tableName="VAS_FWGI_ED_TEMP"/>
-	</changeSet>-->
+	</changeSet>
 <changeSet id="82" author="Jayant">
 		<update tableName="WORKFLOWDETAILS">
 			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":903,"properties":{"process_id":"CL_DISBURSEMENT_PROCESS_NEW","name":"CL_DISBURSEMENT_PROCESS","documentation":"CL_DISBURSEMENT_PROCESS","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C","properties":{"overrideid":"","name":"RM","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_RM","firstName":"CL_DISB_RM","fullName":"CL_DISB_RM","id":"CL_DISB_RM","roledesc":"CL DISB RM","$$hashKey":"object:814"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101"},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9","properties":{"overrideid":"","name":"Business Head","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_BH","firstName":"CL_DISB_BH","fullName":"CL_DISB_BH","id":"CL_DISB_BH","roledesc":"CL DISB BH","$$hashKey":"object:1259"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB"},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238"}],"bounds":{"lowerRight":{"x":490,"y":218},"upperLeft":{"x":390,"y":138}},"dockers":[]},{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286","properties":{"overrideid":"","name":"Credit","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CREDIT","firstName":"CL_DISB_CREDIT","fullName":"CL_DISB_CREDIT","id":"CL_DISB_CREDIT","roledesc":"CL DISB CREDIT","$$hashKey":"object:1711"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77"},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914"},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46"}],"bounds":{"lowerRight":{"x":670,"y":218},"upperLeft":{"x":570,"y":138}},"dockers":[]},{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}],"bounds":{"lowerRight":{"x":389.44921875,"y":178},"upperLeft":{"x":275.55078125,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}},{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}],"bounds":{"lowerRight":{"x":569.78125,"y":178},"upperLeft":{"x":490.21875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":440,"y":137.25},"upperLeft":{"x":225,"y":72}},"dockers":[{"x":50,"y":40},{"x":440,"y":72},{"x":225,"y":72},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":620,"y":137.75},"upperLeft":{"x":209.66668701171875,"y":60}},"dockers":[{"x":50,"y":40},{"x":620,"y":60},{"x":209.66668701171875,"y":60},{"x":34.66668701171875,"y":12}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C","properties":{"overrideid":"","name":"Reject Finance","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E"}],"bounds":{"lowerRight":{"x":175,"y":410},"upperLeft":{"x":75,"y":330}},"dockers":[]},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":225,"y":370},"upperLeft":{"x":176,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":225,"y":370},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914","properties":{"overrideid":"","name":"Reject Finance","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":620,"y":330},"upperLeft":{"x":125,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":620,"y":274},{"x":125,"y":274},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847","properties":{"overrideid":"","name":"Centralized Operations (Maker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_MAKER","firstName":"CL_DISB_CO_MAKER","fullName":"CL_DISB_CO_MAKER","id":"CL_DISB_CO_MAKER","roledesc":"CL DISB CO MAKER","$$hashKey":"object:4144"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441"},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7"}],"bounds":{"lowerRight":{"x":476.6666717529297,"y":395},"upperLeft":{"x":376.6666717529297,"y":315}},"dockers":[]},{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515","properties":{"overrideid":"","name":"Centralized Operations (Checker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_CHECKER","firstName":"CL_DISB_CO_CHECKER","fullName":"CL_DISB_CO_CHECKER","id":"CL_DISB_CO_CHECKER","roledesc":"CL DISB CO CHECKER","$$hashKey":"object:4663"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A"},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E"}],"bounds":{"lowerRight":{"x":745,"y":395},"upperLeft":{"x":645,"y":315}},"dockers":[]},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":640.6666870117188,"y":314.0625},"upperLeft":{"x":436.66668701171875,"y":218.5}},"dockers":[{"x":70.66668701171875,"y":57},{"x":640.6666870117188,"y":291},{"x":436.66668701171875,"y":291},{"x":60.00001525878906,"y":31}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}],"bounds":{"lowerRight":{"x":644.7356780171394,"y":355},"upperLeft":{"x":476.93099373579025,"y":355}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":644.2500138282776,"y":375},"upperLeft":{"x":477.43750512599945,"y":375}},"dockers":[{"x":28.000015258789062,"y":60},{"x":99,"y":60}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":376.3424571156502,"y":355},"upperLeft":{"x":243.66668701171875,"y":218.43229109198845}},"dockers":[{"x":50,"y":40},{"x":243.66668701171875,"y":355},{"x":68.66668701171875,"y":62.538011050653665}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC","properties":{"overrideid":"","name":"Finance CreationHost","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6"}],"bounds":{"lowerRight":{"x":618.6666717529297,"y":530},"upperLeft":{"x":518.6666717529297,"y":450}},"dockers":[]},{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A","properties":{"overrideid":"","name":"Finalize","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Finalized'"}},"defaultflow":"false","action":"Finalize","state":"Finalized","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}],"bounds":{"lowerRight":{"x":695,"y":490},"upperLeft":{"x":619.0156280994415,"y":395.0234375}},"dockers":[{"x":50,"y":40},{"x":695,"y":490},{"x":50,"y":40}],"target":{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}},{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":248,"y":508},"upperLeft":{"x":220,"y":480}},"dockers":[]},{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":219.375,"y":494},"upperLeft":{"x":125,"y":410.71875}},"dockers":[{"x":50,"y":40},{"x":125,"y":494},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}},{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":517.9896590843878,"y":493.8317986625695},"upperLeft":{"x":248.07284544556524,"y":490.6057013374305}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
