@@ -1261,4 +1261,94 @@
 			<column name="OWNERSHIP_INDICATOR"  type="int" />
 		</createTable>
 	</changeSet>
+		<changeSet author="pruthvi" id="89">
+		<createView viewName="RPT_FinJointActDtls_pvt_view" replaceIfExists="true">
+			 Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinJointAccountDetails fj inner join customers c on c.custcif = fj.custcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_APP1,2 as CO_APP2,3 as CO_APP3))
+		</createView>
+	</changeSet>
+	<changeSet author="pruthvi" id="90">
+		<createView viewName="RPT_FinGuarantorDtls_pvt_view" replaceIfExists="true">
+			  Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinGuarantorsDetails fj inner join customers c on c.custcif = fj.GUarantorcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
+		</createView>
+	</changeSet>
+	<changeSet author="pruthvi" id="91">
+	<sql>
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_CLLIMITS');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_CLLIMITS') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_CLLIMITS';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_CLLIMITS','Reports for Commercial Limit MIS', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_CLLIMITMIS');
+Delete from SecRights where RightName = 'menu_Item_CLLIMITMIS';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_CLLIMITMIS', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_CLLIMITS'), (Select RightID from SecRights where RightName = 'menu_Item_CLLIMITMIS'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_CLLIMITS'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_DOCEXTRACT') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_DOCEXTRACT','Reports for List Of Document Extracts', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT');
+Delete from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_LISTOFDOCUMENTEXTRACT', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT'), (Select RightID from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_DOCEXTRACT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_LOANTRACKER');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_LOANTRACKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_LOANTRACKER';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_LOANTRACKER','Reports for Term Loan Tracker', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_TERMLOANTRACKER');
+Delete from SecRights where RightName = 'menu_Item_TERMLOANTRACKER';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_TERMLOANTRACKER', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_LOANTRACKER'), (Select RightID from SecRights where RightName = 'menu_Item_TERMLOANTRACKER'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_LOANTRACKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_DAILYDISBRPT') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_DAILYDISBRPT','Reports for Daily Disbursal', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT');
+Delete from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_DAILYDISBURSALREPORT', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT'), (Select RightID from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_DAILYDISBRPT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+	</changeSet>
+	
+		<changeSet author="pruthvi" id="92">
+	<sql>
+	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:CL LIMIT MIS','CL LIMIT MIS',1,'CL_LIMIT_MIS','pfsDatasource',1,'menu_Item_CLLIMITMIS',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:LIST OF DOCUMENTS EXTRACT','LIST OF DOCUMENTS EXTRACT',1,'LIST_OF_DOCUMENTS_EXTRACT','pfsDatasource',1,'menu_Item_LISTOFDOCUMENTEXTRACT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Term Loan Tracker','Term Loan Tracker',1,'TermLoanTracker','pfsDatasource',1,'menu_Item_TERMLOANTRACKER',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+		</sql>
+	</changeSet>
+			<changeSet author="pruthvi" id="93">
+	<sql>
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+		</sql>
+	</changeSet>
 </databaseChangeLog>
