@@ -1372,4 +1372,9 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
  update bankbranches set IFSC='CNRB0002151' where branchcode='288380'
 </sql>
 </changeSet>
+
+	<changeSet author="Manoj.P" id="98">
+		<renameColumn columnDataType="smallint" newColumnName="OWNERSHIP"
+		oldColumnName="OWNERSHIP_INDICATOR" tableName="CIBIL_DETAILS" />
+	</changeSet>
 </databaseChangeLog>
