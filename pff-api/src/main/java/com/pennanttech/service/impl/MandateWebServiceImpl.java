@@ -23,7 +23,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
@@ -414,13 +413,21 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			}
 		}
 		//validate Dates
-		if(mandate.getStartDate().compareTo(mandate.getExpiryDate())>0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
-			valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
-			return getErrorDetails("90205", valueParm);
-		}
+		if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+				|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "ExpiryDate";
+			valueParm[1] = DateUtility.formatToLongDate(mandate.getStartDate());
+			valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+			return getErrorDetails("90318", valueParm);
+		}	
 		
+		/*if(mandate.getStartDate().compareTo(mandate.getExpiryDate())>= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "ExpiryDate: "+DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
+			valueParm[1] = "StartDate: "+DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
+			return getErrorDetails("91121", valueParm);
+		}*/
 		if(mandate.getStartDate() != null){
 			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 			if (mandate.getStartDate().before(mandbackDate)
