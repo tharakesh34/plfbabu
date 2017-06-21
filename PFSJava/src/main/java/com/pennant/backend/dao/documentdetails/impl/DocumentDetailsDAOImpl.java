@@ -219,7 +219,7 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, " );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DocRefId)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId,:FinEvent");
-		insertSql.append(", :DocPurpose, :DocUri, :DocReceivedDate, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		insertSql.append(", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
@@ -334,7 +334,7 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 
 		documentDetails.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, T2.DocImage,DocReceivedDate,");
+		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, T2.DocImage,DocReceivedDate,DocReceived,");
 		
 		if(readAttachment) {
 			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
