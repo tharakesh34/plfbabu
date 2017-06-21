@@ -1367,4 +1367,9 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			<column name="LATESTRPYDATE" type="datetime" />
 		</addColumn>
 </changeSet>
+<changeSet id="97" author="Srikanth">
+<sql>
+ update bankbranches set IFSC='CNRB0002151' where branchcode='288380'
+</sql>
+</changeSet>
 </databaseChangeLog>
