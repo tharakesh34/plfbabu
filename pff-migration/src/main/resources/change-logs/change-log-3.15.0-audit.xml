@@ -543,4 +543,9 @@
 <changeSet id="28" author="Jayant">
     	<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE" constraintName="PK_ADTVAS_FWGI_ED" tableName="ADTVAS_FWGI_ED"/>
 	</changeSet> 
+<changeSet id="29" author="Jayant">
+    <sql>
+         Update ADTvasStructure set Productdesc=substr(productdesc,1,20);
+    </sql>
+</changeSet>
 </databaseChangeLog>
