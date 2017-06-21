@@ -325,7 +325,6 @@
 					<exclude>**/Downloads/**</exclude>
 					<exclude>**/logs/**</exclude>
 					<exclude>**/reports/**</exclude>
-					<exclude>jdbc*.properties</exclude>
 					<exclude>log4j*.xml</exclude>
 					<exclude>mail*.properties</exclude>
 					<exclude>pff.properties</exclude>
