@@ -1523,4 +1523,10 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="WorkflowId" type="bigint" />
 	</createTable>
 </changeSet>
+<changeSet author="Manoj.P" id="106">
+	<addColumn tableName="CIBIL_FILE_INFO">
+		<column name="STATUS" type="varchar(1)" />
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>
