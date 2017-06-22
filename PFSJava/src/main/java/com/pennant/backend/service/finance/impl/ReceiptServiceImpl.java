@@ -1485,7 +1485,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Accrued Profit Calculation
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = finServiceInstruction.getReceiptDetail().getReceivedDate();
 		BigDecimal priBalance = BigDecimal.ZERO;
 		boolean isLastTermAdjusted = false;
 		if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
@@ -1536,7 +1536,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				aFinanceMain.setPftIntact(true);
 			}
 
-			receiptData.getRepayMain().setEarlyPayOnSchDate(DateUtility.getAppDate());
+			receiptData.getRepayMain().setEarlyPayOnSchDate(curBussniessDate);
 			boolean isSchdDateFound = false;
 			FinanceScheduleDetail prvSchd = null;
 			for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
