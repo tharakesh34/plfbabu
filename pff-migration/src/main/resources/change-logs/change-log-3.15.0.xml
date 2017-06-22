@@ -1574,4 +1574,81 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<modifyDataType tableName="Postings" columnName="ACCOUNTTYPE" newDataType="varchar(15)"/>
 	</changeSet>
 	
+	<changeSet id="113" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADDETAIL">
+		<column name="HAEDERID" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="HostSystemTransactionID" type="varchar(45)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionType" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BusinessArea" type="varchar(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="SourceSystem" type="varchar(3)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CompanyCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="RegisteredCustomer" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CustomerID" type="number(18)" />
+		<column name="CustomerName" type="varchar(200)" />
+		<column name="CustomerGSTIN" type="varchar(100)" />
+		<column name="CustomerAddress" type="varchar(450)" /> 
+		<column name="CustomerStateCode" type="varchar(100)" />
+		<column name="AddressChangeDate" type="datetime" />
+		<column name="CustomerPANNo" type="varchar(20)" />
+		<column name="LedgerCode" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="HSNSACCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NatureOfService" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanAccountNo" type="varchar(20)" />
+		<column name="ProductCode" type="varchar(8)" />
+		<column name="ChargeCode" type="varchar(15)" />
+		<column name="LoanBranch" type="varchar(12)"> 
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanBranchState" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanServicingBranch" type="varchar(12)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BFLGSTINNo" type="varchar(100)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TxnBranchAddress" type="varchar(400)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TxnBranchStateCode" type="varchar(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionAmount" type="number(18)">
+			<constraints nullable="false" />
+		</column>
+		<column name="ReverseChargeApplicable" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="InvoiceType" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="OriginalInvoiceNo" type="varchar(45)">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+	</changeSet>
 </databaseChangeLog>
