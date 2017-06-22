@@ -1385,7 +1385,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Filling Child Window Details Tabs
-		doFillTabs(aFinanceDetail);
+		doFillTabs();
+
 		logger.debug("Leaving");
 	}
 
@@ -1419,13 +1420,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method to invoke data filling method for eligibility tab, Scoring tab, fee charges tab, accounting tab,
 	 * agreements tab and additional field details tab.
-	 * 
-	 * @param aFinanceDetail
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * 
 	 */
-	private void doFillTabs(FinanceDetail aFinanceDetail) throws ParseException, InterruptedException {
+	private void doFillTabs() {
 		logger.debug("Entering");
 
 		//Step Policy Details
@@ -2719,11 +2715,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendFeeDetailTab(boolean feeTabVisible) throws InterruptedException {
+	protected void appendFeeDetailTab(boolean feeTabVisible) {
 		logger.debug("Entering");
+
 		try {
 			Tab tab = new Tab("Fee");
 			tab.setId("feeTab");
@@ -2748,6 +2743,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -5151,12 +5147,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//On Change Event for Finance Start Date
 	public void onChange$finStartDate(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
+
 		changeFrequencies();
-		/* this.finReference.setFocus(true); */
 
 		//Fee charge Calculations
-		boolean isFeesModified = false;
 		if (this.finStartDate.getValue() != null) {
 
 			Date curBussDate = DateUtility.getAppDate();
@@ -5167,7 +5162,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
 					isPastDeal = false;
-					isFeesModified = true;
 				}
 			} else if (this.finStartDate.getValue().compareTo(curBussDate) <= 0) {
 				if (!isPastDeal) {
@@ -5175,14 +5169,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							getFinanceDetailService().getFeeRuleDetails(
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
-
-					isFeesModified = true;
 					isPastDeal = true;
 				}
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug("Leaving");
 	}
 
 	public void onChange$graceTerms(Event event) {
