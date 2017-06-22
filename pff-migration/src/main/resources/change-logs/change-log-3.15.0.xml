@@ -1570,4 +1570,8 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			 UPDATE SMTPARAMETERS SET SYSPARMMAINT = 0 where SYSPARMCODE = 'SAPGL_LAST_RUN_YEAR';
 		</sql>
 	</changeSet>
+	<changeSet id="112" author="Chaitanya.ch">
+		<modifyDataType tableName="Postings" columnName="ACCOUNTTYPE" newDataType="varchar(15)"/>
+	</changeSet>
+	
 </databaseChangeLog>
