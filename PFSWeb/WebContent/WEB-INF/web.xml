@@ -42,8 +42,7 @@
 	<listener>
 		<display-name>Spring Request Context Listener</display-name>
 		<listener-class>
-			org.springframework.web.context.request.RequestContextListener
-		</listener-class>
+			org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -75,8 +74,7 @@
 
 	<listener>
 		<listener-class>
-			org.springframework.security.web.session.HttpSessionEventPublisher
-		</listener-class>
+			org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
 	</listener>
 	<listener>
 		<description>Used to cleanup when a session is destroyed</description>
@@ -150,4 +148,11 @@
 		<location>/default-error.jsp</location>
 	</error-page>
 
+	<!-- ==================== Default Welcome File List ==================== -->
+	<!-- When a request URI refers to a directory, the default servlet looks 
+		for the "welcome file" within that directory and display the corresponding 
+		resource URI. -->
+	<welcome-file-list>
+		<welcome-file>loginDialog.zul</welcome-file>
+	</welcome-file-list>
 </web-app>
