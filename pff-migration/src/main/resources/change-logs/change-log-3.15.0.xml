@@ -1564,4 +1564,10 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<renameColumn columnDataType="bigint" newColumnName="CUSTID"
 		oldColumnName="CUST_ID" tableName="CIBIL_CUSTOMER_EXTRACT" />
 	</changeSet>
+	<changeSet id="111" author="Manoj.P">
+		<sql>
+			 UPDATE SMTPARAMETERS SET SYSPARMMAINT = 0 where SYSPARMCODE = 'SAPGL_LAST_RUN_MONTH';
+			 UPDATE SMTPARAMETERS SET SYSPARMMAINT = 0 where SYSPARMCODE = 'SAPGL_LAST_RUN_YEAR';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
