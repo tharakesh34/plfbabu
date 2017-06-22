@@ -395,6 +395,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				
 				// Not allow Before Current Business Date
 				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
+					prvSchd = curSchd;
 					continue;
 				}
 				

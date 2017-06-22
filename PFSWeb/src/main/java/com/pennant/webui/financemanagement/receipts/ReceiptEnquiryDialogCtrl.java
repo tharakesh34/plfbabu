@@ -479,6 +479,26 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 			totalPaidAmount = totalPaidAmount.add(receiptHeader.getTotFeeAmount());
 		}
 		
+		// Excess / EMI In Advance Settlement Amount
+		if(StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS) ||
+				StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)){
+			item = new Listitem();
+			lc = new Listcell(PennantAppUtil.getlabelDesc(getReceiptHeader().getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes())+" Adjustment");
+			lc.setStyle("font-weight:bold;color: #05b765;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(receiptHeader.getReceiptAmount().subtract(totalPaidAmount).subtract(totalAdvPaidAmount), formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			this.listBoxPastdues.appendChild(item);
+			totalPaidAmount = totalPaidAmount.add(receiptHeader.getReceiptAmount().subtract(totalPaidAmount).subtract(totalAdvPaidAmount));
+		}
+		
 		// Creating Pastdue Totals to verify against calculations & for validation
 		if(totalPaidAmount.compareTo(BigDecimal.ZERO) > 0 || totalWaivedAmount.compareTo(BigDecimal.ZERO) > 0){
 			addFooter(totalPaidAmount, totalWaivedAmount, formatter, true);

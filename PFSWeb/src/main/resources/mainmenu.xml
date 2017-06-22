@@ -187,7 +187,7 @@
 		<menuItem id="menu_Item_DisbursementDataEngine_Import" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
  	</menu>
  	<menu id="menu_Category_SAPGL"  rightName="menuCat_SAPGL" >
-		<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GLFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
+		<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
  	</menu>
  	
  	
@@ -418,7 +418,7 @@
 	   <!-- <menuItem id="menu_Item_RlsHoldDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RlsHoldDisbursment"/> -->
 	   <!-- <menuItem id="menu_Item_SubSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_SubSchedule"/> -->	   
 	   <!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
-	   <menuItem id="menuItem_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
+	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
 	   <menuItem id="menu_Item_FinanceTaxDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/> 
  	</menu>
  
@@ -521,11 +521,11 @@
 		<menuItem id="menu_Item_PendingFinances" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PendingFinances"/>
 		<!-- <menuItem id="menu_Item_StaffProductivity" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_StaffProductivity"/> -->
 		 <!-- <menuItem id="menu_Item_LimitReports" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Limit_LimitItem"/> -->
-		<!-- <menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CLLIMITMIS"/>
+		<menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CLLIMITMIS"/>
 		<menuItem id="menu_Item_LISTOFDOCUMENTEXTRACT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_LISTOFDOCUMENTEXTRACT"/>
 		<menuItem id="menu_Item_TERMLOANTRACKER" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_TERMLOANTRACKER"/>
 		<menuItem id="menu_Item_DAILYDISBURSALREPORT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DAILYDISBURSALREPORT"/>
-		 -->
+		 
 		<!-- <menu id="menu_Category_AdminReports" rightName="menuCat_AdminReports">
 			<menuItem id="menu_Item_RoleGroups" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_RoleGroups" />
 			<menuItem id="menu_Item_GroupRights" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_AdminReports_GroupRights" />	

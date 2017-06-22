@@ -111,14 +111,14 @@ public class LimitManagement {
 			allowOverride = false;
 		}
 
-		Date dateToValidate=DateUtility.getAppDate();
-		
+		Date dateToValidate = DateUtility.getAppDate();
+
 		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
 			if (disbursement.getDisbDate().compareTo(dateToValidate) > 0) {
 				dateToValidate = disbursement.getDisbDate();
 			}
 		}
-		
+
 		BigDecimal tranAmt = BigDecimal.ZERO;
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();
@@ -143,7 +143,7 @@ public class LimitManagement {
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
 				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly,dateToValidate));
+						validateOnly, dateToValidate));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
@@ -167,7 +167,7 @@ public class LimitManagement {
 				}
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
 				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly,dateToValidate));
+						validateOnly, dateToValidate));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -197,7 +197,8 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly,Date disbDate) {
+			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly,
+			Date disbDate) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
@@ -225,8 +226,7 @@ public class LimitManagement {
 			}
 
 			if (!override) {
-				errors.addAll(
-						validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
+				errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -234,8 +234,7 @@ public class LimitManagement {
 
 		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
 			if (!override) {
-				errors.addAll(
-						validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
+				errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -457,7 +456,12 @@ public class LimitManagement {
 		} else if (StringUtils.equals(LimitConstants.APPROVE, tranType)) {
 			//	validate
 			if (!override) {
-				errors.addAll(validate(limitDetails, limitAmount, prvReserv, allowOverride, appdate));
+				BigDecimal amoutToValidate = BigDecimal.ZERO;
+
+				if (prvReserv.compareTo(BigDecimal.ZERO) > 0) {
+					amoutToValidate = prvReserv;
+				}
+				errors.addAll(validate(limitDetails, limitAmount, amoutToValidate, allowOverride, appdate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -490,7 +494,7 @@ public class LimitManagement {
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
 				break;
-			// loan rejected
+			// add disbursement rejected
 			case LimitConstants.CANCIL:
 
 				if (prvblock != null) {
@@ -501,6 +505,9 @@ public class LimitManagement {
 						limitDetailDAO.updateReserveUtilise(details, "");
 					}
 					limitTransactionDetailDAO.updateSeq(prvblock.getTransactionId(), 0);
+				} else {
+					//if there is no block now then nothing to cancel. Log not required
+					mapping.setProceeed(false);
 				}
 				break;
 

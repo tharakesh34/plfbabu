@@ -513,6 +513,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			wve.add(we);
 		}
 		aDocumentDetails.setDocReceivedDate(new Timestamp(System.currentTimeMillis()));
+		aDocumentDetails.setDocReceived(true);
 		doRemoveValidation();
 		doRemoveLOVValidation();
 

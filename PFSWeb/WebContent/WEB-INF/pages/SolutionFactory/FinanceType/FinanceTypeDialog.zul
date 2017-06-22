@@ -770,7 +770,7 @@
 													<space
 														spacing="2px" />
 													<checkbox
-														id="equalRepayment" checked="true" />
+														id="equalRepayment" checked="true"  />
 												</hbox>
 												
 											</row>

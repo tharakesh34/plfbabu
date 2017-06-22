@@ -314,4 +314,21 @@ public class BranchDAOImpl extends BasisCodeDAO<Branch> implements BranchDAO {
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), mapSource);
 		logger.debug("Leaving");
 	}
+
+	@Override
+	public boolean isPinCodeExists(String pinCode) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PinCode", pinCode);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(PinCode)");
+		selectSql.append(" From RMTBranches_View ");
+		selectSql.append(" Where PinCode=:PinCode");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
 }

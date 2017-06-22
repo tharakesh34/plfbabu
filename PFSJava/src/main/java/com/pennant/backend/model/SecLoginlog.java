@@ -39,48 +39,32 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model;
 
 import java.sql.Timestamp;
 
-
 public class SecLoginlog implements java.io.Serializable, Entity {
+	private static final long	serialVersionUID	= -3312254328936965373L;
 
-	private static final long serialVersionUID = -3312254328936965373L;
-	
-	private long loginLogID;
-	private String loginUsrLogin;
-	private Timestamp loginTime;
-	private String loginIP;
-	private String loginBrowserType;
-	private int loginStsID;
-	private String loginSessionID;
-	private Timestamp logOutTime;
-	private String loginError;
-	
-	
+	private long				loginLogID;
+	private String				loginUsrLogin;
+	private Timestamp			loginTime;
+	private String				loginIP;
+	private String				loginBrowserType;
+	private int					loginStsID;
+	private String				loginSessionID;
+	private Timestamp			logOutTime;
+	private String				loginError;
+
 	public SecLoginlog() {
 	}
-	/*
-	public SecLoginlog(long loginLogID,String loginUsrLogin,Timestamp loginTime,String loginIP,String loginBrowserType,int loginStsID,String loginSessionID,Timestamp logOutTime,String loginError) {
-	
-		this.loginLogID=loginLogID;
-		this.loginUsrLogin=loginUsrLogin;
-		this.loginTime=loginTime;
-		this.loginIP=loginIP;
-		this.loginBrowserType=loginBrowserType;
-		this.loginStsID=loginStsID;
-		this.loginSessionID=loginSessionID;
-		this.logOutTime=logOutTime;
-		this.loginError=loginError;
-	}*/
-	
+
 	@Override
 	public boolean isNew() {
 		return getId() == Long.MIN_VALUE;
 	}
-	
+
 	@Override
 	public void setId(long id) {
 		this.loginLogID = id;
@@ -160,8 +144,7 @@ public class SecLoginlog implements java.io.Serializable, Entity {
 	}
 
 	public void setLoginError(String loginError) {
-		this.loginError= loginError;
+		this.loginError = loginError;
 	}
-
 
 }

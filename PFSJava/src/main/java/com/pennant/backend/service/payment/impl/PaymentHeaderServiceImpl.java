@@ -635,11 +635,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				amountCodes.setFinType(financeMain.getFinType());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCustID(financeMain.getCustID());
+				
+				
 
 				PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
 				if (paymentInstruction != null) {
 					amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
+					aeEvent.setValueDate(paymentInstruction.getPostDate());
 				}
 				
 				aeEvent.setCcy(financeMain.getFinCcy());

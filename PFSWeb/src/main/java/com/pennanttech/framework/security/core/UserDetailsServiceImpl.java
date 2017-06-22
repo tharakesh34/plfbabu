@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  PolicyManager.java													*                           
+ * FileName    		:  UserDetailsServiceImpl.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -40,81 +40,68 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.policy.model;
+package com.pennanttech.framework.security.core;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.security.auth.login.AccountExpiredException;
-
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.service.UserService;
-
+import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * This class implements the spring-security UserDetailService.<br>
  * It's been configured in the spring security xml contextfile.<br>
  * 
  */
-@SuppressWarnings("deprecation")
-public class PolicyManager implements UserDetailsService, Serializable {
-
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PolicyManager.class);
-
-	private transient UserService userService;
-	public UserDetails _userDetails;
-
-	public PolicyManager() {
-		
-	}
+public class UserDetailsServiceImpl implements UserDetailsService {
+	private static final Logger		logger	= Logger.getLogger(UserDetailsServiceImpl.class);
 	
+	
+	@Autowired
+	private transient UserService	userService;
+
+	public UserDetailsServiceImpl() {
+
+	}
+
 	@Override
-	public UserDetails loadUserByUsername(String userId) {
-		logger.debug("Entering ");
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+		logger.debug(Literal.ENTERING);
 
-		SecurityUser user = null;
-		Collection<GrantedAuthority> grantedAuthorities = null;
-		List<SecurityRole> securityRole=null;
-
-		try {
-			user = getUserByLogin(userId);
-			if (user == null) {
-				throw new UsernameNotFoundException("Invalid User");
-			}
-
-			if (user.getUsrAcExpDt()!=null && DateUtility.compare(SysParamUtil.getValueAsDate("APP_DATE"), user.getUsrAcExpDt())>=0) {
-				throw new AccountExpiredException("User Account Expired");
-			}
-			
-			securityRole= userService.getUserRolesByUserID(user.getId()); 	 
-			grantedAuthorities = getGrantedAuthority(user);
-
-		} catch (final NumberFormatException | AccountExpiredException e) {
-			throw new DataRetrievalFailureException("Cannot loadUserByUsername userId:" + userId + " Exception:" + e.getMessage(), e);
+		SecurityUser user;
+		Collection<GrantedAuthority> grantedAuthorities;
+		List<SecurityRole> securityRole;
+				
+		user = getUserByLogin(username);
+		
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found.");
+		}
+		
+		if (!user.isUsrEnabled()) {
+			throw new UsernameNotFoundException("User account disabled.");
 		}
 
-		// Create the UserDetails object for a specified user with
-		// their grantedAuthorities List.
-		final UserDetails userDetails = new UserImpl(user, grantedAuthorities,securityRole);
+		securityRole = userService.getUserRolesByUserID(user.getId());
+		grantedAuthorities = getGrantedAuthority(user);
+	
 
-		// neu wegen clustering ?
-		this._userDetails = userDetails;
-		logger.debug("Leaving ");
+		// Create the UserDetails object for a specified user with their granted Authorities.
+		final UserDetails userDetails = new User(user, grantedAuthorities, securityRole);
+		
+		logger.debug(Literal.LEAVING);
 		return userDetails;
 
 	}
@@ -126,8 +113,8 @@ public class PolicyManager implements UserDetailsService, Serializable {
 	 * @return
 	 */
 	public SecurityUser getUserByLogin(final String userName) {
-		logger.debug("Entering ");
-		return getUserService().getUserByLogin(userName);
+		logger.trace(Literal.ENTERING);
+		return userService.getUserByLogin(userName);
 	}
 
 	/**
@@ -140,26 +127,23 @@ public class PolicyManager implements UserDetailsService, Serializable {
 	 * @return
 	 */
 	private Collection<GrantedAuthority> getGrantedAuthority(SecurityUser user) {
-		logger.debug("Entering ");
+		logger.trace(Literal.ENTERING);
 
 		// get the list of rights for a specified user.
-		final Collection<SecurityRight> rights = getUserService().getMenuRightsByUser(user);
+		final Collection<SecurityRight> rights = userService.getMenuRightsByUser(user);
 
 		final ArrayList<GrantedAuthority> rechteGrantedAuthorities = new ArrayList<GrantedAuthority>(rights.size());
 
 		// now create for all rights a GrantedAuthority
 		// and fill the GrantedAuthority List with these authorities.
 		for (final SecurityRight right : rights) {
-			rechteGrantedAuthorities.add(new GrantedAuthorityImpl(right.getRightName()));
+			rechteGrantedAuthorities.add(new SimpleGrantedAuthority(right.getRightName()));
 		}
-		logger.debug("Leaving ");
+		
+		logger.trace(Literal.LEAVING);
 		return rechteGrantedAuthorities;
 	}
-
-	public UserService getUserService() {
-		return this.userService;
-	}
-
+	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}

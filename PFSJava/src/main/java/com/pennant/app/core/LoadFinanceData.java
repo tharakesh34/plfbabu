@@ -315,7 +315,7 @@ public class LoadFinanceData extends ServiceHelper {
 			// provisions
 			if (!finEODEvent.getProvisions().isEmpty()) {
 				for (Provision provision : finEODEvent.getProvisions()) {
-					if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
+					if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_UPDATE)) {
 						getProvisionDAO().updateProvisonAmounts(provision);
 					} else if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
 						getProvisionDAO().save(provision, "");

@@ -16,12 +16,11 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	<context:annotation-config />
     <context:component-scan base-package="com.pennant" />
-
-	<bean id="coreDBDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${coredbjdbc.driverClassName}" />
-		<property name="url" value="${coredbjdbc.url}" />
-		<property name="username" value="${coredbjdbc.username}" />
-		<property name="password" value="${coredbjdbc.password}" />
+	
+	<bean id="coreDBDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFSEC" /> <!-- FIXME -->
+		<property name="lookupOnStartup" value="true" />
 	</bean>
 	
 	<bean id="interfaceDAO" class="com.pennant.corebanking.dao.impl.InterfaceDAOImpl">

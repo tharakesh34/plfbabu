@@ -35,30 +35,38 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 
-public class LatePayBuketService extends ServiceHelper {
+public class LatePayBucketService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(LatePayBuketService.class);
+	private static Logger		logger				= Logger.getLogger(LatePayBucketService.class);
+	@Autowired
+	private FinExcessAmountDAO	finExcessAmountDAO;
 
 	/**
 	 * Default constructor
 	 */
-	public LatePayBuketService() {
+	public LatePayBucketService() {
 		super();
 	}
 
@@ -74,8 +82,8 @@ public class LatePayBuketService extends ServiceHelper {
 		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(),
-					valueDate);
+			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinanceScheduleDetails(),
+					finEODEvent.getFinanceMain(), valueDate);
 
 			if (isFinStsChanged) {
 				finEODEvent.setUpdFinMain(true);
@@ -91,39 +99,66 @@ public class LatePayBuketService extends ServiceHelper {
 	}
 
 	/**
-	 * @param connection
-	 * @param custId
+	 * @param listScheduleDetails
+	 * @param financeMain
 	 * @param valueDate
-	 * @throws Exception
+	 * @return
 	 */
-	public boolean updateDPDBuketing(FinanceMain financeMain, FinanceProfitDetail pftDetail, Date valueDate) {
-
-		List<FinanceScheduleDetail> scheduleDetails = new ArrayList<FinanceScheduleDetail>();
-
-		for (FinanceScheduleDetail scheduleDetail : scheduleDetails) {
-
-			if (scheduleDetail.getSchDate().compareTo(valueDate) > 0) {
+	public boolean updateDPDBuketing(List<FinanceScheduleDetail> listScheduleDetails, FinanceMain financeMain, Date valueDate) {
+		String finReference = financeMain.getFinReference();
+		
+		Map<Date, BigDecimal> reallocationMap = new TreeMap<Date, BigDecimal>();
+		BigDecimal totalPaid = BigDecimal.ZERO;
+		//prepare the re allocation required records i.e. schedule Date with scheduled amount and total paid till today
+		for (FinanceScheduleDetail schDetail : listScheduleDetails) {
+			if (schDetail.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
 
-			if (scheduleDetail.isRepayOnSchDate() || scheduleDetail.isPftOnSchDate()) {
+			if (schDetail.isRepayOnSchDate() || schDetail.isPftOnSchDate()) {
+				totalPaid = totalPaid.add(schDetail.getSchdPriPaid().add(schDetail.getSchdPftPaid()));
+				reallocationMap.put(schDetail.getSchDate(),
+						schDetail.getPrincipalSchd().add(schDetail.getProfitSchd()));
+			}
 
+		}
+
+		//reallocate and find the first due date.
+		Date firstDuedate = null;
+		// for due percentage calculation
+		BigDecimal netSchdAmount = BigDecimal.ZERO;
+		BigDecimal netSchdDue = BigDecimal.ZERO;
+		
+		for (Entry<Date, BigDecimal> entry : reallocationMap.entrySet()) {
+			if (totalPaid.compareTo(entry.getValue()) > 0) {
+				totalPaid = totalPaid.subtract(entry.getValue());
+			} else {
+				if (firstDuedate == null) {
+					firstDuedate = entry.getKey();
+				}
+				netSchdDue = netSchdDue.add(entry.getValue().subtract(totalPaid));
+				totalPaid = BigDecimal.ZERO;
+				netSchdAmount = netSchdAmount.add(entry.getValue());
 			}
 		}
 
-		int dueDays = pftDetail.getCurODDays();
+		int dueDays = 0;
+		if (firstDuedate != null) {
+			dueDays = DateUtility.getDaysBetween(firstDuedate, valueDate);
+		}
+
 		int newDueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
 		int dueBucket = financeMain.getDueBucket();
 		BigDecimal minDuePerc = BigDecimal.ZERO;
 
 		String newFinStatus = FinanceConstants.FINSTSRSN_SYSTEM;
 		String finStatus = StringUtils.trimToEmpty(financeMain.getFinStatus());
-		String productCode = pftDetail.getFinCategory();
+		String productCode = financeMain.getFinCategory();
 
 		BigDecimal duePercentage = BigDecimal.ZERO;
 
 		//No current OD Days and No change in the Bucket Status and Number of Buckets
-		if (pftDetail.getCurODDays() == 0) {
+		if (dueDays == 0) {
 			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
 				return false;
 			}
@@ -135,11 +170,9 @@ public class LatePayBuketService extends ServiceHelper {
 				return false;
 			}
 		}
-
-		BigDecimal netSchdAmount = pftDetail.getTdSchdPri().add(pftDetail.getTdSchdPft());
-		BigDecimal netDueAmount = netSchdAmount.subtract(pftDetail.getTdSchdPriPaid())
-				.subtract(pftDetail.getTdSchdPftPaid()).subtract(pftDetail.getEmiInAdvanceBal())
-				.subtract(pftDetail.getExcessAmtBal());
+		
+		
+		BigDecimal netDueAmount = netSchdDue.subtract(getDeductedAmt(finReference));
 
 		if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
 			duePercentage = (netDueAmount.divide(netSchdAmount, 0, RoundingMode.HALF_DOWN))
@@ -185,6 +218,29 @@ public class LatePayBuketService extends ServiceHelper {
 		financeMain.setDueBucket(newDueBucket);
 
 		return true;
+	}
+	
+	/**
+	 * @param finReference
+	 * @return
+	 */
+	private BigDecimal getDeductedAmt(String finReference) {
+
+		BigDecimal balanceAmt = BigDecimal.ZERO;
+		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finReference);
+		if (finExcessAmounts.size() > 0) {
+			for (FinExcessAmount finExcessAmount : finExcessAmounts) {
+				if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+					balanceAmt.add(finExcessAmount.getBalanceAmt());
+				} 
+				/*else if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+					balanceAmt.add(finExcessAmount.getBalanceAmt());
+				}*/
+
+			}
+		}
+		return balanceAmt;
+
 	}
 
 }

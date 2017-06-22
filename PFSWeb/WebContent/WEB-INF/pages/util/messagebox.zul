@@ -2,8 +2,7 @@
 <?page title="Multiline Messagebox" language="xul/html"?>
 <window width="450px" closable="false"
 	use="org.zkoss.zul.impl.MessageboxDlg">
-	<panel title="${arg.title}" border="normal"
-		sclass="myMultiMessageBox">
+	<panel title="${arg.title}" border="normal">
 		<panelchildren>
 			<hbox style="padding: 8px;">
 				<div class="${arg.icon}" />

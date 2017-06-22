@@ -1593,6 +1593,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		financeDetail.setFinScheduleData(getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView"));
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
@@ -1608,8 +1609,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Setting Early Payment Amount for Calculation, 
 			//Not required to Set in case of Early settlement(Already calculated in ReceiptCaculator)
 			if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
-				receiptData.getRepayMain().setEarlyPayAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), 
-						CurrencyUtil.getFormat(this.finCcy.getValue())));
+				receiptData.getRepayMain().setEarlyPayAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), 	formatter));
 			}
 
 			if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)
@@ -1636,6 +1636,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
 						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd().add(
 								receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
+					}
+					if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+						detail.setPartialPaidAmt(detail.getPartialPaidAmt().add(
+								(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(),formatter))));
 					}
 				}
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {

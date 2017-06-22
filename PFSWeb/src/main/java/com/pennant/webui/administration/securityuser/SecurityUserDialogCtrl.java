@@ -98,7 +98,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -114,6 +113,7 @@ import com.pennant.webui.administration.securityuser.changepassword.ChangePasswo
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;

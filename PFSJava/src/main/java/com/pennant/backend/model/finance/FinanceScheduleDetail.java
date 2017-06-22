@@ -149,6 +149,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
 	private String 	   finCcy;
+	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
 	
 	private long presentmentId ;
 	private boolean newRecord = false;
@@ -855,6 +856,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setTDSPaid(BigDecimal tDSPaid) {
 		this.tDSPaid = tDSPaid;
+	}
+
+	public BigDecimal getPartialPaidAmt() {
+		return partialPaidAmt;
+	}
+
+	public void setPartialPaidAmt(BigDecimal partialPaidAmt) {
+		this.partialPaidAmt = partialPaidAmt;
 	}
 
 }

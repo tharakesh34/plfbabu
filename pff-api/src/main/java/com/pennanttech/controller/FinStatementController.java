@@ -62,7 +62,6 @@ public class FinStatementController extends SummaryDetailService {
 	private CollateralSetupService		collateralSetupService;
 	private FeeDetailService			feeDetailService;
 
-	// TODO: cleanup required(DDP)
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private RepayCalculator				repayCalculator;
 	private ManualPaymentService		manualPaymentService;
@@ -453,6 +452,7 @@ public class FinStatementController extends SummaryDetailService {
 		Date valuedate = finServiceInst.getFromDate();
 
 		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
+		// Calculate the accruals based up on the valuedate
 		getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail,
 				valuedate);
 

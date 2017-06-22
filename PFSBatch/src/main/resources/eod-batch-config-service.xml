@@ -53,6 +53,10 @@
 		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 
+	<!-- Late Pay Buckets-->
+	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
+	</bean>
+	
 	<!-- Late Pay Interest -->
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
 	</bean>

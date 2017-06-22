@@ -1,4 +1,4 @@
-package com.pennant.web.security.util;
+package com.pennanttech.framework.security.filter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,22 +10,25 @@ import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.sys.PageCtrl;
 import org.zkoss.zk.ui.util.GenericInitiator;
 
-public class CsrfMetaAppender extends GenericInitiator {
-	private static final String TOKEN_SET_FOR_DESKTOP = CsrfMetaAppender.class.getName() + ".tokenSetForDesktop";
+public class CsrfTokenAppender extends GenericInitiator {
+	private static final String	TOKEN_SET_FOR_DESKTOP	= CsrfTokenAppender.class.getName() + ".tokenSetForDesktop";
 
-	public CsrfMetaAppender() {
+	public CsrfTokenAppender() {
 		super();
 	}
-	
+
 	@Override
 	public void doAfterCompose(Page page, Component[] comps) throws Exception {
 		Execution execution = Executions.getCurrent();
-		if(Boolean.TRUE.equals(execution.getAttribute(TOKEN_SET_FOR_DESKTOP))) {
-			return; // avoid setting the token more than once per page (e.g. includes also count)
+
+		// Avoid setting the token more than once per page (e.g. includes also count)
+		if (Boolean.TRUE.equals(execution.getAttribute(TOKEN_SET_FOR_DESKTOP))) {
+			return;
 		}
+
 		execution.setAttribute(TOKEN_SET_FOR_DESKTOP, true);
 
-		HttpServletRequest nativeRequest = (HttpServletRequest)Executions.getCurrent().getNativeRequest();
+		HttpServletRequest nativeRequest = (HttpServletRequest) execution.getNativeRequest();
 
 		CsrfToken csrf = (CsrfToken) nativeRequest.getAttribute("_csrf");
 		addMeta(page, "_csrf_parameter", csrf.getParameterName());
@@ -35,9 +38,6 @@ public class CsrfMetaAppender extends GenericInitiator {
 
 	private void addMeta(Page page, String name, String content) {
 		String meta = "<meta name=\"" + name + "\" content=\"" + content + "\"/>";
-		((PageCtrl)page).addBeforeHeadTags(meta);
+		((PageCtrl) page).addBeforeHeadTags(meta);
 	}
-
-
-
 }

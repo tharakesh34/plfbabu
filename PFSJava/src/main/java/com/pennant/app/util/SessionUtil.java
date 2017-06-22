@@ -50,7 +50,7 @@ import java.util.Map;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.zkoss.zkplus.spring.SpringUtil;
 
-import com.pennant.policy.model.UserImpl;
+import com.pennanttech.framework.security.core.User;
 
 public class SessionUtil {
 	private static Map<String,Boolean> activeDeskTopsMap = new HashMap<String, Boolean>();
@@ -63,9 +63,9 @@ public class SessionUtil {
 	public static Map<String,Object> getCurrentLoginUsers(){
 		currentLoginUsersMap.clear();
 		
-		UserImpl userImpl = null;
+		User userImpl = null;
 		for(int i=0; i<getSessionRegistry().getAllPrincipals().size(); i++){
-			userImpl =(UserImpl) getSessionRegistry().getAllPrincipals().get(i);
+			userImpl =(User) getSessionRegistry().getAllPrincipals().get(i);
 			currentLoginUsersMap.put(String.valueOf(userImpl.getSecurityUser().getUsrLogin()) ,getSessionRegistry().getAllPrincipals().get(i));
 		}
 		
@@ -80,17 +80,17 @@ public class SessionUtil {
 		return activeDeskTopsMap;
 	}
 	
-	public static List<UserImpl> getLoggedInUsers() {
-		List<UserImpl> loggedInUsers = new ArrayList<UserImpl>();
+	public static List<User> getLoggedInUsers() {
+		List<User> loggedInUsers = new ArrayList<User>();
 		Map<String, Object> loginUsersMap = getCurrentLoginUsers();
 		
 		for (String userID : loginUsersMap.keySet()) {
 			if (SessionUtil.getActiveDeskTopsMap().containsKey(userID)) {
 				if (!SessionUtil.getActiveDeskTopsMap().get(userID).booleanValue()) {
-					loggedInUsers.add((UserImpl) loginUsersMap.get(userID));
+					loggedInUsers.add((User) loginUsersMap.get(userID));
 				}
 			} else {
-				loggedInUsers.add((UserImpl) loginUsersMap.get(userID));
+				loggedInUsers.add((User) loginUsersMap.get(userID));
 			}
 		}
 

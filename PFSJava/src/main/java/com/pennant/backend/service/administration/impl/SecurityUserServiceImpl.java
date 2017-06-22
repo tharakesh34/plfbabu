@@ -50,7 +50,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
@@ -68,6 +67,8 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>SecurityUsers</b>.<br>
@@ -491,31 +492,33 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * @return auditHeaders (AuditHeader)
 	 *
 	 */
-	public AuditHeader  changePassword(AuditHeader auditHeader){
-		logger.debug("Entering ");
-		SecurityUser securityUser= (SecurityUser) auditHeader.getAuditDetail().getModelData();
+	public AuditHeader changePassword(AuditHeader auditHeader) {
+		logger.trace(Literal.ENTERING);
+		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 		securityUser.getBefImage().getLastMntOn();
-		auditHeader = businessValidation(auditHeader,"changePassword");
+		auditHeader = businessValidation(auditHeader, "changePassword");
+		
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.trace(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		int expDays;
 		//if password is changed by user itself sets UsrAcExpDt is 30days after present date
-		if(securityUser.getLastMntBy()==securityUser.getUsrID()){
+		if (securityUser.getLastMntBy() == securityUser.getUsrID()) {
 			expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
-			securityUser.setUsrAcExpDt( DateUtility.addDays(new Date(System.currentTimeMillis()),expDays));
-			/*save the password for backup */
-			getSecurityUserPasswordsDAO().save(securityUser);	
-		}else{
+			securityUser.setUsrAcExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), expDays));
+			/* save the password for backup */
+			getSecurityUserPasswordsDAO().save(securityUser);
+		} else {
 			//if it is changed by admin sets UsrAcExpDt is one day before the present date
-			securityUser.setUsrAcExpDt( DateUtility.addDays(new Date(System.currentTimeMillis()),-1));
+			securityUser.setUsrAcExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		}
 
-		getSecurityUserDAO().changePassword( securityUser);
-		getAuditHeaderDAO().addAudit(auditHeader);	
-		logger.debug("Leaving ");
+		getSecurityUserDAO().changePassword(securityUser);
+		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		logger.trace(Literal.LEAVING);
 		return auditHeader;
 	}
 

@@ -168,7 +168,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.pinCodes.setMaxlength(10);
+		this.pinCodes.setMaxlength(20);
 		this.city.setModuleName("City");
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");

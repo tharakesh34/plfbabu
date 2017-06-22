@@ -1,4 +1,4 @@
-package com.pennant.web.security.handler;
+package com.pennanttech.framework.security.core;
 
 import java.io.IOException;
 
@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-public class LoginAuthenticationFailureHandler implements AuthenticationFailureHandler {
-	public LoginAuthenticationFailureHandler() {
+public class AuthenticationFailureHandler implements
+		org.springframework.security.web.authentication.AuthenticationFailureHandler {
+	public AuthenticationFailureHandler() {
 		super();
 	}
 

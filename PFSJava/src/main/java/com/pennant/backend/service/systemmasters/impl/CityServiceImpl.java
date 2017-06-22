@@ -42,10 +42,12 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -67,6 +69,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 	private AuditHeaderDAO auditHeaderDAO;	
 	private CityDAO cityDAO;
+	private PinCodeDAO pinCodeDAO;
 
 	public CityServiceImpl() {
 		super();
@@ -343,11 +346,31 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008", parameters, null));
 		}
+		
+		// If City Code is already utilized in PinCode 
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, city.getRecordType())) {
+			boolean workflowExists = getPinCodeDAO().isCityCodeExists(city.getPCCity());
+			if (workflowExists) {
+
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_PCCity") + ": " + city.getPCCity();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	public PinCodeDAO getPinCodeDAO() {
+		return pinCodeDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
 	}
 	
 }

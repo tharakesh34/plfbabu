@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.pennant.app.core.AccrualService;
@@ -11,6 +12,7 @@ import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
+import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
@@ -25,6 +27,8 @@ public class EodService {
 	private DataSource					dataSource;
 
 	private LatePayMarkingService		latePayMarkingService;
+	@Autowired
+	private LatePayBucketService		latePayBuketService;
 	private NPAService					npaService;
 	private DateRollOverService			dateRollOverService;
 	private LoadFinanceData				loadFinanceData;
@@ -41,12 +45,11 @@ public class EodService {
 	}
 
 	
-	
 	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
 		Customer customer = custEODEvent.getCustomer();
 		//update customer EOD
 		getLoadFinanceData().updateFinEODEvents(custEODEvent);
-		//receipt postings
+		//receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
 			getReceiptPaymentService().processrReceipts(custEODEvent);
 		}
@@ -73,7 +76,7 @@ public class EodService {
 		}
 
 		//DPD Bucketing
-		custEODEvent = latePayMarkingService.processDPDBuketing(custEODEvent);
+		custEODEvent = latePayBuketService.processDPDBuketing(custEODEvent);
 
 		//customer status update
 		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);

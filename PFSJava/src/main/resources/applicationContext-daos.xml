@@ -192,19 +192,8 @@
 	<!-- SERVICE Beans Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl"
-		parent="basisNextidDao">
+	<bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="secDatasource" />
-	</bean>
-
-	<bean name="loginLoggingService"
-		class="com.pennant.backend.service.impl.LoginLoggingServiceImpl">
-		<property name="secLoginlogDAO" ref="secLoginlogDAO" />
-		<property name="userDAO" ref="userDAO" />
-	</bean>
-
-	<bean name="loginService" class="com.pennant.backend.service.impl.LoginServiceImpl">
-		<property name="userDAO" ref="userDAO" />
 	</bean>
 
 	<bean name="pagedListService" class="com.pennant.backend.service.impl.PagedListServiceImpl"
@@ -223,10 +212,7 @@
 
 	<!--================== Use Login Details ================== -->
 
-	<bean name="userService" class="com.pennant.backend.service.impl.UserServiceImpl">
-		<property name="userDAO" ref="userDAO" />
-		<property name="securityRightDAO" ref="securityRightDAO" />
-	</bean>
+	<bean id="userService" class="com.pennanttech.framework.security.core.service.UserServiceImpl"/>
 
 	<bean id="userDAO" class="com.pennant.backend.dao.impl.UserDAOImpl"
 		parent="basisNextidDao">
@@ -552,6 +538,7 @@
 	<bean name="cityServiceTarget"
 		class="com.pennant.backend.service.systemmasters.impl.CityServiceImpl">
 		<property name="cityDAO" ref="cityDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -6534,6 +6521,7 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
 	</bean>
 
@@ -9437,6 +9425,11 @@
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
+	
+	<!-- Late Pay Buckets-->
+	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
+	</bean>
+	
 	<!-- AccountTypeGroup -->
 	<bean id="accountTypeGroupService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -10009,6 +10002,7 @@
 
  	<bean name="pinCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.PinCodeServiceImpl">
        <property name="pinCodeDAO" ref="pinCodeDAO" />
+       <property name="branchDAO" ref="branchDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
    

@@ -216,7 +216,7 @@
 			</constraint>
 		</field>
 
-		<field name="expiryDate">
+		<!-- <field name="expiryDate">
 			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>expiryDate is Mandatory</message>
 				<groups>
@@ -224,7 +224,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>
-		</field>
+		</field> -->
 
 		<field name="maxLimit">
 			<constraint annotation="javax.validation.constraints.Min">

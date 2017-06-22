@@ -634,7 +634,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				Date disbDate = disbursement.getDisbDate();
 				BigDecimal singletDisbursment = disbursement.getDisbAmount();
 
-				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0) {
+				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0 && disbursement.getDisbSeq()==1) {
 					singletDisbursment = singletDisbursment.subtract(financeMain.getDownPayment());
 					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductFeeDisb());
 					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductInsDisb());
@@ -679,8 +679,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				
 				date = financeDisbursement.getDisbDate();
 				
-				//check is first disbursement
-				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
+				//check is first disbursement to make sure the we deducted from first disbursement date
+				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime() && financeDisbursement.getDisbSeq()==1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());

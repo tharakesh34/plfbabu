@@ -523,7 +523,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
 			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
 				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
-					feeDetail.setFeeTypeCode(vasRecording.getVasReference().substring(0, 9));
+					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());
 					feeDetail.setCalculatedAmount(vasRecording.getFee());
 					feeDetail.setFixedAmount(vasRecording.getFee());

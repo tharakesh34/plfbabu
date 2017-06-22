@@ -42,10 +42,12 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -68,6 +70,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private PinCodeDAO pinCodeDAO;
+	private BranchDAO branchDAO;
 
 
 	// ******************************************************//
@@ -361,11 +364,31 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			
+		// If PIN Code is already utilized in Branches 
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, pinCode.getRecordType())) {
+			boolean workflowExists = getBranchDAO().isPinCodeExists(pinCode.getPinCode());
+			if (workflowExists) {
+
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_PinCode") + ": " + pinCode.getPinCode();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+
+		public BranchDAO getBranchDAO() {
+			return branchDAO;
+		}
+
+		public void setBranchDAO(BranchDAO branchDAO) {
+			this.branchDAO = branchDAO;
 		}
 
 }

@@ -20,7 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
-	<changeSet author="Siva" id="1">
+	 <changeSet author="Siva" id="1">
 		<createTable tableName="FinTaxDetail">
 			<column name="FinReference" type="nvarchar(20)">
 				<constraints primaryKey="true" nullable="false" />
@@ -509,4 +509,1024 @@
 	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
 		</createView>
 	</changeSet>
+	<changeSet id="25" author="Irfan">
+		<addColumn tableName="FINSCHEDULEDETAILS">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_PA">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+		<addColumn tableName="REJECTFINSCHEDULEDETAILS">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="PartialPaidAmt" type="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="26" author="Irfan">
+		<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+	                       T1.PartialPaidAmt
+	
+	FROM         FinScheduleDetails_Temp  T1
+	UNION ALL
+	SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+	                       T1.PartialPaidAmt
+	
+	FROM         FinScheduleDetails  T1
+	WHERE     NOT EXISTS
+	                          (SELECT     1
+	                            FROM          FinScheduleDetails_Temp
+	                            WHERE      FinReference = T1.FinReference)
+		
+		</createView>
+	</changeSet>
+	<changeSet id="27" author="Irfan">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+	                       T1.PartialPaidAmt
+	
+					FROM         FinScheduleDetails_Temp  T1
+		
+		</createView>
+	</changeSet>
+	<changeSet id="28" author="Irfan">
+		<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+	                       T1.PartialPaidAmt
+	
+	FROM         FinScheduleDetails  T1
+		
+		</createView>
+	
+	</changeSet>
+	<changeSet id="29" author="Irfan">
+		<sql>
+			Update FINSCHEDULEDETAILS set PartialPaidAmt=0;
+			Update FINSCHEDULEDETAILS_TEMP set PartialPaidAmt=0;
+			Update FINSCHEDULEDETAILS_PA set PartialPaidAmt=0;
+			Update REJECTFINSCHEDULEDETAILS set PartialPaidAmt=0;
+			Update FINSCHEDULEDETAILS_LOG set PartialPaidAmt=0;
+		
+		</sql>
+	</changeSet>
+	<changeSet id="30" author="Satya">
+		<addColumn tableName="DocumentDetails">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+<changeSet id="31" author="Satya">
+		<addColumn tableName="DocumentDetails_Temp">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="32" author="Vinay">
+	<createView viewName="DOCUMENTDETAILS_TVIEW" replaceIfExists="true">
+	SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+		   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+		   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+		   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM   DocumentDetails_temp T1
+			WHERE      NOT EXISTS (SELECT 1 FROM DocumentDetails_temp WHERE DocId = T1.DocId)
+	</createView>
+</changeSet>
+	<changeSet id="33" author="Vinay">
+		<createView viewName="DOCUMENTDETAILS_VIEW" replaceIfExists="true">
+		SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+					   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+					   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM       DocumentDetails_temp T1
+			UNION ALL
+			SELECT     T1.DocId, T1.DocModule, T1.DocCategory, T1.Doctype, T1.DocName, T1.DocImage, T1.FinEvent,
+					   T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+					   T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ReferenceId, T1.DocRefId,
+					   T1.DocPurpose, T1.DocUri,T1.DocReceivedDate,T1.DocReceived
+			FROM       DocumentDetails T1
+			WHERE      NOT EXISTS (SELECT 1 FROM DocumentDetails_temp WHERE DocId = T1.DocId)
+		</createView>
+	</changeSet>
+	<changeSet id="31" author="Satya">
+		<addColumn tableName="DocumentDetails_Temp">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Madhubabu" id="30">
+		<createTable tableName="FinTaxDetailUpload">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="31">
+		<createTable tableName="FinTaxDetailUpload_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="PrasadRaju" id="33" dbms="oracle">
+    <sqlFile path="UDF_CONVERTCURRENCY.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
+	</changeSet>
+	<changeSet id="34.1" author="Jayant">
+	    <sql>
+		Delete from extendedfieldheader where modulename='Vas' and submodulename in ('VASFFR01','VASPD01','VASEC01','VASCC01','ETOUCHLI','GCPPLI','GPGI','CCPGI','IHGI','STGI','TMGI','FWGI');
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASFFR01','Financial Fitness Report','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASPD01','Property Dossier','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASEC01','Gold EMI Card','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','VASCC01','Super Card 499','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','ETOUCHLI','eTouch Online Term','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','GCPPLI','Group Credit Protection Plan','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','GPGI','Global Personal Guard Policy','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','CCPGI','Comprehensive Care Plan','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','IHGI','Health Guard Policy','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','STGI','Travel Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','TMGI','Two Wheeler Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		Insert into extendedfieldheader (MODULEID,MODULENAME,SUBMODULENAME,TABHEADING,NUMBEROFCOLUMNS,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+		values ((Select max(moduleid)+1 from extendedfieldheader),'Vas','FWGI','Car Insurance','2',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+		Update seqextendedfieldheader set seqno=(Select max(moduleid) from extendedfieldheader);
+	    </sql>
+	</changeSet>
+	<changeSet id="34" author="Jayant">
+		<createTable tableName="VAS_VASFFR01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="35" author="Jayant">
+		<createTable tableName="VAS_VASPD01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="36" author="Jayant">
+		<createTable tableName="VAS_VASEC01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="37" author="Jayant">
+		<createTable tableName="VAS_VASCC01_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="38" author="Jayant">
+		<createTable tableName="VAS_ETOUCHLI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="39" author="Jayant">
+		<createTable tableName="VAS_GCPPLI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="40" author="Jayant">
+		<createTable tableName="VAS_GPGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="41" author="Jayant">
+		<createTable tableName="VAS_CCPGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="42" author="Jayant">
+		<createTable tableName="VAS_IHGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="43" author="Jayant">
+		<createTable tableName="VAS_STGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="44" author="Jayant">
+		<createTable tableName="VAS_TMGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="45" author="Jayant">
+		<createTable tableName="VAS_FWGI_ED">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="46" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED" tableName="VAS_VASFFR01_ED"/>
+	</changeSet>
+<changeSet id="47" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED" tableName="VAS_VASPD01_ED"/>
+	</changeSet>
+<changeSet id="48" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED" tableName="VAS_VASEC01_ED"/>
+	</changeSet>
+<changeSet id="49" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED" tableName="VAS_VASCC01_ED"/>
+	</changeSet>
+<changeSet id="50" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED" tableName="VAS_ETOUCHLI_ED"/>
+	</changeSet>
+<changeSet id="51" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED" tableName="VAS_GCPPLI_ED"/>
+	</changeSet>
+<changeSet id="52" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED" tableName="VAS_GPGI_ED"/>
+	</changeSet>
+<changeSet id="53" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED" tableName="VAS_CCPGI_ED"/>
+	</changeSet>
+<changeSet id="54" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED" tableName="VAS_IHGI_ED"/>
+	</changeSet>
+<changeSet id="55" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED" tableName="VAS_STGI_ED"/>
+	</changeSet>
+<changeSet id="56" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED" tableName="VAS_TMGI_ED"/>
+	</changeSet>
+<changeSet id="57" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED" tableName="VAS_FWGI_ED"/>
+	</changeSet>
+<changeSet id="58" author="Jayant">
+		<createTable tableName="VAS_VASFFR01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="59" author="Jayant">
+		<createTable tableName="VAS_VASPD01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="60" author="Jayant">
+		<createTable tableName="VAS_VASEC01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="61" author="Jayant">
+		<createTable tableName="VAS_VASCC01_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="62" author="Jayant">
+		<createTable tableName="VAS_ETOUCHLI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="63" author="Jayant">
+		<createTable tableName="VAS_GCPPLI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="64" author="Jayant">
+		<createTable tableName="VAS_GPGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="65" author="Jayant">
+		<createTable tableName="VAS_CCPGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="66" author="Jayant">
+		<createTable tableName="VAS_IHGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="67" author="Jayant">
+		<createTable tableName="VAS_STGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="68" author="Jayant">
+		<createTable tableName="VAS_TMGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="69" author="Jayant">
+		<createTable tableName="VAS_FWGI_ED_TEMP">
+			<column name="REFERENCE" type="varchar(20)"/>
+			<column name="SEQNO" type="int" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+<changeSet id="70" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED_TEMP" tableName="VAS_VASFFR01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="71" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED_TEMP" tableName="VAS_VASPD01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="72" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED_TEMP" tableName="VAS_VASEC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="73" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED_TEMP" tableName="VAS_VASCC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="74" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED_TEMP" tableName="VAS_ETOUCHLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="75" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED_TEMP" tableName="VAS_GCPPLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="76" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED_TEMP" tableName="VAS_GPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="77" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED_TEMP" tableName="VAS_CCPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="78" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED_TEMP" tableName="VAS_IHGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="79" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED_TEMP" tableName="VAS_STGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="80" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED_TEMP" tableName="VAS_TMGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="81" author="Jayant">
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED_TEMP" tableName="VAS_FWGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="82" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":903,"properties":{"process_id":"CL_DISBURSEMENT_PROCESS_NEW","name":"CL_DISBURSEMENT_PROCESS","documentation":"CL_DISBURSEMENT_PROCESS","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C","properties":{"overrideid":"","name":"RM","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_RM","firstName":"CL_DISB_RM","fullName":"CL_DISB_RM","id":"CL_DISB_RM","roledesc":"CL DISB RM","$$hashKey":"object:814"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101"},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9","properties":{"overrideid":"","name":"Business Head","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_BH","firstName":"CL_DISB_BH","fullName":"CL_DISB_BH","id":"CL_DISB_BH","roledesc":"CL DISB BH","$$hashKey":"object:1259"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB"},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238"}],"bounds":{"lowerRight":{"x":490,"y":218},"upperLeft":{"x":390,"y":138}},"dockers":[]},{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286","properties":{"overrideid":"","name":"Credit","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CREDIT","firstName":"CL_DISB_CREDIT","fullName":"CL_DISB_CREDIT","id":"CL_DISB_CREDIT","roledesc":"CL DISB CREDIT","$$hashKey":"object:1711"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77"},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914"},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46"}],"bounds":{"lowerRight":{"x":670,"y":218},"upperLeft":{"x":570,"y":138}},"dockers":[]},{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}],"bounds":{"lowerRight":{"x":389.44921875,"y":178},"upperLeft":{"x":275.55078125,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}},{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}],"bounds":{"lowerRight":{"x":569.78125,"y":178},"upperLeft":{"x":490.21875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":440,"y":137.25},"upperLeft":{"x":225,"y":72}},"dockers":[{"x":50,"y":40},{"x":440,"y":72},{"x":225,"y":72},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":620,"y":137.75},"upperLeft":{"x":209.66668701171875,"y":60}},"dockers":[{"x":50,"y":40},{"x":620,"y":60},{"x":209.66668701171875,"y":60},{"x":34.66668701171875,"y":12}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C","properties":{"overrideid":"","name":"Reject Finance","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E"}],"bounds":{"lowerRight":{"x":175,"y":410},"upperLeft":{"x":75,"y":330}},"dockers":[]},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":225,"y":370},"upperLeft":{"x":176,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":225,"y":370},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914","properties":{"overrideid":"","name":"Reject Finance","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":620,"y":330},"upperLeft":{"x":125,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":620,"y":274},{"x":125,"y":274},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847","properties":{"overrideid":"","name":"Centralized Operations (Maker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_MAKER","firstName":"CL_DISB_CO_MAKER","fullName":"CL_DISB_CO_MAKER","id":"CL_DISB_CO_MAKER","roledesc":"CL DISB CO MAKER","$$hashKey":"object:4144"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441"},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7"}],"bounds":{"lowerRight":{"x":476.6666717529297,"y":395},"upperLeft":{"x":376.6666717529297,"y":315}},"dockers":[]},{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515","properties":{"overrideid":"","name":"Centralized Operations (Checker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_CHECKER","firstName":"CL_DISB_CO_CHECKER","fullName":"CL_DISB_CO_CHECKER","id":"CL_DISB_CO_CHECKER","roledesc":"CL DISB CO CHECKER","$$hashKey":"object:4663"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A"},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E"}],"bounds":{"lowerRight":{"x":745,"y":395},"upperLeft":{"x":645,"y":315}},"dockers":[]},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":640.6666870117188,"y":314.0625},"upperLeft":{"x":436.66668701171875,"y":218.5}},"dockers":[{"x":70.66668701171875,"y":57},{"x":640.6666870117188,"y":291},{"x":436.66668701171875,"y":291},{"x":60.00001525878906,"y":31}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}],"bounds":{"lowerRight":{"x":644.7356780171394,"y":355},"upperLeft":{"x":476.93099373579025,"y":355}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":644.2500138282776,"y":375},"upperLeft":{"x":477.43750512599945,"y":375}},"dockers":[{"x":28.000015258789062,"y":60},{"x":99,"y":60}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":376.3424571156502,"y":355},"upperLeft":{"x":243.66668701171875,"y":218.43229109198845}},"dockers":[{"x":50,"y":40},{"x":243.66668701171875,"y":355},{"x":68.66668701171875,"y":62.538011050653665}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC","properties":{"overrideid":"","name":"Finance CreationHost","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6"}],"bounds":{"lowerRight":{"x":618.6666717529297,"y":530},"upperLeft":{"x":518.6666717529297,"y":450}},"dockers":[]},{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A","properties":{"overrideid":"","name":"Finalize","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Finalized'"}},"defaultflow":"false","action":"Finalize","state":"Finalized","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}],"bounds":{"lowerRight":{"x":695,"y":490},"upperLeft":{"x":619.0156280994415,"y":395.0234375}},"dockers":[{"x":50,"y":40},{"x":695,"y":490},{"x":50,"y":40}],"target":{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}},{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":248,"y":508},"upperLeft":{"x":220,"y":480}},"dockers":[]},{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":219.375,"y":494},"upperLeft":{"x":125,"y":410.71875}},"dockers":[{"x":50,"y":40},{"x":125,"y":494},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}},{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":517.9896590843878,"y":493.8317986625695},"upperLeft":{"x":248.07284544556524,"y":490.6057013374305}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="CL_DISBURSEMENT_PROCESS_NEW" name="CL_DISBURSEMENT_PROCESS" isExecutable="true"><documentation>CL_DISBURSEMENT_PROCESS</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" name="RM" activiti:actor="CL_DISB_RM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2" sourceRef="startEvent1" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" representsUserAction="false" mandateNotes="false" /><userTask id="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" name="Business Head" activiti:actor="CL_DISB_BH" activiti:assignmentLevel="Role Queue" /><userTask id="sid-3E803107-94DD-424F-9F91-5F8533701286" name="Credit" activiti:actor="CL_DISB_CREDIT" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101" name="Submit" sourceRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" targetRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB" name="Approve" sourceRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" targetRef="sid-3E803107-94DD-424F-9F91-5F8533701286" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1418E552-823D-4840-A495-12F920D98238" name="Resubmit" sourceRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-CC66D26A-675D-4B79-99FD-5A844F60BA77" name="Resubmit" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-EF27A317-CBEB-4A09-82A8-10853905466C" name="Reject Finance" activiti:operation="doReject" /><sequenceFlow id="sid-33899770-CAF9-4508-A162-2FDD3FC41F2F" name="Cancel" sourceRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" targetRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914" name="Reject Finance" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><userTask id="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" name="Centralized Operations (Maker)" activiti:actor="CL_DISB_CO_MAKER" activiti:assignmentLevel="Role Queue" /><userTask id="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" name="Centralized Operations (Checker)" activiti:actor="CL_DISB_CO_CHECKER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46" name="Approve" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-88287A60-CC2D-476F-8365-70185C7B1441" name="Approve" sourceRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" targetRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E" name="Resubmit" sourceRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" targetRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7" name="Resubmit" sourceRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" name="Finance CreationHost" activiti:operation="doApprove" /><sequenceFlow id="sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A" name="Finalize" sourceRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" targetRef="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" action="Finalize" state="Finalized" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Finalized'</conditionExpression></sequenceFlow><endEvent id="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" name="End" /><sequenceFlow id="sid-9FEDA1FC-91C3-475E-AF92-454D2803397E" sourceRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" targetRef="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6" sourceRef="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" targetRef="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" representsUserAction="false" mandateNotes="false" /></process><bpmndi:BPMNDiagram id="BPMNDiagram_CL_DISBURSEMENT_PROCESS_NEW"><bpmndi:BPMNPlane bpmnElement="CL_DISBURSEMENT_PROCESS_NEW" id="BPMNPlane_CL_DISBURSEMENT_PROCESS_NEW"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" id="BPMNShape_sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"><omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" id="BPMNShape_sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"><omgdc:Bounds height="80.0" width="100.0" x="390.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-3E803107-94DD-424F-9F91-5F8533701286" id="BPMNShape_sid-3E803107-94DD-424F-9F91-5F8533701286"><omgdc:Bounds height="80.0" width="100.0" x="570.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EF27A317-CBEB-4A09-82A8-10853905466C" id="BPMNShape_sid-EF27A317-CBEB-4A09-82A8-10853905466C"><omgdc:Bounds height="80.0" width="100.0" x="75.0" y="330.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" id="BPMNShape_sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"><omgdc:Bounds height="80.0" width="100.0" x="376.6666717529297" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" id="BPMNShape_sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"><omgdc:Bounds height="80.0" width="100.0" x="645.0" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" id="BPMNShape_sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"><omgdc:Bounds height="80.0" width="100.0" x="518.6666717529297" y="450.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" id="BPMNShape_sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"><omgdc:Bounds height="28.0" width="28.0" x="220.0" y="480.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914" id="BPMNEdge_sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914"><omgdi:waypoint x="620.0" y="218.0" /><omgdi:waypoint x="620.0" y="274.0" /><omgdi:waypoint x="125.0" y="274.0" /><omgdi:waypoint x="125.0" y="330.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46" id="BPMNEdge_sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46"><omgdi:waypoint x="640.6666870117188" y="218.0" /><omgdi:waypoint x="640.6666870117188" y="291.0" /><omgdi:waypoint x="436.66668701171875" y="291.0" /><omgdi:waypoint x="436.66668701171875" y="315.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-CC66D26A-675D-4B79-99FD-5A844F60BA77" id="BPMNEdge_sid-CC66D26A-675D-4B79-99FD-5A844F60BA77"><omgdi:waypoint x="620.0" y="138.0" /><omgdi:waypoint x="620.0" y="60.0" /><omgdi:waypoint x="209.66668701171875" y="60.0" /><omgdi:waypoint x="209.66668701171875" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1418E552-823D-4840-A495-12F920D98238" id="BPMNEdge_sid-1418E552-823D-4840-A495-12F920D98238"><omgdi:waypoint x="440.0" y="138.0" /><omgdi:waypoint x="440.0" y="72.0" /><omgdi:waypoint x="225.0" y="72.0" /><omgdi:waypoint x="225.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101" id="BPMNEdge_sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101"><omgdi:waypoint x="275.0" y="178.0" /><omgdi:waypoint x="390.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6" id="BPMNEdge_sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6"><omgdi:waypoint x="518.6666717529297" y="490.5976095526705" /><omgdi:waypoint x="247.99900012302984" y="493.83268127597285" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-88287A60-CC2D-476F-8365-70185C7B1441" id="BPMNEdge_sid-88287A60-CC2D-476F-8365-70185C7B1441"><omgdi:waypoint x="476.6666717529297" y="355.0" /><omgdi:waypoint x="645.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2" id="BPMNEdge_sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2"><omgdi:waypoint x="130.0" y="178.0" /><omgdi:waypoint x="175.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7" id="BPMNEdge_sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7"><omgdi:waypoint x="376.6666717529297" y="355.0" /><omgdi:waypoint x="243.66668701171875" y="355.0" /><omgdi:waypoint x="243.66668701171875" y="218.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E" id="BPMNEdge_sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E"><omgdi:waypoint x="645.0" y="375.0" /><omgdi:waypoint x="476.6666717529297" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A" id="BPMNEdge_sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A"><omgdi:waypoint x="695.0" y="395.0" /><omgdi:waypoint x="695.0" y="490.0" /><omgdi:waypoint x="618.6666717529297" y="490.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9FEDA1FC-91C3-475E-AF92-454D2803397E" id="BPMNEdge_sid-9FEDA1FC-91C3-475E-AF92-454D2803397E"><omgdi:waypoint x="125.0" y="410.0" /><omgdi:waypoint x="125.0" y="494.0" /><omgdi:waypoint x="220.0" y="494.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-33899770-CAF9-4508-A162-2FDD3FC41F2F" id="BPMNEdge_sid-33899770-CAF9-4508-A162-2FDD3FC41F2F"><omgdi:waypoint x="225.0" y="218.0" /><omgdi:waypoint x="225.0" y="370.0" /><omgdi:waypoint x="175.0" y="370.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB" id="BPMNEdge_sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB"><omgdi:waypoint x="490.0" y="178.0" /><omgdi:waypoint x="570.0" y="178.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='CL_DISBURSEMENT_PROCESS'and workflowactive=1</where>
+		</update>
+</changeSet>
+<changeSet id="83" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":904,"properties":{"process_id":"LIMITS_PROCESS_NEW","name":"Maker/Checker For Limits Process","documentation":"Maker/Checker For Limits Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-72E4D1A8-677A-45EF-BDAB-F7962A917233"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0","properties":{"overrideid":"","name":"Capture Customer data (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM","firstName":"LIMITS_RM","fullName":"LIMITS_RM","id":"LIMITS_RM","roledesc":"Capture customer data","$$hashKey":"object:790"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9"},{"resourceId":"sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-72E4D1A8-677A-45EF-BDAB-F7962A917233","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}},{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD","properties":{"overrideid":"","name":"Customer financial Spread Sheet (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM_EXT1","firstName":"LIMITS_RM_EXT1","fullName":"LIMITS_RM_EXT1","id":"LIMITS_RM_EXT1","roledesc":"Customer financial spreadsheet","$$hashKey":"object:1383"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-BD98AE7B-960F-4E28-93E1-85877B165A82"},{"resourceId":"sid-36FBC6D6-A61F-477E-8A99-568238CFE367"}],"bounds":{"lowerRight":{"x":460,"y":218},"upperLeft":{"x":360,"y":138}},"dockers":[]},{"resourceId":"sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"}],"bounds":{"lowerRight":{"x":359.859375,"y":178},"upperLeft":{"x":275.140625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"}},{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B","properties":{"overrideid":"","name":"Credit","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_CREDIT","firstName":"LIMITS_CREDIT","fullName":"LIMITS_CREDIT","id":"LIMITS_CREDIT","roledesc":"Credit","$$hashKey":"object:1990"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F"},{"resourceId":"sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5"}],"bounds":{"lowerRight":{"x":640,"y":218},"upperLeft":{"x":540,"y":138}},"dockers":[]},{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D","properties":{"overrideid":"","name":"Credit committe","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_CREDIT_COMM","firstName":"LIMITS_CREDIT_COMM","fullName":"LIMITS_CREDIT_COMM","id":"LIMITS_CREDIT_COMM","roledesc":"Credit Committee","$$hashKey":"object:2471"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-86616F24-FBFC-44C0-A3B6-776DD5840890"},{"resourceId":"sid-A1D3353B-B385-462F-A45E-6C250939302B"}],"bounds":{"lowerRight":{"x":805,"y":218},"upperLeft":{"x":705,"y":138}},"dockers":[]},{"resourceId":"sid-BD98AE7B-960F-4E28-93E1-85877B165A82","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}],"bounds":{"lowerRight":{"x":539.78125,"y":178},"upperLeft":{"x":460.21875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}},{"resourceId":"sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"}],"bounds":{"lowerRight":{"x":704.37109375,"y":178},"upperLeft":{"x":640.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"}},{"resourceId":"sid-36FBC6D6-A61F-477E-8A99-568238CFE367","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}],"bounds":{"lowerRight":{"x":410,"y":137.625},"upperLeft":{"x":225,"y":66}},"dockers":[{"x":50,"y":40},{"x":410,"y":66},{"x":225,"y":66},{"x":50,"y":40}],"target":{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}},{"resourceId":"sid-86616F24-FBFC-44C0-A3B6-776DD5840890","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resbmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}],"bounds":{"lowerRight":{"x":755,"y":137.125},"upperLeft":{"x":590,"y":62}},"dockers":[{"x":50,"y":40},{"x":755,"y":62},{"x":590,"y":62},{"x":50,"y":40}],"target":{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}},{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75","properties":{"overrideid":"","name":"Collect additional documents (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM_EXT2","firstName":"LIMITS_RM_EXT2","fullName":"LIMITS_RM_EXT2","id":"LIMITS_RM_EXT2","roledesc":"Collection of additional documents","$$hashKey":"object:1489"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-1E4308B2-D176-4A25-9E88-006850E58561"},{"resourceId":"sid-5624DFEC-0004-4667-BE85-B4812DBB1331"}],"bounds":{"lowerRight":{"x":970,"y":218},"upperLeft":{"x":870,"y":138}},"dockers":[]},{"resourceId":"sid-A1D3353B-B385-462F-A45E-6C250939302B","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}],"bounds":{"lowerRight":{"x":869.37109375,"y":178},"upperLeft":{"x":805.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}},{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7","properties":{"overrideid":"","name":"Centralised Operations","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_OP","firstName":"LIMITS_OP","fullName":"LIMITS_OP","id":"LIMITS_OP","roledesc":"Centralised operations","$$hashKey":"object:1851"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D"},{"resourceId":"sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C"}],"bounds":{"lowerRight":{"x":1135,"y":218},"upperLeft":{"x":1035,"y":138}},"dockers":[]},{"resourceId":"sid-1E4308B2-D176-4A25-9E88-006850E58561","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"}],"bounds":{"lowerRight":{"x":1034.37109375,"y":178},"upperLeft":{"x":970.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"}},{"resourceId":"sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}],"bounds":{"lowerRight":{"x":1085,"y":137.46875},"upperLeft":{"x":920,"y":63}},"dockers":[{"x":50,"y":40},{"x":1085,"y":63},{"x":920,"y":63},{"x":50,"y":40}],"target":{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}},{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B"}],"bounds":{"lowerRight":{"x":1180,"y":333},"upperLeft":{"x":1080,"y":253}},"dockers":[]},{"resourceId":"sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"}],"bounds":{"lowerRight":{"x":1157.671875,"y":252.15625},"upperLeft":{"x":1135.73974609375,"y":178}},"dockers":[{"x":99,"y":40},{"x":1157.671875,"y":178},{"x":77.671875,"y":55}],"target":{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"}},{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1144,"y":403},"upperLeft":{"x":1116,"y":375}},"dockers":[]},{"resourceId":"sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"}],"bounds":{"lowerRight":{"x":1130,"y":374.5},"upperLeft":{"x":1130,"y":333.75}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"}},{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-7C4EA12F-B707-468C-A251-E0032785A549"}],"bounds":{"lowerRight":{"x":975.671875,"y":333},"upperLeft":{"x":875.671875,"y":253}},"dockers":[]},{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":939.671875,"y":403},"upperLeft":{"x":911.671875,"y":375}},"dockers":[]},{"resourceId":"sid-7C4EA12F-B707-468C-A251-E0032785A549","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423"}],"bounds":{"lowerRight":{"x":925.671875,"y":374.5},"upperLeft":{"x":925.671875,"y":333.75}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423"}},{"resourceId":"sid-5624DFEC-0004-4667-BE85-B4812DBB1331","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":920,"y":252.38692531907807},"upperLeft":{"x":920,"y":218.5971728948693}},"dockers":[{"x":50,"y":40},{"x":44.328125,"y":22.46996404890905}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}},{"resourceId":"sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":874.8175388086614,"y":279},"upperLeft":{"x":590,"y":218.453125}},"dockers":[{"x":50,"y":40},{"x":590,"y":279},{"x":80.17457467508655,"y":26}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}},{"resourceId":"sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":875.4058837890625,"y":293},"upperLeft":{"x":225,"y":218.53125}},"dockers":[{"x":50,"y":40},{"x":225,"y":293},{"x":50,"y":40}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}}],"bounds":{"lowerRight":{"x":1280,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="LIMITS_PROCESS_NEW" name="Maker/Checker For Limits Process" isExecutable="true"><documentation>Maker/Checker For Limits Process</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" name="Capture Customer data (RM)" activiti:actor="LIMITS_RM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-72E4D1A8-677A-45EF-BDAB-F7962A917233" sourceRef="startEvent1" targetRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" representsUserAction="false" mandateNotes="false" /><userTask id="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" name="Customer financial Spread Sheet (RM)" activiti:actor="LIMITS_RM_EXT1" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9" name="Submit" sourceRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" targetRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><userTask id="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" name="Credit" activiti:actor="LIMITS_CREDIT" activiti:assignmentLevel="Role Queue" /><userTask id="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" name="Credit committe" activiti:actor="LIMITS_CREDIT_COMM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-BD98AE7B-960F-4E28-93E1-85877B165A82" name="Submit" sourceRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" targetRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F" name="Submit" sourceRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" targetRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-36FBC6D6-A61F-477E-8A99-568238CFE367" name="Resubmit" sourceRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" targetRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-86616F24-FBFC-44C0-A3B6-776DD5840890" name="Resubmit" sourceRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" targetRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" action="Resbmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><userTask id="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" name="Collect additional documents (RM)" activiti:actor="LIMITS_RM_EXT2" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-A1D3353B-B385-462F-A45E-6C250939302B" name="Submit" sourceRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" targetRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><userTask id="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" name="Centralised Operations" activiti:actor="LIMITS_OP" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-1E4308B2-D176-4A25-9E88-006850E58561" name="Submit" sourceRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" targetRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D" name="Resubmit" sourceRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" targetRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" name="Complete Process" activiti:operation="doApprove" /><sequenceFlow id="sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C" name="Approve" sourceRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" targetRef="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><endEvent id="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" name="Approved" /><sequenceFlow id="sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B" sourceRef="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" targetRef="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-89949107-5246-4F29-9467-FE1C9A314578" name="Cancel Process" activiti:operation="doReject" /><endEvent id="sid-EBDE8D97-F475-4B18-9E76-574993780423" name="Rejected" /><sequenceFlow id="sid-7C4EA12F-B707-468C-A251-E0032785A549" sourceRef="sid-89949107-5246-4F29-9467-FE1C9A314578" targetRef="sid-EBDE8D97-F475-4B18-9E76-574993780423" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-5624DFEC-0004-4667-BE85-B4812DBB1331" name="Reject" sourceRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5" name="Reject" sourceRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40" name="Cancel" sourceRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_LIMITS_PROCESS_NEW"><bpmndi:BPMNPlane bpmnElement="LIMITS_PROCESS_NEW" id="BPMNPlane_LIMITS_PROCESS_NEW"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" id="BPMNShape_sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"><omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" id="BPMNShape_sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"><omgdc:Bounds height="80.0" width="100.0" x="360.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" id="BPMNShape_sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"><omgdc:Bounds height="80.0" width="100.0" x="540.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" id="BPMNShape_sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"><omgdc:Bounds height="80.0" width="100.0" x="705.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" id="BPMNShape_sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"><omgdc:Bounds height="80.0" width="100.0" x="870.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" id="BPMNShape_sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"><omgdc:Bounds height="80.0" width="100.0" x="1035.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" id="BPMNShape_sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"><omgdc:Bounds height="80.0" width="100.0" x="1080.0" y="253.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" id="BPMNShape_sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"><omgdc:Bounds height="28.0" width="28.0" x="1116.0" y="375.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-89949107-5246-4F29-9467-FE1C9A314578" id="BPMNShape_sid-89949107-5246-4F29-9467-FE1C9A314578"><omgdc:Bounds height="80.0" width="100.0" x="875.671875" y="253.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EBDE8D97-F475-4B18-9E76-574993780423" id="BPMNShape_sid-EBDE8D97-F475-4B18-9E76-574993780423"><omgdc:Bounds height="28.0" width="28.0" x="911.671875" y="375.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F" id="BPMNEdge_sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F"><omgdi:waypoint x="640.0" y="178.0" /><omgdi:waypoint x="705.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40" id="BPMNEdge_sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40"><omgdi:waypoint x="225.0" y="218.0" /><omgdi:waypoint x="225.0" y="293.0" /><omgdi:waypoint x="875.671875" y="293.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BD98AE7B-960F-4E28-93E1-85877B165A82" id="BPMNEdge_sid-BD98AE7B-960F-4E28-93E1-85877B165A82"><omgdi:waypoint x="460.0" y="178.0" /><omgdi:waypoint x="540.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-7C4EA12F-B707-468C-A251-E0032785A549" id="BPMNEdge_sid-7C4EA12F-B707-468C-A251-E0032785A549"><omgdi:waypoint x="925.671875" y="333.0" /><omgdi:waypoint x="925.671875" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-5624DFEC-0004-4667-BE85-B4812DBB1331" id="BPMNEdge_sid-5624DFEC-0004-4667-BE85-B4812DBB1331"><omgdi:waypoint x="920.0" y="218.0" /><omgdi:waypoint x="920.0" y="253.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-72E4D1A8-677A-45EF-BDAB-F7962A917233" id="BPMNEdge_sid-72E4D1A8-677A-45EF-BDAB-F7962A917233"><omgdi:waypoint x="130.0" y="178.0" /><omgdi:waypoint x="175.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B" id="BPMNEdge_sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B"><omgdi:waypoint x="1130.0" y="333.0" /><omgdi:waypoint x="1130.0" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D" id="BPMNEdge_sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D"><omgdi:waypoint x="1085.0" y="138.0" /><omgdi:waypoint x="1085.0" y="63.0" /><omgdi:waypoint x="920.0" y="63.0" /><omgdi:waypoint x="920.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-36FBC6D6-A61F-477E-8A99-568238CFE367" id="BPMNEdge_sid-36FBC6D6-A61F-477E-8A99-568238CFE367"><omgdi:waypoint x="410.0" y="138.0" /><omgdi:waypoint x="410.0" y="66.0" /><omgdi:waypoint x="225.0" y="66.0" /><omgdi:waypoint x="225.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C" id="BPMNEdge_sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C"><omgdi:waypoint x="1135.0" y="178.0" /><omgdi:waypoint x="1157.671875" y="178.0" /><omgdi:waypoint x="1157.671875" y="253.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-A1D3353B-B385-462F-A45E-6C250939302B" id="BPMNEdge_sid-A1D3353B-B385-462F-A45E-6C250939302B"><omgdi:waypoint x="805.0" y="178.0" /><omgdi:waypoint x="870.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5" id="BPMNEdge_sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5"><omgdi:waypoint x="590.0" y="218.0" /><omgdi:waypoint x="590.0" y="279.0" /><omgdi:waypoint x="875.671875" y="279.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1E4308B2-D176-4A25-9E88-006850E58561" id="BPMNEdge_sid-1E4308B2-D176-4A25-9E88-006850E58561"><omgdi:waypoint x="970.0" y="178.0" /><omgdi:waypoint x="1035.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-86616F24-FBFC-44C0-A3B6-776DD5840890" id="BPMNEdge_sid-86616F24-FBFC-44C0-A3B6-776DD5840890"><omgdi:waypoint x="755.0" y="138.0" /><omgdi:waypoint x="755.0" y="62.0" /><omgdi:waypoint x="590.0" y="62.0" /><omgdi:waypoint x="590.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9" id="BPMNEdge_sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9"><omgdi:waypoint x="275.0" y="178.0" /><omgdi:waypoint x="360.0" y="178.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='LIMITS_PROCESS'and workflowactive=1</where>
+		</update>
+</changeSet>
+<changeSet id="84" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":903,"properties":{"process_id":"CL_DISBURSEMENT_PROCESS","name":"CL_DISBURSEMENT_PROCESS","documentation":"CL_DISBURSEMENT_PROCESS","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C","properties":{"overrideid":"","name":"RM","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_RM","firstName":"CL_DISB_RM","fullName":"CL_DISB_RM","id":"CL_DISB_RM","roledesc":"CL DISB RM","$$hashKey":"object:814"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101"},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9","properties":{"overrideid":"","name":"Business Head","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_BH","firstName":"CL_DISB_BH","fullName":"CL_DISB_BH","id":"CL_DISB_BH","roledesc":"CL DISB BH","$$hashKey":"object:1259"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB"},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238"}],"bounds":{"lowerRight":{"x":490,"y":218},"upperLeft":{"x":390,"y":138}},"dockers":[]},{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286","properties":{"overrideid":"","name":"Credit","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CREDIT","firstName":"CL_DISB_CREDIT","fullName":"CL_DISB_CREDIT","id":"CL_DISB_CREDIT","roledesc":"CL DISB CREDIT","$$hashKey":"object:1711"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77"},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914"},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46"}],"bounds":{"lowerRight":{"x":670,"y":218},"upperLeft":{"x":570,"y":138}},"dockers":[]},{"resourceId":"sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}],"bounds":{"lowerRight":{"x":389.44921875,"y":178},"upperLeft":{"x":275.55078125,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"}},{"resourceId":"sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}],"bounds":{"lowerRight":{"x":569.78125,"y":178},"upperLeft":{"x":490.21875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-3E803107-94DD-424F-9F91-5F8533701286"}},{"resourceId":"sid-1418E552-823D-4840-A495-12F920D98238","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":440,"y":137.25},"upperLeft":{"x":225,"y":72}},"dockers":[{"x":50,"y":40},{"x":440,"y":72},{"x":225,"y":72},{"x":50,"y":40}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-CC66D26A-675D-4B79-99FD-5A844F60BA77","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":620,"y":137.75},"upperLeft":{"x":209.66668701171875,"y":60}},"dockers":[{"x":50,"y":40},{"x":620,"y":60},{"x":209.66668701171875,"y":60},{"x":34.66668701171875,"y":12}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C","properties":{"overrideid":"","name":"Reject Finance","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E"}],"bounds":{"lowerRight":{"x":175,"y":410},"upperLeft":{"x":75,"y":330}},"dockers":[]},{"resourceId":"sid-33899770-CAF9-4508-A162-2FDD3FC41F2F","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":225,"y":370},"upperLeft":{"x":176,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":225,"y":370},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914","properties":{"overrideid":"","name":"Reject Finance","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}],"bounds":{"lowerRight":{"x":620,"y":330},"upperLeft":{"x":125,"y":218.75}},"dockers":[{"x":50,"y":40},{"x":620,"y":274},{"x":125,"y":274},{"x":50,"y":40}],"target":{"resourceId":"sid-EF27A317-CBEB-4A09-82A8-10853905466C"}},{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847","properties":{"overrideid":"","name":"Centralized Operations (Maker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_MAKER","firstName":"CL_DISB_CO_MAKER","fullName":"CL_DISB_CO_MAKER","id":"CL_DISB_CO_MAKER","roledesc":"CL DISB CO MAKER","$$hashKey":"object:4144"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441"},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7"}],"bounds":{"lowerRight":{"x":476.6666717529297,"y":395},"upperLeft":{"x":376.6666717529297,"y":315}},"dockers":[]},{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515","properties":{"overrideid":"","name":"Centralized Operations (Checker)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CL_DISB_CO_CHECKER","firstName":"CL_DISB_CO_CHECKER","fullName":"CL_DISB_CO_CHECKER","id":"CL_DISB_CO_CHECKER","roledesc":"CL DISB CO CHECKER","$$hashKey":"object:4663"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A"},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E"}],"bounds":{"lowerRight":{"x":745,"y":395},"upperLeft":{"x":645,"y":315}},"dockers":[]},{"resourceId":"sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":640.6666870117188,"y":314.0625},"upperLeft":{"x":436.66668701171875,"y":218.5}},"dockers":[{"x":70.66668701171875,"y":57},{"x":640.6666870117188,"y":291},{"x":436.66668701171875,"y":291},{"x":60.00001525878906,"y":31}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-88287A60-CC2D-476F-8365-70185C7B1441","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}],"bounds":{"lowerRight":{"x":644.7356780171394,"y":355},"upperLeft":{"x":476.93099373579025,"y":355}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"}},{"resourceId":"sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}],"bounds":{"lowerRight":{"x":644.2500138282776,"y":375},"upperLeft":{"x":477.43750512599945,"y":375}},"dockers":[{"x":28.000015258789062,"y":60},{"x":99,"y":60}],"target":{"resourceId":"sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"}},{"resourceId":"sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}],"bounds":{"lowerRight":{"x":376.3424571156502,"y":355},"upperLeft":{"x":243.66668701171875,"y":218.43229109198845}},"dockers":[{"x":50,"y":40},{"x":243.66668701171875,"y":355},{"x":68.66668701171875,"y":62.538011050653665}],"target":{"resourceId":"sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"}},{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC","properties":{"overrideid":"","name":"Finance CreationHost","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6"}],"bounds":{"lowerRight":{"x":618.6666717529297,"y":530},"upperLeft":{"x":518.6666717529297,"y":450}},"dockers":[]},{"resourceId":"sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A","properties":{"overrideid":"","name":"Finalize","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Finalized'"}},"defaultflow":"false","action":"Finalize","state":"Finalized","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}],"bounds":{"lowerRight":{"x":695,"y":490},"upperLeft":{"x":619.0156280994415,"y":395.0234375}},"dockers":[{"x":50,"y":40},{"x":695,"y":490},{"x":50,"y":40}],"target":{"resourceId":"sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"}},{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":248,"y":508},"upperLeft":{"x":220,"y":480}},"dockers":[]},{"resourceId":"sid-9FEDA1FC-91C3-475E-AF92-454D2803397E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":219.375,"y":494},"upperLeft":{"x":125,"y":410.71875}},"dockers":[{"x":50,"y":40},{"x":125,"y":494},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}},{"resourceId":"sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}],"bounds":{"lowerRight":{"x":517.9896590843878,"y":493.8317986625695},"upperLeft":{"x":248.07284544556524,"y":490.6057013374305}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="CL_DISBURSEMENT_PROCESS_NEW" name="CL_DISBURSEMENT_PROCESS" isExecutable="true"><documentation>CL_DISBURSEMENT_PROCESS</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" name="RM" activiti:actor="CL_DISB_RM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2" sourceRef="startEvent1" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" representsUserAction="false" mandateNotes="false" /><userTask id="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" name="Business Head" activiti:actor="CL_DISB_BH" activiti:assignmentLevel="Role Queue" /><userTask id="sid-3E803107-94DD-424F-9F91-5F8533701286" name="Credit" activiti:actor="CL_DISB_CREDIT" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101" name="Submit" sourceRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" targetRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB" name="Approve" sourceRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" targetRef="sid-3E803107-94DD-424F-9F91-5F8533701286" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1418E552-823D-4840-A495-12F920D98238" name="Resubmit" sourceRef="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-CC66D26A-675D-4B79-99FD-5A844F60BA77" name="Resubmit" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-EF27A317-CBEB-4A09-82A8-10853905466C" name="Reject Finance" activiti:operation="doReject" /><sequenceFlow id="sid-33899770-CAF9-4508-A162-2FDD3FC41F2F" name="Cancel" sourceRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" targetRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914" name="Reject Finance" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><userTask id="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" name="Centralized Operations (Maker)" activiti:actor="CL_DISB_CO_MAKER" activiti:assignmentLevel="Role Queue" /><userTask id="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" name="Centralized Operations (Checker)" activiti:actor="CL_DISB_CO_CHECKER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46" name="Approve" sourceRef="sid-3E803107-94DD-424F-9F91-5F8533701286" targetRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-88287A60-CC2D-476F-8365-70185C7B1441" name="Approve" sourceRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" targetRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E" name="Resubmit" sourceRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" targetRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7" name="Resubmit" sourceRef="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" targetRef="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" name="Finance CreationHost" activiti:operation="doApprove" /><sequenceFlow id="sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A" name="Finalize" sourceRef="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" targetRef="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" action="Finalize" state="Finalized" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Finalized'</conditionExpression></sequenceFlow><endEvent id="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" name="End" /><sequenceFlow id="sid-9FEDA1FC-91C3-475E-AF92-454D2803397E" sourceRef="sid-EF27A317-CBEB-4A09-82A8-10853905466C" targetRef="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6" sourceRef="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" targetRef="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" representsUserAction="false" mandateNotes="false" /></process><bpmndi:BPMNDiagram id="BPMNDiagram_CL_DISBURSEMENT_PROCESS_NEW"><bpmndi:BPMNPlane bpmnElement="CL_DISBURSEMENT_PROCESS_NEW" id="BPMNPlane_CL_DISBURSEMENT_PROCESS_NEW"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C" id="BPMNShape_sid-F63EAA5F-6E98-4342-97DE-CB8B9385E53C"><omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9" id="BPMNShape_sid-48D09B11-D321-4F9A-BDC8-2B8207D37CD9"><omgdc:Bounds height="80.0" width="100.0" x="390.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-3E803107-94DD-424F-9F91-5F8533701286" id="BPMNShape_sid-3E803107-94DD-424F-9F91-5F8533701286"><omgdc:Bounds height="80.0" width="100.0" x="570.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EF27A317-CBEB-4A09-82A8-10853905466C" id="BPMNShape_sid-EF27A317-CBEB-4A09-82A8-10853905466C"><omgdc:Bounds height="80.0" width="100.0" x="75.0" y="330.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-84E9C900-21B8-4DDA-8AE1-3112091A3847" id="BPMNShape_sid-84E9C900-21B8-4DDA-8AE1-3112091A3847"><omgdc:Bounds height="80.0" width="100.0" x="376.6666717529297" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515" id="BPMNShape_sid-9B0A9FC4-3ECF-4D07-AC3C-3CD8B0FA3515"><omgdc:Bounds height="80.0" width="100.0" x="645.0" y="315.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B38BE152-538D-41FD-B884-1F3FC312F7AC" id="BPMNShape_sid-B38BE152-538D-41FD-B884-1F3FC312F7AC"><omgdc:Bounds height="80.0" width="100.0" x="518.6666717529297" y="450.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05" id="BPMNShape_sid-812E07AA-C199-44A1-86F4-2C5E8CDBFC05"><omgdc:Bounds height="28.0" width="28.0" x="220.0" y="480.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914" id="BPMNEdge_sid-1F7BCDB5-4811-49D9-A24B-A90EAE0F7914"><omgdi:waypoint x="620.0" y="218.0" /><omgdi:waypoint x="620.0" y="274.0" /><omgdi:waypoint x="125.0" y="274.0" /><omgdi:waypoint x="125.0" y="330.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46" id="BPMNEdge_sid-D9C7104B-4E7E-4F87-BF91-C8A677835F46"><omgdi:waypoint x="640.6666870117188" y="218.0" /><omgdi:waypoint x="640.6666870117188" y="291.0" /><omgdi:waypoint x="436.66668701171875" y="291.0" /><omgdi:waypoint x="436.66668701171875" y="315.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-CC66D26A-675D-4B79-99FD-5A844F60BA77" id="BPMNEdge_sid-CC66D26A-675D-4B79-99FD-5A844F60BA77"><omgdi:waypoint x="620.0" y="138.0" /><omgdi:waypoint x="620.0" y="60.0" /><omgdi:waypoint x="209.66668701171875" y="60.0" /><omgdi:waypoint x="209.66668701171875" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1418E552-823D-4840-A495-12F920D98238" id="BPMNEdge_sid-1418E552-823D-4840-A495-12F920D98238"><omgdi:waypoint x="440.0" y="138.0" /><omgdi:waypoint x="440.0" y="72.0" /><omgdi:waypoint x="225.0" y="72.0" /><omgdi:waypoint x="225.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101" id="BPMNEdge_sid-40F547B1-CD0B-4E15-A3DB-8A8FFBFA8101"><omgdi:waypoint x="275.0" y="178.0" /><omgdi:waypoint x="390.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6" id="BPMNEdge_sid-127B1E28-8CB6-46D7-9F91-2BA4AD619DF6"><omgdi:waypoint x="518.6666717529297" y="490.5976095526705" /><omgdi:waypoint x="247.99900012302984" y="493.83268127597285" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-88287A60-CC2D-476F-8365-70185C7B1441" id="BPMNEdge_sid-88287A60-CC2D-476F-8365-70185C7B1441"><omgdi:waypoint x="476.6666717529297" y="355.0" /><omgdi:waypoint x="645.0" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2" id="BPMNEdge_sid-BA8EAA9F-4BCF-4C9E-ACD6-02E6B9FD5DC2"><omgdi:waypoint x="130.0" y="178.0" /><omgdi:waypoint x="175.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7" id="BPMNEdge_sid-700B2C3A-FAFB-4186-8A2F-50BFB91C70D7"><omgdi:waypoint x="376.6666717529297" y="355.0" /><omgdi:waypoint x="243.66668701171875" y="355.0" /><omgdi:waypoint x="243.66668701171875" y="218.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E" id="BPMNEdge_sid-4EAF3965-0E94-4EDC-AEAA-967BE78D991E"><omgdi:waypoint x="645.0" y="375.0" /><omgdi:waypoint x="476.6666717529297" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A" id="BPMNEdge_sid-FFA82F5C-11A5-41F0-A4E8-1523DCC38A1A"><omgdi:waypoint x="695.0" y="395.0" /><omgdi:waypoint x="695.0" y="490.0" /><omgdi:waypoint x="618.6666717529297" y="490.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9FEDA1FC-91C3-475E-AF92-454D2803397E" id="BPMNEdge_sid-9FEDA1FC-91C3-475E-AF92-454D2803397E"><omgdi:waypoint x="125.0" y="410.0" /><omgdi:waypoint x="125.0" y="494.0" /><omgdi:waypoint x="220.0" y="494.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-33899770-CAF9-4508-A162-2FDD3FC41F2F" id="BPMNEdge_sid-33899770-CAF9-4508-A162-2FDD3FC41F2F"><omgdi:waypoint x="225.0" y="218.0" /><omgdi:waypoint x="225.0" y="370.0" /><omgdi:waypoint x="175.0" y="370.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB" id="BPMNEdge_sid-3E7ABC8F-EBAA-46F1-9A40-47F086F324CB"><omgdi:waypoint x="490.0" y="178.0" /><omgdi:waypoint x="570.0" y="178.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='CL_DISBURSEMENT_PROCESS'and workflowactive=1</where>
+		</update>
+</changeSet>
+<changeSet id="85" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":904,"properties":{"process_id":"LIMITS_PROCESS","name":"Maker/Checker For Limits Process","documentation":"Maker/Checker For Limits Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-72E4D1A8-677A-45EF-BDAB-F7962A917233"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0","properties":{"overrideid":"","name":"Capture Customer data (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM","firstName":"LIMITS_RM","fullName":"LIMITS_RM","id":"LIMITS_RM","roledesc":"Capture customer data","$$hashKey":"object:790"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9"},{"resourceId":"sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40"}],"bounds":{"lowerRight":{"x":275,"y":218},"upperLeft":{"x":175,"y":138}},"dockers":[]},{"resourceId":"sid-72E4D1A8-677A-45EF-BDAB-F7962A917233","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}],"bounds":{"lowerRight":{"x":174.15625,"y":178},"upperLeft":{"x":130.609375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}},{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD","properties":{"overrideid":"","name":"Customer financial Spread Sheet (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM_EXT1","firstName":"LIMITS_RM_EXT1","fullName":"LIMITS_RM_EXT1","id":"LIMITS_RM_EXT1","roledesc":"Customer financial spreadsheet","$$hashKey":"object:1383"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-BD98AE7B-960F-4E28-93E1-85877B165A82"},{"resourceId":"sid-36FBC6D6-A61F-477E-8A99-568238CFE367"}],"bounds":{"lowerRight":{"x":460,"y":218},"upperLeft":{"x":360,"y":138}},"dockers":[]},{"resourceId":"sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"}],"bounds":{"lowerRight":{"x":359.859375,"y":178},"upperLeft":{"x":275.140625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"}},{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B","properties":{"overrideid":"","name":"Credit","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_CREDIT","firstName":"LIMITS_CREDIT","fullName":"LIMITS_CREDIT","id":"LIMITS_CREDIT","roledesc":"Credit","$$hashKey":"object:1990"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F"},{"resourceId":"sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5"}],"bounds":{"lowerRight":{"x":640,"y":218},"upperLeft":{"x":540,"y":138}},"dockers":[]},{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D","properties":{"overrideid":"","name":"Credit committe","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_CREDIT_COMM","firstName":"LIMITS_CREDIT_COMM","fullName":"LIMITS_CREDIT_COMM","id":"LIMITS_CREDIT_COMM","roledesc":"Credit Committee","$$hashKey":"object:2471"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-86616F24-FBFC-44C0-A3B6-776DD5840890"},{"resourceId":"sid-A1D3353B-B385-462F-A45E-6C250939302B"}],"bounds":{"lowerRight":{"x":805,"y":218},"upperLeft":{"x":705,"y":138}},"dockers":[]},{"resourceId":"sid-BD98AE7B-960F-4E28-93E1-85877B165A82","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}],"bounds":{"lowerRight":{"x":539.78125,"y":178},"upperLeft":{"x":460.21875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}},{"resourceId":"sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"}],"bounds":{"lowerRight":{"x":704.37109375,"y":178},"upperLeft":{"x":640.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"}},{"resourceId":"sid-36FBC6D6-A61F-477E-8A99-568238CFE367","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}],"bounds":{"lowerRight":{"x":410,"y":137.625},"upperLeft":{"x":225,"y":66}},"dockers":[{"x":50,"y":40},{"x":410,"y":66},{"x":225,"y":66},{"x":50,"y":40}],"target":{"resourceId":"sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"}},{"resourceId":"sid-86616F24-FBFC-44C0-A3B6-776DD5840890","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resbmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}],"bounds":{"lowerRight":{"x":755,"y":137.125},"upperLeft":{"x":590,"y":62}},"dockers":[{"x":50,"y":40},{"x":755,"y":62},{"x":590,"y":62},{"x":50,"y":40}],"target":{"resourceId":"sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"}},{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75","properties":{"overrideid":"","name":"Collect additional documents (RM)","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_RM_EXT2","firstName":"LIMITS_RM_EXT2","fullName":"LIMITS_RM_EXT2","id":"LIMITS_RM_EXT2","roledesc":"Collection of additional documents","$$hashKey":"object:1489"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-1E4308B2-D176-4A25-9E88-006850E58561"},{"resourceId":"sid-5624DFEC-0004-4667-BE85-B4812DBB1331"}],"bounds":{"lowerRight":{"x":970,"y":218},"upperLeft":{"x":870,"y":138}},"dockers":[]},{"resourceId":"sid-A1D3353B-B385-462F-A45E-6C250939302B","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}],"bounds":{"lowerRight":{"x":869.37109375,"y":178},"upperLeft":{"x":805.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}},{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7","properties":{"overrideid":"","name":"Centralised Operations","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"LIMITS_OP","firstName":"LIMITS_OP","fullName":"LIMITS_OP","id":"LIMITS_OP","roledesc":"Centralised operations","$$hashKey":"object:1851"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D"},{"resourceId":"sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C"}],"bounds":{"lowerRight":{"x":1135,"y":218},"upperLeft":{"x":1035,"y":138}},"dockers":[]},{"resourceId":"sid-1E4308B2-D176-4A25-9E88-006850E58561","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"}],"bounds":{"lowerRight":{"x":1034.37109375,"y":178},"upperLeft":{"x":970.62890625,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"}},{"resourceId":"sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}],"bounds":{"lowerRight":{"x":1085,"y":137.46875},"upperLeft":{"x":920,"y":63}},"dockers":[{"x":50,"y":40},{"x":1085,"y":63},{"x":920,"y":63},{"x":50,"y":40}],"target":{"resourceId":"sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"}},{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B"}],"bounds":{"lowerRight":{"x":1180,"y":333},"upperLeft":{"x":1080,"y":253}},"dockers":[]},{"resourceId":"sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"}],"bounds":{"lowerRight":{"x":1157.671875,"y":252.15625},"upperLeft":{"x":1135.73974609375,"y":178}},"dockers":[{"x":99,"y":40},{"x":1157.671875,"y":178},{"x":77.671875,"y":55}],"target":{"resourceId":"sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"}},{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1144,"y":403},"upperLeft":{"x":1116,"y":375}},"dockers":[]},{"resourceId":"sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"}],"bounds":{"lowerRight":{"x":1130,"y":374.5},"upperLeft":{"x":1130,"y":333.75}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"}},{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-7C4EA12F-B707-468C-A251-E0032785A549"}],"bounds":{"lowerRight":{"x":975.671875,"y":333},"upperLeft":{"x":875.671875,"y":253}},"dockers":[]},{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":939.671875,"y":403},"upperLeft":{"x":911.671875,"y":375}},"dockers":[]},{"resourceId":"sid-7C4EA12F-B707-468C-A251-E0032785A549","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423"}],"bounds":{"lowerRight":{"x":925.671875,"y":374.5},"upperLeft":{"x":925.671875,"y":333.75}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-EBDE8D97-F475-4B18-9E76-574993780423"}},{"resourceId":"sid-5624DFEC-0004-4667-BE85-B4812DBB1331","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":920,"y":252.38692531907807},"upperLeft":{"x":920,"y":218.5971728948693}},"dockers":[{"x":50,"y":40},{"x":44.328125,"y":22.46996404890905}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}},{"resourceId":"sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":874.8175388086614,"y":279},"upperLeft":{"x":590,"y":218.453125}},"dockers":[{"x":50,"y":40},{"x":590,"y":279},{"x":80.17457467508655,"y":26}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}},{"resourceId":"sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}],"bounds":{"lowerRight":{"x":875.4058837890625,"y":293},"upperLeft":{"x":225,"y":218.53125}},"dockers":[{"x":50,"y":40},{"x":225,"y":293},{"x":50,"y":40}],"target":{"resourceId":"sid-89949107-5246-4F29-9467-FE1C9A314578"}}],"bounds":{"lowerRight":{"x":1280,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="LIMITS_PROCESS_NEW" name="Maker/Checker For Limits Process" isExecutable="true"><documentation>Maker/Checker For Limits Process</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" name="Capture Customer data (RM)" activiti:actor="LIMITS_RM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-72E4D1A8-677A-45EF-BDAB-F7962A917233" sourceRef="startEvent1" targetRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" representsUserAction="false" mandateNotes="false" /><userTask id="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" name="Customer financial Spread Sheet (RM)" activiti:actor="LIMITS_RM_EXT1" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9" name="Submit" sourceRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" targetRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><userTask id="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" name="Credit" activiti:actor="LIMITS_CREDIT" activiti:assignmentLevel="Role Queue" /><userTask id="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" name="Credit committe" activiti:actor="LIMITS_CREDIT_COMM" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-BD98AE7B-960F-4E28-93E1-85877B165A82" name="Submit" sourceRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" targetRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F" name="Submit" sourceRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" targetRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-36FBC6D6-A61F-477E-8A99-568238CFE367" name="Resubmit" sourceRef="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" targetRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-86616F24-FBFC-44C0-A3B6-776DD5840890" name="Resubmit" sourceRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" targetRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" action="Resbmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><userTask id="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" name="Collect additional documents (RM)" activiti:actor="LIMITS_RM_EXT2" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-A1D3353B-B385-462F-A45E-6C250939302B" name="Submit" sourceRef="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" targetRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><userTask id="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" name="Centralised Operations" activiti:actor="LIMITS_OP" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-1E4308B2-D176-4A25-9E88-006850E58561" name="Submit" sourceRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" targetRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D" name="Resubmit" sourceRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" targetRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><serviceTask id="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" name="Complete Process" activiti:operation="doApprove" /><sequenceFlow id="sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C" name="Approve" sourceRef="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" targetRef="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><endEvent id="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" name="Approved" /><sequenceFlow id="sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B" sourceRef="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" targetRef="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-89949107-5246-4F29-9467-FE1C9A314578" name="Cancel Process" activiti:operation="doReject" /><endEvent id="sid-EBDE8D97-F475-4B18-9E76-574993780423" name="Rejected" /><sequenceFlow id="sid-7C4EA12F-B707-468C-A251-E0032785A549" sourceRef="sid-89949107-5246-4F29-9467-FE1C9A314578" targetRef="sid-EBDE8D97-F475-4B18-9E76-574993780423" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-5624DFEC-0004-4667-BE85-B4812DBB1331" name="Reject" sourceRef="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5" name="Reject" sourceRef="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40" name="Cancel" sourceRef="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" targetRef="sid-89949107-5246-4F29-9467-FE1C9A314578" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_LIMITS_PROCESS_NEW"><bpmndi:BPMNPlane bpmnElement="LIMITS_PROCESS_NEW" id="BPMNPlane_LIMITS_PROCESS_NEW"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0" id="BPMNShape_sid-F0BB62C9-EDCC-405A-A561-F7B8AD36C4C0"><omgdc:Bounds height="80.0" width="100.0" x="175.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD" id="BPMNShape_sid-FC42DC4C-0330-42F3-ABF6-C95D10AB0BDD"><omgdc:Bounds height="80.0" width="100.0" x="360.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B" id="BPMNShape_sid-AE94CD74-AE42-4428-A6E8-72BAC245CF8B"><omgdc:Bounds height="80.0" width="100.0" x="540.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D" id="BPMNShape_sid-0946AE91-A8C3-4799-A8AF-A8B10B2EC50D"><omgdc:Bounds height="80.0" width="100.0" x="705.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-646B66AA-4F3E-417A-B82E-6CE248F87D75" id="BPMNShape_sid-646B66AA-4F3E-417A-B82E-6CE248F87D75"><omgdc:Bounds height="80.0" width="100.0" x="870.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7" id="BPMNShape_sid-EFFD6E4A-5EAB-45A7-8A28-A7E790E7AFA7"><omgdc:Bounds height="80.0" width="100.0" x="1035.0" y="138.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE" id="BPMNShape_sid-EF30643E-AD5E-461A-BD1A-2C93AE6999DE"><omgdc:Bounds height="80.0" width="100.0" x="1080.0" y="253.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2" id="BPMNShape_sid-0A1A2648-CB7C-4041-BEFF-25ED3361A9A2"><omgdc:Bounds height="28.0" width="28.0" x="1116.0" y="375.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-89949107-5246-4F29-9467-FE1C9A314578" id="BPMNShape_sid-89949107-5246-4F29-9467-FE1C9A314578"><omgdc:Bounds height="80.0" width="100.0" x="875.671875" y="253.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EBDE8D97-F475-4B18-9E76-574993780423" id="BPMNShape_sid-EBDE8D97-F475-4B18-9E76-574993780423"><omgdc:Bounds height="28.0" width="28.0" x="911.671875" y="375.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F" id="BPMNEdge_sid-A5670FF8-5FF7-4E14-B5FE-44E8FC58808F"><omgdi:waypoint x="640.0" y="178.0" /><omgdi:waypoint x="705.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40" id="BPMNEdge_sid-1EDF89E1-6F2F-4095-9537-FEF2DF963A40"><omgdi:waypoint x="225.0" y="218.0" /><omgdi:waypoint x="225.0" y="293.0" /><omgdi:waypoint x="875.671875" y="293.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BD98AE7B-960F-4E28-93E1-85877B165A82" id="BPMNEdge_sid-BD98AE7B-960F-4E28-93E1-85877B165A82"><omgdi:waypoint x="460.0" y="178.0" /><omgdi:waypoint x="540.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-7C4EA12F-B707-468C-A251-E0032785A549" id="BPMNEdge_sid-7C4EA12F-B707-468C-A251-E0032785A549"><omgdi:waypoint x="925.671875" y="333.0" /><omgdi:waypoint x="925.671875" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-5624DFEC-0004-4667-BE85-B4812DBB1331" id="BPMNEdge_sid-5624DFEC-0004-4667-BE85-B4812DBB1331"><omgdi:waypoint x="920.0" y="218.0" /><omgdi:waypoint x="920.0" y="253.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-72E4D1A8-677A-45EF-BDAB-F7962A917233" id="BPMNEdge_sid-72E4D1A8-677A-45EF-BDAB-F7962A917233"><omgdi:waypoint x="130.0" y="178.0" /><omgdi:waypoint x="175.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B" id="BPMNEdge_sid-55CD854C-C5ED-49E4-AE5D-42E4EDE6824B"><omgdi:waypoint x="1130.0" y="333.0" /><omgdi:waypoint x="1130.0" y="375.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D" id="BPMNEdge_sid-87AA0DDB-8917-4B0E-B6B5-821479AC006D"><omgdi:waypoint x="1085.0" y="138.0" /><omgdi:waypoint x="1085.0" y="63.0" /><omgdi:waypoint x="920.0" y="63.0" /><omgdi:waypoint x="920.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-36FBC6D6-A61F-477E-8A99-568238CFE367" id="BPMNEdge_sid-36FBC6D6-A61F-477E-8A99-568238CFE367"><omgdi:waypoint x="410.0" y="138.0" /><omgdi:waypoint x="410.0" y="66.0" /><omgdi:waypoint x="225.0" y="66.0" /><omgdi:waypoint x="225.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C" id="BPMNEdge_sid-A7E2E14A-DE12-4667-B597-9588BDAB8A5C"><omgdi:waypoint x="1135.0" y="178.0" /><omgdi:waypoint x="1157.671875" y="178.0" /><omgdi:waypoint x="1157.671875" y="253.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-A1D3353B-B385-462F-A45E-6C250939302B" id="BPMNEdge_sid-A1D3353B-B385-462F-A45E-6C250939302B"><omgdi:waypoint x="805.0" y="178.0" /><omgdi:waypoint x="870.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5" id="BPMNEdge_sid-1F0F4E4A-CB74-4C12-AA14-F22E9B8925C5"><omgdi:waypoint x="590.0" y="218.0" /><omgdi:waypoint x="590.0" y="279.0" /><omgdi:waypoint x="875.671875" y="279.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1E4308B2-D176-4A25-9E88-006850E58561" id="BPMNEdge_sid-1E4308B2-D176-4A25-9E88-006850E58561"><omgdi:waypoint x="970.0" y="178.0" /><omgdi:waypoint x="1035.0" y="178.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-86616F24-FBFC-44C0-A3B6-776DD5840890" id="BPMNEdge_sid-86616F24-FBFC-44C0-A3B6-776DD5840890"><omgdi:waypoint x="755.0" y="138.0" /><omgdi:waypoint x="755.0" y="62.0" /><omgdi:waypoint x="590.0" y="62.0" /><omgdi:waypoint x="590.0" y="138.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9" id="BPMNEdge_sid-96F7D897-58E7-4074-8D9F-6DADE0957FA9"><omgdi:waypoint x="275.0" y="178.0" /><omgdi:waypoint x="360.0" y="178.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='LIMITS_PROCESS'and workflowactive=1</where>
+		</update>
+</changeSet>
+<changeSet id="86" author=" Jayant">
+    <sql>
+        Update vasStructure set Productdesc=substr(productdesc,1,20);
+    </sql>
+</changeSet>
+
+<changeSet id="87" author="Manoj.P">
+		<createTable tableName="CIBIL_FILE_INFO">
+			<column name="ID"  	type="bigint" autoIncrement="true" incrementBy="1">
+			  	<constraints primaryKey="true"  nullable="false" />
+		 	 </column>
+			<column name="FILE_NAME"     type="VARCHAR(100)" >
+				<constraints nullable="false" />
+			</column>	
+			<column name="MEMBERID"       type="VARCHAR(30)">
+				<constraints nullable="false" />
+			</column>	
+			<column name="MEMBER_SHORTNAME" type="VARCHAR(16)">
+				<constraints nullable="false" />
+			</column>	
+			<column name="MEMBER_PASSWORD"  type="VARCHAR(30)" />
+			<column name="CREATEDON"        type="datetime">
+				<constraints nullable="false" />
+			</column>	
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="88" author="Manoj.P">
+		<createTable tableName="CIBIL_DETAILS">
+			<column name="CUST_ID"              type="bigint"/>
+			<column name="FINREFERENCE"         type="VARCHAR2(20)"/>
+			<column name="OWNERSHIP_INDICATOR"  type="int" />
+		</createTable>
+	</changeSet>
+		<changeSet author="pruthvi" id="89">
+		<createView viewName="RPT_FinJointActDtls_pvt_view" replaceIfExists="true">
+			 Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinJointAccountDetails fj inner join customers c on c.custcif = fj.custcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_APP1,2 as CO_APP2,3 as CO_APP3))
+		</createView>
+	</changeSet>
+	<changeSet author="pruthvi" id="90">
+		<createView viewName="RPT_FinGuarantorDtls_pvt_view" replaceIfExists="true">
+			  Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinGuarantorsDetails fj inner join customers c on c.custcif = fj.GUarantorcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
+		</createView>
+	</changeSet>
+	<changeSet author="pruthvi" id="91">
+	<sql>
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_CLLIMITS');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_CLLIMITS') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_CLLIMITS';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_CLLIMITS','Reports for Commercial Limit MIS', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_CLLIMITMIS');
+Delete from SecRights where RightName = 'menu_Item_CLLIMITMIS';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_CLLIMITMIS', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_CLLIMITS'), (Select RightID from SecRights where RightName = 'menu_Item_CLLIMITMIS'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_CLLIMITS'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_DOCEXTRACT') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_DOCEXTRACT','Reports for List Of Document Extracts', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT');
+Delete from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_LISTOFDOCUMENTEXTRACT', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_DOCEXTRACT'), (Select RightID from SecRights where RightName = 'menu_Item_LISTOFDOCUMENTEXTRACT'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_DOCEXTRACT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_LOANTRACKER');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_LOANTRACKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_LOANTRACKER';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_LOANTRACKER','Reports for Term Loan Tracker', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_TERMLOANTRACKER');
+Delete from SecRights where RightName = 'menu_Item_TERMLOANTRACKER';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_TERMLOANTRACKER', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_LOANTRACKER'), (Select RightID from SecRights where RightName = 'menu_Item_TERMLOANTRACKER'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_LOANTRACKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_DAILYDISBRPT') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'ADMIN');
+Delete from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_DAILYDISBRPT','Reports for Daily Disbursal', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT');
+Delete from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_DAILYDISBURSALREPORT', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_DAILYDISBRPT'), (Select RightID from SecRights where RightName = 'menu_Item_DAILYDISBURSALREPORT'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'REPORTS_DAILYDISBRPT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'ADMIN'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+	</changeSet>
+	
+		<changeSet author="pruthvi" id="92">
+	<sql>
+	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:CL LIMIT MIS','CL LIMIT MIS',1,'CL_LIMIT_MIS','pfsDatasource',1,'menu_Item_CLLIMITMIS',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:LIST OF DOCUMENTS EXTRACT','LIST OF DOCUMENTS EXTRACT',1,'LIST_OF_DOCUMENTS_EXTRACT','pfsDatasource',1,'menu_Item_LISTOFDOCUMENTEXTRACT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Term Loan Tracker','Term Loan Tracker',1,'TermLoanTracker','pfsDatasource',1,'menu_Item_TERMLOANTRACKER',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
+		</sql>
+	</changeSet>
+			<!-- <changeSet author="pruthvi" id="93">
+	<sql>
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+		</sql>
+	</changeSet> -->
+	
+	<changeSet author="Manoj.P" id="94">
+		<renameColumn columnDataType="VARCHAR(30)" newColumnName="MEMBER_ID"
+		oldColumnName="MEMBERID" tableName="CIBIL_FILE_INFO" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="95">
+		<renameColumn columnDataType="VARCHAR(16)" newColumnName="MEMBER_NAME"
+		oldColumnName="MEMBER_SHORTNAME" tableName="CIBIL_FILE_INFO" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="96">
+		<addColumn tableName="CIBIL_DETAILS">
+			<column name="LATESTRPYDATE" type="datetime" />
+		</addColumn>
+</changeSet>
+<changeSet id="97" author="Srikanth">
+<sql>
+ update bankbranches set IFSC='CNRB0002151' where branchcode='288380'
+</sql>
+</changeSet>
+
+	<changeSet author="Manoj.P" id="98">
+		<renameColumn columnDataType="smallint" newColumnName="OWNERSHIP"
+		oldColumnName="OWNERSHIP_INDICATOR" tableName="CIBIL_DETAILS" />
+	</changeSet>
+
+	<changeSet author="Manoj.P" id="99">
+		<renameTable newTableName="CIBIL_CUSTOMER_EXTRACT"
+			oldTableName="CIBIL_DETAILS" />
+	</changeSet>
+	<changeSet id="98" author="Madhubabu">
+	<dropTable tableName="FinTaxDetailUpload_temp"/>
+	<dropTable tableName="FinTaxDetailUpload"/>
+	</changeSet>
+<changeSet author="Madhubabu" id="99">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+
+<changeSet author="Madhubabu" id="100">
+		<createTable tableName="FinTaxUploadDetail">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Madhubabu" id="101">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="102" author="Madhubabu">
+	<dropTable tableName="FinTaxUploadDetail_temp"/>
+	</changeSet>
+	<changeSet author="Madhubabu" id="103">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="104" author="Madhubabu">
+	<dropTable tableName="FinTaxDetailUploadHeader"/>
+	</changeSet>
+	<changeSet author="Madhubabu" id="105">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet author="Manoj.P" id="106">
+	<addColumn tableName="CIBIL_FILE_INFO">
+		<column name="STATUS" type="varchar(1)" />
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>

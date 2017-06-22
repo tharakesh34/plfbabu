@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  UserCounterSpringSessionListenerImpl.java 							*                           
+ * FileName    		:  UserImpl.java														*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -39,55 +39,66 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.policy.model;
+ */
+package com.pennanttech.framework.security.core;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.aspectj.lang.reflect.Pointcut;
-public class UserCounterSpringSessionListenerImpl implements Serializable {
+import org.springframework.security.core.GrantedAuthority;
 
-	private static final long serialVersionUID = 8979460663616009375L;
-	private static final Logger logger = Logger.getLogger(UserCounterSpringSessionListenerImpl.class);
-	private UserCounterImpl userCounter;
+import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.administration.SecurityUser;
 
-	public UserCounterSpringSessionListenerImpl() {
-		
-	}
-	
-	public void startSession() {
-		logger.warn("start");
-	}
+public class User extends org.springframework.security.core.userdetails.User implements Serializable {
+	private static final long	serialVersionUID	= 7682359879431168931L;
 
-	public void disposeSession() {
-		logger.warn("ende");
-	}
+	final private String		usrToken;
+	final private long			userId;
+	private SecurityUser		securityUser;
+	private List<SecurityRole>	securityRole;
+	private long				loginId;
 
-	public void registerNewSession(Pointcut pointcut) {
-		// public void registerNewSession(Object returnValue, Method method,
-		// Object[] args, Object target) throws Throwable {
-		// final String session = pointcut. user1.toString();
-		// final String user = session1;
-		// System.err.println("###############################################");
-		// System.err.println(session + " -> " + user);
+	public User(SecurityUser user, Collection<GrantedAuthority> authorities, List<SecurityRole> roles) {
+		super(user.getUsrLogin(), user.getUsrPwd() == null ? "" : user.getUsrPwd(), user.isUsrEnabled(), user.isAccountNonExpired(), user
+				.isCredentialsNonExpired(), user.isAccountNonLocked(), authorities);
 
-		// return call.proceed();
+		this.usrToken = user.getUsrToken();
+		this.userId = user.getId();
+		this.securityUser = user;
+		this.securityRole = roles;
 	}
 
-	public void removeSessionInformation(Object returnValue, Method method, Object[] args, Object target)
-			throws Throwable {
-		final String user = (String) args[0];
-		logger.debug(user);
+	public String getToken() {
+		return getUsrToken();
 	}
 
-	public UserCounterImpl getUserCounter() {
-		return this.userCounter;
+	private String getUsrToken() {
+		return this.usrToken;
 	}
 
-	public void setUserCounter(UserCounterImpl userCounter) {
-		this.userCounter = userCounter;
+	public long getUserId() {
+		return this.userId;
 	}
 
+	public SecurityUser getSecurityUser() {
+		return this.securityUser;
+	}
+
+	public List<SecurityRole> getSecurityRole() {
+		return securityRole;
+	}
+
+	public void setSecurityRole(List<SecurityRole> securityRole) {
+		this.securityRole = securityRole;
+	}
+
+	public long getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(long loginId) {
+		this.loginId = loginId;
+	}
 }

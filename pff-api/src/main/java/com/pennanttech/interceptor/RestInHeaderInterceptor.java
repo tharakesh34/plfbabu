@@ -39,12 +39,12 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennant.backend.service.UserService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.ws.exception.ServiceException;
 import com.pennant.ws.exception.ServiceExceptionDetails;
+import com.pennanttech.framework.security.core.User;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.ws.auth.model.ServerAuthentication;
 import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;
@@ -408,7 +408,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		List<SecurityRole> securityRole = new ArrayList<>();
 		Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-		UserImpl userDetails = new UserImpl(userLoginDetails, grantedAuthorities, securityRole);
+		User userDetails = new User(userLoginDetails, grantedAuthorities, securityRole);
 		UsernamePasswordAuthenticationToken currentUser = new UsernamePasswordAuthenticationToken(userDetails,
 				userDetails.getPassword(), userDetails.getAuthorities());
 		currentUser.setDetails(authDetails);

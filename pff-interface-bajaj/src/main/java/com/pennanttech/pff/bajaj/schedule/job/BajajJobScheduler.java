@@ -22,7 +22,6 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	private static final Logger	logger		= Logger.getLogger(BajajJobScheduler.class);
 
 	protected DataSource		dataSource;
-	private JobSchedulerDetails	jobDetails	= null;
 	private DataEngineConfig	datEngine	= null;
 
 	public BajajJobScheduler() {
@@ -55,7 +54,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
-				jobDetails = new JobSchedulerDetails();
+				JobSchedulerDetails jobDetails = new JobSchedulerDetails();
 				jobDetails.setJobDetail(JobBuilder.newJob(DisbursementResponseJob.class)
 						.withIdentity("AUTO_DISB_RES_JOB", "AUTO_DISB_RES_FILE")
 						.withDescription("Auto Disbrsement response file job").build());
@@ -82,7 +81,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
-				jobDetails = new JobSchedulerDetails();
+				JobSchedulerDetails jobDetails = new JobSchedulerDetails();
 				jobDetails.setJobDetail(JobBuilder.newJob(DisbrsementImpsResponseJob.class)
 						.withIdentity("DISB_IMPS_RES_JOB", "DISB_IMPS_RESPONSE")
 						.withDescription("Disbrsement imps response job").build());
@@ -110,7 +109,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			}
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
-				jobDetails = new JobSchedulerDetails();
+				JobSchedulerDetails jobDetails = new JobSchedulerDetails();
 				jobDetails.setJobDetail(JobBuilder.newJob(PosidexCustomerUpdateResponseJob.class)
 						.withIdentity("POSIDEX_RES_JOB", "POSIDEX_CUSTOMER_RESPONSE")
 						.withDescription("Posidex customer update response job trigger.").build());

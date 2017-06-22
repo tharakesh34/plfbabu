@@ -101,7 +101,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			valueParm[2] = "maturity Date:" + DateUtility.formatToShortDate(financeMain.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90282", valueParm)));
 		}
-
+		
 		// validate from date
 		if (finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
 			String[] valueParm = new String[1];
@@ -224,13 +224,15 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
-		// terms
+		// term
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
 				|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-			if (finServiceInstruction.getTerms() <= 0) {
-				String[] valueParm = new String[2];
+			if (finServiceInstruction.getTerms() <= 0 ||finServiceInstruction.getTerms()> 99) {
+				String[] valueParm = new String[3];
 				valueParm[0] = "terms";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				valueParm[1] = "1";
+				valueParm[2] = "99";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
 			}
 		} else {
 			if (finServiceInstruction.getTerms() > 0) {
@@ -262,10 +264,13 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 			
-			if(!isValidRecalFromDate && (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-					|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
+			if (!isValidRecalFromDate
+					&& (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+							|| StringUtils.equals(finServiceInstruction.getRecalType(),CalculationConstants.RPYCHG_TILLDATE)
+							|| StringUtils.equals(finServiceInstruction.getRecalType(),CalculationConstants.RPYCHG_ADDRECAL))) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
+				valueParm[0] = "RecalFromDate:"
+						+ DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
 			}
 			if(!isValidRecalToDate && (StringUtils.equals(finServiceInstruction.getRecalType(), 

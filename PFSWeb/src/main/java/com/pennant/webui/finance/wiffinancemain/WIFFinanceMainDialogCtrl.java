@@ -46,7 +46,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -54,8 +53,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -902,14 +899,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceMain
 	 *            financeMain
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
 	 */
-	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1385,7 +1376,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Filling Child Window Details Tabs
-		doFillTabs(aFinanceDetail);
+		doFillTabs();
+
 		logger.debug("Leaving");
 	}
 
@@ -1419,13 +1411,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method to invoke data filling method for eligibility tab, Scoring tab, fee charges tab, accounting tab,
 	 * agreements tab and additional field details tab.
-	 * 
-	 * @param aFinanceDetail
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 * 
 	 */
-	private void doFillTabs(FinanceDetail aFinanceDetail) throws ParseException, InterruptedException {
+	private void doFillTabs() {
 		logger.debug("Entering");
 
 		//Step Policy Details
@@ -2500,9 +2487,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -2527,7 +2513,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// setFocus
 		this.finReference.focus();
 
-		try {
 			// fill the components with the data
 			doWriteBeanToComponents(afinanceDetail, true);
 			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()) {
@@ -2593,9 +2578,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doStoreInitValues();
 			setDialog(DialogType.EMBEDDED);
 
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
 		logger.debug("Leaving");
 	}
 
@@ -2719,11 +2701,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendFeeDetailTab(boolean feeTabVisible) throws InterruptedException {
+	protected void appendFeeDetailTab(boolean feeTabVisible) {
 		logger.debug("Entering");
+
 		try {
 			Tab tab = new Tab("Fee");
 			tab.setId("feeTab");
@@ -2748,6 +2729,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -5151,12 +5133,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//On Change Event for Finance Start Date
 	public void onChange$finStartDate(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
+
 		changeFrequencies();
-		/* this.finReference.setFocus(true); */
 
 		//Fee charge Calculations
-		boolean isFeesModified = false;
 		if (this.finStartDate.getValue() != null) {
 
 			Date curBussDate = DateUtility.getAppDate();
@@ -5167,7 +5148,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
 					isPastDeal = false;
-					isFeesModified = true;
 				}
 			} else if (this.finStartDate.getValue().compareTo(curBussDate) <= 0) {
 				if (!isPastDeal) {
@@ -5175,14 +5155,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							getFinanceDetailService().getFeeRuleDetails(
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
-
-					isFeesModified = true;
 					isPastDeal = true;
 				}
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug("Leaving");
 	}
 
 	public void onChange$graceTerms(Event event) {

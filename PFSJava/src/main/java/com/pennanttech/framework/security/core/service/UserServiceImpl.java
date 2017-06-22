@@ -39,30 +39,40 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.service.impl;
+ */
+package com.pennanttech.framework.security.core.service;
 
 import java.util.Collection;
 import java.util.List;
 
-import com.pennant.backend.dao.LanguageDAO;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.dao.administration.SecurityRightDAO;
+import com.pennant.backend.dao.staticparms.LanguageDAO;
+import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.service.UserService;
 
 public class UserServiceImpl implements UserService {
-	private UserDAO userDAO;
-	private LanguageDAO languageDAO;
-
-	private SecurityRightDAO securityRightDAO;
+	private final static Logger	logger	= Logger.getLogger(UserServiceImpl.class);
+	
+	@Autowired
+	private UserDAO				userDAO;
+	@Autowired
+	private LanguageDAO			languageDAO;
+	@Autowired
+	private SecurityRightDAO	securityRightDAO;
+	@Autowired
+	private SecLoginlogDAO		secLoginlogDAO;
 
 	public UserServiceImpl() {
 		super();
 	}
-	
+
 	public LanguageDAO getLanguageDAO() {
 		return languageDAO;
 	}
@@ -86,7 +96,6 @@ public class UserServiceImpl implements UserService {
 	public SecurityUser getUserByLogin(final String userName) {
 		return getUserDAO().getUserByLogin(userName);
 	}
-
 
 	public List<SecurityUser> getUserLikeLastname(String value) {
 		return getUserDAO().getUserLikeLastname(value);
@@ -118,18 +127,35 @@ public class UserServiceImpl implements UserService {
 
 	public Collection<SecurityRight> getMenuRightsByUser(SecurityUser user) {
 		return getSecurityRightDAO().getMenuRightsByUser(user);
-		
+
 	}
 
 	public Collection<SecurityRight> getPageRights(SecurityRight secRight) {
 		return getSecurityRightDAO().getPageRights(secRight);
 	}
-	
+
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
 		return getUserDAO().getUserRolesByUserID(userID);
 	}
 
-	public List<SecurityRight> getRoleRights(SecurityRight secRight,String[] roles){
-		return getSecurityRightDAO().getRoleRights(secRight,roles); 
+	public List<SecurityRight> getRoleRights(SecurityRight secRight, String[] roles) {
+		return getSecurityRightDAO().getRoleRights(secRight, roles);
+	}
+	
+	@Override
+	public long logLoginAttempt(SecLoginlog logingLog) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Login failed for: " + logingLog.getLoginUsrLogin() + " Host:" + logingLog.getLoginIP() + " SessionId: " + logingLog.getLoginSessionID());
+		}
+
+		long loginAttemptId = this.secLoginlogDAO.saveLog(logingLog);
+		userDAO.updateLoginStatus(logingLog.getLoginUsrLogin(), logingLog.getLoginStsID());
+
+		return loginAttemptId;
+	}
+	
+	@Override
+	public void logLogOut(long loginId) {
+		secLoginlogDAO.logLogOut(loginId);
 	}
 }

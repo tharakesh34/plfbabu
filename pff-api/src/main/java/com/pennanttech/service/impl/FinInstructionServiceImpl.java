@@ -888,7 +888,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		finODPenaltyRate.setODChargeAmtOrPerc(finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc());
 		finODPenaltyRate.setODAllowWaiver(finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver());
 		finODPenaltyRate.setODMaxWaiverPerc(finServiceInstruction.getFinODPenaltyRate().getODMaxWaiverPerc());
-		finODPenaltyRate.setFinEffectDate(DateUtility.getSysDate());
+		finODPenaltyRate.setFinEffectDate(DateUtility.getAppDate());
 
 		returnStatus = validatefinODPenaltyRate(finODPenaltyRate);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {

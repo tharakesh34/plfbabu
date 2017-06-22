@@ -31,9 +31,7 @@ public final class App {
 	public static final String			NAME		= "pennApps Lending Factory";
 
 	public static final Database		DATABASE	= Database.ORACLE;
-
-	public static AuthenticationType	AUTH_TYPE	= AuthenticationType.SSO;
-
+	
 	private App() {
 		super();
 	}

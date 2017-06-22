@@ -64,4 +64,5 @@ public interface BranchDAO extends BasicCrudDao<Branch> {
 	boolean isDuplicateKey(String branchCode, TableType tableType);
 	void updateFinanceBranch(Branch branch, String type);
 	void updateApplicationAccess(String sysParmName,String sysParmValue);
+	boolean isPinCodeExists(String pinCode);
 }

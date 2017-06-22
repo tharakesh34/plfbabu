@@ -56,8 +56,8 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -78,12 +78,7 @@ public class MicroEOD implements Tasklet {
 	private PlatformTransactionManager	transactionManager;
 	private DataSource					dataSource;
 
-	private static final String			customerSQL	= "Select CUST.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch,"
-															+ " CustPOB, CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry,CustSector,"
-															+ " CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry,CustResdCountry,"
-															+ " CustRiskCountry, CustNationality, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,"
-															+ " CustAppDate FROM  Customers CUST INNER JOIN CustomerQueuing CQ ON CUST.CustID = CQ.CustID "
-															+ " Where ThreadID = :ThreadId and Progress=:Progress";
+	private static final String			customerSQL	= "Select CustID from CustomerQueuing  Where ThreadID = :ThreadId and Progress=:Progress";
 
 	public MicroEOD() {
 
@@ -101,10 +96,10 @@ public class MicroEOD implements Tasklet {
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
-		JdbcCursorItemReader<Customer> cursorItemReader = new JdbcCursorItemReader<Customer>();
+		JdbcCursorItemReader<Long> cursorItemReader = new JdbcCursorItemReader<Long>();
 		cursorItemReader.setSql(customerSQL);
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setRowMapper(new BeanPropertyRowMapper<Customer>(Customer.class));
+		cursorItemReader.setRowMapper(new SingleColumnRowMapper<Long>(Long.class));
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -117,12 +112,9 @@ public class MicroEOD implements Tasklet {
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
-		Customer customer;
-		while ((customer = cursorItemReader.read()) != null) {
-			long custID = 0;
+		Long custID = null;
+		while ((custID = cursorItemReader.read()) != null) {
 			try {
-
-				custID = customer.getCustID();
 				//update start
 				customerQueuingDAO.startEODForCID(custID);
 
@@ -130,25 +122,15 @@ public class MicroEOD implements Tasklet {
 				txStatus = transactionManager.getTransaction(txDef);
 
 				CustEODEvent custEODEvent = new CustEODEvent();
+				Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custID);
 				custEODEvent.setCustomer(customer);
 				custEODEvent.setEodDate(valueDate);
 				custEODEvent.setEodValueDate(valueDate);
 
 				eodService.doProcess(custEODEvent, valueDate);
 
-				//update customer EOD
-				eodService.getLoadFinanceData().updateFinEODEvents(custEODEvent);
-				//receipt postings
-				if (custEODEvent.isCheckPresentment()) {
-					eodService.getReceiptPaymentService().processrReceipts(custEODEvent);
-				}
-				//customer Date update
-				String newCustStatus = null;
-				if (custEODEvent.isUpdCustomer()) {
-					newCustStatus = custEODEvent.getCustomer().getCustSts();
-				}
+				eodService.doUpdate(custEODEvent);
 
-				eodService.getLoadFinanceData().updateCustomerDate(custID, valueDate, newCustStatus);
 				//update  end
 				customerQueuingDAO.updateSucess(custID);
 
@@ -165,7 +147,7 @@ public class MicroEOD implements Tasklet {
 				updateFailed(custID);
 			}
 			//clear data after the process
-			customer = null;
+			custID = null;
 		}
 
 		cursorItemReader.close();

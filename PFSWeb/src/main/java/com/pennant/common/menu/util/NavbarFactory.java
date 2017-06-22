@@ -123,7 +123,7 @@ abstract public class NavbarFactory implements Serializable {
 
 	private boolean isAllowed(IMenuDomain treecellValue) {
 
-		if (!App.AUTH_TYPE.equals(AuthenticationType.DAO)) {
+		if (!AuthenticationType.SSO.equals(workspace.getLoggedInUser().getAuthType())) {
 			if ("menu_Item_ChgPwd".equals(treecellValue.getId())
 					|| "menu_Item_PasswordResetUser".equals(treecellValue.getId())) {
 				return false;

@@ -146,7 +146,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 					}
 
 					if (StringUtils.trimToNull((String) rowMap.get("FINREFERENCE")) == null) {
-						if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
+						if (CUST_EMI.compareTo(UPPER_LIMIT) > 0) {
 							rowMap.put("EMI", UPPER_LIMIT);
 							rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
 						} else {
@@ -155,11 +155,15 @@ public class MandateRequestService extends BajajService implements MandateReques
 						}
 						
 						Date startDate = (Date) rowMap.get("START_DATE");
+						Date firstDueDate = (Date) rowMap.get("FIRSTDUEDATE");
 						Date endDate = DateUtil.addMonths(startDate, 240);
 						
 						rowMap.put("EFFECTIVE_DATE", startDate);
 						rowMap.put("EMI_ENDDATE", endDate);
 						
+						if(firstDueDate == null) {
+							rowMap.put("FIRSTDUEDATE", startDate);
+						}
 					}
 
 					rowMap.remove("CCYMINORCCYUNITS");

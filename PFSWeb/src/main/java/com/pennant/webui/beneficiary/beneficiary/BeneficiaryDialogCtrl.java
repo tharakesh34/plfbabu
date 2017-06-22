@@ -507,15 +507,15 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 					.getLabel("label_BeneficiaryDialog_BankBranchID.value"), null, true));
 		}
 		// Acc Number
-		/*if (!this.accNumber.isReadonly()) {
+		if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_BeneficiaryDialog_AccNumber.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
 					true,accNoLength,accNoLength));
-		}*/
+		}
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BeneficiaryDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_NAME,
+					.getLabel("label_BeneficiaryDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					true));
 		}
 
