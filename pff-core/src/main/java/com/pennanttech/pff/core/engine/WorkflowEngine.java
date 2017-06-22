@@ -51,17 +51,14 @@ import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
+import com.pennanttech.pff.core.FactoryException;
 import com.pennanttech.pff.core.model.workflow.SequenceFlow;
 import com.pennanttech.pff.core.model.workflow.ServiceTask;
 import com.pennanttech.pff.core.model.workflow.UserTask;
@@ -72,14 +69,12 @@ import com.pennanttech.pff.core.util.XmlUtil;
  * BPMN.
  */
 public class WorkflowEngine {
-	private static final Logger	logger					= Logger.getLogger(WorkflowEngine.class);
-
-	private OMElement			definition;
-	private String				namespaceURI;
-	private OMElement			process;
-	private String				actualFirstTaskId		= "";
-	private String				actualFirstTaskActor	= "";
-	private List<String>		firstTaskActors			= new ArrayList<>();
+	private OMElement		definition;
+	private String			namespaceURI;
+	private OMElement		process;
+	private String			actualFirstTaskId		= "";
+	private String			actualFirstTaskActor	= "";
+	private List<String>	firstTaskActors			= new ArrayList<>();
 
 	/**
 	 * Enumerates the namespaces that were used in the BPMN.
@@ -110,18 +105,20 @@ public class WorkflowEngine {
 	 * 
 	 * @param bpmn
 	 *            The BPMN definition.
-	 * @throws XMLStreamException
-	 *             If the BPMN is not well-formed or cannot be processed.
-	 * @throws FactoryConfigurationError
-	 *             If the BPMN cannot be loaded.
+	 * @throws FactoryException
+	 *             If the BPMN cannot be loaded or the BPMN is not well-formed or cannot be processed.
 	 */
-	public WorkflowEngine(String bpmn) throws XMLStreamException, FactoryConfigurationError {
-		ByteArrayInputStream stream = new ByteArrayInputStream(bpmn.getBytes(StandardCharsets.UTF_8));
-		XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
-		StAXOMBuilder builder = new StAXOMBuilder(parser);
+	public WorkflowEngine(String bpmn) {
+		try {
+			ByteArrayInputStream stream = new ByteArrayInputStream(bpmn.getBytes(StandardCharsets.UTF_8));
+			XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(stream);
+			StAXOMBuilder builder = new StAXOMBuilder(parser);
 
-		definition = builder.getDocumentElement();
-		init();
+			definition = builder.getDocumentElement();
+			init();
+		} catch (Exception e) {
+			throw new FactoryException("workflow", e);
+		}
 	}
 
 	/**
@@ -572,9 +569,10 @@ public class WorkflowEngine {
 		}
 
 		// Unescape XML characters.
-		exp = exp.replaceAll("&amp;", "&");
-		exp = exp.replaceAll("&gt;", ">");
-		exp = exp.replaceAll("&lt;", "<");
+		String script = exp;
+		script = script.replaceAll("&amp;", "&");
+		script = script.replaceAll("&gt;", ">");
+		script = script.replaceAll("&lt;", "<");
 
 		ScriptEngineManager factory = new ScriptEngineManager();
 		ScriptEngine engine = factory.getEngineByName("JavaScript");
@@ -582,10 +580,9 @@ public class WorkflowEngine {
 		engine.put("vo", object);
 
 		try {
-			return (Boolean) engine.eval(exp);
-		} catch (ScriptException e) {
-			logger.warn("Exception: ", e);
-			return false;
+			return (Boolean) engine.eval(script);
+		} catch (Exception e) {
+			throw new FactoryException("workflow", e);
 		}
 	}
 
