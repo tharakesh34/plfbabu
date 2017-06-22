@@ -1282,8 +1282,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 		
 		if(limitHeader.getLimitExpiryDate() != null){
-			if (limitHeader.getLimitExpiryDate().before(DateUtility.getAppDate())
-					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+			if (limitHeader.getLimitExpiryDate().compareTo(DateUtility.getAppDate()) <= 0|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Limit expiry date";
 				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
@@ -1366,6 +1365,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
+		Date lineMaxExpDate=DateUtility.getAppDate();
 		if(limitDetails != null) {
 			for(LimitDetails detail: limitDetails) {
 
@@ -1387,6 +1387,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 						return auditDetail;
 					}	
+					if (detail.getExpiryDate() != null && lineMaxExpDate != null) {
+						if (detail.getExpiryDate().compareTo(lineMaxExpDate) >= 0) {
+							lineMaxExpDate = detail.getExpiryDate();
+						}
+					}
 				}
 				if(detail.getLimitSanctioned().compareTo(BigDecimal.ZERO)<0){
 					String[] valueParm = new String[2];
@@ -1402,6 +1407,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL +","+ LimitConstants.LIMIT_CHECK_RESERVED;
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90809", "", valueParm)));
 				}
+			}
+			if(limitHeader.getLimitExpiryDate()!=null){
+				if (limitHeader.getLimitExpiryDate().before(lineMaxExpDate)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Limit expiry date";
+					valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				}	
 			}
 		}
 
