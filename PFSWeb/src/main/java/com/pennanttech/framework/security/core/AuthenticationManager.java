@@ -283,19 +283,39 @@ public class AuthenticationManager implements AuthenticationProvider {
 	}
 
 	public static String getRemoteAddress() {
+		Authentication authentication = getAuthentication();
+
+		if (authentication == null) {
+			return "";
+		}
+
+		if (authentication.getDetails() == null) {
+			return "";
+		}
+
 		try {
-			return ((WebAuthenticationDetails) getAuthentication().getDetails()).getRemoteAddress();
+			return ((WebAuthenticationDetails) authentication.getDetails()).getRemoteAddress();
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Literal.EXCEPTION, e);
 			return "";
 		}
 	}
 
 	public static String getSessionId() {
+		Authentication authentication = getAuthentication();
+
+		if (authentication == null) {
+			return "";
+		}
+
+		if (authentication.getDetails() == null) {
+			return "";
+		}
+
 		try {
-			return ((WebAuthenticationDetails) getAuthentication().getDetails()).getSessionId();
+			return ((WebAuthenticationDetails) authentication.getDetails()).getSessionId();
 		} catch (ClassCastException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(Literal.EXCEPTION, e);
 			return "";
 		}
 	}
