@@ -1559,4 +1559,9 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="Manoj.P" id="110">
+		<renameColumn columnDataType="bigint" newColumnName="CUSTID"
+		oldColumnName="CUST_ID" tableName="CIBIL_CUSTOMER_EXTRACT" />
+	</changeSet>
 </databaseChangeLog>
