@@ -1573,7 +1573,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceDetail getServiceInstResponse(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		FinanceDetail response = new FinanceDetail();
 		response.setFinReference(finScheduleData.getFinReference());
@@ -1581,17 +1580,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// Finance Summary details i.e Basic Calculator details
 		FinanceSummary summaryDetail = getFinanceSummary(finScheduleData);
-		summaryDetail.setEffectiveRateOfReturn(financeMain.getEffectiveRateOfReturn());
-		summaryDetail.setTotalGracePft(financeMain.getTotalGracePft());
-		summaryDetail.setTotalGraceCpz(financeMain.getTotalGraceCpz());
-		summaryDetail.setTotalGrossGrcPft(financeMain.getTotalGrossGrcPft());
-		summaryDetail.setTotalCpz(financeMain.getTotalCpz());
-		summaryDetail.setTotalProfit(financeMain.getTotalProfit());
-		summaryDetail.setTotalRepayAmt(financeMain.getTotalRepayAmt());
-		summaryDetail.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-		summaryDetail.setNumberOfTerms(financeMain.getNumberOfTerms());
-		summaryDetail.setMaturityDate(financeMain.getMaturityDate());
-
 		response.getFinScheduleData().setFinanceSummary(summaryDetail);
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
