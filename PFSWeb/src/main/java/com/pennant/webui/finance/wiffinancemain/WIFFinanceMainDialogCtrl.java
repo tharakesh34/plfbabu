@@ -2513,7 +2513,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// setFocus
 		this.finReference.focus();
 
-		try {
 			// fill the components with the data
 			doWriteBeanToComponents(afinanceDetail, true);
 			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()) {
@@ -2579,9 +2578,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doStoreInitValues();
 			setDialog(DialogType.EMBEDDED);
 
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
 		logger.debug("Leaving");
 	}
 
