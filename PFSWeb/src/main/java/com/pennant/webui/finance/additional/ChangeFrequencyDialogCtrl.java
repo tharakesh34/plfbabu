@@ -325,11 +325,13 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				//Not Review Date
 				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq() 
 						&& !curSchd.isPftOnSchDate()) {
+					prvSchd = curSchd;
 					continue;
 				}
 				
 				// Only allowed if payment amount is greater than Zero
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0 && StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
+					prvSchd = curSchd;
 					continue;
 				}
 

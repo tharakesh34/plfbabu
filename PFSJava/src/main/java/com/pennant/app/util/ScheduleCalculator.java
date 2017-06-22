@@ -760,8 +760,11 @@ public class ScheduleCalculator {
 			}
 		}
 
-		finMain.setEqualRepay(true);
-		finMain.setCalculateRepay(true);
+		if(finMain.getEventFromDate() != null && 
+				DateUtility.compare(finMain.getEventFromDate(), finMain.getFinStartDate()) == 0){
+			finMain.setEqualRepay(true);
+			finMain.setCalculateRepay(true);
+		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
@@ -2776,8 +2779,8 @@ public class ScheduleCalculator {
 		 * BigDecimal(termsPerYear));
 		 */
 
-		cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-		cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
+		//cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+		//cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));

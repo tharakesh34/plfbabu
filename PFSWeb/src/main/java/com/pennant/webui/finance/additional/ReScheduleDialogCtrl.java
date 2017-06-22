@@ -401,11 +401,13 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				
 				//Not Review Date
 				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
+					prvSchd = curSchd;
 					continue;
 				}
 				
 				// Only allowed if payment amount is greater than Zero
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
+					prvSchd = curSchd;
 					continue;
 				}
 
