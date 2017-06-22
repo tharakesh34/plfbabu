@@ -46,6 +46,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -279,6 +280,13 @@ public final class MessageUtil {
 	 *            The exception.
 	 */
 	private static void show(Exception e) {
+		// To address multiple double-clicks of the list items.
+		if (e instanceof UiException && e.getMessage() != null
+				&& e.getMessage().startsWith("Not unique in the ID space")) {
+			logger.warn(e.getMessage());
+			return;
+		}
+
 		logger.error("Exception: ", e);
 
 		Messagebox.setTemplate(TEMPLATE);
