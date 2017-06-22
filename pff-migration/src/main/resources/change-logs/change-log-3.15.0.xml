@@ -1537,4 +1537,26 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="FILE_LOCATION" type="VARCHAR(250) " />
 	</addColumn>
 </changeSet>
+<changeSet id="109" author="Durgaprasad G">
+		<createTable tableName="TAXDOWNLOADHAEDER">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProcessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EndDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordCount" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Export" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
