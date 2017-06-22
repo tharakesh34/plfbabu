@@ -1528,5 +1528,8 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="STATUS" type="varchar(1)" />
 	</addColumn>
 </changeSet>
-
+<changeSet author="Madhu Babu" id="107">
+<renameTable newTableName="FinTaxUploadHeader"
+            oldTableName="FinTaxDetailUploadHeader"/>
+</changeSet>
 </databaseChangeLog>
