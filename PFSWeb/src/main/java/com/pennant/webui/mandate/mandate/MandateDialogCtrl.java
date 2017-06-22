@@ -1798,10 +1798,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (StringUtils.isEmpty(repaymethod)) {
 				repaymethod = financemain.getFinRepayMethod();
 			}
-			Filter[] filters = new Filter[3];
+			Filter[] filters = new Filter[4];
 			filters[0] = new Filter("CustID", financemain.getCustID(), Filter.OP_EQUAL);
 			filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 			filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[3] = new Filter("STATUS", MandateConstants.STATUS_REJECTED, Filter.OP_NOT_EQUAL);
 			this.mandateRef.setFilters(filters);
 			this.mandateRef.setWhereClause("(OpenMandate = 1 or OrgReference is null)");
 		}
