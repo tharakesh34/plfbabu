@@ -548,4 +548,11 @@
          Update ADTvasStructure set Productdesc=substr(productdesc,1,20);
     </sql>
 </changeSet>
+
+<changeSet id="30" author="SreeRavali">
+	<addColumn tableName="ADTFinTaxDetail">
+			<column name="ApplicableForCustId" type="NUMBER(19)" />
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>
