@@ -1682,7 +1682,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException, DatatypeConfigurationException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -2896,7 +2896,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unused")
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException, DatatypeConfigurationException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -5717,7 +5717,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@Override
 	public boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
-			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException, DatatypeConfigurationException {
+			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Rate Changes applied for fetched list
@@ -5774,7 +5774,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
 			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException, DatatypeConfigurationException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Deferment Changes applied for fetched list
@@ -7701,7 +7701,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@SuppressWarnings("unchecked")
 	private void doRolledOverFinancePostings(String finReference, BigDecimal custPayAmount, String accNumber)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException, DatatypeConfigurationException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		//Finance Details
 		FinanceMain main = getFinanceMainDAO().getFinanceMainById(finReference, "", false);
@@ -8158,7 +8158,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	
 	@Override
-	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) throws DatatypeConfigurationException {
+	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
 		return processVasAccounting(aeEvent, vasRecordings, false);
 	}
 
