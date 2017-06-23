@@ -462,11 +462,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	private void createPayableAdvise(String finReference, Map<Long, FinFeeReceipt> map) {
+		logger.debug("Entering");
+
 		FinFeeReceipt feeReceipt;
 		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
 		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise;
-		for(Long key : map.keySet()) {
+
+		// FIXME CH Get the latest Receipt details and update the payable.
+		for (Long key : map.keySet()) {
 			feeReceipt = map.get(key);
 			if (feeReceipt.getAvailableAmount().compareTo(BigDecimal.ZERO) != 0) {
 				manualAdvise = new ManualAdvise();
@@ -484,39 +488,55 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				manualAdvise.setPostDate(DateUtility.getAppDate());
 				manualAdvise.setReservedAmt(BigDecimal.ZERO);
 				manualAdvise.setBalanceAmt(BigDecimal.ZERO);
-				
+
 				manualAdvise.setVersion(0);
 				manualAdvise.setLastMntBy(feeReceipt.getLastMntBy());
 				manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);		
+				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				manualAdvise.setRoleCode("");
 				manualAdvise.setNextRoleCode("");
 				manualAdvise.setTaskId("");
 				manualAdvise.setNextTaskId("");
 				manualAdvise.setRecordType("");
 				manualAdvise.setWorkflowId(0);
-				
+
 				getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
 			}
 		}
-	}
 
-	private void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map) {
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map) {
+		logger.debug("Entering");
+
 		FinFeeReceipt feeReceipt;
 		FinExcessAmount finExcessAmount;
-		for(Long key : map.keySet()) {
-			feeReceipt = map.get(key);
-			if (feeReceipt.getAvailableAmount().compareTo(BigDecimal.ZERO) != 0) {
-				finExcessAmount = new FinExcessAmount();
-				finExcessAmount.setFinReference(finReference);
-				finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
-				finExcessAmount.setAmount(feeReceipt.getAvailableAmount());
-				finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-				finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmount.setBalanceAmt(feeReceipt.getAvailableAmount());
-				getFinExcessAmountDAO().saveExcess(finExcessAmount);
+
+		List<FinReceiptDetail> finReceiptDetailsList = getFinFeeDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
+			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
+				feeReceipt = map.get(finReceiptDetail.getReceiptID());
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feeReceipt.getPaidAmount()));
+			} else {
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
 			}
 		}
+
+		if (excessAmount.compareTo(BigDecimal.ZERO) != 0) {
+			finExcessAmount = new FinExcessAmount();
+			finExcessAmount.setFinReference(finReference);
+			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			finExcessAmount.setAmount(excessAmount);
+			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
+			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
+			finExcessAmount.setBalanceAmt(excessAmount);
+			getFinExcessAmountDAO().saveExcess(finExcessAmount);
+		}
+	
+		logger.debug("Leaving");
 	}
 	
 	@Override
