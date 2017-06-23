@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -54,12 +55,9 @@ public class CIBILReport {
 	
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
-
+	
+	@Autowired
 	private CIBILService cibilService;
-
-	public void setCibilService(CIBILService cibilService) {
-		this.cibilService = cibilService;
-	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
