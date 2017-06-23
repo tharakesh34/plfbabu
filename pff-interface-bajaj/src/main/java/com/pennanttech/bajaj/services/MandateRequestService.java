@@ -168,7 +168,8 @@ public class MandateRequestService extends BajajService implements MandateReques
 
 					rowMap.remove("CCYMINORCCYUNITS");
 					rowMap.remove("CUST_EMI");
-
+					rowMap.remove("FIRSTDUEDATE");
+					
 					id = String.valueOf(insertData(rowMap));
 					logMandateHistory((BigDecimal)rowMap.get("MANDATEID"), id);
 					rowMap = null;
