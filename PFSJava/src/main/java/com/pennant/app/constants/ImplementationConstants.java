@@ -109,5 +109,5 @@ public class ImplementationConstants {
 	
 	public static final boolean FRQ_DATE_VALIDATION				= true;   //Constant to check Frequency and Date Match/Not
 
-	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// 	inserting Payable Advise while receipt remaining amount is there
+	public static final boolean	UPFRONT_ADJUST_PAYABLEADVISE	= false;		// Excess upfront fees paid by customer to be created as Payable Advise/Excess.
 }
