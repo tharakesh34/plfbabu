@@ -30,12 +30,13 @@ public class CIBILDAOImpl implements CIBILDAO  {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select CustShrtName, CustDOB, CustGenderCode from customers");
+		sql.append(" select custShrtName, custDOB, custGenderCode from customers");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
 
-		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, Customer.class);
+		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap,
+				ParameterizedBeanPropertyRowMapper.newInstance(Customer.class));
 	}
 
 	@Override

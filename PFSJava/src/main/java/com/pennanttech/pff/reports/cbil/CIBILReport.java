@@ -87,13 +87,13 @@ public class CIBILReport {
 
 			StringBuilder sql = new StringBuilder();
 
-			sql.append("select CUST_ID, FINREFERENCE, OWNERSHIP  From CIBIL_CUSTOMER_EXTRACT");
+			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP  From CIBIL_CUSTOMER_EXTRACT");
 
 			namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					long customerId = rs.getLong("CUST_ID");
+					long customerId = rs.getLong("CUSTID");
 					int ownership= rs.getInt("OWNERSHIP");
 
 					try {
@@ -164,7 +164,7 @@ public class CIBILReport {
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
 			writer.write(StringUtils.rightPad("", 2, ""));
-			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY)); // FIXME SHOULD BE Month End Date
+			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
 			writer.write("L");
 			writer.write("00000");
