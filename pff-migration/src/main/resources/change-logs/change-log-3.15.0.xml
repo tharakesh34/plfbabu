@@ -2190,4 +2190,10 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
     <changeSet id="148" author="Manoj.P">
     	<dropTable tableName="CIBIL_PHONE_TYPES_MAPPING"/>
     </changeSet>
+    
+    
+    <changeSet author="Manoj.P" id="149">
+		<addUniqueConstraint columnNames="FinType"
+		constraintName="UK_CBFINTYPE" tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
+	</changeSet>
 </databaseChangeLog>
