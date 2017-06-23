@@ -555,4 +555,10 @@
 	</addColumn>
 </changeSet>
 
+<changeSet id="31" author="Durgaprasad G">
+	<sql>
+		Update ADTFinTaxDetail set ApplicableForCustId = 0;
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
