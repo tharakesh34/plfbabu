@@ -100,6 +100,17 @@ public final class DateUtility extends DateUtil {
 	public static String getAppDate(DateFormat dateFormat) {
 		return format(getAppDate(), dateFormat);
 	}
+	
+	/**
+	 * Returns the string representation with the specified date format pattern of the application date.
+	 * 
+	 * @param dateFormat
+	 *            The format describing the date and time pattern.
+	 * @return The formatted date string of the application date.
+	 */
+	public static String getAppDate(String dateFormat) {
+		return format(getAppDate(), dateFormat);
+	}
 
 	/**
 	 * Returns a {@link java.util.Date} object that represents the value date.
