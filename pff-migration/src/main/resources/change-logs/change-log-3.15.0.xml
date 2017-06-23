@@ -2011,4 +2011,10 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</createTable>
 	</changeSet>	
 	
+	<changeSet author="Manoj.P" id="136">
+		<addUniqueConstraint columnNames="AddrTypeCode"
+		constraintName="UK_CBADDTYPE" tableName="CIBIL_ADDRESS_TYPES_MAPPING" />
+	</changeSet>
+	
+	
 </databaseChangeLog>
