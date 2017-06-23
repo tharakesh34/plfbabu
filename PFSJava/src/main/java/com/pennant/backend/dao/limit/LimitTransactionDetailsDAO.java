@@ -24,4 +24,8 @@ public interface LimitTransactionDetailsDAO {
 	LimitTransactionDetail geLoantAvaliableReserve(String refNo, String tranType, long headerId);
 
 	void updateSeq(long transactionId, int schSeq);
+
+	List<LimitTransactionDetail> getPreviousReservedAmt(String finReference, String transtype, long limitId);
+
+	void deleteReservedLogs(String referenceNumber);
 }

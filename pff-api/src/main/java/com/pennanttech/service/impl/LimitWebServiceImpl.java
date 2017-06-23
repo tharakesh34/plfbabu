@@ -3,12 +3,14 @@ package com.pennanttech.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
@@ -28,6 +30,7 @@ import com.pennant.backend.service.customermasters.CustomerGroupService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limit.LimitStructureService;
+import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -54,6 +57,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 	private CurrencyService currencyService;
 	private CommitmentService commitmentService;
 	private ValidationUtility validationUtility;
+	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 
 	/**
 	 * Fetch customer limit structure by structure code.
@@ -197,18 +201,25 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// bean validations
 		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
-
-		// validate reserve limit request
-		WSReturnStatus returnStatus = doLimitReserveValidations(limitTransDetail);
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		WSReturnStatus returnStatus = null;
+		try {
+			limitTransactionDetailDAO.deleteReservedLogs(limitTransDetail.getReferenceNumber());
+			
+			// validate reserve limit request
+			returnStatus = doLimitReserveValidations(limitTransDetail);
+			
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				return returnStatus;
+			}
+			
+			// call do Reserve limit method
+			returnStatus = limitServiceController.doReserveLimit(limitTransDetail);
+			
+			logger.debug("Leaving");
 			return returnStatus;
+		} catch(Exception e) {
+			
 		}
-
-		// call do Reserve limit method
-		returnStatus = limitServiceController.doReserveLimit(limitTransDetail);
-
-		logger.debug("Leaving");
 		return returnStatus;
 	}
 
@@ -224,12 +235,25 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		WSReturnStatus returnStatus = null;
 		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
 		limitTransDetail.setReferenceCode(LimitConstants.FINANCE);
+		
 		// validate limit transaction details
 		returnStatus = doLimitReserveValidations(limitTransDetail);
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
+		
+		// validate limit reserve amount for cancellation
+		String finReference = limitTransDetail.getReferenceNumber();
+		String transType = limitTransDetail.getTransactionType();
+		long limitId = limitTransDetail.getHeaderId();
+		List<LimitTransactionDetail> lmtTransDetails = limitTransactionDetailDAO.getPreviousReservedAmt(finReference,
+				transType, limitId);
+		BigDecimal prvReserv = LimitManagement.getPreviousReservedAmt(lmtTransDetails);
+		if(prvReserv.compareTo(BigDecimal.ZERO) <= 0) {
+			return APIErrorHandlerService.getFailedStatus("90340");
+		}
+		
 
 		// call cancel Reserve limit method
 		returnStatus = limitServiceController.cancelReserveLimit(limitTransDetail);
@@ -438,49 +462,44 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		logger.debug("Leaving");
 		return response;
 	}
-
 	@Autowired
 	public void setLimitServiceController(LimitServiceController limitServiceController) {
 		this.limitServiceController = limitServiceController;
 	}
-
 	@Autowired
 	public void setLimitStructureService(LimitStructureService limitStructureService) {
 		this.limitStructureService = limitStructureService;
 	}
-
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-
 	@Autowired
 	public void setCustomerGroupService(CustomerGroupService customerGroupService) {
 		this.customerGroupService = customerGroupService;
 	}
-
 	@Autowired
 	public void setLimitDetailService(LimitDetailService limitDetailService) {
 		this.limitDetailService = limitDetailService;
 	}
-
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-
 	@Autowired
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
-
 	@Autowired
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
+	}
+	@Autowired
+	public void setLimitTransactionDetailDAO(LimitTransactionDetailsDAO limitTransactionDetailDAO) {
+		this.limitTransactionDetailDAO = limitTransactionDetailDAO;
 	}
 }

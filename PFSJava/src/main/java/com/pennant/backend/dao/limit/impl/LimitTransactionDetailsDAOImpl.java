@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.limit.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -272,6 +273,71 @@ public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTran
 		}
 		logger.debug("Leaving");
 
+	}
+
+	/**
+	 * 
+	 * 
+	 */
+	@Override
+	public List<LimitTransactionDetail> getPreviousReservedAmt(String finReference, String transtype, long limitId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+
+		StringBuilder selectSql = new StringBuilder("Select TransactionType, SUM(LimitAmount) LimitAmount");
+		selectSql.append(" From LimitTransactionDetails");
+		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND HeaderId = :HeaderId");
+		selectSql.append(" group by TransactionType");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		source = new MapSqlParameterSource();
+		source.addValue("ReferenceCode", LimitConstants.FINANCE);
+		source.addValue("ReferenceNumber", finReference);
+		source.addValue("TransactionType", transtype);
+		source.addValue("HeaderId", limitId);
+
+		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitTransactionDetail.class);
+		try {
+			return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+		} finally {
+			source = null;
+			selectSql = null;
+			logger.debug("Leaving");
+		}
+		return null;
+	}
+
+	/**
+	 * Method for delete logged information, When Reserve Limit service called from API.
+	 * 
+	 * @param referenceNumber
+	 */
+	@Override
+	public void deleteReservedLogs(String referenceNumber) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReferenceNumber", referenceNumber);
+		List<String> transTypes = new ArrayList<String>();
+		transTypes.add(LimitConstants.BLOCK);
+		transTypes.add(LimitConstants.UNBLOCK);
+		source.addValue("Transactiontype", transTypes);
+		
+		StringBuilder deleteSql = new StringBuilder("Delete From LimitTransactionDetails");
+		deleteSql.append(" Where ReferenceNumber = :ReferenceNumber AND Transactiontype IN(:Transactiontype)");
+		
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		
 	}
 
 }

@@ -1301,6 +1301,28 @@ public class LimitManagement {
 		transDet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		limitTransactionDetailDAO.save(transDet);
 	}
+	
+	public static BigDecimal getPreviousReservedAmt(List<LimitTransactionDetail> lmtTransDetails) { 
+		logger.debug("Entering");
+		BigDecimal blockAmount = BigDecimal.ZERO;
+
+		if (lmtTransDetails != null && !lmtTransDetails.isEmpty()) {
+			for (LimitTransactionDetail tansDetail : lmtTransDetails) {
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.BLOCK)) {
+					blockAmount = blockAmount.add(tansDetail.getLimitAmount());
+				}
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.APPROVE)) {
+					blockAmount = blockAmount.subtract(tansDetail.getLimitAmount());
+				}
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.UNBLOCK)) {
+					blockAmount = blockAmount.subtract(tansDetail.getLimitAmount());
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return blockAmount;
+	}
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailDAO) {
 		this.limitDetailDAO = limitDetailDAO;
