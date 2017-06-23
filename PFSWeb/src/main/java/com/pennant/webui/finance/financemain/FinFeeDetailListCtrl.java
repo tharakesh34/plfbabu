@@ -1583,9 +1583,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					for (int i = 0; i < finFeeReceipts.size(); i++) {
 						FinFeeReceipt finFeeReceipt = finFeeReceipts.get(i);
 						if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
-							finFeeReceipts.remove(i);
+								if (finFeeReceipts.size() > 1) {
+									finFeeReceipts.remove(i);
+									break;
+								} else {
+									finFeeReceipt.setFeeTypeId(0);
+									finFeeReceipt.setFeeType("");
+									finFeeReceipt.setPaidAmount(BigDecimal.ZERO);
+								}
+							}
+						//	finFeeReceipts.remove(i);
 							receiptFound = true;
-						}
 					}
 				}
 

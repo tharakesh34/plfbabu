@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 
 public class ApplicationStartup implements ServletContextListener {
@@ -44,7 +45,7 @@ public class ApplicationStartup implements ServletContextListener {
 				scheduler.shutdown();
 			}
 		} catch (SchedulerException e) {
-			logger.error(e.toString());
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug("<<<<<< THE APPLICATION STOPED >>>>>>");

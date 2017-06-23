@@ -310,8 +310,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			doWriteBeanToComponents(financeDetail);
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
