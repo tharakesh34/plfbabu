@@ -146,6 +146,10 @@ public class CustomerDetails implements java.io.Serializable {
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private CustomerDedup custDedup;
 	private String coreReferenceNum; // used while performing ReleaseCIF service
+	
+	private List<FinanceEnquiry> customerFinances;
+	private FinanceEnquiry customerFinance;
+
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 
@@ -450,5 +454,27 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+	
+	public List<FinanceEnquiry> getCustomerFinances() {
+		return customerFinances;
+	}
+
+	public void setCustomerFinances(List<FinanceEnquiry> customerFinances) {
+		this.customerFinances = customerFinances;
+	}
+
+	/**
+	 * @return the customerFinance
+	 */
+	public FinanceEnquiry getCustomerFinance() {
+		return customerFinance;
+	}
+
+	/**
+	 * @param customerFinance the customerFinance to set
+	 */
+	public void setCustomerFinance(FinanceEnquiry customerFinance) {
+		this.customerFinance = customerFinance;
 	}
 }
