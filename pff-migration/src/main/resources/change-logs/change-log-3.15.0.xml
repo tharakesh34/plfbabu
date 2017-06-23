@@ -2266,5 +2266,9 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	 	<dropTable tableName="CIBIL_ACCOUNT_TYPES"/>
 	 	<dropTable tableName="CIBIL_ADDRESS_TYPES_MAPPING"/>
 	</changeSet>
+	<changeSet author="Manoj.P" id="156">
+		<addPrimaryKey columnNames="CODE, PHONETYPECODE"
+			constraintName="PK_CPTM_CD_PTC" tableName="CIBIL_PHONE_TYPES_MAPPING"/>
+	</changeSet>
 	
 </databaseChangeLog>
