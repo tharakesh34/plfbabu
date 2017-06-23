@@ -482,12 +482,12 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append(" SELECT Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
-		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" SELECT Id, PresentmentId, FinReference, PresentmentRef, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue,");
+		sql.append("  schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
+		sql.append(" ErrorCode, ErrorDesc, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
-			sql.append(" ,mandateType ,finTypeDesc, customerName ");
+			sql.append(" ,mandateType ,finTypeDesc, finType, customerName ");
 		}
 		sql.append(" From PresentmentDetails");
 		sql.append(type);
@@ -775,33 +775,121 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 	
-	/**
-	 * Method for fetching Max Schedule Date which are in presentment Details
-	 */
 	@Override
-	public Date getMaxSchdPresentment(String finReference) {
+	public PresentmentDetail getPresentmentDetail(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT MAX(SchDate) FROM PresentmentDetails WHERE FinReference =:FinReference ");
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		if (type.contains("View")) {
+			sql.append(" ,mandateType ,finTypeDesc, customerName ");
+		}
+		sql.append(" From PresentmentDetails");
+		sql.append(type);
+		sql.append(" Where Id = :Id");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		
-		Date maxSchdate = null;
+		source = new MapSqlParameterSource();
+		source.addValue("Id", id);
 		try {
-			maxSchdate = jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			maxSchdate = null;
+			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
+	// Update the presentment status and bounceid
+	@Override
+	public void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Update Presentmentdetails set Status = :Status, BounceID = :BounceID, ErrorDesc = :ErrorDesc, ");
+		sql.append("ManualAdviseId = :ManualAdviseId  Where PresentmentRef = :PresentmentRef");
+
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("BounceID", bounceId);
+		source.addValue("ManualAdviseId", manualAdviseId);
+		source.addValue("ErrorDesc", errorDesc);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return maxSchdate;
+	}
+	
+	// Update the presentment status
+	@Override
+	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Update Presentmentdetails set Status = :Status, ErrorCode = :ErrorCode, ErrorDesc = :ErrorDesc Where PresentmentRef = :PresentmentRef ");
+
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("ErrorCode", errorCode);
+		if (StringUtils.trimToNull(errorDesc) != null) {
+			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
+		}
+		source.addValue("ErrorDesc", errorDesc);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updatePresentmentHeader(long presentmentId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Update PRESENTMENTHEADER set SUCCESSRECORDS = SUCCESSRECORDS+1 AND FAILEDRECORDS = FAILEDRECORDS-1 Where ID = :ID ");
+		source.addValue("ID", presentmentId);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 }

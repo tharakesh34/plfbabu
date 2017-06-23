@@ -171,7 +171,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected Listbox sortOperator_btnbranchDetails;
 
 	private transient MandateService mandateService;
-	private DataSource dataSource;
 	private transient boolean validationOn;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
@@ -751,7 +750,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	}
 
 	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 	}
 
 	public void setValidationOn(boolean validationOn) {

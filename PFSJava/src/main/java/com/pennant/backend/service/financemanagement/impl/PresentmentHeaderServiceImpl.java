@@ -377,11 +377,17 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type) {
 		return presentmentHeaderDAO.getPresentmentDetailsList(presentmentId, isExclude, type);
 	}
-
+	
 	@Override
-	public Date getMaxSchdPresentment(String finReference) {
-		return getPresentmentHeaderDAO().getMaxSchdPresentment(finReference);
+	public void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc) {
+		 getPresentmentHeaderDAO().updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
 	}
+	
+	@Override
+	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
+		getPresentmentHeaderDAO().updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
+	}
+	
 	
 	/* processPresentmentDetails */
 	@Override
@@ -616,7 +622,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
-
+	
 	@Override
 	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);

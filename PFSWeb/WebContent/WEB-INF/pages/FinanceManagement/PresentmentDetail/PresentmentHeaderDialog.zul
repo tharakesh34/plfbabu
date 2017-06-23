@@ -146,10 +146,17 @@
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"
 													hflex="min" />
 												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}"
+													hflex="min" />
+												<listheader
 													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"
+													hflex="min" align="center" />
+												<listheader
+													id="listheader_PresentmentDetail_Description" visible="false"
+													label="${c:l('listheader_PresentmentDetail_Description.label')}"
 													hflex="min" align="center" />
 											</listhead>
 										</listbox>
@@ -199,6 +206,9 @@
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}"
 													hflex="min" />
 												<listheader
 													id="listheader_PresentmentDetail_Exclude_MandateType"
@@ -252,6 +262,9 @@
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"

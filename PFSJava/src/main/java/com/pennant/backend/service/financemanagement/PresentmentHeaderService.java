@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.service.financemanagement;
 
-import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -77,5 +76,7 @@ public interface PresentmentHeaderService {
 
 	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
 	
-	Date getMaxSchdPresentment(String finReference);
+	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
+
+	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
 }

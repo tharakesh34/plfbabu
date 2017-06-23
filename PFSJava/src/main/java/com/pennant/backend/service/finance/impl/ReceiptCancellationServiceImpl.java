@@ -573,6 +573,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		presentmentDetail.setErrorDesc(errorMsg);
 		manualAdvise = receiptHeader.getManualAdvise();
 		presentmentDetail.setBounceID(manualAdvise.getBounceID());
+		presentmentDetail.setBounceReason(bounceReason.getReason());
 		presentmentDetail.setManualAdviseId(manualAdvise.getAdviseID());
 
 		logger.debug(Literal.LEAVING);

@@ -78,10 +78,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private int emiNo;
 	private int schSeq;
 	private long bounceID;
+	private String bounceReason;
 	private long manualAdviseId;
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
+	private String finType;
 	private String finTypeDesc;
 	private String mandateType;
 	private String mandateStatus;
@@ -107,6 +109,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("accountNo");
 		excludeFields.add("acType");
+		excludeFields.add("bounceReason");
 		return excludeFields;
 	}
 
@@ -264,6 +267,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.bounceID = bounceID;
 	}
 
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
 	public BigDecimal gettDSAmount() {
 		return tDSAmount;
 	}
@@ -326,6 +337,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 	public String getMandateType() {
