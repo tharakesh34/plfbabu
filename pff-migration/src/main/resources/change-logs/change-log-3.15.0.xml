@@ -2016,5 +2016,15 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		constraintName="UK_CBADDTYPE" tableName="CIBIL_ADDRESS_TYPES_MAPPING" />
 	</changeSet>
 	
+	<changeSet author="Manoj.P" id="137">
+		<addUniqueConstraint columnNames="PhoneTypeCode"
+		constraintName="UK_CBPHTYPE" tableName="CIBIL_PHONE_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="138">
+		<addUniqueConstraint columnNames="EmailTypeCode"
+		constraintName="UK_CBEMTYPE" tableName="CIBIL_EMAIL_TYPES_MAPPING" />
+	</changeSet>
+	
 	
 </databaseChangeLog>
