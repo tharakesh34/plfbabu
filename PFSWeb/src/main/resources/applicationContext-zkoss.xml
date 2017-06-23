@@ -4835,5 +4835,17 @@
 		<property name="entityService" ref="entityService"/>
 	</bean>
 	
+	<!-- Finance Tax Detail Upload -->
+	
+	<bean id="finTaxUploadDetailListCtrl"
+		class="com.pennant.webui.finance.financemain.FinTaxUploadDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
+	</bean>
+	<bean id="finTaxUploadDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinTaxUploadDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
+	</bean>
 	
 </beans>
