@@ -2746,8 +2746,9 @@ public class ScheduleCalculator {
 					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
 							finFeeDetail.getFeeScheduleMethod())
 			) {
-				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
+				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
 			}
+			feeAmount = feeAmount.add(finFeeDetail.getPaidAmount());
 		}
 
 		//FIXME CH Servicing Fees should be handled
@@ -2779,8 +2780,8 @@ public class ScheduleCalculator {
 		 * BigDecimal(termsPerYear));
 		 */
 
-		//cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-		//cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
+		cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+		cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
