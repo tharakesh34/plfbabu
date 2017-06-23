@@ -190,6 +190,9 @@
 		<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
  	</menu>
  	
+ 	<menu id="menu_Category_CIBIL"  rightName="menuCat_SAPGL" >
+		<menuItem id="menu_Item_CIBILFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
+ 	</menu>
  	
 	<!-- Rules   Factory -->
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >

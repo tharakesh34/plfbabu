@@ -4162,8 +4162,12 @@
 	<bean id="glFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.GlFileDownloadListctrl"
 		parent="basisListCtrl" scope="prototype" />
 		
+	<bean id="cibilFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.CIBILFileDownloadListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+			
 	<bean id="cibilReport" class="com.pennanttech.pff.reports.cbil.CIBILReport">
-		  	<property name="dataSource" ref="pfsDatasource" />
+			 <property name="dataSource" ref="pfsDatasource" />
+		  	<property name="cibilService" ref="cibilService" />
 		  	</bean>
 		
 

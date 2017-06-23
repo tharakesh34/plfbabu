@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,30 +27,34 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CIBILReport {
-	protected static final Logger		logger	= LoggerFactory.getLogger(CIBILReport.class);
-	private String						CBIL_REPORT_PATH;
-	private String						CBIL_REPORT_MEMBER_SHORT_NAME;
-	private String						CBIL_REPORT_MEMBER_PASSWORD;
-	private String						CBIL_REPORT_MEMBER_ID;
-	private String						ADDRESS_TYPE_PERMANENT;
-	private String						ADDRESS_TYPE_RESIDENCE;
-	private String						ADDRESS_TYPE_OFFICE;
-	private String						PHONE_TYPE_MOBILE;
-	private String						PHONE_TYPE_HOME;
-	private String						PHONE_TYPE_OFFICE;
+	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
+	private String CBIL_REPORT_PATH;
+	private String CBIL_REPORT_MEMBER_SHORT_NAME;
+	private String CBIL_REPORT_MEMBER_PASSWORD;
+	private String CBIL_REPORT_MEMBER_ID;
+	private String ADDRESS_TYPE_PERMANENT;
+	private String ADDRESS_TYPE_RESIDENCE;
+	private String ADDRESS_TYPE_OFFICE;
+	private String PHONE_TYPE_MOBILE;
+	private String PHONE_TYPE_HOME;
+	private String PHONE_TYPE_OFFICE;
+	
+	private DataSource dataSource;
+	private NamedParameterJdbcTemplate namedJdbcTemplate;
 
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	namedJdbcTemplate;
+	private CIBILService cibilService;
 
-	@Autowired
-	private CustomerDetailsService		customerDetailsService;
+	public void setCibilService(CIBILService cibilService) {
+		this.cibilService = cibilService;
+	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -60,6 +65,8 @@ public class CIBILReport {
 		super();
 	}
 
+	
+	
 	public void generateReport() throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -68,32 +75,38 @@ public class CIBILReport {
 		File reportName = createFile();
 
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
-
 		try {
-			new CBILHeader(writer).write();
 
-			//MapSqlParameterSource paramMap = new MapSqlParameterSource();
+			cibilService.logFileInfo(reportName.getName(), CBIL_REPORT_MEMBER_ID, CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD);
+
+			cibilService.deleteDetails();
+			
+			cibilService.extractCustomers();
+
+			new CBILHeader(writer).write();
 
 			StringBuilder sql = new StringBuilder();
 
-			sql.append("select custid from customers where custid in (select distinct custid  from financemain)");
+			sql.append("select CUST_ID, FINREFERENCE, OWNERSHIP  From CIBIL_CUSTOMER_EXTRACT");
 
-			namedJdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
+			namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					CustomerDetails customer = customerDetailsService.getApprovedCustomerById(rs.getLong("custid"));
+					long customerId = rs.getLong("CUST_ID");
+					int ownership= rs.getInt("OWNERSHIP");
+
 					try {
+						CustomerDetails customer = cibilService.getCustomerDetails(customerId);
 						new NameSegment(writer, customer.getCustomer()).write();
 						new IdentificationSegment(writer, customer.getCustomerDocumentsList()).write();
 						new TelephoneSegment(writer, customer.getCustomerPhoneNumList()).write();
 						new AddressSegment(writer, customer.getAddressList()).write();
-						new AccountSegment(writer, customer.getCustID());
+						new CustomerLoanExtracter(writer, ownership, customer).extract();
 						new EndofSubjectSegment(writer).write();
 					} catch (IOException e) {
 						logger.error(Literal.EXCEPTION, e);
-					}
-
+					} 
 				}
 			});
 			new TrailerSegment(writer).write();
@@ -109,6 +122,8 @@ public class CIBILReport {
 		logger.debug(Literal.LEAVING);
 	}
 
+
+	
 	private File createFile() throws Exception {
 		logger.debug("Creating the ");
 		File reportName = null;
@@ -129,7 +144,6 @@ public class CIBILReport {
 		builder.append("-");
 		builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".txt");
-
 		reportName = new File(builder.toString());
 
 		reportName.createNewFile();
@@ -138,7 +152,7 @@ public class CIBILReport {
 	}
 
 	public class CBILHeader {
-		private BufferedWriter	writer;
+		private BufferedWriter writer;
 
 		public CBILHeader(BufferedWriter writer) {
 			this.writer = writer;
@@ -150,7 +164,7 @@ public class CIBILReport {
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
 			writer.write(StringUtils.rightPad("", 2, ""));
-			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY)); //FIXME SHOULD BE Month End Date
+			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY)); // FIXME SHOULD BE Month End Date
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
 			writer.write("L");
 			writer.write("00000");
@@ -159,8 +173,8 @@ public class CIBILReport {
 	}
 
 	public class NameSegment {
-		private BufferedWriter	writer;
-		private Customer		customer;
+		private BufferedWriter writer;
+		private Customer customer;
 
 		public NameSegment(BufferedWriter writer, Customer customer) {
 			this.writer = writer;
@@ -184,8 +198,8 @@ public class CIBILReport {
 	}
 
 	public class IdentificationSegment {
-		private BufferedWriter			writer;
-		private List<CustomerDocument>	documents;
+		private BufferedWriter writer;
+		private List<CustomerDocument> documents;
 
 		public IdentificationSegment(BufferedWriter writer, List<CustomerDocument> documents) {
 			this.writer = writer;
@@ -220,8 +234,8 @@ public class CIBILReport {
 	}
 
 	public class TelephoneSegment {
-		private BufferedWriter				writer;
-		private List<CustomerPhoneNumber>	phoneNumbers;
+		private BufferedWriter writer;
+		private List<CustomerPhoneNumber> phoneNumbers;
 
 		public TelephoneSegment(BufferedWriter writer, List<CustomerPhoneNumber> phoneNumbers) {
 			this.writer = writer;
@@ -254,8 +268,8 @@ public class CIBILReport {
 	}
 
 	public class EmailContactSegment {
-		private BufferedWriter		writer;
-		private List<CustomerEMail>	emails;
+		private BufferedWriter writer;
+		private List<CustomerEMail> emails;
 
 		public EmailContactSegment(BufferedWriter writer, List<CustomerEMail> emails) {
 			this.writer = writer;
@@ -280,8 +294,8 @@ public class CIBILReport {
 	}
 
 	public class AddressSegment {
-		private BufferedWriter			writer;
-		private List<CustomerAddres>	addresses;
+		private BufferedWriter writer;
+		private List<CustomerAddres> addresses;
 
 		public AddressSegment(BufferedWriter writer, List<CustomerAddres> addresses) {
 			this.writer = writer;
@@ -314,28 +328,211 @@ public class CIBILReport {
 					writeValue(writer, "08", "04");
 				}
 
-				//Residence Code FIXME
+				// Residence Code FIXME
 			}
 		}
 	}
 
 	public class AccountSegment {
-		private BufferedWriter		writer;
-		private  long customerId;
+		private BufferedWriter writer;
+		private List<FinanceEnquiry> loans;
 
-		
-		public AccountSegment(BufferedWriter writer, long customerId) {
+		public AccountSegment(BufferedWriter writer, List<FinanceEnquiry> loans) {
 			this.writer = writer;
-			this.customerId = customerId;
+			this.loans = loans;
 		}
 
 		public void write() throws IOException {
+			int i = 0;
+			for (FinanceEnquiry loan : loans) {
+				writeValue(writer, "PA", "T00" + (i++));
+				writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
+				writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+				writeValue(writer, "03", StringUtils.trimToEmpty(loan.getFinReference()));
+				// Account Type FIXME
+			//	writeValue(writer, "05", StringUtils.trimToEmpty(String.valueOf(ownership)));
+				writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DateFormat.ddMMYYYY));
+				writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+				BigDecimal CURRENT_BALANCE = loan.getCurrentBalance();
+
+				if (CURRENT_BALANCE == null) {
+					CURRENT_BALANCE = BigDecimal.ZERO;
+				}
+
+				if (CURRENT_BALANCE.compareTo(BigDecimal.ZERO) <= 0) {
+					writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+				}
+
+				writeValue(writer, "11", DateUtility.getAppDate(DateFormat.ddMMYYYY));
+				writeValue(writer, "12", loan.getFinAssetValue());
+				writeValue(writer, "13", loan.getCurrentBalance());
+				writeValue(writer, "14", loan.getAmountOverdue());
+				writeValue(writer, "15", loan.getOdDays());
+
+				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
+				if (closingstatus.equals("M")) {
+					closingstatus = "03";
+
+				} else if (closingstatus.equals("W")) {
+					closingstatus = "02";
+				}
+
+				writeValue(writer, "22", closingstatus);
+				// writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
+				writeValue(writer, "34", loan.getCollateralValue());
+				writeValue(writer, "35", StringUtils.trimToEmpty(loan.getCollateralType()));
+
+				BigDecimal repayProfit = loan.getRepayProfitRate();
+
+				if (repayProfit == null) {
+					repayProfit = BigDecimal.ZERO;
+				}
+
+				String repayProfitRate = repayProfit.toString();
+				if (repayProfitRate.contains(".")) {
+					String rate[] = repayProfitRate.split("\\.");
+					String integralPart = String.valueOf(rate[0]);
+					String decimalPart = rate[1];
+
+					if (decimalPart.length() > 2) {
+						decimalPart = (String) decimalPart.subSequence(0, 3);
+					}
+
+					writeValue(writer, "38", integralPart + "." + decimalPart);
+				} else {
+					writeValue(writer, "38", StringUtils.trimToEmpty(repayProfitRate));
+				}
+
+				writeValue(writer, "39", loan.getNumberOfTerms());
+				writeValue(writer, "40", loan.getFirstRepay());
+				writeValue(writer, "41", loan.getWrittenOffAmount());
+				writeValue(writer, "42", loan.getWrittenOffPrincipal());
+				writeValue(writer, "43", loan.getSettlementAmount());
+
+				String repayFreq = StringUtils.trimToEmpty(loan.getRepayFrq());
+
+				repayFreq = repayFreq.substring(0, 1);
+
+				if (repayFreq.equals("W")) {
+					repayFreq = "01";
+				} else if (repayFreq.equals("M")) {
+					repayFreq = "03";
+				} else if (repayFreq.equals("F")) {
+					repayFreq = "02";
+				} else if (repayFreq.equals("Q")) {
+					repayFreq = "04";
+				}
+
+				writeValue(writer, "44", repayFreq);
+				writeValue(writer, "48", "G");
+				writeValue(writer, "49", "M");
+			}
 
 		}
 	}
 	
+	
+	
+	public class AccountSegmentHistory {
+		private BufferedWriter writer;
+		private List<FinanceEnquiry> loans;
+
+		public AccountSegmentHistory(BufferedWriter writer, List<FinanceEnquiry> loans) {
+			this.writer = writer;
+			this.loans = loans;
+		}
+
+		public void write() throws IOException {
+			int i = 0;
+			for (FinanceEnquiry loan : loans) {
+				writeValue(writer, "TH", StringUtils.leftPad(String.valueOf(i++),2,"0"));
+				writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
+				writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+				writeValue(writer, "03", StringUtils.trimToEmpty(loan.getFinReference()));
+				// Account Type FIXME
+			//	writeValue(writer, "05", StringUtils.trimToEmpty(String.valueOf(ownership)));
+				writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DateFormat.ddMMYYYY));
+				writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+				BigDecimal CURRENT_BALANCE = loan.getCurrentBalance();
+
+				if (CURRENT_BALANCE == null) {
+					CURRENT_BALANCE = BigDecimal.ZERO;
+				}
+
+				if (CURRENT_BALANCE.compareTo(BigDecimal.ZERO) <= 0) {
+					writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+				}
+
+				writeValue(writer, "11", DateUtility.getAppDate(DateFormat.ddMMYYYY));
+				writeValue(writer, "12", loan.getFinAssetValue());
+				writeValue(writer, "13", loan.getCurrentBalance());
+				writeValue(writer, "14", loan.getAmountOverdue());
+				writeValue(writer, "15", loan.getOdDays());
+
+				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
+				if (closingstatus.equals("M")) {
+					closingstatus = "03";
+
+				} else if (closingstatus.equals("W")) {
+					closingstatus = "02";
+				}
+
+				writeValue(writer, "22", closingstatus);
+				// writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
+				writeValue(writer, "34", loan.getCollateralValue());
+				writeValue(writer, "35", StringUtils.trimToEmpty(loan.getCollateralType()));
+
+				BigDecimal repayProfit = loan.getRepayProfitRate();
+
+				if (repayProfit == null) {
+					repayProfit = BigDecimal.ZERO;
+				}
+
+				String repayProfitRate = repayProfit.toString();
+				if (repayProfitRate.contains(".")) {
+					String rate[] = repayProfitRate.split("\\.");
+					String integralPart = String.valueOf(rate[0]);
+					String decimalPart = rate[1];
+
+					if (decimalPart.length() > 2) {
+						decimalPart = (String) decimalPart.subSequence(0, 3);
+					}
+
+					writeValue(writer, "38", integralPart + "." + decimalPart);
+				} else {
+					writeValue(writer, "38", StringUtils.trimToEmpty(repayProfitRate));
+				}
+
+				writeValue(writer, "39", loan.getNumberOfTerms());
+				writeValue(writer, "40", loan.getFirstRepay());
+				writeValue(writer, "41", loan.getWrittenOffAmount());
+				writeValue(writer, "42", loan.getWrittenOffPrincipal());
+				writeValue(writer, "43", loan.getSettlementAmount());
+
+				String repayFreq = StringUtils.trimToEmpty(loan.getRepayFrq());
+
+				repayFreq = repayFreq.substring(0, 1);
+
+				if (repayFreq.equals("W")) {
+					repayFreq = "01";
+				} else if (repayFreq.equals("M")) {
+					repayFreq = "03";
+				} else if (repayFreq.equals("F")) {
+					repayFreq = "02";
+				} else if (repayFreq.equals("Q")) {
+					repayFreq = "04";
+				}
+
+				writeValue(writer, "44", repayFreq);
+				writeValue(writer, "48", "G");
+				writeValue(writer, "49", "M");
+			}
+
+		}
+	}
+
 	public class EndofSubjectSegment {
-		private BufferedWriter	writer;
+		private BufferedWriter writer;
 
 		public EndofSubjectSegment(BufferedWriter writer) {
 			this.writer = writer;
@@ -345,9 +542,9 @@ public class CIBILReport {
 			writer.write("ES02**");
 		}
 	}
-	
+
 	public class TrailerSegment {
-		private BufferedWriter	writer;
+		private BufferedWriter writer;
 
 		public TrailerSegment(BufferedWriter writer) {
 			this.writer = writer;
@@ -357,7 +554,6 @@ public class CIBILReport {
 			writer.write("TRLR");
 		}
 	}
-	
 
 	private void writeValue(BufferedWriter writer, String fieldTag, String value) throws IOException {
 		int length = 0;
@@ -366,6 +562,25 @@ public class CIBILReport {
 		}
 
 		length = value.length();
+
+		writer.write(fieldTag + String.valueOf(length) + value);
+	}
+	
+	private void writeValue(BufferedWriter writer, String fieldTag, BigDecimal value) throws IOException {
+		int length = 0;
+		if (value == null) {
+			return;
+		}
+
+		length = value.toString().length();
+
+		writer.write(fieldTag + String.valueOf(length) + value);
+	}
+	
+	private void writeValue(BufferedWriter writer, String fieldTag, int value) throws IOException {
+		int length = 0;
+
+		length = String.valueOf(value).length();
 
 		writer.write(fieldTag + String.valueOf(length) + value);
 	}
@@ -382,24 +597,38 @@ public class CIBILReport {
 		this.PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
 		this.PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
-	
-	
-	
+
 	public class CustomerLoanExtracter {
 		private BufferedWriter writer;
-		private long customerId;
+		private CustomerDetails customer;
+		private int ownership;
 
-		public CustomerLoanExtracter(BufferedWriter writer, long customerId) {
+		public CustomerLoanExtracter(BufferedWriter writer,  int ownership, CustomerDetails customer) {
 			this.writer = writer;
-			this.customerId = customerId;
+			this.customer = customer;
+			this.ownership = ownership;
+			
+		}
+
+		private void extract() throws SQLException {}
+
+	}
+
+	public class customerLoanHistoryExtractor {
+		private BufferedWriter writer;
+		private String finreference;
+
+		public customerLoanHistoryExtractor(BufferedWriter writer, String finreference) {
+			this.writer = writer;
+			this.finreference = finreference;
 		}
 
 		private void extract() throws SQLException {
 			MapSqlParameterSource parmMap = new MapSqlParameterSource();
 
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT * from CUSTOMER_LOANS where CUSTID = :CUSTID");
-			parmMap.addValue("CUSTID", customerId);
+			sql.append("SELECT * from CUSTOMER_LOAN_HISTORY where FINREFERENCE = :FINREFERENCE");
+			parmMap.addValue("FINREFERENCE", finreference);
 
 			namedJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				@Override
@@ -413,27 +642,37 @@ public class CIBILReport {
 						writeValue(writer, "05", StringUtils.trimToEmpty(rs.getString("OWNERSHIP")));
 						writeValue(writer, "08", DateUtil.format(rs.getDate("FINSTARTDATE"), DateFormat.ddMMYYYY));
 						writeValue(writer, "09", DateUtil.format(rs.getDate("LASTREPAYDATE"), DateFormat.ddMMYYYY));
-						writeValue(writer, "10", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY)); 
-						writeValue(writer, "11", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY)); 
-						writeValue(writer, "12",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "13",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "14",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "15",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "16",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "17",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "18",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "19",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "20",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "21",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "22",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "26",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "34",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "35",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "36",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "37",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "38",  StringUtils.trimToEmpty(rs.getString(""))); 
-						writeValue(writer, "39",  StringUtils.trimToEmpty(rs.getString(""))); 
-						
+						writeValue(writer, "10", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY));
+						writeValue(writer, "11", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY));
+						writeValue(writer, "12", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "13", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "14", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "15", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "16", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "17", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "18", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "19", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "20", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "21", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "22", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "34", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "35", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "36", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "37", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "38", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "39", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "40", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "41", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "42", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "43", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "44", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "45", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "46", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "47", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "48", StringUtils.trimToEmpty(rs.getString("")));
+						writeValue(writer, "49", StringUtils.trimToEmpty(rs.getString("")));
+
 					} catch (IOException e) {
 					}
 				}
@@ -442,6 +681,5 @@ public class CIBILReport {
 		}
 
 	}
-	
 
 }

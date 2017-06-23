@@ -45,6 +45,8 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Model class for the <b>FinanceMain table</b>.<br>
@@ -83,9 +85,48 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private Date 	nextDueDate;
 	private long 	mandateID;
 	private String 		finRepayMethod;
+	private Date       latestRpyDate;
+	private BigDecimal       currentBalance;
+	private BigDecimal       amountOverdue;
+	private BigDecimal       finAssetValue;
+	private int       odDays;
+	private BigDecimal	collateralValue;
+	private String		collateralType;
+	private BigDecimal repayProfitRate;
+	private BigDecimal firstRepay = BigDecimal.ZERO;
+	private BigDecimal writtenOffAmount = BigDecimal.ZERO;
+	private BigDecimal writtenOffPrincipal = BigDecimal.ZERO;
+	private BigDecimal settlementAmount = BigDecimal.ZERO;
+	private String repayFrq;
+
+
+
+
+
+	
 	
 	public FinanceEnquiry() {
 		
+	}
+	
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("latestRpyDate");
+		excludeFields.add("currentBalance");
+		excludeFields.add("amountOverdue");
+		excludeFields.add("finAssetValue");
+		excludeFields.add("odDays");
+		excludeFields.add("collateralValue");
+		excludeFields.add("collateralType");
+		excludeFields.add("repayProfitRate");
+		excludeFields.add("firstRepay");
+		excludeFields.add("writtenOffAmount");
+		excludeFields.add("writtenOffPrincipal");
+		excludeFields.add("settlementAmount");
+		excludeFields.add("repayFrq");
+	
+		return excludeFields;
 	}
 	
 	// ******************************************************//
@@ -302,5 +343,134 @@ public class FinanceEnquiry implements java.io.Serializable {
 	public void setInsuranceAmt(BigDecimal insuranceAmt) {
 		this.insuranceAmt = insuranceAmt;
 	}
+
+	public Date getLatestRpyDate() {
+		return latestRpyDate;
+	}
+
+	public void setLatestRpyDate(Date latestRpyDate) {
+		this.latestRpyDate = latestRpyDate;
+	}
+
+
+	public BigDecimal getCurrentBalance() {
+		return currentBalance;
+	}
+
+
+	public void setCurrentBalance(BigDecimal currentBalance) {
+		this.currentBalance = currentBalance;
+	}
+
+
+	public BigDecimal getAmountOverdue() {
+		return amountOverdue;
+	}
+
+
+	public void setAmountOverdue(BigDecimal amountOverdue) {
+		this.amountOverdue = amountOverdue;
+	}
+
+
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+
+
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
+	}
+
+
+	public int getOdDays() {
+		return odDays;
+	}
+
+
+	public void setOdDays(int odDays) {
+		this.odDays = odDays;
+	}
+
+
+	public BigDecimal getCollateralValue() {
+		return collateralValue;
+	}
+
+
+	public void setCollateralValue(BigDecimal collateralValue) {
+		this.collateralValue = collateralValue;
+	}
+
+
+	public String getCollateralType() {
+		return collateralType;
+	}
+
+
+	public void setCollateralType(String collateralType) {
+		this.collateralType = collateralType;
+	}
+
+
+	public BigDecimal getRepayProfitRate() {
+		return repayProfitRate;
+	}
+
+
+	public void setRepayProfitRate(BigDecimal repayProfitRate) {
+		this.repayProfitRate = repayProfitRate;
+	}
+
+
+	public BigDecimal getFirstRepay() {
+		return firstRepay;
+	}
+
+
+	public void setFirstRepay(BigDecimal firstRepay) {
+		this.firstRepay = firstRepay;
+	}
+
+
+	public BigDecimal getWrittenOffAmount() {
+		return writtenOffAmount;
+	}
+
+
+	public void setWrittenOffAmount(BigDecimal writtenOffAmount) {
+		this.writtenOffAmount = writtenOffAmount;
+	}
+
+
+	public BigDecimal getWrittenOffPrincipal() {
+		return writtenOffPrincipal;
+	}
+
+
+	public void setWrittenOffPrincipal(BigDecimal writtenOffPrincipal) {
+		this.writtenOffPrincipal = writtenOffPrincipal;
+	}
+
+
+	public BigDecimal getSettlementAmount() {
+		return settlementAmount;
+	}
+
+
+	public void setSettlementAmount(BigDecimal settlementAmount) {
+		this.settlementAmount = settlementAmount;
+	}
+
+
+	public String getRepayFrq() {
+		return repayFrq;
+	}
+
+
+	public void setRepayFrq(String repayFrq) {
+		this.repayFrq = repayFrq;
+	}
+
 	
 }
