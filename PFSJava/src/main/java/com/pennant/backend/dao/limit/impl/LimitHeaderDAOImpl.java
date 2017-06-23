@@ -426,9 +426,9 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
-
+		source.addValue("Active", 1);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From LimitHeader");
-		selectSql.append(" Where HeaderId = :HeaderId");
+		selectSql.append(" Where HeaderId = :HeaderId AND Active = :Active ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 

@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -27,6 +29,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limit.LimitStructureService;
 import com.pennant.backend.util.LimitConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.LimitSetupGroup;
 import com.pennant.validation.SaveValidationGroup;
@@ -323,6 +326,14 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				String[] valueParm = new String[1];
 				valueParm[0] = customer.getCustCIF();
 				return APIErrorHandlerService.getFailedStatus("90812", valueParm);
+			}
+			BigDecimal finAmount = PennantApplicationUtil.formateAmount(financeMain.getFinAmount(),
+					CurrencyUtil.getFormat(limitTransDetail.getLimitCurrency()));
+			if (finAmount.compareTo(limitTransDetail.getLimitAmount()) != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "amount";
+				valueParm[1] = "FinanceAmont: " + finAmount;
+				return APIErrorHandlerService.getFailedStatus("90277", valueParm);
 			}
 			break;
 		case LimitConstants.COMMITMENT:
