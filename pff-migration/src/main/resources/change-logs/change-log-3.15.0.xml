@@ -1700,4 +1700,16 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 	</createTable>
 </changeSet>
 
+	<changeSet id="115" author="Durgaprasad G">
+		<createTable tableName="SEQTAXDOWNLOADHAEDER">
+			<column name="SeqNo" type="NUMBER(19)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="116" author="Durgaprasad G">
+		<sql>
+			Insert into SEQTAXDOWNLOADHAEDER values (0);
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
