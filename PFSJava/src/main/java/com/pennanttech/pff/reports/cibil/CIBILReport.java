@@ -1,4 +1,4 @@
-package com.pennanttech.pff.reports.cbil;
+package com.pennanttech.pff.reports.cibil;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +14,6 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -32,20 +31,26 @@ import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class CIBILReport {
 	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
+	
+	private static final String DATE_FORMAT = "ddMMYYYY";
+	
 	private String CBIL_REPORT_PATH;
 	private String CBIL_REPORT_MEMBER_SHORT_NAME;
 	private String CBIL_REPORT_MEMBER_PASSWORD;
 	private String CBIL_REPORT_MEMBER_ID;
+	
 	private String ADDRESS_TYPE_PERMANENT;
 	private String ADDRESS_TYPE_RESIDENCE;
 	private String ADDRESS_TYPE_OFFICE;
 	private String PHONE_TYPE_MOBILE;
 	private String PHONE_TYPE_HOME;
 	private String PHONE_TYPE_OFFICE;
+	
+	private String DOC_TYPE_PANNUMBER;
+	private String DOC_TYPE_PASSPORT;
 	
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -93,23 +98,25 @@ public class CIBILReport {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
+					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
-					int ownership= rs.getInt("OWNERSHIP");
 
 					try {
-						CustomerDetails customer = cibilService.getCustomerDetails(customerId);
+						CustomerDetails customer = cibilService.getCustomerDetails(finreference, customerId);
 						new NameSegment(writer, customer.getCustomer()).write();
 						new IdentificationSegment(writer, customer.getCustomerDocumentsList()).write();
 						new TelephoneSegment(writer, customer.getCustomerPhoneNumList()).write();
 						new AddressSegment(writer, customer.getAddressList()).write();
-						new CustomerLoanExtracter(writer, ownership, customer).extract();
+						new AccountSegment(writer, customer.getCustomerFinance()).write();
 						new EndofSubjectSegment(writer).write();
 					} catch (IOException e) {
 						logger.error(Literal.EXCEPTION, e);
 					} 
 				}
 			});
+			
 			new TrailerSegment(writer).write();
+			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -164,7 +171,7 @@ public class CIBILReport {
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
 			writer.write(StringUtils.rightPad("", 2, ""));
-			writer.write(DateUtility.getAppDate(DateFormat.ddMMYYYY));
+			writer.write(DateUtility.getAppDate(DATE_FORMAT));
 			writer.write(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
 			writer.write("L");
 			writer.write("00000");
@@ -184,7 +191,7 @@ public class CIBILReport {
 		public void write() throws IOException {
 			writeValue(writer, "PN", "N01");
 			writeValue(writer, "01", customer.getCustShrtName());
-			writeValue(writer, "07", DateUtil.format(customer.getCustDOB(), DateFormat.ddMMYYYY));
+			writeValue(writer, "07", DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
 			writeValue(writer, "01", customer.getCustGenderCode());
 
 			if ("M".equals(customer.getCustGenderCode())) {
@@ -215,9 +222,9 @@ public class CIBILReport {
 
 				writeValue(writer, "ID", "I0" + i);
 
-				if (PennantConstants.PANNUMBER.equals(document.getCustDocCategory())) {
+				if (DOC_TYPE_PANNUMBER.equals(document.getCustDocCategory())) {
 					writeValue(writer, "01", "01");
-				} else if (PennantConstants.PASSPORT.equals(document.getCustDocCategory())) {
+				} else if (DOC_TYPE_PASSPORT.equals(document.getCustDocCategory())) {
 					writeValue(writer, "02", "01");
 				} else if (PennantConstants.CPRCODE.equals(document.getCustDocCategory())) {
 					writeValue(writer, "06", "01");
@@ -226,8 +233,8 @@ public class CIBILReport {
 				}
 
 				writeValue(writer, "02", document.getCustDocTitle());
-				writeValue(writer, "03", DateUtil.format(document.getCustDocIssuedOn(), DateFormat.ddMMYYYY));
-				writeValue(writer, "04", DateUtil.format(document.getCustDocExpDate(), DateFormat.ddMMYYYY));
+				writeValue(writer, "03", DateUtil.format(document.getCustDocIssuedOn(), DATE_FORMAT));
+				writeValue(writer, "04", DateUtil.format(document.getCustDocExpDate(), DATE_FORMAT));
 			}
 
 		}
@@ -334,105 +341,102 @@ public class CIBILReport {
 	}
 
 	public class AccountSegment {
-		private BufferedWriter writer;
-		private List<FinanceEnquiry> loans;
+		private BufferedWriter	writer;
+		private FinanceEnquiry	loan;
 
-		public AccountSegment(BufferedWriter writer, List<FinanceEnquiry> loans) {
+		public AccountSegment(BufferedWriter writer, FinanceEnquiry loan) {
 			this.writer = writer;
-			this.loans = loans;
+			this.loan = loan;
 		}
 
 		public void write() throws IOException {
-			int i = 0;
-			for (FinanceEnquiry loan : loans) {
-				writeValue(writer, "PA", "T00" + (i++));
-				writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
-				writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
-				writeValue(writer, "03", StringUtils.trimToEmpty(loan.getFinReference()));
-				// Account Type FIXME
+
+			writeValue(writer, "PA", "T001");
+			writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
+			writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+			writeValue(writer, "03", StringUtils.trimToEmpty(loan.getFinReference()));
+			// Account Type FIXME
 			//	writeValue(writer, "05", StringUtils.trimToEmpty(String.valueOf(ownership)));
-				writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DateFormat.ddMMYYYY));
-				writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
-				BigDecimal CURRENT_BALANCE = loan.getCurrentBalance();
+			writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DATE_FORMAT));
+			writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT));
+			BigDecimal CURRENT_BALANCE = loan.getCurrentBalance();
 
-				if (CURRENT_BALANCE == null) {
-					CURRENT_BALANCE = BigDecimal.ZERO;
-				}
-
-				if (CURRENT_BALANCE.compareTo(BigDecimal.ZERO) <= 0) {
-					writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
-				}
-
-				writeValue(writer, "11", DateUtility.getAppDate(DateFormat.ddMMYYYY));
-				writeValue(writer, "12", loan.getFinAssetValue());
-				writeValue(writer, "13", loan.getCurrentBalance());
-				writeValue(writer, "14", loan.getAmountOverdue());
-				writeValue(writer, "15", loan.getOdDays());
-
-				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
-				if (closingstatus.equals("M")) {
-					closingstatus = "03";
-
-				} else if (closingstatus.equals("W")) {
-					closingstatus = "02";
-				}
-
-				writeValue(writer, "22", closingstatus);
-				// writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
-				writeValue(writer, "34", loan.getCollateralValue());
-				writeValue(writer, "35", StringUtils.trimToEmpty(loan.getCollateralType()));
-
-				BigDecimal repayProfit = loan.getRepayProfitRate();
-
-				if (repayProfit == null) {
-					repayProfit = BigDecimal.ZERO;
-				}
-
-				String repayProfitRate = repayProfit.toString();
-				if (repayProfitRate.contains(".")) {
-					String rate[] = repayProfitRate.split("\\.");
-					String integralPart = String.valueOf(rate[0]);
-					String decimalPart = rate[1];
-
-					if (decimalPart.length() > 2) {
-						decimalPart = (String) decimalPart.subSequence(0, 3);
-					}
-
-					writeValue(writer, "38", integralPart + "." + decimalPart);
-				} else {
-					writeValue(writer, "38", StringUtils.trimToEmpty(repayProfitRate));
-				}
-
-				writeValue(writer, "39", loan.getNumberOfTerms());
-				writeValue(writer, "40", loan.getFirstRepay());
-				writeValue(writer, "41", loan.getWrittenOffAmount());
-				writeValue(writer, "42", loan.getWrittenOffPrincipal());
-				writeValue(writer, "43", loan.getSettlementAmount());
-
-				String repayFreq = StringUtils.trimToEmpty(loan.getRepayFrq());
-
-				repayFreq = repayFreq.substring(0, 1);
-
-				if (repayFreq.equals("W")) {
-					repayFreq = "01";
-				} else if (repayFreq.equals("M")) {
-					repayFreq = "03";
-				} else if (repayFreq.equals("F")) {
-					repayFreq = "02";
-				} else if (repayFreq.equals("Q")) {
-					repayFreq = "04";
-				}
-
-				writeValue(writer, "44", repayFreq);
-				writeValue(writer, "48", "G");
-				writeValue(writer, "49", "M");
+			if (CURRENT_BALANCE == null) {
+				CURRENT_BALANCE = BigDecimal.ZERO;
 			}
+
+			if (CURRENT_BALANCE.compareTo(BigDecimal.ZERO) <= 0) {
+				writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT));
+			}
+
+			writeValue(writer, "11", DateUtility.getAppDate(DATE_FORMAT));
+			writeValue(writer, "12", loan.getFinAssetValue());
+			writeValue(writer, "13", loan.getCurrentBalance());
+			writeValue(writer, "14", loan.getAmountOverdue());
+			writeValue(writer, "15", loan.getOdDays());
+
+			String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
+			if (closingstatus.equals("M")) {
+				closingstatus = "03";
+
+			} else if (closingstatus.equals("W")) {
+				closingstatus = "02";
+			}
+
+			writeValue(writer, "22", closingstatus);
+			// writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
+			writeValue(writer, "34", loan.getCollateralValue());
+			writeValue(writer, "35", StringUtils.trimToEmpty(loan.getCollateralType()));
+
+			BigDecimal repayProfit = loan.getRepayProfitRate();
+
+			if (repayProfit == null) {
+				repayProfit = BigDecimal.ZERO;
+			}
+
+			String repayProfitRate = repayProfit.toString();
+			if (repayProfitRate.contains(".")) {
+				String rate[] = repayProfitRate.split("\\.");
+				String integralPart = String.valueOf(rate[0]);
+				String decimalPart = rate[1];
+
+				if (decimalPart.length() > 2) {
+					decimalPart = (String) decimalPart.subSequence(0, 3);
+				}
+
+				writeValue(writer, "38", integralPart + "." + decimalPart);
+			} else {
+				writeValue(writer, "38", StringUtils.trimToEmpty(repayProfitRate));
+			}
+
+			writeValue(writer, "39", loan.getNumberOfTerms());
+			writeValue(writer, "40", loan.getFirstRepay());
+			writeValue(writer, "41", loan.getWrittenOffAmount());
+			writeValue(writer, "42", loan.getWrittenOffPrincipal());
+			writeValue(writer, "43", loan.getSettlementAmount());
+
+			String repayFreq = StringUtils.trimToEmpty(loan.getRepayFrq());
+
+			repayFreq = repayFreq.substring(0, 1);
+
+			if (repayFreq.equals("W")) {
+				repayFreq = "01";
+			} else if (repayFreq.equals("M")) {
+				repayFreq = "03";
+			} else if (repayFreq.equals("F")) {
+				repayFreq = "02";
+			} else if (repayFreq.equals("Q")) {
+				repayFreq = "04";
+			}
+
+			writeValue(writer, "44", repayFreq);
+			writeValue(writer, "48", "G");
+			writeValue(writer, "49", "M");
 
 		}
 	}
 	
-	
-	
+
 	public class AccountSegmentHistory {
 		private BufferedWriter writer;
 		private List<FinanceEnquiry> loans;
@@ -451,8 +455,8 @@ public class CIBILReport {
 				writeValue(writer, "03", StringUtils.trimToEmpty(loan.getFinReference()));
 				// Account Type FIXME
 			//	writeValue(writer, "05", StringUtils.trimToEmpty(String.valueOf(ownership)));
-				writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DateFormat.ddMMYYYY));
-				writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+				writeValue(writer, "08", DateUtil.format(loan.getFinStartDate(), DATE_FORMAT));
+				writeValue(writer, "09", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT));
 				BigDecimal CURRENT_BALANCE = loan.getCurrentBalance();
 
 				if (CURRENT_BALANCE == null) {
@@ -460,10 +464,10 @@ public class CIBILReport {
 				}
 
 				if (CURRENT_BALANCE.compareTo(BigDecimal.ZERO) <= 0) {
-					writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DateFormat.ddMMYYYY));
+					writeValue(writer, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT));
 				}
 
-				writeValue(writer, "11", DateUtility.getAppDate(DateFormat.ddMMYYYY));
+				writeValue(writer, "11", DateUtility.getAppDate(DATE_FORMAT));
 				writeValue(writer, "12", loan.getFinAssetValue());
 				writeValue(writer, "13", loan.getCurrentBalance());
 				writeValue(writer, "14", loan.getAmountOverdue());
@@ -597,89 +601,4 @@ public class CIBILReport {
 		this.PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
 		this.PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
-
-	public class CustomerLoanExtracter {
-		private BufferedWriter writer;
-		private CustomerDetails customer;
-		private int ownership;
-
-		public CustomerLoanExtracter(BufferedWriter writer,  int ownership, CustomerDetails customer) {
-			this.writer = writer;
-			this.customer = customer;
-			this.ownership = ownership;
-			
-		}
-
-		private void extract() throws SQLException {}
-
-	}
-
-	public class customerLoanHistoryExtractor {
-		private BufferedWriter writer;
-		private String finreference;
-
-		public customerLoanHistoryExtractor(BufferedWriter writer, String finreference) {
-			this.writer = writer;
-			this.finreference = finreference;
-		}
-
-		private void extract() throws SQLException {
-			MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT * from CUSTOMER_LOAN_HISTORY where FINREFERENCE = :FINREFERENCE");
-			parmMap.addValue("FINREFERENCE", finreference);
-
-			namedJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
-				@Override
-				public void processRow(ResultSet rs) throws SQLException {
-					try {
-						writeValue(writer, "PA", "T001");
-						writeValue(writer, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
-						writeValue(writer, "02", StringUtils.rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
-						writeValue(writer, "03", StringUtils.trimToEmpty(rs.getString("FINREFERENCE")));
-						// Account Type FIXME
-						writeValue(writer, "05", StringUtils.trimToEmpty(rs.getString("OWNERSHIP")));
-						writeValue(writer, "08", DateUtil.format(rs.getDate("FINSTARTDATE"), DateFormat.ddMMYYYY));
-						writeValue(writer, "09", DateUtil.format(rs.getDate("LASTREPAYDATE"), DateFormat.ddMMYYYY));
-						writeValue(writer, "10", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY));
-						writeValue(writer, "11", DateUtil.format(rs.getDate(" "), DateFormat.ddMMYYYY));
-						writeValue(writer, "12", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "13", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "14", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "15", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "16", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "17", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "18", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "19", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "20", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "21", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "22", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "26", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "34", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "35", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "36", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "37", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "38", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "39", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "40", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "41", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "42", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "43", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "44", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "45", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "46", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "47", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "48", StringUtils.trimToEmpty(rs.getString("")));
-						writeValue(writer, "49", StringUtils.trimToEmpty(rs.getString("")));
-
-					} catch (IOException e) {
-					}
-				}
-			});
-
-		}
-
-	}
-
 }
