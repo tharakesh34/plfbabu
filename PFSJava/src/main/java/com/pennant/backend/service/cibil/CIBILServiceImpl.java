@@ -1,52 +1,30 @@
 package com.pennant.backend.service.cibil;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.cibil.CIBILDAO;
-import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.finance.FinanceEnquiry;
 
 public class CIBILServiceImpl implements CIBILService {
-	private CIBILDAO cibildao;
 
-	public void setCibildao(CIBILDAO cibildao) {
-		this.cibildao = cibildao;
-	}
+	@Autowired
+	private CIBILDAO	cibildao;
 
 	@Override
-	public Customer getCustomer(long customerId) {
-		return cibildao.getCustomer(customerId);
-	}
+	public CustomerDetails getCustomerDetails(String finReference, long customerId) {
+		CustomerDetails customer = new CustomerDetails();
 
-	@Override
-	public List<CustomerDocument> getCustomerDocuments(long customerId) {
-		return cibildao.getCustomerDocuments(customerId);
-	}
+		try {
+			customer.setCustomer(cibildao.getCustomer(customerId));
+			customer.setAddressList(cibildao.getCustomerAddres(customerId));
+			customer.setCustomerDocumentsList(cibildao.getCustomerDocuments(customerId));
+			customer.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(customerId));
+			customer.setCustomerFinance(cibildao.getFinanceSummary(finReference));
+		} catch (Exception e) {
+			customer = null;
+		}
 
-	@Override
-	public List<CustomerPhoneNumber> getCustomerPhoneNumbers(long customerId) {
-		return cibildao.getCustomerPhoneNumbers(customerId);
-	}
-
-	@Override
-	public List<CustomerAddres> getCustomerAddres(long customerId) {
-		return cibildao.getCustomerAddres(customerId);
-	}
-
-	@Override
-	public List<FinanceEnquiry> getCustomerLoans(long customerId) {
-		return cibildao.getCustomerLoans(customerId);
-	}
-
-	@Override
-	public CustomerDetails getCustomerDetails(long customerId) {
-		return cibildao.getCustomerDetails(customerId);
+		return customer;
 	}
 
 	@Override
@@ -62,7 +40,7 @@ public class CIBILServiceImpl implements CIBILService {
 	@Override
 	public void extractCustomers() throws Exception {
 		cibildao.extractCustomers();
-		
+
 	}
 
 }
