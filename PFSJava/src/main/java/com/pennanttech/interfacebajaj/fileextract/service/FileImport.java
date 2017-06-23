@@ -77,10 +77,10 @@ public class FileImport {
 				totalRecords = 0;
 				br = new BufferedReader(new FileReader(getFile()));
 				while ((line = br.readLine()) != null) {
-					totalRecords++;
 					if (StringUtils.trimToNull(line) == null) {
 						break;
 					}
+					totalRecords++;
 				}
 			} catch (Exception e) {
 				throw new Exception("The file format is not valid");
