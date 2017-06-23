@@ -296,10 +296,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setFinIsActive(true);
 		financeMain.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
 
-		financeMain.setMaturityDate(financeMain.getCalMaturity());
-		financeMain.setNumberOfTerms(financeMain.getCalTerms());
-		financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
-		financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		if(financeMain.getMaturityDate() == null) {
+			financeMain.setMaturityDate(financeMain.getCalMaturity());
+		}
+		if(financeMain.getNumberOfTerms() <= 0) {
+			financeMain.setNumberOfTerms(financeMain.getCalTerms());
+		}
+		if(financeMain.getGrcPeriodEndDate() == null) {
+			financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
+		} 
+		if(financeMain.getGraceTerms() <= 0) {
+			financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		}
 		financeMain.setFinCurrAssetValue(financeMain.getFinAmount());
 		
 		// set Head branch
