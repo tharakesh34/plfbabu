@@ -157,7 +157,7 @@ public class LimitManagement {
 				}
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
 						validateOnly, dateToValidate, limitTranDetail, blockAmount));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -193,7 +193,7 @@ public class LimitManagement {
 				}
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
 						validateOnly, dateToValidate, limitTranDetail, blockAmount));
 
 				if (!errors.isEmpty()) {
@@ -224,12 +224,9 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly,
-			Date disbDate, LimitTransactionDetail limitTranDetail, BigDecimal blockAmount) {
+			boolean allowOverride, BigDecimal limitAmount, boolean override, boolean validateOnly, Date disbDate,
+			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount) {
 		logger.debug(" Entering ");
-
-		//		String finref = mapping.getReferenceNumber();
-		//		long headerId = mapping.getHeaderId();
 
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
