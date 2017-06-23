@@ -76,7 +76,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.reports.cbil.CIBILReport;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
