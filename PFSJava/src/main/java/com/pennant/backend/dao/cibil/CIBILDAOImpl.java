@@ -19,11 +19,11 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
-public class CIBILDAOImpl implements CIBILDAO  {
-	private static Logger logger = Logger.getLogger(CIBILDAOImpl.class);
+public class CIBILDAOImpl implements CIBILDAO {
+	private static Logger				logger	= Logger.getLogger(CIBILDAOImpl.class);
 
-	private DataSource dataSource;
-	private NamedParameterJdbcTemplate namedJdbcTemplate;
+	private DataSource					dataSource;
+	private NamedParameterJdbcTemplate	namedJdbcTemplate;
 
 	@Override
 	public Customer getCustomer(long customerId) {
@@ -80,16 +80,16 @@ public class CIBILDAOImpl implements CIBILDAO  {
 	}
 
 	@Override
-	public List<FinanceEnquiry> getCustomerLoans(long customerId) {
+	public FinanceEnquiry getFinanceSummary(String finReference) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select  CustID, FinReference, FinStartDate, LatestRpyDate, CurrentBalance, AmountOverdue, ODDays, ClosingStatus, collateralValue ");
 		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOffAmount, writtenOffPrincipal, settlementAmount, RepayFrq from  CUSTOMER_LOANS_VIEW");
-		sql.append(" where CUSTID = :CUSTID");
+		sql.append(" where FinReference = :FinReference");
 
-		paramMap.addValue("CUSTID", customerId);
+		paramMap.addValue("FinReference", finReference);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap,
+		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap,
 				ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class));
 	}
 
@@ -110,7 +110,7 @@ public class CIBILDAOImpl implements CIBILDAO  {
 
 		return customerDetails;
 	}
-	
+
 	@Override
 	public void logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
 		logger.trace(Literal.ENTERING);
@@ -136,7 +136,7 @@ public class CIBILDAOImpl implements CIBILDAO  {
 		logger.trace(Literal.LEAVING);
 
 	}
-	
+
 	@Override
 	public void deleteDetails() {
 		logger.debug(Literal.ENTERING);
@@ -148,7 +148,7 @@ public class CIBILDAOImpl implements CIBILDAO  {
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	@Override
 	public void extractCustomers() throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -165,13 +165,11 @@ public class CIBILDAOImpl implements CIBILDAO  {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert CIBIL Details");
 		}
-	} 
-	
-
+	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
 	}
-	
+
 }

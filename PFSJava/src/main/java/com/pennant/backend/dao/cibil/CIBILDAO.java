@@ -21,7 +21,7 @@ public interface CIBILDAO {
 
 	List<CustomerAddres> getCustomerAddres(long customerId);
 
-	List<FinanceEnquiry> getCustomerLoans(long customerId);
+	FinanceEnquiry getFinanceSummary(String financeReference);
 	
 	 void logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
 	 
