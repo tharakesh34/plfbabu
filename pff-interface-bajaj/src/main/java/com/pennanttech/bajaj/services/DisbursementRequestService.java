@@ -2,7 +2,6 @@ package com.pennanttech.bajaj.services;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -283,7 +282,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 
 		if ("DISB_HDFC_EXPORT".equals(configName)) {
 			parameterMap.put("CLIENT_CODE", fileNamePrefix);
-			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 4, "0"));
+			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 3, "0"));
 		}
 		try {
 			export.setValueDate(getValueDate());
