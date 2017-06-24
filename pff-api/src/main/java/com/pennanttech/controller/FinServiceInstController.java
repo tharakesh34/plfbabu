@@ -1197,6 +1197,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (finReceiptDetail == null) {
 			finReceiptDetail = new FinReceiptDetail();
 			finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			finServiceInst.setReceiptDetail(finReceiptDetail);
 		} else {
 			if(finReceiptDetail.getReceivedDate() == null) {
 				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
@@ -1264,7 +1265,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose);
-		} else if(StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+		} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			finReceiptData = receiptService.calculateRepayments(finReceiptData);
 		} else {
 			doProcessPayments(finReceiptData, finServiceInst);
