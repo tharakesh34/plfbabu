@@ -2464,5 +2464,13 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			UPDATE DATA_ENGINE_CONFIG set FILEEXTENSION = NULL where Name = 'DISB_HDFC_EXPORT';
 		</sql>
 	</changeSet>
+	<changeSet id="174" author="Srikanth">
+	<sql>
+	 Delete from ErrorDetails where ErrorCode in('90340','90341','90342');
+	INSERT INTO ErrorDetails VALUES('90340','EN','E','Cancel reserve not applicable when reserve amount is less than or equal to zero.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90341','EN','E','Given CIF:{0} should be matched with customer in assigned limit:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90342','EN','E','Old mandate customer and new mandate customer should be same.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
