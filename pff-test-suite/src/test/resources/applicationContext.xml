@@ -62,4 +62,12 @@
 		<property name="dataSource" ref="auditDatasource" />
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
+	
+	<!-- Duplicating from applicationContext-core-interface.xml -->
+	<bean id="coreDBDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${secjdbc.driverClassName}" />
+		<property name="url" value="${secjdbc.url}" />
+		<property name="username" value="${secjdbc.username}" />
+		<property name="password" value="${secjdbc.password}" />
+	</bean>
 </beans>
