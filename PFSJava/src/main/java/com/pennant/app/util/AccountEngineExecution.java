@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pff.core.FactoryException;
 import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -764,8 +765,13 @@ public class AccountEngineExecution implements Serializable {
 				RuleConstants.MODULE_SUBHEAD);
 		dataMap.put("acType", txnEntry.getAccountType());
 		if (rule != null) {
-			newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
-					aeEvent.getCcy(), RuleReturnType.STRING));
+			String accountNumber = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
+					aeEvent.getCcy(), RuleReturnType.STRING);
+			if (StringUtils.isBlank(accountNumber)) {
+				throw new FactoryException("Invalid accounting configuration, please contact administrator");
+			} else {
+				newAccount.setAccountId(accountNumber);
+			}
 		}
 
 		accountsMap.put(txnOrder, txnEntry.getAccount() + txnEntry.getAccountType());
