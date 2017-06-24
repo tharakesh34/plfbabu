@@ -66,6 +66,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	private String finReference;
 	private String applicableFor;
+	private long  	applicableForCustId;
 	private boolean taxExempted;
 	private String taxNumber;
 	private String addrLine1;
@@ -266,4 +267,12 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
+	public long getApplicableForCustId() {
+		return applicableForCustId;
+	}
+
+	public void setApplicableForCustId(long applicableForCustId) {
+		this.applicableForCustId = applicableForCustId;
+	}
+	
 }

@@ -81,7 +81,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference, applicableFor, taxExempted, taxNumber, addrLine1, addrLine2, ");
+		sql.append(" finReference, applicableFor,applicableForCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
 		sql.append(" addrLine3, addrLine4, country, province, city, pinCode, ");
 		if(type.contains("View")){
 			sql.append("countryName,provinceName,cityName,pinCodeName,");
@@ -119,11 +119,11 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append("(finReference, applicableFor, taxExempted, taxNumber, addrLine1, addrLine2, ");
+		sql.append("(finReference, applicableFor,applicableForCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
 		sql.append("addrLine3, addrLine4, country, province, city, pinCode, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :finReference, :applicableFor, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
+		sql.append(" :finReference, :applicableFor,:applicableForCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
 		sql.append(" :addrLine3, :addrLine4, :country, :province, :city, :pinCode, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -148,7 +148,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		// Prepare the SQL.
 		StringBuilder	sql =new StringBuilder("update FinTaxDetail" );
 		sql.append(tableType.getSuffix());
-		sql.append("  set applicableFor = :applicableFor, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
+		sql.append("  set applicableFor = :applicableFor,applicableForCustId= :applicableForCustId, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
 		sql.append(" addrLine1 = :addrLine1, addrLine2 = :addrLine2, addrLine3 = :addrLine3, ");
 		sql.append(" addrLine4 = :addrLine4, country = :country, province = :province, ");
 		sql.append(" city = :city, pinCode = :pinCode, ");

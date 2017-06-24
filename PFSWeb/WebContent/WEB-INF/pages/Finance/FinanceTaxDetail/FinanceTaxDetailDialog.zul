@@ -91,6 +91,11 @@
 											width="180px" readonly="true" />
 									</hbox>
 								</row>
+								<row id="row_custID" visible="false">
+									<label id="label_custRef"
+										value="${c:l('label_FinanceTaxDetailDialog_CustRef.value')}" />
+									<extendedcombobox id="custRef" />
+								</row>
 								<row id="row1">
 									<label id="label_TaxExempted"
 										value="${c:l('label_FinanceTaxDetailDialog_TaxExempted.value')}" />
