@@ -25,8 +25,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 	private DataSource					dataSource;
 	private NamedParameterJdbcTemplate	namedJdbcTemplate;
-	
-	
+
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -43,7 +42,6 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		return customerDetails;
 	}
-	
 
 	@Override
 	public Customer getCustomer(long customerId) {
@@ -54,7 +52,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
-		
+
 		RowMapper<Customer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
@@ -63,11 +61,15 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public List<CustomerDocument> getCustomerDocuments(long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select CustDocCategory, CustDocIssuedOn, CustDocExpDate from CustomerDocuments");
+
+		sql.append(" select dt.code CustDocCategory, CustDocTitle, CustDocIssuedOn, CustDocExpDate");
+		sql.append(" from CustomerDocuments doc");
+		sql.append(" left join CIBIL_DOCUMENT_TYPES dt on DT.CODE = DOC.CUSTDOCCATEGORY");
+		sql.append(" left join CIBIL_DOCUMENT_TYPES_MAPPING dm on dm.code = dt.code");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
-		
+
 		RowMapper<CustomerDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
 		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
@@ -77,6 +79,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public List<CustomerPhoneNumber> getCustomerPhoneNumbers(long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
+
 		sql.append(" select coalesce(cpt.code, '00') PhoneTypeCode, cp.PhoneNumber");
 		sql.append(" from CustomerPhoneNumbers cp");
 		sql.append(" left join CIBIL_PHONE_TYPES_MAPPING pm on pm.PHONETYPECODE=cp.PHONETYPECODE");
@@ -85,8 +88,9 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		paramMap.addValue("PHONECUSTID", customerId);
 
-		RowMapper<CustomerPhoneNumber> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
-		
+		RowMapper<CustomerPhoneNumber> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+
 		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
@@ -96,10 +100,11 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select coalesce(cat.code, '04') CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		sql.append(" CustAddrLine1, CustAddrLine2, CustAddrProvince, CustAddrZIP, CustAddrType");
+		sql.append(" CustAddrLine1, CustAddrLine2, coalesce(sm.code, '99') CustAddrProvince, CustAddrZIP, CustAddrType, ");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join CIBIL_ADDRESS_TYPES_MAPPING am on am.ADDRTYPECODE=ca.CUSTADDRTYPE");
 		sql.append(" left join CIBIL_ADDRESS_TYPES cat on CAT.CODE=am.code");
+		sql.append(" left join CIBIL_STATES_MAPPING sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE ");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
@@ -112,10 +117,10 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public FinanceEnquiry getFinanceSummary(String finReference) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select  cs.CustID, cs.FinReference, FinStartDate, cs.LatestRpyDate, Current_Balance, Amount_Overdue, CurODDays, ClosingStatus, collateral_Value ");
-		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOff_Amount, writtenOff_Principal, settelement_Amount, RepayFrq, ce.ownership");
+		sql.append(" select  CustID, FinReference, FinStartDate, LatestRpyDate, Current_Balance, Amount_Overdue,");
+		sql.append(" CurODDays, ClosingStatus, collateral_Value, CollateralType, RepayProfitRate, NumberOfTerms,");
+		sql.append(" FirstRepay, WrittenOff_Amount, writtenOff_Principal, settelement_Amount, payment_Amount, RepayFrq, ownership, finType");
 		sql.append(" from CUSTOMER_LOANS_VIEW cs");
-		sql.append(" inner join CIBIL_CUSTOMER_EXTRACT ce on ce.CustID = cs.CustID and ce.FinReference = cs.FinReference");
 		sql.append(" where cs.FinReference = :FinReference");
 
 		paramMap.addValue("FinReference", finReference);
@@ -159,12 +164,12 @@ public class CIBILDAOImpl implements CIBILDAO {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
 	public void extractCustomers() throws Exception {
 		StringBuilder sql = new StringBuilder();
+
 		sql.append(" INSERT INTO CIBIL_CUSTOMER_EXTRACT ");
 		sql.append(" SELECT CUSTID, FINREFERENCE, OWNERSHIP, LATESTRPYDATE FROM CIBIL_CUSTOMER_EXTARCT_VIEW");
 		sql.append(" WHERE LATESTRPYDATE >= :LATESTRPYDATE ");
