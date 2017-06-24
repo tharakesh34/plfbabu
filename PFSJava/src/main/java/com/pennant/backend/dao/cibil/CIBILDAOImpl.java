@@ -5,6 +5,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -24,6 +25,25 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 	private DataSource					dataSource;
 	private NamedParameterJdbcTemplate	namedJdbcTemplate;
+	
+	
+	@Override
+	public CustomerDetails getCustomerDetails(long customerId) {
+		CustomerDetails customerDetails = new CustomerDetails();
+
+		try {
+			customerDetails.setCustomer(getCustomer(customerId));
+			customerDetails.setCustomerDocumentsList(getCustomerDocuments(customerId));
+			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumbers(customerId));
+			customerDetails.setAddressList(getCustomerAddres(customerId));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			customerDetails = null;
+		}
+
+		return customerDetails;
+	}
+	
 
 	@Override
 	public Customer getCustomer(long customerId) {
@@ -34,9 +54,9 @@ public class CIBILDAOImpl implements CIBILDAO {
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
-
-		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap,
-				ParameterizedBeanPropertyRowMapper.newInstance(Customer.class));
+		
+		RowMapper<Customer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -47,36 +67,48 @@ public class CIBILDAOImpl implements CIBILDAO {
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
+		
+		RowMapper<CustomerDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap,
-				ParameterizedBeanPropertyRowMapper.newInstance(CustomerDocument.class));
+		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
 	public List<CustomerPhoneNumber> getCustomerPhoneNumbers(long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select PhoneTypeCode, PhoneNumber from CustomerPhoneNumbers");
+		sql.append(" select PhoneTypeCode, PhoneNumber");
+		sql.append(" from CustomerPhoneNumbers cp");
+		sql.append(" left join CIBIL_PHONE_TYPES_MAPPING pm on pm.PHONETYPECODE=cp.PHONETYPECODE");
+		sql.append(" select coalesce(cpt.code, '00') PhoneTypeCode, cp.PhoneNumber");
+		sql.append(" from CustomerPhoneNumbers cp");
+		sql.append(" left join CIBIL_PHONE_TYPES_MAPPING pm on pm.PHONETYPECODE=cp.PHONETYPECODE");
+		sql.append(" left join CIBIL_PHONE_TYPES cpt on CPT.CODE = pm.code");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap,
-				ParameterizedBeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class));
+		RowMapper<CustomerPhoneNumber> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
+		
+		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
 	public List<CustomerAddres> getCustomerAddres(long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2, CustAddrProvince, ");
-		sql.append(" CustAddrZIP, CustAddrType from  CustomerAddresses");
+		sql.append(" select coalesce(cat.code, '04') CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
+		sql.append(" CustAddrLine1, CustAddrLine2, CustAddrProvince, CustAddrZIP, CustAddrType");
+		sql.append(" from CustomerAddresses ca");
+		sql.append(" left join CIBIL_ADDRESS_TYPES_MAPPING am on am.ADDRTYPECODE=ca.CUSTADDRTYPE");
+		sql.append(" left join CIBIL_ADDRESS_TYPES cat on CAT.CODE=am.code");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
 
-		return this.namedJdbcTemplate.query(sql.toString(), paramMap,
-				ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class));
+		RowMapper<CustomerAddres> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		return this.namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
@@ -84,31 +116,15 @@ public class CIBILDAOImpl implements CIBILDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select  CustID, FinReference, FinStartDate, LatestRpyDate, CurrentBalance, AmountOverdue, ODDays, ClosingStatus, collateralValue ");
-		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOffAmount, writtenOffPrincipal, settlementAmount, RepayFrq from  CUSTOMER_LOANS_VIEW");
-		sql.append(" where FinReference = :FinReference");
+		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOffAmount, writtenOffPrincipal, settlementAmount, RepayFrq, ownership");
+		sql.append(" from CUSTOMER_LOANS_VIEW cs");
+		sql.append(" inner join CIBIL_CUSTOMER_EXTRACT ce on ce.CustID = cs.CustID and ce.FinReference = cs.FinReference");
+		sql.append(" where cs.FinReference = :FinReference");
 
 		paramMap.addValue("FinReference", finReference);
 
-		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap,
-				ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class));
-	}
-
-	@Override
-	public CustomerDetails getCustomerDetails(long customerId) {
-		CustomerDetails customerDetails = new CustomerDetails();
-
-		try {
-			customerDetails.setCustomer(getCustomer(customerId));
-			customerDetails.setCustomerDocumentsList(getCustomerDocuments(customerId));
-			customerDetails.setCustomerPhoneNumList(getCustomerPhoneNumbers(customerId));
-			customerDetails.setAddressList(getCustomerAddres(customerId));
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-
-		}
-
-		return customerDetails;
+		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
+		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override

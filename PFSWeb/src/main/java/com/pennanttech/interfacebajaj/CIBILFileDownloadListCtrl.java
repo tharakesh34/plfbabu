@@ -88,10 +88,8 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
-	
 
 	private Button downlaod;
-	private String module = null;
 	
 	@Autowired
 	private CIBILReport cibilReport;
@@ -107,12 +105,8 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	protected void doSetProperties() {
 		super.moduleCode = "FileDownload";
 		super.pageRightName = "FileDownload";
-
-		this.module = getArgument("module");
-
 		super.tableName = "CIBIL_FILE_INFO";
 		super.queueTableName = "CIBIL_FILE_INFO";
-
 	}
 
 	public void onCreate$window_CIBILFileDownloadList(Event event) throws Exception {

@@ -99,7 +99,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected DataEngineConfig dataEngineConfig;
 
 	private Button downlaod;
-	private String module = null;
 	
 	@Autowired
 	private CIBILReport cibilReport;
@@ -115,9 +114,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected void doSetProperties() {
 		super.moduleCode = "FileDownload";
 		super.pageRightName = "FileDownload";
-
-		this.module = getArgument("module");
-
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
 
