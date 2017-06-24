@@ -202,12 +202,14 @@ public class ExtendedFieldDetailsValidation {
 			}
 			
 			if(StringUtils.isNotBlank(exdConfigDetail.getFieldConstraint())) {
+				if(PennantRegularExpressions.getRegexMapper(exdConfigDetail.getFieldConstraint())!=null){
 				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
 						exdConfigDetail.getFieldConstraint()));
 				Matcher matcher = pattern.matcher(fieldValue);
 				if (matcher.find() == false) {
 					String[] valueParm = new String[0];
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+				}
 				}
 			}
 			break;

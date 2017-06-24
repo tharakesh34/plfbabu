@@ -258,6 +258,11 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
 			return returnStatus;
 		}
+		//validate cif
+		if(!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())){
+			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
+			return returnStatus;
+		}
 		// validations for MandateRef
 		if(!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
 		if (StringUtils.isBlank(newMandate.getMandateRef())) {

@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -218,7 +218,8 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			logger.debug("Leaving");
 			return returnStatus;
 		} catch(Exception e) {
-			
+			logger.error(e);
+			returnStatus = APIErrorHandlerService.getFailedStatus();
 		}
 		return returnStatus;
 	}
@@ -284,11 +285,11 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				return APIErrorHandlerService.getFailedStatus("91125", valueParm);
 			}
 		}*/
-
+		LimitHeader limitheader=null;
 		// validate limitId
 		if (limitTransDetail.getHeaderId() != Long.MIN_VALUE) {
-			int rcdCount = limitDetailService.getLimitHeaderCountById(limitTransDetail.getHeaderId());
-			if (rcdCount <= 0) {
+			limitheader = limitDetailService.getCustomerLimitsById(limitTransDetail.getHeaderId());
+			if (limitheader == null || !limitheader.isActive()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(limitTransDetail.getHeaderId());
 				return getErrorDetails("90807", valueParm);
@@ -306,7 +307,12 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				return getErrorDetails("90101", valueParm);
 			}
 		}
-
+		if(customer.getCustID()!=limitheader.getCustomerId()){
+			String[] valueParm = new String[2];
+			valueParm[0] = customer.getCustCIF();
+			valueParm[1] = String.valueOf(limitTransDetail.getHeaderId());
+			return APIErrorHandlerService.getFailedStatus("90341", valueParm);
+		}
 		// validate customer group code
 		String custGrpCode = limitTransDetail.getCustGrpCode();
 		if (StringUtils.isNotBlank(custGrpCode)) {
@@ -315,15 +321,6 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				String[] valueParm = new String[1];
 				valueParm[0] = custGrpCode;
 				return getErrorDetails("90107", valueParm);
-			} else {
-				if(customer != null) {
-					if(customer.getCustGroupID() != customerGroup.getCustGrpID()) {
-						String[] valueParm = new String[2];
-						valueParm[0] = customer.getCustCIF();
-						valueParm[1] = custGrpCode;
-						return getErrorDetails("90808", valueParm);
-					}
-				}
 			}
 		}
 

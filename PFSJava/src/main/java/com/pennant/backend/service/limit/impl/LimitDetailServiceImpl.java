@@ -1454,7 +1454,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	@Override
+	public LimitHeader getCustomerLimitsById(long headerId) {
+		logger.debug("Entering");
+		LimitHeader limitHeader;
+		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "");
+		logger.debug("Leaving");
+		return limitHeader;
+	}
 	/**
 	 * 
 	 * 
@@ -1583,6 +1590,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public void setLimitGroupLinesDAO(LimitGroupLinesDAO limitGroupLinesDAO) {
 		this.limitGroupLinesDAO = limitGroupLinesDAO;
 	}
+
 
 
 }
