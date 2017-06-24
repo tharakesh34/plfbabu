@@ -2638,4 +2638,8 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</createView>
 	</changeSet>
 	
+	<changeSet id="177" author="Manoj.P">
+		<modifyDataType tableName="BMTDocumentTypes" columnName="DOCTYPEDESC"
+			newDataType="varchar(500) " />
+	</changeSet>
 </databaseChangeLog>
