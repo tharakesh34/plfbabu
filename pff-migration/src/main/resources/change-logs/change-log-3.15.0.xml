@@ -2459,4 +2459,10 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			constraintName="PK_CDTM_CD_DT" tableName="CIBIL_DOCUMENT_TYPES_MAPPING"/>
 	</changeSet>
 	
+	<changeSet id="173" author="Manoj.P">
+		<sql>
+			UPDATE DATA_ENGINE_CONFIG set FILEEXTENSION = NULL where Name = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
