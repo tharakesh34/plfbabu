@@ -1487,7 +1487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Tax Details
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			//appendTaxDetailTab(onLoad);
+			appendTaxDetailTab(onLoad);
 		}
 
 		//Eligibility Details Tab Adding
@@ -2365,6 +2365,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
+			map.put("panNum", getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
+			
 			FinanceTaxDetail financetaxdetail = getFinanceDetail().getTaxDetail();
 			if(financetaxdetail == null){
 				financetaxdetail = new FinanceTaxDetail();
