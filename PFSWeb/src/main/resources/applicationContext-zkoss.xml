@@ -4165,7 +4165,9 @@
 	<bean id="cibilFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.CIBILFileDownloadListCtrl"
 		parent="basisListCtrl" scope="prototype" />
 			
-	<bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport"/>
+	<bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport">
+	<property name="dataSource" ref="pfsDatasource" />
+		  	</bean>
 	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"

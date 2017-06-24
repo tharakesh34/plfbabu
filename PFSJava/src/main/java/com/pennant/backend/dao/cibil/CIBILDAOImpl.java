@@ -77,16 +77,13 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public List<CustomerPhoneNumber> getCustomerPhoneNumbers(long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select PhoneTypeCode, PhoneNumber");
-		sql.append(" from CustomerPhoneNumbers cp");
-		sql.append(" left join CIBIL_PHONE_TYPES_MAPPING pm on pm.PHONETYPECODE=cp.PHONETYPECODE");
 		sql.append(" select coalesce(cpt.code, '00') PhoneTypeCode, cp.PhoneNumber");
 		sql.append(" from CustomerPhoneNumbers cp");
 		sql.append(" left join CIBIL_PHONE_TYPES_MAPPING pm on pm.PHONETYPECODE=cp.PHONETYPECODE");
 		sql.append(" left join CIBIL_PHONE_TYPES cpt on CPT.CODE = pm.code");
-		sql.append(" where CUSTID = :CUSTID");
+		sql.append(" where PHONECUSTID = :PHONECUSTID");
 
-		paramMap.addValue("CUSTID", customerId);
+		paramMap.addValue("PHONECUSTID", customerId);
 
 		RowMapper<CustomerPhoneNumber> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 		
@@ -115,8 +112,8 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public FinanceEnquiry getFinanceSummary(String finReference) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select  CustID, FinReference, FinStartDate, LatestRpyDate, CurrentBalance, AmountOverdue, ODDays, ClosingStatus, collateralValue ");
-		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOffAmount, writtenOffPrincipal, settlementAmount, RepayFrq, ownership");
+		sql.append(" select  cs.CustID, cs.FinReference, FinStartDate, cs.LatestRpyDate, Current_Balance, Amount_Overdue, CurODDays, ClosingStatus, collateral_Value ");
+		sql.append(" CollateralType, RepayProfitRate, NumberOfTerms, FirstRepay, WrittenOff_Amount, writtenOff_Principal, settelement_Amount, RepayFrq, ce.ownership");
 		sql.append(" from CUSTOMER_LOANS_VIEW cs");
 		sql.append(" inner join CIBIL_CUSTOMER_EXTRACT ce on ce.CustID = cs.CustID and ce.FinReference = cs.FinReference");
 		sql.append(" where cs.FinReference = :FinReference");
