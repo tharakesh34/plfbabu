@@ -3192,4 +3192,16 @@ insert into CIBIL_COLLATERAL_TYPES values ('04','Saving Account and Fixed Deposi
 			LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR ON LR.ACTYPEGRPID = ATG.GROUPCODE AND LR.HOSTACCOUNT = AM.HOSTACCOUNT
 		</createView>
 	</changeSet>
+	
+	<!-- Rename Column -->
+	<changeSet author="Kesav" id="197">
+		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
+			oldColumnName="APPLICABLEFORCUSTID" tableName="FinTaxDetail" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="198">
+		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
+			oldColumnName="APPLICABLEFORCUSTID" tableName="FinTaxDetail_Temp" />
+	</changeSet>
+	
 </databaseChangeLog>
