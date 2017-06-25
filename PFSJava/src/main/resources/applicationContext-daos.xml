@@ -4220,6 +4220,7 @@
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
