@@ -5,9 +5,11 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 public interface CIBILService {
 	CustomerDetails getCustomerDetails(String finreference, long customerId);
 
-	void logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
+	long logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
 
 	void deleteDetails();
 
-	void extractCustomers() throws Exception;
+	long extractCustomers() throws Exception;
+	
+	void updateFileStatus(long headerid, String status);
 }

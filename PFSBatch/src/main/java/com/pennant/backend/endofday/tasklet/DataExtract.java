@@ -18,6 +18,7 @@ import com.pennanttech.bajaj.services.DataMartRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class DataExtract implements Tasklet {
 	private Logger						logger	= Logger.getLogger(DataExtract.class);
@@ -34,6 +35,8 @@ public class DataExtract implements Tasklet {
 	private DataMartRequestService		dataMartRequestService;
 	@Autowired
 	private TrailBalanceReportService	trailBalanceReportService;
+	@Autowired
+	private CIBILReport              	cibilReport;
 	
 
 	@Override
@@ -54,6 +57,7 @@ public class DataExtract implements Tasklet {
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
 			new DataMartRequest(new Long(1000), dataMartRequestService).start();
 			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
+			new CibilReport().start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -174,6 +178,24 @@ public class DataExtract implements Tasklet {
 			try {
 				logger.debug("Trail Balance Request Service started...");
 				this.trailBalanceReportservice.generateReport(userId);
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+	
+	
+	public class CibilReport extends Thread {
+		private CIBILReport cibilReport;
+
+		public CibilReport() {
+		}
+
+		public void run() {
+			try {
+				logger.debug("Cibil Report Service started...");
+				this.cibilReport.generateReport();
 
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

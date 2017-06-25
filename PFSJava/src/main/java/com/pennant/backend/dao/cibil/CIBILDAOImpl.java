@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
@@ -21,10 +23,10 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class CIBILDAOImpl implements CIBILDAO {
-	private static Logger				logger	= Logger.getLogger(CIBILDAOImpl.class);
+	private static Logger logger = Logger.getLogger(CIBILDAOImpl.class);
 
-	private DataSource					dataSource;
-	private NamedParameterJdbcTemplate	namedJdbcTemplate;
+	private DataSource dataSource;
+	private NamedParameterJdbcTemplate namedJdbcTemplate;
 
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
@@ -48,7 +50,8 @@ public class CIBILDAOImpl implements CIBILDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select custShrtName, custDOB, custGenderCode from customers");
+		sql.append(
+				" select custShrtName, CustSalutationCode, CustFName, CustMName, CustLName, custDOB, custGenderCode from customers");
 		sql.append(" where CUSTID = :CUSTID");
 
 		paramMap.addValue("CUSTID", customerId);
@@ -100,7 +103,8 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select coalesce(cat.code, '04') CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		sql.append(" CustAddrLine1, CustAddrLine2, coalesce(sm.code, '99') CustAddrProvince, CustAddrZIP, CustAddrType, ");
+		sql.append(
+				" CustAddrLine1, CustAddrLine2, coalesce(sm.code, '99') CustAddrProvince, CustAddrZIP, CustAddrType");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join CIBIL_ADDRESS_TYPES_MAPPING am on am.ADDRTYPECODE=ca.CUSTADDRTYPE");
 		sql.append(" left join CIBIL_ADDRESS_TYPES cat on CAT.CODE=am.code");
@@ -114,23 +118,28 @@ public class CIBILDAOImpl implements CIBILDAO {
 	}
 
 	@Override
-	public FinanceEnquiry getFinanceSummary(String finReference) {
+	public FinanceEnquiry getFinanceSummary(String finReference, long customerId) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select  CustID, FinReference, FinStartDate, LatestRpyDate, Current_Balance, Amount_Overdue,");
 		sql.append(" CurODDays, ClosingStatus, collateral_Value, CollateralType, RepayProfitRate, NumberOfTerms,");
-		sql.append(" FirstRepay, WrittenOff_Amount, writtenOff_Principal, settelement_Amount, payment_Amount, RepayFrq, ownership, finType");
-		sql.append(" from CUSTOMER_LOANS_VIEW cs");
-		sql.append(" where cs.FinReference = :FinReference");
+		sql.append(" FirstRepay, WrittenOff_Amount, writtenOff_Principal, settelement_Amount, payment_Amount,");
+		sql.append(" RepayFrq, ownership, finType");
+		sql.append(" from CIBIL_CUSTOMER_LOANS_VIEW cs");
+		sql.append(" where cs.FinReference = :FinReference and CUSTID = :CUSTID");
 
 		paramMap.addValue("FinReference", finReference);
+		paramMap.addValue("CUSTID", customerId);
 
 		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 		return this.namedJdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
-	public void logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
+	public long logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
+		
+		final KeyHolder keyHolder = new GeneratedKeyHolder();
+
 		logger.trace(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -147,6 +156,26 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("STATUS", "I");
 
 		try {
+			this.namedJdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "ID" });
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return keyHolder.getKey().longValue();
+
+	}
+	
+	@Override
+	public void updateFileStatus(long headerid,String status) {
+		logger.trace(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("UPDATE  CIBIL_FILE_INFO");
+		sql.append(" SET STATUS = :STATUS WHERE ID = :ID");
+
+		paramMap.addValue("STATUS", status);
+		paramMap.addValue("ID", headerid);
+
+		try {
 			this.namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -154,7 +183,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		logger.trace(Literal.LEAVING);
 
 	}
-
+	
 	@Override
 	public void deleteDetails() {
 		logger.debug(Literal.ENTERING);
@@ -167,7 +196,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 	}
 
 	@Override
-	public void extractCustomers() throws Exception {
+	public int extractCustomers() throws Exception {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" INSERT INTO CIBIL_CUSTOMER_EXTRACT ");
@@ -178,7 +207,7 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("LATESTRPYDATE", DateUtil.addMonths(DateUtility.getAppDate(), -36));
 
 		try {
-			namedJdbcTemplate.update(sql.toString(), paramMap);
+			return namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert CIBIL Details");

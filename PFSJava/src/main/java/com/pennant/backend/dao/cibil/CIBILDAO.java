@@ -21,13 +21,17 @@ public interface CIBILDAO {
 
 	List<CustomerAddres> getCustomerAddres(long customerId);
 
-	FinanceEnquiry getFinanceSummary(String financeReference);
+	FinanceEnquiry getFinanceSummary(String financeReference,long customerId);
 	
-	 void logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
+	 long logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
 	 
 	 void deleteDetails();
 	 
-	 void extractCustomers() throws Exception;
+	 int extractCustomers() throws Exception;
+
+	void updateFileStatus(long headerid, String status);
+ 
+	 
 	 
 	 
  

@@ -8,7 +8,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 public class CIBILServiceImpl implements CIBILService {
 
 	@Autowired
-	private CIBILDAO	cibildao;
+	private CIBILDAO cibildao;
 
 	@Override
 	public CustomerDetails getCustomerDetails(String finReference, long customerId) {
@@ -19,7 +19,7 @@ public class CIBILServiceImpl implements CIBILService {
 			customer.setAddressList(cibildao.getCustomerAddres(customerId));
 			customer.setCustomerDocumentsList(cibildao.getCustomerDocuments(customerId));
 			customer.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(customerId));
-			customer.setCustomerFinance(cibildao.getFinanceSummary(finReference));
+			customer.setCustomerFinance(cibildao.getFinanceSummary(finReference, customerId));
 		} catch (Exception e) {
 			customer = null;
 		}
@@ -28,8 +28,8 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public void logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
-		cibildao.logFileInfo(fileName, memberId, memberName, memberPwd);
+	public long logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
+		return new Long(cibildao.logFileInfo(fileName, memberId, memberName, memberPwd));
 	}
 
 	@Override
@@ -38,9 +38,13 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public void extractCustomers() throws Exception {
-		cibildao.extractCustomers();
+	public long extractCustomers() throws Exception {
+		return new Long(cibildao.extractCustomers());
+	}
 
+	@Override
+	public void updateFileStatus(long headerid, String status) {
+		cibildao.updateFileStatus(headerid, status);
 	}
 
 }
