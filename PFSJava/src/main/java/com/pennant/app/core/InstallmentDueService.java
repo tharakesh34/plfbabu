@@ -123,6 +123,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

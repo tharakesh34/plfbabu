@@ -482,7 +482,9 @@ public class AccountEngineExecution implements Serializable {
 		
 		//FIXME CH To be discussed if this is required here
 		// Dates Setting
-		aeEvent.setPostDate(DateUtility.getPostDate());
+		if (aeEvent.getPostDate() == null) {
+			aeEvent.setPostDate(DateUtility.getPostDate());
+		}
 		aeEvent.setAppDate(DateUtility.getAppDate());
 		aeEvent.setAppValueDate(DateUtility.getAppValueDate());
 		

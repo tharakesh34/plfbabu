@@ -256,6 +256,7 @@ public class RateReviewService extends ServiceHelper {
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
+		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
@@ -296,6 +297,10 @@ public class RateReviewService extends ServiceHelper {
 			curSchd = finSchdDetails.get(i);
 
 			if (i==iEvtFrom) {
+				continue;
+			}
+			//Since schedule is presented it should not considered for rate review.
+			if (curSchd.getPresentmentId() != 0) {
 				continue;
 			}
 
