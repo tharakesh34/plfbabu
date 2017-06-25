@@ -2826,4 +2826,80 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</sql>
 	</changeSet>
 	
+	<changeSet id="191" author="Kesav">
+		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="192" author="Kesav">
+		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="193" author="Kesav">
+		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+			
+			UNION ALL
+			
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+			          
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
