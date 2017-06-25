@@ -128,7 +128,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" CREDITAMOUNT,");
 		sql.append(" CLOSINGBAL,");
 		sql.append(" CR_DR");
-		sql.append(" FROM TRAIL_BALANCE_REPORT_VIES");
+		sql.append(" FROM TRAIL_BALANCE_REPORT_VIEW");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
