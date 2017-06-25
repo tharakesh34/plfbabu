@@ -2815,4 +2815,15 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</createView>
 	</changeSet>
 	
+	<changeSet id="190" author="Manoj.P">
+		<sql>
+		 DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  'D:/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
