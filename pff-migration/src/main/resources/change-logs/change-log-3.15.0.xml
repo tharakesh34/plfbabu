@@ -2706,4 +2706,50 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		<addPrimaryKey columnNames="Code, CollateralType"
 			constraintName="PK_CCTM_CD_CT" tableName="CIBIL_COLLATERAL_TYPES_MAPPING"/>
 	</changeSet>
+	
+	<changeSet id="184" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_TVIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails_Temp T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="185" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_AVIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="186" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_VIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails_Temp T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+				UNION ALL
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+				WHERE         NOT EXISTS (SELECT 1 FROM FinJointAccountDetails_TEMP WHERE JointAccountId = T1.JointAccountId)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
