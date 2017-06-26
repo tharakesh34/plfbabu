@@ -5427,6 +5427,7 @@
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->

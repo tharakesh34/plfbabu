@@ -64,6 +64,7 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -98,6 +99,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
 
 	public FinFeeDetailServiceImpl() {
 		super();
@@ -129,7 +131,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public List<FinReceiptDetail> getFinReceiptDetais(String finReference) {
 		logger.debug("Entering");
 		
-		List<FinReceiptDetail> finReceiptDetails = getFinFeeDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		List<FinReceiptDetail> finReceiptDetails = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
 		
 		logger.debug("Leaving");
 		
@@ -514,7 +516,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinFeeReceipt feeReceipt;
 		FinExcessAmount finExcessAmount;
 
-		List<FinReceiptDetail> finReceiptDetailsList = getFinFeeDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
 			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
@@ -936,6 +938,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
 

@@ -185,5 +185,24 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	@Override
+	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReferece) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT " );
+		selectSql.append(" From FINRECEIPTHEADER T1 " );
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID" );
+		selectSql.append(" where ReceiptPurpose = 'FeePayment' And T2.Status <> 'C' And T1.Reference = '" + finReferece + "'" );
+		
+		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+		logger.debug("Leaving");
+		
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);	
+	}
 
 }
