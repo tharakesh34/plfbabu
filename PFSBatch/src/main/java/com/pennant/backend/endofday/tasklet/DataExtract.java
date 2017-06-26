@@ -21,23 +21,22 @@ import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class DataExtract implements Tasklet {
-	private Logger						logger	= Logger.getLogger(DataExtract.class);
+	private Logger logger = Logger.getLogger(DataExtract.class);
 
-	private DataSource					dataSource;
+	private DataSource dataSource;
 
 	@Autowired
-	private ALMRequestService			almRequestService;
+	private ALMRequestService almRequestService;
 	@Autowired
-	private ControlDumpRequestService	controlDumpRequestService;
+	private ControlDumpRequestService controlDumpRequestService;
 	@Autowired
-	private PosidexRequestService		posidexRequestService;
+	private PosidexRequestService posidexRequestService;
 	@Autowired
-	private DataMartRequestService		dataMartRequestService;
+	private DataMartRequestService dataMartRequestService;
 	@Autowired
-	private TrailBalanceReportService	trailBalanceReportService;
+	private TrailBalanceReportService trailBalanceReportService;
 	@Autowired
-	private CIBILReport              	cibilReport;
-	
+	private CIBILReport cibilReport;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -46,18 +45,18 @@ public class DataExtract implements Tasklet {
 
 		try {
 
-			Date monthEndDate = DateUtility.getMonthEnd(valueDate);
-			//if month end then only it should run
-//			if (monthEndDate.compareTo(valueDate) == 0) {
-				new AMLRequest(new Long(1000), almRequestService).start();
-				new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
-//			}
+			//Date monthEndDate = DateUtility.getMonthEnd(valueDate);
+			// if month end then only it should run
+			// if (monthEndDate.compareTo(valueDate) == 0) {
+			new AMLRequest(new Long(1000), almRequestService).start();
+			new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
+			// }
 
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
 			new DataMartRequest(new Long(1000), dataMartRequestService).start();
 			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
-			new CibilReport().start();
+			new CibilReport(cibilReport).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -81,12 +80,12 @@ public class DataExtract implements Tasklet {
 
 	public class AMLRequest extends Thread {
 
-		private long				userId;
-		private ALMRequestService	almRequestService;
+		private long userId;
+		private ALMRequestService almRequestService;
 
 		public AMLRequest(long userId, ALMRequestService almRequestService) {
 			this.userId = userId;
-			this.almRequestService=almRequestService;
+			this.almRequestService = almRequestService;
 		}
 
 		public void run() {
@@ -101,8 +100,8 @@ public class DataExtract implements Tasklet {
 	}
 
 	public class ControlDumpRequest extends Thread {
-		private long						userId;
-		private ControlDumpRequestService	controlDumpRequestService;
+		private long userId;
+		private ControlDumpRequestService controlDumpRequestService;
 
 		public ControlDumpRequest(long userId, ControlDumpRequestService controlDumpRequestService) {
 			this.userId = userId;
@@ -125,8 +124,8 @@ public class DataExtract implements Tasklet {
 	}
 
 	public class PosidexRequest extends Thread {
-		private long					userId;
-		private PosidexRequestService	posidexRequestService;
+		private long userId;
+		private PosidexRequestService posidexRequestService;
 
 		public PosidexRequest(long userId, PosidexRequestService posidexRequestService) {
 			this.userId = userId;
@@ -143,11 +142,10 @@ public class DataExtract implements Tasklet {
 			}
 		}
 	}
-	
-	
+
 	public class DataMartRequest extends Thread {
-		private long					userId;
-		private DataMartRequestService	dataMartRequestService;
+		private long userId;
+		private DataMartRequestService dataMartRequestService;
 
 		public DataMartRequest(long userId, DataMartRequestService dataMartRequestService) {
 			this.userId = userId;
@@ -166,10 +164,10 @@ public class DataExtract implements Tasklet {
 	}
 
 	public class TrailBalanceReport extends Thread {
-		private long							userId;
-		private TrailBalanceReportService   	trailBalanceReportservice;
+		private long userId;
+		private TrailBalanceReportService trailBalanceReportservice;
 
-		public TrailBalanceReport(long userId,TrailBalanceReportService trailBalanceReportService) {
+		public TrailBalanceReport(long userId, TrailBalanceReportService trailBalanceReportService) {
 			this.userId = userId;
 			this.trailBalanceReportservice = trailBalanceReportService;
 		}
@@ -184,23 +182,22 @@ public class DataExtract implements Tasklet {
 			}
 		}
 	}
-	
-	
+
 	public class CibilReport extends Thread {
 		private CIBILReport cibilReport;
 
-		public CibilReport() {
+		public CibilReport(CIBILReport cibilReport) {
+			this.cibilReport = cibilReport;
 		}
 
 		public void run() {
 			try {
 				logger.debug("Cibil Report Service started...");
-				this.cibilReport.generateReport();
-
+				cibilReport.generateReport();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}
-	
+
 }
