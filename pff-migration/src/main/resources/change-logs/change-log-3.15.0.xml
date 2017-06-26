@@ -3607,4 +3607,46 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
                           WHERE AggrementNo = T1.AggrementNo )
 		</createView>
 </changeSet>
+
+<changeSet id="162" author="Durgaprasad G">
+	  <dropTable tableName="TAXDOWNLOADDETAIL" />
+    </changeSet>
+
+	<changeSet id="163" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADDETAIL">
+		<column name="HEADERID" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="TRANSACTION_DATE" type="datetime" />
+		<column name="HOST_SYSTEM_TRANSACTION_ID" type="varchar(20)" />
+		<column name="TRANSACTION_TYPE" type="varchar(50)" />
+		<column name="BUSINESS_AREA" type="varchar(2)" />
+		<column name="SOURCE_SYSTEM" type="varchar(20)" />
+		<column name="COMPANY_CODE" type="varchar(50)" />
+		<column name="CUSTOMER_NAME" type="varchar(300)" />
+		<column name="REGISTERED_CUSTOMER" type="varchar(1)" />
+		<column name="CUSTOMER_ID" type="number(8)" />
+		<column name="CUSTOMER_GSTIN" type="varchar(30)" />
+		<column name="CUSTOMER_ADDRESS" type="varchar(500)" />
+		<column name="CUSTOMER_STATE_CODE" type="varchar(2)" />
+		<column name="ADDRESS_CHANGE_DATE" type="datetime" />
+		<column name="PAN_NO" type="varchar(30)" />
+		<column name="LEDGER_CODE" type="varchar(20)" />
+		<column name="HSN_SAC_CODE" type="varchar(50)" />
+		<column name="NATURE_OF_SERVICE" type="varchar(20)" />
+		<column name="LOAN_ACCOUNT_NO" type="varchar(20)" />
+		<column name="PRODUCT_CODE" type="varchar(8)" />
+		<column name="CHARGE_CODE" type="number(8)" />
+		<column name="LOAN_BRANCH" type="number(8)" />
+		<column name="LOAN_BRANCH_STATE" type="varchar(2)" />
+		<column name="LOAN_SERVICING_BRANCH" type="varchar(200)" />
+		<column name="BFLGSTINNo" type="varchar(30)" />
+		<column name="TXN_BRANCH_ADDRESS" type="varchar(500)" />
+		<column name="TXN_BRANCH_STATE_CODE" type="varchar(2)" />
+		<column name="TRANSACTION_AMOUNT" type="NUMBER(25,2)" />
+		<column name="REVERSE_CHARGE_APPLICABLE" type="varchar(1)" />
+		<column name="INVOICE_TYPE" type="varchar(1)" />
+		<column name="ORIGINAL_INVOICE_NO" type="varchar(16)" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
