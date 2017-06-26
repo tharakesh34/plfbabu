@@ -1022,7 +1022,7 @@
 			baseTableName="PaymentInstructions" baseColumnNames="PaymentId" />
 	</changeSet>
 	
-	<changeSet id="35" author="Durgaprasad G">
+	<changeSet id="35" author="Durgaprasad G" dbms="oracle">
 		<createTable tableName="PaymentInstructions_Temp">
 			<column name="PaymentInstructionId" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
@@ -1049,6 +1049,44 @@
 			<column name="Remarks" type="varchar(100)"  />
 			<column name="Active" type="Char(1)"  />
 			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="35" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="PaymentInstructions_Temp">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -1123,7 +1161,7 @@
 			baseTableName="PaymentInstructions" baseColumnNames="PaymentId" />
 	</changeSet>
 	
-	<changeSet id="41" author="Durgaprasad G">
+	<changeSet id="41" author="Durgaprasad G" dbms="oracle">
 		<createTable tableName="PaymentInstructions_Temp">
 			<column name="PaymentInstructionId" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
@@ -1150,6 +1188,44 @@
 			<column name="Remarks" type="varchar(100)"  />
 			<column name="Active" type="Char(1)"  />
 			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="41" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="PaymentInstructions_Temp">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="varchar(8)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -1235,7 +1311,7 @@
 				                            WHERE      ReceiptID = T1.ReceiptID)
 		</createView>
 	</changeSet>
-	<changeSet id="47" author="murthy.y">
+	<changeSet id="47" author="murthy.y" dbms="oracle">
 		<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
 			SELECT SUBSTR(FM.FINREFERENCE, 7, LENGTH(FM.FINREFERENCE)) AGREEMENTID,
 			  FM.FINREFERENCE AGREEMENTNO,
@@ -1263,7 +1339,35 @@
 			LEFT JOIN FINPROVISIONS PR ON PR.FINREFERENCE = FM.FINREFERENCE
 		</createView>
 	</changeSet>
-	<changeSet id="48" author="murthy.y">
+	<changeSet id="47" author="murthy.y" dbms="mssql">
+		<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+			SELECT SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) AGREEMENTID,
+			  FM.FINREFERENCE AGREEMENTNO,
+			  FM.FINTYPE PRODUCTFLAG,
+			    	CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+			  (FP.TOTALPRIBAL+FP.TOTALPFTBAL)/CCYMINORCCYUNITS INSTLAMT,
+			  FP.TOTALPRIBAL /CCYMINORCCYUNITS PRINCOMP,
+			  FP.TOTALPFTBAL /CCYMINORCCYUNITS INTCOMP,
+			  FP.FIRSTREPAYDATE DUEDATE,
+			  FP.PFTACCRUED/CCYMINORCCYUNITS ACCRUEDAMT,
+			  FP.PFTACCRUED/CCYMINORCCYUNITS CUMULATIVE_ACCRUAL_AMT,
+			  CASE
+			    WHEN (SELECT COUNT(RH.REFERENCE) EMIADV
+			      FROM FINRECEIPTDETAIL RD
+			      INNER JOIN FINRECEIPTHEADER RH
+			      ON RH.RECEIPTID  =RH.RECEIPTID
+			      WHERE PAYMENTTYPE='EMIINADV'
+			      AND RH.REFERENCE = FM.FINREFERENCE) > 0
+			    THEN 'Y'
+			    ELSE 'N'
+			  END ADVFLAG
+			FROM FINANCEMAIN FM
+			INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE=FM.FINREFERENCE
+			INNER JOIN RMTCURRENCIES RC ON RC.CCYCODE=FM.FINCCY
+			LEFT JOIN FINPROVISIONS PR ON PR.FINREFERENCE = FM.FINREFERENCE
+		</createView>
+	</changeSet>
+	<changeSet id="48" author="murthy.y" dbms="oracle">
 		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
 			 SELECT 
 				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
@@ -1404,13 +1508,153 @@
 				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
-	
+	<changeSet id="48" author="murthy.y" dbms="mssql">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+			 SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				cast(FM.EFFECTIVERATEOFRETURN as decimal(10,7)) EFFECTIVE_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				cast(FM.REPAYPROFITRATE as decimal(10,7)) FLAT_RATE,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				SUBSTRING(AP.PAYMENTTYPE,0,1) INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(DATEDIFF (mm,FM.MATURITYDATE, FM.FINSTARTDATE),2) SANCTIONED_TENURE,
+				COALESCE(PR.PROMOTIONCODE, '0') SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN PROMOTIONS PR ON  PR.FINTYPE = FT.FINTYPE
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT count(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN FINADVANCEPAYMENTS AP ON AP.FINREFERENCE = FM.FINREFERENCE AND AP.DISBSEQ = DD.DISBSEQ 
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINODDETAILS OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS FPR ON FPR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = FPR.NPABUCKETID
+		</createView>
+	</changeSet>
 	<changeSet id="49" author="Durgaprasad G">
 	 	<dropTable tableName="PaymentInstructions"/>
 	 	<dropTable tableName="PaymentInstructions_Temp"/>
 	</changeSet>
 	
-   <changeSet id="50" author="Durgaprasad G">
+   <changeSet id="50" author="Durgaprasad G" dbms="oracle">
 		<createTable tableName="PaymentInstructions">
 			<column name="PaymentInstructionId" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_PI_PIID" nullable="false"/>
@@ -1449,14 +1693,52 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	 <changeSet id="50" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="PaymentInstructions">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostDate" type="datetime"  />
+			<column name="PaymentType" type="varchar(8)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PatnerBankId" type="bigInt"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="IssuingBank" type="varchar(8)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="51" author="Durgaprasad G">
 		<addForeignKeyConstraint constraintName="FK_PI_PID"
 			referencedTableName="PaymentHeader" referencedColumnNames="PaymentId"
 			baseTableName="PaymentInstructions" baseColumnNames="PaymentId" />
 	</changeSet>
 	
-	<changeSet id="52" author="Durgaprasad G">
+	<changeSet id="52" author="Durgaprasad G" dbms="oracle">
 		<createTable tableName="PaymentInstructions_Temp">
 			<column name="PaymentInstructionId" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
@@ -1495,7 +1777,45 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="52" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="PaymentInstructions_Temp">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostDate" type="datetime"  />
+			<column name="PaymentType" type="varchar(8)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PatnerBankId" type="bigInt"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="IssuingBank" type="varchar(8)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="53" author="Manoj.P">
 		<sql>
 			update data_engine_config set Name = 'POSIDEX_CUSTOMER_UPDATE_RESPONSE', CRONEXPRESSION ='0 01 22 * * ?'  where Name = 'POSIDEX_CUSTOMER_UPDATEREQUEST';
@@ -1572,7 +1892,7 @@
 		WHERE NOT EXISTS ( SELECT 1  FROM PaymentInstructions_Temp WHERE PaymentInstructionId = T1.PaymentInstructionId)
 	 </createView>
 	</changeSet>
-	<changeSet id="54" author="Manoj.p">
+	<changeSet id="54" author="Manoj.p" dbms="oracle">
 		<createView viewName="INT_POSIDEX_CUST_VIEW" replaceIfExists="true">
 					SELECT C.CUSTID CUSTOMER_NO,
 				  '' SOURCE_SYS_ID,
@@ -1688,8 +2008,123 @@
 				WHERE C.CUSTADDLVAR1 IS NULL
 		</createView>
 	</changeSet>
-	
-	<changeSet id="60" author="Manoj.P">
+	<changeSet id="54" author="Manoj.p" dbms="mssql">
+		<createView viewName="INT_POSIDEX_CUST_VIEW" replaceIfExists="true">
+					SELECT C.CUSTID CUSTOMER_NO,
+				  '' SOURCE_SYS_ID,
+				  C.CUSTFNAME FIRST_NAME,
+				  C.CUSTMNAME MIDDLE_NAME,
+				  C.CUSTLNAME LAST_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DOB,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPAN.CUSTDOCTITLE
+				    ELSE ''
+				  END PAN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDDLN.CUSTDOCTITLE
+				    ELSE ''
+				  END DRIVING_LICENSE_NUMBER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDVTR.CUSTDOCTITLE
+				    ELSE ''
+				  END VOTER_ID,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DATE_OF_INCORPORATION,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDTAN.CUSTDOCTITLE
+				    ELSE ''
+				  END TAN_NO,
+				  '' PROCESS_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN 'I'
+				    ELSE 'C'
+				  END APPLICANT_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CAST(EMPNAME AS VARCHAR(105))
+				    ELSE NULL
+				  END EMPOYER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTMOTHERMAIDEN
+				    ELSE ''
+				  END FATHER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPPT.CUSTDOCTITLE
+				    ELSE ''
+				  END PASSPORT_NO,
+				  '' ACCOUNT_NUMBER,
+				  '' CREDIT_CARD_NUMBER,
+				  'N' PROCESS_FLAG,
+				  '' ERROR_CODE,
+				  '' ERROR_DESC,
+				  C.CUSTCIF CUSTOMER_ID,
+				  '' SOURCE_SYSTEM,
+				  CAST(NULL AS NUMERIC(18,0)) PSX_BATCH_ID,
+				  '' UCIN_FLAG,
+				  CAST(NULL AS NUMERIC(18,0)) EOD_BATCH_ID,
+				  CURRENT_TIMESTAMP INSERT_TS,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTGENDERCODE
+				    ELSE ''
+				  END GENDER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDADR.CUSTDOCTITLE
+				    ELSE ''
+				  END AADHAR_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCIN.CUSTDOCTITLE
+				    ELSE ''
+				  END CIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDDIN.CUSTDOCTITLE
+				    ELSE ''
+				  END DIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDRGNO.CUSTDOCTITLE
+				    ELSE ''
+				  END REGISTRATION_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCANO.CUSTDOCTITLE
+				    ELSE ''
+				  END CA_NUMBER,
+				  'CF' SEGMENT
+				  
+				FROM CUSTOMERS C
+				LEFT JOIN CUSTOMERDOCUMENTS CDPAN ON CDPAN.CUSTID = C.CUSTID AND CDPAN.CUSTDOCCATEGORY='03'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDLN ON CDDLN.CUSTID = C.CUSTID AND CDDLN.CUSTDOCCATEGORY='04'
+				LEFT JOIN CUSTOMERDOCUMENTS CDVTR ON CDVTR.CUSTID = C.CUSTID AND CDVTR.CUSTDOCCATEGORY='05'
+				LEFT JOIN CUSTOMERDOCUMENTS CDTAN ON CDTAN.CUSTID = C.CUSTID AND CDTAN.CUSTDOCCATEGORY='15'
+				LEFT JOIN CUSTOMERDOCUMENTS CDPPT ON CDPPT.CUSTID = C.CUSTID AND CDPPT.CUSTDOCCATEGORY='02'
+				LEFT JOIN CUSTOMERDOCUMENTS CDADR ON CDADR.CUSTID = C.CUSTID AND CDADR.CUSTDOCCATEGORY='01'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCIN ON CDCIN.CUSTID = C.CUSTID AND CDCIN.CUSTDOCCATEGORY='16'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDIN ON CDDIN.CUSTID = C.CUSTID AND CDDIN.CUSTDOCCATEGORY='17'
+				LEFT JOIN CUSTOMERDOCUMENTS CDRGNO ON CDRGNO.CUSTID = C.CUSTID AND CDRGNO.CUSTDOCCATEGORY='18'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCANO ON CDCANO.CUSTID  = C.CUSTID AND CDCANO.CUSTDOCCATEGORY='19'
+				LEFT JOIN CUSTEMPLOYEEDETAIL CE ON CE.CUSTID = C.CUSTID LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = C.CUSTID AND CUSTADDRPRIORITY=5
+				WHERE C.CUSTADDLVAR1 IS NULL
+		</createView>
+	</changeSet>
+	<changeSet id="60" author="Manoj.P" dbms="oracle">
 		<createView viewName="INT_POSIDEX_CUST_LOAN_VIEW" replaceIfExists="true">
 			SELECT C.CUSTID CUSTOMER_NO,
     '' SOURCE_SYS_ID,
@@ -1714,8 +2149,33 @@
   ON C.CUSTID = FM.CUSTID
 		</createView>
 	</changeSet>
+		<changeSet id="60" author="Manoj.P" dbms="mssql">
+		<createView viewName="INT_POSIDEX_CUST_LOAN_VIEW" replaceIfExists="true">
+			SELECT C.CUSTID CUSTOMER_NO,
+    '' SOURCE_SYS_ID,
+    'CF' SEGMENT,
+    FM.FINREFERENCE DEAL_ID,
+    FM.FINREFERENCE LAN_NO,
+    '' CUSTOMER_TYPE,
+    SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) APPLN_NO,
+    FM.FINTYPE PRODUCT_CODE,
+    '' PROCESS_TYPE,
+    'N' PROCESS_FLAG,
+    '' ERROR_CODE,
+    '' ERROR_DESC,
+    0 PSX_BATCH_ID,
+    0 PSX_ID,
+    C.CUSTCIF CUSTOMER_ID,
+    '' SOURCE_SYSTEM,
+    0 EOD_BATCH_ID,
+    FM.LASTMNTON FIN_LASTMNTON
+  FROM FINANCEMAIN FM
+  INNER JOIN CUSTOMERS C
+  ON C.CUSTID = FM.CUSTID
+		</createView>
+	</changeSet>
 	
-	<changeSet id="61" author="Manoj.P">
+	<changeSet id="61" author="Manoj.P" dbms="oracle">
 		<createView viewName="INT_POSIDEX_CUST_ADDR_VIEW" replaceIfExists="true">
 		SELECT C.CUSTID CUSTOMER_NO,
 		  '' SOURCE_SYS_ID,
@@ -1752,7 +2212,44 @@
 		WHERE C.CUSTADDLVAR1 IS NULL		
 		</createView>
 	</changeSet>
-	<changeSet id="62" author="murthy.y">
+	<changeSet id="61" author="Manoj.P" dbms="mssql">
+		<createView viewName="INT_POSIDEX_CUST_ADDR_VIEW" replaceIfExists="true">
+		SELECT C.CUSTID CUSTOMER_NO,
+		  '' SOURCE_SYS_ID,
+		  'CF' SEGMENT,
+		  '' ADDRESS_TYPE,
+		  CA.CUSTADDRHNBR ADDRESS_1,
+		  CA.CUSTFLATNBR ADDRESS_2,
+		   CA.CUSTADDRLINE1 ADDRESS_3,
+		   CA.CUSTADDRPROVINCE STATE,
+		   CA.CUSTADDRCITY CITY,
+		   CA.CUSTADDRZIP PIN,
+		     CAST(CPLND1.PHONECOUNTRYCODE+CPLND1.PHONEAREACODE+CPLND1.PHONENUMBER AS VARCHAR(48)) LANDLINE_1,
+			  CAST(CPLND2.PHONECOUNTRYCODE+CPLND2.PHONEAREACODE+CPLND2.PHONENUMBER AS VARCHAR(48)) LANDLINE_2,
+			    CAST(CPMOB.PHONECOUNTRYCODE +CPMOB.PHONEAREACODE+CPMOB.PHONENUMBER AS   VARCHAR(105)) MOBILE,
+				 CA.CUSTADDRSTREET AREA,
+			 CA.CUSTADDRLINE1 LANDMARK,
+		
+		   '' STD,	 
+		   '' PROCESS_TYPE,
+		   CEM.CUSTEMAIL EMAIL,
+		   'N' PROCESS_FLAG,
+		    '' ERROR_CODE,
+		  '' ERROR_DESC,
+		  C.CUSTCIF CUSTOMER_ID,
+		  '' SOURCE_SYSTEM,
+		   CAST(NULL AS DECIMAL(18,0)) PSX_BATCH_ID,
+		  CAST(NULL AS Decimal(18,0)) EOD_BATCH_ID
+		FROM CUSTOMERS C
+		LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = C.CUSTID AND CUSTADDRPRIORITY=5
+		LEFT JOIN CUSTOMERPHONENUMBERS CPLND1 ON CPLND1.PHONECUSTID = C.CUSTID AND CPLND1.PHONETYPECODE='HOME'
+		LEFT JOIN CUSTOMERPHONENUMBERS CPLND2 ON CPLND2.PHONECUSTID = C.CUSTID AND CPLND2.PHONETYPECODE='MOBILE2'
+		LEFT JOIN CUSTOMERPHONENUMBERS CPMOB ON CPMOB.PHONECUSTID = C.CUSTID AND CPMOB.PHONETYPECODE='MOBILE1'
+		LEFT JOIN CUSTOMEREMAILS CEM ON CEM.CUSTID = C.CUSTID AND CEM.CUSTEMAILPRIORITY=5
+		WHERE C.CUSTADDLVAR1 IS NULL		
+		</createView>
+	</changeSet>
+	<changeSet id="62" author="murthy.y" dbms="oracle">
 		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
 			SELECT 
 				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
@@ -1894,6 +2391,148 @@
 				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
+	<changeSet id="62" author="murthy.y" dbms="mssql">
+		<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+			SELECT 
+				PD.PFTACCRUED/100 ACCRUED_AMOUNT,
+				COALESCE(EA.AMOUNT,0)/100 ADVANCE_EMI,
+				0 ADVANCE_EMI_BILLED,
+				SUBSTRING(FM.FINREFERENCE, 7, LEN(FM.FINREFERENCE)) AGREEMENTID,
+				FM.FINAPPROVEDDATE AGREEMENTDATE,
+				FM.FINREFERENCE  AGREEMENTNO,
+				FM.FINAMOUNT/100 AMTFIN,
+				FM.FINASSETVALUE/100 ASSETCOST,
+				'' ASSETDESC,
+				TOTALPFTSCHD-TOTALPFTPAID-PFTACCRUED/100 BALANCE_UMFC,
+				0 BOUNCE_CHARGES_DUE,
+				0 BOUNCE_CHARGES_RECEIVED,
+				LB.BANKREFNO BRANCHID,
+				LB.BRANCHDESC BRANCH_NAME, 
+				PS.REPAYAMOUNT BULK_REFUND,
+				0 CHASISNUM,
+				0 CLOSED_CAN_ADV_EMI,
+				0 CLOS_CAN_ADV_EMI_INTCOMP,
+				0 CLOS_CAN_ADV_EMI_PRINCOMP,
+				FM. MATURITYDATE CLOSUREDATE,
+				FM.DUEBUCKET/100 CURRENT_BUCKET,
+				LC.CUSTID CUSTOMERID,
+				LC.CUSTSHRTNAME CUSTOMERNAME,
+				FM.DUEBUCKET  DERIVED_BUCKET,
+				DD.DISBDATE DISBURSALDATE,
+				DD.DISBAMOUNT/100 DISBURSED_AMOUNT,
+				CASE WHEN FM.FINASSETVALUE = FINCURRASSETVALUE THEN 'FD' ELSE 'PD' END DISB_STATUS,
+				PD.CURODDAYS DPD,
+				cast(FM.EFFECTIVERATEOFRETURN as decimal(10,7)) EFFECTIVE_RATE,
+				(PD.ODPRINCIPAL+PD.ODPROFIT)/100 EMI_DUE,
+				PFT.WAIVEDAMOUNT EMI_INTEREST_WAIVED,
+				0 PRINCIPAL_AT_TERM,
+				0 EMI_IN_ADVANCE_BILLED,
+				0 EMI_IN_ADVANCE_RECEIVED_MAKER,
+				EA.BALANCEAMT EMI_IN_ADVANCE_UNBILLED,
+				0 EMI_IN_ADV_BILLED_INTCOMP,
+				0 EMI_IN_ADV_BILLED_PRINCOMP,
+				0 EMI_IN_ADV_UNBILLED_INTCOMP,
+				0 EMI_IN_ADV_UNBILLED_PRINCOMP,
+				PD.TOTALPFTBAL + PD.TOTALPRIBAL/100 EMI_OS,
+				PRI.WAIVEDAMOUNT/100 EMI_PRINCIPAL_WAIVED,
+				PD.TOTALPFTPAID+PD.TOTALPRIPAID/100 EMI_RECEIVED,
+				'' ENGINENUM,
+				PD.FIRSTREPAYDATE FIRST_DUE_DATE,
+				OD.FINODSCHDDATE FIRST_REPAYDUE_DATE,
+				cast(FM.REPAYPROFITRATE as decimal(10,7)) FLAT_RATE,
+				FD.PAIDAMOUNT/100 FORECLOSURE_CHARGES_DUE,
+				0 FORECLOSURE_CHARGES_RECEIVED,
+				SUBSTRING(AP.PAYMENTTYPE,0,1) INSTRUMENT,
+				0 INSUR_PAID,
+				0 INSUR_PAYABLE,
+				0 INSUR_RECEIVABLE,
+				0 INSUR_RECEIVED,
+				0 INSUR_RENEW_CHARGE,
+				0 INSUR_RENEW_CHARGE_RECD,
+				PD.TOTALPFTBAL/100 INTEREST_BALANCE,
+				PD.TDSCHDPFTBAL/100  INTEREST_DUE,
+				PD.TOTALPFTBAL/100  INTEREST_OS,
+				PD.TOTALPFTPAID/100  INTEREST_RECEIVED,
+				0 INVOICEAMT,
+				FM.FIRSTREPAY/100 LOAN_EMI,
+				CASE FM.FINISACTIVE WHEN 1 THEN 'A' ELSE 'C' END LOAN_STATUS,
+				'' LOCAL_OUTSTATION_FLAG,
+				CHRG.TOTPENALTYBAL/100 LPP_CHARGES_RECEIVABLE,
+				CHRG.TOTPENALTYPAID/100 LPP_CHARGES_RECEIVED,
+				'' MAKE,
+				FM.MATURITYDATE MATURITY_DATE,
+				0 MIGRATED_ADVANCE_EMI,
+				0 MIGRATED_ADVANCE_EMI_BILLED,
+				0 MIGRATED_ADVANCE_EMI_UNBILLED,
+				0 MIG_ADV_EMI_BILLED_INTCOMP,
+				0 MIG_ADV_EMI_BILLED_PRINCOMP,
+				0 MIG_ADV_EMI_UNBILLED_INTCOMP,
+				0 MIG_ADV_EMI_UNBILLED_PRINCOMP,
+				0 MIG_DIFFERENCE_PAID,
+				0 MIG_DIFFERENCE_PAYABLE,
+				0 MIG_DIFFERENCE_RECEIVABLE,
+				0 MIG_DIFFERENCE_RECEIVED,
+				EAE.AMOUNT/100 NET_EXCESS_ADJUSTED,
+				EAE.UTILISEDAMT/100 NET_EXCESS_RECEIVED,
+				ECAE.NO_OF_ADVANCE_EMIS NO_OF_ADVANCE_EMIS,
+				(PD.NOINST - PD.NOPAIDINST)  NO_OF_EMI_OS, 
+				(PD.NOINST - PD.NOPAIDINST - PD.NOODINST) NO_OF_UNBILLED_EMI,
+				CASE WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END NPA_STAGEID,
+				0 PDC_SWAP_CHARGES_RECEIVABLE,
+				0 PDC_SWAP_CHARGES_RECEIVED,
+				0 PRINCIPAL_BALANCE,
+				PD.ODPRINCIPAL/100 PRINCIPAL_DUE,
+				PD.TOTALPRIBAL/100 PRINCIPAL_OS,
+				PD.TOTALPRIPAID/100 PRINCIPAL_RECEIVED,
+				PRI.WAIVEDAMOUNT/100 PRINCIPAL_WAIVED,
+				FT.FINCATEGORY PRODUCTFLAG,
+				'' REGDNUM,
+				0 REPO_CHARGES_RECEIVABLE,
+				0 REPO_CHARGES_RECEIVED,
+				'' REPO_DATE,
+				'' ROUNDING_DIFF_RECEIVABLE,
+				'' ROUNDING_DIFF_RECEIVED,
+				ROUND(DATEDIFF(mm,FM.MATURITYDATE, FM.FINSTARTDATE),2) SANCTIONED_TENURE,
+				COALESCE(PR.PROMOTIONCODE, '0') SCHEMEID, 
+				FT.FINTYPEDESC SCHEME_NAME,
+				0 SECURITY_DEPOSIT,
+				0 SECURITY_DEPOSIT_ADJUSTED,
+				0 SOH_BALANCE,
+				0 SOLD_SEIZE_PAID,
+				0 SOLD_SEIZE_PAYABLE,
+				0 SOLD_SEIZE_RECEIVABLE,
+				0 SOLD_SEIZE_RECEIVED,
+				'' SUPPLIERDESC,
+				PD.TOTALPFTBAL/100 TOTAL_INTEREST,
+				(WD.WRITTENOFFPRI+WD.WRITTENOFFPFT)/100 WRITEOFF_DUE,
+				WP.WRITEOFFPAYAMOUNT/100 WRITEOFF_RECEIVED,
+        FM.LASTREPAYDATE
+				FROM FINANCEMAIN FM 
+				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE 
+				LEFT JOIN PROMOTIONS PR ON  PR.FINTYPE = FT.FINTYPE
+				LEFT JOIN FINEXCESSAMOUNT EA ON EA.FINREFERENCE = FM.FINREFERENCE AND EA.AMOUNTTYPE = 'A'
+				LEFT JOIN FINEXCESSAMOUNT EAE ON EAE.FINREFERENCE = FM.FINREFERENCE AND EAE.AMOUNTTYPE = 'E'
+				LEFT JOIN (SELECT count(*) NO_OF_ADVANCE_EMIS, T2.FINREFERENCE  FROM FINEXCESSMOVEMENT T1 INNER JOIN FINEXCESSAMOUNT T2 ON T1.EXCESSID = T2.EXCESSID
+				WHERE  TRANTYPE = 'C' AND AMOUNTTYPE = 'A'
+				GROUP BY T2.FINREFERENCE) ECAE ON ECAE.FINREFERENCE = FM.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE 
+				INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID
+				INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'PartialSettlement' GROUP BY FINREFERENCE) PS ON PS.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(REPAYAMOUNT) REPAYAMOUNT FROM FINREPAYHEADER WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) ES ON ES.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINDISBURSEMENTDETAILS DD ON DD.FINREFERENCE = FM.FINREFERENCE AND DISBDATE = FM.FINSTARTDATE AND DD.DISBSEQ = 1 
+				LEFT JOIN FINADVANCEPAYMENTS AP ON AP.FINREFERENCE = FM.FINREFERENCE AND AP.DISBSEQ = DD.DISBSEQ 
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PRI' GROUP BY REFERENCE) PRI ON PRI.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT REFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT FROM RECEIPTALLOCATIONDETAIL PFT LEFT JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID  = PFT.RECEIPTID AND RH.ALLOCATIONTYPE = 'PFT' GROUP BY REFERENCE) PFT ON PFT.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID FROM FINODDETAILS GROUP BY FINREFERENCE) CHRG ON CHRG.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(PAIDAMOUNT) PAIDAMOUNT FROM FINFEEDETAIL WHERE FINEVENT= 'EarlySettlement' GROUP BY FINREFERENCE) FD ON FD.FINREFERENCE = FM.FINREFERENCE 
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT FINREFERENCE, SUM(WRITEOFFPAYAMOUNT)  WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT GROUP BY FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINODDETAILS OD ON OD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINPROVISIONS FPR ON FPR.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = FPR.NPABUCKETID
+		</createView>
+	</changeSet>
 	<changeSet id="63" author="murthy.y">
 		<sql>
 			update DATA_ENGINE_CONFIG set FILENAMEFORMAT = '_${CLIENT_CODE},${ddMM},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
@@ -1928,7 +2567,7 @@
 	<addDefaultValue columnDataType="boolean" columnName="restructureloan"
 			 defaultValueBoolean="false" tableName="financemain" />
 	</changeSet>
-		<changeSet id="68" author = "SreeRavali">
+		<changeSet id="68" author = "SreeRavali" dbms="oracle">
 	<addDefaultValue columnDataType="boolean" columnName="restructureloan"
 			defaultValueBoolean="false" tableName="financemain_temp" />
 	</changeSet>
@@ -1949,7 +2588,7 @@
 				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
 		</createView>
 	</changeSet>
-     <changeSet id="72" author="murthy">
+     <changeSet id="72" author="murthy" dbms="oracle">
 		<dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
 		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
 		<dropTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY"/>
@@ -2009,7 +2648,66 @@
 			<column name="DOWNLOADED_DATE" type="datetime" />
 		</createTable>
 	</changeSet>
-	
+	 <changeSet id="72" author="murthy" dbms="mssql">
+		<dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
+		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
+		<dropTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY"/>
+		<dropTable tableName="DATA_ENGINE_LOG"/>
+		<dropTable tableName="DATA_ENGINE_STATUS" cascadeConstraints="true"/>
+		<dropTable tableName="SEQ_DATA_ENGINE_STATUS"/>
+		
+		<createTable tableName="DATA_ENGINE_STATUS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Name" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FileName" type="varchar(100)"/>
+			<column name="Reference" type="varchar(100)"/>
+			<column name="ValueDate" type="datetime"/>
+			<column name="TotalRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ProcessedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column  name="SuccessRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column  name="FailedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="StartTime" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EndTime" type="datetime"/>
+			<column name="UserId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Remarks" type="varchar(2000)"/>
+		</createTable>
+		<createTable tableName="DATA_ENGINE_LOG">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" foreignKeyName="FK_DEL" references="DATA_ENGINE_STATUS(ID)"/>
+			</column>
+			<column name="KeyId" type="varchar(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reason" type="varchar(2000)"/>
+	</createTable>
+	    <createTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY">			
+			<column name="ID" type="bigint" />
+			<column name="USERID" type="bigint" />
+			<column name="DOWNLOADED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>
 	<changeSet id="73" author="Durgaprasad G">
 		<addColumn tableName="FINEXCESSAMOUNTRESERVE">
 		 <column name="PaymentType" type="char(1)"/>
