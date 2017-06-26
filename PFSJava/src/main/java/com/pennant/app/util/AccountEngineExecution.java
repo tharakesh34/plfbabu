@@ -572,7 +572,7 @@ public class AccountEngineExecution implements Serializable {
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			
-			if (acc == null && BigDecimal.ZERO.compareTo(postAmt) != 0) {
+			if ((acc == null ||  StringUtils.isBlank(acc.getAccountId())) && BigDecimal.ZERO.compareTo(postAmt) != 0) {
 				throw new FactoryException("Invalid accounting configuration, please contact administrator");
 			} 
 			

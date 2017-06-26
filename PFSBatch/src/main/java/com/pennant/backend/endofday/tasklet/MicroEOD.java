@@ -141,7 +141,7 @@ public class MicroEOD implements Tasklet {
 				custEODEvent = null;
 
 			} catch (Exception e) {
-				logger.error("Exception", e);
+				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
 				updateFailed(custID);
@@ -153,15 +153,9 @@ public class MicroEOD implements Tasklet {
 		cursorItemReader.close();
 
 		if (!exceptions.isEmpty()) {
-			List<StackTraceElement> elements = new ArrayList<StackTraceElement>();
-			for (Exception exp : exceptions) {
-				for (int i = 0; i < exp.getStackTrace().length; i++) {
-					elements.add(exp.getStackTrace()[i]);
-				}
-			}
-			RuntimeException exception = new RuntimeException();
-			exception.setStackTrace(elements.toArray(new StackTraceElement[elements.size()]));
-			logger.error("Exception", exception);
+			Exception exception = new Exception(exceptions.get(0));
+			exceptions.clear();
+			exceptions=null;
 			throw exception;
 		}
 
@@ -189,6 +183,14 @@ public class MicroEOD implements Tasklet {
 		//reset to "wait", to re run only failed cases.
 		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		customerQueuingDAO.updateFailed(customerQueuing);
+	}
+
+	private void logError(Exception exp) {
+		logger.error("Cause : " + exp.getCause());
+		logger.error("Message : " + exp.getMessage());
+		logger.error("LocalizedMessage : " + exp.getLocalizedMessage());
+		logger.error("StackTrace : ", exp);
+
 	}
 
 	public void setEodService(EodService eodService) {
