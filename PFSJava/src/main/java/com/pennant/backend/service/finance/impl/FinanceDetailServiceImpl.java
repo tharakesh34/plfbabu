@@ -4634,8 +4634,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		// Delete Tax Details
-		if(financeDetail.getTaxDetail() != null){
-			getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+		if (financeDetail.getTaxDetail() != null) {
+			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
+			if (tempTaxDetail != null) {
+				getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+			}
 		}
 
 		// Finance Main Details Deletion
