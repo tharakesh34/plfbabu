@@ -3670,4 +3670,10 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			UPDATE DATA_ENGINE_TABLE SET NAME = 'DE_TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='TRAIL_BALANCE_REPORT_VIEW';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="215" author="Durgaprasad.g">
+	<addColumn tableName="TAXDOWNLOADDETAIL">
+	 <column name="BFL_GSTIN_NO" type="VARCHAR(30)"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
