@@ -3541,4 +3541,70 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)
 		</createView>
 </changeSet>
+ <changeSet author="Madhubabu" id="208">
+	<createView viewName="FinTaxUploadHeader_View"
+		replaceIfExists="true">
+			  SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1
+   UNION ALL 
+  select T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WORKFLOWID 
+     FROM FinTaxUploadHeader T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadHeader_Temp 
+                          WHERE BatchReference = T1.BatchReference )
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="209">
+	<createView viewName="FinTaxUploadHeader_TView"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="210">
+	<createView viewName="FINTAXUPLOADHEADER_AVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="211">
+	<createView viewName="FINTAXUPLOADDETAIL_AVIEW"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="212">
+	<createView viewName="FINTAXUPLOADDETAIL_TVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="213">
+	<createView viewName="FINTAXUPLOADDETAIL_VIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+   UNION ALL 
+  select  T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadDetail_Temp 
+                          WHERE AggrementNo = T1.AggrementNo )
+		</createView>
+</changeSet>
 </databaseChangeLog>
