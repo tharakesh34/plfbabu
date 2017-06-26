@@ -23,6 +23,7 @@ import com.pennanttech.bajaj.services.DataMartRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
+import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class DataExtract implements Tasklet {
@@ -30,7 +31,7 @@ public class DataExtract implements Tasklet {
 
 	private DataSource dataSource;
 	@Autowired
-	private EODConfigDAO				eodConfigDAO;
+	private EODConfigDAO eodConfigDAO;
 
 	@Autowired
 	private ALMRequestService almRequestService;
@@ -44,7 +45,9 @@ public class DataExtract implements Tasklet {
 	private TrailBalanceReportService trailBalanceReportService;
 	@Autowired
 	private CIBILReport cibilReport;
-	
+	@Autowired
+	private TaxDownlaodDetailService taxDownlaodDetailService;
+
 	public EODConfig getEodConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -64,6 +67,7 @@ public class DataExtract implements Tasklet {
 		logger.debug("START: Data Extract Preparation On : " + valueDate);
 
 		try {
+			
 			boolean monthEnd = false;
 			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
@@ -78,14 +82,15 @@ public class DataExtract implements Tasklet {
 				}
 
 			}
-			//if month end then only it should run
+			// if month end then only it should run
 			if (monthEnd) {
-				
+
 			}
-		
+
 			new AMLRequest(new Long(1000), almRequestService).start();
 			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
 			new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
+			new TaxDownlaodDetail(new Long(1000), taxDownlaodDetailService).start();
 
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
@@ -234,4 +239,22 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
+	public class TaxDownlaodDetail extends Thread {
+		private long userId;
+		private TaxDownlaodDetailService taxDownlaodDetailService;
+
+		public TaxDownlaodDetail(long userId, TaxDownlaodDetailService taxDownlaodDetailService) {
+			this.userId = userId;
+			this.taxDownlaodDetailService = taxDownlaodDetailService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Trail Balance Request Service started...");
+				this.taxDownlaodDetailService.process(userId, DateUtility.getAppValueDate());
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
 }

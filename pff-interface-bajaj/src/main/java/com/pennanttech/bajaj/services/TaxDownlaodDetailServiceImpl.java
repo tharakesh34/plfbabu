@@ -1,5 +1,6 @@
 package com.pennanttech.bajaj.services;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -80,7 +81,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 				return (long) 0;
 			}
 		});
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -91,28 +92,28 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("HEADERID", id);
-		map.addValue("TRANSACTIONDATE", rs.getObject("POSTDATE"));
+		map.addValue("TRANSACTION_DATE", rs.getObject("POSTDATE"));
 
 		// hostSystemTransactionID
 		String hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANSORDER"));
-		map.addValue("HOSTSYSTEMTRANSACTIONID", hostSystemTransactionID);
+		map.addValue("HOST_SYSTEM_TRANSACTION_ID", hostSystemTransactionID);
 
-		map.addValue("TRANSACTIONTYPE", rs.getObject("FINEVENT"));
-		map.addValue("BUSINESSAREA", "CF");
-		map.addValue("SOURCESYSTEM", "PLF");
-		map.addValue("COMPANYCODE", rs.getObject("ENTITYCODE"));
+		map.addValue("TRANSACTION_TYPE", rs.getObject("FINEVENT"));
+		map.addValue("BUSINESS_AREA", "CF");
+		map.addValue("SOURCE_SYSTEM", "PLF");
+		map.addValue("COMPANY_CODE", rs.getObject("ENTITYCODE"));
 
 		// RegisteredCustomer or not
 		String customerGSTIN = rs.getString("CUSTOMERGSTIN");
 		if (StringUtils.trimToNull(customerGSTIN) == null) {
-			map.addValue("REGISTEREDCUSTOMER", "N");
+			map.addValue("REGISTERED_CUSTOMER", "N");
 		} else {
-			map.addValue("REGISTEREDCUSTOMER", "Y");
+			map.addValue("REGISTERED_CUSTOMER", "Y");
 		}
 
-		map.addValue("CUSTOMERID", rs.getObject("CUSTID"));
-		map.addValue("CUSTOMERNAME", rs.getObject("CUSTSHRTNAME"));
-		map.addValue("CUSTOMERGSTIN", customerGSTIN);
+		map.addValue("CUSTOMER_ID", rs.getObject("CUSTID"));
+		map.addValue("CUSTOMER_NAME", rs.getObject("CUSTSHRTNAME"));
+		map.addValue("CUSTOMER_GSTIN", customerGSTIN);
 
 		// CustomerAddress
 		StringBuilder address = null;
@@ -128,8 +129,8 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 			address.append(rs.getObject("CITY"));
 			address.append(rs.getObject("PINCODE"));
 			String taxStateCode = getTaxStateCode(rs.getString("PROVINCE"));
-			map.addValue("CUSTOMERSTATECODE", taxStateCode);
-			map.addValue("ADDRESSCHANGEDATE", rs.getObject("LASTMNTON"));
+			map.addValue("CUSTOMER_STATE_CODE", taxStateCode);
+			map.addValue("ADDRESS_CHANGE_DATE", rs.getObject("LASTMNTON"));
 		} else {
 			Map<String, Object> addrMap = getCustomerAddress(rs.getLong("CUSTID"));
 			address = new StringBuilder();
@@ -146,26 +147,26 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 			Object custAssrProvince = addrMap.get("CUSTADDRPROVINCE");
 			if (custAssrProvince != null) {
 				String taxStateCode = getTaxStateCode(custAssrProvince.toString());
-				map.addValue("CUSTOMERSTATECODE", taxStateCode);
+				map.addValue("CUSTOMER_STATE_CODE", taxStateCode);
 			}
-			map.addValue("ADDRESSCHANGEDATE", addrMap.get("LASTMNTON"));
+			map.addValue("ADDRESS_CHANGE_DATE", addrMap.get("LASTMNTON"));
 		}
-		map.addValue("CUSTOMERADDRESS", address);
+		map.addValue("CUSTOMER_ADDRESS", address);
 
-		map.addValue("CUSTOMERPANNO", rs.getObject("CUSTCRCPR"));
-		map.addValue("LEDGERCODE", rs.getObject("ACCOUNT"));
-		map.addValue("HSNSACCODE", rs.getObject("HSNSACCODE"));
-		map.addValue("NATUREOFSERVICE", rs.getObject("NATUREOFSERVICE"));
-		map.addValue("LOANACCOUNTNO", rs.getObject("FINREFERENCE"));
-		map.addValue("PRODUCTCODE", rs.getObject("FINTYPE"));
-		map.addValue("CHARGECODE", null);
-		map.addValue("LOANBRANCH", rs.getObject("FINBRANCH"));
+		map.addValue("PAN_NO", rs.getObject("CUSTCRCPR"));
+		map.addValue("LEDGER_CODE", rs.getObject("ACCOUNT"));
+		map.addValue("HSN_SAC_CODE", rs.getObject("HSNSACCODE"));
+		map.addValue("NATURE_OF_SERVICE", rs.getObject("NATUREOFSERVICE"));
+		map.addValue("LOAN_ACCOUNT_NO", rs.getObject("FINREFERENCE"));
+		map.addValue("PRODUCT_CODE", rs.getObject("FINTYPE"));
+		map.addValue("CHARGE_CODE", null);
+		map.addValue("LOAN_BRANCH", rs.getObject("FINBRANCH"));
 		// LoanBranchState
 		String loanBranchState = getTaxStateCode(rs.getString("CPPROVINCE"));
-		map.addValue("LOANBRANCHSTATE", loanBranchState);
+		map.addValue("LOAN_BRANCH_STATE", loanBranchState);
 
-		map.addValue("LOANSERVICINGBRANCH", rs.getObject("USERBRANCH"));
-		map.addValue("BFLGSTINNO", rs.getObject("TAXCODE"));
+		map.addValue("LOAN_SERVICING_BRANCH", rs.getObject("USERBRANCH"));
+		map.addValue("BFL_GSTIN_NO", rs.getObject("TAXCODE"));
 
 		// TxnBranchAddress
 		String taxAddressLine1 = rs.getString("ADDRESSLINE1");
@@ -182,7 +183,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 			address.append(rs.getObject("TAXCOUNTRY"));
 			address.append(rs.getObject("TAXPINCODE"));
 			String txnBranchStateCode = getTaxStateCode(rs.getString("TAXSTATECODE"));
-			map.addValue("TXNBRANCHSTATECODE", txnBranchStateCode);
+			map.addValue("TXN_BRANCH_STATE_CODE", txnBranchStateCode);
 		} else if (StringUtils.trimToNull(brnchAddressLine1) != null) {
 			address = new StringBuilder();
 			address.append(brnchAddressLine1);
@@ -196,21 +197,26 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 			address.append(rs.getObject("BRANCHCOUNTRY"));
 			address.append(rs.getObject("PINCODE"));
 			String txnBranchStateCode = getTaxStateCode(rs.getString("BRANCHPROVINCE"));
-			map.addValue("TXNBRANCHSTATECODE", txnBranchStateCode);
+			map.addValue("TXN_BRANCH_STATE_CODE", txnBranchStateCode);
 		}
-		map.addValue("TXNBRANCHADDRESS", address);
+		map.addValue("TXN_BRANCH_ADDRESS", address);
 
-		map.addValue("TRANSACTIONAMOUNT", rs.getObject("PostAmount"));
-		map.addValue("REVERSECHARGEAPPLICABLE", "Y");// check with chaitanya
+		// PostAmount amount convention using currency minor units..
+		BigDecimal postAmount = rs.getBigDecimal("PostAmount");
+		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
+		BigDecimal transactionAmt = postAmount.divide(new BigDecimal(ccyMinorUnits));
+		map.addValue("TRANSACTION_AMOUNT", transactionAmt);
+
+		map.addValue("REVERSE_CHARGE_APPLICABLE", "Y");
 
 		// InvoiceType
 		String status = rs.getString("Status");
 		if ("R".equalsIgnoreCase(status)) {
-			map.addValue("INVOICETYPE", "C");
-			map.addValue("ORIGINALINVOICENO", hostSystemTransactionID);
+			map.addValue("INVOICE_TYPE", "C");
+			map.addValue("ORIGINAL_INVOICE_NO", hostSystemTransactionID);
 		} else {
-			map.addValue("INVOICETYPE", "I");
-			map.addValue("ORIGINALINVOICENO", null);
+			map.addValue("INVOICE_TYPE", "I");
+			map.addValue("ORIGINAL_INVOICE_NO", null);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -221,31 +227,31 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 	private StringBuilder getSql() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO TAXDOWNLOADDETAIL ");
-		sql.append(" (HEADERID,  TRANSACTIONDATE,  HOSTSYSTEMTRANSACTIONID,  TRANSACTIONTYPE,  BUSINESSAREA,");
-		sql.append(" SOURCESYSTEM,  COMPANYCODE,  REGISTEREDCUSTOMER,  CUSTOMERID,  CUSTOMERNAME,");
-		sql.append(" CUSTOMERGSTIN,  CUSTOMERADDRESS,  CUSTOMERSTATECODE,  ADDRESSCHANGEDATE,  CUSTOMERPANNO,");
-		sql.append(" LEDGERCODE,  HSNSACCODE,  NATUREOFSERVICE,  LOANACCOUNTNO,  PRODUCTCODE, CHARGECODE,");
-		sql.append(" LOANBRANCH,  LOANBRANCHSTATE,  LOANSERVICINGBRANCH,  BFLGSTINNO,  TXNBRANCHADDRESS,");
-		sql.append(" TXNBRANCHSTATECODE,  TRANSACTIONAMOUNT,  REVERSECHARGEAPPLICABLE,  INVOICETYPE,  ORIGINALINVOICENO)");
+		sql.append(" (HEADERID,  TRANSACTION_DATE,  HOST_SYSTEM_TRANSACTION_ID,  TRANSACTION_TYPE,  BUSINESS_AREA,");
+		sql.append(" SOURCE_SYSTEM,  COMPANY_CODE,  REGISTERED_CUSTOMER,  CUSTOMER_ID,  CUSTOMER_NAME,");
+		sql.append(" CUSTOMER_GSTIN,  CUSTOMER_ADDRESS,  CUSTOMER_STATE_CODE,  ADDRESS_CHANGE_DATE,  PAN_NO,");
+		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
+		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
+		sql.append( " TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE, ORIGINAL_INVOICE_NO)");
 		sql.append(" values(");
-		sql.append(":HEADERID, :TRANSACTIONDATE, :HOSTSYSTEMTRANSACTIONID, :TRANSACTIONTYPE, :BUSINESSAREA,");
-		sql.append(":SOURCESYSTEM, :COMPANYCODE, :REGISTEREDCUSTOMER, :CUSTOMERID, :CUSTOMERNAME,");
-		sql.append(":CUSTOMERGSTIN, :CUSTOMERADDRESS, :CUSTOMERSTATECODE, :ADDRESSCHANGEDATE, :CUSTOMERPANNO,");
-		sql.append(":LEDGERCODE, :HSNSACCODE, :NATUREOFSERVICE, :LOANACCOUNTNO, :PRODUCTCODE,:CHARGECODE,");
-		sql.append(":LOANBRANCH, :LOANBRANCHSTATE, :LOANSERVICINGBRANCH, :BFLGSTINNO, :TXNBRANCHADDRESS,");
-		sql.append(":TXNBRANCHSTATECODE, :TRANSACTIONAMOUNT, :REVERSECHARGEAPPLICABLE, :INVOICETYPE, :ORIGINALINVOICENO)");
+		sql.append(":HEADERID, :TRANSACTION_DATE, :HOST_SYSTEM_TRANSACTION_ID, :TRANSACTION_TYPE, :BUSINESS_AREA,");
+		sql.append(":SOURCE_SYSTEM, :COMPANY_CODE, :REGISTERED_CUSTOMER, :CUSTOMER_ID, :CUSTOMER_NAME,");
+		sql.append(":CUSTOMER_GSTIN, :CUSTOMER_ADDRESS, :CUSTOMER_STATE_CODE, :ADDRESS_CHANGE_DATE, :PAN_NO,");
+		sql.append(":LEDGER_CODE, :HSN_SAC_CODE, :NATURE_OF_SERVICE, :LOAN_ACCOUNT_NO, :PRODUCT_CODE,:CHARGE_CODE,");
+		sql.append(":LOAN_BRANCH, :LOAN_BRANCH_STATE, :LOAN_SERVICING_BRANCH, :BFL_GSTIN_NO, :TXN_BRANCH_ADDRESS,");
+		sql.append( ":TXN_BRANCH_STATE_CODE, :TRANSACTION_AMOUNT, :REVERSE_CHARGE_APPLICABLE, :INVOICE_TYPE, :ORIGINAL_INVOICE_NO)");
 
 		return sql;
 	}
 
-	//Loading the default values in to map to reduce the db iterations while processing 
+	// Loading the default values in to map to reduce the db iterations while  processing
 	private void loadDefaults() {
 		logger.debug(Literal.ENTERING);
 		taxStateCodesMap = getTaxStateCodeDetails();
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Getting the all TAXSTATECODE , CPPROVINCE from RMTCOUNTRYVSPROVINCE
+	// Getting the all TAXSTATECODE , CPPROVINCE from RMTCOUNTRYVSPROVINCE
 	private Map<String, String> getTaxStateCodeDetails() {
 		logger.debug(Literal.ENTERING);
 
@@ -264,8 +270,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		return map;
 	}
 
-	//Get TAXSTATECODE from taxStateCodesMap if available.
-	//If not available then fetch from DB
+	// Get TAXSTATECODE from taxStateCodesMap if available. If not available  then fetch from DB
 	private String getTaxStateCode(String key) {
 		if (StringUtils.trimToNull(key) == null) {
 			return null;
@@ -277,7 +282,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		}
 	}
 
-	//Get TAXSTATECODE from DB
+	// Get TAXSTATECODE from DB
 	private String getTaxStateCodeFromDb(String key) {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource map = new MapSqlParameterSource();
@@ -287,7 +292,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		return namedJdbcTemplate.queryForObject(sql.toString(), map, String.class);
 	}
 
-	//Get customer high priority addres  from DB
+	// Get customer high priority addres from DB
 	public Map<String, Object> getCustomerAddress(long custId) {
 		final Map<String, Object> map = new HashMap<String, Object>();
 
@@ -320,7 +325,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		return map;
 	}
 
-	//Saving TAXDOWNLOADDETAIL in to DB
+	// Saving TAXDOWNLOADDETAIL in to DB
 	private void saveDetails(MapSqlParameterSource map) {
 		logger.debug(Literal.ENTERING);
 
@@ -330,7 +335,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Saving TAXDOWNLOADHAEDER in to DB
+	// Saving TAXDOWNLOADHAEDER in to DB
 	private long saveHeader() {
 		logger.debug(Literal.ENTERING);
 
@@ -356,7 +361,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		return id;
 	}
 
-	//Clearing the TAXDOWNLOADHAEDER table
+	// Clearing the TAXDOWNLOADHAEDER table
 	private void clearTaxheader(Date postDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -367,31 +372,30 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Clearing the TAXDOWNLOADDETAIL table
+	// Clearing the TAXDOWNLOADDETAIL table
 	private void clearTaxdetails(Date postDate) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("TRANSACTIONDATE", postDate);
-		namedJdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTIONDATE = :TRANSACTIONDATE", source);
+		source.addValue("TRANSACTION_DATE", postDate);
+		namedJdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE = :TRANSACTION_DATE", source);
 
 		logger.debug(Literal.LEAVING);
 
 	}
 
-	//Saving the required posings data into staging table POSTINGS_TAXDOWNLOAD
+	// Saving the required posings data into staging table POSTINGS_TAXDOWNLOAD
 	private void preparePosingsData(Date appLastBussDate) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("POSTDATE", appLastBussDate);
-		namedJdbcTemplate.update("INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM POSTINGS WHERE POSTDATE = :POSTDATE ",
-				source);
+		namedJdbcTemplate.update("INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM POSTINGS WHERE POSTDATE = :POSTDATE ", source);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Update the TAXDOWNLOADHAEDER record cnt
+	// Update the TAXDOWNLOADHAEDER record cnt
 	private void updateHeader(long id, int recordCnt) {
 		logger.debug(Literal.ENTERING);
 
@@ -403,7 +407,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Clear the staging table POSTINGS_TAXDOWNLOAD
+	// Clear the staging table POSTINGS_TAXDOWNLOAD
 	private void clearTables() {
 		logger.debug(Literal.ENTERING);
 
@@ -412,7 +416,7 @@ public class TaxDownlaodDetailServiceImpl extends BajajService implements TaxDow
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Clear the Taxdetails and Taxheader table if error occured during the process.
+	// Clear the Taxdetails and Taxheader table if error occurred during the process.
 	private void clearTaxDownlaodTables(Date postDate) {
 		logger.debug(Literal.ENTERING);
 		clearTaxdetails(postDate);

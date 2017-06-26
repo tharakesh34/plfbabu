@@ -552,7 +552,8 @@
 	<bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/>
     <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
     <bean id="trailBalanceReportService" class=" com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl" scope="prototype" parent="bajajService"/> 
-   
+    <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl"  scope="prototype" parent="bajajService"/>
+  
   	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
