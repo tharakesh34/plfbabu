@@ -1,4 +1,4 @@
-            package com.pennanttech.controller;
+package com.pennanttech.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -53,6 +53,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -1399,6 +1400,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
 		WSReturnStatus returnStatus = new WSReturnStatus();
+		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		
 		if(totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
@@ -1495,13 +1497,39 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
+			
+			// Fetching Actual Late Payments based on Value date passing
+			BigDecimal latePayPftBal = BigDecimal.ZERO;
+			BigDecimal penaltyBal = BigDecimal.ZERO;
+			if (DateUtility.compare(curBussniessDate, DateUtility.getAppDate()) == 0) {
+				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference);
+				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference);
+			} else {
+				// Calculate overdue Penalties
+				List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate);
+
+				// Calculating Actual Sum of Penalty Amount & Late Pay Interest
+				if (overdueList != null && !overdueList.isEmpty()) {
+					for (int i = 0; i < overdueList.size(); i++) {
+						FinODDetails finODDetail = overdueList.get(i);
+						if (finODDetail.getFinODSchdDate().compareTo(curBussniessDate) > 0) {
+							continue;
+						}
+						latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+						penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+					}
+				}
+			}
+			
+			BigDecimal remBal = priBalance.add(pftBalance).add(schFeeBal).add(latePayPftBal).add(penaltyBal).subtract(tdsReturns);
+			
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
+				if (totReceiptAmt.compareTo(remBal) < 0) {
 					return APIErrorHandlerService.getFailedStatus("90330");
 				}
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) <= 0) {
+				if (totReceiptAmt.compareTo(remBal) <= 0) {
 					return APIErrorHandlerService.getFailedStatus("90332");
 				}
 			}
@@ -1593,6 +1621,22 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 			finScheduleData.setFinFeeDetailList(srvFeeList);
 		}
+		
+		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+		int size = finScheduleData.getFinanceScheduleDetails().size();
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finScheduleData.getFinanceMain().getProductCategory())){
+			for (int i = size - 1; i >= 0; i--) {
+				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+					finScheduleData.getFinanceMain().setMaturityDate(curSchd.getSchDate());
+					break;
+				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+					finScheduleData.getFinanceScheduleDetails().remove(i);
+				}
+			}
+		}
+		
 		finScheduleData.setFinanceMain(null);
 		finScheduleData.setDisbursementDetails(null);
 		finScheduleData.setFinReference(null);

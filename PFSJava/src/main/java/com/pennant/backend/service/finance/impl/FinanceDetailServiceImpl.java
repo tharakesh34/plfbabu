@@ -3142,7 +3142,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setWorkflowId(0);
 			
 			// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
-			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+			if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
 				int size = financeDetail.getFinScheduleData().getFinanceScheduleDetails().size();
 				for (int i = size - 1; i >= 0; i--) {
 					FinanceScheduleDetail curSchd = financeDetail.getFinScheduleData().getFinanceScheduleDetails().get(i);
