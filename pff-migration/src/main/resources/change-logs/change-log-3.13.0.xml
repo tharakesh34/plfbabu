@@ -57,7 +57,7 @@
 	 </sql>
 	</changeSet>
 	
-	<changeSet id="04" author="Durgaprasad G">
+	<changeSet id="04" author="Durgaprasad G" dbms="oracle">
 	 <createView viewName="DE_DISBURSE_FILE_CONTROL_VIEW" replaceIfExists="true">
 	  SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS, 
 			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, FA.PAYMENTTYPE
@@ -78,8 +78,28 @@
       WHERE NOT EXISTS (SELECT ID FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID = DS.ID) ORDER BY ID DESC
 	 </createView>
 	</changeSet>
-	
-	<changeSet id="05" author="Durgaprasad G">
+	<changeSet id="04" author="Durgaprasad G" dbms="mssql">
+	 <createView viewName="DE_DISBURSE_FILE_CONTROL_VIEW" replaceIfExists="true">
+	  SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS, 
+			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, FA.PAYMENTTYPE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DISBURSEMENT_REQUESTS DR ON DR.BATCH_ID =DS.ID
+      		INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID
+			INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+      WHERE NOT EXISTS (SELECT ID FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID = DS.ID)
+	  UNION ALL
+	  SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS, 
+			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, PI.PAYMENTTYPE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DISBURSEMENT_REQUESTS DR ON DR.BATCH_ID =DS.ID
+      		INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID
+			INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+      WHERE NOT EXISTS (SELECT ID FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID = DS.ID)
+	 </createView>
+	</changeSet>
+	<changeSet id="05" author="Durgaprasad G" dbms="oracle">
 	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			   SELECT   
 			   FA. PAYMENTID,
@@ -241,7 +261,168 @@
 	 </createView>
 	
 	</changeSet>
+	<changeSet id="05" author="Durgaprasad G" dbms="mssql">
+	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			   SELECT   
+			   FA. PAYMENTID,
+			   FA.FINREFERENCE,
+			   '' CHANNEL, 
+			   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+			   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+			   FA.DISBDATE,
+               FA.LLDATE,
+			   FA.PAYABLELOC,
+			   FA.PRINTINGLOC,
+			   CU.CUSTCIF,            
+			   CU.CUSTSHRTNAME,     
+			   '' AS CUSTOMER_MOBILE,
+			   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+			   CS.CPPROVINCENAME  CUSTOMER_STATE,
+			   CC.PCCITYNAME      CUSTOMER_CITY,
+			   ''                 CUSTOMER_ADDRESS1,
+			   ''                 CUSTOMER_ADDRESS2,
+			   ''                 CUSTOMER_ADDRESS3,
+			   ''                 CUSTOMER_ADDRESS4,
+			   ''                 CUSTOMER_ADDRESS5,
+              BD.BANKNAME BANKNAME,
+              BB.BRANCHCODE,
+              BB.BRANCHDESC BRANCHDESC,
+			  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+			  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+			   BB.MICR             MICR_CODE,
+			   BB.IFSC             IFSC_CODE,
+			   FA.BENEFICIARYACCNO,
+			   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+			   FA.PHONECOUNTRYCODE+FA.PHONEAREACODE+FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+			   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+			   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+			   BRC.PCCITYNAME      BENFICIARY_CITY,
+			   ''                  BENFICIARY_ADDRESS1,
+			   ''                  BENFICIARY_ADDRESS2,
+			   ''                  BENFICIARY_ADDRESS3,
+			   ''                  BENFICIARY_ADDRESS4,
+			   ''                  BENFICIARY_ADDRESS5,
+			   ''				   PAYMENT_DETAIL1,
+			   ''                  PAYMENT_DETAIL2,
+			   ''                  PAYMENT_DETAIL3,
+			   ''                  PAYMENT_DETAIL4,
+			   ''                  PAYMENT_DETAIL5,
+			   ''                  PAYMENT_DETAIL6,
+			   ''                  PAYMENT_DETAIL7,     
+			   FA.STATUS           STATUS,
+			   FA.DESCRIPTION      REMARKS,
+			     FA.PAYMENTTYPE      PAYMENTTYPE,
+			     FM.FINTYPE,
+			     PB.PARTNERBANKID,
+			     PB.PARTNERBANKCODE,
+			     FA.INPUTDATE,
+			     PB.ALWFILEDOWNLOAD,
+                PB.FILENAME,
+			     FM.FINISACTIVE
+			   FROM FINADVANCEPAYMENTS FA
+			   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+			   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+			   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+               INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+			   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+			   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+			   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+			   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+			   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+			   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+			   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+			   
+			   UNION ALL
+			   
+			   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+			   PH.FINREFERENCE,
+			   PH.PAYMENTTYPE CHANNEL, 
+			   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+			   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+			   PI.POSTDATE DISBDATE, 
+			   PI.POSTDATE LLDATE, 
+			   PI.PAYABLELOC, 
+			   PI.PRINTINGLOC, 
+			   CU.CUSTCIF,            
+			   CU.CUSTSHRTNAME,     
+			   '' AS CUSTOMER_MOBILE,
+			   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+			   CS.CPPROVINCENAME  CUSTOMER_STATE,
+			   CC.PCCITYNAME      CUSTOMER_CITY,
+			   ''                 CUSTOMER_ADDRESS1,
+			   ''                 CUSTOMER_ADDRESS2,
+			   ''                 CUSTOMER_ADDRESS3,
+			   ''                 CUSTOMER_ADDRESS4,
+			   ''                 CUSTOMER_ADDRESS5,
+			   BD.BANKNAME,
+			   BB.BRANCHCODE,
+			   BB.BRANCHDESC,
+			   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+			   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+			   BB.MICR              MICR_CODE,
+			   BB.IFSC              IFSC_CODE,
+			   PI.ACCOUNTNO BENEFICIARYACCNO,
+			   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+			   PI.PHONECOUNTRYCODE+PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+			   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+			   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+			   BRC.PCCITYNAME      BENFICIARY_CITY,
+			   ''                  BENFICIARY_ADDRESS1,
+			   ''                  BENFICIARY_ADDRESS2,
+			   ''                  BENFICIARY_ADDRESS3,
+			   ''                  BENFICIARY_ADDRESS4,
+			   ''                  BENFICIARY_ADDRESS5,
+			   ''				   PAYMENT_DETAIL1,
+			   ''                  PAYMENT_DETAIL2,
+			   ''                  PAYMENT_DETAIL3,
+			   ''                  PAYMENT_DETAIL4,
+			   ''                  PAYMENT_DETAIL5,
+			   ''                  PAYMENT_DETAIL6,
+			   ''                  PAYMENT_DETAIL7,     
+			   PI.STATUS           STATUS, 
+			   PI.REMARKS          REMARKS,
+			   PI.PAYMENTTYPE      PAYMENTTYPE,
+			   FM.FINTYPE,
+			   PB.PARTNERBANKID,
+			   PB.PARTNERBANKCODE,
+			   PI.POSTDATE INPUTDATE, 
+			   PB.ALWFILEDOWNLOAD,
+			   PB.FILENAME,
+			   FM.FINISACTIVE
+			   FROM PAYMENTINSTRUCTIONS PI 
+			   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+			   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PH.FINREFERENCE
+			   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+			   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+			   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+			   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+			   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+			   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+			   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+			   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+			   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+			   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+			   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+			   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+			   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+			   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+			   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+	 
+	 
+	 </createView>
 	
+	</changeSet>
 	<changeSet id="06" author="Durgaprasad G">
 	 <sql>
 	  Update SECUSERS set authtype = 'DAO';
@@ -256,10 +437,15 @@
 		 <modifyDataType tableName="SECUSERS_TEMP" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
 	</changeSet>
 	
-	<changeSet id="08" author="Durgaprasad G">
+	<changeSet id="08" author="Durgaprasad G" dbms="oracle">
 	 <dropNotNullConstraint tableName="SECUSERS" columnName="USRPWD"/>
 	 <dropNotNullConstraint tableName="SECUSERS_RTEMP" columnName="USRPWD"/>
 	 <dropNotNullConstraint tableName="SECUSERS_TEMP" columnName="USRPWD"/>
+	</changeSet>
+	<changeSet id="08" author="Durgaprasad G" dbms="mssql">
+	 <dropNotNullConstraint tableName="SECUSERS" columnName="USRPWD" columnDataType="varchar(100)"/>
+	 <dropNotNullConstraint tableName="SECUSERS_RTEMP" columnName="USRPWD" columnDataType="varchar(100)"/>
+	 <dropNotNullConstraint tableName="SECUSERS_TEMP" columnName="USRPWD" columnDataType="varchar(100)"/>
 	</changeSet>
 	
 	<changeSet id="9" author="Siva">
@@ -412,7 +598,7 @@
 		Update 	RMTAccountTypes_TEMP set RevChrgApplicable=0 where  RevChrgApplicable is null;
 	</sql>
 </changeSet>
-<changeSet id="16" author="Madhubabu">
+<changeSet id="16" author="Madhubabu" dbms="oracle">
 	<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 		SELECT	T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
                   T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
@@ -452,8 +638,47 @@ WHERE     (NOT EXISTS
 	</createView>
 
 </changeSet>
-	
-	<changeSet id="18" author="Manoj.P">
+<changeSet id="16" author="Madhubabu" dbms="mssql">
+	<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
+		SELECT	T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision, T1.RepayRateBasis,
+                   T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate,
+                   COALESCE(T5.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		   T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+              T1.planEMIHAlw,T1.FinCurrAssetValue   , T1.CalTerms,T1.RateChgAnyDay
+            FROM           FinanceMain_Temp T1 INNER JOIN
+			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+ UNION ALL
+SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt,T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,  
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision,  T1.RepayRateBasis ,
+                   T1.ManualSchedule , T1.TakeOverFinance  , T1.NextRolloverDate,
+                    COALESCE(T5.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		    T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,  T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+		    T1.planEMIHAlw,T1.FinCurrAssetValue  , T1.CalTerms,T1.RateChgAnyDay
+            FROM           FinanceMain T1 INNER JOIN
+	    			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+	</createView>
+
+</changeSet>
+ <changeSet id="18" author="Manoj.P" dbms="oracle">
 		<createView viewName=" INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 		   SELECT M.MANDATEID, 
 			BD.BANKSHORTCODE BANKCODE,
@@ -502,7 +727,55 @@ WHERE     (NOT EXISTS
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where status = 'AC' OR status = 'NEW')
 		</createView>
 	</changeSet>
-	
+	 <changeSet id="18" author="Manoj.P" dbms="mssql">
+		<createView viewName=" INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+		   SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE)/CCYMINORCCYUNITS CUST_EMI,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD WHERE REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1 AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(SCHDATE) from FINSCHEDULEDETAILS where REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1 and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1 and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+      (SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1 AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID) AND REPAYONSCHDATE =1
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			  INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			  LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			  LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where status = 'AC' OR status = 'NEW')
+		</createView>
+	</changeSet>
 	<changeSet id="19" author="Manoj.P">
 		<sql>
 			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
@@ -536,7 +809,7 @@ WHERE     (NOT EXISTS
 			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 		</sql>
 	</changeSet>
-	<changeSet id="20" author="Prasad">
+	<changeSet id="20" author="Prasad" dbms="oracle">
 	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
@@ -610,7 +883,80 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
-	
+	<changeSet id="20" author="Prasad" dbms="mssql">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			   Amount debit, 0 credit,3 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid=1
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,4 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '+ (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)+'('+t2.Finreference+')' Particulars ,0,t2.WaivedAmount,6 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+	Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,7 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,7 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc+'- Due ('+T1.Finreference+')', RemainingFee Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,9 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
 	<changeSet id="21" author="Kesava">
 		<sql>
 		Delete from ErrorDetails where errorCode = '60210';
@@ -625,7 +971,56 @@ union
 			Update rmtfinancetypes_Temp SET FinScheduleOn = 'ADJMUR', AlwEarlyPayMethods = 'ADJMUR' WHERE ProductCategory = 'ODFCLITY';
 		</sql>
 	</changeSet>
-	<changeSet id="23" author="murthy.y">
+	 <changeSet id="23" author="murthy.y" dbms="oracle">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE)/CCYMINORCCYUNITS CUST_EMI,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+      		(SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1 AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID) AND REPAYONSCHDATE =1
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+	<changeSet id="23" author="murthy.y" dbms="mssql">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 			SELECT M.MANDATEID, 
 			BD.BANKSHORTCODE BANKCODE,
@@ -694,7 +1089,7 @@ union
 		<modifyDataType tableName="TRAIL_BALANCE_REPORT" columnName="ACTYPEGRPID" newDataType="VARCHAR(20)"/>
 		<modifyDataType tableName="TRAIL_BALANCE_REPORT" columnName="DESCRIPTION" newDataType="VARCHAR(100)"/>
 	</changeSet>
-	<changeSet id="28" author="Prasad">
+	<changeSet id="28" author="Prasad" dbms="oracle">
 	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
@@ -768,7 +1163,81 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
-	<changeSet id="29" author="Prasad">
+	<changeSet id="28" author="Prasad" dbms="mssql">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			   Amount debit, 0 credit,3 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,4 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '+ (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)+'('+t2.Finreference+')' Particulars ,0,t2.WaivedAmount,6 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+	Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,7 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' +FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,7 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc+'- Due ('+T1.Finreference+')', RemainingFee Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,9 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="29" author="Prasad" dbms="oracle">
 	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
@@ -842,7 +1311,80 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
-	
+	<changeSet id="29" author="Prasad" dbms="mssql">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			   Amount debit, 0 credit,3 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,4 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '+ (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)+'('+t2.Finreference+')' Particulars ,0,t2.WaivedAmount,6 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+	Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,7 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,7 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc+'- Due ('+T1.Finreference+')', RemainingFee Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,9 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
 	<changeSet id="29" author="murthy.y">
 		<createTable tableName="TRAIL_BALANCE_REPORT_LAST_RUN">
 			<column name="HEADERID" type="bigint">
@@ -882,7 +1424,56 @@ union
 		<addForeignKeyConstraint constraintName="FK_TBRLR_HID"
 			referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID" baseTableName="TRAIL_BALANCE_REPORT_LAST_RUN" baseColumnNames="HEADERID" />
 	</changeSet>
-	<changeSet id="31" author="murthy.y">
+	 <changeSet id="31" author="murthy.y" dbms="oracle">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE)/CCYMINORCCYUNITS CUST_EMI,
+			(SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)/CCYMINORCCYUNITS EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT, 0)/CCYMINORCCYUNITS MAXLIMIT, 
+       		 (SELECT SUM(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+			  )/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+	<changeSet id="31" author="murthy.y" dbms="mssql">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 			SELECT M.MANDATEID, 
 			BD.BANKSHORTCODE BANKCODE,
@@ -942,13 +1533,21 @@ union
 	<changeSet id="33" author="murthy.y">
 		<dropView viewName="DE_GL_TRAIL_BAL_REPORT_VIEW"/>
 	</changeSet>
-	<changeSet id="34" author="murthy.y">
+	<changeSet id="34" author="murthy.y" dbms="oracle">
 		<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true">
 			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
 			FROM TRANSACTION_DETAIL_REPORT DR
 			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
 			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
 			ORDER BY LINK
+		</createView>
+	</changeSet>
+	<changeSet id="34" author="murthy.y" dbms="mssql">
+		<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true">
+			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
 		</createView>
 	</changeSet>
 	<changeSet id="35" author="murthy.y">
