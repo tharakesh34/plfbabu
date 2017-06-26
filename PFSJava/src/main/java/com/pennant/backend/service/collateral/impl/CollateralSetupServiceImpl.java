@@ -2383,7 +2383,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 			}
-			if(collateralSetup.getReviewFrequency()!=null){
+			if(StringUtils.isNotBlank(collateralSetup.getReviewFrequency())){
 			if(!FrequencyUtil.isFrqDate(collateralSetup.getReviewFrequency(), nextRvwDate)){
 				String[] valueParm = new String[1];
 				valueParm[0] =  DateUtility.formatToLongDate(nextRvwDate);
