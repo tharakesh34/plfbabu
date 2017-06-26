@@ -3062,6 +3062,10 @@ insert into CIBIL_DOCUMENT_TYPES values ('08','Additional ID #2 (For Future Use'
 
 insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('01', '03',                         1, 1000,sysdate,'Approved','','','','','', 0);
 insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('02', '02',                         1, 1000,sysdate,'Approved','','','','','', 0);
+alter table CustomerDocuments disable constraint FK_CUSTDOCS_BMTDOCTYPES;
+update CustomerDocuments set CustDocCategory ='01' where CustDocCategory in (select DOCTYPECODE from BMTDOCUMENTTYPES where DOCTYPEDESC='Aadhar Card');
+update BMTDOCUMENTTYPES set DOCTYPECODE ='01' where DOCTYPEDESC='Aadhar Card';
+alter table CustomerDocuments enable constraint FK_CUSTDOCS_BMTDOCTYPES;
 insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('06', '01',                         1, 1000,sysdate,'Approved','','','','','', 0);
 
 delete from CIBIL_STATES_MAPPING;
