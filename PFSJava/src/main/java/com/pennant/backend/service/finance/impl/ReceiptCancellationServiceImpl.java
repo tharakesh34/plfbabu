@@ -536,12 +536,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
 		
 		if(receiptHeader == null){
-			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id: " + presentmentDetail.getReceiptID());
+			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable")+ presentmentDetail.getReceiptID());
 			return presentmentDetail;
 		}
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
 		if (bounceReason == null) {
-			presentmentDetail.setErrorDesc("Bounce Reason not available for the reason code: " + returnCode);
+			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_BounceReason_Notavailable") + returnCode);
 			return presentmentDetail;
 		}
 		
@@ -556,14 +556,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		if(finReceiptDetail == null){
-			presentmentDetail.setErrorDesc("FinReceiptDetails not available for the MandateType: " +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptDetails_Notavailable")  +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		
 		ManualAdvise manualAdvise = getManualAdvise(receiptHeader,  bounceReason, finReceiptDetail);
 		
 		if(manualAdvise == null){
-			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType: " +  presentmentDetail.getMandateType());
+			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_ManualAdvise_Notavailable") +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
 		

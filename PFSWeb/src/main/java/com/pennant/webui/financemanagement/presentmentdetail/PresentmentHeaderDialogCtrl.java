@@ -186,7 +186,11 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.listheader_PresentmentDetail_Description.setVisible("E".equalsIgnoreCase(moduleType));
+		if ("E".equalsIgnoreCase(moduleType) || "A".equalsIgnoreCase(moduleType)) {
+			this.listheader_PresentmentDetail_Description.setVisible(true);
+		} else {
+			this.listheader_PresentmentDetail_Description.setVisible(false);
+		}
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
@@ -318,7 +322,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		if(presentmentHeader.getPartnerBankId() != 0){
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
-			this.partnerBank.setDescription(presentmentHeader.getPartnerBankIdName());
+			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
 		}
 		
 		this.label_PresentmentReference.setValue(presentmentHeader.getReference());
@@ -326,8 +330,9 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				PennantStaticListUtil.getPresentmentBatchStatusList()));
 		
 		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
-		this.includeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, "_AView");
-		List<PresentmentDetail> excludeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, "_AView");
+		boolean isApprove = "A".equals(moduleType);
+		this.includeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, isApprove, "_AView");
+		List<PresentmentDetail> excludeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, isApprove, "_AView");
 		
 		for (PresentmentDetail presentmentDetail : includeList) {
 			this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
@@ -554,7 +559,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 		
 		try {
-			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), partnerBankId);
+			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction,
+					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -613,7 +619,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				} else {
 					lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getStatus(), statusList));
 					lc.setParent(item);
-					if ("E".equalsIgnoreCase(moduleType)) {
+					if ("E".equalsIgnoreCase(moduleType) || "A".equalsIgnoreCase(moduleType)) {
 						lc = new Listcell(presentmentDetail.getErrorDesc());
 						lc.setParent(item);
 					}

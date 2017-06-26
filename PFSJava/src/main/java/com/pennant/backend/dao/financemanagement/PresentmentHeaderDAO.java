@@ -55,8 +55,6 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	PresentmentHeader getPresentmentHeader(long id, String type);
 
-	boolean isDuplicateKey(long id, String reference, TableType tableType);
-
 	long save(PresentmentDetail presentmentDetail, TableType tableType);
 
 	long getSeqNumber(String tableName);
@@ -65,11 +63,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
-
-	void updatePresentmentDetailId(long presentmentId, long extractId);
-
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
 
 	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 
@@ -87,14 +81,10 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
 
-	List<PresentmentDetail> getPresentmentDetail(long presentmentId);
-
-	PresentmentDetail getPresentmentDetail(long id, String type);
+	List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData);
 
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
-
-	void updatePresentmentHeader(long presentmentId);
 
 }

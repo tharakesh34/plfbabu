@@ -168,7 +168,8 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
 		registerField("schdate", listheader_Schdate, SortOrder.NONE, schdate, sortOperator_Schdate, Operators.DATE);
 		registerField("id");
-		registerField("partnerBankIdName");
+		registerField("partnerBankCode");
+		registerField("partnerBankName");
 		
 		this.row_AlwWorkflow.setVisible(false);
 		// Render the page and display the data.

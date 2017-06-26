@@ -9787,9 +9787,11 @@
 		class="com.pennant.backend.service.financemanagement.impl.PresentmentHeaderServiceImpl">
 		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="dataSource" ref="pfsDatasource" />
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="presentmentRequestService" ref="presentmentRequestService" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 

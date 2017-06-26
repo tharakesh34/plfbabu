@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -93,7 +94,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				String presentmentRef = map.getValue("Batchid").toString();
 				String status = isPresentmentReferenceExists(presentmentRef);
 				if (status == null) {
-					throw new Exception(" Presentment details are not available for the presentment reference :" + presentmentRef);
+					throw new Exception(Labels.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
 				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
 					throw new Exception(" The presentment with the presentment reference :" + presentmentRef + " already processed.");
 				}
