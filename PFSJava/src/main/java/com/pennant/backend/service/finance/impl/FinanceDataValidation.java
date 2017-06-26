@@ -748,7 +748,6 @@ public class FinanceDataValidation {
 			}
 			if (!finODPenaltyRate.isApplyODPenalty()) {
 				if (finODPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())
-						|| StringUtils.isNotBlank(finODPenaltyRate.getODChargeCalOn())
 						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0
 						|| finODPenaltyRate.isODAllowWaiver()) {
 					String[] valueParm = new String[1];
@@ -756,11 +755,25 @@ public class FinanceDataValidation {
 				}
 			} else {
 				if (StringUtils.isBlank(finODPenaltyRate.getODChargeType())
-						|| StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn())
 						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90314", valueParm)));
 				}
+				if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT)
+						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+								FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+					finODPenaltyRate.setODChargeCalOn("");
+				}
+				if (StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn())&& StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ONETIME)|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "odChargeCalOn";
+						valueParm[1] = "odChargeType"+ FinanceConstants.PENALTYTYPE_PERC_ONETIME +","
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS +","+FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", valueParm)));
+					} 
 			}
 
 			if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
@@ -788,16 +801,14 @@ public class FinanceDataValidation {
 			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
 				StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
 			 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
-				BigDecimal totPerc = PennantApplicationUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
-				if (totPerc.compareTo(new BigDecimal(100)) > 0) {
+				//BigDecimal totPerc = PennantApplicationUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
+				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
 					valueParm[1] = "100";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-				finODPenaltyRate.setODChargeAmtOrPerc(
-						PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
-			} 
+			}
 			
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
 				List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
@@ -828,7 +839,9 @@ public class FinanceDataValidation {
 						break;
 					}
 				}
-				if (!finODCCalculatedOnSts) {
+				if (!finODCCalculatedOnSts && (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+						StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+						 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
 					String[] valueParm = new String[2];
 					valueParm[0] = finODPenaltyRate.getODChargeCalOn();
 					valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
