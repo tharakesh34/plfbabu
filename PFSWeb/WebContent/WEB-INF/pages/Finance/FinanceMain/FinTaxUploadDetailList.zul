@@ -110,7 +110,7 @@
 										id="sortOperator_BatchApprovedDate" width="43px" mold="select"
 										rows="1" />
 									<datebox id="batchApprovedDate"
-										width="150px"  maxlength="100" />
+										width="150px" maxlength="100" />
 								</row>
 								<row visible="false">
 									<label id="label_RecordStatus"
@@ -142,12 +142,18 @@
 								<listheader id="listheader_FileName"
 									label="${c:l('listheader_FileName.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_BatchCreatedDate"
+								<listheader
+									id="listheader_BatchCreatedDate"
 									label="${c:l('listheader_BatchCreatedDate.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_BatchApprovedDate"
-									label="${c:l('listheader_BatchApprovedDate.label')}" sort="auto"
+								<listheader
+									id="listheader_NumberOfRecords"
+									label="${c:l('listheader_NumberOfRecords.label')}" sort="auto"
 									hflex="min" />
+								<listheader
+									id="listheader_Status"
+									label="${c:l('listheader_FileStatus.label')}" sort="auto"
+									hflex="min" />	
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

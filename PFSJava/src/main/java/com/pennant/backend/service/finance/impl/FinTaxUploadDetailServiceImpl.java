@@ -48,6 +48,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinTaxUploadDetailDAO;
@@ -93,8 +94,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	}
 
 	@Override
-	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(long reference) {
-		return null;
+	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference, String type) {
+		return finTaxUploadDetailDAO.getFinTaxDetailUploadById(reference, type);
 	}
 
 	@Override
@@ -122,14 +123,14 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			getFinTaxUploadDetailDAO().update(finTaxUploadHeader, tableType);
 		}
 
-		
-		
 		if (finTaxUploadHeader.getFinTaxUploadDetailList() != null
 				&& finTaxUploadHeader.getFinTaxUploadDetailList().size() > 0) {
-			
-		for (FinTaxUploadDetail finTaxDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
-			finTaxDetail.setBatchReference(String.valueOf(finTaxUploadHeader.getBatchReference()));
-		}
+
+			for (FinTaxUploadDetail finTaxDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
+				finTaxDetail.setBatchReference(String.valueOf(finTaxUploadHeader.getBatchReference()));
+				finTaxDetail.setNewRecord(finTaxUploadHeader.isNew());
+
+			}
 			List<AuditDetail> details = finTaxUploadHeader.getAuditDetailMap().get("TaxDetail");
 			details = processTaxDetails(details, tableType);
 			auditDetails.addAll(details);
@@ -340,20 +341,184 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("Entering");
+
+		auditHeader = businessValidation(auditHeader, "delete");
+		if (!auditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+
+		FinTaxUploadHeader finTaxUploadHeader = (FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData();
+		getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "");
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(finTaxUploadHeader, "", auditHeader.getAuditTranType())));
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * Common Method for Customers list validation
+	 * 
+	 * @param list
+	 * @param method
+	 * @param userDetails
+	 * @param lastMntON
+	 * @return
+	 */
+	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
+		logger.debug("Entering");
+		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
+
+		if (list != null && list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+
+				String transType = "";
+				String rcdType = "";
+				FinTaxUploadDetail uploadDetail = (FinTaxUploadDetail) ((AuditDetail) list.get(i)).getModelData();
+
+				rcdType = uploadDetail.getRecordType();
+
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
+					transType = PennantConstants.TRAN_ADD;
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(rcdType)
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(rcdType)) {
+					transType = PennantConstants.TRAN_DEL;
+				} else {
+					transType = PennantConstants.TRAN_UPD;
+				}
+
+				if (StringUtils.isNotEmpty(transType)) {
+					// check and change below line for Complete code
+					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
+							uploadDetail.getBefImage(), uploadDetail));
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetailsList;
+	}
+
+	/**
+	 * Method deletion of feeTier list with existing fee type
+	 * 
+	 * @param finTaxUploadHeader
+	 * @param tableType
+	 */
+	public List<AuditDetail> listDeletion(FinTaxUploadHeader finTaxUploadHeader, String tableType,
+			String auditTranType) {
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		if (finTaxUploadHeader.getFinTaxUploadDetailList() != null
+				&& finTaxUploadHeader.getFinTaxUploadDetailList().size() > 0) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTaxUploadDetail());
+
+			for (int i = 0; i < finTaxUploadHeader.getFinTaxUploadDetailList().size(); i++) {
+				FinTaxUploadDetail taxDetail = finTaxUploadHeader.getFinTaxUploadDetailList().get(i);
+				if (StringUtils.isNotEmpty(taxDetail.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], taxDetail.getBefImage(),
+							taxDetail));
+				}
+			}
+			finTaxUploadDetailDAO.deleteFintaxDetail(finTaxUploadHeader.getFinTaxUploadDetailList().get(0), tableType);
+
+		}
+
+		return auditList;
 	}
 
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException {
-		// TODO Auto-generated method stub
-		return null;
+
+		logger.debug("Entering");
+
+		String tranType = "";
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		auditHeader = businessValidation(auditHeader, "Approve");
+		if (!auditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+
+		FinTaxUploadHeader finTaxUploadHeader = new FinTaxUploadHeader();
+		BeanUtils.copyProperties((FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData(), finTaxUploadHeader);
+
+		getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "_Temp");
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(finTaxUploadHeader.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(
+					getFinTaxUploadDetailDAO().getFinTaxUploadHeaderByRef(finTaxUploadHeader.getBatchReference(), ""));
+		}
+
+		if (finTaxUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			tranType = PennantConstants.TRAN_DEL;
+			auditDetails.addAll(listDeletion(finTaxUploadHeader, "", auditHeader.getAuditTranType()));
+			getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "");
+		} else {
+			finTaxUploadHeader.setRoleCode("");
+			finTaxUploadHeader.setNextRoleCode("");
+			finTaxUploadHeader.setTaskId("");
+			finTaxUploadHeader.setNextTaskId("");
+			finTaxUploadHeader.setWorkflowId(0);
+
+			if (finTaxUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
+				finTaxUploadHeader.setRecordType("");
+				getFinTaxUploadDetailDAO().save(finTaxUploadHeader, "");
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				finTaxUploadHeader.setRecordType("");
+				getFinTaxUploadDetailDAO().update(finTaxUploadHeader, "");
+			}
+
+			if (finTaxUploadHeader.getFinTaxUploadDetailList() != null
+					&& finTaxUploadHeader.getFinTaxUploadDetailList().size() > 0) {
+				List<AuditDetail> details = finTaxUploadHeader.getAuditDetailMap().get("TaxDetail");
+				details = processTaxDetails(details, "");
+				auditDetails.addAll(details);
+			}
+		}
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(finTaxUploadHeader, "_Temp", auditHeader.getAuditTranType())));
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setModelData(finTaxUploadHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+
 	}
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("Entering");
+
+		auditHeader = businessValidation(auditHeader, "doReject");
+		if (!auditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+
+		FinTaxUploadHeader uploadHeader = (FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData();
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getFinTaxUploadDetailDAO().delete(uploadHeader, "_Temp");
+		auditHeader.setAuditDetails(
+				getListAuditDetails(listDeletion(uploadHeader, "_Temp", auditHeader.getAuditTranType())));
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	@Override
+	public FinTaxUploadHeader getFinTaxUploadHeaderByRef(long ref) {
+		return finTaxUploadDetailDAO.getFinTaxUploadHeaderByRef(ref, "_View");
 	}
 
 }

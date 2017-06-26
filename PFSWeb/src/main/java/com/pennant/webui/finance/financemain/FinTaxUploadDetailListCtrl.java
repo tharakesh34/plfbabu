@@ -96,7 +96,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	protected Listheader				listheader_BatchReference;													// autoWired
 	protected Listheader				listheader_FileName;														// autoWired
 	protected Listheader				listheader_BatchCreatedDate;												// autoWired
-	protected Listheader				listheader_BatchApprovedDate;												// autoWired
+	protected Listheader				listheader_NumberOfRecords;												// autoWired
 	protected Listheader				listheader_RecordStatus;													// autoWired
 	protected Listheader				listheader_RecordType;														// autoWired
 
@@ -139,8 +139,8 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	protected void doSetProperties() {
 		super.moduleCode = "FinTaxUploadHeader";
 		super.pageRightName = "FinTaxUploadHeaderList";
-		super.tableName = "FinTaxUploadHeader";
-		super.queueTableName = "FinTaxUploadHeader";
+		super.tableName = "FinTaxUploadHeader_view";
+		super.queueTableName = "FinTaxUploadHeader_Tview";
 	}
 
 	/**
@@ -170,8 +170,11 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		registerField("BatchCreatedDate", listheader_BatchCreatedDate, SortOrder.NONE, batchCreationDate,
 				sortOperator_BatchCreationDate, Operators.STRING);
 
-		registerField("BatchApprovedDate", listheader_BatchApprovedDate, SortOrder.NONE, batchApprovedDate,
-				sortOperator_FileName, Operators.STRING);
+		registerField("numberofRecords",listheader_NumberOfRecords);
+		registerField("status");
+		
+		registerField("RecordStatus");
+		registerField("RecordType");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -227,27 +230,29 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		Listitem selectedItem = this.listBoxFinTaxUploadDetail.getSelectedItem();
 
 		// Get the selected entity.
-		FinTaxUploadHeader finTaxDetailUploadheader = (FinTaxUploadHeader) selectedItem.getAttribute("data");
+		long reference = (Long) selectedItem.getAttribute("id");
+		
+		FinTaxUploadHeader FinTaxUploadHeader=finTaxUploadDetailService.getFinTaxUploadHeaderByRef(reference);
 
-		if (finTaxDetailUploadheader == null) {
+		if (FinTaxUploadHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BatchReference='" + finTaxDetailUploadheader.getBatchReference() + "' AND version="
-				+ finTaxDetailUploadheader.getVersion() + " ";
+		String whereCond = " AND BatchReference='" + FinTaxUploadHeader.getBatchReference() + "' AND version="
+				+ FinTaxUploadHeader.getVersion() + " ";
 
-		if (doCheckAuthority(finTaxDetailUploadheader, whereCond)) {
+		if (doCheckAuthority(FinTaxUploadHeader, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && finTaxDetailUploadheader.getWorkflowId() == 0) {
-				finTaxDetailUploadheader.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && FinTaxUploadHeader.getWorkflowId() == 0) {
+				FinTaxUploadHeader.setWorkflowId(getWorkFlowId());
 			}
 
 			List<FinTaxUploadDetail> finTaxUploadDetailList = finTaxUploadDetailService
-					.getFinTaxDetailUploadById(finTaxDetailUploadheader.getBatchReference());
-			finTaxDetailUploadheader.setFinTaxUploadDetailList(finTaxUploadDetailList);
-			doShowDialogPage(finTaxDetailUploadheader);
+					.getFinTaxDetailUploadById(String.valueOf(FinTaxUploadHeader.getBatchReference()),"_View");
+			FinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
+			doShowDialogPage(FinTaxUploadHeader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -270,7 +275,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		}
 		arg.put("finTaxUploadDetailListCtrl", this);
 		arg.put("finTaxUploadHeader", aFinTaxDetailUploadheader);
-		arg.put("role", getRole());
+
 
 		// call the zul-file with the parameters packed in a map
 		try {
@@ -305,6 +310,19 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		doShowHelp(event);
 
 	}
+	
+	
+	/**
+	 * The framework calls this event handler when user clicks the search button.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onClick$button_FinTaxUploadDetailList_Search(Event event) {
+		search();
+	}
+	
+	
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.

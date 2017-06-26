@@ -74,8 +74,9 @@ public class FinTaxUploadDetailItemRenderer implements ListitemRenderer<FinTaxUp
 		lc = new Listcell(
 				DateUtility.formatDate(finTaxUploadHeader.getBatchCreatedDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
-		lc = new Listcell(
-				DateUtility.formatDate(finTaxUploadHeader.getBatchApprovedDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(finTaxUploadHeader.getNumberofRecords() + "");
+		lc.setParent(item);
+		lc = new Listcell(finTaxUploadHeader.getStatus());
 		lc.setParent(item);
 		lc = new Listcell(finTaxUploadHeader.getRecordStatus());
 		lc.setParent(item);

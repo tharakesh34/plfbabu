@@ -16,38 +16,58 @@
 				<north border="none" autoscroll="true">
 					<div>
 						<groupbox mold="3d">
-							<div sclass="z-toolbar" style="padding:0px"
-								height="28px">
-								<hbox pack="stretch"
-									sclass="hboxRemoveWhiteStrips" width="100%"
-									widths="30%,40%,30%">
-									<toolbar align="start"
-										sclass="toolbar-start">
-										<button id="btnSave"
-											height="24px" label="${c:l('label_Save')}"
-											tooltiptext="${c:l('btnSave.tooltiptext')}"
-											autodisable="btnSave,btnCancel,btnClose" />
-										<button id="btnCancel"
-											height="24px" label="${c:l('btnCancel.tooltiptext')}"
-											tooltiptext="${c:l('btnCancel.tooltiptext')}"
-											autodisable="btnSave,btnCancel,btnClose" />
-									</toolbar>
-									<toolbar align="center"
-										sclass="toolbar-center">
-										<label id="fileUpload"
-											value="${c:l('window_FileUpload.title')}"
-											sclass="label-heading" />
-									</toolbar>
-									<toolbar align="end"
-										sclass="toolbar-end">
-										<button id="btnClose"
-											height="24px" label="${c:l('btnClose.tooltiptext')}"
-											tooltiptext="${c:l('btnClose.tooltiptext')}" 
-											autodisable="btnSave,btnCancel,btnClose" />
-											
-									</toolbar>
-								</hbox>
-							</div>
+							<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew"
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit"
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete"
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave" label="${c:l('label_Save')}"
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel"
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnNotes"
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_feePostingsDialog_Title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false"
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
 							<grid id="grid_UploadedDetails"
 								fixedLayout="true" style="border:0px">
 								<columns>
@@ -57,7 +77,7 @@
 									<column width="35%" />
 								</columns>
 								<rows>
-									<row>
+									<row id="row_FinTaxUpload">
 										<label
 											id="label_FinTaxUploadDetailDialog_FileUpload"
 											value="${c:l('label_FinTaxUploadDetailDialog_FileUpload.value')}" />

@@ -3,13 +3,14 @@ package com.pennant.backend.service.finance;
 import java.util.List;
 
 import com.pennant.backend.model.FinTaxUploadDetail;
-import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.fees.FeePostings;
 import com.pennanttech.pff.core.InterfaceException;
 
 public interface FinTaxUploadDetailService {
-	List<FinTaxUploadDetail> getFinTaxDetailUploadById(long reference);
+	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type);
+	
+	FinTaxUploadHeader getFinTaxUploadHeaderByRef(long ref);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
