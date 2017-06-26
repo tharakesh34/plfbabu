@@ -34,6 +34,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.AddDisbursementGroup;
@@ -1212,6 +1213,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				valueParm[1] = "100";
 				return getErrorDetails("30565", valueParm);
 			}
+			BigDecimal totPerc = PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
+			finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
 		}
 		if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
 			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
