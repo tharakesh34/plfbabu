@@ -2905,7 +2905,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws DatatypeConfigurationException 
 	 * @throws AccountNotFoundException
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException {
 		logger.debug("Entering");
@@ -3220,10 +3219,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						"");
 
 				// Save FInance Tax Details
-				if (financeDetail.getTaxDetail() != null) {
-					financeDetail.getTaxDetail().setRecordType("");
-					financeDetail.getTaxDetail().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), TableType.MAIN_TAB);
+				FinanceTaxDetail financeTaxDetail = financeDetail.getTaxDetail();
+				if (financeTaxDetail != null) {
+					if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(financeTaxDetail.getApplicableFor())
+							|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(financeTaxDetail.getApplicableFor())
+							|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(financeTaxDetail.getApplicableFor())) {
+						financeTaxDetail.setRecordType(" ");
+						financeTaxDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						financeTaxDetail.setTaskId("");
+						financeTaxDetail.setNextTaskId("");
+						financeTaxDetail.setRoleCode("");
+						financeTaxDetail.setNextRoleCode("");
+						financeTaxDetail.setWorkflowId(0);
+						getFinanceTaxDetailDAO().save(financeTaxDetail, TableType.MAIN_TAB);
+					}
 				}
 
 				// Indicative Term Sheet Details Maintenance
