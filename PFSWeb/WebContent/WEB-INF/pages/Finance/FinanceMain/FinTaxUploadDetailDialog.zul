@@ -173,9 +173,6 @@
 								multiple="false">
 
 								<listhead sizable="true">
-									<listheader id="listheader_Select"
-										label="${c:l('listheader_Select.label')}" sort="auto"
-										hflex="min" />
 									<listheader id="listheader_TaxCode"
 										label="${c:l('listheader_TaxCode.label')}" sort="auto"
 										hflex="min" />

@@ -132,8 +132,6 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		logger.debug("Entering");
 		this.listBoxFileData.setHeight(this.borderLayoutHeight - 200 + "px");
-		Checkbox box= new Checkbox();
-		this.listBoxFileData.getListhead().getFirstChild().appendChild(box);
 		if (!finTaxUploadHeader.isNew()) {
 			grid_UploadedDetails.setVisible(false);
 			doFillHeaderData(finTaxUploadHeader.getFileName(), finTaxUploadHeader.getBatchCreatedDate(),
@@ -270,12 +268,6 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				Listitem item = new Listitem();
 				Listcell lc;
 				
-				lc = new Listcell();		
-				Checkbox ckActive= new Checkbox();
-				ckActive.setChecked(false);
-				ckActive.setParent(lc);
-				lc.setParent(item);
-
 				lc = new Listcell(taxMappingDetail.getTaxCode());
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getAggrementNo());
@@ -423,7 +415,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						afinTaxUploadHeader.getNextRoleCode(), afinTaxUploadHeader.getBatchReference() + "",
 						" GST Upload ", afinTaxUploadHeader.getRecordStatus());
 				if (StringUtils.equals(afinTaxUploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
-					msg = "Fee Postings with Reference " + afinTaxUploadHeader.getBatchReference()
+					msg = " GST Upload with Reference " + afinTaxUploadHeader.getBatchReference()
 							+ " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
