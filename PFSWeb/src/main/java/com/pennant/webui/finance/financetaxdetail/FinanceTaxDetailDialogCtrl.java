@@ -745,9 +745,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.applicableFor, aFinanceTaxDetail.getApplicableFor(), listApplicableFor, getExcludeFields());
-		
-		setCustCIFFilter();
-
+		if(fromLoan){
+			setCustCIFFilter();
+		}
 		if(!aFinanceTaxDetail.isNewRecord()) {
 			this.custRef.setValue(aFinanceTaxDetail.getCustCIF());
 			this.custRef.setDescription(aFinanceTaxDetail.getCustShrtName());
@@ -762,7 +762,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.province.setValue(aFinanceTaxDetail.getProvince());
 		this.city.setValue(aFinanceTaxDetail.getCity());
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode());
-
+		if(!fromLoan){
+			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
+		}
 		if (aFinanceTaxDetail.isNewRecord()) {
 			this.country.setValue("IN");
 			this.country.setDescription("INDIAone");
@@ -894,6 +896,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				throw new WrongValuesException(wvea);
 			}
 		}
+		
+		aFinanceTaxDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug(Literal.LEAVING);
 		return wve;
 	}
@@ -1123,18 +1127,31 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.applicableFor);
 		}
-
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxExempted"), this.taxExempted);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxNumber"), this.taxNumber);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine1"), this.addrLine1);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine2"), this.addrLine2);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine3"), this.addrLine3);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine4"), this.addrLine4);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Country"), this.country);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Province"), this.province);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_City"), this.city);
-		 readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_PinCode"), this.pinCode);
+		if(!fromLoan){
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxNumber"), this.taxNumber);
+			readOnlyComponent(true, this.custRef);
+			readOnlyComponent(true, this.taxExempted);
+			readOnlyComponent(true, this.addrLine1);
+			readOnlyComponent(true,this.addrLine2);
+			readOnlyComponent(true,this.addrLine3);
+			readOnlyComponent(true, this.addrLine4);
+			readOnlyComponent(true, this.country);
+			readOnlyComponent(true,this.province);
+			readOnlyComponent(true, this.city);
+			readOnlyComponent(true, this.pinCode);
+		}else{
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxExempted"), this.taxExempted);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxNumber"), this.taxNumber);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine1"), this.addrLine1);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine2"), this.addrLine2);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine3"), this.addrLine3);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_AddrLine4"), this.addrLine4);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Country"), this.country);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Province"), this.province);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_City"), this.city);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_PinCode"), this.pinCode);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
