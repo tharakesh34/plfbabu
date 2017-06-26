@@ -63,7 +63,7 @@
 									sclass="z-toolbarbutton" />
 								<button id="btnClose"
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSave"
 									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
@@ -173,6 +173,9 @@
 								multiple="false">
 
 								<listhead sizable="true">
+									<listheader id="listheader_Select"
+										label="${c:l('listheader_Select.label')}" sort="auto"
+										hflex="min" />
 									<listheader id="listheader_TaxCode"
 										label="${c:l('listheader_TaxCode.label')}" sort="auto"
 										hflex="min" />

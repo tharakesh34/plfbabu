@@ -181,7 +181,6 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 
 		if (isSupported) {
-
 			HSSFWorkbook workbook = new HSSFWorkbook(media.getStreamData());
 			Sheet firstSheet = workbook.getSheetAt(0);
 			Iterator<Row> iterator = firstSheet.iterator();
