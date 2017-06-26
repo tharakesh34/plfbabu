@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
@@ -109,6 +110,16 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		super.queueTableName = "CIBIL_FILE_INFO";
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("STATUS", "C");
+		this.searchObject.addFilters(filter);
+
+	}
+	
 	public void onCreate$window_CIBILFileDownloadList(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 

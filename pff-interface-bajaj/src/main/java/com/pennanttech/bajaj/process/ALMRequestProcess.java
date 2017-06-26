@@ -85,7 +85,6 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 	}
 
 	@Override

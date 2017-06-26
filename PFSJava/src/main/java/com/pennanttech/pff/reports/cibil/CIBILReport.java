@@ -49,7 +49,7 @@ public class CIBILReport {
 	private String CBIL_REPORT_MEMBER_CODE;
 
 	private long headerId;
-	private String status= "C";
+	private String status= "S";
 	
 	private long totalRecords;
 	private long processedRecords;
@@ -109,6 +109,7 @@ public class CIBILReport {
 						CustomerDetails customer = cibilService.getCustomerDetails(finreference, customerId);
 
 						if (customer == null) {
+							failedCount++;
 							return;
 						}
 
@@ -141,6 +142,7 @@ public class CIBILReport {
 				writer.flush();
 				writer.close();
 			}
+			
 			updateRemarks();
 			cibilService.updateFileStatus(headerId, status);
 		}
@@ -610,14 +612,14 @@ public class CIBILReport {
 			remarks.append(successCount);
 			remarks.append(", Failure: ");
 			remarks.append(failedCount);
-			CIBIL_EXPORT_STATUS.setStatus("F");
+			CIBIL_EXPORT_STATUS.setStatus(status);
 
 		} else {
 			remarks.append("Completed successfully, total Records: ");
 			remarks.append(totalRecords);
 			remarks.append(", Sucess: ");
 			remarks.append(successCount);
-			CIBIL_EXPORT_STATUS.setStatus("S");
+			CIBIL_EXPORT_STATUS.setStatus(status);
 		}
 		CIBIL_EXPORT_STATUS.setEndTime(DateUtil.getSysDate());
 		CIBIL_EXPORT_STATUS.setRemarks(remarks.toString());

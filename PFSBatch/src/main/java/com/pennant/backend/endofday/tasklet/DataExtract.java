@@ -58,8 +58,6 @@ public class DataExtract implements Tasklet {
 		return null;
 	}
 
-	
-
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();

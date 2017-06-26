@@ -171,8 +171,14 @@ public class CIBILDAOImpl implements CIBILDAO {
 
 		StringBuilder sql = new StringBuilder("UPDATE  CIBIL_FILE_INFO");
 		sql.append(" SET STATUS = :STATUS WHERE ID = :ID");
-
-		paramMap.addValue("STATUS", status);
+		
+		
+		if("S".equals(status)) {
+			paramMap.addValue("STATUS", "C");
+		} else {
+			paramMap.addValue("STATUS", "F");
+		}
+		
 		paramMap.addValue("ID", headerid);
 
 		try {
