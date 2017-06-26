@@ -429,11 +429,14 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		
 		// Plan EMI Holidays Resetting after Rescheduling
 		if(scheduleData.getFinanceMain().isPlanEMIHAlw()){
-			scheduleData.getFinanceMain().setEventFromDate(fromDate);
+			scheduleData.getFinanceMain().setEventFromDate(startRepayCalDate);
 			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getMaturityDate());
-			scheduleData.getFinanceMain().setRecalFromDate(fromDate);
+			scheduleData.getFinanceMain().setRecalFromDate(startRepayCalDate);
 			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
 			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
+			
+			scheduleData.getFinanceMain().setEqualRepay(true);
+			scheduleData.getFinanceMain().setCalculateRepay(true);
 
 			if(StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
 				scheduleData = ScheduleCalculator.getFrqEMIHoliday(scheduleData);

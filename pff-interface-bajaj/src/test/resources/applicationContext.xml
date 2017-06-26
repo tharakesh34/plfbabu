@@ -26,4 +26,5 @@
 	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/> 
 	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestService" scope="prototype" parent="bajajService"/> 
 	 <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
+	 <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl" scope="prototype" parent="bajajService"/> 
 </beans>

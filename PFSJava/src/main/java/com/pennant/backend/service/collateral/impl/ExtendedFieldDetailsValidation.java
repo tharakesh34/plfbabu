@@ -193,8 +193,7 @@ public class ExtendedFieldDetailsValidation {
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_TEXT:
 		case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
-		case ExtendedFieldConstants.FIELDTYPE_PHONE:
-			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+		if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
@@ -202,6 +201,7 @@ public class ExtendedFieldDetailsValidation {
 			}
 			
 			if(StringUtils.isNotBlank(exdConfigDetail.getFieldConstraint())) {
+				if(PennantRegularExpressions.getRegexMapper(exdConfigDetail.getFieldConstraint())!=null){
 				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
 						exdConfigDetail.getFieldConstraint()));
 				Matcher matcher = pattern.matcher(fieldValue);
@@ -209,16 +209,24 @@ public class ExtendedFieldDetailsValidation {
 					String[] valueParm = new String[0];
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
 				}
+				}
 			}
 			break;
-		case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
-			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+			case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
+			if(fieldValue.length() > 100) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				valueParm[1] = String.valueOf(100);
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
 			break;
+			/*case ExtendedFieldConstants.FIELDTYPE_PHONE:
+				if(fieldValue.length() > 10) {
+					String[] valueParm = new String[2];
+					valueParm[0] = fieldName;
+					valueParm[1] = String.valueOf(10);
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+				}*/
 		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
 			
 			break;

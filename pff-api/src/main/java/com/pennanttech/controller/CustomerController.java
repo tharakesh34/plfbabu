@@ -18,6 +18,7 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -207,8 +208,10 @@ public class CustomerController {
 			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
 					curCustomer.getCustMName(), curCustomer.getCustLName()));
 		}
-	/*	CustomerStatusCode customerStatusCode = getCustomerDetailsService().getCustStatusByMinDueDays();
-		curCustomer.setCustSts(customerStatusCode.getCustStsCode());*/
+		CustomerStatusCode customerStatusCode = getCustomerDetailsService().getCustStatusByMinDueDays();
+		if (customerStatusCode != null) {
+			curCustomer.setCustSts(customerStatusCode.getCustStsCode());
+		}
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 			// generate new customer CIF
 			String custCIF = customerDetailsService.getNewProspectCustomerCIF();

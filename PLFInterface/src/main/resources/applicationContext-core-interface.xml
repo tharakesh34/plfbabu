@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx" 
-	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
@@ -15,76 +12,92 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	<context:annotation-config />
-    <context:component-scan base-package="com.pennant" />
-	
+	<context:component-scan base-package="com.pennant" />
+
+	<!-- FIXME -->
 	<bean id="coreDBDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFSEC" /> <!-- FIXME -->
+		<property name="jndiName" value="jdbc/PFFSEC" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-	
+
 	<bean id="interfaceDAO" class="com.pennant.corebanking.dao.impl.InterfaceDAOImpl">
 		<property name="dataSource" ref="coreDBDatasource" />
 	</bean>
 
-	<bean id="accountDetailProcess" class="com.pennant.corebanking.process.impl.AccountDetailProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-	
-	<bean id="accountDataProcess" class="com.pennant.corebanking.process.impl.AccountDataProcessImpl"/>
-	
-	<bean id="accountPostingProcess" class="com.pennant.corebanking.process.impl.AccountPostingProcessImpl">
+	<bean id="accountDetailProcess"
+		class="com.pennant.corebanking.process.impl.AccountDetailProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
 
-	<bean id="customerDataProcess" class="com.pennant.corebanking.process.impl.CustomerDataProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-	
-	<bean id="customerCreationProcess" class="com.pennant.corebanking.process.impl.CustomerCreationProcessImpl">
+	<bean id="accountDataProcess"
+		class="com.pennant.corebanking.process.impl.AccountDataProcessImpl" />
+
+	<bean id="accountPostingProcess"
+		class="com.pennant.corebanking.process.impl.AccountPostingProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
 
-	<bean id="customerLimitProcess" class="com.pennant.corebanking.process.impl.CustomerLimitProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-	
-	<bean id="dateRollOverProcess" class="com.pennant.corebanking.process.impl.DateRollOverProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-	
-	<bean id="dailyDownloadProcess" class="com.pennant.corebanking.process.impl.DailyDownloadProcessImpl">
+	<bean id="customerDataProcess"
+		class="com.pennant.corebanking.process.impl.CustomerDataProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
 
-	<bean id="financeCancellationProcess" class="com.pennant.corebanking.process.impl.FinanceCancellationProcessImpl">
+	<bean id="customerCreationProcess"
+		class="com.pennant.corebanking.process.impl.CustomerCreationProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
-	
-	<bean id="uploadProfitDetailProcess" class="com.pennant.corebanking.process.impl.UploadProfitDetailProcessImpl">
+
+	<bean id="customerLimitProcess"
+		class="com.pennant.corebanking.process.impl.CustomerLimitProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
-	
-	<bean id="ddaProcess" class="com.pennant.corebanking.process.impl.DDAProcessmpl"/>
-	
-	<bean id="depositDetailProcess" class="com.pennant.corebanking.process.impl.DepositDetailProcessImpl">
-	</bean>
-	
-	<bean id="hostStatusEnquiryProcess" class="com.pennant.corebanking.process.impl.HostStatusEnquiryProcessImpl" />
-	
-	<bean id="policeAcceptanceProcess" class="com.pennant.corebanking.process.impl.PoliceAcceptanceProcessImpl"/>
-	
-	<bean id="norkamCheckProcess" class="com.pennant.corebanking.process.impl.NorkamCheckProcessImpl"/>
-	
-	<bean id="financeMaintenanceProcess" class="com.pennant.corebanking.process.impl.FinanceMaintenanceProcessImpl"/>
-	
-	<bean id="chequeVerificationProcess" class="com.pennant.corebanking.process.impl.ChequeVerificationProcessImpl"/>
-	
-	<bean id="nationalBondProcess" class="com.pennant.corebanking.process.impl.NationalBondProcessImpl">
+
+	<bean id="dateRollOverProcess"
+		class="com.pennant.corebanking.process.impl.DateRollOverProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
-	
-	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess">
- 	</bean>
-	
+
+	<bean id="dailyDownloadProcess"
+		class="com.pennant.corebanking.process.impl.DailyDownloadProcessImpl">
+		<property name="interfaceDAO" ref="interfaceDAO" />
+	</bean>
+
+	<bean id="financeCancellationProcess"
+		class="com.pennant.corebanking.process.impl.FinanceCancellationProcessImpl">
+		<property name="interfaceDAO" ref="interfaceDAO" />
+	</bean>
+
+	<bean id="uploadProfitDetailProcess"
+		class="com.pennant.corebanking.process.impl.UploadProfitDetailProcessImpl">
+		<property name="interfaceDAO" ref="interfaceDAO" />
+	</bean>
+
+	<bean id="ddaProcess" class="com.pennant.corebanking.process.impl.DDAProcessmpl" />
+
+	<bean id="depositDetailProcess"
+		class="com.pennant.corebanking.process.impl.DepositDetailProcessImpl">
+	</bean>
+
+	<bean id="hostStatusEnquiryProcess"
+		class="com.pennant.corebanking.process.impl.HostStatusEnquiryProcessImpl" />
+
+	<bean id="policeAcceptanceProcess"
+		class="com.pennant.corebanking.process.impl.PoliceAcceptanceProcessImpl" />
+
+	<bean id="norkamCheckProcess"
+		class="com.pennant.corebanking.process.impl.NorkamCheckProcessImpl" />
+
+	<bean id="financeMaintenanceProcess"
+		class="com.pennant.corebanking.process.impl.FinanceMaintenanceProcessImpl" />
+
+	<bean id="chequeVerificationProcess"
+		class="com.pennant.corebanking.process.impl.ChequeVerificationProcessImpl" />
+
+	<bean id="nationalBondProcess"
+		class="com.pennant.corebanking.process.impl.NationalBondProcessImpl">
+		<property name="interfaceDAO" ref="interfaceDAO" />
+	</bean>
+
+	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess" />
 </beans>

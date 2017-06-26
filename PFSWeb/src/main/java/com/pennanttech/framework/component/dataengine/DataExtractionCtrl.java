@@ -18,6 +18,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
@@ -104,8 +105,8 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 				doFillPanel(config, BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 			}
 			
-			
 		}
+		doFillPanel(null, CIBILReport.CIBIL_EXPORT_STATUS);
 		timer.start();
 		logger.debug(Literal.LEAVING);
 	}
@@ -125,9 +126,9 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
 		ProcessExecution pannel = new ProcessExecution();
-		pannel.setId(config.getName());
+		pannel.setId(ds.getName());
 		pannel.setBorder("normal");
-		pannel.setTitle(config.getName());
+		pannel.setTitle(ds.getName());
 		pannel.setWidth("460px");
 		pannel.setProcess(ds);
 		pannel.render();

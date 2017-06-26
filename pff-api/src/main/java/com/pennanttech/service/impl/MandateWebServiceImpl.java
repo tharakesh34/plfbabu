@@ -39,13 +39,14 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class MandateWebServiceImpl implements MandateRestService,MandateSoapService {
 	private static final Logger logger = Logger.getLogger(MandateWebServiceImpl.class);
 
-	private ValidationUtility validationUtility;
-	private MandateController mandateController;
-	private CustomerDetailsService customerDetailsService;
-	private BankBranchService bankBranchService;
-	private MandateService mandateService;
-	private FinanceMainService financeMainService;
-	private BankDetailService bankDetailService;
+	private ValidationUtility		validationUtility;
+	private MandateController		mandateController;
+	private CustomerDetailsService	customerDetailsService;
+	private BankBranchService		bankBranchService;
+	private MandateService			mandateService;;
+	private BankDetailService		bankDetailService;
+	private FinanceMainService		financeMainService;
+
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -193,10 +194,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	@Override
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandate) throws ServiceException {
 		logger.debug("Entering");
-		// beanValidation
-		validationUtility.validate(mandate, SaveValidationGroup.class);
+		
 		// validate customer details as per the API specification
-
 		WSReturnStatus response = doValidation(mandate);
 		if (response == null) {
 			return response = mandateController.loanMandateSwapping(mandate);
@@ -216,45 +215,78 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		logger.debug("Entering");
 
 		WSReturnStatus returnStatus = null;
-		// validate newMandateId
-		Mandate mandate = mandateService.getApprovedMandateById(mandateDetail.getNewMandateId());
-		if (mandate == null) {
-
+		if(mandateDetail.getFinReference() == null){
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			valueParm[0] = "FinReference";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return returnStatus;
+		}
+		if(mandateDetail.getOldMandateId() == null || mandateDetail.getOldMandateId()<=0 ){
+			String[] valueParm = new String[1];
+			valueParm[0] = "OldMandateId";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return returnStatus;
+		}
+		if(mandateDetail.getNewMandateId() == null || mandateDetail.getNewMandateId()<=0 ){
+			String[] valueParm = new String[1];
+			valueParm[0] = "NewMandateId";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return returnStatus;
+		}
+		
+		// validate oldMandate
+		Mandate oldMandate = mandateService.getApprovedMandateById(mandateDetail.getOldMandateId());
+		if (oldMandate == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(mandateDetail.getOldMandateId());
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
-
-			return returnStatus;
-		}
-		// validations for MandateRef
-
-		if (StringUtils.isBlank(mandate.getMandateRef())) {
-
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
-
-			return returnStatus;
-		}
-		// validations for Status
-
-		if (!StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())) {
-
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90306", valueParm);
-
 			return returnStatus;
 		}
 		// validate FinanceReference
-		int count = financeMainService.getFinanceCountById(mandateDetail.getFinReference(),
-				mandateDetail.getOldMandateId());
+		int count = financeMainService.getFinanceCountById(mandateDetail.getFinReference(),mandateDetail.getOldMandateId());
 		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = mandateDetail.getFinReference();
 			return getErrorDetails("90201", valueParm);
 		}
 
+		// validate newMandateId
+		Mandate newMandate = mandateService.getApprovedMandateById(mandateDetail.getNewMandateId());
+		if (newMandate == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
+			return returnStatus;
+		}
+		//validate cif
+		if(!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())){
+			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
+			return returnStatus;
+		}
+		// validations for MandateRef
+		if(!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
+		if (StringUtils.isBlank(newMandate.getMandateRef())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
+			return returnStatus;
+		}
+		// validations for Status
+		if (StringUtils.equals(MandateConstants.STATUS_REJECTED, newMandate.getStatus())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			returnStatus = APIErrorHandlerService.getFailedStatus("90306", valueParm);
+			return returnStatus;
+		}
+		// openMandate
+		if (!newMandate.isOpenMandate()) {
+			if(StringUtils.isNotBlank(newMandate.getOrgReference())){
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			returnStatus = APIErrorHandlerService.getFailedStatus("90312", valueParm);
+			return returnStatus;
+			}
+		}
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -519,7 +551,6 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
 	}
-
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;

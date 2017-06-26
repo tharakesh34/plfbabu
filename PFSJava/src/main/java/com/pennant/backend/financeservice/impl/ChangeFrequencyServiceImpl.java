@@ -232,9 +232,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		// Plan EMI Holidays Resetting after Rescheduling
 		if(scheduleData.getFinanceMain().isPlanEMIHAlw()){
-			scheduleData.getFinanceMain().setEventFromDate(fromDate);
+			scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
 			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getCalMaturity());
-			scheduleData.getFinanceMain().setRecalFromDate(fromDate);
+			scheduleData.getFinanceMain().setRecalFromDate(eventFromdate);
 			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getCalMaturity());
 			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
 

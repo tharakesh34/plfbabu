@@ -890,7 +890,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		Listcell lc = null;
 		String label = "";
 		if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) || 
-				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) || 
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PRESENTMENT)){
 
 			label = Labels.getLabel("label_ReceiptCancellationDialog_ExcessType_"+receiptDetail.getPaymentType());
 

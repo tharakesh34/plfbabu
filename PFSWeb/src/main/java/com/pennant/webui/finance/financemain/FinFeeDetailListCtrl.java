@@ -1538,7 +1538,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	@SuppressWarnings("unchecked")
 	public void onChangeFeeAmount(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
-		
+
 		List<Object> list = (List<Object>) event.getData();
 		Decimalbox actualBox = (Decimalbox) list.get(0);
 		Decimalbox paidBox = (Decimalbox) list.get(1);
@@ -1546,8 +1546,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Decimalbox remFeeBox = (Decimalbox) list.get(3);
 		Combobox feeSchdMthdBox = (Combobox) list.get(4);
 		Intbox termsBox = (Intbox) list.get(5);
-		FinFeeDetail finFeeDetail  = (FinFeeDetail) list.get(6);
-		boolean quickDisb  = (boolean) list.get(7);
+		FinFeeDetail finFeeDetail = (FinFeeDetail) list.get(6);
+		boolean quickDisb = (boolean) list.get(7);
 		Button adjustButton = (Button) list.get(10);
 
 		actualBox.setErrorMessage("");
@@ -1557,9 +1557,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feeSchdMthdBox.setErrorMessage("");
 		termsBox.setErrorMessage("");
 
-		remFeeBox.setValue(BigDecimal.valueOf(actualBox.doubleValue())
-				.subtract(BigDecimal.valueOf(waiverBox.doubleValue()))
-				.subtract(BigDecimal.valueOf(paidBox.doubleValue())));
+		remFeeBox.setValue(
+				BigDecimal.valueOf(actualBox.doubleValue()).subtract(BigDecimal.valueOf(waiverBox.doubleValue()))
+						.subtract(BigDecimal.valueOf(paidBox.doubleValue())));
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 
 		if (quickDisb && readOnly) {
@@ -1569,13 +1569,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		boolean feeSchdMthdDisable = false;
 		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
-		} 
-		
+		}
+
 		feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
-		
+
 		if (BigDecimal.valueOf(paidBox.doubleValue()).compareTo(BigDecimal.ZERO) == 0) {
 			adjustButton.setDisabled(true);
-			
+
 			if (!this.finFeeReceiptMap.isEmpty()) {
 				boolean receiptFound = false;
 				for (Long key : this.finFeeReceiptMap.keySet()) {
@@ -1583,8 +1583,26 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					for (int i = 0; i < finFeeReceipts.size(); i++) {
 						FinFeeReceipt finFeeReceipt = finFeeReceipts.get(i);
 						if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
+							FinFeeReceipt finFeeReceipt2 = null;
+							if (finFeeReceipts.size() == 1) {
+								finFeeReceipt2 = new FinFeeReceipt();
+								finFeeReceipt2.setNewRecord(true);
+								finFeeReceipt2.setReceiptAmount(finFeeReceipt.getReceiptAmount());
+								finFeeReceipt2.setReceiptReference(finFeeReceipt.getReceiptReference());
+								finFeeReceipt2.setReceiptType(finFeeReceipt.getReceiptType());
+								finFeeReceipt2.setRemainingFee(finFeeReceipt.getReceiptAmount());
+								finFeeReceipt2.setAvailableAmount(finFeeReceipt.getReceiptAmount());
+								finFeeReceipt2.setReceiptID(finFeeReceipt.getReceiptID());
+								finFeeReceipt2.setWorkflowId(
+										getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
+								finFeeReceipt2.setRecordType(PennantConstants.RCD_ADD);
+							}
 							finFeeReceipts.remove(i);
+							if (finFeeReceipt2 != null) {
+								finFeeReceipts.add(finFeeReceipt2);
+							}
 							receiptFound = true;
+							break;
 						}
 					}
 				}
@@ -1594,13 +1612,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		} else {
-			if(getFinanceDetail().getFinScheduleData().getFinReceiptDetails().isEmpty()) {
+			if (getFinanceDetail().getFinScheduleData().getFinReceiptDetails().isEmpty()) {
 				adjustButton.setDisabled(true);
 			} else {
 				readOnlyComponent(isReadOnly("FinFeeDetailListCtrl_Adjust"), adjustButton);
 			}
 		}
-		
+
 		this.dataChanged = true;
 
 		// Can be utilized only on Receipts Process

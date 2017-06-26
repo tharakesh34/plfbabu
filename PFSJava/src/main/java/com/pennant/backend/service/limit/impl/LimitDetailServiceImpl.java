@@ -1249,28 +1249,28 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		LimitHeader limitHeader = (LimitHeader) auditDetail.getModelData();
 
 		// validate limit header id for update
-		if(!limitHeader.isNew()) {
+		if (!limitHeader.isNew()) {
 			int count = getLimitHeaderCountById(limitHeader.getHeaderId());
-			if(count <= 0 ) {
+			if (count <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(limitHeader.getHeaderId());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90807", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90807", "", valueParm)));
 			}
 		}
 
 		//validate expiryDate and reviewDate
-		if(limitHeader.getLimitRvwDate() != null && limitHeader.getLimitExpiryDate() != null) {
-			if(limitHeader.getLimitRvwDate().compareTo(limitHeader.getLimitExpiryDate())> 0) {
+		if (limitHeader.getLimitRvwDate() != null && limitHeader.getLimitExpiryDate() != null) {
+			if (limitHeader.getLimitRvwDate().compareTo(limitHeader.getLimitExpiryDate()) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "Review date("+DateUtility.formatToShortDate(limitHeader.getLimitRvwDate())+")";
-				valueParm[1] = "Limit expiry date("+DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+")";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN"));
+				valueParm[0] = "Review date(" + DateUtility.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
+				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+ ")";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm)));
 			}
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.YEAR, 1); // to get previous year add -1
 		Date nextYear = cal.getTime();
-		if(limitHeader.getLimitRvwDate() != null){
+		if (limitHeader.getLimitRvwDate() != null) {
 			if (limitHeader.getLimitRvwDate().before(DateUtility.getAppDate())
 					|| limitHeader.getLimitRvwDate().after(nextYear)) {
 				String[] valueParm = new String[3];
@@ -1278,18 +1278,18 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(nextYear);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-			}	
+			}
 		}
-		
-		if(limitHeader.getLimitExpiryDate() != null){
-			if (limitHeader.getLimitExpiryDate().before(DateUtility.getAppDate())
+
+		if (limitHeader.getLimitExpiryDate() != null) {
+			if (limitHeader.getLimitExpiryDate().compareTo(DateUtility.getAppDate()) <= 0
 					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Limit expiry date";
 				valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
 				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-			}	
+			}
 		}
 		// validate Customer and customer group
 		String custCIF = limitHeader.getCustCIF();
@@ -1300,23 +1300,24 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custCIF;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm)));
 			} else {
-				if(!limitHeader.isNew()){
-					int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(), customer.getCustID());
-					if(count <= 0){
+				if (!limitHeader.isNew()) {
+					int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(),
+							customer.getCustID());
+					if (count <= 0) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "Cif :"+custCIF + " And LimitId: " +limitHeader.getHeaderId();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm), "EN"));
+						valueParm[0] = "Cif :" + custCIF + " And LimitId: " + limitHeader.getHeaderId();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
 					}
 				}
 
-				if(limitHeader.isNew()) {
+				if (limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(), "_AView");
-					if(headerDetail != null) {
+					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custCIF;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90806", "", valueParm), "EN"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90806", "", valueParm)));
 					}
 				}
 			}
@@ -1329,55 +1330,55 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (customerGroup == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custGrpCode;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm)));
 				return auditDetail;
 			} else {
-				if(limitHeader.isNew()) {
-					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(), "_AView");
-					if(headerDetail != null) {
+				if (limitHeader.isNew()) {
+					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(
+							customerGroup.getCustGrpID(), "_AView");
+					if (headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custGrpCode;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90805", "", valueParm), "EN"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90805", "", valueParm)));
 					}
 				}
 			}
 		}
 
 		// validate structure code
-		
-			String structureCode = limitHeader.getLimitStructureCode();
-			int recordCount = getLimitStructureDetailDAO().getLimitStructureCountById(structureCode, "");
-			if(recordCount <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = structureCode;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90801", "", valueParm), "EN"));
-			}
-		
+		String structureCode = limitHeader.getLimitStructureCode();
+		int recordCount = getLimitStructureDetailDAO().getLimitStructureCountById(structureCode, "");
+		if (recordCount <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = structureCode;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90801", "", valueParm)));
+		}
 
 		// validate currency code
-		if(StringUtils.isNotBlank(limitHeader.getLimitCcy())) {
+		if (StringUtils.isNotBlank(limitHeader.getLimitCcy())) {
 			Currency currency = currencyService.getCurrencyById(limitHeader.getLimitCcy());
-			if(currency == null) {
+			if (currency == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Limit Currency";
 				valueParm[1] = limitHeader.getLimitCcy();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm)));
 			}
 		}
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
-		if(limitDetails != null) {
-			for(LimitDetails detail: limitDetails) {
+		Date lineMaxExpDate = DateUtility.getAppDate();
+		if (limitDetails != null) {
+			for (LimitDetails detail : limitDetails) {
 
 				// validate structureDetailId from LimitDetails
-				long structureId =  detail.getLimitStructureDetailsID();
+				long structureId = detail.getLimitStructureDetailsID();
 				int count = getLimitDetailDAO().getLimitDetailByStructureId(structureId, "");
-				if(count <= 0) {
+				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(structureId);
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90803", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90803", "", valueParm)));
 				}
-				if(detail.getExpiryDate() != null){
+				if (detail.getExpiryDate() != null) {
 					if (detail.getExpiryDate().before(DateUtility.getAppDate())
 							|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
@@ -1386,9 +1387,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 						return auditDetail;
-					}	
+					}
+					if (detail.getExpiryDate() != null && lineMaxExpDate != null) {
+						if (detail.getExpiryDate().compareTo(lineMaxExpDate) >= 0) {
+							lineMaxExpDate = detail.getExpiryDate();
+						}
+					}
 				}
-				if(detail.getLimitSanctioned().compareTo(BigDecimal.ZERO)<0){
+				if (detail.getLimitSanctioned().compareTo(BigDecimal.ZERO) < 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "limitSanctioned";
 					valueParm[1] = "Zero";
@@ -1396,22 +1402,31 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					return auditDetail;
 				}
 				// validate limit check method
-				if(!StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_ACTUAL)
+				if (!StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_ACTUAL)
 						&& !StringUtils.equals(detail.getLimitChkMethod(), LimitConstants.LIMIT_CHECK_RESERVED)) {
 					String[] valueParm = new String[1];
-					valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL +","+ LimitConstants.LIMIT_CHECK_RESERVED;
+					valueParm[0] = LimitConstants.LIMIT_CHECK_ACTUAL + "," + LimitConstants.LIMIT_CHECK_RESERVED;
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90809", "", valueParm)));
+				}
+			}
+			if (limitHeader.getLimitExpiryDate() != null) {
+				if (limitHeader.getLimitExpiryDate().before(lineMaxExpDate)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Limit expiry date";
+					valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
 				}
 			}
 		}
 
 		// validate Limit Structure details
-		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO().getLimitStructureDetailById(limitHeader.getLimitStructureCode(), "_AView");
-		if(extgStructDetails != null) {
-			for(LimitStructureDetail structDetail: extgStructDetails) {
+		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO().getLimitStructureDetailById(
+				limitHeader.getLimitStructureCode(), "_AView");
+		if (extgStructDetails != null) {
+			for (LimitStructureDetail structDetail : extgStructDetails) {
 				boolean limitStrFound = false;
-				for(LimitDetails detail: limitDetails) {
-					if(structDetail.getLimitStructureDetailsID() == detail.getLimitStructureDetailsID()) {
+				for (LimitDetails detail : limitDetails) {
+					if (structDetail.getLimitStructureDetailsID() == detail.getLimitStructureDetailsID()) {
 						limitStrFound = true;
 						detail.setGroupCode(structDetail.getGroupCode());
 						detail.setGroupName(structDetail.getGroupName());
@@ -1421,7 +1436,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					}
 				}
 
-				if(!limitStrFound) {
+				if (!limitStrFound) {
 					String[] valueParm = new String[1];
 					valueParm[0] = limitHeader.getLimitStructureCode();
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", valueParm)));
@@ -1432,14 +1447,21 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		// validate groups and line amounts
 		List<ErrorDetails> errorDetails = validateLimitSetup(limitHeader);
-		for(ErrorDetails error:errorDetails) {
+		for (ErrorDetails error : errorDetails) {
 			auditDetail.setErrorDetail(error);
 		}
 
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	@Override
+	public LimitHeader getCustomerLimitsById(long headerId) {
+		logger.debug("Entering");
+		LimitHeader limitHeader;
+		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "");
+		logger.debug("Leaving");
+		return limitHeader;
+	}
 	/**
 	 * 
 	 * 
@@ -1568,6 +1590,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	public void setLimitGroupLinesDAO(LimitGroupLinesDAO limitGroupLinesDAO) {
 		this.limitGroupLinesDAO = limitGroupLinesDAO;
 	}
+
 
 
 }

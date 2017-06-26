@@ -150,7 +150,6 @@ public class SecurityRoleGroupsDAOImpl extends BasisNextidDaoImpl<SecurityRole> 
 			 this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.warn("Exception: ", e);
-			logger.debug(e.toString());
 		}
 		
 		logger.debug("Leaving");

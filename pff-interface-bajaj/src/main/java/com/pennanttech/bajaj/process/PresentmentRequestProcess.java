@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -20,11 +21,15 @@ import com.pennanttech.pff.core.Literal;
 
 public class PresentmentRequestProcess extends DatabaseDataEngine {
 
+	private List<Long> idList;
 	private long presentmentId;
+	private boolean isError;
 
-	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, long presentmentId) {
+	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList, long presentmentId, boolean isError) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		this.idList = idList;
 		this.presentmentId = presentmentId;
+		this.isError = isError;
 	}
 
 	@Override
@@ -37,7 +42,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = getSqlQuery();
 
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("PRESENTMENTID", presentmentId);
+		parmMap.addValue("IdList", idList);
 		parmMap.addValue("EXCLUDEREASON", "0");
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
@@ -74,8 +79,12 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 						clearTables();
 					} else {
 						copyDataFromTempToMainTables();
-						updatePresentmentHeader(presentmentId, 4, executionStatus.getId(), processedCount);
-						updatePresentmentDetails(presentmentId, "A");
+						if (isError) {
+							updatePresentmentHeader(presentmentId, 3, executionStatus.getId(), processedCount);
+						} else {
+							updatePresentmentHeader(presentmentId, 4, executionStatus.getId(), processedCount);
+						}
+						updatePresentmentDetails(idList, "A");
 					}
 				}
 				return totalRecords;
@@ -104,7 +113,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
-		sql.append(" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
 		return sql;
 	}
 
@@ -173,7 +182,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = :TOTALRECORDS  Where ID = :ID ");
+		sql.append( " UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = TOTALRECORDS+:TOTALRECORDS  Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -191,19 +200,20 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 	
-	private void updatePresentmentDetails(long presentmentId, String status) {
+	private void updatePresentmentDetails(List<Long> idList, String status) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID AND EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("PRESENTMENTID", presentmentId);
+		source.addValue("IDList", idList);
 		source.addValue("STATUS", status);
+		source.addValue("ErrorDesc", null);
 		source.addValue("EXCLUDEREASON", 0);
 
 		try {

@@ -1448,7 +1448,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param receiptData
 	 * @param aFinScheduleData
 	 */
-	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, Date valueDate, String receiptPurpose) {
+	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, Date valueDate, String receiptPurpose, boolean isPresentment) {
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -1458,17 +1458,18 @@ public class ReceiptCalculator implements Serializable {
 		if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 			return null;
 		}
-		
 		// Fetch total Advise details
 		Map<Long, ManualAdvise> adviseMap = new HashMap<Long, ManualAdvise>();
-		List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(), 
-				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
-		if (advises != null && !advises.isEmpty()) {
-			for (int i = 0; i < advises.size(); i++) {
-				if (adviseMap.containsKey(advises.get(i).getAdviseID())) {
-					adviseMap.remove(advises.get(i).getAdviseID());
+		if(!isPresentment){
+			List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRef(financeMain.getFinReference(), 
+					FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
+			if (advises != null && !advises.isEmpty()) {
+				for (int i = 0; i < advises.size(); i++) {
+					if (adviseMap.containsKey(advises.get(i).getAdviseID())) {
+						adviseMap.remove(advises.get(i).getAdviseID());
+					}
+					adviseMap.put(advises.get(i).getAdviseID(), advises.get(i));
 				}
-				adviseMap.put(advises.get(i).getAdviseID(), advises.get(i));
 			}
 		}
 		
@@ -1829,30 +1830,31 @@ public class ReceiptCalculator implements Serializable {
 		}
 		
 		// Manual Advises
-		if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-
-			if(!adviseMap.isEmpty()){
-				List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
-				Collections.sort(adviseIdList);
-				for (int i = 0; i < adviseIdList.size(); i++) {
-
-					ManualAdvise advise = adviseMap.get(adviseIdList.get(i));
-					if(advise != null){
-						BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
-						if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
-							if(totalReceiptAmt.compareTo(balAdvise) > 0){
-								totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
-							}else{
-								balAdvise = totalReceiptAmt;
-								totalReceiptAmt = BigDecimal.ZERO;
+		if (!isPresentment) {
+			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+				if(!adviseMap.isEmpty()){
+					List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
+					Collections.sort(adviseIdList);
+					for (int i = 0; i < adviseIdList.size(); i++) {
+						
+						ManualAdvise advise = adviseMap.get(adviseIdList.get(i));
+						if(advise != null){
+							BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+							if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
+								if(totalReceiptAmt.compareTo(balAdvise) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+								}else{
+									balAdvise = totalReceiptAmt;
+									totalReceiptAmt = BigDecimal.ZERO;
+								}
+								
+								BigDecimal totAdvisePayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
+									totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
 							}
-
-							BigDecimal totAdvisePayNow = BigDecimal.ZERO;
-							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
-								totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
-								allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
-							}
-							allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
 						}
 					}
 				}

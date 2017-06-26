@@ -122,7 +122,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",GuarantorIDTypeName");
+			selectSql.append(",GuarantorIDTypeName, custID ");
 		}
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -306,7 +306,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",GuarantorIDTypeName");
+			selectSql.append(",GuarantorIDTypeName, custID");
 		}
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -374,6 +374,11 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql.append(" Remarks, Version , LastMntBy, LastMntOn, RecordStatus, ");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		selectSql.append(" RecordType, WorkflowId,GuarantorIDTypeName,GuarantorProof");
+		
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(", custID ");
+		}
+		
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");

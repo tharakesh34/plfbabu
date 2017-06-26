@@ -33,6 +33,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 
@@ -866,6 +867,15 @@ public class FinanceDataDefaulting {
 			finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 			finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 			finScheduleData.setFinODPenaltyRate(finODPenaltyRate);
+		} else {
+			FinODPenaltyRate finODPenaltyRate = finScheduleData.getFinODPenaltyRate();
+			if(StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+				StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+			 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)){
+				BigDecimal totPerc = PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
+				finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
+			}
+			
 		}
 	}
 	

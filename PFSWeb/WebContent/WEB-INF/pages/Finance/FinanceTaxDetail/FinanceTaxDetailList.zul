@@ -33,7 +33,7 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" style="border-style: none;">
 						<button
-							id="button_FinanceTaxDetailList_NewFinanceTaxDetail"
+							id="button_FinanceTaxDetailList_NewFinanceTaxDetail" visible="false"
 							label="${c:l('label_New')}"
 							autodisable="button_FinanceTaxDetailList_FinanceTaxDetailSearch,print,button_FinanceTaxDetailList_NewFinanceTaxDetail,btnRefresh,help"
 							tooltiptext="${c:l('button_FinanceTaxDetailList_NewFinanceTaxDetail.tooltiptext')}"
@@ -120,7 +120,7 @@
 										maxlength="10" />
 								</row>
 
-								<row>
+								<row id="row_AlwWorkflow">
 									<label
 										id="label_FinanceTaxDetailList_RecordStatus"
 										value="${c:l('label_FinanceTaxDetailList_RecordStatus.value')}" />
@@ -137,6 +137,21 @@
 										rows="1" />
 									<listbox id="recordType"
 										width="100px" mold="select" />
+								</row>
+								<row id="workFlowFrom">
+									<label
+										value="${c:l('common.fetch.selectfrom')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="fromApproved"
+												selected="true"
+												label="${c:l('common.fetch.fromapproved')}">
+											</radio>
+											<radio id="fromWorkFlow"
+												label="${c:l('common.fetch.fromWorkFlow')}">
+											</radio>
+										</radiogroup>
+									</cell>
 								</row>
 							</rows>
 						</grid>

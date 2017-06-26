@@ -134,7 +134,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",LovDescCIFName");
+			selectSql.append(",LovDescCIFName, custID ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -284,7 +284,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",LovDescCIFName");
+			selectSql.append(",LovDescCIFName, custID ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -331,6 +331,27 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 
 
 	@Override
+    public List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference) {
+		logger.debug("Entering");
+		
+		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		jountAccountDetail.setFinReference(finReference);
+		
+		StringBuilder selectSql = new StringBuilder("Select ");
+		selectSql.append(" JointAccountId, FinReference, CustCIF");
+		selectSql.append(" From FinJointAccountDetails");	
+		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JointAccountDetail.class);
+				
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+	}
+	
+	@Override
     public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
 		logger.debug("Entering");
 		
@@ -342,8 +363,8 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		selectSql.append(" Version , ");
 		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("_View")) {
-			selectSql.append(",LovDescCIFName");		
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(",LovDescCIFName, custID ");		
         }
 		selectSql.append(" From FinJointAccountDetails");		
 		selectSql.append(StringUtils.trimToEmpty(type));

@@ -47,6 +47,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -284,7 +285,19 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 	public static String getRemoteAddress() {
 		try {
-			return ((WebAuthenticationDetails) getAuthentication().getDetails()).getRemoteAddress();
+
+			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+			HttpServletRequest httpRequest = (HttpServletRequest) attr.getRequest();
+
+			// Get the remote host.
+			String host;
+			if (httpRequest.getHeader("X-FORWARDED-FOR") != null) {
+				host = httpRequest.getHeader("X-FORWARDED-FOR");
+			} else {
+				host = httpRequest.getRemoteHost();
+			}
+
+			return host;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			return "";
@@ -292,20 +305,21 @@ public class AuthenticationManager implements AuthenticationProvider {
 	}
 
 	public static String getSessionId() {
-		try {
-			return ((WebAuthenticationDetails) getAuthentication().getDetails()).getSessionId();
-		} catch (ClassCastException e) {
-			logger.error(Literal.EXCEPTION, e);
-			return "";
-		}
+		return getRequestAttribute().getSessionId();
 	}
 
 	public static String getBrowser() {
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-
-		UserAgent userAgent = UserAgent.parseUserAgentString(attr.getRequest().getHeader("User-Agent"));
+		UserAgent userAgent = getUserAgent();
 
 		return userAgent.getBrowser().getName() + " Version " + userAgent.getBrowserVersion();
+	}
+	
+	private static UserAgent getUserAgent() {
+		return UserAgent.parseUserAgentString(getRequestAttribute().getRequest().getHeader("User-Agent"));
+	}
+	
+	private static ServletRequestAttributes getRequestAttribute() {
+		return (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 	}
 
 	private SecLoginlog getLoginLog(Authentication authentication, String loginError) {

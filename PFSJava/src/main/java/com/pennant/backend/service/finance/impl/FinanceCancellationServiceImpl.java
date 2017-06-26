@@ -686,7 +686,9 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
 		if (list!=null && !list.isEmpty()) {
 			for (FinAdvancePayments finAdvPayment : list) {
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID) && 
+						!StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, finAdvPayment.getPaymentType()) &&
+						!StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, finAdvPayment.getPaymentType())) {
 					//Disbursement instructions should be cancelled before canceling a loan.
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 							"60406", errParm, valueParm), usrLanguage));

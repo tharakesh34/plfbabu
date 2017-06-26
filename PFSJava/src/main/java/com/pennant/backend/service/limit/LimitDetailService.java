@@ -95,4 +95,6 @@ public interface LimitDetailService {
 	int getLimitHeaderCountById(long headerId);
 
 	List<String> getLinesForGroup(String groupCode);
+
+	LimitHeader getCustomerLimitsById(long headerId);
 }

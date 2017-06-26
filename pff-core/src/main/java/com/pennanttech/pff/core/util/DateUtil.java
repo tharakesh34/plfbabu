@@ -39,8 +39,7 @@ public class DateUtil {
 		SHORT_TIME("HH:mm"),
 		LONG_TIME("HH:mm:ss"),
 		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
-		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss"),
-		ddMMYYYY("ddMMYYYY");
+		LONG_DATE_TIME("dd-MMM-yyyy HH:mm:ss");
 		
 		private final String	pattern;
 

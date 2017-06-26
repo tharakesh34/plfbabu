@@ -56,6 +56,8 @@ public class TransactionDetail implements Serializable {
 	private String account;
 	private String postAmount;
 	private String ccy;
+	private String postDate;
+	private String valueDate;
 
 	public TransactionDetail() {
 		
@@ -119,5 +121,21 @@ public class TransactionDetail implements Serializable {
 	public void setCcy(String ccy) {
 	    this.ccy = ccy;
     }
+
+	public String getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(String postDate) {
+		this.postDate = postDate;
+	}
+
+	public String getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(String valueDate) {
+		this.valueDate = valueDate;
+	}
 	
 }

@@ -39,6 +39,7 @@ public interface JountAccountDetailDAO {
 	long save(JointAccountDetail jountAccountDetail, String type);
 	JointAccountDetail getJountAccountDetailByRefId(String finReference, String custCIF, String type);
 	void deleteByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference);	
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);	
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
 	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);

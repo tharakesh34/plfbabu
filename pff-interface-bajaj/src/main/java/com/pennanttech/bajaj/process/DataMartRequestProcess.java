@@ -25,18 +25,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
 	}
 
-	
-	
 	@Override
 	public void processData() {
-		
+
 		try {
 			loadCount();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
-		
 
 		try {
 			ApplicantDetailsDataMart appDM = new ApplicantDetailsDataMart();
@@ -285,8 +281,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_APPLICANT_DETAILS, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
-						saveOrUpdate(map, DataMartTable.DM_APPLICANT_DETAILS.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.DM_APPLICANT_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -527,8 +522,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 					try {
 						map = DataMartMapper.mapData(DataMartTable.FORECLOSURECHARGES, rs);
-						saveOrUpdate(map, DataMartTable.FORECLOSURECHARGES.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.FORECLOSURECHARGES.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -608,8 +602,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_INSURANCE_DETAILS, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
-						saveOrUpdate(map, DataMartTable.DM_INSURANCE_DETAILS.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.DM_INSURANCE_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -641,7 +634,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					processedCount++;				
+					processedCount++;
 					executionStatus.setProcessedRecords(processedCount);
 					String[] keyFields = new String[1];
 					keyFields[0] = "AGREEMENTNO";
@@ -649,8 +642,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
-						saveOrUpdate(map, DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -929,8 +921,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_OPENECS_DETAILS, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
-						saveOrUpdate(map, DataMartTable.DM_OPENECS_DETAILS.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.DM_OPENECS_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -1164,8 +1155,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_SUBQ_DISB_DETAILS, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
-						saveOrUpdate(map, DataMartTable.DM_SUBQ_DISB_DETAILS.name(), destinationJdbcTemplate,
-								keyFields);
+						saveOrUpdate(map, DataMartTable.DM_SUBQ_DISB_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -1203,9 +1193,8 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					keyFields[0] = "AGREEMENTNO";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_WRITEOFF_DETAILS, rs);
-						
-						saveOrUpdate(map, DataMartTable.DM_WRITEOFF_DETAILS.name(), destinationJdbcTemplate,
-								keyFields);
+
+						saveOrUpdate(map, DataMartTable.DM_WRITEOFF_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -1222,7 +1211,6 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	
 	private String getKeyId(String tableName, MapSqlParameterSource map, String[] ketFields) {
 		StringBuilder builder = new StringBuilder();
 		if (ketFields != null) {
@@ -1235,7 +1223,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 		return tableName + ": " + builder.toString();
 	}
-	
+
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		// TODO Auto-generated method stub

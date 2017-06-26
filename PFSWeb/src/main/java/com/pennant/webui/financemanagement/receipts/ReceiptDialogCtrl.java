@@ -1514,7 +1514,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Calling for Past due Amount Auto Calculation Process
 		FinScheduleData aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView");
 		Map<String, BigDecimal> paidAllocatedMap = getReceiptCalculator().recalAutoAllocation(aFinScheduleData, 
-				totReceiptAmount, valueDate, tempReceiptPurpose);
+				totReceiptAmount, valueDate, tempReceiptPurpose, false);
 		
 		// Render Allocation Details & Manual Advises
 		if(paidAllocatedMap != null && !paidAllocatedMap.isEmpty()){

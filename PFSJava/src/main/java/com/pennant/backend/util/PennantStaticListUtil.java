@@ -2633,12 +2633,11 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getPresentmentBatchStatusList() {
 		if (presentmentBatchStatusList == null) {
 			presentmentBatchStatusList = new ArrayList<ValueLabel>(5);
-			presentmentBatchStatusList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Extract")));
-			presentmentBatchStatusList.add(new ValueLabel("2", Labels.getLabel("label_Represent_Batch_Created")));
-			presentmentBatchStatusList.add(new ValueLabel("3", Labels.getLabel("label_Represent_Awaiting_Conf")));
-			presentmentBatchStatusList.add(new ValueLabel("4", Labels.getLabel("label_Represent_Send_Represent")));
-			presentmentBatchStatusList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Cleared")));
-			presentmentBatchStatusList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Bounced")));
+			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_EXTRACT), Labels.getLabel("label_Presentment_Extract")));
+			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_BATCH_CREATED), Labels.getLabel("label_Presentment_Batch_Created")));
+			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_AWAITING_CONF), Labels.getLabel("label_Presentment_Awaiting_Conf")));
+			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_SEND_PRESENTMENT), Labels.getLabel("label_Presentment_Send_Represent")));
+			presentmentBatchStatusList.add(new ValueLabel(String.valueOf(RepayConstants.PEXC_RECEIVED), Labels.getLabel("label_Presentment_Received")));
 		}
 		return presentmentBatchStatusList;
 	}
@@ -2700,8 +2699,8 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));
 			presentmentsStatusList.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
 			presentmentsStatusList.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
-			presentmentsStatusList.add(new ValueLabel("E", Labels.getLabel("label_Presentment_Status_Error")));
 			presentmentsStatusList.add(new ValueLabel("A", Labels.getLabel("label_Presentment_Status_Approve")));
+			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
 		}
 		return presentmentsStatusList;
 	}
@@ -2709,9 +2708,9 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getTaxApplicableFor() {
 		if (taxApplicableFor == null) {
 			taxApplicableFor = new ArrayList<ValueLabel>(3);
-			taxApplicableFor.add(new ValueLabel("P", Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
-			taxApplicableFor.add(new ValueLabel("C", Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
-			taxApplicableFor.add(new ValueLabel("B", Labels.getLabel("label_TaxApplicableFor_Borrower")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER, Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT, Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
 		}
 		return taxApplicableFor;
 	}

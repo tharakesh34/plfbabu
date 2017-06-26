@@ -162,13 +162,14 @@ public class MandateRequestService extends BajajService implements MandateReques
 						rowMap.put("EMI_ENDDATE", endDate);
 						
 						if(firstDueDate == null) {
-							rowMap.put("FIRSTDUEDATE", startDate);
+							rowMap.put("EFFECTIVE_DATE", startDate);
 						}
 					}
 
 					rowMap.remove("CCYMINORCCYUNITS");
 					rowMap.remove("CUST_EMI");
-
+					rowMap.remove("FIRSTDUEDATE");
+					
 					id = String.valueOf(insertData(rowMap));
 					logMandateHistory((BigDecimal)rowMap.get("MANDATEID"), id);
 					rowMap = null;
@@ -176,6 +177,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			paramMap = null;

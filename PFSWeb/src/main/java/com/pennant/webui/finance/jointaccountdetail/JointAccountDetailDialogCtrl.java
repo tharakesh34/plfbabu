@@ -1145,6 +1145,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if((!this.custCIF.isDisabled()) && this.custID.getValue() == 0) {
 				wve.add(new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value")})));
 			}
+			aJountAccountDetail.setCustID(this.custID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

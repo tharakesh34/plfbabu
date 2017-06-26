@@ -141,9 +141,24 @@ public class LimitManagement {
 				if (mapping.isNewRecord()) {
 					limitReferenceMappingDAO.save(mapping);
 				}
+
+				//in origination there should be one block
+				LimitTransactionDetail limitTranDetail = getFinTransaction(finMain.getFinReference(),
+						custHeader.getHeaderId(), LimitConstants.BLOCK, disbSeq);
+
+				BigDecimal blockAmount = BigDecimal.ZERO;
+
+				if (limitTranDetail != null) {
+					blockAmount = limitTranDetail.getLimitAmount();
+				}
+
+				if (LimitConstants.UNBLOCK.equals(tranType)) {
+					tranAmt = blockAmount;
+				}
+
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly, dateToValidate));
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
+						validateOnly, dateToValidate, limitTranDetail, blockAmount));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
@@ -165,9 +180,21 @@ public class LimitManagement {
 				if (mapping.isNewRecord()) {
 					limitReferenceMappingDAO.save(mapping);
 				}
+				//in origination there should be one block
+				LimitTransactionDetail limitTranDetail = getFinTransaction(finMain.getFinReference(),
+						groupHeader.getHeaderId(), LimitConstants.BLOCK, disbSeq);
+				BigDecimal blockAmount = BigDecimal.ZERO;
+				if (limitTranDetail != null) {
+					blockAmount = limitTranDetail.getLimitAmount();
+				}
+
+				if (LimitConstants.UNBLOCK.equals(tranType)) {
+					tranAmt = blockAmount;
+				}
+
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
-				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						validateOnly, dateToValidate));
+				errors.addAll(updateLimitOrgination(mapping, tranType, allowOverride, limitAmount, overide,
+						validateOnly, dateToValidate, limitTranDetail, blockAmount));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -197,18 +224,10 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetails> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
-			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, boolean validateOnly,
-			Date disbDate) {
+			boolean allowOverride, BigDecimal limitAmount, boolean override, boolean validateOnly, Date disbDate,
+			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount) {
 		logger.debug(" Entering ");
 
-		String finref = mapping.getReferenceNumber();
-		long headerId = mapping.getHeaderId();
-		//in origination there should be one block
-		LimitTransactionDetail limitTranDetail = getFinTransaction(finref, headerId, LimitConstants.BLOCK, disbSeq);
-		BigDecimal blockAmount = BigDecimal.ZERO;
-		if (limitTranDetail != null) {
-			blockAmount = limitTranDetail.getLimitAmount();
-		}
 		//get limit details by line and group associated with it
 		List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 
@@ -1281,6 +1300,28 @@ public class LimitManagement {
 		transDet.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		transDet.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		limitTransactionDetailDAO.save(transDet);
+	}
+	
+	public static BigDecimal getPreviousReservedAmt(List<LimitTransactionDetail> lmtTransDetails) { 
+		logger.debug("Entering");
+		BigDecimal blockAmount = BigDecimal.ZERO;
+
+		if (lmtTransDetails != null && !lmtTransDetails.isEmpty()) {
+			for (LimitTransactionDetail tansDetail : lmtTransDetails) {
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.BLOCK)) {
+					blockAmount = blockAmount.add(tansDetail.getLimitAmount());
+				}
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.APPROVE)) {
+					blockAmount = blockAmount.subtract(tansDetail.getLimitAmount());
+				}
+				if (StringUtils.equals(tansDetail.getTransactionType(), LimitConstants.UNBLOCK)) {
+					blockAmount = blockAmount.subtract(tansDetail.getLimitAmount());
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return blockAmount;
 	}
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailDAO) {

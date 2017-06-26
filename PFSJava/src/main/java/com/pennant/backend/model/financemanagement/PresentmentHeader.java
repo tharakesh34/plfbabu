@@ -44,8 +44,6 @@ package com.pennant.backend.model.financemanagement;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -73,7 +71,10 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
 	private long partnerBankId;
-	private String partnerBankIdName;
+	private String partnerBankCode;
+	private String partnerBankName;
+	private String partnerAcctNumber;
+	private String partnerAcctType;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date fromDate;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
@@ -116,15 +117,6 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.setId(id);
 	}
 
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("partnerBankIdName");
-		excludeFields.add("mandateTypeName");
-		excludeFields.add("loanTypeName");
-		excludeFields.add("finBranchName");
-		return excludeFields;
-	}
-
 	public String getReference() {
 		return reference;
 	}
@@ -149,12 +141,36 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.partnerBankId = partnerBankId;
 	}
 
-	public String getPartnerBankIdName() {
-		return this.partnerBankIdName;
+	public String getPartnerBankCode() {
+		return partnerBankCode;
 	}
 
-	public void setPartnerBankIdName(String partnerBankIdName) {
-		this.partnerBankIdName = partnerBankIdName;
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public String getPartnerBankName() {
+		return partnerBankName;
+	}
+
+	public void setPartnerBankName(String partnerBankName) {
+		this.partnerBankName = partnerBankName;
+	}
+
+	public String getPartnerAcctNumber() {
+		return partnerAcctNumber;
+	}
+
+	public void setPartnerAcctNumber(String partnerAcctNumber) {
+		this.partnerAcctNumber = partnerAcctNumber;
+	}
+
+	public String getPartnerAcctType() {
+		return partnerAcctType;
+	}
+
+	public void setPartnerAcctType(String partnerAcctType) {
+		this.partnerAcctType = partnerAcctType;
 	}
 
 	public Date getFromDate() {

@@ -105,7 +105,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		sql.append(" importStatusId, totalRecords, processedRecords, successRecords, failedRecords, ");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append(" ,PartnerBankIdName");
+			sql.append(" ,PartnerBankCode,PartnerBankName,PartnerAcctNumber,PartnerAcctType");
 		}
 		sql.append(" From PresentmentHeader");
 		sql.append(type);
@@ -129,43 +129,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 		return presentmentHeader;
 	}
-
-	@Override
-	public boolean isDuplicateKey(long id, String reference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		String sql;
-		String whereClause = "reference = :reference AND id != :id";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("PresentmentHeader", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("PresentmentHeader_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "PresentmentHeader_Temp", "PresentmentHeader" }, whereClause);
-			break;
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("id", id);
-		paramSource.addValue("reference", reference);
-
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
+ 
 
 	@Override
 	public String save(PresentmentHeader presentmentHeader, TableType tableType) {
@@ -426,74 +390,29 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 
 	@Override
-	public void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append("Update PRESENTMENTDETAILS set PRESENTMENTID = :PRESENTMENTID Where DETAILID  IN(:DetaildList) ");
-		logger.trace(Literal.SQL + sql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("PRESENTMENTID", presentmentId);
-		source.addValue("DetaildList", detaildList);
-
-		try {
-			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void updatePresentmentDetailId(long presentmentId, long extractId) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append(" update PRESENTMENTDETAILHEADER Set BATCHID = :BATCHID Where EXTRACTID = :EXTRACTID ");
-		logger.trace(Literal.SQL + sql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("BATCHID", extractId);
-		source.addValue("EXTRACTID", presentmentId);
-
-		try {
-			jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type) {
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append(" SELECT Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
-		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" SELECT Id, PresentmentId, FinReference, PresentmentRef, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue,");
+		sql.append(" schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, tDSAmount, excludeReason, bounceID, emiNo, status,");
+		sql.append(" ErrorCode, ErrorDesc, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
-			sql.append(" ,mandateType ,finTypeDesc, customerName ");
+			sql.append(" ,mandateType ,finTypeDesc, finType, customerName ");
 		}
 		sql.append(" From PresentmentDetails");
 		sql.append(type);
 		sql.append(" Where PresentmentId = :PresentmentId ");
 		if (isExclude) {
-			sql.append("AND ExcludeReason = :ExcludeReason ");
+			if (isApprove) {
+				sql.append("AND ExcludeReason = :ExcludeReason AND (Status = :IMPORTSTATUS OR Status = :FAILEDSTATUS)");
+			} else {
+				sql.append("AND ExcludeReason = :ExcludeReason");
+			}
 		} else {
 			sql.append("AND ExcludeReason <> :ExcludeReason ");
 		}
@@ -503,6 +422,8 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source = new MapSqlParameterSource();
 		source.addValue("PresentmentId", presentmentId);
 		source.addValue("ExcludeReason", 0);
+		source.addValue("IMPORTSTATUS", RepayConstants.PEXC_IMPORT);
+		source.addValue("FAILEDSTATUS", RepayConstants.PEXC_FAILURE);
 		try {
 			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 					.newInstance(PresentmentDetail.class);
@@ -684,7 +605,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 	
 	@Override
-	public List<PresentmentDetail> getPresentmentDetail(long presentmentId) {
+	public List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
@@ -692,15 +613,22 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
-		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID,");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID, excludeReason,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentId = :PresentmentId");
+		if (includeData) {
+			sql.append(" AND ExcludeReason = :ExcludeReason AND Status <> :Status ");
+		}
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("PresentmentId", presentmentId);
+		if (includeData) {
+			source.addValue("ExcludeReason", 0);
+			source.addValue("Status", RepayConstants.PEXC_APPROV);
+		}
 
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
@@ -774,34 +702,64 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	/**
-	 * Method for fetching Max Schedule Date which are in presentment Details
-	 */
+
+	// Update the presentment status and bounceid
 	@Override
-	public Date getMaxSchdPresentment(String finReference) {
+	public void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT MAX(SchDate) FROM PresentmentDetails WHERE FinReference =:FinReference ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
+		StringBuffer sql = new StringBuffer();
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		
-		Date maxSchdate = null;
+
+		sql.append("Update Presentmentdetails set Status = :Status, BounceID = :BounceID, ErrorDesc = :ErrorDesc, ");
+		sql.append("ManualAdviseId = :ManualAdviseId  Where PresentmentRef = :PresentmentRef");
+
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("BounceID", bounceId);
+		source.addValue("ManualAdviseId", manualAdviseId);
+		source.addValue("ErrorDesc", errorDesc);
 		try {
-			maxSchdate = jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			maxSchdate = null;
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return maxSchdate;
+	}
+	
+	// Update the presentment status
+	@Override
+	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Update Presentmentdetails set Status = :Status, ErrorCode = :ErrorCode, ErrorDesc = :ErrorDesc Where PresentmentRef = :PresentmentRef ");
+
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("ErrorCode", errorCode);
+		if (StringUtils.trimToNull(errorDesc) != null) {
+			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
+		}
+		source.addValue("ErrorDesc", errorDesc);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

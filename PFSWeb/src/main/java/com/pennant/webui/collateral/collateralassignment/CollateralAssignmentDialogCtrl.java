@@ -399,11 +399,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					whereClause.append(" AND ((DepositorId = ");
 					whereClause.append(customerId).append(") ");
 					whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
-					whereClause.append(customerId).append(")) ) AND");
+					whereClause.append(customerId).append(")) ) ");
 				}
 			
 				// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment in Loans
-				whereClause.append(" (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
+				whereClause.append(" AND (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
 				whereClause.append(" Select CollateralRef From CollateralAssignment union Select CollateralRef From CollateralAssignment_Temp)) ");
 				whereClause.append(" OR MultiLoanAssignment = 1))  ");
 				this.collateralRef.setWhereClause(whereClause.toString());

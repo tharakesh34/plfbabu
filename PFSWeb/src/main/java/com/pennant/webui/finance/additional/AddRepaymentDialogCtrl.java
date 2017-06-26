@@ -424,7 +424,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
-				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || 
+						curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
 					comboitem.setValue("#");
@@ -436,11 +437,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				
 				// If maturity Terms, not include in list
 				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
-					continue;
-				}
-				
-				// Excluding Present generated file Schedule Terms
-				if(curSchd.getPresentmentId() > 0){
 					continue;
 				}
 				
@@ -508,17 +504,6 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				} else if (!includeFromDate && curSchd.getSchDate().compareTo(fillAfter) > 0) {
 					dateCombobox.appendChild(comboitem);
 				}
-				/*
-				 * In Recalculation type if Till Date is selected and for the Same date if the profit Balance in schedule is greater
-				 * than zero then will set the pftbal attribute
-				 */
-				if(this.cbReCalType.getSelectedIndex()>=0 &&
-						StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(), CalculationConstants.RPYCHG_TILLDATE)
-						&& curSchd.getProfitBalance().compareTo(BigDecimal.ZERO) > 0 && includeFromDate){
-					comboitem.setStyle("color:Red;");
-					comboitem.setAttribute("pftBal", curSchd.getProfitBalance());
-				}
-				//}
 			}
 		}
 		logger.debug("Leaving");

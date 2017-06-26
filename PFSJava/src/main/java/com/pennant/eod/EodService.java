@@ -86,7 +86,9 @@ public class EodService {
 
 		/**************** SOD ***********/
 		//moving customer date to sod
-		custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
+		Date eodValueDate=DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+		custEODEvent.setEodValueDate(eodValueDate);
+		custEODEvent.getCustomer().setCustAppDate(eodValueDate);
 		
 		//Date rollover
 		if (custEODEvent.isDateRollover()) {
@@ -99,6 +101,7 @@ public class EodService {
 		}
 
 		//Accrual
+		//posted on EOD only
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
 		//Auto disbursements

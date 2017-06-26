@@ -4141,11 +4141,8 @@
 	<bean id="disbursementRegistrationListCtrl"
 		class="com.pennanttech.interfacebajaj.DisbursementRegistrationListCtrl"
 		parent="basisListCtrl" scope="prototype" />
-	<bean id="mandateRegistrationListCtrl"
-		class="com.pennanttech.interfacebajaj.MandateRegistrationListCtrl"
-		parent="basisListCtrl" scope="prototype">
+	<bean id="mandateRegistrationListCtrl" class="com.pennanttech.interfacebajaj.MandateRegistrationListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="mandateService" ref="mandateService" />
-		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="mandateDataImportCtrl" class="com.pennanttech.interfacebajaj.MandateDataImportCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4165,11 +4162,13 @@
 	<bean id="glFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.GlFileDownloadListctrl"
 		parent="basisListCtrl" scope="prototype" />
 		
-	<bean id="cibilReport" class="com.pennanttech.pff.reports.cbil.CIBILReport">
-		  	<property name="dataSource" ref="pfsDatasource" />
+	<bean id="cibilFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.CIBILFileDownloadListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+			
+	<bean id="cibilReport" class="com.pennanttech.pff.reports.cibil.CIBILReport">
+	<property name="dataSource" ref="pfsDatasource" />
 		  	</bean>
-		
-
+	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"
 		class="com.pennant.webui.mandate.mandate.MandateFileUploadListCtrl"
@@ -4838,5 +4837,17 @@
 		<property name="entityService" ref="entityService"/>
 	</bean>
 	
+	<!-- Finance Tax Detail Upload -->
+	
+	<bean id="finTaxUploadDetailListCtrl"
+		class="com.pennant.webui.finance.financemain.FinTaxUploadDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
+	</bean>
+	<bean id="finTaxUploadDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinTaxUploadDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
+	</bean>
 	
 </beans>

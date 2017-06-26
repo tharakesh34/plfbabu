@@ -44,7 +44,6 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 
 
@@ -64,7 +63,6 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getFinScheduleFees(String reference, boolean isWIF, String type);
 	List<FinFeeDetail> getFinFeeDetailByFinRef(String reference, boolean isWIF, String type, String finEvent);
 	List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type);
-	List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference);
 	FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type);
 	void statusUpdate(long feeID, String status, boolean isWIF, String type);
 }

@@ -12,7 +12,7 @@
 		sizable="false">
 
 		<borderlayout id="borderlayoutFinanceTaxDetail">
-			<north>
+			<north id="north_FinTaxDetail">
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 						width="100%" widths="35%,30%,35%">
@@ -80,16 +80,19 @@
 							</columns>
 							<rows>
 								<row id="row0">
-									<label id="label_FinReference"
-										value="${c:l('label_FinanceTaxDetailDialog_FinReference.value')}" />
-									<extendedcombobox id="finReference" />
 									<label id="label_ApplicableFor"
 										value="${c:l('label_FinanceTaxDetailDialog_ApplicableFor.value')}" />
 									<hbox>
-										<space spacing="2px"/>
+										<space spacing="2px" />
 										<combobox id="applicableFor"
 											width="180px" readonly="true" />
 									</hbox>
+									<label id="label_custRef"
+										value="${c:l('label_FinanceTaxDetailDialog_CustRef.value')}" />
+									<extendedcombobox id="custRef" />
+								</row>
+								<row id="row_custID" visible="false">
+									
 								</row>
 								<row id="row1">
 									<label id="label_TaxExempted"
@@ -102,7 +105,7 @@
 									<label id="label_TaxNumber"
 										value="${c:l('label_FinanceTaxDetailDialog_TaxNumber.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px"/>
 										<uppercasebox id="taxNumber"
 											maxlength="100" width="180px" />
 									</hbox>

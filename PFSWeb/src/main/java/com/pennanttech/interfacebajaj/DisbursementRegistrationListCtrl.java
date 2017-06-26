@@ -401,9 +401,20 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
-		searchObject.addFilter(filter[0]);
+		searchObject.addFilters(filter);
 
-
+		if (fromDate.getValue() != null) {
+			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("LLDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
+			searchObject.addFilters(filters);
+		}
+		if (toDate.getValue() != null) {
+			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
+			searchObject.addFilters(filters);
+		}
 		
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filters = searchControl.getFilter();

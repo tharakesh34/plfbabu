@@ -45,6 +45,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -296,10 +297,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setFinIsActive(true);
 		financeMain.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
 
-		financeMain.setMaturityDate(financeMain.getCalMaturity());
-		financeMain.setNumberOfTerms(financeMain.getCalTerms());
-		financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
-		financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		if(financeMain.getMaturityDate() == null) {
+			financeMain.setMaturityDate(financeMain.getCalMaturity());
+		}
+		if(financeMain.getNumberOfTerms() <= 0) {
+			financeMain.setNumberOfTerms(financeMain.getCalTerms());
+		}
+		if(financeMain.getGrcPeriodEndDate() == null) {
+			financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
+		} 
+		if(financeMain.getGraceTerms() <= 0) {
+			financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		}
 		financeMain.setFinCurrAssetValue(financeMain.getFinAmount());
 		
 		// set Head branch
@@ -702,6 +711,14 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 			if (financeDetail != null) {
+				FinODPenaltyRate finODPenaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
+				if(finODPenaltyRate!=null && StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+						StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)){
+					BigDecimal totPerc = PennantApplicationUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
+					finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
+				}
+				financeDetail.getFinScheduleData().setFinODPenaltyRate(finODPenaltyRate);
 				prepareResponse(financeDetail);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {

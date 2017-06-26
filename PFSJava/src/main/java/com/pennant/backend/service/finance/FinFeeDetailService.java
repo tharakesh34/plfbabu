@@ -44,6 +44,7 @@
 package com.pennant.backend.service.finance;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -67,4 +68,5 @@ public interface FinFeeDetailService {
 	List<AuditDetail>  doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType, String finReference);
 	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
 			String auditTranType);
+	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map);
 }

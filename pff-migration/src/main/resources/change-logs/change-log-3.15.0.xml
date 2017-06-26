@@ -1343,14 +1343,14 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
 		</sql>
 	</changeSet>
-			<!-- <changeSet author="pruthvi" id="93">
+	<changeSet author="pruthvi" id="93">
 	<sql>
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet author="Manoj.P" id="94">
 		<renameColumn columnDataType="VARCHAR(30)" newColumnName="MEMBER_ID"
@@ -1528,5 +1528,2222 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="STATUS" type="varchar(1)" />
 	</addColumn>
 </changeSet>
+<changeSet author="Madhu Babu" id="107">
+<renameTable newTableName="FinTaxUploadHeader"
+            oldTableName="FinTaxDetailUploadHeader"/>
+</changeSet>
+<changeSet author="Manoj.P" id="108">
+	<addColumn tableName="CIBIL_FILE_INFO">
+		<column name="FILE_LOCATION" type="VARCHAR(250) " />
+	</addColumn>
+</changeSet>
+<changeSet id="109" author="Durgaprasad G">
+		<createTable tableName="TAXDOWNLOADHAEDER">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProcessDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EndDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecordCount" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Export" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="110">
+		<renameColumn columnDataType="bigint" newColumnName="CUSTID"
+		oldColumnName="CUST_ID" tableName="CIBIL_CUSTOMER_EXTRACT" />
+	</changeSet>
+	<changeSet id="111" author="Manoj.P">
+		<sql>
+			 UPDATE SMTPARAMETERS SET SYSPARMMAINT = 0 where SYSPARMCODE = 'SAPGL_LAST_RUN_MONTH';
+			 UPDATE SMTPARAMETERS SET SYSPARMMAINT = 0 where SYSPARMCODE = 'SAPGL_LAST_RUN_YEAR';
+		</sql>
+	</changeSet>
+	<changeSet id="112" author="Chaitanya.ch">
+		<modifyDataType tableName="Postings" columnName="ACCOUNTTYPE" newDataType="varchar(15)"/>
+	</changeSet>
+	
+	<changeSet id="113" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADDETAIL">
+		<column name="HAEDERID" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="HostSystemTransactionID" type="varchar(45)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionType" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BusinessArea" type="varchar(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="SourceSystem" type="varchar(3)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CompanyCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="RegisteredCustomer" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="CustomerID" type="number(18)" />
+		<column name="CustomerName" type="varchar(200)" />
+		<column name="CustomerGSTIN" type="varchar(100)" />
+		<column name="CustomerAddress" type="varchar(450)" /> 
+		<column name="CustomerStateCode" type="varchar(100)" />
+		<column name="AddressChangeDate" type="datetime" />
+		<column name="CustomerPANNo" type="varchar(20)" />
+		<column name="LedgerCode" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="HSNSACCode" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NatureOfService" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanAccountNo" type="varchar(20)" />
+		<column name="ProductCode" type="varchar(8)" />
+		<column name="ChargeCode" type="varchar(15)" />
+		<column name="LoanBranch" type="varchar(12)"> 
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanBranchState" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="LoanServicingBranch" type="varchar(12)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BFLGSTINNo" type="varchar(100)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TxnBranchAddress" type="varchar(400)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TxnBranchStateCode" type="varchar(2)">
+			<constraints nullable="false" />
+		</column>
+		<column name="TransactionAmount" type="number(18)">
+			<constraints nullable="false" />
+		</column>
+		<column name="ReverseChargeApplicable" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="InvoiceType" type="char(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="OriginalInvoiceNo" type="varchar(45)">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+	</changeSet>
+	
+	<changeSet id="114" author="Durgaprasad G">
+	<createTable tableName="POSTINGS_TAXDOWNLOAD">
+		<column name="LINKEDTRANID" type="NUMBER(19)">
+			<constraints nullable="false" />
+		</column>
+		<column name="POSTREF" type="VARCHAR(50)" />
+		<column name="POSTINGID" type="VARCHAR(50)" />
+		<column name="FINREFERENCE" type="VARCHAR(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="FINEVENT" type="VARCHAR(20) ">
+			<constraints nullable="false" />
+		</column>
+		<column name="SHADOWPOSTING" type="CHAR(1)" />
+		<column name="POSTDATE" type="datetime"/>
+		<column name="VALUEDATE" type="datetime"/>
+		<column name="TRANCODE" type="VARCHAR(20)" />
+		<column name="TRANDESC" type="VARCHAR(50)" />
+		<column name="REVTRANCODE" type="VARCHAR(20)" />
+		<column name="DRORCR" type="CHAR(1)" />
+		<column name="ACCOUNT" type="VARCHAR(50)" />
+		<column name="POSTAMOUNT" type="NUMBER(18)" />
+		<column name="AMOUNTTYPE" type="VARCHAR(10)" />
+		<column name="POSTSTATUS" type="VARCHAR(20)" />
+		<column name="ERRORID" type="VARCHAR(8)" />
+		<column name="ERRORMSG" type="VARCHAR(50)" />
+		<column name="ACCCY" type="VARCHAR(3)" />
+		<column name="TRANORDERID" type="VARCHAR(20)" />
+		<column name="FINRUNNINGBAL" type="NUMBER(18)" />
+		<column name="POSTTOSYS" type="CHAR(1)" />
+		<column name="EXCHANGERATE" type="NUMBER(13,9)" />
+		<column name="POSTBRANCH" type="VARCHAR(12)" />
+		<column name="DERIVEDTRANORDER" type="NUMBER(10)" />
+		<column name="TRANSORDER" type="NUMBER(10)" />
+		<column name="POSTAMOUNTLCCCY" type="NUMBER(18)" />
+		<column name="APPDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="APPVALUEDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="USERBRANCH" type="VARCHAR(12)" />
+		<column name="CUSTAPPDATE" type="datetime" />
+		<column name="POSTCATEGORY" type="NUMBER(10)" />
+		<column name="ACCOUNTTYPE" type="VARCHAR(15)" />
+	</createTable>
+</changeSet>
 
+	<changeSet id="115" author="Durgaprasad G">
+		<createTable tableName="SEQTAXDOWNLOADHAEDER">
+			<column name="SeqNo" type="NUMBER(19)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="116" author="Durgaprasad G">
+		<sql>
+			Insert into SEQTAXDOWNLOADHAEDER values (0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="117" author="SreeRavali">
+		<addColumn tableName="FinTaxDetail">
+			<column name="ApplicableForCustId" type="NUMBER(19)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="118" author="SreeRavali">
+		<addColumn tableName="FinTaxDetail_Temp">
+			<column name="ApplicableForCustId" type="NUMBER(19)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="119" author="SreeRavali">
+		<createView replaceIfExists="true" viewName="FinTaxDetail_AView">
+SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1 LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city
+</createView>
+	</changeSet>
+
+
+	<changeSet id="120" author="SreeRavali">
+		<createView replaceIfExists="true" viewName="FinTaxDetail_View">
+SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail_Temp T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			UNION ALL
+			SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.CountryDesc CountryName, T3.CPProvinceName ProvinceName,T4.PCCItyName CityName, t5.areaname PinCodeName
+			FROM    	FinTaxDetail T1  LEFT JOIN
+      BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+      RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+      rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+      pincodes T5 ON T1.PinCode = t5.pincode and T1.City = t5.city 
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+</createView>
+	</changeSet>
+	
+	<changeSet id="121" author="Durgaprasad G">
+	<sql>
+		Update FinTaxDetail set ApplicableForCustId = 0;
+		Update FinTaxDetail_Temp set ApplicableForCustId = 0;
+	</sql>
+</changeSet>
+
+	<changeSet id="122" author="Durgaprasad">
+		<dropColumn tableName="TAXDOWNLOADDETAIL" columnName="HAEDERID" />
+		<addColumn tableName="TAXDOWNLOADDETAIL">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="CustomerAddress" newDataType="varchar(500)" />
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="TxnBranchAddress" newDataType="varchar(500)" />
+		<dropNotNullConstraint tableName="TAXDOWNLOADDETAIL" columnName="OriginalInvoiceNo"/>
+	</changeSet>
+	
+	
+	<changeSet id="123" author="Manoj.P">
+		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBAM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AddrTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="124" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CBAM_ADT"
+			referencedTableName="BMTADDRESSTYPES" referencedColumnNames="AddrTypeCode"
+			baseTableName="CIBIL_ADDRESS_TYPES_MAPPING" baseColumnNames="AddrTypeCode" />
+	</changeSet>
+	
+	
+	
+<changeSet id="125" author="Manoj.P">
+		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBPM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PhoneTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	
+	<changeSet id="126" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CBAM_PT"
+			referencedTableName="BMTPHONETYPES" referencedColumnNames="PhoneTypeCode"
+			baseTableName="CIBIL_PHONE_TYPES_MAPPING" baseColumnNames="PhoneTypeCode" />
+	</changeSet>
+	
+	
+	
+	<changeSet id="127" author="Manoj.P">
+		<createTable tableName="CIBIL_EMAIL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBEM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	
+	<changeSet id="128" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CBEM_ET"
+			referencedTableName="BMTEMAILTYPES" referencedColumnNames="EmailTypeCode"
+			baseTableName="CIBIL_EMAIL_TYPES_MAPPING" baseColumnNames="EmailTypeCode" />
+	</changeSet>
+	
+	<changeSet id="129" author="Manoj.P">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet author="Manoj.P" id="130">
+		<addPrimaryKey columnNames="Code,FinType" constraintName="PK_CB_CD_FT"
+		tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
+	</changeSet>
+
+	<changeSet id="131" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_FT"
+			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FinType"
+			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="FinType"/>
+	</changeSet>
+	
+	<changeSet id="132" author="Manoj.P">
+		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBCT_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	
+	<changeSet id="133" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_CS"
+			referencedTableName="COLLATERALSTRUCTURE" referencedColumnNames="CollateralType"
+			baseTableName="CIBIL_COLLATERAL_TYPES_MAPPING" baseColumnNames="CollateralType" />
+	</changeSet>
+	
+	<changeSet id="134" author="Siva">
+		<sql>
+		Delete from ErrorDetails where errorCode = 'CL002';
+		INSERT INTO ErrorDetails VALUES('CL002','EN','E','Bank Valuation should not be less than pre-defined value.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="134" author="Manoj.P">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			COALESCE((SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID GROUP BY FM.FINREFERENCE)/CCYMINORCCYUNITS, 0) CUST_EMI,
+			COALESCE((SELECT SUM(MAX(FSD.REPAYAMOUNT+FSD.FEESCHD)) FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)/CCYMINORCCYUNITS, 0) EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT, 
+      COALESCE((SELECT SUM(MAX(REPAYAMOUNT+FEESCHD)) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+      GROUP BY FINREFERENCE), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+			
+		</createView>
+	</changeSet>
+	
+	<changeSet id="135" author="Manoj.P">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBAT" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	<changeSet author="Manoj.P" id="136">
+		<addUniqueConstraint columnNames="AddrTypeCode"
+		constraintName="UK_CBADDTYPE" tableName="CIBIL_ADDRESS_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="137">
+		<addUniqueConstraint columnNames="PhoneTypeCode"
+		constraintName="UK_CBPHTYPE" tableName="CIBIL_PHONE_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="138">
+		<addUniqueConstraint columnNames="EmailTypeCode"
+		constraintName="UK_CBEMTYPE" tableName="CIBIL_EMAIL_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet id="139" author="Manoj.P">
+		<dropTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING"/>
+	</changeSet>
+	
+	
+	<changeSet id="140" author="Manoj.P">
+		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBDM_DT" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocTypeCode" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	
+	<changeSet id="141" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_DT"
+			referencedTableName="BMTDOCUMENTTYPES" referencedColumnNames="DOCTYPECODE"
+			baseTableName="CIBIL_DOCUMENT_TYPES_MAPPING" baseColumnNames="DocTypeCode" />
+	</changeSet>
+	
+	
+	<changeSet author="Manoj.P" id="142">
+		<addUniqueConstraint columnNames="DocTypeCode"
+		constraintName="UK_CBDOCTYPE" tableName="CIBIL_DOCUMENT_TYPES_MAPPING" />
+	</changeSet>
+	<changeSet author="Madhubabu" id="136">
+	<createTable tableName="FinTaxDetailUploadHeader_Temp">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet id="137" author="Madhubabu">
+	<dropTable tableName="FinTaxDetailUploadHeader_Temp"/>
+	</changeSet>
+	<changeSet author="Madhubabu" id="138">
+	<createTable tableName="FinTaxUploadHeader_Temp">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+
+
+<changeSet id="143" author="Manoj.P">
+		<createTable tableName="CIBIL_STATES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBST_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="CPProvince" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FirstDigitPrefixMin" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FirstDigitPrefixMax" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	
+	<changeSet id="144" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_RMT_CP"
+			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
+			baseTableName="CIBIL_STATES_MAPPING" baseColumnNames="CPProvince" />
+	</changeSet>
+	
+	
+	<changeSet id="145" author="Manoj.P">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBACM_CD" nullable="false"/>
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="146" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_ACTM_FT"
+			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE"
+			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="FINTYPE" />
+	</changeSet>
+	
+	<changeSet id="147" author="Durgaprasad G">
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="HSNSACCode" newDataType="VARCHAR(50)" />
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="NATUREOFSERVICE" newDataType="VARCHAR(50)" />
+    </changeSet>
+    
+    <changeSet id="148" author="Manoj.P">
+    	<dropTable tableName="CIBIL_PHONE_TYPES_MAPPING"/>
+    </changeSet>
+    
+    
+    <changeSet author="Manoj.P" id="149">
+		<addUniqueConstraint columnNames="FinType"
+		constraintName="UK_CBFINTYPE" tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet id="150" author="Manoj.P">
+		<createTable tableName="CIBIL_PHONE_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBPC" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	
+	<changeSet id="151" author="Manoj.P">
+		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="PhoneTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
+	
+	
+	<changeSet id="152" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_PT"
+			referencedTableName="BMTPHONETYPES" referencedColumnNames="PhoneTypeCode"
+			baseTableName="CIBIL_PHONE_TYPES_MAPPING" baseColumnNames="PhoneTypeCode" />
+	</changeSet>
+	
+	
+	<changeSet id="153" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CB_CD"
+			referencedTableName="CIBIL_PHONE_TYPES" referencedColumnNames="Code"
+			baseTableName="CIBIL_PHONE_TYPES_MAPPING" baseColumnNames="Code"/>
+	</changeSet>
+	
+	
+	<changeSet author="Manoj.P" id="154">
+		<addUniqueConstraint columnNames="PhoneTypeCode"
+		constraintName="UK_CBPHTYPECD" tableName="CIBIL_PHONE_TYPES_MAPPING" />
+	</changeSet>
+	
+	<changeSet id="155" author="Manoj.P">
+	 	<dropTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING"/>
+	 	<dropTable tableName="CIBIL_ACCOUNT_TYPES"/>
+	 	<dropTable tableName="CIBIL_ADDRESS_TYPES_MAPPING"/>
+	</changeSet>
+	<changeSet author="Manoj.P" id="156">
+		<addPrimaryKey columnNames="CODE, PHONETYPECODE"
+			constraintName="PK_CPTM_CD_PTC" tableName="CIBIL_PHONE_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="157" author="Manoj.P">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBAT" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="158" author="Manoj.P">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="159" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CATM_FT"
+			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE"
+			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="FINTYPE" />
+	</changeSet>
+	
+	
+	<changeSet id="160" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CATM_CD"
+			referencedTableName="CIBIL_ACCOUNT_TYPES" referencedColumnNames="Code"
+			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="Code"/>
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="161">
+		<addPrimaryKey columnNames="CODE, FinType"
+			constraintName="PK_CATM_CD_FT" tableName="CIBIL_ACCOUNT_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="162" author="Manoj.P">
+		<createTable tableName="CIBIL_ADDRESS_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CAT_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="163" author="Manoj.P">
+		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="AddrTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="164" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CADTM_CD"
+			referencedTableName="BMTADDRESSTYPES" referencedColumnNames="AddrTypeCode"
+			baseTableName="CIBIL_ADDRESS_TYPES_MAPPING" baseColumnNames="AddrTypeCode" />
+	</changeSet>
+	
+	
+	<changeSet id="165" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CATM_ATC"
+			referencedTableName="CIBIL_ADDRESS_TYPES" referencedColumnNames="Code"
+			baseTableName="CIBIL_ADDRESS_TYPES_MAPPING" baseColumnNames="Code"/>
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="166">
+		<addPrimaryKey columnNames="CODE, AddrTypeCode"
+			constraintName="PK_CADTM_CD_AT" tableName="CIBIL_ADDRESS_TYPES_MAPPING"/>
+	</changeSet>
+	
+	
+	<changeSet id="167" author="Manoj.P">
+		<createTable tableName="CIBIL_DOCUMENT_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBD_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="168" author="Manoj.P">
+		<dropTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="169" author="Manoj.P">
+		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DocTypeCode" type="VARCHAR2(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="170" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CDTM_DT"
+			referencedTableName="BMTDOCUMENTTYPES" referencedColumnNames="DocTypeCode"
+			baseTableName="CIBIL_DOCUMENT_TYPES_MAPPING" baseColumnNames="DocTypeCode" />
+	</changeSet>
+	
+	<changeSet id="171" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CDTM_CD"
+			referencedTableName="CIBIL_DOCUMENT_TYPES" referencedColumnNames="Code"
+			baseTableName="CIBIL_DOCUMENT_TYPES_MAPPING" baseColumnNames="Code"/>
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="172">
+		<addPrimaryKey columnNames="CODE, DocTypeCode"
+			constraintName="PK_CDTM_CD_DT" tableName="CIBIL_DOCUMENT_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="173" author="Manoj.P">
+		<sql>
+			UPDATE DATA_ENGINE_CONFIG set FILEEXTENSION = NULL where Name = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
+	<changeSet id="174" author="Srikanth">
+	<sql>
+	 Delete from ErrorDetails where ErrorCode in('90340','90341','90342');
+	INSERT INTO ErrorDetails VALUES('90340','EN','E','Cancel reserve not applicable when reserve amount is less than or equal to zero.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90341','EN','E','Given CIF:{0} should be matched with customer in assigned limit:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 INSERT INTO ErrorDetails VALUES('90342','EN','E','Old mandate customer and new mandate customer should be same.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="175" author="Manoj.P">
+		<modifyDataType tableName="BMTDocumentTypes" columnName="DOCTYPEDESC"
+			newDataType="varchar(250) " />
+	</changeSet>
+	
+	<changeSet id="176" author="Manoj.P">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT   
+				   FA. PAYMENTID,
+				   FA.FINREFERENCE,
+				   'D' CHANNEL, 
+				   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   FA.DISBDATE,
+	               FA.LLDATE,
+				   FA.PAYABLELOC,
+				   FA.PRINTINGLOC,
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+	              BD.BANKNAME BANKNAME,
+	              BB.BRANCHCODE,
+	              BB.BRANCHDESC BRANCHDESC,
+				  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR             MICR_CODE,
+				   BB.IFSC             IFSC_CODE,
+				   FA.BENEFICIARYACCNO,
+				   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+				   FA.PHONECOUNTRYCODE||FA.PHONEAREACODE||FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+				   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   FA.STATUS           STATUS,
+				   FA.DESCRIPTION      REMARKS,
+				     FA.PAYMENTTYPE      PAYMENTTYPE,
+				     FM.FINTYPE,
+				     PB.PARTNERBANKID,
+				     PB.PARTNERBANKCODE,
+				     FA.INPUTDATE,
+				     PB.ALWFILEDOWNLOAD,
+	                PB.FILENAME,
+				     FM.FINISACTIVE
+				   FROM FINADVANCEPAYMENTS FA
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+	               INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+	         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+				   
+				   UNION ALL
+				   
+				   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+				   PH.FINREFERENCE,
+				   PH.PAYMENTTYPE CHANNEL, 
+				   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   PI.POSTDATE DISBDATE, 
+				   PI.POSTDATE LLDATE, 
+				   PI.PAYABLELOC, 
+				   PI.PRINTINGLOC, 
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+				   BD.BANKNAME,
+				   BB.BRANCHCODE,
+				   BB.BRANCHDESC,
+				   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR              MICR_CODE,
+				   BB.IFSC              IFSC_CODE,
+				   PI.ACCOUNTNO BENEFICIARYACCNO,
+				   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+				   PI.PHONECOUNTRYCODE||PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+				   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   PI.STATUS           STATUS, 
+				   PI.REMARKS          REMARKS,
+				   PI.PAYMENTTYPE      PAYMENTTYPE,
+				   FM.FINTYPE,
+				   PB.PARTNERBANKID,
+				   PB.PARTNERBANKCODE,
+				   PI.POSTDATE INPUTDATE, 
+				   PB.ALWFILEDOWNLOAD,
+				   PB.FILENAME,
+				   FM.FINISACTIVE
+				   FROM PAYMENTINSTRUCTIONS PI 
+				   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="177" author="Manoj.P">
+		<modifyDataType tableName="BMTDocumentTypes" columnName="DOCTYPEDESC"
+			newDataType="varchar(500) " />
+	</changeSet>
+	
+	
+	<changeSet id="178" author="Manoj.P">
+		<createTable tableName="CIBIL_COLLATERAL_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBCT_COD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="179" author="Manoj.P">
+		<dropTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="180" author="Manoj.P">
+		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="CollateralType" type="VARCHAR(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="181" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CCTM_CT"
+			referencedTableName="COLLATERALSTRUCTURE" referencedColumnNames="CollateralType"
+			baseTableName="CIBIL_COLLATERAL_TYPES_MAPPING" baseColumnNames="CollateralType" />
+	</changeSet>
+	
+	<changeSet id="182" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CCTM_CD"
+			referencedTableName="CIBIL_COLLATERAL_TYPES" referencedColumnNames="Code"
+			baseTableName="CIBIL_COLLATERAL_TYPES_MAPPING" baseColumnNames="Code"/>
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="183">
+		<addPrimaryKey columnNames="Code, CollateralType"
+			constraintName="PK_CCTM_CD_CT" tableName="CIBIL_COLLATERAL_TYPES_MAPPING"/>
+	</changeSet>
+	
+	<changeSet id="184" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_TVIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails_Temp T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="185" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_AVIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="186" author="Kesav">
+		<createView viewName="FINJOINTACCOUNTDETAILS_VIEW" replaceIfExists="true">
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails_Temp T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+				UNION ALL
+				SELECT        T1.JointAccountId, T1.FinReference, T1.CustCIF, T1.IncludeRepay, T1.RepayAccountId, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+				              T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+				              T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, 
+				              T3.CustShrtName LovDescCIFName, T3.CUSTID
+				FROM          FinJointAccountDetails T1 INNER JOIN
+				              SecUsers T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				              Customers T3 ON T1.CustCIF =  T3.CustCIF
+				WHERE         NOT EXISTS (SELECT 1 FROM FinJointAccountDetails_TEMP WHERE JointAccountId = T1.JointAccountId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="187" author="Kesav">
+		<createView viewName="FINGUARANTORSDETAILS_AVIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            T3.CUSTID
+			            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="188" author="Kesav">
+		<createView viewName="FINGUARANTORSDETAILS_TVIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            T3.CUSTID
+			            
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		</createView>
+	</changeSet>
+	
+	<changeSet id="189" author="Kesav">
+		<createView viewName="FINGUARANTORSDETAILS_VIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            T3.CUSTID
+			            
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+			
+			UNION ALL
+			
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            T3.CUSTID
+			            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+			WHERE     NOT EXISTS (SELECT 1 FROM FinGuarantorsDetails_TEMP  WHERE GuarantorId = T1.GuarantorId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="190" author="Manoj.P">
+		<sql>
+		 DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  'D:/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="191" author="Kesav">
+		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="192" author="Kesav">
+		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="193" author="Kesav">
+		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+			
+			UNION ALL
+			
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = t3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.APPLICABLEFORCUSTID = T6.CUSTID
+			          
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	<changeSet id="191" author="Manoj.P">
+		<sql>
+DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  'D:/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+
+DELETE FROM CIBIL_ACCOUNT_TYPES;
+insert into CIBIL_ACCOUNT_TYPES values ('01', 	'Auto Loan (Personal)',             			1, 1000,sysdate,'Approved','','','','','', 0);	
+insert into CIBIL_ACCOUNT_TYPES values ('02', 	'Housing Loan',                     			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('03', 	'Property Loan',                    			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('04', 	'Loan Against Shares / Securities', 			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('05', 	'Personal Loan',                    			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('06', 	'Consumer Loan',                    			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('07', 	'Gold Loan',                        			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('08', 	'Education Loan',                   			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('09', 	'Loan to Professional',             			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('10', 	'Credit Card',                      			1, 1000,sysdate,'Approved','','','','','', 0);			
+insert into CIBIL_ACCOUNT_TYPES values ('11', 	'Leasing',                          			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('12', 	'Overdraft',                        			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('13', 	'Two-Wheeler Loan',                 			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('14', 	'Non-Funded Credit Facility',       			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('15', 	'Loan Against Bank Deposits',       			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('16', 	'Fleet Card',                       			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('17', 	'Commercial Vehicle Loan',          			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('18', 	'Telco – Wireless',                 			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('19', 	'Telco – Broadband',                			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('20', 	'Telco – Landline'	,               			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('31', 	'Secured Credit Card',              			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('32', 	'Used Car Loan',                    			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('33', 	'Construction Equipment Loan',      			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('34', 	'Tractor Loan',                     			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('35', 	'Corporate Credit Card',            			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('36', 	'Kisan Credit Card',                            1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('37', 	'Loan on Credit Card',                          1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('38', 	'Prime Minister Jaan Dhan Yojana - Overdraft',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('39', 	'Mudra Loans – Shishu / Kishor / Tarun',        1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('40', 	'Microfinance – Business Loan'	,               1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('41', 	'Microfinance – Personal Loan'	,               1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('42', 	'Microfinance – Housing Loan',                  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('43', 	'Microfinance – Others',                        1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('44', 	'Pradhan Mantri Awas Yojana - Credit Link Su', 	1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('50', 	'Business Loan - Secured',           			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('51', 	'Business Loan – General',           			1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('52', 	'Business Loan – Priority Sector – Small Bus',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('53', 	'Business Loan – Priority Sector – Agricultu',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('54', 	'Business Loan – Priority Sector – Others',   	1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('55', 	'Business Non-Funded Credit Facility – Gener',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('56', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('57', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('58', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('59', 	'Business Loan Against Bank Deposits',          1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('61', 	'Business Loan - Unsecured',                    1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('0'	, 'Other',                                          1, 1000,sysdate,'Approved','','','','','', 0);
+
+delete from CIBIL_PHONE_TYPES_MAPPING;
+delete from CIBIL_PHONE_TYPES;
+insert into CIBIL_PHONE_TYPES values ('01','MOBILE',                     1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES values ('02','Home Landline No.',          1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES values ('03','Office Landline No.',        1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'MOBILE1', 1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'MOBILE2', 1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'OFFMOB',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('02', 'HOME',    1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('03', 'OFFICE',  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('03', 'OFFFAX',  1, 1000,sysdate,'Approved','','','','','', 0);
+
+delete from CIBIL_ADDRESS_TYPES_MAPPING;
+delete from CIBIL_ADDRESS_TYPES;
+insert into CIBIL_ADDRESS_TYPES values ('01','PERMANENT ADDRESS',       1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES values ('02','RESIDENCE ADDRESS',       1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES values ('03','OFFICE ADDRESS',          1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('01', 'PER',                      1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('02', 'CURRES',                  1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('03', 'OFFICE',                  1, 1000,sysdate,'Approved','','','','','', 0);
+
+
+delete from CIBIL_DOCUMENT_TYPES_MAPPING;
+delete from CIBIL_DOCUMENT_TYPES;
+delete from BMTDocumentTypes where DOCTYPECODE IN (
+'SP001'
+,'SP002'
+,'SP003'
+,'SP004'
+,'SP005'
+,'SP006'
+,'SP007'
+,'SP008'
+,'SP009'
+,'SP010'
+,'IN001'
+,'IN002'
+,'IN004'
+,'IN005'
+,'IN006'
+,'IN007'
+,'IN008'
+,'IN009'
+,'IN003'
+,'IN010'
+,'IN011'
+,'IN012'
+,'IN013'
+,'IN014'
+,'IN015'
+,'IN016'
+,'IN017'
+,'IN018'
+,'IN019'
+,'IN020'
+,'IN021'
+,'IN022'
+,'CO001'
+,'CO002'
+,'CO003'
+,'CO004'
+,'CO005'
+,'PF001'
+,'PF002'
+,'PF003'
+,'PF004'
+,'PF005'
+,'PF006'
+,'PF007'
+,'PF008'
+,'PF009'
+,'PF010'
+,'PF011'
+,'PF012'
+,'TR001'
+,'TR002'
+,'TR003'
+,'TR004'
+,'HF001'
+,'HF002'
+,'HF003'
+,'HF004'
+,'LA001');
+
+
+insert into CIBIL_DOCUMENT_TYPES values ('01','Income Tax ID Number (PAN)',           1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('02','Passport Number',                      1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('03','Voter ID Number',                      1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('04','Driver’s License Number',              1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('05','Ration Card Number',                   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('06','Universal ID Number (UID)',            1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('07','Additional ID #1 (For Future Use',     1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('08','Additional ID #2 (For Future Use',     1, 1000,sysdate,'Approved','','','','','', 0);
+
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('01', '03',                         1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('02', '02',                         1, 1000,sysdate,'Approved','','','','','', 0);
+alter table CustomerDocuments disable constraint FK_CUSTDOCS_BMTDOCTYPES;
+update CustomerDocuments set CustDocCategory ='01' where CustDocCategory in (select DOCTYPECODE from BMTDOCUMENTTYPES where DOCTYPEDESC='Aadhar Card');
+update BMTDOCUMENTTYPES set DOCTYPECODE ='01' where DOCTYPEDESC='Aadhar Card';
+alter table CustomerDocuments enable constraint FK_CUSTDOCS_BMTDOCTYPES;
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('06', '01',                         1, 1000,sysdate,'Approved','','','','','', 0);
+
+delete from CIBIL_STATES_MAPPING;
+insert into CIBIL_STATES_MAPPING values ('01','Jammu and Kashmir', 				'11', 18,19,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('02','Himachal Pradesh',				'3', 17,17,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('03','Punjab',          				'12', 14,16,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('04','Chandigarh',      				'13', 16,16,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('05','Uttaranchal',     				'14', 24,26,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('06','Haryana',         				'37', 12,13,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('07','Delhi',			 				'6',  11,11,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('08','Rajasthan',		 				'15', 30,34,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('09','Uttar Pradesh',	 				'38', 20,28,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('10','Bihar',			 				'16', 80,85,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('11','Sikkim',							'17', 73,73,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('12','Arunachal Pradesh',				'18', 78,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('13','Nagaland',						'19', 79,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('14','Manipur',						'20', 79,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('15','Mizoram',						'21', 79,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('16','Tripura',						'22', 72,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('17','Meghalaya',						'23', 79,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('18','Assam',							'24', 78,79,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('19','West Bengal',					'8',  70,74,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('20','Jharkhand',						'25', 81,83,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('21','Orissa',							'26', 75,77,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('22','Chhattisgarh',					'27', 46,49,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('23','Madhya Pradesh',					'28', 45,48,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('24','Gujarat',						'29', 36,39,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('25','Daman and Diu',					'30', 36,39,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('26','Dadra and Nagar Haveli',			'31', 39,39,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('27','Maharashtra',					'5',  40,44,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('28','Andhra Pradesh',					'32', 50,56,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('29','Karnataka',						'7',  53,59,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('30','Goa',							'33', 40,40,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('31','Lakshadweep',					'34', 67,68,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('32','Kerala',							'10', 67,69,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('33','Tamil Nadu',						'9',  53,66,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('34','Pondicherry',					'35', 60,60,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('35','Andaman and Nicobar Islands',	'36', 74,74,   1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('36','Telangana',						'TS', 50,56,   1, 1000,sysdate,'Approved','','','','','', 0);
+
+
+delete from CIBIL_COLLATERAL_TYPES_MAPPING;
+delete from CIBIL_COLLATERAL_TYPES;
+
+insert into CIBIL_COLLATERAL_TYPES values ('00','No Collateral',           					1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('01','Property',                					1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('02','Gold',         								1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('03','Shares',          							1, 1000,sysdate,'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('04','Saving Account and Fixed Deposit',           1, 1000,sysdate,'Approved','','','','','', 0);
+
+		</sql>
+	</changeSet>
+	
+	<changeSet id="194" author="Manoj.P">
+		<createView viewName="CIBIL_CUSTOMER_EXTARCT_VIEW" replaceIfExists="true"> 
+			 	select C.CUSTID, FM.FINREFERENCE, 1 OWNERSHIP, PD.LATESTRPYDATE from FINANCEMAIN FM
+				INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE
+				where C.custid in (select distinct custid  from financemain) 
+				and CUSTTYPECODE IN (select CUSTTYPECODE from RMTCUSTTYPES WHERE CUSTTYPECTG = 'RETAIL')
+				UNION ALL
+				select C.CUSTID, FM.FINREFERENCE, 3 OWNERSHIP, PD.LATESTRPYDATE from FINGUARANTORSDETAILS GD
+				INNER JOIN CUSTOMERS C ON C.CUSTCIF = GD.GUARANTORCIF
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = GD.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = GD.FINREFERENCE
+				where C.custid in (select distinct custid  from financemain) 
+				and CUSTTYPECODE IN (select CUSTTYPECODE from RMTCUSTTYPES WHERE CUSTTYPECTG = 'RETAIL')
+				UNION ALL
+				select  C.CUSTID, FM.FINREFERENCE, 4 OWNERSHIP, PD.LATESTRPYDATE from FINJOINTACCOUNTDETAILS JA
+				INNER JOIN CUSTOMERS C ON C.CUSTCIF = JA.CUSTCIF
+				INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = JA.FINREFERENCE
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = JA.FINREFERENCE
+				where C.custid in (select distinct custid  from financemain) 
+				and CUSTTYPECODE IN (select CUSTTYPECODE from RMTCUSTTYPES WHERE CUSTTYPECTG = 'RETAIL')
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="195" author="Manoj.P">
+	<createView viewName="CIBIL_CUSTOMER_LOANS_VIEW" replaceIfExists="true">
+				SELECT  
+				CU.CUSTID,
+				coalesce(at.code, '0') FINTYPE,
+				FM.FINREFERENCE, 
+				FM.FINSTARTDATE,
+				PD.LATESTRPYDATE,
+				UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+				UDF_CONVERTCURRENCY(PD.TOTALPRIBAL+PD.TOTALPFTBAL, FM.FINCCY, 'INR') CURRENT_BALANCE,
+				UDF_CONVERTCURRENCY(PD.ODPRINCIPAL+PD.ODPROFIT, FM.FINCCY, 'INR') AMOUNT_OVERDUE,
+				PD.CURODDAYS,
+				FM.CLOSINGSTATUS,
+				COALESCE(COLTRL.COLLATERAL_VALUE, 0) COLLATERAL_VALUE,
+				COALESCE(ctm.code,'00') COLLATERALTYPE,
+				COALESCE(FM.REPAYPROFITRATE, 0) REPAYPROFITRATE,
+				FM.NUMBEROFTERMS,
+				UDF_CONVERTCURRENCY(FM.FIRSTREPAY, FM.FINCCY, 'INR') FIRSTREPAY,
+				UDF_CONVERTCURRENCY(WD.WriteOFFPrincipal + WD.WriteOffProfit + WD.WriteOffSchFee + WD.WriteOffIns, FM.FINCCY, 'INR') WRITTENOFF_AMOUNT,
+				UDF_CONVERTCURRENCY(WD.WRITTENOFFPRI, FM.FINCCY, 'INR') WRITTENOFF_PRINCIPAL,
+				UDF_CONVERTCURRENCY(WP.SETTLEMENT_AMOUNT, FM.FINCCY, 'INR') SETTELEMENT_AMOUNT,
+				UDF_CONVERTCURRENCY(PD.LATESTRPYPRI+LATESTRPYPFT, FM.FINCCY, 'INR') PAYMENT_AMOUNT,
+				FM.REPAYFRQ,
+				CU.OWNERSHIP
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FinReference = FM.FinReference 
+				INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (SELECT CA.REFERENCE, UDF_CONVERTCURRENCY((CS.BANKVALUATION*CA.ASSIGNPERC), CS.COLLATERALCCY, 'INR') COLLATERAL_VALUE, CS.COLLATERALTYPE
+				FROM COLLATERALASSIGNMENT CA 
+				INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF) COLTRL ON COLTRL.REFERENCE = FM.FINREFERENCE
+				LEFT JOIN FINWRITEOFFDETAIL WD ON WD.FINREFERENCE = FM.FINREFERENCE
+				LEFT JOIN (select FINREFERENCE, SUM(WriteoffPayamount) SETTLEMENT_AMOUNT from finwriteoffpayment group by FINREFERENCE) WP ON WP.FINREFERENCE = FM.FINREFERENCE
+				left join CIBIL_ACCOUNT_TYPES_MAPPING atm on atm.finType = FM.finType
+				left join CIBIL_ACCOUNT_TYPES at on at.code = atm.code
+				left join CIBIL_COLLATERAL_TYPES_MAPPING ctm on ctm.COLLATERALTYPE = COLTRL.COLLATERALTYPE
+				left join CIBIL_COLLATERAL_TYPES ct on ct.code = ctm.code
+	</createView>
+	</changeSet>
+	
+	<changeSet id="196" author="Manoj.P">
+		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+			select   
+			ATG.GROUPCODE,
+			AM.HOSTACCOUNT HOSTACCOUNT,
+			AT.ACTYPEDESC DESCRIPTION,
+			COALESCE(LR.CLOSINGBAL, 0) OPENINGBAL,
+			COALESCE(LR.CLOSINGBALTYPE, ' ') OPENINGBALTYPE,
+			ABS(TODAYDEBITS) DEBITAMOUNT,
+			ABS(TODAYCREDITS) CREDITAMOUNT,
+			COALESCE(ABS(AH.TODAYNET), 0) CLOSINGBAL,
+			CASE WHEN AH.TODAYNET >= 0 THEN '40' ELSE '50' END CR_DR
+			FROM (SELECT ACCOUNTID, SUM(TODAYDEBITS) TODAYDEBITS, SUM(TODAYCREDITS) TODAYCREDITS, SUM(TODAYNET) TODAYNET FROM ACCOUNTSHISTORY AH
+			GROUP BY ACCOUNTID) AH
+			INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = AH.ACCOUNTID
+			INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
+			INNER JOIN ACCOUNTTYPEGROUP ATG ON  ATG.GROUPID = AT.ACTYPEGRPID
+			LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR ON LR.ACTYPEGRPID = ATG.GROUPCODE AND LR.HOSTACCOUNT = AM.HOSTACCOUNT
+		</createView>
+	</changeSet>
+	
+	<!-- Rename Column -->
+	<changeSet author="Kesav" id="197">
+		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
+			oldColumnName="APPLICABLEFORCUSTID" tableName="FinTaxDetail" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="198">
+		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
+			oldColumnName="APPLICABLEFORCUSTID" tableName="FinTaxDetail_Temp" />
+	</changeSet>
+	
+	
+	<changeSet id="199" author="Kesav">
+		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.TAXCUSTID, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = T3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.TAXCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="200" author="Kesav">
+		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.TAXCUSTID, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = T3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.TAXCUSTID = T6.CUSTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="201" author="Kesav">
+		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.TAXCUSTID, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail_Temp T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = T3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = T4.pccity and T1.Province = T4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.TAXCUSTID = T6.CUSTID
+			
+			UNION ALL
+			
+			SELECT	  T1.FinReference, T1.ApplicableFor,T1.TAXCUSTID, T1.TaxExempted, T1.TaxNumber, T1.AddrLine1, T1.AddrLine2, T1.AddrLine3, 
+			          T1.AddrLine4, T1.Country, T1.Province, T1.City, T1.PinCode, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode,
+			          T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.CountryDesc CountryName,
+			          T3.CPProvinceName ProvinceName,
+			          T4.PCCItyName CityName,
+			          T5.areaname PinCodeName,
+			          T6.CustCIF, T6.CUSTSHRTNAME
+			FROM      FinTaxDetail T1 LEFT JOIN
+			          BMTCountries T2 ON T1.Country = T2.CountryCode LEFT JOIN
+			          RmtCountryvsProvince T3 ON T1.Province = T3.cpprovince and T1.Country = T3.CPCountry  LEFT JOIN
+			          rmtprovincevscity T4 ON T1.City = t4.pccity and T1.Province = t4.pcprovince and T1.Country = T4.pcCountry LEFT JOIN
+			          pincodes T5 ON T1.PinCode = T5.pincode and T1.City = T5.city Inner Join
+			          Customers T6 ON T1.TAXCUSTID = T6.CUSTID
+			          
+			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
+		</createView>
+	</changeSet>
+	<changeSet  id="202" author="Prasad">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,9 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		TotPenaltyAmt Debit, 0 credit,9 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,10 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,11 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="203" author="Manoj.P">
+		<sql>
+		 DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  'opt/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="204" author="Manoj.P">
+		<sql>
+		 DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  '/opt/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="205" author="Manoj.P">	
+		<sql>
+			delete from DATA_ENGINE_COLUMN where TABLEID in (Select ID from DATA_ENGINE_TABLE where CONFIGID in (Select ID from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE'));
+			 delete from DATA_ENGINE_TABLE where CONFIGID in (Select ID from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE');
+			 delete from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE';
+			 delete from SMTPARAMETERS where SYSPARMCODE = 'IS_LDAP_AUTH';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="206" author="Manoj.p">
+		<dropTable tableName="CIBIL_EMAIL_TYPES_MAPPING"/>
+	</changeSet>
+	  <changeSet author="Madhubabu" id="148">
+	<createView viewName="FinTaxUploadHeader_View"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1
+   UNION ALL 
+  select T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WORKFLOWID 
+     FROM FinTaxUploadHeader T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadHeader_Temp 
+                          WHERE BatchReference = T1.BatchReference )
+                          
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="149">
+	<createView viewName="FinTaxUploadHeader_TView"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="150">
+	<createView viewName="FinTaxUploadHeader_AView"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader T1
+		</createView>
+</changeSet>
+
+<changeSet author="Madhubabu" id="160">
+	<createView viewName="FinTaxUploadDetail_View"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+   UNION ALL 
+  select  T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadDetail_Temp 
+                          WHERE AggrementNo = T1.AggrementNo )
+		</createView>
+</changeSet>	
+<changeSet author="Madhubabu" id="157">
+	<createView viewName="FinTaxUploadDetail_TView"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+  
+		</createView>
+</changeSet>	
+<changeSet author="Madhubabu" id="158">
+	<createView viewName="FinTaxUploadDetail_AView"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+  
+		</createView>
+</changeSet>	
+ <changeSet author="Madhubabu" id="159">
+	<createView viewName="FinTaxUploadHeader_View"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1
+   UNION ALL 
+  select T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WORKFLOWID 
+     FROM FinTaxUploadHeader T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadHeader_Temp 
+                          WHERE BatchReference = T1.BatchReference )
+                          
+		</createView>
+</changeSet>
+
+	<changeSet id="160" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65021';
+			INSERT INTO ErrorDetails VALUES('65021','EN','E','Customer CIF: {0} should not available in Co-Applicant Details.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			
+			Delete from ErrorDetails where errorCode = '65022';
+			INSERT INTO ErrorDetails VALUES('65022','EN','E','Customer CIF: {0} should not available in Guarantors Details.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="161" author="Durgaprasad G">
+	<createView viewName="PRESENTMENTHEADER_AVIEW"
+		replaceIfExists="true">
+			SELECT		T1.ID, T1.REFERENCE, T1.PRESENTMENTDATE, T1.PARTNERBANKID, T1.FROMDATE, T1.TODATE, T1.STATUS, T1.MANDATETYPE, T1.LOANTYPE, T1.FINBRANCH, T1.SCHDATE		
+						, T1.VERSION , T1.LASTMNTBY, T1.LASTMNTON,T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE, T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, 
+            T1.DBSTATUSID, T2.PARTNERBANKNAME, T2.PARTNERBANKCODE, T2.ACCOUNTNO PARTNERACCTNUMBER,T2.ACTYPE PARTNERACCTTYPE,
+            T1.IMPORTSTATUSID, T1.TOTALRECORDS,T1.PROCESSEDRECORDS,T1.SUCCESSRECORDS,T1.FAILEDRECORDS       
+			FROM    	PRESENTMENTHEADER  T1 LEFT JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
+	</createView>
+	<createView viewName="PRESENTMENTHEADER_VIEW" replaceIfExists="true">
+		  SELECT		T1.ID, T1.REFERENCE, T1.PRESENTMENTDATE, T1.PARTNERBANKID, T1.FROMDATE, T1.TODATE, T1.STATUS, T1.MANDATETYPE, T1.LOANTYPE, T1.FINBRANCH, T1.SCHDATE		
+						, T1.VERSION , T1.LASTMNTBY, T1.LASTMNTON,T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE, T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, T1.DBSTATUSID,
+			      T2.PARTNERBANKNAME, T2.PARTNERBANKCODE,  T2.ACCOUNTNO PARTNERACCTNUMBER,T2.ACTYPE PARTNERACCTTYPE,
+						T1.ImportStatusId,T1.TotalRecords,T1.ProcessedRecords,T1.SuccessRecords,T1.FailedRecords 
+			FROM    	PresentmentHeader_Temp T1 LEFT JOIN PARTNERBANKS T2 ON T1.PartnerBankId = T2.PartnerBankId
+			UNION ALL
+			
+			SELECT		T1.ID, T1.REFERENCE, T1.PRESENTMENTDATE, T1.PARTNERBANKID, T1.FROMDATE, T1.TODATE, T1.STATUS, T1.MANDATETYPE, T1.LOANTYPE, T1.FINBRANCH, T1.SCHDATE		
+						, T1.VERSION , T1.LASTMNTBY, T1.LASTMNTON,T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE, T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,
+			      T1.DBSTATUSID, T2.PARTNERBANKNAME, T2.PARTNERBANKCODE,  T2.ACCOUNTNO PARTNERACCTNUMBER,T2.ACTYPE PARTNERACCTTYPE,
+						T1.ImportStatusId,T1.TotalRecords,T1.ProcessedRecords,T1.SuccessRecords,T1.FailedRecords 
+			FROM    	PRESENTMENTHEADER T1 LEFT JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
+			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="208">
+	<createView viewName="FinTaxUploadHeader_View"
+		replaceIfExists="true">
+			  SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1
+   UNION ALL 
+  select T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WORKFLOWID 
+     FROM FinTaxUploadHeader T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadHeader_Temp 
+                          WHERE BatchReference = T1.BatchReference )
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="209">
+	<createView viewName="FinTaxUploadHeader_TView"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="210">
+	<createView viewName="FINTAXUPLOADHEADER_AVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
+           T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadHeader_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="211">
+	<createView viewName="FINTAXUPLOADDETAIL_AVIEW"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="212">
+	<createView viewName="FINTAXUPLOADDETAIL_TVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1;
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="213">
+	<createView viewName="FINTAXUPLOADDETAIL_VIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+   UNION ALL 
+  select  T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadDetail_Temp 
+                          WHERE AggrementNo = T1.AggrementNo )
+		</createView>
+</changeSet>
+
+<changeSet id="162" author="Durgaprasad G">
+	  <dropTable tableName="TAXDOWNLOADDETAIL" />
+    </changeSet>
+
+	<changeSet id="163" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADDETAIL">
+		<column name="HEADERID" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="TRANSACTION_DATE" type="datetime" />
+		<column name="HOST_SYSTEM_TRANSACTION_ID" type="varchar(20)" />
+		<column name="TRANSACTION_TYPE" type="varchar(50)" />
+		<column name="BUSINESS_AREA" type="varchar(2)" />
+		<column name="SOURCE_SYSTEM" type="varchar(20)" />
+		<column name="COMPANY_CODE" type="varchar(50)" />
+		<column name="CUSTOMER_NAME" type="varchar(300)" />
+		<column name="REGISTERED_CUSTOMER" type="varchar(1)" />
+		<column name="CUSTOMER_ID" type="number(8)" />
+		<column name="CUSTOMER_GSTIN" type="varchar(30)" />
+		<column name="CUSTOMER_ADDRESS" type="varchar(500)" />
+		<column name="CUSTOMER_STATE_CODE" type="varchar(2)" />
+		<column name="ADDRESS_CHANGE_DATE" type="datetime" />
+		<column name="PAN_NO" type="varchar(30)" />
+		<column name="LEDGER_CODE" type="varchar(20)" />
+		<column name="HSN_SAC_CODE" type="varchar(50)" />
+		<column name="NATURE_OF_SERVICE" type="varchar(20)" />
+		<column name="LOAN_ACCOUNT_NO" type="varchar(20)" />
+		<column name="PRODUCT_CODE" type="varchar(8)" />
+		<column name="CHARGE_CODE" type="number(8)" />
+		<column name="LOAN_BRANCH" type="number(8)" />
+		<column name="LOAN_BRANCH_STATE" type="varchar(2)" />
+		<column name="LOAN_SERVICING_BRANCH" type="varchar(200)" />
+		<column name="BFLGSTINNo" type="varchar(30)" />
+		<column name="TXN_BRANCH_ADDRESS" type="varchar(500)" />
+		<column name="TXN_BRANCH_STATE_CODE" type="varchar(2)" />
+		<column name="TRANSACTION_AMOUNT" type="NUMBER(25,2)" />
+		<column name="REVERSE_CHARGE_APPLICABLE" type="varchar(1)" />
+		<column name="INVOICE_TYPE" type="varchar(1)" />
+		<column name="ORIGINAL_INVOICE_NO" type="varchar(16)" />
+	</createTable>
+</changeSet>
+	<changeSet id="214" author="manoj">
+		<createView viewName="DE_TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+		  SELECT HEADERID,
+		  ACTYPEGRPID,
+		  HOSTACCOUNT,
+		  DESCRIPTION,
+		   UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+		  OPENINGBALTYPE,
+		  UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+		  UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+		  UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+		  CLOSINGBALTYPE
+		FROM TRAIL_BALANCE_REPORT TBR
+		INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
+	<changeSet id="215" author="manoj">
+		<sql>
+			UPDATE DATA_ENGINE_TABLE SET NAME = 'DE_TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='TRAIL_BALANCE_REPORT_VIEW';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="215" author="Durgaprasad.g">
+	<addColumn tableName="TAXDOWNLOADDETAIL">
+	 <column name="BFL_GSTIN_NO" type="VARCHAR(30)"/>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet id="216" author="Durgaprasad g">
+	 <createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+				 SELECT T1.POSTDATE,
+			T1.LINKEDTRANID, T1.TRANSORDER,
+			T1.FINEVENT,
+			T5.ENTITYCODE ,
+			T6.TAXNUMBER TAXNUMBER,
+			T2.CUSTID CUSTID,
+			T7.CUSTSHRTNAME  ,
+			T6.TAXNUMBER CUSTOMERGSTIN ,
+			T6.ADDRLINE1,
+			T6.ADDRLINE2,
+			T6.ADDRLINE3,
+			T6.ADDRLINE4,
+			T6.COUNTRY, 
+			T6.PROVINCE, 
+			T6.CITY, 
+			T6.PINCODE,
+			T6.LASTMNTON, 
+			T7.CUSTCRCPR, 
+			T1.ACCOUNT,
+			T9.ACCADDLVAR1 HSNSACCODE, 
+			T9.ACCADDLVAR1 NATUREOFSERVICE,
+			T1.FINREFERENCE ,
+			T2.FINTYPE,
+			T2.FINBRANCH ,
+			T11.CPPROVINCE, 
+			T1.USERBRANCH, 
+			T12.ADDRESSLINE1,
+			T12.ADDRESSLINE2,
+			T12.ADDRESSLINE3,
+			T12.ADDRESSLINE4,
+			T12.CITYCODE TAXCITYCODE,
+			T12.STATECODE TAXSTATECODE,
+			T12.COUNTRY TAXCOUNTRY,
+			T12.PINCODE TAXPINCODE,
+			T12.TAXCODE,
+			T10.BRANCHADDRHNBR,              
+			T10.BRANCHFLATNBR,              
+			T10.BRANCHADDRSTREET,
+			T10.BRANCHADDRLINE1,
+			T10.BRANCHADDRLINE2,
+			T10.BRANCHPOBOX,   
+			T10.BRANCHCITY,
+			T10.BRANCHPROVINCE,
+			T10.BRANCHCOUNTRY,     
+			T10.PINCODE BRANCHPINCODE,
+			T1.POSTAMOUNT, 
+			'' REVERSECHARGEAPPLICABLE,
+			T1.POSTSTATUS STATUS, 
+			'' ORIGINALINVOICENO,
+			T13.CCYMINORCCYUNITS
+			FROM POSTINGS_TAXDOWNLOAD T1 
+			INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+			INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+			INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+			INNER JOIN ENTITIES T5 ON T5.ENTITYCODE = T4.ENTITYCODE
+			LEFT JOIN FINTAXDETAIL T6 ON T6.FINREFERENCE = T1.FINREFERENCE 
+			INNER JOIN CUSTOMERS T7 ON T7.CUSTID = T2.CUSTID
+			INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+			INNER JOIN RMTBRANCHES T10 ON T10.BRANCHCODE = T2.FINBRANCH 
+			INNER JOIN RMTCOUNTRYVSPROVINCE T11 ON T11.CPPROVINCE =  T10.BRANCHPROVINCE
+			INNER JOIN TAXDETAIL T12 ON T10.BRANCHPROVINCE = T12.STATECODE AND T5.ENTITYCODE = T12.ENTITYCODE
+			INNER JOIN RMTCURRENCIES T13 ON T13.CCYCODE = T1.ACCCY
+	 </createView>
+	
+	</changeSet>
 </databaseChangeLog>

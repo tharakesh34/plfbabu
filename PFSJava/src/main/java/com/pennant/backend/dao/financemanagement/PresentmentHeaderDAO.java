@@ -54,8 +54,6 @@ import com.pennanttech.pff.core.TableType;
 public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	PresentmentHeader getPresentmentHeader(long id, String type);
-	
-	boolean isDuplicateKey(long id, String reference, TableType tableType);
 
 	long save(PresentmentDetail presentmentDetail, TableType tableType);
 
@@ -65,11 +63,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
-
-	void updatePresentmentDetailId(long presentmentId, long extractId);
-
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
 
 	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 
@@ -82,13 +76,15 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 	void deletePresentmentDetails(long presentmentId);
 
 	PresentmentDetail getPresentmentDetail(String presentmentRef);
-	
+
 	void updateReceptId(long id, long receiptID);
 
 	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
 
-	List<PresentmentDetail> getPresentmentDetail(long presentmentId);
+	List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData);
 
-	Date getMaxSchdPresentment(String finReference);
+	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
+
+	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
 
 }

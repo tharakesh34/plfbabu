@@ -1487,7 +1487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Tax Details
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			//appendTaxDetailTab(onLoad);
+			appendTaxDetailTab(onLoad);
 		}
 
 		//Eligibility Details Tab Adding
@@ -2365,12 +2365,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
+			map.put("panNum", getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
 			FinanceTaxDetail financetaxdetail = getFinanceDetail().getTaxDetail();
 			if(financetaxdetail == null){
 				financetaxdetail = new FinanceTaxDetail();
 				financetaxdetail.setNewRecord(true);
 			}
 			map.put("financeTaxDetail", financetaxdetail);
+			map.put("financeDetail", getFinanceDetail());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_TAX), map);
 		}
@@ -11027,7 +11029,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& !aFinanceSchData.getFinanceScheduleDetails().isEmpty()) {
 
 				int size = aFinanceSchData.getFinanceScheduleDetails().size();
-				aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
+				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
+				if(!isOverDraft){
+					for (int i = size - 1; i >= 0; i--) {
+						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
+						if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+							aFinanceMain.setMaturityDate(curSchd.getSchDate());
+							break;
+						}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+								curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+							aFinanceSchData.getFinanceScheduleDetails().remove(i);
+						}
+					}
+				}else{
+					aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
+				}
 
 				aFinanceSchData.setFinanceScheduleDetails(sortSchdDetails(aFinanceSchData.getFinanceScheduleDetails()));
 				//Reset Grace period End Date while Change Frequency Option

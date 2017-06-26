@@ -82,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pff.core.FactoryException;
 import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -481,7 +482,9 @@ public class AccountEngineExecution implements Serializable {
 		
 		//FIXME CH To be discussed if this is required here
 		// Dates Setting
-		aeEvent.setPostDate(DateUtility.getPostDate());
+		if (aeEvent.getPostDate() == null) {
+			aeEvent.setPostDate(DateUtility.getPostDate());
+		}
 		aeEvent.setAppDate(DateUtility.getAppDate());
 		aeEvent.setAppValueDate(DateUtility.getAppValueDate());
 		
@@ -567,10 +570,15 @@ public class AccountEngineExecution implements Serializable {
 
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
+			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
+			
+			if ((acc == null ||  StringUtils.isBlank(acc.getAccountId())) && BigDecimal.ZERO.compareTo(postAmt) != 0) {
+				throw new FactoryException("Invalid accounting configuration, please contact administrator");
+			} 
+			
 			if (acc == null) {
 				continue;
 			}
-
 			returnDataSet.setTranOrderId(acc.getTransOrder());
 			returnDataSet.setAccount(acc.getAccountId());
 		//	returnDataSet.setPostStatus(acc.getFlagPostStatus());
@@ -588,7 +596,6 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setInternalAc(acc.getInternalAc());
 
 			//Amount Rule Execution for Amount Calculation
-			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
 				returnDataSet.setPostAmount(postAmt);
 				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
@@ -764,8 +771,9 @@ public class AccountEngineExecution implements Serializable {
 				RuleConstants.MODULE_SUBHEAD);
 		dataMap.put("acType", txnEntry.getAccountType());
 		if (rule != null) {
-			newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
-					aeEvent.getCcy(), RuleReturnType.STRING));
+			String accountNumber = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
+					aeEvent.getCcy(), RuleReturnType.STRING);
+			newAccount.setAccountId(accountNumber);
 		}
 
 		accountsMap.put(txnOrder, txnEntry.getAccount() + txnEntry.getAccountType());

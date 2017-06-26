@@ -959,6 +959,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			aFinSchData.setFinanceScheduleDetails(sortSchdDetails(aFinSchData.getFinanceScheduleDetails()));
 
 			BigDecimal totalAdvPft = BigDecimal.ZERO;
+			boolean lastRecord = false;
 
 			for (int i = 0; i < sdSize; i++) {
 				boolean showRate = false;
@@ -1065,8 +1066,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					finRender.render(map, prvSchDetail, false, allowRvwRate, true, tempFeeChargesMap, showRate,
 							StringUtils.isEmpty(moduleDefiner));
 				}
+				
+				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
+				if(!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+					lastRecord = true;
+				}
 
-				if (i == sdSize - 1) {
+				if (i == sdSize - 1 || lastRecord) {
 					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate,
 							StringUtils.isEmpty(moduleDefiner));
 					break;

@@ -37,6 +37,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -75,6 +76,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -110,34 +112,34 @@ import com.pennant.backend.util.RuleReturnType;
 
 public class FinanceDataValidation {
 
-	private BaseRateDAO					baseRateDAO;
-	private SplRateDAO					splRateDAO;
-	private BranchDAO					branchDAO;
-	private CustomerDAO					customerDAO;
-	private FinanceMainDAO				financeMainDAO;
-	private FinanceDetailService		financeDetailService;
-	private BankDetailService			bankDetailService;
-	private BankBranchService			bankBranchService;
-	private DocumentTypeService			documentTypeService;
-	private CustomerDetailsService		customerDetailsService;
-	private FlagDAO						flagDAO;
-	private CollateralSetupService		collateralSetupService;
-	private MandateService				mandateService;
-	private StepPolicyService			stepPolicyService;
-	private RelationshipOfficerService	relationshipOfficerService;
-	private FinTypePartnerBankService	finTypePartnerBankService;
-	private VASConfigurationService		vASConfigurationService;
-	private ScriptValidationService 	scriptValidationService;
-	private RuleExecutionUtil 			ruleExecutionUtil;
-	private RuleService 				ruleService;
-	private FinTypeVASProductsDAO 		finTypeVASProductsDAO;
-	private ProvinceDAO					provinceDAO;
-	private CityDAO						cityDAO;
-	private FinanceDetail 				financeDetail;
-	private CustomerDocumentService 	customerDocumentService;
+	private BaseRateDAO						baseRateDAO;
+	private SplRateDAO						splRateDAO;
+	private BranchDAO						branchDAO;
+	private CustomerDAO						customerDAO;
+	private FinanceMainDAO					financeMainDAO;
+	private FinanceDetailService			financeDetailService;
+	private BankDetailService				bankDetailService;
+	private BankBranchService				bankBranchService;
+	private DocumentTypeService				documentTypeService;
+	private CustomerDetailsService			customerDetailsService;
+	private FlagDAO							flagDAO;
+	private CollateralSetupService			collateralSetupService;
+	private MandateService					mandateService;
+	private StepPolicyService				stepPolicyService;
+	private RelationshipOfficerService		relationshipOfficerService;
+	private FinTypePartnerBankService		finTypePartnerBankService;
+	private VASConfigurationService			vASConfigurationService;
+	private ScriptValidationService			scriptValidationService;
+	private RuleExecutionUtil				ruleExecutionUtil;
+	private RuleService						ruleService;
+	private FinTypeVASProductsDAO			finTypeVASProductsDAO;
+	private ProvinceDAO						provinceDAO;
+	private CityDAO							cityDAO;
+	private FinanceDetail					financeDetail;
+	private CustomerDocumentService			customerDocumentService;
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
-
+	private PartnerBankDAO					partnerBankDAO;
 
 	public FinanceDataValidation() {
 		super();
@@ -746,7 +748,6 @@ public class FinanceDataValidation {
 			}
 			if (!finODPenaltyRate.isApplyODPenalty()) {
 				if (finODPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())
-						|| StringUtils.isNotBlank(finODPenaltyRate.getODChargeCalOn())
 						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0
 						|| finODPenaltyRate.isODAllowWaiver()) {
 					String[] valueParm = new String[1];
@@ -754,11 +755,25 @@ public class FinanceDataValidation {
 				}
 			} else {
 				if (StringUtils.isBlank(finODPenaltyRate.getODChargeType())
-						|| StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn())
 						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90314", valueParm)));
 				}
+				if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT)
+						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+								FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+					finODPenaltyRate.setODChargeCalOn("");
+				}
+				if ((StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn()))&& (StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ONETIME)|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "odChargeCalOn";
+						valueParm[1] = "odChargeType"+ FinanceConstants.PENALTYTYPE_PERC_ONETIME +","
+						+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS +","+FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", valueParm)));
+					} 
 			}
 
 			if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
@@ -793,9 +808,7 @@ public class FinanceDataValidation {
 					valueParm[1] = "100";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-				finODPenaltyRate.setODChargeAmtOrPerc(
-						PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
-			} 
+			}
 			
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
 				List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
@@ -826,7 +839,9 @@ public class FinanceDataValidation {
 						break;
 					}
 				}
-				if (!finODCCalculatedOnSts) {
+				if (!finODCCalculatedOnSts && (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+						StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+						 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
 					String[] valueParm = new String[2];
 					valueParm[0] = finODPenaltyRate.getODChargeCalOn();
 					valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
@@ -1701,6 +1716,13 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));
 					return errorDetails;
+				}
+				
+				// fetch partner bank details
+				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(advPayment.getPartnerBankID(), "");
+				if(partnerBank != null) {
+					advPayment.setPartnerBankAc(partnerBank.getAccountNo());
+					advPayment.setPartnerBankAcType(partnerBank.getAcType());
 				}
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				if(financeMain != null){
@@ -4145,5 +4167,9 @@ public class FinanceDataValidation {
 
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 }

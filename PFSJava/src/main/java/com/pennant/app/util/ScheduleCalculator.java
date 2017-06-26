@@ -760,8 +760,11 @@ public class ScheduleCalculator {
 			}
 		}
 
-		finMain.setEqualRepay(true);
-		finMain.setCalculateRepay(true);
+		if(finMain.getEventFromDate() != null && 
+				DateUtility.compare(finMain.getEventFromDate(), finMain.getFinStartDate()) == 0){
+			finMain.setEqualRepay(true);
+			finMain.setCalculateRepay(true);
+		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
@@ -2743,8 +2746,9 @@ public class ScheduleCalculator {
 					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
 							finFeeDetail.getFeeScheduleMethod())
 			) {
-				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
+				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
 			}
+			feeAmount = feeAmount.add(finFeeDetail.getPaidAmount());
 		}
 
 		//FIXME CH Servicing Fees should be handled

@@ -142,7 +142,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 		// Register buttons and fields.
 		registerButton(button_FinanceTaxDetailList_FinanceTaxDetailSearch);
-		registerButton(button_FinanceTaxDetailList_NewFinanceTaxDetail, "button_FinanceTaxDetailList_NewFinanceTaxDetail", true);
+		//registerButton(button_FinanceTaxDetailList_NewFinanceTaxDetail, "button_FinanceTaxDetailList_NewFinanceTaxDetail", true);
 
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
 		registerField("applicableFor", listheader_ApplicableFor, SortOrder.NONE, applicableFor, sortOperator_ApplicableFor, Operators.STRING);

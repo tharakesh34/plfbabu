@@ -102,13 +102,13 @@ public class AccrualService extends ServiceHelper {
 		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-			if (custEODEvent.getEodValueDate()
-					.compareTo(DateUtility.getMonthEnd(custEODEvent.getEodValueDate())) == 0) {
+			if (custEODEvent.getEodDate()
+					.compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0) {
 				isAmzPostToday = true;
 			}
 		} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
 			if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
-				if (getEodConfig().getMnthExtTo().compareTo(custEODEvent.getEodValueDate()) == 0) {
+				if (getEodConfig().getMnthExtTo().compareTo(custEODEvent.getEodDate()) == 0) {
 					isAmzPostToday = true;
 				}
 			}

@@ -42,40 +42,25 @@
  */
 package com.pennant.backend.service.financemanagement;
 
-import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
 public interface PresentmentHeaderService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
 	PresentmentHeader getPresentmentHeader(long id);
-
-	PresentmentHeader getApprovedPresentmentHeader(long id);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
 	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
 
-	void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception;
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove, String type);
 
-	void updatePresentmentDetailHeader(long presentmentId, long extractId);
-
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
-
-	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId) throws Exception;
+	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId, LoggedInUser loggedInUser) throws Exception;
 
 	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
 	
-	Date getMaxSchdPresentment(String finReference);
+	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
+
+	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
 }

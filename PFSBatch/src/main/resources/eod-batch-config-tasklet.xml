@@ -47,16 +47,6 @@
 		<property name="customerAccountService" ref="customerAccountService" />
 	</bean>
 	
-	 <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	
-	<bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/>
-	<bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/>
-	<bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/>
-    <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
-    <bean id="trailBalanceReportService" class=" com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl" scope="prototype" parent="bajajService"/> 
-	
 	<bean id="dataExtractTaskLet" class="com.pennant.backend.endofday.tasklet.DataExtract">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>

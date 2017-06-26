@@ -84,10 +84,12 @@ public class SummaryDetailService {
 			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
 
 			// overdue details
-			summary.setOverDuePrincipal(finPftDetail.getODPrincipal());
-			summary.setOverDueProfit(finPftDetail.getODProfit());
-			summary.setTotalOverDue(finPftDetail.getODPrincipal().add(finPftDetail.getODProfit()));
-			summary.setOverDueInstlments(finPftDetail.getNOODInst());
+			FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(finReference);
+			if (finODDetails != null) {
+				summary.setOverDuePrincipal(finODDetails.getFinCurODPri());
+				summary.setOverDueProfit(finODDetails.getFinCurODPft());
+				summary.setTotalOverDue(finODDetails.getFinCurODPri().add(finODDetails.getFinCurODPft()));
+			}
 			summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
 
 			// set Finance closing status
@@ -132,6 +134,7 @@ public class SummaryDetailService {
 			if (finODDetailsList != null) {
 				// ODcharges
 				summary.setFinODDetail(finODDetailsList);
+				summary.setOverDueInstlments(finODDetailsList.size());
 			}
 		}
 		logger.debug("Leaving");

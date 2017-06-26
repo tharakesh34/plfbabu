@@ -50,6 +50,8 @@ import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.ApplicationDetails;
+import com.pennant.backend.model.FinTaxUploadDetail;
+import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.QueueAssignment;
@@ -1380,6 +1382,14 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FinanceTaxDetail", new ModuleMapping("FinanceTaxDetail", FinanceTaxDetail.class, new String[] { "FinTaxDetail",
 				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
+		
+		ModuleUtil.register("FinTaxUploadHeader", new ModuleMapping("FinTaxUploadHeader", FinTaxUploadHeader.class, new String[] { "FinTaxUploadHeader",
+		"FinTaxUploadHeader_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+
+		ModuleUtil.register("FinTaxUploadDetail", new ModuleMapping("FinTaxUploadDetail", FinTaxUploadDetail.class, new String[] { "FinTaxUploadDetail",
+		"FinTaxUploadDetail_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+		
+		
 		
 		/************ Finance Related Module Details *************/
 
