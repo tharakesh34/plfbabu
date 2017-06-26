@@ -1395,7 +1395,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		BigDecimal schFeeBal = BigDecimal.ZERO;
 		BigDecimal tdsReturns = BigDecimal.ZERO;
 
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = finServiceInst.getReceiptDetail().getReceivedDate();
 		boolean partAccrualReq = true;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
