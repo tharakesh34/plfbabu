@@ -1866,6 +1866,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Save or Update FInance Tax Details
 		FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
 		if ( taxDetail != null) {
+			FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(taxDetail.getFinReference(), "_View");
+			if (tempTaxDetail != null) {
+				getFinanceTaxDetailDAO().delete(taxDetail, tableType);
+			}
 			if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(taxDetail.getApplicableFor())
 					|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())
 					|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
@@ -1876,12 +1880,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				taxDetail.setNextRoleCode(financeMain.getNextRoleCode());
 				taxDetail.setRecordStatus(financeMain.getRecordStatus());
 				taxDetail.setWorkflowId(financeMain.getWorkflowId());
-				
-				if (taxDetail.isNew()) {
-					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
-				} else {
-					getFinanceTaxDetailDAO().update(financeDetail.getTaxDetail(), tableType);
-				}
+				getFinanceTaxDetailDAO().save(taxDetail, tableType);
 			}
 		}
 
@@ -3221,6 +3220,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Save FInance Tax Details
 				FinanceTaxDetail financeTaxDetail = financeDetail.getTaxDetail();
 				if (financeTaxDetail != null) {
+					FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeTaxDetail.getFinReference(), "_AView");
+					if (tempTaxDetail != null) {
+						getFinanceTaxDetailDAO().delete(financeTaxDetail, TableType.MAIN_TAB);
+					}
 					if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(financeTaxDetail.getApplicableFor())
 							|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(financeTaxDetail.getApplicableFor())
 							|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(financeTaxDetail.getApplicableFor())) {
@@ -3674,7 +3677,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Save FInance Tax Details
 			if (financeDetail.getTaxDetail() != null) {
-				getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+				FinanceTaxDetail tempTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeDetail.getTaxDetail().getFinReference(), "_TView");
+				if (tempTaxDetail != null) {
+					getFinanceTaxDetailDAO().delete(financeDetail.getTaxDetail(), TableType.TEMP_TAB);
+				}
 			}
 			
 			// ScheduleDetails delete
@@ -5038,43 +5044,55 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (taxDetail != null) {
 				if (!financeDetail.isActionSave()) {
 					long custId = taxDetail.getTaxCustId();
+					String taxNumber = taxDetail.getTaxNumber();
 					boolean idExist = false;
-					if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())) {
-						for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
-							if (jointAccountDetail.getCustID() == custId && !(StringUtils
-									.equals(PennantConstants.RECORD_TYPE_DEL, jointAccountDetail.getRecordType())
-									|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
-											jointAccountDetail.getRecordType()))) {
-								idExist = true;
-								break;
+					
+					if (custId != 0) {
+						if(StringUtils.isNotBlank(taxNumber)) {
+							int count = getFinanceTaxDetailDAO().getGSTNumberCount(custId, taxNumber, "_View");
+							if (count != 0) {
+								String[] parameters = new String[2];
+								parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
+								parameters[1] = taxNumber;
+								auditDetails.get(0).setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 							}
 						}
-						String[] errParm = new String[1];
-						String[] valueParm = new String[1];
-						valueParm[0] = taxDetail.getCustCIF();
-						errParm[0] = valueParm[0];
-						if (!idExist) {
-							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
-						}
-					} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
-						for (GuarantorDetail guarantorDetail : gurantorsDetailList) {
-							if (guarantorDetail.getCustID() == custId && !(StringUtils
-									.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())
-									|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
-											guarantorDetail.getRecordType()))) {
-								idExist = true;
-								break;
+					
+						if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())) {
+							for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+								if (jointAccountDetail.getCustID() == custId && !(StringUtils
+										.equals(PennantConstants.RECORD_TYPE_DEL, jointAccountDetail.getRecordType())
+										|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, jointAccountDetail.getRecordType()))) {
+									idExist = true;
+									break;
+								}
 							}
-						}
-						
-						String[] errParm = new String[1];
-						String[] valueParm = new String[1];
-						valueParm[0] = taxDetail.getCustCIF();
-						errParm[0] = valueParm[0];
-						if (!idExist) {
-							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
+							String[] errParm = new String[1];
+							String[] valueParm = new String[1];
+							valueParm[0] = taxDetail.getCustCIF();
+							errParm[0] = valueParm[0];
+							if (!idExist) {
+								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
+										new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
+							}
+						} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
+							for (GuarantorDetail guarantorDetail : gurantorsDetailList) {
+								if (guarantorDetail.getCustID() == custId && !(StringUtils
+										.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())
+										|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, guarantorDetail.getRecordType()))) {
+									idExist = true;
+									break;
+								}
+							}
+
+							String[] errParm = new String[1];
+							String[] valueParm = new String[1];
+							valueParm[0] = taxDetail.getCustCIF();
+							errParm[0] = valueParm[0];
+							if (!idExist) {
+								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
+										new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
+							}
 						}
 					}
 				}

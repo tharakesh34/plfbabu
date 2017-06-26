@@ -44,12 +44,14 @@ package com.pennant.backend.dao.finance.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -76,7 +78,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 	}
 	
 	@Override
-	public FinanceTaxDetail getFinanceTaxDetail(String finReference,String type) {
+	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
@@ -199,6 +201,33 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public int getGSTNumberCount(long taxCustId, String taxNumber, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count() From FinTaxDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where TaxCustId <> :TaxCustId And TaxNumber = :TaxNumber");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("TaxCustId", taxCustId);
+		source.addValue("TaxNumber", taxNumber);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
 	}
 
 	/**

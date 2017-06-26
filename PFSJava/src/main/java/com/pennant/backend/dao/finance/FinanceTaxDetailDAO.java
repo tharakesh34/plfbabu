@@ -58,5 +58,7 @@ public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 	 * @return FinanceTaxDetail
 	 */
 	FinanceTaxDetail getFinanceTaxDetail(String finReference,String type);
+
+	int getGSTNumberCount(long taxCustId, String taxNumber, String string);
 	
 }
