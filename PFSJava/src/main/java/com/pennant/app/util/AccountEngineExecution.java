@@ -570,10 +570,15 @@ public class AccountEngineExecution implements Serializable {
 
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
+			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
+			
+			if (acc == null && BigDecimal.ZERO.compareTo(postAmt) != 0) {
+				throw new FactoryException("Invalid accounting configuration, please contact administrator");
+			} 
+			
 			if (acc == null) {
 				continue;
 			}
-
 			returnDataSet.setTranOrderId(acc.getTransOrder());
 			returnDataSet.setAccount(acc.getAccountId());
 		//	returnDataSet.setPostStatus(acc.getFlagPostStatus());
@@ -591,7 +596,6 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setInternalAc(acc.getInternalAc());
 
 			//Amount Rule Execution for Amount Calculation
-			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
 				returnDataSet.setPostAmount(postAmt);
 				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
@@ -769,11 +773,7 @@ public class AccountEngineExecution implements Serializable {
 		if (rule != null) {
 			String accountNumber = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
 					aeEvent.getCcy(), RuleReturnType.STRING);
-			if (StringUtils.isBlank(accountNumber)) {
-				throw new FactoryException("Invalid accounting configuration, please contact administrator");
-			} else {
-				newAccount.setAccountId(accountNumber);
-			}
+			newAccount.setAccountId(accountNumber);
 		}
 
 		accountsMap.put(txnOrder, txnEntry.getAccount() + txnEntry.getAccountType());
