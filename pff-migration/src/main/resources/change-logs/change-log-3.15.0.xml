@@ -3410,6 +3410,8 @@ union
 	
 	<changeSet id="205" author="Manoj.P">	
 		<sql>
+			delete from DATA_ENGINE_COLUMN where TABLEID in (Select ID from DATA_ENGINE_TABLE where CONFIGID in (Select ID from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE'));
+			 delete from DATA_ENGINE_TABLE where CONFIGID in (Select ID from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE');
 			 delete from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE';
 			 delete from SMTPARAMETERS where SYSPARMCODE = 'IS_LDAP_AUTH';
 		</sql>
