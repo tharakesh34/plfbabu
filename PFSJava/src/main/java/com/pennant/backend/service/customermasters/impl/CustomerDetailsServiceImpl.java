@@ -1900,8 +1900,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP) ||
 				StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)){
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
-				String[] valueParm = new String[1];
+				String[] valueParm = new String[2];
 				valueParm[0] = "shortName";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm), "EN"));
 			}	
 			if (StringUtils.isNotBlank(customer.getCustFName())) {
