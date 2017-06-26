@@ -3396,4 +3396,11 @@ union
 		INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="205" author="Manoj.P">	
+		<sql>
+			 delete from DATA_ENGINE_CONFIG WHERE NAME  = 'DISB_RESPONSE';
+			 delete from SMTPARAMETERS where SYSPARMCODE = 'IS_LDAP_AUTH';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
