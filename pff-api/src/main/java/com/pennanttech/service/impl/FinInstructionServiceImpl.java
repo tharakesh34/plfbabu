@@ -34,7 +34,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.AddDisbursementGroup;
@@ -846,7 +845,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				if (StringUtils.isBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())) {
 					return beanValidation("odChargeType");
 				}
-				if (StringUtils.isBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())) {
+				if (StringUtils.isBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())&& StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ONETIME)|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 					return beanValidation("odChargeCalOn");
 				}
 				if (finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
@@ -1190,10 +1192,14 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					break;
 				}
 			}
-			if (!odChargeCalOnSts) {
-				String[] valueParm = new String[1];
+			if (!odChargeCalOnSts && (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
+					StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
+				String[] valueParm = new String[2];
 				valueParm[0] = finODPenaltyRate.getODChargeCalOn();
-				return getErrorDetails("90501", valueParm);
+				valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
+						+ FinanceConstants.ODCALON_SPRI;
+				return getErrorDetails("90317", valueParm);
 			}
 		}
 		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
@@ -1206,8 +1212,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				valueParm[1] = "100";
 				return getErrorDetails("30565", valueParm);
 			}
-			finODPenaltyRate.setODChargeAmtOrPerc(
-					PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
 		}
 		if (!(finODPenaltyRate.isApplyODPenalty() && finODPenaltyRate.isODAllowWaiver())) {
 			if (finODPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
