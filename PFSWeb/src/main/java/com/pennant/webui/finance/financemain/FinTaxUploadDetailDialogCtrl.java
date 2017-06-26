@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -41,6 +42,7 @@ import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -113,7 +115,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 			}
 			doCheckRights();
 			doShowDialog(this.finTaxUploadHeader);
@@ -130,8 +132,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		logger.debug("Entering");
 		this.listBoxFileData.setHeight(this.borderLayoutHeight - 200 + "px");
-		listBoxFileData.setCheckmark(true);
-		listBoxFileData.setMultiple(true);
+		Checkbox box= new Checkbox();
+		this.listBoxFileData.getListhead().getFirstChild().appendChild(box);
 		if (!finTaxUploadHeader.isNew()) {
 			grid_UploadedDetails.setVisible(false);
 			doFillHeaderData(finTaxUploadHeader.getFileName(), finTaxUploadHeader.getBatchCreatedDate(),
@@ -180,8 +182,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		if (isSupported) {
 
-			FileInputStream inputStream = new FileInputStream("D:/FileUpload/" + media.getName());
-			HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
+			HSSFWorkbook workbook = new HSSFWorkbook(media.getStreamData());
 			Sheet firstSheet = workbook.getSheetAt(0);
 			Iterator<Row> iterator = firstSheet.iterator();
 
@@ -269,6 +270,12 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			for (FinTaxUploadDetail taxMappingDetail : finTaxUploadDetailList) {
 				Listitem item = new Listitem();
 				Listcell lc;
+				
+				lc = new Listcell();		
+				Checkbox ckActive= new Checkbox();
+				ckActive.setChecked(false);
+				ckActive.setParent(lc);
+				lc.setParent(item);
 
 				lc = new Listcell(taxMappingDetail.getTaxCode());
 				lc.setParent(item);
@@ -311,9 +318,24 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private void doShowDialogPage(FinTaxUploadDetail finTaxUploadDetail) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
+		financeTaxDetail.setFinReference(finTaxUploadDetail.getAggrementNo());
+		financeTaxDetail.setApplicableFor(finTaxUploadDetail.getApplicableFor());
+		financeTaxDetail.setTaxCustId(Long.valueOf(finTaxUploadDetail.getApplicant()));
+		financeTaxDetail.setAddrLine1(finTaxUploadDetail.getAddrLine1());
+		financeTaxDetail.setAddrLine2(finTaxUploadDetail.getAddrLine2());
+		financeTaxDetail.setAddrLine3(finTaxUploadDetail.getAddrLine3());
+		financeTaxDetail.setAddrLine4(finTaxUploadDetail.getAddrLine4());
+		financeTaxDetail.setCountry(finTaxUploadDetail.getCountry());
+		financeTaxDetail.setProvince(finTaxUploadDetail.getProvince());
+		financeTaxDetail.setCity(finTaxUploadDetail.getCity());
+		financeTaxDetail.setPinCode(finTaxUploadDetail.getPinCode());
+
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("FinTaxUploadDetail", finTaxUploadDetail);
 		arg.put("FinTaxUploadDetailDialogCtrl", this);
+		arg.put("financeTaxDetail", financeTaxDetail);
+		arg.put("enqiryModule", true);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null,
@@ -325,8 +347,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
@@ -338,12 +359,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		doShowNotes(this.finTaxUploadHeader);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
 
 	@Override
 	public String getReference() {
-		return this.finTaxUploadHeader.getBatchReference()+"";
+		return this.finTaxUploadHeader.getBatchReference() + "";
 	}
 
 	/**
