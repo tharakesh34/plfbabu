@@ -1870,6 +1870,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())
 					|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
 				taxDetail.setFinReference(finReference);
+				taxDetail.setTaskId(financeMain.getTaskId());
+				taxDetail.setNextTaskId(financeMain.getNextTaskId());
+				taxDetail.setRoleCode(financeMain.getRoleCode());
+				taxDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				taxDetail.setRecordStatus(financeMain.getRecordStatus());
+				
 				if (taxDetail.isNew()) {
 					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
 				} else {
@@ -5016,6 +5022,52 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (jountAccountDetailList != null && !jountAccountDetailList.isEmpty()) {
 				auditDetails.addAll(getJointAccountDetailService().validate(jountAccountDetailList,
 						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+			}
+			
+			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+			if (taxDetail != null) {
+				if (!financeDetail.isActionSave()) {
+					long custId = taxDetail.getTaxCustId();
+					boolean idExist = false;
+					if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())) {
+						for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+							if (jointAccountDetail.getCustID() == custId && !(StringUtils
+									.equals(PennantConstants.RECORD_TYPE_DEL, jointAccountDetail.getRecordType())
+									|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
+											jointAccountDetail.getRecordType()))) {
+								idExist = true;
+								break;
+							}
+						}
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						valueParm[0] = taxDetail.getCustCIF();
+						errParm[0] = valueParm[0];
+						if (!idExist) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
+						}
+					} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
+						for (GuarantorDetail guarantorDetail : gurantorsDetailList) {
+							if (guarantorDetail.getCustID() == custId && !(StringUtils
+									.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())
+									|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,
+											guarantorDetail.getRecordType()))) {
+								idExist = true;
+								break;
+							}
+						}
+						
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						valueParm[0] = taxDetail.getCustCIF();
+						errParm[0] = valueParm[0];
+						if (!idExist) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
+						}
+					}
+				}
 			}
 
 			// set Finance Collateral Details Audit

@@ -482,8 +482,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		String applicable = this.applicableFor.getSelectedItem().getValue();
 		this.custRef.setValue("");
 		this.custRef.setDescription("");
+		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
 		if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(applicable)) {
-			 Customer customer = this.financeDetail.getCustomerDetails().getCustomer();
+			Customer customer = this.financeDetail.getCustomerDetails().getCustomer();
 			readOnlyComponent(true, this.custRef);
 			
 			this.custRef.setValue(customer.getCustCIF());
@@ -1257,7 +1258,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 		doClearMessage();
 		
-		if (!recSave) {
+		if (!recSave && !(StringUtils.equals(this.applicableFor.getSelectedItem().getValue(), PennantConstants.List_Select))) {
 			doSetValidation();
 		}
 
