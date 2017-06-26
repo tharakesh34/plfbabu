@@ -3403,4 +3403,9 @@ union
 			 delete from SMTPARAMETERS where SYSPARMCODE = 'IS_LDAP_AUTH';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="206" author="Manoj.p">
+		<dropTable tableName="CIBIL_EMAIL_TYPES_MAPPING"/>
+	</changeSet>
+	
 </databaseChangeLog>
