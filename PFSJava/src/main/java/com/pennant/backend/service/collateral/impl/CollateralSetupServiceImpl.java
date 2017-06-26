@@ -56,6 +56,8 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
@@ -2361,13 +2363,42 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			// expiry date
 			Date currAppDate = DateUtility.getAppDate();
 			Date expiryDate = collateralSetup.getExpiryDate();
-			if (expiryDate.compareTo(currAppDate) <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(expiryDate);
-				valueParm[1] = DateUtility.formatToShortDate(currAppDate);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90903", "", valueParm)));
+			if(expiryDate !=null){
+			if (expiryDate.compareTo(currAppDate) <= 0 ||expiryDate.after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "ExpiryDate";
+				valueParm[1] = DateUtility.formatToLongDate(currAppDate);
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 			}
-
+			}
+			// expiry date
+			Date nextRvwDate = collateralSetup.getNextReviewDate();
+			if(nextRvwDate != null){
+			if (nextRvwDate.compareTo(currAppDate) <= 0
+					|| nextRvwDate.after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "nextReviewDate";
+				valueParm[1] = DateUtility.formatToLongDate(currAppDate);
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}
+			if(collateralSetup.getReviewFrequency()!=null){
+			if(!FrequencyUtil.isFrqDate(collateralSetup.getReviewFrequency(), nextRvwDate)){
+				String[] valueParm = new String[1];
+				valueParm[0] =  DateUtility.formatToLongDate(nextRvwDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91123", "", valueParm)));
+			}	
+			}
+			}
+			if(collateralSetup.getReviewFrequency()!=null){
+				ErrorDetails errorDetail = FrequencyUtil.validateFrequency(collateralSetup.getReviewFrequency());
+				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = collateralSetup.getReviewFrequency();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90207", "", valueParm)));
+				}
+			}
 			// validate third party customers
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
 			if(thirdPartyCollateral !=null){
