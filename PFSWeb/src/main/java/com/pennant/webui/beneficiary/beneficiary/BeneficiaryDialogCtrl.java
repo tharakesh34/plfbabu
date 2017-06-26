@@ -515,7 +515,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_BeneficiaryDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_COMPANY_NAME,
+					.getLabel("label_BeneficiaryDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,
 					true));
 		}
 
