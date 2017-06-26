@@ -1,6 +1,7 @@
 package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -11,7 +12,11 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.bajaj.services.ALMRequestService;
 import com.pennanttech.bajaj.services.ControlDumpRequestService;
 import com.pennanttech.bajaj.services.DataMartRequestService;
@@ -24,6 +29,8 @@ public class DataExtract implements Tasklet {
 	private Logger logger = Logger.getLogger(DataExtract.class);
 
 	private DataSource dataSource;
+	@Autowired
+	private EODConfigDAO				eodConfigDAO;
 
 	@Autowired
 	private ALMRequestService almRequestService;
@@ -37,6 +44,21 @@ public class DataExtract implements Tasklet {
 	private TrailBalanceReportService trailBalanceReportService;
 	@Autowired
 	private CIBILReport cibilReport;
+	
+	public EODConfig getEodConfig() {
+		try {
+			List<EODConfig> list = eodConfigDAO.getEODConfig();
+			if (!list.isEmpty()) {
+				return list.get(0);
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+		return null;
+	}
+
+	
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -44,18 +66,32 @@ public class DataExtract implements Tasklet {
 		logger.debug("START: Data Extract Preparation On : " + valueDate);
 
 		try {
+			boolean monthEnd = false;
+			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
+				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
+					monthEnd = true;
+				}
+			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
+				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
+					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
+						monthEnd = true;
+					}
+				}
 
-			//Date monthEndDate = DateUtility.getMonthEnd(valueDate);
-			// if month end then only it should run
-			// if (monthEndDate.compareTo(valueDate) == 0) {
+			}
+			//if month end then only it should run
+			if (monthEnd) {
+				
+			}
+		
 			new AMLRequest(new Long(1000), almRequestService).start();
+			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
 			new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
-			// }
 
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
 			new DataMartRequest(new Long(1000), dataMartRequestService).start();
-			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
 			new CibilReport(cibilReport).start();
 
 		} catch (Exception e) {
