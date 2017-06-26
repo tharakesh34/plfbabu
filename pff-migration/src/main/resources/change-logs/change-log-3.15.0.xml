@@ -1939,6 +1939,13 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			baseTableName="CIBIL_COLLATERAL_TYPES_MAPPING" baseColumnNames="CollateralType" />
 	</changeSet>
 	
+	<changeSet id="134" author="Siva">
+		<sql>
+		Delete from ErrorDetails where errorCode = 'CL002';
+		INSERT INTO ErrorDetails VALUES('CL002','EN','E','Bank Valuation should not be less than pre-defined value.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
 	<changeSet id="134" author="Manoj.P">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 			SELECT M.MANDATEID, 

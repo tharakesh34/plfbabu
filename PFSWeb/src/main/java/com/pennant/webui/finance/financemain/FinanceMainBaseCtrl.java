@@ -11029,7 +11029,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& !aFinanceSchData.getFinanceScheduleDetails().isEmpty()) {
 
 				int size = aFinanceSchData.getFinanceScheduleDetails().size();
-				aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
+				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
+				if(!isOverDraft){
+					for (int i = size - 1; i >= 0; i--) {
+						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
+						if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+							aFinanceMain.setMaturityDate(curSchd.getSchDate());
+							break;
+						}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+								curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+							aFinanceSchData.getFinanceScheduleDetails().remove(i);
+						}
+					}
+				}else{
+					aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
+				}
 
 				aFinanceSchData.setFinanceScheduleDetails(sortSchdDetails(aFinanceSchData.getFinanceScheduleDetails()));
 				//Reset Grace period End Date while Change Frequency Option

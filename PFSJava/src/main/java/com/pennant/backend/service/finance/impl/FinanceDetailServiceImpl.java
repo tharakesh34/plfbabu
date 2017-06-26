@@ -3134,6 +3134,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setTaskId("");
 			financeMain.setNextTaskId("");
 			financeMain.setWorkflowId(0);
+			
+			// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+				int size = financeDetail.getFinScheduleData().getFinanceScheduleDetails().size();
+				for (int i = size - 1; i >= 0; i--) {
+					FinanceScheduleDetail curSchd = financeDetail.getFinScheduleData().getFinanceScheduleDetails().get(i);
+					if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+						financeMain.setMaturityDate(curSchd.getSchDate());
+						break;
+					}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+							curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+						financeDetail.getFinScheduleData().getFinanceScheduleDetails().remove(i);
+					}
+				}
+			}
 
 			if (recordType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 

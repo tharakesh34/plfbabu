@@ -770,7 +770,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
@@ -971,11 +971,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		}
 		
 		// Bank valuation checking against the total utilized amount
-		if (collateralSetup.getBankValuation() != null) {
-			//Getting the utilized amount FIXME
-			BigDecimal utilizedAmount = new BigDecimal(0);
-			if (utilizedAmount.compareTo(collateralSetup.getBankValuation()) == 1) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "CL001", errParm, valueParm));
+		if (!StringUtils.trimToEmpty(method).equals("doReject")) {
+			if (collateralSetup.getBankValuation() != null && befCollateralSetup != null) {
+
+				BigDecimal assignedPerc = getCollateralAssignmentDAO().getAssignedPerc(collateralSetup.getCollateralRef(), null, "_View");
+				if (assignedPerc.compareTo(BigDecimal.ZERO) > 0 && befCollateralSetup.getBankValuation().compareTo(collateralSetup.getBankValuation()) > 0) {
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "CL002", errParm, valueParm));
+				}
 			}
 		}
 		

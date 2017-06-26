@@ -829,6 +829,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setNextTaskId("");
 		financeMain.setWorkflowId(0);
 		
+		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+			int size = scheduleData.getFinanceScheduleDetails().size();
+			for (int i = size - 1; i >= 0; i--) {
+				FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
+				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+					financeMain.setMaturityDate(curSchd.getSchDate());
+					break;
+				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
+						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+					scheduleData.getFinanceScheduleDetails().remove(i);
+				}
+			}
+		}
+		
 		// Value Date identification
 		Date valueDate = DateUtility.getAppDate();
 		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
