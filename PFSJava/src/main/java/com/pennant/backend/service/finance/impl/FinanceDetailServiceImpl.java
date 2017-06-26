@@ -1875,6 +1875,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				taxDetail.setRoleCode(financeMain.getRoleCode());
 				taxDetail.setNextRoleCode(financeMain.getNextRoleCode());
 				taxDetail.setRecordStatus(financeMain.getRecordStatus());
+				taxDetail.setWorkflowId(financeMain.getWorkflowId());
 				
 				if (taxDetail.isNew()) {
 					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
@@ -5044,7 +5045,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						valueParm[0] = taxDetail.getCustCIF();
 						errParm[0] = valueParm[0];
 						if (!idExist) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
 						}
 					} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
@@ -5063,7 +5064,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						valueParm[0] = taxDetail.getCustCIF();
 						errParm[0] = valueParm[0];
 						if (!idExist) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
 						}
 					}

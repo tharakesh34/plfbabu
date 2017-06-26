@@ -1487,7 +1487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Tax Details
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			//appendTaxDetailTab(onLoad);
+			appendTaxDetailTab(onLoad);
 		}
 
 		//Eligibility Details Tab Adding

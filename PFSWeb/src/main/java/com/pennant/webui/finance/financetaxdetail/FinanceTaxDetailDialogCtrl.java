@@ -494,10 +494,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			List<String> custCIFList = new ArrayList<>();
 
 			if (jntDialogCtrl != null) {
-				if (jntDialogCtrl.getJointAccountCustomers().size() > 0) {
-					for (Customer customer : jntDialogCtrl.getJointAccountCustomers()) {
-						custCIFList.add(customer.getCustCIF());
-					}
+				for (Customer customer : jntDialogCtrl.getJointAccountCustomers()) {
+					custCIFList.add(customer.getCustCIF());
 				}
 			}
 			// set CustomerReference as Filter for finLimitRef
@@ -508,10 +506,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			List<String> guarantorDetails = new ArrayList<>();
 
 			if (jntDialogCtrl != null) {
-				if (jntDialogCtrl.getGuarantorCustomers().size() > 0) {
-					for (Customer jntDet : jntDialogCtrl.getGuarantorCustomers()) {
-						guarantorDetails.add(jntDet.getCustCIF());
-					}
+				for (Customer jntDet : jntDialogCtrl.getGuarantorCustomers()) {
+					guarantorDetails.add(jntDet.getCustCIF());
 				}
 			}
 			// set CustomerReference as Filter for finLimitRef
@@ -751,6 +747,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		if(!aFinanceTaxDetail.isNewRecord()) {
 			this.custRef.setValue(aFinanceTaxDetail.getCustCIF());
 			this.custRef.setDescription(aFinanceTaxDetail.getCustShrtName());
+			this.taxCustId = aFinanceTaxDetail.getTaxCustId();
 		}
 		
 		this.taxExempted.setChecked(aFinanceTaxDetail.isTaxExempted());
