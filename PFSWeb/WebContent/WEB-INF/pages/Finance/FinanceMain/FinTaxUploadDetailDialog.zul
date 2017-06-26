@@ -51,7 +51,7 @@
 							<toolbar align="center"
 								sclass="toolbar-center">
 								<label
-									value="${c:l('window_feePostingsDialog_Title')}"
+									value="${c:l('window_FinTaxFileUpload_Title')}"
 									sclass="label-heading" />
 							</toolbar>
 							<!-- CRUD BUTTONS -->
