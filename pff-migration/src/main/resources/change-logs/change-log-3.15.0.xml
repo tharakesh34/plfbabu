@@ -3504,5 +3504,15 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
                           
 		</createView>
 </changeSet>
+
+	<changeSet id="160" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65021';
+			INSERT INTO ErrorDetails VALUES('65021','EN','E','Customer CIF: {0} should not available in Co-Applicant Details.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			
+			Delete from ErrorDetails where errorCode = '65022';
+			INSERT INTO ErrorDetails VALUES('65022','EN','E','Customer CIF: {0} should not available in Guarantors Details.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
