@@ -2708,9 +2708,9 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getTaxApplicableFor() {
 		if (taxApplicableFor == null) {
 			taxApplicableFor = new ArrayList<ValueLabel>(3);
-			taxApplicableFor.add(new ValueLabel("P", Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
-			taxApplicableFor.add(new ValueLabel("C", Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
-			taxApplicableFor.add(new ValueLabel("B", Labels.getLabel("label_TaxApplicableFor_Borrower")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER, Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT, Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
+			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
 		}
 		return taxApplicableFor;
 	}

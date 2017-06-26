@@ -134,7 +134,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",LovDescCIFName");
+			selectSql.append(",LovDescCIFName, custID ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -284,7 +284,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",LovDescCIFName");
+			selectSql.append(",LovDescCIFName, custID ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -364,7 +364,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("_View")) {
-			selectSql.append(",LovDescCIFName");		
+			selectSql.append(",LovDescCIFName, custID ");		
         }
 		selectSql.append(" From FinJointAccountDetails");		
 		selectSql.append(StringUtils.trimToEmpty(type));

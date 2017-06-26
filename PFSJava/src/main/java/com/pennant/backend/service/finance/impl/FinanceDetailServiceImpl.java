@@ -420,7 +420,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		// Finance Tax Detail
-		financeDetail.setTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_View"));
+		financeDetail.setTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_TView"));
 
 		//Contributor Details
 		if (scheduleData.getFinanceType().isAllowRIAInvestment()) {
@@ -1864,13 +1864,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		
 		// Save or Update FInance Tax Details
-		if (financeDetail.getTaxDetail() != null) {
-			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
-			taxDetail.setFinReference(finReference);
-			if(taxDetail.isNew()){
-				getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
-			}else{
-				getFinanceTaxDetailDAO().update(financeDetail.getTaxDetail(), tableType);
+		FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+		if ( taxDetail != null) {
+			if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(taxDetail.getApplicableFor())
+					|| PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())
+					|| PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(taxDetail.getApplicableFor())) {
+				taxDetail.setFinReference(finReference);
+				if (taxDetail.isNew()) {
+					getFinanceTaxDetailDAO().save(financeDetail.getTaxDetail(), tableType);
+				} else {
+					getFinanceTaxDetailDAO().update(financeDetail.getTaxDetail(), tableType);
+				}
 			}
 		}
 

@@ -66,7 +66,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	private String finReference;
 	private String applicableFor;
-	private long  	applicableForCustId;
+	private long  	taxCustId;
 	private boolean taxExempted;
 	private String taxNumber;
 	private String addrLine1;
@@ -89,6 +89,9 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private FinanceTaxDetail befImage;
 	@XmlTransient
 	private  LoggedInUser userDetails;
+	
+	private String custCIF;
+	private String custShrtName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -109,6 +112,8 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		excludeFields.add("provinceName");
 		excludeFields.add("cityName");
 		excludeFields.add("pinCodeName");
+		excludeFields.add("custCIF");
+		excludeFields.add("custShrtName");
 		return excludeFields;
 	}
 
@@ -267,12 +272,28 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public long getApplicableForCustId() {
-		return applicableForCustId;
+	public String getCustCIF() {
+		return custCIF;
 	}
 
-	public void setApplicableForCustId(long applicableForCustId) {
-		this.applicableForCustId = applicableForCustId;
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
+	}
+
+	public long getTaxCustId() {
+		return taxCustId;
+	}
+
+	public void setTaxCustId(long taxCustId) {
+		this.taxCustId = taxCustId;
 	}
 	
 }

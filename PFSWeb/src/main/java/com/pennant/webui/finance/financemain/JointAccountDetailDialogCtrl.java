@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -587,6 +588,67 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		
 	}
 
+	/**
+	 * This method is using for FinanceTaxDetailDialogCtrl for getting the joint account customers.
+	 * 
+	 * @return List<Customer>
+	 */
+	public List<Customer> getJointAccountCustomers(){
+		logger.debug("Entering");
+		
+		List<Customer> customersList = new ArrayList<Customer>();
+		List<Listitem> listItems =	this.listBoxJountAccountDetails.getItems();
+
+		JointAccountDetail jointAccount = null;
+		Customer customer = null;
+		for (Listitem listItem : listItems) {
+			jointAccount = (JointAccountDetail) listItem.getAttribute("data");
+			if (jointAccount != null && !(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, jointAccount.getRecordType())
+					|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, jointAccount.getRecordType()))) {
+				customer = new Customer();
+				customer.setId(jointAccount.getCustID());
+				customer.setCustCIF(jointAccount.getCustCIF());
+				customer.setCustShrtName(jointAccount.getLovDescCIFName());
+				customersList.add(customer);
+			}
+		}
+		
+		logger.debug("Leaving");
+		return customersList;
+	}
+	
+	/**
+	 * This method is using for FinanceTaxDetailDialogCtrl for getting the joint account customers.
+	 * 
+	 * @return List<Customer>
+	 */
+	public List<Customer> getGuarantorCustomers(){
+		logger.debug("Entering");
+		
+		List<Customer> customersList = new ArrayList<Customer>();
+		List<Listitem> listItems =	this.listBoxGurantorsDetail.getItems();
+		
+		GuarantorDetail guarantorDetail = null;
+		Customer customer = null;
+		for (Listitem listItem : listItems) {
+			guarantorDetail =  (GuarantorDetail) listItem.getAttribute("data");
+			if (guarantorDetail != null && StringUtils.isNotBlank(guarantorDetail.getGuarantorCIF())
+					&& !(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, guarantorDetail.getRecordType())
+							|| StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, guarantorDetail.getRecordType()))) {
+				customer = new Customer();
+				customer.setId(guarantorDetail.getCustID());
+				customer.setCustCIF(guarantorDetail.getGuarantorCIF());
+				customer.setCustShrtName(guarantorDetail.getGuarantorCIFName());
+				customersList.add(customer);
+			}
+		}
+		
+		logger.debug("Leaving");
+		return customersList;
+	}
+	
+	
+	
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}

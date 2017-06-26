@@ -1417,6 +1417,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+		} else {
+			aGuarantorDetail.setCustID(this.customer.getCustID());
 		}
 		
 		doRemoveValidation();

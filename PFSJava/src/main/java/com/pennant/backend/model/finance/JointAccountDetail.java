@@ -71,6 +71,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String lovValue;
 	private JointAccountDetail befImage;
 	private LoggedInUser userDetails;
+	
+	private long custID;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -96,6 +98,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("guarantorExposure");
 		excludeFields.add("worstStatus");
 		excludeFields.add("status");
+		excludeFields.add("custID");
 		return excludeFields;
 	}
 
@@ -253,5 +256,13 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setGuarantorList(List<FinanceExposure> guarantorList) {
 		this.guarantorList = guarantorList;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
 	}
 }

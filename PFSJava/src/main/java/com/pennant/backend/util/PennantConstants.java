@@ -668,4 +668,9 @@ public class PennantConstants {
 	
 	public static final DataEngineStatus BATCH_TYPE_PRESENTMENT_IMPORT = new DataEngineStatus();
 	public static final String FILESTATUS_STARTING = "STARTING";
+	
+	//GST Tax Constants	TaxApplicableFor_PrimaryCustomer
+	public static final String TAXAPPLICABLEFOR_PRIMAYCUSTOMER = "P";
+	public static final String TAXAPPLICABLEFOR_COAPPLICANT = "C";
+	public static final String TAXAPPLICABLEFOR_GUARANTOR= "G";
 }
