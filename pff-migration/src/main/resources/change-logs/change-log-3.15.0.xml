@@ -3563,7 +3563,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 		replaceIfExists="true">
 			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
            T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
-     FROM FinTaxUploadHeader_Temp T1;
+     FROM FinTaxUploadHeader_Temp T1
 		</createView>
 </changeSet>
  <changeSet author="Madhubabu" id="210">
@@ -3571,7 +3571,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 		replaceIfExists="true">
 			 SELECT T1.BatchReference, T1.FileName, T1.NumberofRecords,T1.BatchCreatedDate,T1.BatchApprovedDate,T1.Status,T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,
            T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
-     FROM FinTaxUploadHeader_Temp T1;
+     FROM FinTaxUploadHeader_Temp T1
 		</createView>
 </changeSet>
  <changeSet author="Madhubabu" id="211">
@@ -3589,7 +3589,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
 T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,
 T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
-     FROM FinTaxUploadDetail_Temp T1;
+     FROM FinTaxUploadDetail_Temp T1
 		</createView>
 </changeSet>
  <changeSet author="Madhubabu" id="213">
