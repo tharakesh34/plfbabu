@@ -363,7 +363,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		selectSql.append(" Version , ");
 		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("_View")) {
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",LovDescCIFName, custID ");		
         }
 		selectSql.append(" From FinJointAccountDetails");		
