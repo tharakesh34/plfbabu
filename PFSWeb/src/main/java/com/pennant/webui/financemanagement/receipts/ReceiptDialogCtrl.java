@@ -3589,7 +3589,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.favourName.isReadonly()){
 				this.favourName.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_favourName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 			
 			if(!this.depositDate.isDisabled()){
