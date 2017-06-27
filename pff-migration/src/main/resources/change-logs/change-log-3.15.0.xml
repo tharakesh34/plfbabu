@@ -3803,4 +3803,11 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 		</sql>
 	</changeSet>
 	
+	<changeSet id="221" author="Kesav">
+		<sql>
+			Delete from Rules where RuleModule = 'BOUNCE';
+			Delete from Rules_Temp where RuleModule = 'BOUNCE';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
