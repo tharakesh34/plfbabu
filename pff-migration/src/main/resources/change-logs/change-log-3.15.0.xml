@@ -3873,5 +3873,12 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 		   LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR   ON LR.ACTYPEGRPID  = ATG.GROUPCODE   AND LR.HOSTACCOUNT = AM.HOSTACCOUNT
 		</createView>
 	</changeSet>
-	
+	<changeSet id="225" author="Jayant">
+	    <sql>
+	        Insert into REPORTLIST values ('FinanceTaxDetail','FinanceTaxDetail','label_FinanceTaxDetailList_FinReference.value,listheader_ApplicableFor.label,listheader_TaxExempted.label,listheader_TaxNumber.label,listheader_City.label,listheader_PinCode.label','finReference,applicableFor,taxExempted,taxNumber,city,pinCode','String,String,boolean,String,String,String',' ','ReportList06_LoanGST','Loan GST Detail','Loan Management',2,1001,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,0);
+
+			Insert into REPORTLIST values ('FinTaxUploadHeader','FinTaxUploadHeader','listheader_BatchReference.label,listheader_FileName.label,listheader_BatchCreatedDate.label,listheader_NumberOfRecords.label,listheader_FileStatus.label','batchReference,fileName,batchCreatedDate,numberofRecords,status','long,String,Date,long,String',' ','ReportList05','GST Upload','Loan Management',2,1001,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,0);
+	        
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
