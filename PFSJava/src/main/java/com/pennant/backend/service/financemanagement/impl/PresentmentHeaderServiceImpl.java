@@ -424,7 +424,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		PresentmentHeader header = presentmentHeaderDAO.getPresentmentHeader(presentmentId, "_Aview");
 		if (detailList != null && !detailList.isEmpty()) {
 			for (PresentmentDetail detail : detailList) {
-				if (!(DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) > 0)) {
+				if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
 					try {
 						long receiptId = doCreateReceipts(detail, userDetails, header);
 						presentmentHeaderDAO.updateReceptId(detail.getId(), receiptId);
