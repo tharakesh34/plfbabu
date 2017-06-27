@@ -141,6 +141,8 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setCategory(int category) {
 		this.category = category;
+		this.categoryDesc = PennantStaticListUtil.getlabelDesc(String.valueOf(category),
+				PennantStaticListUtil.getCategoryType());
 	}
 	public String getReason() {
 		return reason;

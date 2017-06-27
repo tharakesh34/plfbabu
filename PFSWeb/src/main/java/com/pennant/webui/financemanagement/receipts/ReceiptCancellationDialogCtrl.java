@@ -663,9 +663,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if (dataObject instanceof String) {
 			this.bounceCode.setValue(dataObject.toString());
 		} else {
-			BounceReason details = (BounceReason) dataObject;
-			if (details != null) {
-				HashMap<String, Object> executeMap = details.getDeclaredFieldValues();
+			BounceReason bounceReason = (BounceReason) dataObject;
+			if (bounceReason != null) {
+				HashMap<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
 
 				if (this.receiptHeader != null) {
 					if (this.receiptHeader.getReceiptDetails() != null
@@ -680,7 +680,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					}
 				}
 
-				Rule rule = getRuleService().getRuleById(details.getRuleID(), "");
+				Rule rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 				if (rule != null) {
