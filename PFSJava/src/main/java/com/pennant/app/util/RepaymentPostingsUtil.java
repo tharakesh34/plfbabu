@@ -279,7 +279,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// Schedule updations
-		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, aeEvent.getLinkedTranId(),valueDate);
+		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, aeEvent.getLinkedTranId(),valueDate,postDate);
 
 		actReturnList.add(aeEvent.isPostingSucess());
 		actReturnList.add(aeEvent.getLinkedTranId());
@@ -309,7 +309,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	private List<FinanceScheduleDetail> scheduleUpdate(FinanceMain financeMain,
-			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader rpyQueueHeader, long linkedTranId, Date valueDate)
+			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader rpyQueueHeader, long linkedTranId, Date valueDate,Date postDate)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -338,7 +338,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				scheduleDetail = scheduleMap.get(DateUtility.getSqlDate(repayQueue.getRpyDate()));
 			}
 
-			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, valueDate, linkedTranId,
+			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, valueDate,postDate, linkedTranId,
 					rpyTotal);
 			scheduleMap.remove(scheduleDetail.getSchDate());
 			scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
@@ -634,7 +634,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public FinanceScheduleDetail paymentUpdate(FinanceMain financeMain, FinanceScheduleDetail scheduleDetail,
-			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt)
+			FinRepayQueue finRepayQueue, Date dateValueDate,Date postDate, long linkedTranId, BigDecimal totalRpyAmt)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
@@ -649,7 +649,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// Finance Repayments Details
-		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate, linkedTranId, totalRpyAmt);
+		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate,postDate ,linkedTranId, totalRpyAmt);
 		getFinanceRepaymentsDAO().save(repayment, "");
 
 		logger.debug("Leaving");
@@ -708,12 +708,11 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @param repayAmtBal
 	 * @return
 	 */
-	public FinanceRepayments prepareRepayDetailData(FinRepayQueue queue, Date valueDate, long linkedTranId,
+	public FinanceRepayments prepareRepayDetailData(FinRepayQueue queue, Date valueDate,Date postdate, long linkedTranId,
 			BigDecimal totalRpyAmt) {
 		logger.debug("Entering");
 
 		FinanceRepayments repayment = new FinanceRepayments();
-		Date curAppDate = DateUtility.getAppDate();
 
 		repayment.setFinReference(queue.getFinReference());
 		repayment.setFinSchdDate(queue.getRpyDate());
@@ -721,7 +720,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		repayment.setLinkedTranId(linkedTranId);
 
 		repayment.setFinRpyAmount(totalRpyAmt);
-		repayment.setFinPostDate(curAppDate);
+		repayment.setFinPostDate(postdate);
 		repayment.setFinValueDate(valueDate);
 		repayment.setFinBranch(queue.getBranch());
 		repayment.setFinType(queue.getFinType());
