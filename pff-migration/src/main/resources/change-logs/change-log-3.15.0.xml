@@ -3907,4 +3907,10 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			<where>workflowtype='RECEIPT_PROCESS'and workflowactive=1</where>
 		</update>
 </changeSet>
+
+	<changeSet id="229" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="PRESENTMENTID" type="bigint" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
