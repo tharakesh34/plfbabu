@@ -38,32 +38,28 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	public FinScheduleData getRateChangeDetails(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
 		logger.debug("Entering");
 
-		if (finScheduleData != null && finServiceInst != null) {
-			FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			// Profit Days Basis Setting for Calculation Process
-			List<FinanceScheduleDetail> schDetailList = finScheduleData.getFinanceScheduleDetails();
-			for (FinanceScheduleDetail curSchd : schDetailList) {
-				if (curSchd.getSchDate().compareTo(financeMain.getEventFromDate()) >= 0
-						&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0) {
-					curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
-				}
+		// Profit Days Basis Setting for Calculation Process
+		List<FinanceScheduleDetail> schDetailList = finScheduleData.getFinanceScheduleDetails();
+		for (FinanceScheduleDetail curSchd : schDetailList) {
+			if (curSchd.getSchDate().compareTo(financeMain.getEventFromDate()) >= 0
+					&& curSchd.getSchDate().compareTo(financeMain.getEventToDate()) < 0) {
+				curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
 			}
-			FinScheduleData finSchData = null;
-			
-			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-			
-			finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(), finServiceInst.getSplRate(),
-					finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin(),
-							finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), true);
-
-			return finSchData;
 		}
+		FinScheduleData finSchData = null;
 
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+
+		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(), finServiceInst.getSplRate(),
+				finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin(),
+						finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), true);
+
+		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
-
-		return new FinScheduleData();
+		return finSchData;
 	}
 
 	/**

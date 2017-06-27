@@ -3439,6 +3439,7 @@ public class ScheduleCalculator {
 		 */
 
 		if (curSchd.getPresentmentId() > 0) {
+			curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 			return curSchd;
 		}
 

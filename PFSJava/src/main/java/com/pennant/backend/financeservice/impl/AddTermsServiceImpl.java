@@ -32,6 +32,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		
 		finscheduleData = ScheduleCalculator.addTerm(finscheduleData,finServiceInstruction.getTerms());
 
+		finscheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finscheduleData;
 	}

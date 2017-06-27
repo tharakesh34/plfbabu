@@ -339,7 +339,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		insertSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis, ");
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal,WriteoffPrincipal, WriteoffProfit, ");
-			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt,  ");
+			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId, ");
 			if (type.contains("Log")) {
 				insertSql.append(" LogKey , ");
 			}
@@ -363,7 +363,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.append(" :SuplRent , :IncrCost , :SuplRentPaid , :IncrCostPaid , :TDSAmount, :TDSPaid, :PftDaysBasis, ");
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
-			insertSql.append(" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt, ");
+			insertSql.append(" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt,:PresentmentId, ");
 			if (type.contains("Log")) {
 				insertSql.append(" :LogKey , ");
 			}
@@ -439,7 +439,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		if (!isWIF) {
 			updateSql.append(" RefundOrWaiver=:RefundOrWaiver, EarlyPaid =:EarlyPaid, EarlyPaidBal=:EarlyPaidBal ,");
 			updateSql.append(" WriteoffPrincipal=:WriteoffPrincipal, WriteoffProfit=:WriteoffProfit ,");
-			updateSql.append(" WriteoffIns=:WriteoffIns ,  ");
+			updateSql.append(" WriteoffIns=:WriteoffIns , PresentmentId=:PresentmentId, ");
 			updateSql
 					.append(" WriteoffIncrCost=:WriteoffIncrCost, WriteoffSuplRent=:WriteoffSuplRent, WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
 		}
@@ -640,7 +640,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis, ");
 		if (!isWIF) {
 			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
-			selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, PartialPaidAmt, ");
+			selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
 		}
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate, SchdMethod, ");

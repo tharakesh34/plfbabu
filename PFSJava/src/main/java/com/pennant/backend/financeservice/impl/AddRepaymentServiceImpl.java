@@ -51,6 +51,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 		finSchdData = ScheduleCalculator.changeRepay(finscheduleData, finServiceInstruction.getAmount(), 
 				finServiceInstruction.getSchdMethod());
 
+		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 
 		return finSchdData;

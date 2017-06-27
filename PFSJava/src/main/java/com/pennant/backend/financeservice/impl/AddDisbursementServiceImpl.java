@@ -60,6 +60,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
+		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 
 		return finSchData;
