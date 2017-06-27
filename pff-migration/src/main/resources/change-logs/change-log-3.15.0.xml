@@ -3766,4 +3766,25 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			<column name="Remarks" type="varchar(2000)"/>
 		</addColumn>
 	</changeSet>
+	
+	
+	<changeSet id="218" author="Manoj.P">
+		<createTable tableName="CIBIL_FILE_INFO_LOG">
+			<column name="ID" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FINREFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REASON" type="VARCHAR(3000)">
+			</column>
+		</createTable>
+	</changeSet>
+	
+		<changeSet id="219" author="Manoj.P">
+		<addForeignKeyConstraint constraintName="FK_CBIL_ID"
+			referencedTableName="CIBIL_FILE_INFO" referencedColumnNames="ID"
+			baseTableName="CIBIL_FILE_INFO_LOG" baseColumnNames="ID" />
+	</changeSet>
+	
 </databaseChangeLog>
