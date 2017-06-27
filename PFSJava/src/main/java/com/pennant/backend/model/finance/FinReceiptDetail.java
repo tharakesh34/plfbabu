@@ -55,19 +55,24 @@ public class FinReceiptDetail implements Entity {
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
-
+	
 	
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> receiptDetailMap = new HashMap<String, Object>();
+		getDeclaredFieldValues(receiptDetailMap);
+		return receiptDetailMap;
+	}
+
+	public void getDeclaredFieldValues(HashMap<String, Object> receiptDetailMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				// "rd_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				receiptDetailMap.put("rd_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				receiptDetailMap.put("rd_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return receiptDetailMap;
 	}
 	
 	public FinReceiptDetail() {

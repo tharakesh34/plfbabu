@@ -397,7 +397,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bounceCode.setValueColumn("BounceID");
 		this.bounceCode.setDescColumn("BounceCode");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
 		
 		this.bounceCharge.setProperties(false , formatter);
 		this.bounceRemarks.setMaxlength(100);
@@ -665,27 +665,28 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		} else {
 			BounceReason details = (BounceReason) dataObject;
 			if (details != null) {
-				HashMap<String, Object> executeMap = new HashMap<String, Object>();
-				
-				if(this.receiptHeader != null) {
-					if(this.receiptHeader.getReceiptDetails() != null && !this.receiptHeader.getReceiptDetails().isEmpty()) {
-						for(FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
-							if(StringUtils.equals(this.receiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
-								executeMap.put("MandateType", finReceiptDetail.getPaymentType());
-								executeMap.put("PresentmentAmt", finReceiptDetail.getAmount());
-								executeMap.put("reqFinType", receiptHeader.getFinType());
+				HashMap<String, Object> executeMap = details.getDeclaredFieldValues();
+
+				if (this.receiptHeader != null) {
+					if (this.receiptHeader.getReceiptDetails() != null
+							&& !this.receiptHeader.getReceiptDetails().isEmpty()) {
+						for (FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
+							if (StringUtils.equals(this.receiptHeader.getReceiptMode(),
+									finReceiptDetail.getPaymentType())) {
+								finReceiptDetail.getDeclaredFieldValues(executeMap);
 								break;
 							}
 						}
 					}
 				}
+
 				Rule rule = getRuleService().getRuleById(details.getRuleID(), "");
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
-				if(rule != null){
-					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-							executeMap, getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
-					// unFormating bounceAmt
+				if (rule != null) {
+					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+							getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
+					// unFormating BounceAmt
 					bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt, formatter);
 				}
 				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, formatter));

@@ -119,7 +119,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		super.pageRightName = "ManualAdviseList";
 		super.tableName = "ManualAdvise";
 		super.queueTableName = "ManualAdvise_TView";
-		super.enquiryTableName = "ManualAdvise_AView";
+		super.enquiryTableName = "MANUALADVISE_LVIEW";
 	}
 	
 	@Override
