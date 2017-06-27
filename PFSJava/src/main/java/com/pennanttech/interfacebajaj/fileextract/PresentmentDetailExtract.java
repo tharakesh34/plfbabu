@@ -448,7 +448,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		sql.append(" SELECT STATUS FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
+		sql.append(" AND (STATUS = :APPSTATUS OR STATUS = :FAISTATUS )");
 		source.addValue("PRESENTMENTREF", presentmentRef);
+		source.addValue("APPSTATUS", RepayConstants.PAYMENT_APPROVE	);
+		source.addValue("FAISTATUS", RepayConstants.PAYMENT_FAILURE);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
