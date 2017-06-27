@@ -3746,4 +3746,24 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 	 </createView>
 	
 	</changeSet>
+	
+	
+	<changeSet id="217" author="Manoj">
+		<addColumn tableName="CIBIL_FILE_INFO">
+				<column defaultValueNumeric="0" name="TotalRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="ProcessedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="SuccessRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="FailedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EndTime" type="datetime"/>
+			<column name="Remarks" type="varchar(2000)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
