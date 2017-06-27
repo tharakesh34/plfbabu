@@ -87,59 +87,58 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennanttech.framework.web.AbstractDialogController;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
-	private static final long serialVersionUID = -1351367303946249042L;
-	private static final Logger logger = Logger.getLogger(NotesCtrl.class);
-	
+	private static final long					serialVersionUID	= -1351367303946249042L;
+	private static final Logger					logger				= Logger.getLogger(NotesCtrl.class);
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_notesDialog; 		
-	protected Tabbox 		tabbox;						
-	protected Listbox 		listboxNotes;				
-	protected Listhead 		listheadNotes;				
-	protected PTCKeditor	remarks;					 
-	protected Textbox		remarksText;					
-	protected Radiogroup 	remarkType; 		 		
-	protected Label 		label_NotesDialog_AlignType;
-	protected Radiogroup 	alignType; 		 			
-	protected Hlayout 		hlayout_cbType;				
-	protected Div 			div_toolbar;				
-	protected Label 		label_title;				
-	protected Separator     separator1;			       
-	protected Separator     separator2;			       
-	protected Space			space_type1;					
-	protected Space			space_type2;					
-	protected Label			label_NotesDialog_Type;		
-	
+	protected Window							window_notesDialog;
+	protected Tabbox							tabbox;
+	protected Listbox							listboxNotes;
+	protected Listhead							listheadNotes;
+	protected PTCKeditor						remarks;
+	protected Textbox							remarksText;
+	protected Radiogroup						remarkType;
+	protected Label								label_NotesDialog_AlignType;
+	protected Radiogroup						alignType;
+	protected Hlayout							hlayout_cbType;
+	protected Div								div_toolbar;
+	protected Label								label_title;
+	protected Separator							separator1;
+	protected Separator							separator2;
+	protected Space								space_type1;
+	protected Space								space_type2;
+	protected Label								label_NotesDialog_Type;
+
 	// not auto wired variables
-	private Notes 			notes; 						// overHanded per parameter
-	private NotesCtrl 		notesCtrl;
-	
-	private transient NotesService notesService;
+	private Notes								notes;															// overHanded per parameter
+	private NotesCtrl							notesCtrl;
+
+	private transient NotesService				notesService;
 	// not auto wired variables
-	private Notes 			newNotes; 					// overHanded per parameter
-	
-	private AbstractDialogController<Object> mainControl = null;
-	private transient boolean validationOn;	
-	private List<ValueLabel> remarkTypeList = PennantStaticListUtil.getRemarkType();
-	private List<ValueLabel> recommandTypeList = PennantStaticListUtil.getRecommandType();
-	private List<ValueLabel> alignTypeList = PennantStaticListUtil.getAlignType();
-	private List<Notes> notesList;
-	private boolean isFinanceNotes = false;
-	private boolean isRecommendMand = false;
-	private String roleCode = "";
-	private String moduleName = "";
-	private Tabpanel tabpanel = null;
-	private boolean  isEnquiry = false;
-	private boolean  isNotFinanceProcess = false;
-	
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
-	private CollateralBasicDetailsCtrl  collateralBasicDetailsCtrl;
-	protected Groupbox finBasicdetails;
-	
-	public NotesCtrl(){
+	private Notes								newNotes;														// overHanded per parameter
+
+	private AbstractDialogController<Object>	mainControl			= null;
+	private transient boolean					validationOn;
+	private List<ValueLabel>					remarkTypeList		= PennantStaticListUtil.getRemarkType();
+	private List<ValueLabel>					recommandTypeList	= PennantStaticListUtil.getRecommandType();
+	private List<ValueLabel>					alignTypeList		= PennantStaticListUtil.getAlignType();
+	private List<Notes>							notesList;
+	private boolean								isFinanceNotes		= false;
+	private boolean								isRecommendMand		= false;
+	private String								roleCode			= "";
+	private String								moduleName			= "";
+	private Tabpanel							tabpanel			= null;
+	private boolean								isEnquiry			= false;
+	private boolean								isNotFinanceProcess	= false;
+
+	private FinBasicDetailsCtrl					finBasicDetailsCtrl;
+	private CollateralBasicDetailsCtrl			collateralBasicDetailsCtrl;
+	protected Groupbox							finBasicdetails;
+
+	public NotesCtrl() {
 		super();
 	}
 
@@ -147,13 +146,12 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
-	
+
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected bankDetails object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected bankDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -165,7 +163,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		// Set the page level components.
 		setPageComponents(window_notesDialog);
 
-		if(event.getTarget().getParent() != null){
+		if (event.getTarget().getParent() != null) {
 			tabpanel = (Tabpanel) event.getTarget().getParent();
 		}
 
@@ -178,49 +176,49 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		} else {
 			setNotes(null);
 		}
-		
+
 		if (arguments.containsKey("isFinanceNotes")) {
 			this.isFinanceNotes = (Boolean) arguments.get("isFinanceNotes");
 		}
 		if (arguments.containsKey("isRecommendMand")) {
 			this.isRecommendMand = (Boolean) arguments.get("isRecommendMand");
 		}
-		
+
 		if (arguments.containsKey("userRole")) {
 			this.roleCode = (String) arguments.get("userRole");
 		}
 		if (arguments.containsKey("moduleName")) {
 			this.moduleName = (String) arguments.get("moduleName");
 		}
-		
+
 		if (arguments.containsKey("enqModule")) {
 			isEnquiry = true;
 		}
-		
+
 		if (arguments.containsKey("notesList")) {
 			this.notesList = (List<Notes>) arguments.get("notesList");
 		}
 		if (arguments.containsKey("isNotFinanceProcess")) {
 			this.isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
 		}
-		
+
 		// append finance basic details 
 		if (arguments.containsKey("finHeaderList")) {
-			appendFinBasicDetails((ArrayList<Object> )arguments.get("finHeaderList"));
+			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		}
-		
-		this.mainControl =  (AbstractDialogController<Object>) arguments.get("control");
+
+		this.mainControl = (AbstractDialogController<Object>) arguments.get("control");
 		this.remarks.setCustomConfigurationsPath(PTCKeditor.SIMPLE_LIST);
-		
+
 		getBorderLayoutHeight();
 		listboxNotes.setHeight(getListBoxHeight(13));
-		
+
 		doShowDialog(getNotes());
-		doCheckEnquiry();	
-		
+		doCheckEnquiry();
+
 		this.remarks.setValue(" ");
-		
-		logger.debug("Leaving" +event.toString());	
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	private void doCheckEnquiry() {
@@ -237,6 +235,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			//listboxNotes.setHeight(borderLayoutHeight-175+"px");
 		}
 	}
+
 	private void doCheckNoteEnquiry() {
 		logger.debug("Entering");
 		if (isEnquiry) {
@@ -255,8 +254,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -264,7 +262,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		this.btnSave.setVisible(true);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
@@ -292,9 +290,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" +event.toString());
+		logger.debug("Entering" + event.toString());
 		doCancel();
-		logger.debug("Leaving" +event.toString());
+		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
@@ -318,37 +316,35 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		//window_notesDialog.detach();
 		logger.debug("Leaving");
 	}
-		
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aNotes
 	 */
-	
+
 	public void doWriteComponentsToBean() {
 		logger.debug("Entering");
 		Notes aNotes = new Notes();
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
-		if (isFinanceNotes) {
-			if (StringUtils.isBlank(remarks.getValue())) {
-				wve.add(new WrongValueException(remarks, Labels.getLabel("Notes_NotEmpty")));
-			} else {
-				aNotes.setRemarks(remarks.getValue().trim());
-			}
-		}else{
-			if (this.remarksText.getValue()==null || this.remarksText.getValue().trim().length()<=0){
+
+		aNotes.setRemarks(remarks.getValue());
+
+		if (!isFinanceNotes) {
+
+			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
 				wve.add(new WrongValueException(this.remarksText, Labels.getLabel("Notes_NotEmpty")));
-			}else{
+			} else {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
+
 		}
-		
-		if (wve.size()>0) {
-			
+
+		if (wve.size() > 0) {
+
 			this.remarksText.setConstraint("");
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
@@ -360,25 +356,25 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aNotes.setAlignType(this.alignType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		UserWorkspace workspace = getUserWorkspace();
-		
+
 		aNotes.setModuleName(this.notes.getModuleName());
 		aNotes.setReference(this.notes.getReference());
 		aNotes.setVersion(this.notes.getVersion());
 		aNotes.setInputBy(workspace.getLoggedInUser().getLoginUsrID());
 		aNotes.setInputDate(new Timestamp(System.currentTimeMillis()));
 		aNotes.setRoleCode(getNotes().getRoleCode());
-		this.newNotes =aNotes;
+		this.newNotes = aNotes;
 		logger.debug("Leaving");
-	} 
-	
+	}
+
 	public void doShowDialog(Notes aNotes) throws Exception {
 		logger.debug("Entering");
 
@@ -386,9 +382,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			// fill the components with the data
 			setAlignTypeList();
 			this.listboxNotes.getItems().clear();
-			
-			if(this.isFinanceNotes){
-				
+
+			if (this.isFinanceNotes) {
+
 				setRecommendTypeList();
 				getRecommendations();
 				this.tabpanel.appendChild(this.window_notesDialog);
@@ -402,51 +398,59 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 				this.btnClose.setVisible(false);
 				this.label_title.setValue(Labels.getLabel("MemoDetails"));
-				
+
 				this.alignType.setVisible(false);
 				this.label_NotesDialog_AlignType.setVisible(false);
 				this.alignType.setSelectedIndex(0);
-				
+
 				this.remarksText.setVisible(false);
 				this.remarks.setVisible(true);
-			}else{
+			} else {
 				this.remarksText.setVisible(true);
 				this.remarks.setVisible(false);
 				setRemarkTypeList();
 				getList();
-				doCheckNoteEnquiry() ;
+				doCheckNoteEnquiry();
 				this.window_notesDialog.doModal(); // open the dialog in modal mode
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() {
 		logger.debug("Entering");
 		// fill the BankDetails object with the components data
 		doWriteComponentsToBean();
 		// save it to database
+
 		try {
-			if(isFinanceNotes){
-				if(StringUtils.equals(this.newNotes.getReference(), "null") || StringUtils.isBlank(this.newNotes.getReference())){
+			if (isFinanceNotes) {
+
+				if (StringUtils.trimToEmpty(this.remarks.getValue()).isEmpty()) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return;
+				}
+				if (StringUtils.equals(this.newNotes.getReference(), "null")
+						|| StringUtils.isBlank(this.newNotes.getReference())) {
 					String finReferece = "";
 					try {
 						Object object = this.mainControl.getClass().getMethod("getReference").invoke(this.mainControl);
 						if (object != null) {
-							finReferece=  object.toString();
+							finReferece = object.toString();
 						}
 					} catch (Exception e) {
 						logger.debug(e);
 					}
-					
-					if(StringUtils.isBlank(finReferece) || StringUtils.equals(finReferece, "null")){
+
+					if (StringUtils.isBlank(finReferece) || StringUtils.equals(finReferece, "null")) {
 						MessageUtil.showError("Reference Must be Entered");
 						return;
 					}
@@ -454,20 +458,20 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 					this.notes.setReference(finReferece);
 				}
 			}
-			
-			if(this.notesList == null){
-				getNotesService().saveOrUpdate(this.newNotes); 
+
+			if (this.notesList == null) {
+				getNotesService().saveOrUpdate(this.newNotes);
 			} else {
 				this.newNotes.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
 				this.newNotes.setUsrName(getUserWorkspace().getLoggedInUser().getFullName());
-				
+
 				this.notesList.add(this.newNotes);
 			}
 			setAlignTypeList();
 			this.listboxNotes.getItems().clear();
-			
-			if(this.isFinanceNotes){
-				
+
+			if (this.isFinanceNotes) {
+
 				//setRecommendTypeList();
 				getRecommendations();
 				this.tabpanel.appendChild(this.window_notesDialog);
@@ -477,24 +481,24 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				//this.div_toolbar.setVisible(false);
 				this.btnClose.setVisible(false);
 				this.label_title.setValue(Labels.getLabel("MemoDetails"));
-				
+
 				this.alignType.setVisible(false);
 				this.alignType.setSelectedIndex(0);
-			}else{
+			} else {
 				setRemarkTypeList();
 				getList();
 			}
-			
+
 			this.remarks.setValue("");
 			this.remarksText.setValue("");
-			
+
 			notesEntered = true;
 		} catch (final DataAccessException e) {
 			throw e;
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public void setRemarkTypeList() {
 		Radio radio;
 		for (int i = 0; i < remarkTypeList.size(); i++) {
@@ -505,7 +509,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		}
 		this.remarkType.setSelectedIndex(0);
 	}
-	
+
 	public void setRecommendTypeList() {
 		Radio radio;
 		for (int i = 0; i < recommandTypeList.size(); i++) {
@@ -516,7 +520,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		}
 		this.remarkType.setSelectedIndex(0);
 	}
-	
+
 	public void setAlignTypeList() {
 		Radio radio;
 		for (int i = 0; i < alignTypeList.size(); i++) {
@@ -527,103 +531,109 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		}
 		this.alignType.setSelectedIndex(0);
 	}
-	
+
 	public void getList() {
 		logger.debug("Entering");
-		
+
 		//Retrieve Notes List By Module Reference
 		List<Notes> appList = getNotesService().getNotesList(this.notes, true);
-		
+
 		Listitem item = null;
 		Listcell lc = null;
 		String alignSide = "left";
-		for(int i=0; i<appList.size(); i++){
-			
-			Notes note =(Notes) appList.get(i);
-			if(note != null) {
+		for (int i = 0; i < appList.size(); i++) {
+
+			Notes note = (Notes) appList.get(i);
+			if (note != null) {
 				item = new Listitem();
 				lc = new Listcell();
 				lc.setStyle("border:0px");
-				lc.setSpan(4);	
+				lc.setSpan(4);
 				Html html = new Html();
-				
-				if("R".equals(note.getAlignType())){
-					if("right".equals(alignSide)){
+
+				if ("R".equals(note.getAlignType())) {
+					if ("right".equals(alignSide)) {
 						alignSide = "left";
-					}else{
+					} else {
 						alignSide = "right";
 					}
 				}
-				
+
 				String usrAlign = "";
-				if("right".equals(alignSide)){
+				if ("right".equals(alignSide)) {
 					usrAlign = "left";
-				}else{
+				} else {
 					usrAlign = "right";
 				}
-				
-				String content = "<p class='triangle-right "+alignSide+"'> <font style='font-weight:bold;'> "  +note.getRemarks()+" </font> <br>  ";
+
+				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
+						+ note.getRemarks() + " </font> <br>  ";
 				String date = DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
-				if("I".equals(note.getRemarkType())){
-					content = content +  "<font style='color:#FF0000;float:"+usrAlign+";'>"+note.getUsrLogin().toLowerCase()+" : "+date+"</font></p>";
-				}else{
-					content = content +  "<font style='color:white;float:"+usrAlign+";'>"+note.getUsrLogin().toLowerCase()+" : "+date+"</font></p>";
+				if ("I".equals(note.getRemarkType())) {
+					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
+							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
+				} else {
+					content = content + "<font style='color:white;float:" + usrAlign + ";'>"
+							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
 				}
 				html.setContent(content);
 				lc.appendChild(html);
 				lc.setParent(item);
 				listboxNotes.appendChild(item);
-				
-			}  
+
+			}
 		}
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Method for clear Error messages to Fields
 	 */
-	public  void doClearMessage(){
+	public void doClearMessage() {
 		logger.debug("Entering");
 		this.remarksText.setErrorMessage("");
 		Clients.clearWrongValue(this.remarks);
 		logger.debug("Leaving");
-		
+
 	}
-	
+
 	/**
 	 * Method for clear Error messages to Fields
 	 */
-	public  void onFulfill$remarks(){
+	public void onFulfill$remarks() {
 		logger.debug("Entering");
-		 doClearMessage();
+		doClearMessage();
 		logger.debug("Leaving");
-		
+
 	}
-	
+
 	public void getRecommendations() {
 		logger.debug("Entering");
-		
+
 		//Retrieve Notes List By Module Reference
 		List<Notes> appList = new ArrayList<>();
-		if(StringUtils.isNotEmpty(this.notes.getReference())){
+		if (StringUtils.isNotEmpty(this.notes.getReference())) {
 			appList = getNotesService().getNotesList(this.notes, false);
 		}
-		
-		if(this.notesList !=null && this.notesList.size() > 0) {
+
+		if (this.notesList != null && this.notesList.size() > 0) {
 			appList.addAll(notesList);
 		}
-		
+
 		Listitem item = null;
 		Listcell lc = null;
 		this.listboxNotes.setSizedByContent(true);
-		for(int i=0; i<appList.size(); i++){
-			
-			Notes note =(Notes) appList.get(i);
-			if(note != null) {
-				
-				if(i == 0 && isRecommendMand && StringUtils.trimToEmpty(roleCode).equalsIgnoreCase(note.getRoleCode())){
+		for (int i = 0; i < appList.size(); i++) {
+
+			Notes note = (Notes) appList.get(i);
+			if (note != null) {
+
+				if (i == 0 && isRecommendMand
+						&& StringUtils.trimToEmpty(roleCode).equalsIgnoreCase(note.getRoleCode())) {
 					try {
-						if (mainControl.getClass().getMethod("setRecommendEntered",Boolean.class)!=null){
-							mainControl.getClass().getMethod("setRecommendEntered",Boolean.class).invoke(mainControl, true);
+						if (mainControl.getClass().getMethod("setRecommendEntered", Boolean.class) != null) {
+							mainControl.getClass().getMethod("setRecommendEntered", Boolean.class).invoke(mainControl,
+									true);
 						}
 					} catch (Exception e) {
 						logger.error("Exception: ", e);
@@ -638,10 +648,10 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc.setParent(item);
 				//2
 				lc = new Listcell();
-				if("R".equals(note.getRemarkType())){
+				if ("R".equals(note.getRemarkType())) {
 					lc.setLabel("Recommend");
 					lc.setStyle("color:orange;cursor:default;text-align:center;");
-				}else{
+				} else {
 					lc.setLabel("Comment");
 					lc.setStyle("color:green;cursor:default;text-align:center;");
 				}
@@ -650,39 +660,42 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc = new Listcell(DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);
-				
+
 				//4
 				lc = new Listcell();
-				Html html=new Html();
+				Html html = new Html();
 				html.setContent(note.getRemarks());
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
-				/*Html html = new Html();
-				String content = "<p class='triangle-right left'> <font style='font-weight:bold;'> "  +note.getRemarks()+" </font> <br>  ";
-				html.setContent(content);
-				lc.appendChild(html);*/
+				/*
+				 * Html html = new Html(); String content =
+				 * "<p class='triangle-right left'> <font style='font-weight:bold;'> "
+				 * +note.getRemarks()+" </font> <br>  "; html.setContent(content); lc.appendChild(html);
+				 */
 				lc.setParent(item);
-				
+
 				listboxNotes.appendChild(item);
-				
-			}  
+
+			}
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentCtrl", this );
-			map.put("finHeaderList", finHeaderList );
-			map.put("moduleName", moduleName );
-			if(isNotFinanceProcess){
-				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",this.finBasicdetails, map);
-			}else {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",this.finBasicdetails, map);
+			map.put("parentCtrl", this);
+			map.put("finHeaderList", finHeaderList);
+			map.put("moduleName", moduleName);
+			if (isNotFinanceProcess) {
+				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
+						this.finBasicdetails, map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul",
+						this.finBasicdetails, map);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -692,21 +705,23 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public Notes getNotes() {
 		return notes;
 	}
+
 	public void setNotes(Notes notes) {
 		this.notes = notes;
 	}
 
 	public NotesService getNotesService() {
 		return notesService;
-	}                                                                               
+	}
+
 	public void setNotesService(NotesService notesService) {
 		this.notesService = notesService;
 	}
@@ -714,21 +729,23 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	public NotesCtrl getNotesCtrl() {
 		return notesCtrl;
 	}
+
 	public void setNotesCtrl(NotesCtrl notesCtrl) {
 		this.notesCtrl = notesCtrl;
 	}
-	
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
-	
+
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
-	
+
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
