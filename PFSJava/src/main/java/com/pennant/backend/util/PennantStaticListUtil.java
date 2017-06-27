@@ -2066,6 +2066,7 @@ public class PennantStaticListUtil {
 			postingGroupList.add(new ValueLabel(PennantConstants.EVENTBASE,Labels.getLabel("label_EventBase")));
 			postingGroupList.add(new ValueLabel(PennantConstants.ACCNO,Labels.getLabel("label_AccoutNO")));
 			postingGroupList.add(new ValueLabel(PennantConstants.POSTDATE,Labels.getLabel("label_PostDate")));
+			postingGroupList.add(new ValueLabel(PennantConstants.VALUEDATE,Labels.getLabel("label_ValueDate")));
 		}
 		return postingGroupList;
 	}
