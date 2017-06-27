@@ -861,7 +861,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Postings Process
 		schdList = getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
-				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate);
+				profitDetail, receiptHeader, scheduleData.getFinFeeDetailList(), scheduleData,valueDate,DateUtility.getAppDate());
 		if(schdList == null){
 			schdList = scheduleData.getFinanceScheduleDetails();
 		}

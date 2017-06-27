@@ -2699,7 +2699,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		StringBuilder selectSql = new StringBuilder();
-
+		
 		selectSql.append(" SELECT FinReference, GrcPeriodEndDate, AllowGrcPeriod,");
 		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw,");
 		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate,");
@@ -2715,7 +2715,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
 		selectSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
 		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
-		selectSql.append(" FinCategory, ProductCategory, ReAgeBucket  ");
+		selectSql.append(" FinCategory, ProductCategory, ReAgeBucket,TDSApplicable  ");
 		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
 		
 		if (isActive) {
