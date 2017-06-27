@@ -76,9 +76,13 @@
 									label="${c:l('listheader_Acc_FinEvent.label')}" sort="false"
 									hflex="min" />
 								<listheader
-									id="listheader_Acc_ValueDate"
+									id="listheader_Acc_PostDate"
 									label="${c:l('listheader_Acc_PostDate.label')}" sort="false"
 									hflex="min" />
+								<listheader
+									id="listheader_Acc_ValueDate"
+									label="${c:l('listheader_Acc_ValueDate.label')}" sort="false"
+									hflex="min" />	
 								<listheader id="listheader_Acc_TranDesc"
 									label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
 									hflex="min" />

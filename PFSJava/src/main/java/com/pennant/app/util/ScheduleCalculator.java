@@ -760,8 +760,8 @@ public class ScheduleCalculator {
 			}
 		}
 
-		if(finMain.getEventFromDate() != null && 
-				DateUtility.compare(finMain.getEventFromDate(), finMain.getFinStartDate()) == 0){
+		if (finMain.getEventFromDate() != null
+				&& DateUtility.compare(finMain.getEventFromDate(), finMain.getFinStartDate()) == 0) {
 			finMain.setEqualRepay(true);
 			finMain.setCalculateRepay(true);
 		}
@@ -2744,9 +2744,9 @@ public class ScheduleCalculator {
 					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
 							finFeeDetail.getFeeScheduleMethod())
 					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
-							finFeeDetail.getFeeScheduleMethod())
-			) {
-				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
+							finFeeDetail.getFeeScheduleMethod())) {
+				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
+						.subtract(finFeeDetail.getPaidAmount()));
 			}
 			feeAmount = feeAmount.add(finFeeDetail.getPaidAmount());
 		}
@@ -2942,14 +2942,13 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
-				continue;
-			}
-
-			if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) {
-				break;
-			}
-
+			//TODO: 27JUN17: PV After Successful unit test cases execution and various normal tests, it can be removed.
+			/*
+			 * if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) { continue; }
+			 */
+			/*
+			 * if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) { break; }
+			 */
 			// Fetch current rates from DB
 			if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
 				if (curSchd.isRvwOnSchDate() || i == 0
@@ -3251,7 +3250,8 @@ public class ScheduleCalculator {
 						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
-				BigDecimal calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+				BigDecimal calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
+						finMain.getRoundingTarget());
 				calIntFraction = calInt.subtract(calIntRounded);
 				calInt = calIntRounded;
 				curSchd.setRepayComplete(false);
@@ -3439,6 +3439,7 @@ public class ScheduleCalculator {
 		 */
 
 		if (curSchd.getPresentmentId() > 0) {
+			curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 			return curSchd;
 		}
 

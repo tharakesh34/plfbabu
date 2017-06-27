@@ -2010,7 +2010,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.custShrtName.isReadonly()) {
 				this.custShrtName.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_CustomerName.value"),
-						PennantRegularExpressions.REGEX_CORP_CUST, true));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 		}
 		if (!this.custArabicName.isReadonly()) {

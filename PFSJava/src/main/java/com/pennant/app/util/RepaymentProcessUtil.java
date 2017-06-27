@@ -2,6 +2,7 @@ package com.pennant.app.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
@@ -105,7 +107,7 @@ public class RepaymentProcessUtil {
 	 */
 	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
 			List<FinanceScheduleDetail> scheduleDetails, List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail,
-			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate) throws IllegalAccessException,
+			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate,Date postDate) throws IllegalAccessException,
 			InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
@@ -117,6 +119,19 @@ public class RepaymentProcessUtil {
 				false));
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finrefer, "", false));
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		
+		//TDS Calculation, if Applicable
+		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		if(financeMain.isTDSApplicable()){
+
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+			
+			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
+		}
 
 		// Fetch total overdue details
 		FinODDetails overdue = getFinODDetailsDAO().getFinODyFinRefSchDate(finrefer, valuedate);
@@ -183,13 +198,29 @@ public class RepaymentProcessUtil {
 
 							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 							if (balPft.compareTo(BigDecimal.ZERO) > 0) {
-								if (balPft.compareTo(totalReceiptAmt) > 0) {
-									balPft = totalReceiptAmt;
+
+								BigDecimal actPftAdjust = BigDecimal.ZERO;
+								//actual tds
+								actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+								// TDS Adjustments
+								BigDecimal tdsAdjust = BigDecimal.ZERO;
+								if(totalReceiptAmt.compareTo(actPftAdjust) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(actPftAdjust);
+									tdsAdjust = balPft.subtract(actPftAdjust);
+								}else{
+									actPftAdjust = totalReceiptAmt;
+									tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
+									totalReceiptAmt = BigDecimal.ZERO;
 								}
-								rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft, valueDate);
+								
+								rsd = prepareRpyRecord(curSchd, rsd, repayTo, tdsAdjust.add(actPftAdjust), valueDate);
+								
+								if (tdsAdjust.compareTo(BigDecimal.ZERO)>0) {
+									rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust.add(actPftAdjust), valueDate);
+								}
+								
 								// Reset Total Receipt Amount
-								totalReceiptAmt = totalReceiptAmt.subtract(balPft);
-								totPftPaidNow = totPftPaidNow.add(balPft);
+								totPftPaidNow = totPftPaidNow.add(actPftAdjust.add(tdsAdjust));
 							}
 
 						} else if (pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT) {
@@ -312,7 +343,7 @@ public class RepaymentProcessUtil {
 		}
 
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, finFeeDetailList, scheduleData,
-				valuedate);
+				valuedate,postDate);
 		
 		FinanceScheduleDetail curSchd = null;
 		
@@ -342,7 +373,7 @@ public class RepaymentProcessUtil {
 	@SuppressWarnings("unchecked")
 	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetailList,
-			FinScheduleData logScheduleData, Date valueDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+			FinScheduleData logScheduleData, Date valueDate,Date postingDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -366,7 +397,7 @@ public class RepaymentProcessUtil {
 		//Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = null;
 		long logKey = 0;
-		Date postDate = getPostDate(DateUtility.getAppDate());
+		Date postDate = getPostDate(postingDate);
 		if (isSchdLogReq && ((receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) 
 				|| receiptHeader.isLogSchInPresentment())) {
 			entryDetail = new FinLogEntryDetail();
@@ -393,7 +424,7 @@ public class RepaymentProcessUtil {
 			List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
 
 			if (i != 0) {
-				postDate = getPostDate(DateUtility.getAppDate());
+				postDate = getPostDate(postingDate);
 			}
 
 			boolean rpyProcessed = false;
@@ -526,7 +557,7 @@ public class RepaymentProcessUtil {
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, finFeeDetailList, profitDetail, repaySchdList,
-						getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetail, receiptHeader.getPostBranch());
+						getEventCode(repayHeader.getFinEvent()), valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch());
 				
 				feesExecuted = true;
 				if (!(Boolean) returnList.get(0)) {
@@ -1036,7 +1067,7 @@ public class RepaymentProcessUtil {
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
-			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
+			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
 			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1109,7 +1140,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
-					rpyQueueHeader, eventCode, valuedate);
+					rpyQueueHeader, eventCode, valuedate,postDate);
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
@@ -1259,7 +1290,11 @@ public class RepaymentProcessUtil {
 		// Fee Detail Payment 
 		if (rpyTo == RepayConstants.REPAY_FEE) {
 			rsd.setSchdFeePayNow(balPayNow);
-
+		}
+		
+		// TDS Payment 
+		if(rpyTo == RepayConstants.REPAY_TDS){
+			rsd.setTdsSchdPayNow(balPayNow);
 		}
 
 		// Insurance Detail Payment 

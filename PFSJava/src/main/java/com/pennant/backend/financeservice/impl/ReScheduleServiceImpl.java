@@ -445,6 +445,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
+		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;
 	}

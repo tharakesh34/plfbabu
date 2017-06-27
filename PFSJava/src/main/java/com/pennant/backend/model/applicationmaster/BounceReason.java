@@ -43,6 +43,7 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -68,6 +70,7 @@ private static final long serialVersionUID = 1L;
 	private String bounceCode;
 	private int reasonType;
 	private int category;
+	private String categoryDesc;
 	private String reason;
 	private int action;
 	private long ruleID=0;
@@ -97,11 +100,12 @@ private static final long serialVersionUID = 1L;
 		this.setId(id);
 	}
 	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("ruleCode");
-			excludeFields.add("ruleCodeDesc");
-	return excludeFields;
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("ruleCode");
+		excludeFields.add("ruleCodeDesc");
+		excludeFields.add("categoryDesc");
+		return excludeFields;
 	}
 
 	public long getId() {
@@ -137,6 +141,8 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setCategory(int category) {
 		this.category = category;
+		this.categoryDesc = PennantStaticListUtil.getlabelDesc(String.valueOf(category),
+				PennantStaticListUtil.getCategoryType());
 	}
 	public String getReason() {
 		return reason;
@@ -227,5 +233,31 @@ private static final long serialVersionUID = 1L;
 		this.ruleID = ruleID;
 	}
 
-	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> bounceReasonMap = new HashMap<String, Object>();
+		getDeclaredFieldValues(bounceReasonMap);
+		return bounceReasonMap;
+	}
+
+	public void getDeclaredFieldValues(HashMap<String, Object> bounceReasonMap) {
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				// "br_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				bounceReasonMap.put("br_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+	}
+
+	public String getCategoryDesc() {
+		this.categoryDesc = PennantStaticListUtil.getlabelDesc(String.valueOf(this.category),
+				PennantStaticListUtil.getCategoryType());
+		return categoryDesc;
+	}
+
+	public void setCategoryDesc(String categoryDesc) {
+		this.categoryDesc = categoryDesc;
+	}
 }

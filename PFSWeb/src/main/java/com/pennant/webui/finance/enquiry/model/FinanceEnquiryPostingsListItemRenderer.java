@@ -36,6 +36,8 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				item.setStyle("text-align:left;");
 			}else if(StringUtils.equals(PennantConstants.POSTDATE, dataSet.getPostingGroupBy())){
 				item.appendChild(new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate())));
+			}else if(StringUtils.equals(PennantConstants.VALUEDATE, dataSet.getPostingGroupBy())){
+				item.appendChild(new Listcell(DateUtility.formatToLongDate(dataSet.getValueDate())));
 			} else if(StringUtils.equals(PennantConstants.ACCNO, dataSet.getPostingGroupBy())){
 				item.appendChild(new Listcell(String.valueOf(dataSet.getAccount())));
 			} else{
@@ -66,6 +68,14 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				lc = new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate()));
 				lc.setParent(item);
 			}
+			if(StringUtils.equals(PennantConstants.VALUEDATE, dataSet.getPostingGroupBy())){
+				lc = new Listcell("");
+				lc.setParent(item);
+			}else{
+				lc = new Listcell(DateUtility.formatToLongDate(dataSet.getValueDate()));
+				lc.setParent(item);
+			}
+			
 			lc = new Listcell(dataSet.getTranDesc());
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.getlabelDesc(dataSet.getDrOrCr(),PennantStaticListUtil.getTranType()));

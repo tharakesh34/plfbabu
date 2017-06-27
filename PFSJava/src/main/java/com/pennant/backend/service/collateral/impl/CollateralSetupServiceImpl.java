@@ -2363,20 +2363,21 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			// expiry date
 			Date currAppDate = DateUtility.getAppDate();
 			Date expiryDate = collateralSetup.getExpiryDate();
-			if(expiryDate !=null){
-			if (expiryDate.compareTo(currAppDate) <= 0 ||expiryDate.after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "ExpiryDate";
-				valueParm[1] = DateUtility.formatToLongDate(currAppDate);
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-			}
+			if (expiryDate != null) {
+				if (expiryDate.compareTo(currAppDate) <= 0
+						|| expiryDate.compareTo(SysParamUtil.getValueAsDate("APP_DFT_END_DATE")) >= 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "ExpiryDate";
+					valueParm[1] = DateUtility.formatToLongDate(currAppDate);
+					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				}
 			}
 			// expiry date
 			Date nextRvwDate = collateralSetup.getNextReviewDate();
 			if(nextRvwDate != null){
 			if (nextRvwDate.compareTo(currAppDate) <= 0
-					|| nextRvwDate.after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+					|| nextRvwDate.compareTo(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))>=0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "nextReviewDate";
 				valueParm[1] = DateUtility.formatToLongDate(currAppDate);

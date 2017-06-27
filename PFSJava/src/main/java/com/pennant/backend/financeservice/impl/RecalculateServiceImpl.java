@@ -42,7 +42,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 		
 		//TODO: PV 19JAN17 schdMethod to be added
 		finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");
-
+		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 
 		return finSchdData;
@@ -53,7 +53,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 
 		FinScheduleData finSchdData = null;
 		finSchdData = ScheduleCalculator.changeProfit(finScheduleData, adjustedPft);
-
+		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finSchdData;
 	}

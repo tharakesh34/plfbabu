@@ -165,7 +165,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doWriteComponentsToBean(detailHeader);
 		try {
 			errorMsg = extractDetails(detailHeader);
-			MessageUtil.showError(errorMsg);
+			MessageUtil.showMessage(errorMsg);
 			return;
 		} catch (Exception e) {
 			MessageUtil.showError(e);

@@ -60,7 +60,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -166,7 +165,6 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 
 	public LimitHeader() {
 		super();
-		setWorkflowId(WorkFlowUtil.getWorkFlowID("LimitHeader"));
 	}
 
 	public LimitHeader(long id) {

@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.pennant.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.15.4</version>
+		<version>3.15.5</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>pff-interface-bajaj</artifactId>
-	
+
 	<properties>
 		<cxf.version>3.1.8</cxf.version>
 	</properties>
@@ -26,7 +26,7 @@
 			<artifactId>pff-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -42,7 +42,7 @@
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-client</artifactId>
@@ -69,6 +69,19 @@
 			<groupId>com.pennanttech.framework.components</groupId>
 			<artifactId>data-engine</artifactId>
 			<version>2.0.0.50</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<version>12.2.0.1.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

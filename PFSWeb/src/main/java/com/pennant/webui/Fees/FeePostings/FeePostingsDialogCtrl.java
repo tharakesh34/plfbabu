@@ -580,6 +580,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postDate.setDisabled(true);
 		this.valueDate.setDisabled(true);
 		this.remarks.setDisabled(true);
+		this.postingDivision.setReadonly(true);
 		
 		logger.debug("Leaving");
 		
@@ -751,6 +752,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		
 		try {
+			if(!enqModule){
 			if (this.valueDate.getValue().before(minReqPostingDate)
 					|| this.valueDate.getValue().after(DateUtility.getAppDate())) {
 				
@@ -763,6 +765,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			}
 			
 			aFeePostings.setValueDate(this.valueDate.getValue());
+	}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

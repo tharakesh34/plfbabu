@@ -1688,15 +1688,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.getEarlyPayOnSchDate(), nextRepaySchDate, receiptData.getRepayMain().getEarlyPayAmount(), method);
 
 			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
-			List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
-			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
-			for (int i = 0; i < disbList.size(); i++) {
-				FinanceDisbursement curDisb = disbList.get(i);
-				if(curDisb.getDisbDate().compareTo(actualMaturity) >= 0){
-					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
-					Events.sendEvent(Events.ON_CLICK, this.btnChangeReceipt, null);
-					logger.debug("Leaving");
-					return;
+			if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
+				Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
+				for (int i = 0; i < disbList.size(); i++) {
+					FinanceDisbursement curDisb = disbList.get(i);
+					if(curDisb.getDisbDate().compareTo(actualMaturity) >= 0){
+						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+						Events.sendEvent(Events.ON_CLICK, this.btnChangeReceipt, null);
+						logger.debug("Leaving");
+						return;
+					}
 				}
 			}
 
@@ -3589,7 +3591,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.favourName.isReadonly()){
 				this.favourName.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_favourName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 			
 			if(!this.depositDate.isDisabled()){

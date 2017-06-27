@@ -47,6 +47,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		
 		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
+		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -78,6 +79,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		
 		// call schedule calculator
 		finScheduleData = ScheduleCalculator.unPlannedEMIH(finScheduleData, BigDecimal.ZERO, scheduleMethod);
+		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -101,6 +103,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		
 		finScheduleData = ScheduleCalculator.reAging(finScheduleData);
+		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return finScheduleData;
 	}

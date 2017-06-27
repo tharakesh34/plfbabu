@@ -45,6 +45,7 @@ package com.pennant.webui.finance.financemain;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.model.FinTaxUploadDetailItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -225,34 +227,37 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 */
 	public void onFinTaxUploadDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering");
-
+		String whereCondition;
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinTaxUploadDetail.getSelectedItem();
 
 		// Get the selected entity.
 		long reference = (Long) selectedItem.getAttribute("id");
 		
-		FinTaxUploadHeader FinTaxUploadHeader=finTaxUploadDetailService.getFinTaxUploadHeaderByRef(reference);
+		FinTaxUploadHeader finTaxUploadHeader=finTaxUploadDetailService.getFinTaxUploadHeaderByRef(reference);
 
-		if (FinTaxUploadHeader == null) {
+		if (finTaxUploadHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BatchReference='" + FinTaxUploadHeader.getBatchReference() + "' AND version="
-				+ FinTaxUploadHeader.getVersion() + " ";
+		String whereCond = " AND BatchReference='" + finTaxUploadHeader.getBatchReference() + "' AND version="
+				+ finTaxUploadHeader.getVersion() + " ";
 
-		if (doCheckAuthority(FinTaxUploadHeader, whereCond)) {
+		if (doCheckAuthority(finTaxUploadHeader, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && FinTaxUploadHeader.getWorkflowId() == 0) {
-				FinTaxUploadHeader.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && finTaxUploadHeader.getWorkflowId() == 0) {
+				finTaxUploadHeader.setWorkflowId(getWorkFlowId());
 			}
-
+			
+			doLoadWorkFlow(finTaxUploadHeader.isWorkflow(), finTaxUploadHeader.getWorkflowId(),
+					finTaxUploadHeader.getNextTaskId());
+			
 			List<FinTaxUploadDetail> finTaxUploadDetailList = finTaxUploadDetailService
-					.getFinTaxDetailUploadById(String.valueOf(FinTaxUploadHeader.getBatchReference()),"_View");
-			FinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
-			doShowDialogPage(FinTaxUploadHeader);
+					.getFinTaxDetailUploadById(String.valueOf(finTaxUploadHeader.getBatchReference()),"_View");
+			finTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
+			doShowDialogPage(finTaxUploadHeader);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -331,7 +336,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) throws InterruptedException {
-		new PTListReportUtils("FinTaxUploadDetail", searchObject, this.pagingFinTaxDetailUploadList.getTotalSize() + 1);
+		new PTListReportUtils("FinTaxUploadHeader", searchObject, this.pagingFinTaxDetailUploadList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

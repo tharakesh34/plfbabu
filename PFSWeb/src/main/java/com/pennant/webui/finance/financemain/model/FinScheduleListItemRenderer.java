@@ -2147,10 +2147,19 @@ public class FinScheduleListItemRenderer implements Serializable{
 			if(!isODSchdLimit){
 				limitDrop = BigDecimal.ZERO;
 				if(data.getSchDate().compareTo(financeMain.getMaturityDate()) == 0){
-					limitDrop = BigDecimal.ZERO;
 					availableLimit = BigDecimal.ZERO;
 					odLimit = BigDecimal.ZERO;
 				}
+			}
+			
+			// For Accrue Amount need to reset all things
+			if(StringUtils.equals(eventName, Labels.getLabel("label_listcell_AccrueAmount.label"))){
+				limitDrop = BigDecimal.ZERO;
+				availableLimit = BigDecimal.ZERO;
+				odLimit = BigDecimal.ZERO;
+				bgColor = "";
+				lcColor = "";
+				strDate = "";
 			}
 		}
 

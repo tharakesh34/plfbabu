@@ -594,9 +594,13 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		BigDecimal bounceCharge = BigDecimal.ZERO;
 		Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
 		BigDecimal bounceAmt = BigDecimal.ZERO;
+		
+		HashMap<String, Object> fieldsAndValues = finReceiptDetail.getDeclaredFieldValues();
+		bounceReason.getDeclaredFieldValues(fieldsAndValues);
+		
 		if (rule != null) {
 			bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-					finReceiptDetail.getDeclaredFieldValues(), receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+					fieldsAndValues, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 		}
 		bounceCharge = PennantApplicationUtil.formateAmount(bounceAmt,
 				CurrencyUtil.getFormat(receiptHeader.getFinCcy()));

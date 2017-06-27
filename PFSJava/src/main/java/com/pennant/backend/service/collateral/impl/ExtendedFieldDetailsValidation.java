@@ -147,7 +147,7 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_DATE:
 			Date dateValue = null;
 			try {
-				dateValue = DateUtility.parse(fieldValue, PennantConstants.dateFormat);
+				dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -156,6 +156,7 @@ public class ExtendedFieldDetailsValidation {
 				return errors;
 			}
 			errors = dateValidation(exdConfigDetail, dateValue, errors);
+			exdFieldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateValue)));
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
 			try {
@@ -228,7 +229,19 @@ public class ExtendedFieldDetailsValidation {
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 				}*/
 		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
-			
+			if (StringUtils.isNotBlank(fieldValue)) {
+				if (StringUtils.equals(fieldValue, "true") || StringUtils.equals(fieldValue, "false")
+						|| StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1")) {
+					if(!(StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1"))){
+					int i = fieldValue == "true" ? 1 : 0;
+					exdFieldData.setFieldValue(String.valueOf(i));
+					}
+				} else {
+					String[] valueParm = new String[0];
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+				}
+			}
+				
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
 			String key = exdConfigDetail.getFieldList();
@@ -272,6 +285,22 @@ public class ExtendedFieldDetailsValidation {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
 			}
 			break;
+			case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
+			if (fieldValue.length() > (exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
+					|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
+				String[] valueParm = new String[3];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
+				valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}
+			break;
 		default:
 			break;
 		}
@@ -282,61 +311,63 @@ public class ExtendedFieldDetailsValidation {
 		String[] value = exdConfigDetail.getFieldConstraint().split(",");
 		switch (value[0]) {
 		case "RANGE":
-			if(DateUtility.compare(dateValue, DateUtility.getUtilDate(value[1], PennantConstants.dateFormat)) < 0
-					&& DateUtility.compare(dateValue, DateUtility.getUtilDate(value[2], PennantConstants.dateFormat)) > 0) {
+			if(value[1] !=null && value[2] != null){
+			if(dateValue.before(DateUtility.getUtilDate(value[1], PennantConstants.dateFormat)) ||
+					dateValue.after(DateUtility.getUtilDate(value[2], PennantConstants.dateFormat))) {
 				String valueParm[] = new String[3];
 				valueParm[0] = exdConfigDetail.getFieldName();
-				valueParm[1] = String.valueOf(DateUtility.getUtilDate(value[1], PennantConstants.dateFormat));
-				valueParm[2] = String.valueOf(DateUtility.getUtilDate(value[2], PennantConstants.dateFormat));
+				valueParm[1] = String.valueOf(DateUtility.getDate(value[1]));
+				valueParm[2] = String.valueOf(DateUtility.getDate(value[2]));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}
 			}
 			break;
 		case "FUTURE_DAYS":
-			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1]))) < 0) {
+			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1]))) > 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", null)));
+				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
 			}
 			break;
 		case "PAST_DAYS":
-			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1])))) > 0) {
+			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1])))) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", null)));
+				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
 			}
 			break;
 		case "FUTURE_TODAY":
-			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) > 0) {
-				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
-				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm)));
-			}
-			break;
-		case "PAST_TODAY":
 			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
 			}
 			break;
-		case "FUTURE":
-			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) >= 0) {
+		case "PAST_TODAY":
+			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) > 0) {
 				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
 			}
 			break;
-		case "PAST":
-			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) <= 0) {
+		case "FUTURE":
+			if(DateUtility.compare( DateUtility.getAppDate(),dateValue) >= 0) {
 				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+			}
+			break;
+		case "PAST":
+			if(DateUtility.compare(DateUtility.getAppDate(),dateValue) <= 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
 			}
 			break;
 

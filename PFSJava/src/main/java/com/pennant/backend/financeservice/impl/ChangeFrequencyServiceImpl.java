@@ -251,6 +251,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			scheduleData.getFinanceMain().setMaturityDate(scheduleData.getFinanceScheduleDetails().get(sdSize-1).getSchDate());
 		}
 
+		scheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 		return scheduleData;
 	}

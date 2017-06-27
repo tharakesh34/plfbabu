@@ -237,7 +237,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 							.getMethod("getJointAccountDetailDialogCtrl").invoke(getFinanceMainDialogCtrl());
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
 						| SecurityException e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			
@@ -285,7 +285,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(e);
 		}
 	}
 
