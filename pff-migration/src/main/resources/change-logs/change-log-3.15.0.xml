@@ -3881,4 +3881,16 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 	        
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="226" author="Kesav">
+		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
+			SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+			  			T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks, T1.ValueDate, T1.PostDate,
+			 			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+			          	T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID,T3.BOUNCECODE, T1.ReservedAmt, T1.BalanceAmt
+			FROM    	ManualAdvise  T1
+			INNER JOIN  FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+			LEFT JOIN  BOUNCEREASONS T3 ON T1.BounceID = T3.BOUNCEID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
