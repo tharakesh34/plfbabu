@@ -588,6 +588,7 @@ public class PennantConstants {
 	public static final String EVENTBASE = "FinEvent";
 	public static final String ACCNO = "Account";
 	public static final String POSTDATE = "PostDate";
+	public static final String VALUEDATE = "ValueDate";
 	public static boolean CHANGE_SEGMENT = true;
 
 	public static final String HOME_PHONE = "HOMEPHN";
