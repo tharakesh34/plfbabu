@@ -3893,4 +3893,11 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			LEFT JOIN  BOUNCEREASONS T3 ON T1.BounceID = T3.BOUNCEID
 		</createView>
 	</changeSet>
+	<changeSet id="227" author="Jayant">
+	    <sql>
+	        Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Presentment Details','Presentment Details',1,'Presentment','pfsDatasource',1,'menu_Item_Presentment',2,1005,null,null,null,null,null,null,0,current_timestamp,0);
+ 			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment'),1,'FinReference','LOVSEARCH','Loan Reference','FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+ 			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment'),2,'Finance Status','STATICLIST','Loan Status','STATUS','getPresentmentsStatusList',null,null,null,0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	    </sql> 
+	</changeSet>
 </databaseChangeLog>
