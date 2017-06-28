@@ -416,6 +416,9 @@ public class FinanceDetailController extends SummaryDetailService {
 			finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
 			finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
 			
+			// set fee paid amounts based on schedule method
+			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
+			
 			//summary
 			FinanceDetail response = new FinanceDetail();
 			//used for AEAMOUNTS class 
@@ -518,6 +521,8 @@ public class FinanceDetailController extends SummaryDetailService {
 
 				// Summary details
 				response = financeDetail.getFinScheduleData();
+				// set fee paid amounts based on schedule method
+				response.setFinFeeDetailList(getUpdatedFees(response.getFinFeeDetailList()));
 				response.setFinanceSummary(getFinanceSummary(financeDetail));
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				//get FinODDetails

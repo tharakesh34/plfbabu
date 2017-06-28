@@ -2,6 +2,7 @@ package com.pennanttech.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,37 +13,33 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.core.LatePayPenaltyService;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.RepayCalculator;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.finance.RepayData;
-import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -63,12 +60,8 @@ public class FinStatementController extends SummaryDetailService {
 	private FeeDetailService			feeDetailService;
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private RepayCalculator				repayCalculator;
-	private ManualPaymentService		manualPaymentService;
 	private ManualAdviseDAO				manualAdviseDAO;
-	private FinExcessAmountDAO			finExcessAmountDAO;
-	private LatePayPenaltyService		latePayPenaltyService;
-	private FinanceProfitDetailDAO		profitDetailsDAO;
+	private ReceiptService				receiptService;
 
 
 	/**
@@ -194,7 +187,7 @@ public class FinStatementController extends SummaryDetailService {
 					finScheduleData.setOutstandingPri(finPftDetail.getTotalPriBal());
 					finScheduleData.setOverduePft(finPftDetail.getODProfit());
 					finScheduleData
-							.setTdPftAccured(finPftDetail.getAmzTillLBD().subtract(finPftDetail.getTdSchdPftPaid()));
+					.setTdPftAccured(finPftDetail.getAmzTillLBD().subtract(finPftDetail.getTdSchdPftPaid()));
 				}
 
 				// generate response info
@@ -250,6 +243,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
 				aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
+				
 				finFeeDetails = aFinanceDetail.getFinScheduleData().getFinFeeDetailList();
 				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
 				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
@@ -369,7 +363,7 @@ public class FinStatementController extends SummaryDetailService {
 			} else {
 				financeDetail.getFinScheduleData().getFinanceMain().setFirstDisbDate(disbList.get(0).getDisbDate());
 				financeDetail.getFinScheduleData().getFinanceMain()
-						.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+				.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
 		}
 
@@ -380,6 +374,8 @@ public class FinStatementController extends SummaryDetailService {
 
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		summary.setAdvPaymentAmount(getTotalAdvAmount(finReference));
 		financeDetail.getFinScheduleData().setFinanceSummary(summary);
 
 		financeDetail.getFinScheduleData().setDisbursementDetails(null);
@@ -425,66 +421,42 @@ public class FinStatementController extends SummaryDetailService {
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
-		RepayData repayData = new RepayData();
-		repayData.setBuildProcess("R");
-		repayData.setFinanceDetail(financeDetail);
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		Date valueDate = finServiceInst.getFromDate();
-
-		// Initiate Repay calculations
-		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
-		repayData = repayCalculator.initiateRepay(repayData, financeMain, financeScheduleDetails, "", null, false,
-				finServiceInst.getRecalType(), valueDate, finServiceInst.getModuleDefiner());
-		repayData.setRepayMain(repayData.getRepayMain());
-
-		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
-		repayData.setEventCodeRef(finEvent);
-		// call change frequency service
-		manualPaymentService.doCalcRepayments(repayData, financeDetail, finServiceInst);
-
-		FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
-
 		//Repayments Posting Process Execution
 		//=====================================
-		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
-		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-		Date valuedate = finServiceInst.getFromDate();
+		Date valueDate = finServiceInst.getFromDate();
 
-		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
-		// Calculate the accruals based up on the valuedate
-		getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail,
-				valuedate);
-
-		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
+		List<ReceiptAllocationDetail> allocations = calEarlySettleAmount(finScheduleData, valueDate);
 		BigDecimal totPriPayNow = BigDecimal.ZERO;
 		BigDecimal totPftPayNow = BigDecimal.ZERO;
+		BigDecimal totTdsReturn = BigDecimal.ZERO;
+		BigDecimal totLatePftPayNow = BigDecimal.ZERO;
 		BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-		for (RepayScheduleDetail repayShdData : repaySchdList) {
-			totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
-			totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
+		BigDecimal totFeePayNow = BigDecimal.ZERO;
+		
+		for (ReceiptAllocationDetail ad : allocations) {
+			if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+				totPriPayNow = ad.getPaidAmount();
+			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+				totPftPayNow = ad.getPaidAmount();
+			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
+				totLatePftPayNow = ad.getPaidAmount();
+			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+				totPenaltyPayNow = ad.getPaidAmount();
+			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+				totTdsReturn = ad.getPaidAmount();
+			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+				totFeePayNow = ad.getPaidAmount();
+			}
 		}
-		totPftPayNow = totPftPayNow.add(tempPftDetail.getPftAmz().subtract(tempPftDetail.getTdSchdPftPaid()));
-
+		
 		// fore closure details
 		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 		ForeClosure foreClosure = new ForeClosure();
 		foreClosure.setValueDate(finServiceInst.getFromDate());
-		foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
+		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow).add(totFeePayNow);
+		foreClosure.setForeCloseAmount(foreCloseAmt);
 		foreClosure.setAccuredIntTillDate(totPftPayNow);
-
-		// calculate total penalty amount
-		List<FinODDetails> finOdDetails = financeDetail.getFinScheduleData().getFinODDetails();
-		BigDecimal totPenaltyAmt = BigDecimal.ZERO;
-		if (finOdDetails != null) {
-			for (FinODDetails odDetails : finOdDetails) {
-				FinODDetails detail = latePayPenaltyService.computeLPP(odDetails, finServiceInst.getFromDate(),
-						financeMain.getProfitDaysBasis(), financeScheduleDetails,null, financeMain.getCalRoundingMode(),
-						financeMain.getRoundingTarget());
-				totPenaltyAmt = totPenaltyAmt.add(detail.getTotPenaltyAmt());
-			}
-		}
-		foreClosure.setChargeAmount(totPenaltyAmt);
+		foreClosure.setChargeAmount(totPenaltyPayNow);
 		foreClosureList.add(foreClosure);
 
 		// penalty details
@@ -498,6 +470,167 @@ public class FinStatementController extends SummaryDetailService {
 
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+
+	/**
+	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
+	 */
+	private List<ReceiptAllocationDetail> calEarlySettleAmount(FinScheduleData finScheduleData, Date valueDate) {
+		logger.debug("Entering");
+
+		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		if(finScheduleData.getFinanceMain().isTDSApplicable()){
+
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
+		}
+
+		List<FinanceScheduleDetail> scheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		List<ReceiptAllocationDetail> allocations = new ArrayList<>();
+		Cloner cloner = new Cloner();
+		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
+		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
+
+		BigDecimal pftPaid = BigDecimal.ZERO;
+		BigDecimal pftAccruedTillNow = BigDecimal.ZERO;
+		BigDecimal tdsAccruedTillNow = BigDecimal.ZERO;
+		BigDecimal priBalance = BigDecimal.ZERO;
+		BigDecimal totFeeAmount = BigDecimal.ZERO;
+		boolean partAccrualReq = true;
+		FinanceScheduleDetail curSchd = null;
+		FinanceScheduleDetail prvSchd = null;
+		for (int i = 0; i < tempScheduleDetails.size(); i++) {
+			curSchd = tempScheduleDetails.get(i);
+			if(i != 0){
+				prvSchd = tempScheduleDetails.get(i - 1);
+			}
+			Date schdDate = curSchd.getSchDate();
+
+			// Accrued Profit Calculation
+			if (DateUtility.compare(schdDate, valueDate) < 0) {
+				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
+				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+
+				if(finScheduleData.getFinanceMain().isTDSApplicable()){
+					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
+				}
+
+			}else if (DateUtility.compare(valueDate, schdDate) == 0) {
+
+				BigDecimal remPft = curSchd.getProfitCalc();
+				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
+				if(prvSchd != null){
+					remPft = remPft.add(prvSchd.getProfitBalance());
+					pftAccruedTillNow = pftAccruedTillNow.add(prvSchd.getProfitBalance());
+				}
+				priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
+
+				if(finScheduleData.getFinanceMain().isTDSApplicable()){
+					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
+				}
+				partAccrualReq = false;
+
+			} else {
+				if(partAccrualReq && prvSchd != null){
+					partAccrualReq = false;
+					BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate, curSchd.getBalanceForPftCal(),
+							prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+					accruedPft = accruedPft.add(prvSchd.getProfitFraction());
+					accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+							finScheduleData.getFinanceMain().getRoundingTarget());
+					pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
+
+					priBalance = priBalance.add(prvSchd.getClosingBalance());
+
+					if(finScheduleData.getFinanceMain().isTDSApplicable()){
+						BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+					}
+				}
+			}
+			pftPaid = pftPaid.add(curSchd.getSchdPftPaid());
+			totFeeAmount = totFeeAmount.add(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()));
+		}
+
+		// Principal Amount
+		BigDecimal pftAmt = BigDecimal.ZERO;
+		pftAmt = pftAccruedTillNow.subtract(pftPaid);
+
+		ReceiptAllocationDetail ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_PRI);
+		ad.setPaidAmount(priBalance);
+		allocations.add(ad);
+
+		ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_PFT);
+		ad.setPaidAmount(pftAmt);
+		allocations.add(ad);
+
+		ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_TDS);
+		ad.setPaidAmount(tdsAccruedTillNow);
+		allocations.add(ad);
+		
+		ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_FEE);
+		ad.setPaidAmount(totFeeAmount);
+		allocations.add(ad);
+
+		// Calculate overdue Penalties
+		List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, 
+				priBalance.add(pftAmt).add(totFeeAmount), valueDate, null);
+
+		// Calculating Actual Sum of Penalty Amount & Late Pay Interest
+		BigDecimal latePayPftBal = BigDecimal.ZERO;
+		BigDecimal penaltyBal = BigDecimal.ZERO;
+		if(overdueList != null && !overdueList.isEmpty()){
+			for (int i = 0; i < overdueList.size(); i++) {
+				FinODDetails finODDetail = overdueList.get(i);
+				if (finODDetail.getFinODSchdDate().compareTo(valueDate)>0) {
+					continue;
+				}
+				latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+				penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+			}
+		}
+		
+		ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_ODC);
+		ad.setPaidAmount(penaltyBal);
+		allocations.add(ad);
+		
+		ad = new ReceiptAllocationDetail();
+		ad.setAllocationType(RepayConstants.ALLOCATION_LPFT);
+		ad.setPaidAmount(latePayPftBal);
+		allocations.add(ad);
+
+		logger.debug("Leaving");
+		return allocations;
+	}
+	
+	/**
+	 * Method for Sorting Schedule Details
+	 * @param financeScheduleDetail
+	 * @return
+	 */
+	public List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
+
+		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
+			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
+				@Override
+				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return financeScheduleDetail;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
@@ -516,14 +649,6 @@ public class FinStatementController extends SummaryDetailService {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public void setRepayCalculator(RepayCalculator repayCalculator) {
-		this.repayCalculator = repayCalculator;
-	}
-
-	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
-		this.manualPaymentService = manualPaymentService;
-	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
@@ -532,15 +657,11 @@ public class FinStatementController extends SummaryDetailService {
 		this.feeDetailService = feeDetailService;
 	}
 
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
+	public ReceiptService getReceiptService() {
+		return receiptService;
 	}
 
-	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
-		this.latePayPenaltyService = latePayPenaltyService;
-	}
-
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
 }

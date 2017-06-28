@@ -452,7 +452,7 @@ public class ReceiptCalculator implements Serializable {
 		}else{
 			
 			// Calculate overdue Penalties
-			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate);
+			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate, null);
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 			if(overdueList != null && !overdueList.isEmpty()){
@@ -611,7 +611,7 @@ public class ReceiptCalculator implements Serializable {
 		}else {
 			// Calculate overdue Penalties
 			overdueList = getReceiptService().getValueDatePenalties(scheduleData, receiptData.getReceiptHeader().getReceiptAmount().subtract(
-					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate);
+					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate, null);
 		}
 		
 		// Overdue Penalties Mapping Preparations
@@ -1484,7 +1484,7 @@ public class ReceiptCalculator implements Serializable {
 			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		}else {
 			// Calculate overdue Penalties
-			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate);
+			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate, null);
 		}
 
 		if (overdueList != null && !overdueList.isEmpty()) {

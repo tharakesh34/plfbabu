@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -25,5 +26,5 @@ public interface ReceiptService {
 			throws IllegalAccessException, 
 	InvocationTargetException, InterfaceException;
 	List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal totReceiptAmount,
-			Date valueDate);
+			Date valueDate, List<FinanceRepayments> repayments);
 }

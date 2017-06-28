@@ -630,6 +630,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
 		response.setFinScheduleData(finScheduleData);
 		
+		// set fee paid amounts based on schedule method
+		finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
+		
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
 		response.getFinScheduleData().setFinanceSummary(summary);
@@ -888,12 +891,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		if(finFeeDetail != null) {
-			for(FinFeeDetail feeDetail: finFeeDetail) {
-				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
-			}
-		}
-		financeDetail.setFinFeeDetails(finFeeDetail);
+		financeDetail.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 		
 		// Bounce and manual advice fees if applicable
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
@@ -918,6 +916,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
+		summary.setAdvPaymentAmount(getTotalAdvAmount(finReference));
 		financeDetail.getFinScheduleData().setFinanceSummary(summary);
 
 		// customer details
