@@ -253,7 +253,12 @@ public class ExtendedFieldDetailsValidation {
 			if(moduleMapping != null) {
 				String[] lovFields = moduleMapping.getLovFields();
 				String[][] filters = moduleMapping.getLovFilters();
-				int count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
+				int count=0;
+				if(filters !=null){
+				 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
+				} else {
+					 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],null , fieldValue);
+				}
 				if(count <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = fieldName;
