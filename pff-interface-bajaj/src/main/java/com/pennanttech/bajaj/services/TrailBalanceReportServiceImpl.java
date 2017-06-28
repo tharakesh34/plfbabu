@@ -126,9 +126,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" COALESCE(LR.CLOSINGBALTYPE, ' ') OPENINGBALTYPE,");
 		sql.append(" ABS(TODAYDEBITS) DEBITAMOUNT,");
 		sql.append(" ABS(TODAYCREDITS) CREDITAMOUNT,");
-		sql.append(" ABS(COALESCE((CASE when LR.CLOSINGBALTYPE='Cr' then LR.CLOSINGBAL+AH.TODAYNET ELSE  (LR.CLOSINGBAL*-1) + AH.TODAYNET END), 0)) CLOSINGBAL,");
+		sql.append(" ABS(CASE when LR.CLOSINGBALTYPE='Cr' then COALESCE(LR.CLOSINGBAL, 0)+AH.TODAYNET ELSE  (COALESCE(LR.CLOSINGBAL, 0)*-1) + AH.TODAYNET END)  CLOSINGBAL,");
 		sql.append(" CASE");
-		sql.append(" WHEN COALESCE((CASE when LR.CLOSINGBALTYPE='Cr' then LR.CLOSINGBAL+AH.TODAYNET ELSE  (LR.CLOSINGBAL*-1) + AH.TODAYNET END), 0) >= 0");
+		sql.append(" WHEN  CASE when LR.CLOSINGBALTYPE='Cr' then COALESCE(LR.CLOSINGBAL, 0)+ AH.TODAYNET ELSE  (COALESCE(LR.CLOSINGBAL, 0)*-1) + AH.TODAYNET END <= 0");
 		sql.append(" THEN 'Dr'");
 		sql.append(" ELSE 'Cr'");
 		sql.append(" END CR_DR");
