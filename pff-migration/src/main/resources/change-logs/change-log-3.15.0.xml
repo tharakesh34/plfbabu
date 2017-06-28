@@ -4036,4 +4036,32 @@ Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUN
 			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="233" author="Manoj.P">
+		<dropView viewName="DE_TRAIL_BALANCE_REPORT_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="234" author="Manoj.P">
+		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+			  SELECT HEADERID,
+			  ACTYPEGRPID,
+			  HOSTACCOUNT,
+			  DESCRIPTION,
+			  UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+			  OPENINGBALTYPE,
+			  UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+			  UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+			  UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+			  CLOSINGBALTYPE
+			  FROM TRAIL_BALANCE_REPORT TBR
+			  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="235" author="Manoj.P">
+	<sql>
+		UPDATE DATA_ENGINE_TABLE SET NAME = 'TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='DE_TRAIL_BALANCE_REPORT_VIEW';
+	</sql>	
+	</changeSet>
 </databaseChangeLog>
