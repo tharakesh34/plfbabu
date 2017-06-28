@@ -4015,4 +4015,25 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		  </createView>
 	</changeSet>
+	<changeSet author="Prasad" id="231">
+<sql>
+Update seqrules set seqno=(select max(ruleid) from rules);
+delete from rules where Rulemodule='BOUNCE';
+Insert into RULES (RULEID,RULEMODULE,RULEEVENT,RULECODE,RULECODEDESC,WAIVERDECIDER,WAIVER,WAIVERPERC,SQLRULE,ACTUALBLOCK,SEQORDER,RETURNTYPE,GROUPID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ALLOWDEVIATION,DEVIATIONTYPE,CALFEEMODIFY,FEETOFINANCE,REVOLVING,FIXEDORVARIABLELIMIT,ACTIVE,FIELDS,FEETYPEID)
+values ((select max(ruleid)+1 from rules),'BOUNCE','BOUNCE','BOUNCE','bounce charges',null,0,null,' ',' ',0,'D',0,2,1085,to_date('28-JUN-17','DD-MON-RR'),'Approved',null,null,null,null,null,0,0,'#',0,null,1,'F',1,'br_category',null);
+Update seqrules set seqno=(select max(ruleid) from rules);
+Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUNCE');
+</sql>
+	</changeSet>
+<changeSet author="Prasad" id="232">
+			<update tableName="RULES">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[" if (br_category == 2) {
+		Result = 500 ; return;  
+ } else {
+		Result = 0 ; return;  
+ }"]]></column>
+     		<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|br_category| |==|CALCVALUE|2| |1|0|1|1|1|500| |~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
