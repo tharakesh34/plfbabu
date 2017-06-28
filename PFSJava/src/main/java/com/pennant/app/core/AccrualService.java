@@ -429,7 +429,8 @@ public class AccrualService extends ServiceHelper {
 
 			//First Repayments Date and Amount
 			if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
-				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0 &&
+						curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) {
 					pftDetail.setFirstRepayDate(curSchd.getSchDate());
 					pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 				}

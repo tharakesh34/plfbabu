@@ -1078,7 +1078,7 @@ public class LimitManagement {
 			limittrans.setCreatedBy(userDetails.getLoginUsrID());
 			limittrans.setLastMntBy(userDetails.getLoginUsrID());
 		}
-		limittrans.setTransactionDate(new Timestamp(System.currentTimeMillis()));
+		limittrans.setTransactionDate(new Timestamp(DateUtility.getAppDate().getTime()));
 		limittrans.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		limittrans.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		limitTransactionDetailDAO.save(limittrans);

@@ -172,8 +172,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 
 			odPri = odPri.subtract(repayment.getFinSchdPriPaid());
-			odPft = odPri.subtract(repayment.getFinSchdPftPaid());
+			odPft = odPft.subtract(repayment.getFinSchdPftPaid());
 
+			odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
