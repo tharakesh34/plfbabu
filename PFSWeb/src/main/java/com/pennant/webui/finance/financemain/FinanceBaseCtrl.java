@@ -765,10 +765,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.accountsOfficer.setMaxlength(8);
 		this.accountsOfficer.setMandatoryStyle(true);
-		this.accountsOfficer.setModuleName("GeneralDepartment");
-		this.accountsOfficer.setValueColumn("GenDepartment");
-		this.accountsOfficer.setDescColumn("GenDeptDesc");
-		this.accountsOfficer.setValidateColumns(new String[] { "GenDepartment" });
+		this.accountsOfficer.setModuleName("RelationshipOfficer");
+		this.accountsOfficer.setValueColumn("ROfficerCode");
+		this.accountsOfficer.setDescColumn("ROfficerDesc");
+		this.accountsOfficer.setValidateColumns(new String[] { "ROfficerCode" });
 
 		this.dsaCode.setMaxlength(8);
 		this.dsaCode.setMandatoryStyle(true);

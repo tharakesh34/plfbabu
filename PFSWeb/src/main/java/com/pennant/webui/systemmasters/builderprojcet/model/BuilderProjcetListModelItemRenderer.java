@@ -74,7 +74,7 @@ public class BuilderProjcetListModelItemRenderer implements ListitemRenderer<Bui
 		lc.setParent(item);
 	  	lc = new Listcell(builderProjcet.getName());
 		lc.setParent(item);
-	    lc = new Listcell(String.valueOf(builderProjcet.getBuilderId() + "-" + builderProjcet.getName()));
+	    lc = new Listcell(String.valueOf(builderProjcet.getBuilderId() + "-" + builderProjcet.getbuilderIdName()));
 		lc.setParent(item);
 	  	lc = new Listcell(builderProjcet.getApfNo());
 		lc.setParent(item);

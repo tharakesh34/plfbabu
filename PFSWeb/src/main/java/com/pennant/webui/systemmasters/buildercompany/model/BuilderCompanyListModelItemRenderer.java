@@ -74,7 +74,7 @@ public class BuilderCompanyListModelItemRenderer implements ListitemRenderer<Bui
 		lc.setParent(item);
 	  	lc = new Listcell(builderCompany.getSegmentation());
 		lc.setParent(item);
-	    lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getName()));
+	    lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getGroupIdName()));
 		lc.setParent(item);
 	  	lc = new Listcell(builderCompany.getRecordStatus());
 		lc.setParent(item);
