@@ -376,6 +376,7 @@ public class PennantJavaUtil {
 	private static String receiptBounceWF   = "BOUNCE_PROCESS";
 	private static String receiptCancelWF   = "RECEIPTCANCEL_PROCESS";
 	private static String feeReceiptWF = "FEERECEIPT_PROCESS";
+	private static String gstFileUplod = "GST_UPLOAD_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -1384,10 +1385,10 @@ public class PennantJavaUtil {
 				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
 		
 		ModuleUtil.register("FinTaxUploadHeader", new ModuleMapping("FinTaxUploadHeader", FinTaxUploadHeader.class, new String[] { "FinTaxUploadHeader",
-		"FinTaxUploadHeader_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+		"FinTaxUploadHeader_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 
 		ModuleUtil.register("FinTaxUploadDetail", new ModuleMapping("FinTaxUploadDetail", FinTaxUploadDetail.class, new String[] { "FinTaxUploadDetail",
-		"FinTaxUploadDetail_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+		"FinTaxUploadDetail_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 		
 		
 		

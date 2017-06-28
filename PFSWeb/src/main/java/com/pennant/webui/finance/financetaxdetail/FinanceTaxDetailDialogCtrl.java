@@ -183,7 +183,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}else{
 				this.financeTaxDetailListCtrl = (FinanceTaxDetailListCtrl) arguments.get("financeTaxDetailListCtrl");
 			}
-			
+			if (arguments.containsKey("enqiryModule")) {
+				enqiryModule=(boolean)arguments.containsKey("enqiryModule");
+			}
 			/*if(arguments.containsKey("panNum")){
 				panNum = (String)arguments.get("panNum");
 			}*/
@@ -989,7 +991,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}
 
 		} else {
-			setDialog(DialogType.EMBEDDED);
+			if(enqiryModule){
+				this.window_FinanceTaxDetailDialog.setHeight("80%");
+				this.window_FinanceTaxDetailDialog.setWidth("80%");
+				this.groupboxWf.setVisible(false);
+				this.window_FinanceTaxDetailDialog.doModal() ;
+			}else{				
+				setDialog(DialogType.EMBEDDED);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1228,6 +1237,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		readOnlyComponent(true, this.province);
 		readOnlyComponent(true, this.city);
 		readOnlyComponent(true, this.pinCode);
+		readOnlyComponent(true, this.custRef);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

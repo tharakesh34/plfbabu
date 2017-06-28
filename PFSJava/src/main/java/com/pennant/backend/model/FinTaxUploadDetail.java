@@ -29,10 +29,13 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 	private boolean				newRecord			= false;
 	private LoggedInUser		userDetails;
 	private FinTaxUploadDetail	befImage;
+	private int					seqNo;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("batchReference");
+		excludeFields.add("seqNo");
+		
 		return excludeFields;
 	}
 
@@ -174,6 +177,14 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
 	}
 
 }

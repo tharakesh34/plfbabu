@@ -1,6 +1,5 @@
 package com.pennant.webui.finance.financemain;
 
-import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +31,7 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -72,13 +72,14 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	protected Label								recordStatus;
 	protected Borderlayout						borderLayout_FinTaxUploadDetail;	// autoWired
 	protected Listbox							listBoxFileData;
+	protected Checkbox							select;
 
 	protected Label								fileName;
 	protected Label								totalNoofRecords;
 	protected Label								batchCreationDate;
 	protected Label								batchApprovedDate;
 	protected Label								status;
-
+	protected Listheader						listheader_Select;
 	private FinTaxUploadHeader					finTaxUploadHeader;
 
 	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
@@ -100,9 +101,9 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			this.finTaxUploadHeader = (FinTaxUploadHeader) arguments.get("finTaxUploadHeader");
 			this.finTaxUploadDetailListCtrl = (FinTaxUploadDetailListCtrl) arguments.get("finTaxUploadDetailListCtrl");
 
-			if (this.finTaxUploadHeader == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
-			}
+			/*
+			 * if (this.finTaxUploadHeader == null) { throw new Exception(Labels.getLabel("error.unhandled")); }
+			 */
 
 			// Store the before image.
 			FinTaxUploadHeader finTaxUploadHeader = new FinTaxUploadHeader();
@@ -132,6 +133,13 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		logger.debug("Entering");
 		this.listBoxFileData.setHeight(this.borderLayoutHeight - 200 + "px");
+
+		if (StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
+			this.listheader_Select.setVisible(false);
+		} else {
+			this.listheader_Select.setVisible(true);
+		}
+
 		if (!finTaxUploadHeader.isNew()) {
 			grid_UploadedDetails.setVisible(false);
 			doFillHeaderData(finTaxUploadHeader.getFileName(), finTaxUploadHeader.getBatchCreatedDate(),
@@ -267,7 +275,13 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			for (FinTaxUploadDetail taxMappingDetail : finTaxUploadDetailList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				
+
+				lc = new Listcell();
+				Checkbox selected = new Checkbox();
+				selected.setChecked(false);
+				selected.setParent(lc);
+				lc.setParent(item);
+
 				lc = new Listcell(taxMappingDetail.getTaxCode());
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getAggrementNo());
@@ -312,7 +326,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
 		financeTaxDetail.setFinReference(finTaxUploadDetail.getAggrementNo());
 		financeTaxDetail.setApplicableFor(finTaxUploadDetail.getApplicableFor());
-		financeTaxDetail.setTaxCustId(Long.valueOf(finTaxUploadDetail.getApplicant()));
+		financeTaxDetail.setCustCIF(finTaxUploadDetail.getApplicant());
+		financeTaxDetail.setTaxNumber(finTaxUploadDetail.getTaxCode());
 		financeTaxDetail.setAddrLine1(finTaxUploadDetail.getAddrLine1());
 		financeTaxDetail.setAddrLine2(finTaxUploadDetail.getAddrLine2());
 		financeTaxDetail.setAddrLine3(finTaxUploadDetail.getAddrLine3());
@@ -321,6 +336,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		financeTaxDetail.setProvince(finTaxUploadDetail.getProvince());
 		financeTaxDetail.setCity(finTaxUploadDetail.getCity());
 		financeTaxDetail.setPinCode(finTaxUploadDetail.getPinCode());
+		financeTaxDetail.setTaxExempted(finTaxUploadDetail.isTaxExempted());
 
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("FinTaxUploadDetail", finTaxUploadDetail);
@@ -430,43 +446,60 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private void doWriteComponentsToBean(List<FinTaxUploadDetail> finTaxUploadDetailList, String userAction,
 			final FinTaxUploadHeader afinTaxUploadHeader) {
 		FinTaxUploadDetail finTaxUploadDetail;
+		int seqno = 0;
+		
+	
 		//fill the header data
 		afinTaxUploadHeader.setFileName(this.fileName.getValue());
 		afinTaxUploadHeader.setNumberofRecords(Integer.parseInt(this.totalNoofRecords.getValue()));
 		afinTaxUploadHeader.setBatchCreatedDate(DateUtility.getAppDate());
 		afinTaxUploadHeader.setStatus(this.status.getValue());
-
 		List<Listitem> Listitems = this.listBoxFileData.getItems();
-		//Iterate through the list items to set the statuses
-		for (Listitem listitem : Listitems) {
-			finTaxUploadDetail = (FinTaxUploadDetail) listitem.getAttribute("data");
-			finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);
 
-			//change the record status as per selection 
-			if (listitem.isSelected()) {
-				setStatusbyUserAction(finTaxUploadDetail, userAction);
+		if (StringUtils.equals(userAction, "Approve") || StringUtils.equals(userAction, "Reject")) {
+			for (Listitem listitem : Listitems) {
+				finTaxUploadDetail = (FinTaxUploadDetail) listitem.getAttribute("data");
+				finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);
+				if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
+
+					if (this.finTaxUploadHeader.isNew()) {
+						finTaxUploadDetail.setSeqNo(seqno++);
+					}
+					finTaxUploadDetailList.add(finTaxUploadDetail);
+				} 
+				afinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 			}
-			finTaxUploadDetailList.add(finTaxUploadDetail);
+
+		} else {
+
+			//Iterate through the list items to set the statuses
+			for (Listitem listitem : Listitems) {
+				finTaxUploadDetail = (FinTaxUploadDetail) listitem.getAttribute("data");
+				finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);
+				if (this.finTaxUploadHeader.isNew()) {
+					seqno = seqno + 1;
+					finTaxUploadDetail.setSeqNo(seqno);
+				}
+				finTaxUploadDetailList.add(finTaxUploadDetail);
+			}
+			afinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 		}
-		afinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
+		checkFoSelection(afinTaxUploadHeader);
 	}
 
-	private void setStatusbyUserAction(FinTaxUploadDetail finTaxUploadDetail, String userAction) {
-		if (StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
-			if ("Save".equalsIgnoreCase(userAction)) {
-				finTaxUploadDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-			} else if ("Submit".equalsIgnoreCase(userAction)) {
-				finTaxUploadDetail.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
-			}
-		} else {
-			if ("Resubmit".equalsIgnoreCase(userAction)) {
-				finTaxUploadDetail.setRecordStatus(PennantConstants.RCD_STATUS_RESUBMITTED);
-			} else if ("Reject".equalsIgnoreCase(userAction)) {
-				finTaxUploadDetail.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-			} else if ("Approve".equalsIgnoreCase(userAction)) {
-				finTaxUploadDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+	private void checkFoSelection(FinTaxUploadHeader afinTaxUploadHeader) {
+		List<Listitem> Listitems = this.listBoxFileData.getItems();
+		boolean totalSelected=false;
+		for (Listitem listitem : Listitems) {
+			if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
+				totalSelected=true;
+			}else{
+				totalSelected=false;
+				break;
 			}
 		}
+		afinTaxUploadHeader.setTotalSelected(totalSelected);
 	}
 
 	private boolean doProcess(FinTaxUploadHeader aFinTaxUploadHeader, String tranType) throws InterfaceException {

@@ -10240,6 +10240,7 @@
 		class="com.pennant.backend.service.finance.impl.FinTaxUploadDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finTaxUploadDetailDAO" ref="finTaxUploadDetailDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
    
    

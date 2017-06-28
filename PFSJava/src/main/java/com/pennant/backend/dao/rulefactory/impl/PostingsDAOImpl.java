@@ -91,7 +91,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setFinEvent(finEvent);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
+		selectSql.append(" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
 		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch, UserBranch ");
 		selectSql.append(" FROM Postings_View");
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN ("+finEvent+")");

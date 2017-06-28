@@ -32,7 +32,7 @@ import com.pennant.backend.model.FinTaxUploadHeader;
 
 public interface FinTaxUploadDetailDAO {
 
-	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type);
+	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type, String status);
 
 	void update(FinTaxUploadHeader finTaxUploadHeader, String type);
 

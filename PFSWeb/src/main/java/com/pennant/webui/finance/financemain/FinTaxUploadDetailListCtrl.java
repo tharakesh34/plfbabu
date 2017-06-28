@@ -65,6 +65,7 @@ import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.model.FinTaxUploadDetailItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -259,7 +260,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 					finTaxUploadHeader.getNextTaskId());
 			
 			List<FinTaxUploadDetail> finTaxUploadDetailList = finTaxUploadDetailService
-					.getFinTaxDetailUploadById(String.valueOf(finTaxUploadHeader.getBatchReference()),"_View");
+					.getFinTaxDetailUploadById(String.valueOf(finTaxUploadHeader.getBatchReference()),"_View","'"+PennantConstants.RCD_STATUS_APPROVED+"'");
 			finTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 			doShowDialogPage(finTaxUploadHeader);
 		} else {
