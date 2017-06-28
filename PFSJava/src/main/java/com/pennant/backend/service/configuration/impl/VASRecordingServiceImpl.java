@@ -2104,6 +2104,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					}
 				}
 			}
+			if (extendedDetailsCount > 0 && vasRecording.getExtendedDetails() == null
+					|| vasRecording.getExtendedDetails().isEmpty()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "ExtendedDetails";
+				 auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				 return auditDetail;
+			}
 			if (vasRecording.getExtendedDetails() != null && !vasRecording.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
 					if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details

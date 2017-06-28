@@ -109,6 +109,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.VASConsatnts;
 
 public class FinanceDataValidation {
 
@@ -474,7 +475,9 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", valueParm)));
 					return errorDetails;
 				}
-
+				if(StringUtils.equals("Loan", detail.getPostingAgainst())){
+					detail.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+				}
 				if (!StringUtils.equals(vASConfiguration.getRecAgainst(), detail.getPostingAgainst())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "PostingAgainst";
@@ -638,6 +641,13 @@ public class FinanceDataValidation {
 							extendedDetailsCount++;
 						}
 					}
+				}
+				if (extendedDetailsCount > 0 && detail.getExtendedDetails() == null
+						|| detail.getExtendedDetails().isEmpty()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ExtendedDetails";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+					 return errorDetails;
 				}
 				if (detail.getExtendedDetails() != null && !detail.getExtendedDetails().isEmpty()) {
 					for (ExtendedField details : detail.getExtendedDetails()) {
@@ -3642,6 +3652,21 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90229", null)));
 				return errorDetails;
 			}
+		}
+		String frqBPI = null;
+		Date frqDate;
+		if (finMain.isAllowGrcPeriod()) {
+			frqBPI = finMain.getGrcPftFrq();
+			frqDate = finMain.getNextGrcPftDate();
+		} else {
+			frqBPI = finMain.getRepayFrq();
+			frqDate = finMain.getNextRepayPftDate();
+		}
+		Date bpiDate = DateUtility.getDate(	DateUtility.formatUtilDate(FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
+										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),PennantConstants.dateFormat));
+		if (DateUtility.compare(bpiDate, frqDate) >= 0) {
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null)));
+			return errorDetails;
 		}
 
 		if (finMain.isAlwBPI() && !financeType.isAlwBPI()) {
