@@ -438,7 +438,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderProjcetDialog_name.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderProjcetDialog_name.value"),PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,true));
 		}
 		if (!this.builderId.isReadonly()){
 			this.builderId.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderProjcetDialog_builderId.value"),null,true,true));

@@ -445,7 +445,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_name.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_name.value"),PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,true));
 		}
 		if (!this.segmentation.isReadonly()){
 			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_segmentation.value"),null,true,true));
