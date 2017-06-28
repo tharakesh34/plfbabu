@@ -82,7 +82,7 @@ public class SummaryDetailService {
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-			summary.setNumberOfTerms(financeMain.getCalTerms());
+			summary.setNumberOfTerms(finPftDetail.getNOInst());
 			summary.setLoanTenor(finPftDetail.getTotalTenor());
 			summary.setMaturityDate(finPftDetail.getMaturityDate());
 			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
