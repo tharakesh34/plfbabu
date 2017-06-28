@@ -871,6 +871,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					return APIErrorHandlerService.getFailedStatus("90315", valueParm);
 				}
 			}
+			if (StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+					FinanceConstants.PENALTYTYPE_FLAT)
+					|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+							FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+				finServiceInstruction.getFinODPenaltyRate().setODChargeCalOn("");
+			}
 		} else {
 			return beanValidation("overdue");
 		}
