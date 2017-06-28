@@ -591,7 +591,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, BounceReason bounceReason, FinReceiptDetail finReceiptDetail) {
 		logger.debug(Literal.ENTERING);
 
-		BigDecimal bounceCharge = BigDecimal.ZERO;
 		Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 		
@@ -599,19 +598,15 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		bounceReason.getDeclaredFieldValues(fieldsAndValues);
 		
 		if (rule != null) {
-			bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-					fieldsAndValues, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+			bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 		}
-		bounceCharge = PennantApplicationUtil.formateAmount(bounceAmt,
-				CurrencyUtil.getFormat(receiptHeader.getFinCcy()));
-	
+		
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 		manualAdvise.setFinReference(receiptHeader.getReference());
 		manualAdvise.setFeeTypeID(0);
 		manualAdvise.setSequence(0);
-		manualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(bounceCharge,
-				CurrencyUtil.getFormat(receiptHeader.getFinCcy())));
+		manualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(bounceAmt, CurrencyUtil.getFormat(receiptHeader.getFinCcy())));
 		manualAdvise.setPaidAmount(BigDecimal.ZERO);
 		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
 		manualAdvise.setRemarks("");
