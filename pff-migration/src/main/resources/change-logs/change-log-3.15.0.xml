@@ -4064,4 +4064,40 @@ Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUN
 		UPDATE DATA_ENGINE_TABLE SET NAME = 'TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='DE_TRAIL_BALANCE_REPORT_VIEW';
 	</sql>	
 	</changeSet>
+	
+	<changeSet id="236" author="Manoj.P">
+		<sql>
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+			
+			INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menu_Category_CIBIL','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menu_Item_CIBILFileDownloads','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECGROUPS VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS),'CIBIL_FILE_CONTROL','CIBIL file CONTROL.',0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menu_Category_CIBIL'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_CIBILFileDownloads'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECROLES VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES),1,'CIBIL_FILE_CONTROL','CIBIL File Control.','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='CIBIL_FILE_CONTROL'),0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SecOperations VALUES ((select MAX(OprID)+1 from SecOperations),'CIBIL_FILE_CONTROL','CIBIL File Control.',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+			
+			INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='CIBIL_FILE_CONTROL'), (select RoleID from SecRoles where RoleCd='CIBIL_FILE_CONTROL'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
