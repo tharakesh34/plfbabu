@@ -485,15 +485,12 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-			pftDetail.setPrvRpySchDate(curSchd.getSchDate());
-			pftDetail.setPrvRpySchPft(curSchd.getProfitSchd());
-			pftDetail.setPrvRpySchPri(curSchd.getPrincipalSchd());
-
-			//FIXME: Set in Latepayment marking. Not required again
-			/*
-			 * if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) { pftDetail.setNOODInst(pftDetail.getNOODInst() +
-			 * 1); }
-			 */ }
+			if (curSchd.isFrqDate()	&& !isHoliday(curSchd.getBpiOrHoliday())) {
+				pftDetail.setPrvRpySchDate(curSchd.getSchDate());
+				pftDetail.setPrvRpySchPft(curSchd.getProfitSchd());
+				pftDetail.setPrvRpySchPri(curSchd.getPrincipalSchd());
+			}
+		}
 
 		pftDetail.setCurReducingRate(curSchd.getCalculatedRate());
 
