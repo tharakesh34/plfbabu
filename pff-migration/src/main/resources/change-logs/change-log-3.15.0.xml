@@ -4111,4 +4111,49 @@ Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUN
 			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
 		</update>
 	</changeSet>
+<changeSet author="Madhubabu" id="238">
+	<addColumn tableName="fintaxuploaddetail">
+		<column name="seqno" type="bigint"/>
+	</addColumn>
+	</changeSet>	
+<changeSet author="Madhubabu" id="239">
+	<addColumn tableName="fintaxuploaddetail_temp">
+		<column name="seqno" type="bigint"/>
+	</addColumn>
+	</changeSet>	
+<changeSet author="Madhubabu" id="240">
+	<createView viewName="FINTAXUPLOADDETAIL_AVIEW"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="241">
+	<createView viewName="FINTAXUPLOADDETAIL_TVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="242">
+	<createView viewName="FINTAXUPLOADDETAIL_VIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+   UNION ALL 
+  select  T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadDetail_Temp 
+                          WHERE AggrementNo = T1.AggrementNo )
+		</createView>
+</changeSet>	
 </databaseChangeLog>
