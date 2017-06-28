@@ -123,7 +123,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" AM.HOSTACCOUNT HOSTACCOUNT,");
 		sql.append(" AT.ACTYPEDESC DESCRIPTION,");
 		sql.append(" ABS(COALESCE(LR.CLOSINGBAL, 0)) OPENINGBAL,");
-		sql.append(" COALESCE(LR.CLOSINGBALTYPE, ' ') OPENINGBALTYPE,");
+		sql.append(" COALESCE(LR.CLOSINGBALTYPE, 'Dr') OPENINGBALTYPE,");
 		sql.append(" ABS(TODAYDEBITS) DEBITAMOUNT,");
 		sql.append(" ABS(TODAYCREDITS) CREDITAMOUNT,");
 		sql.append(" ABS(CASE when LR.CLOSINGBALTYPE='Cr' then COALESCE(LR.CLOSINGBAL, 0)+AH.TODAYNET ELSE  (COALESCE(LR.CLOSINGBAL, 0)*-1) + AH.TODAYNET END)  CLOSINGBAL,");
