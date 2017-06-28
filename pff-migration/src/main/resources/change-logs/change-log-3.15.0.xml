@@ -4156,4 +4156,81 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
                           WHERE AggrementNo = T1.AggrementNo )
 		</createView>
 </changeSet>	
+
+	<changeSet author="Kesav" id="243">
+		<createTable tableName="LEA_GST_TMP_DTL">
+		 	<column name="TRANSACTION_DATE" 				type="datetime" />
+			<column name="HOST_SYSTEM_TRANSACTION_ID" 		type="varchar(20)" />
+			<column name="TRANSACTION_TYPE" 				type="varchar(50)" />
+			<column name="BUSINESS_AREA" 					type="varchar(2)" />
+			<column name="SOURCE_SYSTEM" 					type="varchar(20)" />
+			<column name="COMPANY_CODE" 					type="varchar(50)" />
+			<column name="CUSTOMER_NAME" 					type="varchar(300)" />
+			<column name="REGISTERED_CUSTOMER" 				type="varchar(1)" />
+			<column name="CUSTOMER_ID" 						type="number(8)" />
+			<column name="CUSTOMER_GSTIN" 					type="varchar(30)" />
+			<column name="CUSTOMER_ADDRESS" 				type="varchar(500)" />
+			<column name="CUSTOMER_STATE_CODE" 				type="varchar(2)" />
+			<column name="ADDRESS_CHANGE_DATE" 				type="datetime" />
+			<column name="PAN_NO" 							type="varchar(30)" />
+			<column name="LEDGER_CODE" 						type="varchar(20)" />
+			<column name="HSN_SAC_CODE" 					type="varchar(50)" />
+			<column name="NATURE_OF_SERVICE" 				type="varchar(20)" />
+			<column name="LOAN_ACCOUNT_NO" 					type="varchar(20)" />
+			<column name="PRODUCT_CODE" 					type="varchar(8)" />
+			<column name="CHARGE_CODE" 						type="number(8)" />
+			<column name="LOAN_BRANCH" 						type="number(8)" />
+			<column name="LOAN_BRANCH_STATE" 				type="varchar(2)" />
+			<column name="LOAN_SERVICING_BRANCH" 			type="varchar(200)" />
+			<column name="BFLGSTINNo" 						type="varchar(30)" />
+			<column name="TXN_BRANCH_ADDRESS" 				type="varchar(500)" />
+			<column name="TXN_BRANCH_STATE_CODE" 			type="varchar(2)" />
+			<column name="TRANSACTION_AMOUNT" 				type="number(25,2)" />
+			<column name="REVERSE_CHARGE_APPLICABLE" 		type="varchar(1)" />
+			<column name="INVOICE_TYPE" 					type="varchar(1)" />
+			<column name="ORIGINAL_INVOICE_NO" 				type="varchar(16)" />
+			<column name="BFL_GSTIN_NO" 					type="varchar(30)"/>
+			
+			<column name="INVOICE_NO"                 		type="varchar(16)" />
+			<column name="SFDC_DEALID"                		type="varchar(20)" />
+			<column name="TAXABLE_AMOUNT"             		type="number(20,2)" />
+			<column name="CGST_RATE"                  		type="number(10,7)" />
+			<column name="CGST_AMOUNT"                		type="number(25,2)" />
+			<column name="CGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="CGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="CGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="CGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="SGST_RATE"                  		type="number(10,7)" />
+			<column name="SGST_AMOUNT"                		type="number(25,2)" />
+			<column name="SGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="SGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="SGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="SGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="IGST_RATE"                  		type="number(10,7)" />
+			<column name="IGST_AMOUNT"                		type="number(25,2)" />
+			<column name="IGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="IGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="IGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="IGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="UTGST_RATE"                 		type="number(10,7)" />
+			<column name="UTGST_AMOUNT"               		type="number(25,2)" />
+			<column name="UTGST_SURCHARGE_RATE"       		type="number(10,7)" />
+			<column name="UTGST_SURCHARGE_AMOUNT"     		type="number(25,2)" />
+			<column name="UTGST_CESS_RATE"            		type="number(10,7)" />
+			<column name="UTGST_CESS_AMOUNT"          		type="number(25,2)" />
+			<column name="TXNADVICEID"                		type="number(16)" />
+			<column name="TO_STATE"                   		type="varchar(2)" />
+			<column name="FROM_STATE"                 		type="varchar(2)" />
+			<column name="CHEQUEID"                   		type="number" />
+			<column name="EXEMPTED"                   		type="varchar(1)" />
+			<column name="BUSINESSdatetime"               	type="datetime" />
+			<column name="PROCESSdatetime"                	type="datetime" />
+			<column name="PROCESSED_FLAG"             		type="varchar(1)" />
+			<column name="REVERSE_CHARGECODEID"       		type="number(16)" />
+			<column name="AGREEMENTID"                		type="number(8)" />
+			<column name="CONSIDER_FOR_GST"           		type="varchar(1)" />
+			<column name="EXEMPTED_STATE"             		type="varchar(1)" />
+			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
+		</createTable>
+</changeSet>
 </databaseChangeLog>
