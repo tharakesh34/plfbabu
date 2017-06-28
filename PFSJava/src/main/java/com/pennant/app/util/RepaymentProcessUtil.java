@@ -216,7 +216,7 @@ public class RepaymentProcessUtil {
 								rsd = prepareRpyRecord(curSchd, rsd, repayTo, tdsAdjust.add(actPftAdjust), valueDate);
 								
 								if (tdsAdjust.compareTo(BigDecimal.ZERO)>0) {
-									rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust.add(actPftAdjust), valueDate);
+									rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust, valueDate);
 								}
 								
 								// Reset Total Receipt Amount
