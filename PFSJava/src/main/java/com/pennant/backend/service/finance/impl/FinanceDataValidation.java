@@ -905,6 +905,13 @@ public class FinanceDataValidation {
 			 * else { //TODO }
 			 */
 		}
+		if(financeType.isFinCollateralReq()){
+			if(financeDetail.getCollateralAssignmentList()==null ||  financeDetail.getCollateralAssignmentList().isEmpty()){
+				String[] valueParm = new String[1];
+				valueParm[0] = "Collateral";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+			}
+		}
 
 		if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
 			if (StringUtils.isBlank(finMain.getRepayAccountId())) {
@@ -1096,6 +1103,14 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralAssignment.getCollateralRef();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90906", valueParm)));
+					return errorDetails;
+				}
+				String collateralType=financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
+				if(!StringUtils.equals(collateralType, collateralSetup.getCollateralType())){
+					String[] valueParm = new String[2];
+					valueParm[0] = "collateralref";
+					valueParm[1] = "LoanType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
 					return errorDetails;
 				}
 				if (!StringUtils.equalsIgnoreCase(collateralSetup.getDepositorCif(), financeDetail.getFinScheduleData()

@@ -47,7 +47,14 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 		
 		FinScheduleData financeSchdData = null;
 		try {
-
+			if(finScheduleData.getFinanceMain() == null){
+				FinScheduleData response = new FinScheduleData();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[1];
+				valueParm[0] = "financeDetail";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502",valueParm));
+				return response;
+			}
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finScheduleData);
 
