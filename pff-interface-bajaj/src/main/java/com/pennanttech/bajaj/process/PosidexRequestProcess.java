@@ -277,7 +277,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		//parmMap.addValue("CUSTOMER_NO", customerId);
 
 		if (lastRunDate != null) {
-			sql.append(" AND LASTMNTON > : LASTMNTON");
+			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 			parmMap.addValue("LASTMNTON", lastRunDate);
 		}
 
