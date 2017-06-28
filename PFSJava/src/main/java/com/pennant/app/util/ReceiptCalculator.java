@@ -558,7 +558,11 @@ public class ReceiptCalculator implements Serializable {
 				// Adding Advise Details to Map
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
 					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
-					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+					if(advise.getBounceID() > 0){
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), "BC : "+advise.getBounceCode());
+					}else{
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+					}
 				}
 			}
 		}
