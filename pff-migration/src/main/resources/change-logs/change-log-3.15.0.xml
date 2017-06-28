@@ -4100,4 +4100,15 @@ Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUN
 			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 		</sql>
 	</changeSet>
+	<changeSet author="Prasad" id="237">
+			<update tableName="RULES">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (br_category == 2) {
+		Result = 500 ; return;  
+ } else {
+		Result = 0 ; return;  
+ }]]></column>
+     		<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|br_category| |==|CALCVALUE|2| |1|0|1|1|1|500| |~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
