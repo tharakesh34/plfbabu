@@ -2609,6 +2609,4 @@ Insert into reportlist values('TaxDetail','TaxDetail','listheader_Country.label,
 	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
 </changeSet>
-
-
 </databaseChangeLog>
