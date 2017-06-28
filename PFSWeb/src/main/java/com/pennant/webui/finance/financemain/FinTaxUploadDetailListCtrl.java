@@ -45,7 +45,6 @@ package com.pennant.webui.finance.financemain;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -66,13 +65,13 @@ import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.financemain.model.FinTaxUploadDetailItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * @author S051
@@ -177,10 +176,16 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		
 		registerField("RecordStatus");
 		registerField("RecordType");
-
+		doSeFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+
+	}
+
+	private void doSeFieldProperties() {
+		this.batchCreationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.batchApprovedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 	}
 
@@ -227,7 +232,6 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 */
 	public void onFinTaxUploadDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering");
-		String whereCondition;
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinTaxUploadDetail.getSelectedItem();
 
