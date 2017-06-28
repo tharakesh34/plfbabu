@@ -117,21 +117,39 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");
+		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");		
 		sql.append(" :HEADERID,");
-		sql.append(" GROUPCODE,");
-		sql.append(" HOSTACCOUNT,");
-		sql.append(" DESCRIPTION,");
-		sql.append(" OPENINGBAL,");
-		sql.append(" OPENINGBALTYPE,");
-		sql.append(" DEBITAMOUNT,");
-		sql.append(" CREDITAMOUNT,");
-		sql.append(" CLOSINGBAL,");
-		sql.append(" CR_DR");
-		sql.append(" FROM TRAIL_BALANCE_REPORT_VIEW");
-
+		sql.append(" ATG.GROUPCODE,");
+		sql.append(" AM.HOSTACCOUNT HOSTACCOUNT,");
+		sql.append(" AT.ACTYPEDESC DESCRIPTION,");
+		sql.append(" ABS(COALESCE(LR.CLOSINGBAL, 0)) OPENINGBAL,");
+		sql.append(" COALESCE(LR.CLOSINGBALTYPE, ' ') OPENINGBALTYPE,");
+		sql.append(" ABS(TODAYDEBITS) DEBITAMOUNT,");
+		sql.append(" ABS(TODAYCREDITS) CREDITAMOUNT,");
+		sql.append(" ABS(COALESCE((CASE when LR.CLOSINGBALTYPE='CR' then LR.CLOSINGBAL+TODAYNET ELSE  (LR.CLOSINGBAL*-1) + TODAYNET END), 0)) CLOSINGBAL,");
+		sql.append(" CASE");
+		sql.append(" WHEN AH.TODAYNET >= 0");
+		sql.append(" THEN 'DR'");
+		sql.append(" ELSE 'CR'");
+		sql.append(" END CR_DR");
+		sql.append(" FROM");
+		sql.append(" (SELECT ACCOUNTID,");
+		sql.append(" SUM(TODAYDEBITS) TODAYDEBITS,");
+		sql.append(" SUM(TODAYCREDITS) TODAYCREDITS,");
+		sql.append(" SUM(TODAYNET) TODAYNET");
+		sql.append(" FROM ACCOUNTSHISTORY AH");
+		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
+		sql.append(" GROUP BY ACCOUNTID");
+		sql.append(" ) AH");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = AH.ACCOUNTID");
+		sql.append(" INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE");
+		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG   ON ATG.GROUPID = AT.ACTYPEGRPID");
+		sql.append(" LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR   ON LR.ACTYPEGRPID  = ATG.GROUPCODE   AND LR.HOSTACCOUNT = AM.HOSTACCOUNT");
+		
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
+		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
+		paramMap.addValue("MONTH_ENDDATE", monthEndDate);
 
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
