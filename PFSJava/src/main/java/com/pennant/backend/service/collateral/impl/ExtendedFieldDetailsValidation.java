@@ -169,7 +169,7 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[1] = "number";
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
 			}
-			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+			if(fieldValue.length() > exdConfigDetail.getFieldLength()+2) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
@@ -177,6 +177,7 @@ public class ExtendedFieldDetailsValidation {
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_INT:
+		case ExtendedFieldConstants.FIELDTYPE_LONG:
 			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -185,6 +186,16 @@ public class ExtendedFieldDetailsValidation {
 			}
 			try {
 				Integer.parseInt(fieldValue);
+				if (exdConfigDetail.getFieldMaxValue() > 0 && exdConfigDetail.getFieldMinValue() > 0) {
+					if (!(Long.valueOf(fieldValue) >= exdConfigDetail.getFieldMinValue()
+							&& Long.valueOf(fieldValue) <= exdConfigDetail.getFieldMaxValue())) {
+						String valueParm[] = new String[3];
+						valueParm[0] = exdConfigDetail.getFieldName();
+						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
+						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+					}
+				}
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
