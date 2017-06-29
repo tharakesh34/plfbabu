@@ -447,8 +447,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			final FinTaxUploadHeader afinTaxUploadHeader) {
 		FinTaxUploadDetail finTaxUploadDetail;
 		int seqno = 0;
-		
-	
+
 		//fill the header data
 		afinTaxUploadHeader.setFileName(this.fileName.getValue());
 		afinTaxUploadHeader.setNumberofRecords(Integer.parseInt(this.totalNoofRecords.getValue()));
@@ -466,7 +465,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						finTaxUploadDetail.setSeqNo(seqno++);
 					}
 					finTaxUploadDetailList.add(finTaxUploadDetail);
-				} 
+				}
 				afinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 			}
 
@@ -487,15 +486,14 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		checkFoSelection(afinTaxUploadHeader);
 	}
 
-
 	private void checkFoSelection(FinTaxUploadHeader afinTaxUploadHeader) {
 		List<Listitem> Listitems = this.listBoxFileData.getItems();
-		boolean totalSelected=false;
+		boolean totalSelected = false;
 		for (Listitem listitem : Listitems) {
 			if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
-				totalSelected=true;
-			}else{
-				totalSelected=false;
+				totalSelected = true;
+			} else {
+				totalSelected = false;
 				break;
 			}
 		}
@@ -655,6 +653,23 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (getFinTaxUploadDetailListCtrl().listBoxFinTaxUploadDetail != null) {
 			getFinTaxUploadDetailListCtrl().listBoxFinTaxUploadDetail.getListModel();
 		}
+	}
+
+	public void onCheck$select(Event event) {
+		logger.debug("Entering");
+		List<Listitem> Listitems = this.listBoxFileData.getItems();
+		if (this.select.isChecked()) {
+			for (Listitem listitem : Listitems) {
+				((Checkbox) listitem.getFirstChild().getFirstChild()).setChecked(true);
+
+			}
+		} else {
+			for (Listitem listitem : Listitems) {
+				((Checkbox) listitem.getFirstChild().getFirstChild()).setChecked(false);
+
+			}
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
