@@ -2105,8 +2105,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					}
 				}
 			}
-			if (extendedDetailsCount > 0 && vasRecording.getExtendedDetails() == null
-					|| vasRecording.getExtendedDetails().isEmpty()) {
+			if (extendedDetailsCount > 0 && (vasRecording.getExtendedDetails() == null
+					|| vasRecording.getExtendedDetails().isEmpty())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "ExtendedDetails";
 				 auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));

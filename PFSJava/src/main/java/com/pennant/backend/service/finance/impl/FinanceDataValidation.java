@@ -642,8 +642,7 @@ public class FinanceDataValidation {
 						}
 					}
 				}
-				if (extendedDetailsCount > 0 && detail.getExtendedDetails() == null
-						|| detail.getExtendedDetails().isEmpty()) {
+				if (extendedDetailsCount > 0 && (detail.getExtendedDetails() == null || detail.getExtendedDetails().isEmpty())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "ExtendedDetails";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));

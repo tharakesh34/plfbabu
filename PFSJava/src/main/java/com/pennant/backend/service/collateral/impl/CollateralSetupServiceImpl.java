@@ -2459,8 +2459,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					extendedDetailsCount++;
 				}
 			}
-			if (extendedDetailsCount > 0 && collateralSetup.getExtendedDetails() == null
-					|| collateralSetup.getExtendedDetails().isEmpty()) {
+			if (extendedDetailsCount > 0 && (collateralSetup.getExtendedDetails() == null
+					|| collateralSetup.getExtendedDetails().isEmpty())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "ExtendedDetails";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));

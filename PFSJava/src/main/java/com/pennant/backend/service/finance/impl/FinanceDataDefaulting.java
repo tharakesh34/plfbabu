@@ -984,9 +984,9 @@ public class FinanceDataDefaulting {
 		//Default Calculated Grace End Date using terms
 		if (finMain.getGraceTerms() > 0) {
 			finMain.setCalGrcTerms(finMain.getGraceTerms());
-			if (StringUtils.isNotBlank(finMain.getGrcPftFrq()) && finMain.getNextGrcPftDate() != null) {
+			if (StringUtils.isNotBlank(finMain.getGrcPftFrq()) && finMain.getGrcPeriodEndDate() == null) {
 				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getGrcPftFrq(), finMain.getGraceTerms(),
-						finMain.getNextGrcPftDate(), HolidayHandlerTypes.MOVE_NONE, true, financeType.getFddLockPeriod()).getScheduleList();
+						finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getScheduleList();
 
 				Date geDate = null;
 				if (scheduleDateList != null) {
