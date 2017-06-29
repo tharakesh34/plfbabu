@@ -4300,4 +4300,12 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 	<renameColumn columnDataType="int" newColumnName="FAILED_RECORDS"
 		oldColumnName="FAILEDRECORDS" tableName="cibil_file_info" />
 </changeSet>
+<changeSet id="248" author="Manoj.P">
+	<addColumn tableName="cibil_file_info">
+		<column name="START_TIME" type="datetime" />
+	</addColumn>
+	<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+		<column name="END_TIME" type="datetime" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
