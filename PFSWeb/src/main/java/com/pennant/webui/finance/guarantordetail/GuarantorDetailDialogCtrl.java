@@ -58,6 +58,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -452,6 +453,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void onClick$btnSearchGuarantorCIF(Event event) {
 		customer = null;
 		doClearMessage();
+		doRemoveValidation();
+		Clients.clearWrongValue(this.btnSearchGuarantorCIF);
 		if (cif != null) {
 			Filter filter[] = new Filter[1];
 			filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
@@ -1418,7 +1421,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				wve.add(we);
 			}
 		} else {
+			if(customer!=null){
 			aGuarantorDetail.setCustID(this.customer.getCustID());
+			}
 		}
 		
 		doRemoveValidation();
@@ -1441,7 +1446,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		doClearMessage();
-		if (this.bankCustomer.isChecked()) {
+		if (this.bankCustomer.isChecked() && this.guarantorCIF.getValue().isEmpty()) {
 			this.guarantorCIF.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value"), PennantRegularExpressions.REGEX_ALPHANUM, true, true));
 		}
 		// Percentage
@@ -1598,6 +1603,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		// this.finReference.setErrorMessage("");
 		this.guarantorCIFName.setErrorMessage("");
+		this.guarantorCIF.clearErrorMessage();
 		this.guarantorCIF.setErrorMessage("");
 		this.guarantorIDType.setErrorMessage("");
 		this.guarantorIDNumber.setErrorMessage("");

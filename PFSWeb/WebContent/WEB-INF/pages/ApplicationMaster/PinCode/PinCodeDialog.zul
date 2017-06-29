@@ -84,7 +84,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<textbox id="pinCodes"
-										maxlength="20" width="150px" />
+										maxlength="10" width="150px" />
 								</hbox>
 								<label id="label_City"
 									value="${c:l('label_PinCodeDialog_City.value')}" />
