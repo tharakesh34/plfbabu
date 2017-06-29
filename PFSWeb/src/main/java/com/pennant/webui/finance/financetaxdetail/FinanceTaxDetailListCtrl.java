@@ -252,7 +252,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("financeTaxDetail", financetaxdetail);
 		arg.put("financeTaxDetailListCtrl", this);
-		
+		arg.put("enqiryModule", false);		
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null, arg);
 		} catch (Exception e) {

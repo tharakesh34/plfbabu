@@ -278,6 +278,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 				lc = new Listcell();
 				Checkbox selected = new Checkbox();
+				ComponentsCtrl.applyForward(selected, "onCheck=onChecklistItemSelect");
 				selected.setChecked(false);
 				selected.setParent(lc);
 				lc.setParent(item);
@@ -394,7 +395,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.listBoxFileData.getItems().isEmpty()) {
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
-
+		doSetValidation(userAction);
 		doWriteComponentsToBean(finTaxUploadDetailList, userAction, afinTaxUploadHeader);
 
 		isNew = afinTaxUploadHeader.isNew();
@@ -440,6 +441,20 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			}
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
+		}
+	}
+
+	private void doSetValidation(String userAction) {
+		List<Listitem> Listitems = this.listBoxFileData.getItems();
+		boolean selected = false;
+		for (Listitem listitem : Listitems) {
+			if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
+				selected = true;
+			}
+		}
+
+		if (!selected && (StringUtils.equals(userAction, "Approve") || StringUtils.equals(userAction, "Reject"))) {
+			throw new WrongValueException(this.listBoxFileData, Labels.getLabel("MandateDataList_NoEmpty"));
 		}
 	}
 
@@ -661,7 +676,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.select.isChecked()) {
 			for (Listitem listitem : Listitems) {
 				((Checkbox) listitem.getFirstChild().getFirstChild()).setChecked(true);
-
+					Clients.clearWrongValue(this.listBoxFileData);
 			}
 		} else {
 			for (Listitem listitem : Listitems) {
@@ -670,6 +685,22 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onChecklistItemSelect(Event event) {
+		List<Listitem> Listitems = this.listBoxFileData.getItems();
+		boolean totalselected = false;
+		for (Listitem listitem : Listitems) {
+			if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
+				Clients.clearWrongValue(this.listBoxFileData);
+				totalselected = true;
+			} else {
+				totalselected = false;
+				break;
+			}
+
+		}
+		this.select.setChecked(totalselected);
 	}
 
 	/**

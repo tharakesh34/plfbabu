@@ -10241,6 +10241,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finTaxUploadDetailDAO" ref="finTaxUploadDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
    
    

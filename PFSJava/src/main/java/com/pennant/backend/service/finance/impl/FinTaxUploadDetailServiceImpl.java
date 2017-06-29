@@ -51,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinTaxUploadDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
@@ -66,7 +67,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
@@ -78,6 +78,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	private AuditHeaderDAO			auditHeaderDAO;
 	private FinTaxUploadDetailDAO	finTaxUploadDetailDAO;
 	private FinanceTaxDetailDAO		financeTaxDetailDAO;
+	private PinCodeDAO				PinCodeDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -110,6 +111,14 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	@Override
 	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference, String type, String status) {
 		return finTaxUploadDetailDAO.getFinTaxDetailUploadById(reference, type, status);
+	}
+
+	public PinCodeDAO getPinCodeDAO() {
+		return PinCodeDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		PinCodeDAO = pinCodeDAO;
 	}
 
 	@Override
@@ -422,6 +431,20 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
+			if (taxuploadDetail.getPinCode() != null) {
+				boolean pinValid = getPinCodeDAO().isPinValid(taxuploadDetail.getPinCode());
+
+				if (!pinValid) {
+					String[] errParams = new String[2];
+					errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
+							+ taxuploadDetail.getPinCode();
+					errParams[1] = taxuploadDetail.getAggrementNo();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+				} else {
+
+				}
+			}
 
 		}
 		return auditDetail;
@@ -579,19 +602,16 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		//update or insert based on availability.
-		for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
-			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
-					.getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View");
-			if (financeTaxDetail != null) {
-				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
-				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
-			} else {
-				FinanceTaxDetail detail = new FinanceTaxDetail();
-				preparefinTaxDetail(finTaxUploadDetail, detail);
-				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
-			}
-
-		}
+		/*
+		 * for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
+		 * FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
+		 * .getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View"); if (financeTaxDetail != null) {
+		 * preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail); getFinanceTaxDetailDAO().update(financeTaxDetail,
+		 * TableType.MAIN_TAB); } else { FinanceTaxDetail detail = new FinanceTaxDetail();
+		 * preparefinTaxDetail(finTaxUploadDetail, detail); getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB); }
+		 * 
+		 * }
+		 */
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -630,7 +650,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 		FinTaxUploadHeader uploadHeader = (FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		if (uploadHeader.isTotalSelected()) {
+		if (StringUtils.equals(uploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_CANCELLED)
+				|| uploadHeader.isTotalSelected()) {
 			getFinTaxUploadDetailDAO().delete(uploadHeader, "_Temp");
 		}
 		auditHeader.setAuditDetails(
