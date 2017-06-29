@@ -4183,13 +4183,15 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 
+		<!-- GCDCustomers -->
+		<property name="gCDCustomerService" ref="gCDCustomerService" />
+
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -10246,8 +10248,8 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
-   
-   
+
+
    <!-- Beneficiary -->
 	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -10265,5 +10267,23 @@
 	<bean name="cacheAdministrationService"
 		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
 	
-	
+	<!-- GCDCustomers START -->
+	<bean id="gCDCustomerService"
+		class="com.pennant.backend.service.customermasters.impl.GCDCustomerDetailsServiceImpl">
+		<property name="gCDCustomerDAO" ref="gCDCustomerDAO" />
+		<property name="gCDCustomerBajjajDAO" ref="gCDCustomerBajjajDAO" />
+	</bean>
+
+	<bean id="gCDCustomerDAO"
+		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="gCDCustomerBajjajDAO"
+		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerBajjajDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<!-- GCDCustomers END -->
 </beans>
