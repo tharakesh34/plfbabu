@@ -519,6 +519,32 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 
 	@Override
+	public void updatePresentmentIdAsZero(long presentmentId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" UPDATE FINSCHEDULEDETAILS Set PresentmentId = :SetId Where PresentmentId = :PresentmentId ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+		source.addValue("SetId", 0);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
 	public void deletePresentmentDetails(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 

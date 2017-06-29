@@ -152,7 +152,13 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
 		presentmentHeaderDAO.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
 	}
-
+	
+	@Override
+	public void updatePresentmentIdAsZero(long presentmentId) {
+		presentmentHeaderDAO.updatePresentmentIdAsZero(presentmentId);
+	}
+	
+	
 	/* processPresentmentDetails */
 	@Override
 	public String savePresentmentDetails(PresentmentHeader header) throws Exception {
@@ -316,8 +322,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 
 		// EMI IN ADVANCE
-		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
-				RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
 			emiInAdvanceAmt = finExcessAmount.getBalanceAmt();
 			presentmentDetail.setExcessID(finExcessAmount.getExcessID());
@@ -349,8 +354,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction,
-			long presentmentId, long partnerBankId, LoggedInUser userDetails) throws Exception {
+	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId, LoggedInUser userDetails) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		if ("Save".equals(userAction)) {
@@ -359,6 +363,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			}
 			if (excludeList != null && !excludeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+				// Update Presentment is as 0 in Finschedule details
 			}
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Submit".equals(userAction)) {
@@ -368,13 +373,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			if (excludeList != null && !excludeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
 			}
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
 			processDetails(presentmentId, userDetails);
 		} else if ("Resubmit".equals(userAction)) {
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Cancel".equals(userAction)) {
 			List<PresentmentDetail> list = this.presentmentHeaderDAO.getPresentmentDetail(presentmentId, false);
 			if (list != null && !list.isEmpty()) {
@@ -382,6 +385,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 					if (item.getExcessID() != 0) {
 						finExcessAmountDAO.updateExcessAmount(item.getExcessID(), item.getAdvanceAmt());
 					}
+					updatePresentmentIdAsZero(item.getId());
 				}
 			}
 			this.presentmentHeaderDAO.deletePresentmentDetails(presentmentId);
@@ -389,6 +393,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	@Override
 	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
@@ -400,6 +405,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			if (presentmentDetail == null) {
 				throw new Exception(PennantJavaUtil.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
 			}
+			//Update Presentment is as 0 in Finschedule details
+			updatePresentmentIdAsZero(presentmentDetail.getId());
+			
 			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
