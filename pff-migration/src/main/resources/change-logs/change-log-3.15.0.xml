@@ -2642,7 +2642,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="DocTypeCode" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -2654,7 +2654,11 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="140.1" author="Jayant" dbms="mssql">
+        <sql>
+            alter table CIBIL_DOCUMENT_TYPES_MAPPING add constraint DF_CIB_DOC_TYP_MAPNG_VER default 0 for Version;
+        </sql>
+	</changeSet>
 	
 	<changeSet id="141" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_DT"
@@ -5573,5 +5577,19 @@ union
 	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
+	</changeSet>
+		<changeSet id="256" author="Jayant">
+	    <sql>
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN INSSCHD TO TMP1;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN SCHDINSPAID To TMP2;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN WRITEOFFINS TO TMP3;
+	    </sql>
+	</changeSet>
+	<changeSet id="257" author="Jayant">
+	    <sql>
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP1 TO WRITEOFFINS;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP2 TO INSSCHD;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP3 TO SCHDINSPAID;
+	    </sql>
 	</changeSet>
 	</databaseChangeLog>
