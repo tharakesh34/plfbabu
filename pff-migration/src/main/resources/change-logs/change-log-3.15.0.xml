@@ -4308,4 +4308,12 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 		<column name="END_TIME" type="datetime" />
 	</addColumn>
 </changeSet>
+
+<changeSet id="249" author="Durgaprasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE IN ('GST_TAXDETAIL_DOWNLOAD');
+			INSERT INTO SMTPARAMETERS VALUES ('GST_TAXDETAIL_DOWNLOAD', 'Taxdetail download daily(Y) or monthly(N)', 'String', 1, 'Y', '1', 0, NULL, NULL, 'Taxdetail download daily(Y) or monthly(N).', 1, 1000,
+			CURRENT_TIMESTAMP, 'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
