@@ -644,5 +644,11 @@
 		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
 			oldColumnName="APPLICABLEFORCUSTID" tableName="AdtFinTaxDetail" />
 	</changeSet>
+	<changeSet author="Madhubabu" id="36">
+	<addColumn tableName="Adtfintaxuploaddetail">
+		<column name="BatchReference" type="varchar(20)"/>
+		<column name="seqno" type="bigint"/>
+	</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>

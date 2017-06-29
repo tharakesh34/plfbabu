@@ -279,7 +279,7 @@
 	        update pincodes set WorkFlowId = 0 ;
 	    </sql>
 	</changeSet>
-	<changeSet id="15" author="Durgaprasad G">
+	<changeSet id="15" author="Durgaprasad G" dbms="oracle">
 	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 		 	SELECT   
 				   FA. PAYMENTID,
@@ -439,7 +439,166 @@
 	 </createView>
 	
 	</changeSet>
+	<changeSet id="15" author="Durgaprasad G" dbms="mssql">
+	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		 	SELECT   
+				   FA. PAYMENTID,
+				   FA.FINREFERENCE,
+				   'D' CHANNEL, 
+				   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   FA.DISBDATE,
+	               FA.LLDATE,
+				   FA.PAYABLELOC,
+				   FA.PRINTINGLOC,
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+	              BD.BANKNAME BANKNAME,
+	              BB.BRANCHCODE,
+	              BB.BRANCHDESC BRANCHDESC,
+				  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR             MICR_CODE,
+				   BB.IFSC             IFSC_CODE,
+				   FA.BENEFICIARYACCNO,
+				   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+				   FA.PHONECOUNTRYCODE+FA.PHONEAREACODE+FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+				   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   FA.STATUS           STATUS,
+				   FA.DESCRIPTION      REMARKS,
+				     FA.PAYMENTTYPE      PAYMENTTYPE,
+				     FM.FINTYPE,
+				     PB.PARTNERBANKID,
+				     PB.PARTNERBANKCODE,
+				     FA.INPUTDATE,
+				     PB.ALWFILEDOWNLOAD,
+	                PB.FILENAME,
+				     FM.FINISACTIVE
+				   FROM FINADVANCEPAYMENTS FA
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+	               INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+	         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+				   
+				   UNION ALL
+				   
+				   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+				   PH.FINREFERENCE,
+				   PH.PAYMENTTYPE CHANNEL, 
+				   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   PI.POSTDATE DISBDATE, 
+				   PI.POSTDATE LLDATE, 
+				   PI.PAYABLELOC, 
+				   PI.PRINTINGLOC, 
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+				   BD.BANKNAME,
+				   BB.BRANCHCODE,
+				   BB.BRANCHDESC,
+				   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR              MICR_CODE,
+				   BB.IFSC              IFSC_CODE,
+				   PI.ACCOUNTNO BENEFICIARYACCNO,
+				   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+				   PI.PHONECOUNTRYCODE+PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+				   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   PI.STATUS           STATUS, 
+				   PI.REMARKS          REMARKS,
+				   PI.PAYMENTTYPE      PAYMENTTYPE,
+				   FM.FINTYPE,
+				   PB.PARTNERBANKID,
+				   PB.PARTNERBANKCODE,
+				   PI.POSTDATE INPUTDATE, 
+				   PB.ALWFILEDOWNLOAD,
+				   PB.FILENAME,
+				   FM.FINISACTIVE
+				   FROM PAYMENTINSTRUCTIONS PI 
+				   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				   INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+	 </createView>
 	
+	</changeSet>
 	<changeSet id="16" author="Durgaprasad .g">
 	<dropColumn tableName="INT_DSBIMPS_RESPONSE" columnName="CHANNEL"/>
 	</changeSet>
@@ -463,14 +622,21 @@
 	INSERT INTO ErrorDetails VALUES('90339','EN','E','Workflow configuration not defined for product: {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
-	<changeSet id="22" author="Amit">
+	<changeSet id="22" author="Amit" dbms="oracle">
 	<dropColumn tableName="gcdcustomers" columnName="IsSuccess" />
 
 	<addColumn tableName="gcdcustomers">
 		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
 	</addColumn>
 	</changeSet>
-	
+		<changeSet id="22" author="Amit" dbms="mssql">
+		    <dropDefaultValue tableName="gcdcustomers" columnName="IsSuccess" columnDataType="varchar"/>
+	<dropColumn tableName="gcdcustomers" columnName="IsSuccess" />
+
+	<addColumn tableName="gcdcustomers">
+		<column name="IsSuccess" type="Number(2,0)" defaultValueNumeric="1"  />
+	</addColumn>
+	</changeSet>
 	<changeSet author="Vinay" id="23">
 		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
 			SELECT  T1.PCCountry, T1.PCProvince, T1.PCCity, T1.PCCityName,
@@ -680,7 +846,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet author="Madhubabu" id="31">
+	<changeSet author="Madhubabu" id="31" dbms="oracle">
 		<createTable tableName="FinTaxDetailUpload_temp">
 			<column name="TaxCode" type="varchar2(50)" />
 			<column name="AggrementNo" type="nvarchar(20)">
@@ -697,7 +863,7 @@
 			<column name="Province" type="varchar(8)" />
 			<column name="City" type="varchar(50)" />
 			<column name="PinCode" type="varchar(10)" />
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int" defaultValue="0"/>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="nvarchar(50)" />
@@ -708,6 +874,40 @@
 			<column name="RecordType" type="nvarchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="31" dbms="mssql">
+		<createTable tableName="FinTaxDetailUpload_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="31.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table FinTaxDetailUpload_temp add constraint DF_FINTAXDETUPLD_T_VER default 0 for Version;
+	    </sql>
 	</changeSet>
 	<changeSet author="PrasadRaju" id="33" dbms="oracle">
     <sqlFile path="UDF_CONVERTCURRENCY.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
@@ -935,41 +1135,103 @@
 			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
-<changeSet id="46" author="Jayant">
+<changeSet id="46" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED" tableName="VAS_VASFFR01_ED"/>
 	</changeSet>
-<changeSet id="47" author="Jayant">
+<changeSet id="46" author="Jayant" dbms="mssql">
+    	<addNotNullConstraint tableName="VAS_VASFFR01_ED" columnName="REFERENCE" columnDataType="varchar"/>
+    	<addNotNullConstraint tableName="VAS_VASFFR01_ED" columnName="SEQNO" columnDataType="int"/>
+    	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED" tableName="VAS_VASFFR01_ED"/>
+</changeSet>
+<changeSet id="47" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED" tableName="VAS_VASPD01_ED"/>
-	</changeSet>
-<changeSet id="48" author="Jayant">
+</changeSet>
+	
+<changeSet id="48" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED" tableName="VAS_VASEC01_ED"/>
 	</changeSet>
-<changeSet id="49" author="Jayant">
+<changeSet id="49" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED" tableName="VAS_VASCC01_ED"/>
 	</changeSet>
-<changeSet id="50" author="Jayant">
+<changeSet id="50" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED" tableName="VAS_ETOUCHLI_ED"/>
 	</changeSet>
-<changeSet id="51" author="Jayant">
+<changeSet id="51" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED" tableName="VAS_GCPPLI_ED"/>
 	</changeSet>
-<changeSet id="52" author="Jayant">
+<changeSet id="52" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED" tableName="VAS_GPGI_ED"/>
 	</changeSet>
-<changeSet id="53" author="Jayant">
+<changeSet id="53" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED" tableName="VAS_CCPGI_ED"/>
 	</changeSet>
-<changeSet id="54" author="Jayant">
+<changeSet id="54" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED" tableName="VAS_IHGI_ED"/>
 	</changeSet>
-<changeSet id="55" author="Jayant">
+<changeSet id="55" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED" tableName="VAS_STGI_ED"/>
 	</changeSet>
-<changeSet id="56" author="Jayant">
+<changeSet id="56" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED" tableName="VAS_TMGI_ED"/>
 	</changeSet>
-<changeSet id="57" author="Jayant">
+<changeSet id="57" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED" tableName="VAS_FWGI_ED"/>
+	</changeSet>
+	<changeSet id="47" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASPD01_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASPD01_ED" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED" tableName="VAS_VASPD01_ED"/>
+</changeSet>
+	
+<changeSet id="48" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASEC01_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASEC01_ED" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED" tableName="VAS_VASEC01_ED"/>
+	</changeSet>
+<changeSet id="49" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASCC01_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASCC01_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED" tableName="VAS_VASCC01_ED"/>
+	</changeSet>
+<changeSet id="50" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_ETOUCHLI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_ETOUCHLI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED" tableName="VAS_ETOUCHLI_ED"/>
+	</changeSet>
+<changeSet id="51" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_GCPPLI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_GCPPLI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED" tableName="VAS_GCPPLI_ED"/>
+	</changeSet>
+<changeSet id="52" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_GPGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_GPGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED" tableName="VAS_GPGI_ED"/>
+	</changeSet>
+<changeSet id="53" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_CCPGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_CCPGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED" tableName="VAS_CCPGI_ED"/>
+	</changeSet>
+<changeSet id="54" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_IHGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_IHGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED" tableName="VAS_IHGI_ED"/>
+	</changeSet>
+<changeSet id="55" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_STGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_STGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED" tableName="VAS_STGI_ED"/>
+	</changeSet>
+<changeSet id="56" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_TMGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_TMGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED" tableName="VAS_TMGI_ED"/>
+	</changeSet>
+<changeSet id="57" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_FWGI_ED" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_FWGI_ED" columnName="SEQNO" columnDataType="int"/>
+<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED" tableName="VAS_FWGI_ED"/>
 	</changeSet>
 <changeSet id="58" author="Jayant">
 		<createTable tableName="VAS_VASFFR01_ED_TEMP">
@@ -1163,41 +1425,101 @@
 			<column name="WORKFLOWID" type="bigint" />
 		</createTable>
 	</changeSet>
-<changeSet id="70" author="Jayant">
+<changeSet id="70" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED_TEMP" tableName="VAS_VASFFR01_ED_TEMP"/>
 	</changeSet>
-<changeSet id="71" author="Jayant">
+<changeSet id="71" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED_TEMP" tableName="VAS_VASPD01_ED_TEMP"/>
 	</changeSet>
-<changeSet id="72" author="Jayant">
+<changeSet id="72" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED_TEMP" tableName="VAS_VASEC01_ED_TEMP"/>
 	</changeSet>
-<changeSet id="73" author="Jayant">
+<changeSet id="73" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED_TEMP" tableName="VAS_VASCC01_ED_TEMP"/>
 	</changeSet>
-<changeSet id="74" author="Jayant">
+<changeSet id="74" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED_TEMP" tableName="VAS_ETOUCHLI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="75" author="Jayant">
+<changeSet id="75" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED_TEMP" tableName="VAS_GCPPLI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="76" author="Jayant">
+<changeSet id="76" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED_TEMP" tableName="VAS_GPGI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="77" author="Jayant">
+<changeSet id="77" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED_TEMP" tableName="VAS_CCPGI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="78" author="Jayant">
+<changeSet id="78" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED_TEMP" tableName="VAS_IHGI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="79" author="Jayant">
+<changeSet id="79" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED_TEMP" tableName="VAS_STGI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="80" author="Jayant">
+<changeSet id="80" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED_TEMP" tableName="VAS_TMGI_ED_TEMP"/>
 	</changeSet>
-<changeSet id="81" author="Jayant">
+<changeSet id="81" author="Jayant" dbms="oracle">
     	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED_TEMP" tableName="VAS_FWGI_ED_TEMP"/>
+	</changeSet>
+	<changeSet id="70" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASFFR01_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASFFR01_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASFFR01_ED_TEMP" tableName="VAS_VASFFR01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="71" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASPD01_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASPD01_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASPD01_ED_TEMP" tableName="VAS_VASPD01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="72" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASEC01_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASEC01_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASEC01_ED_TEMP" tableName="VAS_VASEC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="73" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_VASCC01_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_VASCC01_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_VASCC01_ED_TEMP" tableName="VAS_VASCC01_ED_TEMP"/>
+	</changeSet>
+<changeSet id="74" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_ETOUCHLI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_ETOUCHLI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_ETOUCHLI_ED_TEMP" tableName="VAS_ETOUCHLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="75" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_GCPPLI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_GCPPLI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GCPPLI_ED_TEMP" tableName="VAS_GCPPLI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="76" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_GPGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_GPGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_GPGI_ED_TEMP" tableName="VAS_GPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="77" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_CCPGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_CCPGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_CCPGI_ED_TEMP" tableName="VAS_CCPGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="78" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_IHGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_IHGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_IHGI_ED_TEMP" tableName="VAS_IHGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="79" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_STGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_STGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_STGI_ED_TEMP" tableName="VAS_STGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="80" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_TMGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_TMGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_TMGI_ED_TEMP" tableName="VAS_TMGI_ED_TEMP"/>
+	</changeSet>
+<changeSet id="81" author="Jayant" dbms="mssql">
+	<addNotNullConstraint tableName="VAS_FWGI_ED_TEMP" columnName="REFERENCE" columnDataType="varchar"/>
+	<addNotNullConstraint tableName="VAS_FWGI_ED_TEMP" columnName="SEQNO" columnDataType="int"/>
+	<addPrimaryKey columnNames="REFERENCE, SEQNO" constraintName="PK_VAS_FWGI_ED_TEMP" tableName="VAS_FWGI_ED_TEMP"/>
 	</changeSet>
 <changeSet id="82" author="Jayant">
 		<update tableName="WORKFLOWDETAILS">
@@ -1227,12 +1549,16 @@
 			<where>workflowtype='LIMITS_PROCESS'and workflowactive=1</where>
 		</update>
 </changeSet>
-<changeSet id="86" author=" Jayant">
+<changeSet id="86" author=" Jayant" dbms="oracle">
     <sql>
         Update vasStructure set Productdesc=substr(productdesc,1,20);
     </sql>
 </changeSet>
-
+<changeSet id="86" author=" Jayant" dbms="mssql">
+    <sql>
+        Update vasStructure set Productdesc=substring(productdesc,1,20);
+    </sql>
+</changeSet>
 <changeSet id="87" author="Manoj.P">
 		<createTable tableName="CIBIL_FILE_INFO">
 			<column name="ID"  	type="bigint" autoIncrement="true" incrementBy="1">
@@ -1261,7 +1587,7 @@
 			<column name="OWNERSHIP_INDICATOR"  type="int" />
 		</createTable>
 	</changeSet>
-		<changeSet author="pruthvi" id="89">
+		<changeSet author="pruthvi" id="89" dbms="oracle">
 		<createView viewName="RPT_FinJointActDtls_pvt_view" replaceIfExists="true">
 			 Select * from (
           Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
@@ -1269,7 +1595,15 @@
           Pivot(max(custshrtname) For row_num in (1 as CO_APP1,2 as CO_APP2,3 as CO_APP3))
 		</createView>
 	</changeSet>
-	<changeSet author="pruthvi" id="90">
+<!-- 			<changeSet author="pruthvi" id="89" dbms="mssql">
+		<createView viewName="RPT_FinJointActDtls_pvt_view" replaceIfExists="true">
+			 Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinJointAccountDetails fj inner join customers c on c.custcif = fj.custcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_APP1,2 as CO_APP2,3 as CO_APP3))
+		</createView>
+	</changeSet> -->
+	<changeSet author="pruthvi" id="90" dbms="oracle">
 		<createView viewName="RPT_FinGuarantorDtls_pvt_view" replaceIfExists="true">
 			  Select * from (
           Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
@@ -1277,6 +1611,14 @@
           Pivot(max(custshrtname) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
 		</createView>
 	</changeSet>
+<!-- 	<changeSet author="pruthvi" id="90" dbms="mssql">
+		<createView viewName="RPT_FinGuarantorDtls_pvt_view" replaceIfExists="true">
+			  Select * from (
+          Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+          from FinGuarantorsDetails fj inner join customers c on c.custcif = fj.GUarantorcif  )
+          Pivot(max(custshrtname) For row_num in (1 as CO_GUR1,2 as CO_GUR2,3 as CO_GUR3))
+		</createView>
+	</changeSet> -->
 	<changeSet author="pruthvi" id="91">
 	<sql>
 	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
@@ -1335,7 +1677,7 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	</sql>
 	</changeSet>
 	
-		<changeSet author="pruthvi" id="92">
+		<changeSet author="pruthvi" id="92" dbms="oracle">
 	<sql>
 	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:CL LIMIT MIS','CL LIMIT MIS',1,'CL_LIMIT_MIS','pfsDatasource',1,'menu_Item_CLLIMITMIS',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
 Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:LIST OF DOCUMENTS EXTRACT','LIST OF DOCUMENTS EXTRACT',1,'LIST_OF_DOCUMENTS_EXTRACT','pfsDatasource',1,'menu_Item_LISTOFDOCUMENTEXTRACT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
@@ -1343,12 +1685,20 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,to_date('31-OCT-2013 00:00:00','DD-MON-RRRR HH24:MI:SS'),0);
 		</sql>
 	</changeSet>
+	<changeSet author="pruthvi" id="92" dbms="mssql">
+	<sql>
+	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:CL LIMIT MIS','CL LIMIT MIS',1,'CL_LIMIT_MIS','pfsDatasource',1,'menu_Item_CLLIMITMIS',2,1005,null,null,null,null,null,null,0,'31-OCT-2013 00:00:00',0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:LIST OF DOCUMENTS EXTRACT','LIST OF DOCUMENTS EXTRACT',1,'LIST_OF_DOCUMENTS_EXTRACT','pfsDatasource',1,'menu_Item_LISTOFDOCUMENTEXTRACT',2,1005,null,null,null,null,null,null,0,'31-OCT-2013 00:00:00',0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Term Loan Tracker','Term Loan Tracker',1,'TermLoanTracker','pfsDatasource',1,'menu_Item_TERMLOANTRACKER',2,1005,null,null,null,null,null,null,0,'31-OCT-2013 00:00:00',0);
+Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Daily Disbursal Report','Daily Disbursal Report',1,'Daily_Disbursal_Report','pfsDatasource',1,'menu_Item_DAILYDISBURSALREPORT',2,1005,null,null,null,null,null,null,0,'31-OCT-2013 00:00:00',0);
+		</sql>
+	</changeSet>
 	<changeSet author="pruthvi" id="93">
 	<sql>
-	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
-	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
-	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
-	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('25-OCT-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'));
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),1,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,'25-OCT-2012 00:00:00');
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN_NO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,'25-OCT-2012 00:00:00');
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),1,'CustID','LOVSEARCH','Customer Number','CUSTID',null,'Customer','getCustID','getCustShrtName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,'25-OCT-2012 00:00:00');
+	Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT'),1,'FinReference','LOVSEARCH','Loan Reference','LAN',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,'25-OCT-2012 00:00:00');
 		</sql>
 	</changeSet>
 	
@@ -1386,7 +1736,7 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 	<dropTable tableName="FinTaxDetailUpload_temp"/>
 	<dropTable tableName="FinTaxDetailUpload"/>
 	</changeSet>
-<changeSet author="Madhubabu" id="99">
+<changeSet author="Madhubabu" id="99" dbms="oracle">
 	<createTable tableName="FinTaxDetailUploadHeader">
 		<column name="BatchReference" type="varchar(20)" />
 		<column name="FileName" type="varchar(20)" />
@@ -1405,7 +1755,30 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="WorkflowId" type="bigint" />
 	</createTable>
 </changeSet>
-
+<changeSet author="Madhubabu" id="99" dbms="mssql">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Version" type="int" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet id="99.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxDetailUploadHeader add constraint DF_FinTaxDetUpld_Ver default 0 for Version;
+    </sql>
+</changeSet>
 <changeSet author="Madhubabu" id="100">
 		<createTable tableName="FinTaxUploadDetail">
 			<column name="BatchReference" type="varchar(20)"/>
@@ -1437,7 +1810,7 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		</createTable>
 	</changeSet>
 	
-	<changeSet author="Madhubabu" id="101">
+	<changeSet author="Madhubabu" id="101" dbms="oracle">
 		<createTable tableName="FinTaxUploadDetail_temp">
 			<column name="TaxCode" type="varchar2(50)" />
 			<column name="AggrementNo" type="nvarchar(20)">
@@ -1466,11 +1839,39 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet author="Madhubabu" id="101" dbms="mssql">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="102" author="Madhubabu">
 	<dropTable tableName="FinTaxUploadDetail_temp"/>
 	</changeSet>
-	<changeSet author="Madhubabu" id="103">
+	<changeSet author="Madhubabu" id="103" dbms="oracle">
 		<createTable tableName="FinTaxUploadDetail_temp">
 			<column name="BatchReference" type="varchar(20)"/>
 			<column name="TaxCode" type="varchar2(50)" />
@@ -1500,10 +1901,40 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet author="Madhubabu" id="103" dbms="mssql">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="104" author="Madhubabu">
 	<dropTable tableName="FinTaxDetailUploadHeader"/>
 	</changeSet>
-	<changeSet author="Madhubabu" id="105">
+	<changeSet author="Madhubabu" id="105" dbms="oracle">
 	<createTable tableName="FinTaxDetailUploadHeader">
 		<column name="BatchReference" type="varchar(20)" />
 		<column name="FileName" type="varchar(20)" />
@@ -1512,6 +1943,26 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="BatchApprovedDate" type="datetime" />
 		<column name="Status" type="nvarchar(10)" />
 		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet author="Madhubabu" id="105" dbms="mssql">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" />
 		<column name="LastMntBy" type="bigint" />
 		<column name="LastMntOn" type="datetime" />
 		<column name="RecordStatus" type="nvarchar(50)" />
@@ -1763,7 +2214,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</sql>
 </changeSet>
 
-	<changeSet id="122" author="Durgaprasad">
+	<changeSet id="122" author="Durgaprasad" dbms="oracle">
 		<dropColumn tableName="TAXDOWNLOADDETAIL" columnName="HAEDERID" />
 		<addColumn tableName="TAXDOWNLOADDETAIL">
 			<column name="HEADERID" type="bigint">
@@ -1774,9 +2225,20 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="TxnBranchAddress" newDataType="varchar(500)" />
 		<dropNotNullConstraint tableName="TAXDOWNLOADDETAIL" columnName="OriginalInvoiceNo"/>
 	</changeSet>
+	<changeSet id="122" author="Durgaprasad" dbms="mssql">
+		<dropColumn tableName="TAXDOWNLOADDETAIL" columnName="HAEDERID" />
+		<addColumn tableName="TAXDOWNLOADDETAIL">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="CustomerAddress" newDataType="varchar(500)" />
+		<modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="TxnBranchAddress" newDataType="varchar(500)" />
+		<dropNotNullConstraint tableName="TAXDOWNLOADDETAIL" columnName="OriginalInvoiceNo" columnDataType="varchar"/>
+	</changeSet>
 	
 	
-	<changeSet id="123" author="Manoj.P">
+	<changeSet id="123" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBAM_CD" nullable="false"/>
@@ -1799,7 +2261,29 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="123" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBAM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AddrTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="124" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBAM_ADT"
 			referencedTableName="BMTADDRESSTYPES" referencedColumnNames="AddrTypeCode"
@@ -1808,7 +2292,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	
 	
 	
-<changeSet id="125" author="Manoj.P">
+<changeSet id="125" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBPM_CD" nullable="false"/>
@@ -1831,17 +2315,35 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
-	
+	<changeSet id="125" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBPM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PhoneTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
 	<changeSet id="126" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBAM_PT"
 			referencedTableName="BMTPHONETYPES" referencedColumnNames="PhoneTypeCode"
 			baseTableName="CIBIL_PHONE_TYPES_MAPPING" baseColumnNames="PhoneTypeCode" />
 	</changeSet>
-	
-	
-	
-	<changeSet id="127" author="Manoj.P">
+	<changeSet id="127" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_EMAIL_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBEM_CD" nullable="false"/>
@@ -1864,7 +2366,29 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
+	<changeSet id="127" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_EMAIL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBEM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
 	
 	<changeSet id="128" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBEM_ET"
@@ -1872,7 +2396,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			baseTableName="CIBIL_EMAIL_TYPES_MAPPING" baseColumnNames="EmailTypeCode" />
 	</changeSet>
 	
-	<changeSet id="129" author="Manoj.P">
+	<changeSet id="129" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				
@@ -1895,8 +2419,33 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	
+	<changeSet id="129" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Manoj.P" id="130.1" dbms="mssql">
+		<addNotNullConstraint tableName="CIBIL_ACCOUNT_TYPES_MAPPING" columnName="Code" columnDataType="char(2)"/>
+		<addNotNullConstraint tableName="CIBIL_ACCOUNT_TYPES_MAPPING" columnName="FinType" columnDataType="VARCHAR2(8)"/>
+	</changeSet>
 	<changeSet author="Manoj.P" id="130">
 		<addPrimaryKey columnNames="Code,FinType" constraintName="PK_CB_CD_FT"
 		tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
@@ -1908,7 +2457,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="FinType"/>
 	</changeSet>
 	
-	<changeSet id="132" author="Manoj.P">
+	<changeSet id="132" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBCT_CD" nullable="false"/>
@@ -1930,9 +2479,30 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>		
+	<changeSet id="132" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBCT_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
 	</changeSet>	
-	
-	
 	<changeSet id="133" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_CS"
 			referencedTableName="COLLATERALSTRUCTURE" referencedColumnNames="CollateralType"
@@ -1946,7 +2516,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</sql>
 	</changeSet>
 	
-	<changeSet id="134" author="Manoj.P">
+	<!-- <changeSet id="134" author="Manoj.P">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 			SELECT M.MANDATEID, 
 			BD.BANKSHORTCODE BANKCODE,
@@ -1995,7 +2565,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 			
 		</createView>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="135" author="Manoj.P">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES">
@@ -2038,7 +2608,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</changeSet>
 	
 	
-	<changeSet id="140" author="Manoj.P">
+	<changeSet id="140" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBDM_DT" nullable="false"/>
@@ -2061,8 +2631,34 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	
+	<changeSet id="140" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBDM_DT" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocTypeCode" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="140.1" author="Jayant" dbms="mssql">
+        <sql>
+            alter table CIBIL_DOCUMENT_TYPES_MAPPING add constraint DF_CIB_DOC_TYP_MAPNG_VER default 0 for Version;
+        </sql>
+	</changeSet>
 	
 	<changeSet id="141" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_DT"
@@ -3291,7 +3887,7 @@ insert into CIBIL_COLLATERAL_TYPES values ('04','Saving Account and Fixed Deposi
 			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
 		</createView>
 	</changeSet>
-	<changeSet  id="202" author="Prasad">
+	<changeSet  id="202" author="Prasad" dbms="oracle">
 	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
@@ -3384,7 +3980,99 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
-	
+	<changeSet  id="202" author="Prasad" dbms="mssql">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('+T1.Finreference+')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '+ (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)+'('+t2.Finreference+')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  +'- Due ('+T1.Finreference+')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,9 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,9 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,10 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '+T1.PaymentType+' :'+ (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)+'('+T.Finreference+')' ,
+    T1.PaymentAmount Debit, 0 credit,11 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
 	
 	<changeSet id="203" author="Manoj.P">
 		<sql>
@@ -3913,7 +4601,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			<column name="PRESENTMENTID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="230" author="Jayant">
+	<changeSet id="230" author="Jayant" dbms="oracle">
 	    <createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
@@ -4015,4 +4703,904 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		  </createView>
 	</changeSet>
-</databaseChangeLog>
+	<changeSet id="230" author="Jayant" dbms="mssql">
+	    <createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('+T1.Finreference+')' else 
+											  'Due for Installment '+T1.INSTNUMBER+' ('+T1.Finreference+')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('+T1.Finreference+')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and
+			 schdate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('+T1.Finreference+')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '+PAYMENTTYPE +' No.:'+FavourNumber +'('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0
+  union
+  	SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) +'- Due ('+Finreference+')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '+ (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)+'('+t2.Finreference+')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  +'- Due ('+T1.Finreference+')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  +'- Due ('+T1.Finreference+')', PaidAmount Debit, 0 credit,9 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+PAYMENTREF+' '+FavourNumber +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+PAYMENTREF +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,10 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit,11 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '+PaymentType+' :'+ (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)+'('+T1.Finreference+')' ,
+    AmtToBeReleased Debit, 0 credit,12 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '+T1.PaymentType+' :'+ (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)+'('+T.Finreference+')' ,
+    T1.PaymentAmount Debit, 0 credit,13 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		  </createView>
+	</changeSet>
+	<changeSet author="Prasad" id="231" dbms="oracle">
+<sql>
+Update seqrules set seqno=(select max(ruleid) from rules);
+delete from rules where Rulemodule='BOUNCE';
+Insert into RULES (RULEID,RULEMODULE,RULEEVENT,RULECODE,RULECODEDESC,WAIVERDECIDER,WAIVER,WAIVERPERC,SQLRULE,ACTUALBLOCK,SEQORDER,RETURNTYPE,GROUPID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ALLOWDEVIATION,DEVIATIONTYPE,CALFEEMODIFY,FEETOFINANCE,REVOLVING,FIXEDORVARIABLELIMIT,ACTIVE,FIELDS,FEETYPEID)
+values ((select max(ruleid)+1 from rules),'BOUNCE','BOUNCE','BOUNCE','bounce charges',null,0,null,' ',' ',0,'D',0,2,1085,to_date('28-JUN-17','DD-MON-RR'),'Approved',null,null,null,null,null,0,0,'#',0,null,1,'F',1,'br_category',null);
+Update seqrules set seqno=(select max(ruleid) from rules);
+Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUNCE');
+</sql>
+	</changeSet>
+	<changeSet author="Prasad" id="231" dbms="mssql">
+<sql>
+Update seqrules set seqno=(select max(ruleid) from rules);
+delete from rules where Rulemodule='BOUNCE';
+Insert into RULES (RULEID,RULEMODULE,RULEEVENT,RULECODE,RULECODEDESC,WAIVERDECIDER,WAIVER,WAIVERPERC,SQLRULE,ACTUALBLOCK,SEQORDER,RETURNTYPE,GROUPID,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ALLOWDEVIATION,DEVIATIONTYPE,CALFEEMODIFY,FEETOFINANCE,REVOLVING,FIXEDORVARIABLELIMIT,ACTIVE,FIELDS,FEETYPEID)
+values ((select max(ruleid)+1 from rules),'BOUNCE','BOUNCE','BOUNCE','bounce charges',null,0,null,' ',' ',0,'D',0,2,1085,'28-JUN-17','Approved',null,null,null,null,null,0,0,'#',0,null,1,'F',1,'br_category',null);
+Update seqrules set seqno=(select max(ruleid) from rules);
+Update BOUNCEREASONS set ruleid=(Select ruleid from rules where Rulemodule='BOUNCE');
+</sql>
+	</changeSet>
+<changeSet author="Prasad" id="232">
+			<update tableName="RULES">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[" if (br_category == 2) {
+		Result = 500 ; return;  
+ } else {
+		Result = 0 ; return;  
+ }"]]></column>
+     		<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|br_category| |==|CALCVALUE|2| |1|0|1|1|1|500| |~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="233" author="Manoj.P">
+		<dropView viewName="DE_TRAIL_BALANCE_REPORT_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="234" author="Manoj.P">
+		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+			  SELECT HEADERID,
+			  ACTYPEGRPID,
+			  HOSTACCOUNT,
+			  DESCRIPTION,
+			  UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+			  OPENINGBALTYPE,
+			  UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+			  UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+			  UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+			  CLOSINGBALTYPE
+			  FROM TRAIL_BALANCE_REPORT TBR
+			  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="235" author="Manoj.P">
+	<sql>
+		UPDATE DATA_ENGINE_TABLE SET NAME = 'TRAIL_BALANCE_REPORT_VIEW' WHERE NAME ='DE_TRAIL_BALANCE_REPORT_VIEW';
+	</sql>	
+	</changeSet>
+	
+	<changeSet id="236" author="Manoj.P">
+		<sql>
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+			
+			INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menu_Category_CIBIL','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menu_Item_CIBILFileDownloads','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECGROUPS VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS),'CIBIL_FILE_CONTROL','CIBIL file CONTROL.',0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menu_Category_CIBIL'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_CIBILFileDownloads'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECROLES VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES),1,'CIBIL_FILE_CONTROL','CIBIL File Control.','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CIBIL_FILE_CONTROL'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='CIBIL_FILE_CONTROL'),0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+			
+			INSERT INTO SecOperations VALUES ((select MAX(OprID)+1 from SecOperations),'CIBIL_FILE_CONTROL','CIBIL File Control.',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+			
+			INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='CIBIL_FILE_CONTROL'), (select RoleID from SecRoles where RoleCd='CIBIL_FILE_CONTROL'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+			UPDATE SeqSecGroups SET SeqNo = (SELECT MAX(GrpID) FROM SecGroups);
+			UPDATE SeqSecRoles SET SeqNo = (SELECT MAX(RoleID) FROM SecRoles);
+			UPDATE SeqSecOperations SET SeqNo = (SELECT MAX(OprID) FROM SecOperations);
+			UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+			UPDATE SeqSecRoleGroups SET SeqNo = (SELECT MAX(RoleGrpID) FROM SecRoleGroups);
+			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+		</sql>
+	</changeSet>
+	<changeSet author="Prasad" id="237">
+			<update tableName="RULES">
+			<column name="SQLRULE" type="NCLOB"><![CDATA[ if (br_category == 2) {
+		Result = 500 ; return;  
+ } else {
+		Result = 0 ; return;  
+ }]]></column>
+     		<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|br_category| |==|CALCVALUE|2| |1|0|1|1|1|500| |~)|~(|else|0|0|0|1|1|0| |~)|]]></column>
+			<where>RuleModule='BOUNCE' and RULEEVENT='BOUNCE' and RULECODE='BOUNCE'</where>
+		</update>
+	</changeSet>
+<changeSet author="Madhubabu" id="238">
+	<addColumn tableName="fintaxuploaddetail">
+		<column name="seqno" type="bigint"/>
+	</addColumn>
+	</changeSet>	
+<changeSet author="Madhubabu" id="239">
+	<addColumn tableName="fintaxuploaddetail_temp">
+		<column name="seqno" type="bigint"/>
+	</addColumn>
+	</changeSet>	
+<changeSet author="Madhubabu" id="240">
+	<createView viewName="FINTAXUPLOADDETAIL_AVIEW"
+		replaceIfExists="true">
+			SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="241">
+	<createView viewName="FINTAXUPLOADDETAIL_TVIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+		</createView>
+</changeSet>
+ <changeSet author="Madhubabu" id="242">
+	<createView viewName="FINTAXUPLOADDETAIL_VIEW"
+		replaceIfExists="true">
+			 SELECT T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail_Temp T1
+   UNION ALL 
+  select  T1.BatchReference, T1.Taxcode, T1.AggrementNo,T1.Applicablefor,T1.applicant,T1.Taxexempted,T1.Addrline1,T1.Addrline2,t1.addrline3,
+T1.addrline4,T1.country,t1.city,t1.province,T1.Pincode,T1.Seqno,
+T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.TaskId ,T1.NextTaskId , T1.RecordType ,T1.WorkflowId 
+     FROM FinTaxUploadDetail T1
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM FinTaxUploadDetail_Temp 
+                          WHERE AggrementNo = T1.AggrementNo )
+		</createView>
+</changeSet>	
+
+	<changeSet author="Kesav" id="243">
+		<createTable tableName="LEA_GST_TMP_DTL">
+		 	<column name="TRANSACTION_DATE" 				type="datetime" />
+			<column name="HOST_SYSTEM_TRANSACTION_ID" 		type="varchar(20)" />
+			<column name="TRANSACTION_TYPE" 				type="varchar(50)" />
+			<column name="BUSINESS_AREA" 					type="varchar(2)" />
+			<column name="SOURCE_SYSTEM" 					type="varchar(20)" />
+			<column name="COMPANY_CODE" 					type="varchar(50)" />
+			<column name="CUSTOMER_NAME" 					type="varchar(300)" />
+			<column name="REGISTERED_CUSTOMER" 				type="varchar(1)" />
+			<column name="CUSTOMER_ID" 						type="number(8)" />
+			<column name="CUSTOMER_GSTIN" 					type="varchar(30)" />
+			<column name="CUSTOMER_ADDRESS" 				type="varchar(500)" />
+			<column name="CUSTOMER_STATE_CODE" 				type="varchar(2)" />
+			<column name="ADDRESS_CHANGE_DATE" 				type="datetime" />
+			<column name="PAN_NO" 							type="varchar(30)" />
+			<column name="LEDGER_CODE" 						type="varchar(20)" />
+			<column name="HSN_SAC_CODE" 					type="varchar(50)" />
+			<column name="NATURE_OF_SERVICE" 				type="varchar(20)" />
+			<column name="LOAN_ACCOUNT_NO" 					type="varchar(20)" />
+			<column name="PRODUCT_CODE" 					type="varchar(8)" />
+			<column name="CHARGE_CODE" 						type="number(8)" />
+			<column name="LOAN_BRANCH" 						type="number(8)" />
+			<column name="LOAN_BRANCH_STATE" 				type="varchar(2)" />
+			<column name="LOAN_SERVICING_BRANCH" 			type="varchar(200)" />
+			<column name="BFLGSTINNo" 						type="varchar(30)" />
+			<column name="TXN_BRANCH_ADDRESS" 				type="varchar(500)" />
+			<column name="TXN_BRANCH_STATE_CODE" 			type="varchar(2)" />
+			<column name="TRANSACTION_AMOUNT" 				type="number(25,2)" />
+			<column name="REVERSE_CHARGE_APPLICABLE" 		type="varchar(1)" />
+			<column name="INVOICE_TYPE" 					type="varchar(1)" />
+			<column name="ORIGINAL_INVOICE_NO" 				type="varchar(16)" />
+			<column name="BFL_GSTIN_NO" 					type="varchar(30)"/>
+			
+			<column name="INVOICE_NO"                 		type="varchar(16)" />
+			<column name="SFDC_DEALID"                		type="varchar(20)" />
+			<column name="TAXABLE_AMOUNT"             		type="number(20,2)" />
+			<column name="CGST_RATE"                  		type="number(10,7)" />
+			<column name="CGST_AMOUNT"                		type="number(25,2)" />
+			<column name="CGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="CGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="CGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="CGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="SGST_RATE"                  		type="number(10,7)" />
+			<column name="SGST_AMOUNT"                		type="number(25,2)" />
+			<column name="SGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="SGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="SGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="SGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="IGST_RATE"                  		type="number(10,7)" />
+			<column name="IGST_AMOUNT"                		type="number(25,2)" />
+			<column name="IGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="IGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="IGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="IGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="UTGST_RATE"                 		type="number(10,7)" />
+			<column name="UTGST_AMOUNT"               		type="number(25,2)" />
+			<column name="UTGST_SURCHARGE_RATE"       		type="number(10,7)" />
+			<column name="UTGST_SURCHARGE_AMOUNT"     		type="number(25,2)" />
+			<column name="UTGST_CESS_RATE"            		type="number(10,7)" />
+			<column name="UTGST_CESS_AMOUNT"          		type="number(25,2)" />
+			<column name="TXNADVICEID"                		type="number(16)" />
+			<column name="TO_STATE"                   		type="varchar(2)" />
+			<column name="FROM_STATE"                 		type="varchar(2)" />
+			<column name="CHEQUEID"                   		type="number" />
+			<column name="EXEMPTED"                   		type="varchar(1)" />
+			<column name="BUSINESSdatetime"               	type="datetime" />
+			<column name="PROCESSdatetime"                	type="datetime" />
+			<column name="PROCESSED_FLAG"             		type="varchar(1)" />
+			<column name="REVERSE_CHARGECODEID"       		type="number(16)" />
+			<column name="AGREEMENTID"                		type="number(8)" />
+			<column name="CONSIDER_FOR_GST"           		type="varchar(1)" />
+			<column name="EXEMPTED_STATE"             		type="varchar(1)" />
+			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
+		</createTable>
+</changeSet>
+<changeSet author="Jayant" id="244">
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">GST_UPLOAD_PROCESS</column>
+			<column name="WorkFlowSubType">GST_UPLOAD_PROCESS</column>
+			<column name="WorkFlowDesc">GST Upload Process Workflow</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">MSTGRP1_MAKER;MSTGRP1_APPROVER</column>
+			<column name="FirstTaskOwner">MSTGRP1_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn">28-JUN-2017</column>
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="245" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":979,"properties":{"process_id":"GST_UPLOAD_PROCESS","name":"GST_UPLOAD_PROCESS","documentation":"GST Upload Process Workflow","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-63B3DFC3-79D0-4C2E-A3A0-F383A48F7050"}],"bounds":{"lowerRight":{"x":130,"y":105},"upperLeft":{"x":100,"y":75}},"dockers":[]},{"resourceId":"sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"MSTGRP1_MAKER","firstName":"MSTGRP1_MAKER","fullName":"MSTGRP1_MAKER","id":"MSTGRP1_MAKER","roledesc":"Workflow Maker","$$hashKey":"object:901"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-0B32FD3D-70FA-4467-BD6E-219850019D6B"},{"resourceId":"sid-E88F25FD-7E24-4D98-8BBE-79B07740A4EF"}],"bounds":{"lowerRight":{"x":265,"y":130},"upperLeft":{"x":165,"y":50}},"dockers":[]},{"resourceId":"sid-63B3DFC3-79D0-4C2E-A3A0-F383A48F7050","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E"}],"bounds":{"lowerRight":{"x":164.78125,"y":90},"upperLeft":{"x":130.0625,"y":90}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E"}},{"resourceId":"sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC","properties":{"overrideid":"","name":"Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"MSTGRP1_APPROVER","firstName":"MSTGRP1_APPROVER","fullName":"MSTGRP1_APPROVER","id":"MSTGRP1_APPROVER","roledesc":"Workflow Approver","$$hashKey":"object:1781"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-5FF682FC-460D-496A-B9F7-60498241B1CA"}],"bounds":{"lowerRight":{"x":445,"y":130},"upperLeft":{"x":345,"y":50}},"dockers":[]},{"resourceId":"sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-82E7C1E7-ADB8-4B29-B419-FCA03F2280DA"},{"resourceId":"sid-B81446CB-66E1-4FC1-828E-F630B0514570"}],"bounds":{"lowerRight":{"x":520,"y":110},"upperLeft":{"x":480,"y":70}},"dockers":[]},{"resourceId":"sid-5FF682FC-460D-496A-B9F7-60498241B1CA","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A"}],"bounds":{"lowerRight":{"x":479.718761230466,"y":90.40151071673206},"upperLeft":{"x":445.453113769534,"y":90.23911428326794}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A"}},{"resourceId":"sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","additionalforms":"","prioritydefinition":"Role Queue","type":"http://b3mn.org/stencilset/bpmn2.0#UserTask","usertaskassignment":"","baseactor":"","formkeydefinition":"","duedatedefinition":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-BF88E17A-D1B2-4E15-802D-565295782106"}],"bounds":{"lowerRight":{"x":550,"y":260},"upperLeft":{"x":450,"y":180}},"dockers":[]},{"resourceId":"sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","additionalforms":"","prioritydefinition":"Role Queue","type":"http://b3mn.org/stencilset/bpmn2.0#UserTask","usertaskassignment":"","baseactor":"","formkeydefinition":"","duedatedefinition":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-18DBC044-805F-41FD-9ABE-A980AE515091"}],"bounds":{"lowerRight":{"x":700,"y":130},"upperLeft":{"x":600,"y":50}},"dockers":[]},{"resourceId":"sid-80707B94-C60E-43C5-844B-D03899990869","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":623,"y":234},"upperLeft":{"x":595,"y":206}},"dockers":[]},{"resourceId":"sid-BF88E17A-D1B2-4E15-802D-565295782106","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-80707B94-C60E-43C5-844B-D03899990869"}],"bounds":{"lowerRight":{"x":594.375,"y":220},"upperLeft":{"x":550.390625,"y":220}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-80707B94-C60E-43C5-844B-D03899990869"}},{"resourceId":"sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":778,"y":104},"upperLeft":{"x":750,"y":76}},"dockers":[]},{"resourceId":"sid-18DBC044-805F-41FD-9ABE-A980AE515091","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62"}],"bounds":{"lowerRight":{"x":749.640625,"y":90},"upperLeft":{"x":700.875,"y":90}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62"}},{"resourceId":"sid-B81446CB-66E1-4FC1-828E-F630B0514570","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED"}],"bounds":{"lowerRight":{"x":500.42192027491734,"y":179.54297620359208},"upperLeft":{"x":500.15620472508266,"y":110.72264879640792}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED"}},{"resourceId":"sid-0B32FD3D-70FA-4467-BD6E-219850019D6B","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC"}],"bounds":{"lowerRight":{"x":344.78125,"y":90},"upperLeft":{"x":265.21875,"y":90}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC"}},{"resourceId":"sid-82E7C1E7-ADB8-4B29-B419-FCA03F2280DA","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E"}],"bounds":{"lowerRight":{"x":599.9453180927317,"y":90.43415553709944},"upperLeft":{"x":520.1874944072683,"y":90.16740696290056}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E"}},{"resourceId":"sid-E88F25FD-7E24-4D98-8BBE-79B07740A4EF","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED"}],"bounds":{"lowerRight":{"x":449.458984375,"y":220},"upperLeft":{"x":215,"y":130.609375}},"dockers":[{"x":50,"y":40},{"x":215,"y":220},{"x":50,"y":40}],"target":{"resourceId":"sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="GST_UPLOAD_PROCESS" name="GST_UPLOAD_PROCESS" isExecutable="true"><documentation>GST Upload Process Workflow</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E" name="Maker" activiti:actor="MSTGRP1_MAKER" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-63B3DFC3-79D0-4C2E-A3A0-F383A48F7050" sourceRef="startEvent1" targetRef="sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E" representsUserAction="false" mandateNotes="false" /><userTask id="sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC" name="Approver" activiti:actor="MSTGRP1_APPROVER" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A" /><sequenceFlow id="sid-5FF682FC-460D-496A-B9F7-60498241B1CA" sourceRef="sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC" targetRef="sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED" name="Cancel Process" activiti:operation="doReject" /><serviceTask id="sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E" name="Complete Process" activiti:operation="doApprove" /><endEvent id="sid-80707B94-C60E-43C5-844B-D03899990869" name="Rejected" /><sequenceFlow id="sid-BF88E17A-D1B2-4E15-802D-565295782106" sourceRef="sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED" targetRef="sid-80707B94-C60E-43C5-844B-D03899990869" representsUserAction="false" mandateNotes="false" /><endEvent id="sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62" name="Approved" /><sequenceFlow id="sid-18DBC044-805F-41FD-9ABE-A980AE515091" sourceRef="sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E" targetRef="sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-B81446CB-66E1-4FC1-828E-F630B0514570" name="Reject" sourceRef="sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A" targetRef="sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-0B32FD3D-70FA-4467-BD6E-219850019D6B" name="Submit" sourceRef="sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E" targetRef="sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-82E7C1E7-ADB8-4B29-B419-FCA03F2280DA" name="Approve" sourceRef="sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A" targetRef="sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-E88F25FD-7E24-4D98-8BBE-79B07740A4EF" name="Cancel" sourceRef="sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E" targetRef="sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_GST_UPLOAD_PROCESS"><bpmndi:BPMNPlane bpmnElement="GST_UPLOAD_PROCESS" id="BPMNPlane_GST_UPLOAD_PROCESS"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="75.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E" id="BPMNShape_sid-98F7AF1B-D082-4034-BDDE-7DAAA440C88E"><omgdc:Bounds height="80.0" width="100.0" x="165.0" y="50.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC" id="BPMNShape_sid-B97A1A5D-E2A2-47E1-A87C-812B29F5FFCC"><omgdc:Bounds height="80.0" width="100.0" x="345.0" y="50.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A" id="BPMNShape_sid-1C20D96E-7DC8-40FA-9B5A-8EB9FC0A5C6A"><omgdc:Bounds height="40.0" width="40.0" x="480.0" y="70.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED" id="BPMNShape_sid-B61A6B93-1302-41AB-A8F5-2BF249EEC7ED"><omgdc:Bounds height="80.0" width="100.0" x="450.0" y="180.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E" id="BPMNShape_sid-1FE0073F-5533-4DBD-91D3-34EBFAC9352E"><omgdc:Bounds height="80.0" width="100.0" x="600.0" y="50.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-80707B94-C60E-43C5-844B-D03899990869" id="BPMNShape_sid-80707B94-C60E-43C5-844B-D03899990869"><omgdc:Bounds height="28.0" width="28.0" x="595.0" y="206.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62" id="BPMNShape_sid-49FB9F12-A7D3-47BA-B10C-02824FEE2D62"><omgdc:Bounds height="28.0" width="28.0" x="750.0" y="76.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-0B32FD3D-70FA-4467-BD6E-219850019D6B" id="BPMNEdge_sid-0B32FD3D-70FA-4467-BD6E-219850019D6B"><omgdi:waypoint x="265.0" y="90.0" /><omgdi:waypoint x="345.0" y="90.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-18DBC044-805F-41FD-9ABE-A980AE515091" id="BPMNEdge_sid-18DBC044-805F-41FD-9ABE-A980AE515091"><omgdi:waypoint x="700.0" y="90.0" /><omgdi:waypoint x="750.0" y="90.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-E88F25FD-7E24-4D98-8BBE-79B07740A4EF" id="BPMNEdge_sid-E88F25FD-7E24-4D98-8BBE-79B07740A4EF"><omgdi:waypoint x="215.0" y="130.0" /><omgdi:waypoint x="215.0" y="220.0" /><omgdi:waypoint x="450.0" y="220.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-5FF682FC-460D-496A-B9F7-60498241B1CA" id="BPMNEdge_sid-5FF682FC-460D-496A-B9F7-60498241B1CA"><omgdi:waypoint x="445.0" y="90.23696682464455" /><omgdi:waypoint x="480.4047619047619" y="90.4047619047619" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BF88E17A-D1B2-4E15-802D-565295782106" id="BPMNEdge_sid-BF88E17A-D1B2-4E15-802D-565295782106"><omgdi:waypoint x="550.0" y="220.0" /><omgdi:waypoint x="595.0" y="220.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-B81446CB-66E1-4FC1-828E-F630B0514570" id="BPMNEdge_sid-B81446CB-66E1-4FC1-828E-F630B0514570"><omgdi:waypoint x="500.4263565891473" y="109.57364341085271" /><omgdi:waypoint x="500.1544401544402" y="180.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-82E7C1E7-ADB8-4B29-B419-FCA03F2280DA" id="BPMNEdge_sid-82E7C1E7-ADB8-4B29-B419-FCA03F2280DA"><omgdi:waypoint x="519.5637583892617" y="90.43624161073825" /><omgdi:waypoint x="600.0" y="90.16722408026756" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-63B3DFC3-79D0-4C2E-A3A0-F383A48F7050" id="BPMNEdge_sid-63B3DFC3-79D0-4C2E-A3A0-F383A48F7050"><omgdi:waypoint x="130.0" y="90.0" /><omgdi:waypoint x="165.0" y="90.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='GST_UPLOAD_PROCESS'and workflowactive=1</where>
+		</update>
+	</changeSet>
+<changeSet id="246" author="Pruthvi">
+	<sql>
+		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+	</sql>
+</changeSet>
+<changeSet id="244" author="Irfan">
+<createView viewName="BUILDERGROUP_VIEW" replaceIfExists="true">
+	SELECT		T1.Id, T1.Name, T1.Segmentation	,T2.ValueDesc SegmentationName	,T2.FieldCode
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup_Temp  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+    
+		UNION ALL
+
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T2.ValueDesc SegmentationName,T2.FieldCode		
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+		WHERE     NOT EXISTS (SELECT 1 FROM BuilderGroup_TEMP WHERE Id = T1.Id)
+
+</createView>
+
+</changeSet>
+<changeSet id="245" author="Irfan">
+	<createView viewName="BUILDERGROUP_AVIEW" replaceIfExists="true">
+	SELECT		T1.Id, T1.Name, T1.Segmentation,T2.ValueDesc SegmentationName	,T2.FieldCode	
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+	
+	</createView>
+</changeSet>
+<changeSet id="246" author="Irfan">
+	<createView viewName="BUILDERCOMPANY_VIEW" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId ,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany_Temp  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+		UNION ALL
+
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE  AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+		WHERE     NOT EXISTS (SELECT 1 FROM BuilderCompany_TEMP WHERE Id = T1.Id)
+	</createView>
+
+</changeSet>
+<changeSet id="247" author="Irfan">
+	<createView viewName="BUILDERCOMPANY_AVIEW" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+	
+	</createView>
+
+</changeSet>
+
+<changeSet id="244" author="Siva">
+	<renameColumn columnDataType="int" newColumnName="TOTAL_RECORDS"
+		oldColumnName="TOTALRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="PROCESSED_RECORDS"
+		oldColumnName="PROCESSEDRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="SUCCESS_RECORDS"
+		oldColumnName="SUCCESSRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="FAILED_RECORDS"
+		oldColumnName="FAILEDRECORDS" tableName="cibil_file_info" />
+</changeSet>
+<changeSet id="248" author="Manoj.P">
+	<addColumn tableName="cibil_file_info">
+		<column name="START_TIME" type="datetime" />
+	</addColumn>
+	<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+		<column name="END_TIME" type="datetime" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="249" author="Durgaprasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE IN ('GST_TAXDETAIL_DOWNLOAD');
+			INSERT INTO SMTPARAMETERS VALUES ('GST_TAXDETAIL_DOWNLOAD', 'Taxdetail download daily(Y) or monthly(N)', 'String', 1, 'Y', '1', 0, NULL, NULL, 'Taxdetail download daily(Y) or monthly(N).', 1, 1000,
+			CURRENT_TIMESTAMP, 'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+<changeSet id="101.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxUploadDetail_temp add constraint DF_FinTaxUpldDet_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="103.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxUploadDetail_temp add constraint DF_FinTaxUpldDet_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+
+<changeSet id="105.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxDetailUploadHeader add constraint DF_FinTaxDetUpldHdr_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="123.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_ADDRESS_TYPES_MAPPING add constraint DF_CIBL_ADDR_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="125.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_PHONE_TYPES_MAPPING add constraint DF_CIBL_PHN_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+		<changeSet id="127.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_EMAIL_TYPES_MAPPING add constraint DF_CIBL_EML_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+	<changeSet id="129.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_ACCOUNT_TYPES_MAPPING add constraint DF_CIBL_ACC_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+	<changeSet id="132.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_COLLATERAL_TYPES_MAPPING add constraint DF_CIBL_COLT_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+	<changeSet id="133.1" author="Jayant" dbms="mssql">
+    <sql>
+	ALTER TABLE DATA_ENGINE_CONFIG DROP CONSTRAINT FK_DE_CONFIG_PARSER;
+	</sql>
+	</changeSet>
+	
+	<changeSet id="133" author="Durgaprasad G">
+	<sql>
+		DELETE FROM DATA_ENGINE_DB_DETAILS WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME ='GST_TAXDOWNLOAD_DETAILS');
+		DELETE FROM DATA_ENGINE_CONFIG where Name = 'GST_TAXDOWNLOAD_DETAILS';
+		
+		INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'GST_TAXDOWNLOAD_DETAILS', 'GST Taxdownload Details', 0, NULL, NULL, NULL, NULL , 0, 0, NULL, NULL,  NULL, 'A', NULL, 'GSTFILE', NULL, 0, NULL, '', NULL, 0, NULL, 1, 1);
+		INSERT INTO DATA_ENGINE_DB_DETAILS VALUES ((SELECT ID  FROM DATA_ENGINE_CONFIG WHERE NAME ='GST_TAXDOWNLOAD_DETAILS'),NULL,NULL,NULL,NULL,NULL,1); 
+	</sql>
+	</changeSet>
+	
+	<changeSet id="134" author="Durgaprasad G">
+		<createIndex tableName="FINSCHEDULEDETAILS" indexName="IX_FINSCHDETAIL_PRESENTMENTID">
+			<column name="PRESENTMENTID"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="250" author="jayanth" dbms="oracle">
+	<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+		<![CDATA[ Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
+  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE,ordrby from (  
+  Select T1.FinReference,T2.finccy,'Instalment Amount' comp,SUM(ProfitSchd + PrincipalSchd + Feeschd) due,
+  SUM(SchdPriPaid+SchdPftPaid+Schdfeepaid) Receipt,1 ordrby 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+ union all
+	 Select T1.FinReference,T2.finccy,'Principal Component' comp,SUM(PrincipalSchd) due,
+  SUM(SchdPriPaid) Receipt ,2 ordrby 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+ union all
+	 Select T1.FinReference,T2.finccy,'Interest Component' comp,SUM(ProfitSchd) due,
+  SUM(SchdPftPaid) Receipt ,3 ordrby 
+  from FinScheduleDetails T1 
+  Inner Join financeMain T2 on T1.FinReference = T2.FinReference
+  where schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+  group by T1.Finreference, T2.FinCcy 
+  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt ,4 ordrby 
+  from FinPftDetails union all
+	Select t1.Finreference,finccy,'Bounce Charges' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt,5 ordrby 
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where Bounceid>0 group by t1.Finreference,finccy union all
+  Select t1.Finreference,finccy,'Other Receivables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt,6 ordrby 
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=1 
+  group by t1.Finreference,finccy union all
+   Select t1.Finreference,finccy,'Unadjusted Amount' comp,SUM(Coalesce(BalanceAmt,0))due,0,7 ordrby   from finexcessamount t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference
+   group by t1.Finreference,finccy union all
+    Select t1.Finreference,finccy,'Other Payables' comp, Sum(Coalesce(BalanceAmt,0)) due,0 Receipt,8 ordrby 
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=2
+  group by t1.Finreference,finccy
+ )T inner join RMTCURRENCIES C on C.ccycode= T.finccy]]>
+	
+	</createView>
+
+</changeSet>
+
+	<changeSet id="251" author="jayanth" dbms="oracle">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and t2.closingstatus!='C' and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and t2.closingstatus!='C'
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0 
+  union
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,9 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,10 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,11 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   t2.closingstatus!='C' 
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,12 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,13 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+		</changeSet>
+		
+	<changeSet id="252" author="jayanth" dbms="oracle">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and t2.closingstatus!='C' and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and t2.closingstatus!='C'
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0 
+  union
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and t3.closingstatus!='C'
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,9 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 and t3.closingstatus!='C'
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,10 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,11 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   t2.closingstatus!='C' 
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,12 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,13 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+		</changeSet>
+	
+	
+	<changeSet id="253" author="Durgaprasad g">
+	<sql>
+     	DELETE FROM DATA_ENGINE_DB_DETAILS WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS');
+		DELETE FROM DATA_ENGINE_CONFIG where Name = 'CUSTOMER_CURD_OPERATIONS';
+		
+		INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CUSTOMER_CURD_OPERATIONS', 'Customer Curd Operations', 0, NULL, NULL, NULL, NULL , 0, 0, NULL, NULL,  NULL, 'A', NULL, 'CUSTOMER', NULL, 0, NULL, '', '0 0/5 * * * ?', 0, NULL, 1, 1);
+		INSERT INTO DATA_ENGINE_DB_DETAILS VALUES ((SELECT ID  FROM DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS'),NULL,NULL,NULL,NULL,NULL,1); 
+	</sql>
+	</changeSet>
+	<changeSet id="254" author="Subbarao">
+	    <addColumn tableName="RejectDocumentDetails">
+	           <column name="DOCRECEIVED" type="NUMBER(1,0)">
+	               <constraints nullable="false"/>
+	           </column>
+	    </addColumn>
+	</changeSet>
+	<changeSet id="255" author="Jayant">
+	    <createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and t2.closingstatus!='C' and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk AMount Due ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and t2.closingstatus!='C'
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0 
+  union
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and t3.closingstatus!='C'
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,9 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 and t3.closingstatus!='C'
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,10 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,11 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   t2.closingstatus!='C' 
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,12 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,13 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+		<changeSet id="256" author="Jayant">
+	    <sql>
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN INSSCHD TO TMP1;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN SCHDINSPAID To TMP2;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN WRITEOFFINS TO TMP3;
+	    </sql>
+	</changeSet>
+	<changeSet id="257" author="Jayant">
+	    <sql>
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP1 TO WRITEOFFINS;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP2 TO INSSCHD;
+	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP3 TO SCHDINSPAID;
+	    </sql>
+	</changeSet>
+	
+	<changeSet id="258" author="Siva">
+		<sql>
+			Delete from SMTparameters where SysParmCode = 'FUTUREDAYS_STARTDATE';
+	
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,
+				SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('FUTUREDAYS_STARTDATE','Number of Days Future Days allowed for Start Date','int',1,'25'
+				,2,0,null,null,'Number of Days Future Days allowed for Start Date',1,1000,CURRENT_TIMESTAMP,	'Approved',null,null,null,null,null,0);
+			</sql>
+	</changeSet> 
+	</databaseChangeLog>

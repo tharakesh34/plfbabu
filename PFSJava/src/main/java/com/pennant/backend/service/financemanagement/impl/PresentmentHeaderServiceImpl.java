@@ -57,6 +57,9 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -71,6 +74,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.GenericService;
@@ -101,6 +105,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private ReceiptCalculator receiptCalculator;
 	private ReceiptService receiptService;
 	private FinanceDetailService financeDetailService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private FinanceMainDAO financeMainDAO ;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -133,6 +140,22 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		this.financeDetailService = financeDetailService;
 	}
 
+	public RepaymentPostingsUtil getRepaymentPostingsUtil() {
+		return repaymentPostingsUtil;
+	}
+
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 	@Override
 	public PresentmentHeader getPresentmentHeader(long id) {
 		return this.presentmentHeaderDAO.getPresentmentHeader(id, "_View");
@@ -152,7 +175,27 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
 		presentmentHeaderDAO.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
 	}
+	
+	@Override
+	public void updatePresentmentIdAsZero(long presentmentId) {
+		presentmentHeaderDAO.updatePresentmentIdAsZero(presentmentId);
+	}
 
+	@Override
+	public void updateFinanceDetails(String presentmentRef) {
+		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail detail = presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
+		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+		boolean isFinactive = repaymentPostingsUtil.isSchdFullyPaid(detail.getFinReference(), list);
+
+		if (isFinactive) {
+			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/* processPresentmentDetails */
 	@Override
 	public String savePresentmentDetails(PresentmentHeader header) throws Exception {
@@ -316,8 +359,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 
 		// EMI IN ADVANCE
-		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
-				RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
 			emiInAdvanceAmt = finExcessAmount.getBalanceAmt();
 			presentmentDetail.setExcessID(finExcessAmount.getExcessID());
@@ -349,8 +391,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction,
-			long presentmentId, long partnerBankId, LoggedInUser userDetails) throws Exception {
+	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId, LoggedInUser userDetails) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		if ("Save".equals(userAction)) {
@@ -358,26 +399,22 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
 			}
 			if (excludeList != null && !excludeList.isEmpty()) {
-				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList,
-						RepayConstants.PEXC_MANUAL_EXCLUDE);
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+				// Update Presentment is as 0 in Finschedule details
 			}
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Submit".equals(userAction)) {
 			if (includeList != null && !includeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
 			}
 			if (excludeList != null && !excludeList.isEmpty()) {
-				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList,
-						RepayConstants.PEXC_MANUAL_EXCLUDE);
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
 			}
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
 			processDetails(presentmentId, userDetails);
 		} else if ("Resubmit".equals(userAction)) {
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Cancel".equals(userAction)) {
 			List<PresentmentDetail> list = this.presentmentHeaderDAO.getPresentmentDetail(presentmentId, false);
 			if (list != null && !list.isEmpty()) {
@@ -385,6 +422,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 					if (item.getExcessID() != 0) {
 						finExcessAmountDAO.updateExcessAmount(item.getExcessID(), item.getAdvanceAmt());
 					}
+					updatePresentmentIdAsZero(item.getId());
 				}
 			}
 			this.presentmentHeaderDAO.deletePresentmentDetails(presentmentId);
@@ -392,6 +430,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	@Override
 	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
@@ -403,6 +442,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			if (presentmentDetail == null) {
 				throw new Exception(PennantJavaUtil.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
 			}
+			//Update Presentment is as 0 in Finschedule details
+			updatePresentmentIdAsZero(presentmentDetail.getId());
+			
 			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
@@ -528,4 +570,13 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
 				new HashMap<String, ArrayList<ErrorDetails>>());
 	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+	
 }

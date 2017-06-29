@@ -376,6 +376,7 @@ public class PennantJavaUtil {
 	private static String receiptBounceWF   = "BOUNCE_PROCESS";
 	private static String receiptCancelWF   = "RECEIPTCANCEL_PROCESS";
 	private static String feeReceiptWF = "FEERECEIPT_PROCESS";
+	private static String gstFileUplod = "GST_UPLOAD_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -406,10 +407,10 @@ public class PennantJavaUtil {
 		"BuilderGroup_AView" }, masterWF, new String[] {"Id","Name"},null, 350));
 		
 		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
-		"BuilderCompany_AView" }, masterWF, new String[] {"GroupId","Name"},null, 600));
-		
+		"BuilderCompany_AView" }, masterWF, new String[] {"Id","Name","Segmentation","GroupId"},null, 600));
+
 		ModuleUtil.register("BuilderProjcet", new ModuleMapping("BuilderProjcet", BuilderProjcet.class, new String[] { "BuilderProjcet",
-		"BuilderProjcet_AView" }, masterWF, new String[] {"id","name","builderId","apfNo"},null, 600));
+		"BuilderProjcet_AView" }, masterWF, new String[] {"Id","Name","BuilderId","ApfNo"},null, 600));
 
 		ModuleUtil.register("BlackListReasonCode", new ModuleMapping("BlackListReasonCode", BlackListReasonCode.class,
 				new String[] { "BMTBlackListRsnCodes", "BMTBlackListRsnCodes_AView" }, masterWF, new String[] {
@@ -556,9 +557,7 @@ public class PennantJavaUtil {
 				"BMTSubSegments", "BMTSubSegments_AView" }, masterWF, new String[] { "SubSegmentCode",
 				"SubSegmentDesc" }, new String[][] { { "SubSegmentIsActive", "0", "1" } }, 500));
 		
-		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
-		"BuilderCompany_AView" }, masterWF, new String[] {"name","segmentation","groupId","id"},null, 600));
-		
+				
 		/************* Application Masters *************/
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
@@ -1384,10 +1383,10 @@ public class PennantJavaUtil {
 				"FinTaxDetail_AView" }, finMaintainWF, new String[] {"FinReference","ApplicableFor","TaxExempted","TaxNumber","City","PinCode"},null, 600));
 		
 		ModuleUtil.register("FinTaxUploadHeader", new ModuleMapping("FinTaxUploadHeader", FinTaxUploadHeader.class, new String[] { "FinTaxUploadHeader",
-		"FinTaxUploadHeader_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+		"FinTaxUploadHeader_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 
 		ModuleUtil.register("FinTaxUploadDetail", new ModuleMapping("FinTaxUploadDetail", FinTaxUploadDetail.class, new String[] { "FinTaxUploadDetail",
-		"FinTaxUploadDetail_AView" }, masterWF, new String[] {"batchReference","taxCode"},null, 300));
+		"FinTaxUploadDetail_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 		
 		
 		
@@ -1985,7 +1984,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
-						new String[] { "id", "name", "city" }, null, 600));
+						new String[] { "Id", "Name", "City" }, null, 600));
 		
 		ModuleUtil.register("FinFeeReceipt", new ModuleMapping("FinFeeReceipt", FinFeeReceipt.class, new String[] {
 				"FinFeeReceipts", "FinFeeReceipts" }, null, new String[] { "feeID", "id" }, null, 600));

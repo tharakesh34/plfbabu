@@ -266,7 +266,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId " );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ,FeeTypeCode, FeeTypeDesc ");
+			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);

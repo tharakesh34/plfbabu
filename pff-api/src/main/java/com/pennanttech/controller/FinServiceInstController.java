@@ -29,6 +29,7 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
@@ -44,6 +45,7 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -125,6 +127,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ManualPaymentService		manualPaymentService;
 	private RepayCalculator				repayCalculator;
 	private FinanceProfitDetailDAO		profitDetailsDAO;
+
+
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -1204,6 +1208,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
 			}
 		}
+		receiptHeader.setReceiptDate(finReceiptDetail.getReceivedDate());
 		finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 		finReceiptDetail.setPaymentType(finServiceInst.getPaymentMode());
@@ -1350,7 +1355,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			financeDetail = getServiceInstResponse(finReceiptData.getFinanceDetail().getFinScheduleData());
 		} else {
-			
 			//Schedule Updations
 			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData().
 					getFinanceScheduleDetails();
@@ -1366,6 +1370,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 			
+			Map<Date, BigDecimal> odChargePaidMap = new HashMap<>();
+			Map<Date, BigDecimal> odPenaltyPaidMap = new HashMap<>();
 			for(FinanceScheduleDetail actFinSchedule: actualSchedules) {
 				for(RepayScheduleDetail chgdFinSchedule: rpySchdList) {
 					if(DateUtility.compare(actFinSchedule.getSchDate(), chgdFinSchedule.getSchDate()) == 0) {
@@ -1374,6 +1380,24 @@ public class FinServiceInstController extends SummaryDetailService {
 						actFinSchedule.setTDSPaid(actFinSchedule.getTDSPaid().add(chgdFinSchedule.getTdsSchdPayNow()));
 						actFinSchedule.setSchdFeePaid(actFinSchedule.getSchdFeePaid().add(chgdFinSchedule.getSchdFeePayNow()));
 						actFinSchedule.setSchdInsPaid(actFinSchedule.getSchdInsPaid().add(chgdFinSchedule.getSchdInsPayNow()));
+
+						// Preparing penalty Amount Paid Now
+						BigDecimal odChargePaid = BigDecimal.ZERO;
+						if(odChargePaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odChargePaid = odChargePaidMap.get(chgdFinSchedule.getSchDate());
+							odChargePaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odChargePaid = odChargePaid.add(chgdFinSchedule.getPenaltyPayNow());
+						odChargePaidMap.put(chgdFinSchedule.getSchDate(), odChargePaid);
+						
+						// Preparing latepay Amount Paid Now
+						BigDecimal odPenaltyPaid = BigDecimal.ZERO;
+						if(odPenaltyPaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odPenaltyPaid = odPenaltyPaidMap.get(chgdFinSchedule.getSchDate());
+							odPenaltyPaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odPenaltyPaid = odPenaltyPaid.add(chgdFinSchedule.getLatePftSchdPayNow());
+						odPenaltyPaidMap.put(chgdFinSchedule.getSchDate(), odPenaltyPaid);
 					}
 				}
 			}
@@ -1381,6 +1405,37 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = finReceiptData.getFinanceDetail();
 			receiptHeader = finReceiptData.getReceiptHeader();
 			financeDetail = getServiceInstResponse(finReceiptData.getFinanceDetail().getFinScheduleData());
+			
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			Date valueDate = finServiceInst.getReceiptDetail().getReceivedDate();
+			
+			List<FinanceRepayments> repayments = getRepaymentDetails(aFinanceDetail.getFinScheduleData(), totReceiptAmt, valueDate);
+			List<FinODDetails> finODDetailsList = receiptService.getValueDatePenalties(financeDetail.getFinScheduleData(), totReceiptAmt,
+					valueDate, repayments);
+			
+			BigDecimal overDuePrincipal = BigDecimal.ZERO;
+			BigDecimal overDueProfit = BigDecimal.ZERO;
+			for (FinODDetails finODDetails : finODDetailsList) {
+				Date finOdDate = DateUtility.getDBDate(DateUtility.formatDate(finODDetails.getFinODSchdDate(),
+						PennantConstants.DBDateFormat));
+				if(odChargePaidMap.containsKey(finOdDate)){
+					BigDecimal penaltyPayNow = odChargePaidMap.get(finOdDate);
+					finODDetails.setTotPenaltyPaid(finODDetails.getTotPenaltyPaid().add(penaltyPayNow));
+				}
+				if(odPenaltyPaidMap.containsKey(finOdDate)){
+					BigDecimal latePenaltyPayNow = odPenaltyPaidMap.get(finOdDate);
+					finODDetails.setLPIPaid(finODDetails.getLPIPaid().add(latePenaltyPayNow));
+				}
+				overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
+				overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
+			}
+			
+			FinanceSummary summary = financeDetail.getFinScheduleData().getFinanceSummary();
+			summary.setOverDuePrincipal(overDuePrincipal);
+			summary.setOverDueProfit(overDueProfit);
+			summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
+			summary.setFinODDetail(finODDetailsList);
+			financeDetail.getFinScheduleData().setFinanceMain(null);
 			
 		}
 		logger.debug("Leaving");
@@ -1502,11 +1557,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			BigDecimal latePayPftBal = BigDecimal.ZERO;
 			BigDecimal penaltyBal = BigDecimal.ZERO;
 			if (DateUtility.compare(curBussniessDate, DateUtility.getAppDate()) == 0) {
-				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference);
-				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference);
+				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference, null);
+				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference, null);
 			} else {
 				// Calculate overdue Penalties
-				List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate);
+				List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);
 
 				// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 				if (overdueList != null && !overdueList.isEmpty()) {
@@ -1741,7 +1796,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
 		finScheduleData.setInsuranceList(new ArrayList<Insurance>());
 		finScheduleData.setFinODPenaltyRate(null);
-		finScheduleData.setFinFeeDetailList(new ArrayList<FinFeeDetail>());
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
 
 		aFinanceDetail.setFinContributorHeader(null);
@@ -1984,4 +2038,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
 }

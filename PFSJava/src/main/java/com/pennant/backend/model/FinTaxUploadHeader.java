@@ -2,7 +2,9 @@ package com.pennant.backend.model;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -25,7 +27,15 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity
 	private LoggedInUser				userDetails;
 	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
 	private List<FinTaxUploadDetail>	finTaxUploadDetailList;
+	private boolean                     totalSelected;
 
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("totalSelected");
+		
+		return excludeFields;
+	}
 	// Getter and Setter methods
 	public long getId() {
 		return batchReference;
@@ -126,6 +136,14 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public boolean isTotalSelected() {
+		return totalSelected;
+	}
+
+	public void setTotalSelected(boolean totalSelected) {
+		this.totalSelected = totalSelected;
 	}
 
 }

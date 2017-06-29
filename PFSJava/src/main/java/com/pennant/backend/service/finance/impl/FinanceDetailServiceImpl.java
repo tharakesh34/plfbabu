@@ -168,6 +168,7 @@ import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.configuration.impl.VasRecordingValidation;
+import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -244,7 +245,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PromotionDAO					promotionDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private FinanceTaxDetailDAO				financeTaxDetailDAO;
-
+	private GCDCustomerService				gCDCustomerService;
 	
 	public FinanceDetailServiceImpl() {
 		super();
@@ -2924,7 +2925,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Date curBDay = DateUtility.getAppDate();
-
+		//gCDCustomerService.processGcdCustomer(financeDetail, "insert"); // inserting gcdcustomer.
 		//Execute Accounting Details Process
 		//=======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -3901,6 +3902,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
+		// Save GCDCustomer'/////
+		//processgcdCustomer(financeDetail, "insert");
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -8631,4 +8634,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
+	public GCDCustomerService getgCDCustomerService() {
+		return gCDCustomerService;
+	}
+
+	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
+		this.gCDCustomerService = gCDCustomerService;
+	}
 }

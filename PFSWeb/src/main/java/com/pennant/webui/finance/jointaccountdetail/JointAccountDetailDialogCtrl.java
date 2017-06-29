@@ -450,7 +450,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.custID.setValue(customer.getCustID());
 			this.custCIFName.setValue(customer.getCustShrtName());
 			if(!(StringUtils.isEmpty(customer.getCustCoreBank())) && (customer.getCustCoreBank()!= null)){
-				this.row1.setVisible(true);
+				this.row1.setVisible(false);
 			}else{
 				this.row1.setVisible(false);
 				this.includeRepay.setChecked(false);
@@ -482,7 +482,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.custID.setValue(customer.getCustID());
 					this.custCIFName.setValue(customer.getCustShrtName());
 					if(customer.getCustCoreBank()!= null && StringUtils.isNotEmpty(customer.getCustCoreBank())){
-						this.row1.setVisible(true);
+						this.row1.setVisible(false);
 					}else{
 						this.row1.setVisible(false);
 						this.includeRepay.setChecked(false);
@@ -571,11 +571,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void doCheckIncludeRepay() {
 		if (includeRepay.isChecked()) {
-			this.repayAccountId.setReadonly(false);
+			this.repayAccountId.setButtonVisible(true);
 			this.repayAccountId.setMandatoryStyle(true);
+			this.repayAccountId.setValue("");
 		} else {
 			this.repayAccountId.setValue("");
-			this.repayAccountId.setReadonly(true);
+			this.repayAccountId.setButtonVisible(false);
 			this.repayAccountId.setMandatoryStyle(false);
 			this.repayAccountId.setErrorMessage("");
 			this.repayAccountId.setConstraint("");
@@ -1186,7 +1187,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		if (!this.repayAccountId.isReadonly()) {
+		if (this.repayAccountId.isVisible() && this.repayAccountId.getValue().isEmpty()) {
 			this.repayAccountId.setConstraint(new PTStringValidator(Labels.getLabel("label_JountAccountDetailDialog_RepayAccountId.value"),null,true));
 		}
 

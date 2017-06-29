@@ -63,4 +63,8 @@ public interface PresentmentHeaderService {
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
+
+	void updatePresentmentIdAsZero(long presentmentId);
+
+	void updateFinanceDetails(String presentmentRef);
 }

@@ -801,6 +801,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 																									appDate,
 																									-SysParamUtil
 																											.getValueAsInt("BACKDAYS_STARTDATE")+1);
+	Date													maxReqFinStartDate		= DateUtility
+																							.addDays(appDate,
+																						   +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
 	Date													appEndDate				= SysParamUtil
 																							.getValueAsDate("APP_DFT_END_DATE");
 	Date													appStartDate			= SysParamUtil
@@ -4574,7 +4577,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (this.finStartDate.isVisible() && !this.finStartDate.isReadonly()) {
 			this.finStartDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_FinanceMainDialog_FinStartDate.value"), true, minReqFinStartDate, appEndDate,
+					.getLabel("label_FinanceMainDialog_FinStartDate.value"), true, minReqFinStartDate, maxReqFinStartDate,
 					true));
 		}
 
@@ -4885,7 +4888,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (this.finStartDate.isVisible() && !this.finStartDate.isReadonly()) {
 				this.finStartDate.setConstraint(new PTDateValidator(Labels
-						.getLabel("label_FinanceMainDialog_FinStartDate.value"), false, minReqFinStartDate, appEndDate,
+						.getLabel("label_FinanceMainDialog_FinStartDate.value"), false, minReqFinStartDate, maxReqFinStartDate,
 						false));
 			}
 			if (this.row_DroplineFrq.isVisible() && !this.firstDroplineDate.isDisabled()) {
@@ -10552,13 +10555,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				} else {
 					if (StringUtils.isEmpty(moduleDefiner)) {
-						this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
-								.getLabel("label_FinanceMainDialog_FinAmount.value"));
+						this.label_FinanceMainDialog_FinAssetValue
+								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAmount.value"));
 						validateFinAssetvalue(this.finAmount, financeType, formatter);
 					}
-
-					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
-							this.finCurrentAssetValue.getActualValue(), formatter));
+					if (aFinanceSchData.getFinFeeDetailList() != null
+							&& !aFinanceSchData.getFinFeeDetailList().isEmpty()) {
+						for (FinFeeDetail feeDetail : aFinanceSchData.getFinFeeDetailList()) {
+							if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+								this.finCurrentAssetValue.getActualValue().add(feeDetail.getActualAmount());
+							}
+							aFinanceMain.setFinAssetValue(PennantAppUtil
+									.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+						}
+					} else {
+						aFinanceMain.setFinAssetValue(
+								PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+					}
 
 				}
 			}

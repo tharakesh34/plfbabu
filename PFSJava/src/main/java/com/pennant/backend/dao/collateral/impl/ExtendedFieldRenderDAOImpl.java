@@ -300,8 +300,10 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
 		selectSql.append(column);
-		selectSql.append("= :Value AND "+filterColumn+"= 1");
-		
+		selectSql.append("= :Value");
+		if(StringUtils.isNotBlank(filterColumn)){
+			selectSql.append(" AND "+filterColumn+"= 1");
+		}
 		logger.debug("insertSql: " + selectSql.toString());
 		int recordCount = 0;
 		try {

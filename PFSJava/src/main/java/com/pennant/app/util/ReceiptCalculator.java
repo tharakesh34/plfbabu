@@ -220,6 +220,7 @@ public class ReceiptCalculator implements Serializable {
 		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
 		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
 
+		List<Date> presentmentDates = new ArrayList<>();
 		boolean setEarlyPayRecord = false;
 		BigDecimal pftAccruedTillNow = BigDecimal.ZERO;
 		BigDecimal tdsAccruedTillNow = BigDecimal.ZERO;
@@ -294,7 +295,10 @@ public class ReceiptCalculator implements Serializable {
 					
 					if(finScheduleData.getFinanceMain().isTDSApplicable()){
 						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						BigDecimal actualPft = pft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+						
+						actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());
 						tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
 					}
 					
@@ -318,8 +322,11 @@ public class ReceiptCalculator implements Serializable {
 					}
 					
 					if(finScheduleData.getFinanceMain().isTDSApplicable()){
-						BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						BigDecimal actualPft = remPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+						actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());
 						tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
+						
 					}
 					partAccrualReq = false;
 					
@@ -339,7 +346,9 @@ public class ReceiptCalculator implements Serializable {
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 						
 						if(finScheduleData.getFinanceMain().isTDSApplicable()){
-							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+							actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+									finScheduleData.getFinanceMain().getRoundingTarget());
 							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
 						}
 					}
@@ -365,16 +374,28 @@ public class ReceiptCalculator implements Serializable {
 			// Overdue Principal and Profit
 			if (DateUtility.compare(schdDate, valueDate) <= 0) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
-				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
-						curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
-
-				repayMain.setOverdueProfit(repayMain.getOverdueProfit().add(
-						curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())));
 				
-				// TDS Calculation
-				BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-				BigDecimal actPftAdjust = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-				tdsAmount = tdsAmount.add(unpaidPft.subtract(actPftAdjust));
+				if(!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) || 
+						curSchd.getPresentmentId() == 0){
+					
+					repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
+							curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
+
+					repayMain.setOverdueProfit(repayMain.getOverdueProfit().add(
+							curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())));
+
+					// TDS Calculation
+					BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+					BigDecimal actualPft = unpaidPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+					actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+							finScheduleData.getFinanceMain().getRoundingTarget());
+					tdsAmount = tdsAmount.add(unpaidPft.subtract(actualPft));
+				}
+				
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
+						curSchd.getPresentmentId() > 0){
+					presentmentDates.add(schdDate);
+				}
 
 			}
 
@@ -437,8 +458,10 @@ public class ReceiptCalculator implements Serializable {
 		if(pftAmt.compareTo(BigDecimal.ZERO) > 0){
 			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAccruedTillNow);
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_NPFT, pftAmt.subtract(tdsAccruedTillNow));
 			}else{
 				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, tdsAmount);
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_NPFT, pftAmt.subtract(tdsAmount));
 			}
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, pftAmt);
 		}
@@ -447,18 +470,23 @@ public class ReceiptCalculator implements Serializable {
 		BigDecimal latePayPftBal = BigDecimal.ZERO;
 		BigDecimal penaltyBal = BigDecimal.ZERO;
 		if(DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0){
-			latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference());
-			penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference());
+			latePayPftBal = getFinODDetailsDAO().getTotalODPftBal(repayMain.getFinReference(), presentmentDates);
+			penaltyBal = getFinODDetailsDAO().getTotalPenaltyBal(repayMain.getFinReference(), presentmentDates);
 		}else{
 			
 			// Calculate overdue Penalties
-			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate);
+			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate, null);
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 			if(overdueList != null && !overdueList.isEmpty()){
 				for (int i = 0; i < overdueList.size(); i++) {
 					FinODDetails finODDetail = overdueList.get(i);
-					if (finODDetail.getFinODSchdDate().compareTo(valueDate)>0) {
+					if (finODDetail.getFinODSchdDate().compareTo(valueDate) > 0) {
+						continue;
+					}
+					
+					// Not allowed Presentment/Freezing Period Schedule dates
+					if(presentmentDates.contains(finODDetail.getFinODSchdDate())){
 						continue;
 					}
 					latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
@@ -558,7 +586,11 @@ public class ReceiptCalculator implements Serializable {
 				// Adding Advise Details to Map
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
 					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
-					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+					if(advise.getBounceID() > 0){
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), "BC : "+advise.getBounceCode());
+					}else{
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+					}
 				}
 			}
 		}
@@ -607,7 +639,7 @@ public class ReceiptCalculator implements Serializable {
 		}else {
 			// Calculate overdue Penalties
 			overdueList = getReceiptService().getValueDatePenalties(scheduleData, receiptData.getReceiptHeader().getReceiptAmount().subtract(
-					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate);
+					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate, null);
 		}
 		
 		// Overdue Penalties Mapping Preparations
@@ -1480,7 +1512,7 @@ public class ReceiptCalculator implements Serializable {
 			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		}else {
 			// Calculate overdue Penalties
-			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate);
+			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate, null);
 		}
 
 		if (overdueList != null && !overdueList.isEmpty()) {
@@ -1527,6 +1559,11 @@ public class ReceiptCalculator implements Serializable {
 			if (schdDate.compareTo(valueDate) > 0 && 
 					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
+			}
+			
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
+					curSchd.getPresentmentId() > 0){
+				continue;
 			}
 			
 			// Early settlement case to calculate profit Till Accrual amount
@@ -1605,7 +1642,8 @@ public class ReceiptCalculator implements Serializable {
 									actPftAdjust = balPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
 									actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 								}else{
-									actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+									actPftAdjust = balPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+									actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 								}
 								
 								// TDS Adjustments
@@ -1797,6 +1835,17 @@ public class ReceiptCalculator implements Serializable {
 			// Sequence Order Increment to reduce loops on Fee setting
 			lastRenderSeq++;
 		}
+		
+		BigDecimal pftAmount = BigDecimal.ZERO;
+		BigDecimal tdsAmount = BigDecimal.ZERO;
+		if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_TDS)){
+			tdsAmount = allocatePaidMap.get(RepayConstants.ALLOCATION_TDS);
+		}
+		if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PFT)){
+			pftAmount = allocatePaidMap.get(RepayConstants.ALLOCATION_PFT);
+		}
+		// Net Interest Amount Setting Excluding TDS
+		allocatePaidMap.put(RepayConstants.ALLOCATION_NPFT, pftAmount.subtract(tdsAmount));
 
 		//Set Penalty Payments for Prepared Past due Schedule Details
 		if (seperatePenalties && totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {

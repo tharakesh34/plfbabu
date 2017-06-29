@@ -1681,6 +1681,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 
 			AEEvent aeEvent = new AEEvent();
+			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			aeEvent.setFinReference(vASRecording.getVasReference());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -2103,6 +2104,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						extendedDetailsCount++;
 					}
 				}
+			}
+			if (extendedDetailsCount > 0 && (vasRecording.getExtendedDetails() == null
+					|| vasRecording.getExtendedDetails().isEmpty())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "ExtendedDetails";
+				 auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				 return auditDetail;
 			}
 			if (vasRecording.getExtendedDetails() != null && !vasRecording.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {

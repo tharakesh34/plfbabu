@@ -3229,7 +3229,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				item.setId("AllocateItem_"+allocateTypes.get(i));
 				
 				// Not editable for TDS Amount
-				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
+						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
 					allocationPaid.setReadonly(true);
 					allocationWaived.setReadonly(true);
 				}
@@ -3241,10 +3242,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					totalAdvWaivedAmount = totalAdvWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
 				}else{
 					this.listBoxPastdues.appendChild(item);
-					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
-						totalDueAmount = totalDueAmount.subtract(totalCalAmount);
-						totalPaidAmount = totalPaidAmount.subtract(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
-						totalWaivedAmount = totalWaivedAmount.subtract(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
+							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
+						
+						// Nothing TODO
 					}else{
 						totalDueAmount = totalDueAmount.add(totalCalAmount);
 						totalPaidAmount = totalPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
@@ -3410,7 +3411,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		BigDecimal tdsCalculated = BigDecimal.ZERO;
-		if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
+		if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_NPFT)){
 			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 
 				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
@@ -3424,15 +3425,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 
 					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
-					BigDecimal actPftAdjust = paidAllocateAmt.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					tdsCalculated = paidAllocateAmt.subtract(actPftAdjust);
+					BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
+					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
 					allocateTDSPaid.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
+					
+					CurrencyBox allocatePFTPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_PFT);
+					allocatePFTPaid.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
 
 					if(paidAllocationMap != null){ 
 						if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
 							paidAllocationMap.remove(allocateTDSPaid.getId());
 						}
+						if(paidAllocationMap.containsKey(allocatePFTPaid.getId())){
+							paidAllocationMap.remove(allocatePFTPaid.getId());
+						}
 						paidAllocationMap.put(allocateTDSPaid.getId(), tdsCalculated);
+						paidAllocationMap.put(allocatePFTPaid.getId(), actPftAdjust);
 					}
 				}
 			}
@@ -4019,18 +4027,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 				}
 				
-				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
-						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
-					
-					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
-								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-					} else {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
-								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-					}
-				}
-				
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				if(!feesExecuted){
@@ -4040,6 +4036,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aeEvent.setDataMap(dataMap);
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
+				
+				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
+						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
+					
+					aeEvent.getAcSetIDList().clear();
+					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+					} else {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+					}
+					
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+					returnSetEntries.addAll(aeEvent.getReturnDataSet());
+				}
 				
 				// Reset Payment Details
 				amountCodes.setRpTot(BigDecimal.ZERO);
@@ -4883,8 +4896,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return true;
 		}
 		
-		// No excess amount validation on partial Settlement
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
+		// No excess amount validation on partial Settlement
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){ 
 			if(remBal.compareTo(BigDecimal.ZERO) <= 0){
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));

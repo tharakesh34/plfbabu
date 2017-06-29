@@ -59,6 +59,14 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
 		try {
+			if(financeDetail.getFinScheduleData().getFinanceMain() == null){
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[1];
+				valueParm[0] = "financeDetail";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502",valueParm));
+				return response;
+			}
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
@@ -188,7 +196,14 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return response;
 				}
 			}
-
+			if(financeDetail.getFinScheduleData().getFinanceMain() == null){
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[1];
+				valueParm[0] = "financeDetail";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502",valueParm));
+				return response;
+			}
 			// validate and Data defaulting
 			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 

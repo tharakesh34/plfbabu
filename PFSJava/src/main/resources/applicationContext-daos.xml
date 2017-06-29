@@ -4183,13 +4183,15 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 
+		<!-- GCDCustomers -->
+		<property name="gCDCustomerService" ref="gCDCustomerService" />
+
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -5732,6 +5734,9 @@
 		class="com.pennant.backend.service.finance.impl.ReceiptRealizationServiceImpl">
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -9793,6 +9798,9 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 
@@ -10240,13 +10248,45 @@
 		class="com.pennant.backend.service.finance.impl.FinTaxUploadDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finTaxUploadDetailDAO" ref="finTaxUploadDetailDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
-   
-   
+
+
    <!-- Beneficiary -->
 	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
+
+	<!-- Cache Administartion -->
+
+	<bean id="cacheDAO"
+		class="com.pennant.backend.dao.cacheadministration.impl.CacheDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean name="cacheAdministrationService"
+		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
+	
+	<!-- GCDCustomers START -->
+	<bean id="gCDCustomerService"
+		class="com.pennant.backend.service.customermasters.impl.GCDCustomerDetailsServiceImpl">
+		<property name="gCDCustomerDAO" ref="gCDCustomerDAO" />
+		<property name="gCDCustomerBajjajDAO" ref="gCDCustomerBajjajDAO" />
+	</bean>
+
+	<bean id="gCDCustomerDAO"
+		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="gCDCustomerBajjajDAO"
+		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerBajjajDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<!-- GCDCustomers END -->
 </beans>

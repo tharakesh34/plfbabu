@@ -419,7 +419,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalRbtSchd(pftDetail.getTotalRbtSchd().add(curSchd.getRebate()));
 
 		//Schedule Information
-		if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
 			//Installments, Paid and OD
 			pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
@@ -484,15 +484,12 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-			pftDetail.setPrvRpySchDate(curSchd.getSchDate());
-			pftDetail.setPrvRpySchPft(curSchd.getProfitSchd());
-			pftDetail.setPrvRpySchPri(curSchd.getPrincipalSchd());
-
-			//FIXME: Set in Latepayment marking. Not required again
-			/*
-			 * if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) { pftDetail.setNOODInst(pftDetail.getNOODInst() +
-			 * 1); }
-			 */ }
+			if (curSchd.isFrqDate()	&& !isHoliday(curSchd.getBpiOrHoliday())) {
+				pftDetail.setPrvRpySchDate(curSchd.getSchDate());
+				pftDetail.setPrvRpySchPft(curSchd.getProfitSchd());
+				pftDetail.setPrvRpySchPri(curSchd.getPrincipalSchd());
+			}
+		}
 
 		pftDetail.setCurReducingRate(curSchd.getCalculatedRate());
 
@@ -507,7 +504,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
 
 		//NEXT Schedule Details
-		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (!isHoliday(curSchd.getBpiOrHoliday()))) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
 			if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 				pftDetail.setNSchdDate(curSchd.getSchDate());
 				pftDetail.setNSchdPri(curSchd.getPrincipalSchd());

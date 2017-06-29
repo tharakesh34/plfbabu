@@ -180,12 +180,10 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
-		this.segmentation.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		this.groupId.setModuleName("BuilderGroup");
 		this.groupId.setValueColumn("Id");
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
-		this.groupId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		this.groupId.setMandatoryStyle(true);
 		setStatusDetails();
 
@@ -445,7 +443,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_name.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_name.value"),PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,true));
 		}
 		if (!this.segmentation.isReadonly()){
 			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_segmentation.value"),null,true,true));

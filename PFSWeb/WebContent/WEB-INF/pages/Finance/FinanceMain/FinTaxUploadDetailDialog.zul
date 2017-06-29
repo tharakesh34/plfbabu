@@ -17,57 +17,59 @@
 					<div>
 						<groupbox mold="3d">
 							<div sclass="z-toolbar" style="padding:0">
-						<hbox pack="stretch"
-							sclass="hboxRemoveWhiteStrips" width="100%"
-							widths="35%,30%,35%">
-							<!-- COMMON BUTTONS -->
-							<toolbar align="start"
-								sclass="toolbar-start">
-								<button id="btnNew"
-									tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnEdit"
-									tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnDelete"
-									tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnSave" label="${c:l('label_Save')}"
-									tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnCancel"
-									tooltiptext="${c:l('btnCancel.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnNotes"
-									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									sclass="z-toolbarbutton" />
-							</toolbar>
-							<!-- SEARCH AREA -->
-							<toolbar align="center"
-								sclass="toolbar-center">
-								<label
-									value="${c:l('window_FinTaxFileUpload_Title')}"
-									sclass="label-heading" />
-							</toolbar>
-							<!-- CRUD BUTTONS -->
-							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false"
-									label="${c:l('label_Help')}"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnClose"
-									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSave"
-									sclass="z-toolbarbutton" />
-							</toolbar>
-						</hbox>
-					</div>
+								<hbox pack="stretch"
+									sclass="hboxRemoveWhiteStrips" width="100%"
+									widths="35%,30%,35%">
+									<!-- COMMON BUTTONS -->
+									<toolbar align="start"
+										sclass="toolbar-start">
+										<button id="btnNew"
+											tooltiptext="${c:l('btnNew.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnEdit"
+											tooltiptext="${c:l('btnEdit.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnDelete"
+											tooltiptext="${c:l('btnDelete.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnSave"
+											label="${c:l('label_Save')}"
+											tooltiptext="${c:l('btnSave.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnCancel"
+											tooltiptext="${c:l('btnCancel.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnNotes"
+											tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+									<!-- SEARCH AREA -->
+									<toolbar align="center"
+										sclass="toolbar-center">
+										<label
+											value="${c:l('window_FinTaxFileUpload_Title')}"
+											sclass="label-heading" />
+									</toolbar>
+									<!-- CRUD BUTTONS -->
+									<toolbar align="end"
+										sclass="toolbar-end">
+										<button id="btnHelp"
+											visible="false" label="${c:l('label_Help')}"
+											tooltiptext="${c:l('btnHelp.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+											sclass="z-toolbarbutton" />
+										<button id="btnClose"
+											tooltiptext="${c:l('btnClose.tooltiptext')}"
+											autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSave"
+											sclass="z-toolbarbutton" />
+									</toolbar>
+								</hbox>
+							</div>
 							<grid id="grid_UploadedDetails"
 								fixedLayout="true" style="border:0px">
 								<columns>
@@ -173,6 +175,11 @@
 								multiple="false">
 
 								<listhead sizable="true">
+									<listheader id="listheader_Select"
+										label="${c:l('listheader_Select.label')}" 
+										hflex="min" align="center">
+										<checkbox id="select" />
+									</listheader>
 									<listheader id="listheader_TaxCode"
 										label="${c:l('listheader_TaxCode.label')}" sort="auto"
 										hflex="min" />

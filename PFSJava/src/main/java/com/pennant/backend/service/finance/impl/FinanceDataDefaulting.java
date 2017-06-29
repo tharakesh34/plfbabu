@@ -596,8 +596,8 @@ public class FinanceDataDefaulting {
 
 		//Set Default Next Profit Date
 		if (isValidPftFrq && finMain.getNextGrcPftDate() == null) {
-			Date nextDate = getNextDftDate(finMain.getGrcPftFrq(), finMain.getFinStartDate(),
-					financeType.getFddLockPeriod());
+			Date nextDate = FrequencyUtil.getNextDate(finMain.getGrcPftFrq(), 1, finMain.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 			finMain.setNextGrcPftDate(nextDate);
 		}
 
@@ -751,7 +751,9 @@ public class FinanceDataDefaulting {
 
 		//Set Default Next Repayment Date
 		if (isValidRpyFrq && finMain.getNextRepayDate() == null) {
-			Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
+		//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
+			Date nextDate = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 			nextDate = DateUtility.getDBDate(DateUtility.formatDate(nextDate, PennantConstants.DBDateFormat));
 			finMain.setNextRepayDate(nextDate);
 		}
@@ -774,7 +776,7 @@ public class FinanceDataDefaulting {
 		//Next Profit Date
 		if (isValidOtherFrq && finMain.getNextRepayPftDate() == null) {
 			Date nextRpyPftDate = FrequencyUtil.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(),
-					HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 			nextRpyPftDate = DateUtility.getDBDate(DateUtility.formatDate(nextRpyPftDate, PennantConstants.DBDateFormat));
 
 			if (finMain.getCalMaturity() != null && nextRpyPftDate != null) {
@@ -803,7 +805,7 @@ public class FinanceDataDefaulting {
 			//Next Profit Review Date
 			if (isValidOtherFrq && finMain.getNextRepayRvwDate() == null) {
 				Date nextRpyRvwDate = FrequencyUtil.getNextDate(finMain.getRepayRvwFrq(), 1, 
-						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 				nextRpyRvwDate = DateUtility.getDBDate(DateUtility.formatDate(nextRpyRvwDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalMaturity() != null && nextRpyRvwDate != null) {
@@ -832,7 +834,7 @@ public class FinanceDataDefaulting {
 			//Next Capitalize Date
 			if (isValidOtherFrq && finMain.getNextRepayCpzDate() == null) {
 				Date cpzDate = FrequencyUtil.getNextDate(finMain.getRepayCpzFrq(), 1,
-						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+						finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 				cpzDate = DateUtility.getDBDate(DateUtility.formatDate(cpzDate, PennantConstants.DBDateFormat));
 				
 				if (finMain.getCalMaturity() != null && cpzDate != null) {
@@ -940,46 +942,6 @@ public class FinanceDataDefaulting {
 
 	/*
 	 * _______________________________________________________________________________________________________________
-	 * GET Next Date
-	 * _______________________________________________________________________________________________________________
-	 */
-	private Date getNextDftDate(String frq, Date startDate, int fddDays) {
-
-		Date nextDate = startDate;
-		int days = 0;
-		boolean isDateFound = false;
-		ErrorDetails errorDetail = FrequencyUtil.validateFrequency(frq);
-
-		if (errorDetail != null) {
-			return null;
-		}
-
-		while (true) {
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, 1, nextDate, HolidayHandlerTypes.MOVE_NONE, 
-					false).getScheduleList();
-
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				nextDate = DateUtility.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
-			}
-			
-			days = DateUtility.getDaysBetween(startDate, nextDate);
-
-			if (days > fddDays) {
-				isDateFound = true;
-				break;
-			}
-		}
-
-		if (isDateFound) {
-			return nextDate;
-		}
-
-		return null;
-	}
-
-	/*
-	 * _______________________________________________________________________________________________________________
 	 * Validate Interest Days Basis
 	 * _______________________________________________________________________________________________________________
 	 */
@@ -1007,6 +969,7 @@ public class FinanceDataDefaulting {
 	 */
 	private void graceEndDefaulting(FinScheduleData finScheduleData) {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceType financeType = finScheduleData.getFinanceType();
 
 		//Both Terms and Grace End Date not present
 		if (finMain.getGraceTerms() == 0 && finMain.getGrcPeriodEndDate() == null) {
@@ -1021,9 +984,9 @@ public class FinanceDataDefaulting {
 		//Default Calculated Grace End Date using terms
 		if (finMain.getGraceTerms() > 0) {
 			finMain.setCalGrcTerms(finMain.getGraceTerms());
-			if (StringUtils.isNotBlank(finMain.getGrcPftFrq()) && finMain.getNextGrcPftDate() != null) {
+			if (StringUtils.isNotBlank(finMain.getGrcPftFrq()) && finMain.getGrcPeriodEndDate() == null) {
 				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getGrcPftFrq(), finMain.getGraceTerms(),
-						finMain.getNextGrcPftDate(), HolidayHandlerTypes.MOVE_NONE, true).getScheduleList();
+						finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getScheduleList();
 
 				Date geDate = null;
 				if (scheduleDateList != null) {
@@ -1076,7 +1039,7 @@ public class FinanceDataDefaulting {
 			finMain.setCalTerms(finMain.getNumberOfTerms());
 			if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
 				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),finMain.getNumberOfTerms(),
-						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true).getScheduleList();
+						finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, financeType.getFddLockPeriod()).getScheduleList();
 
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);

@@ -39,8 +39,8 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		
 		finSchdData = ScheduleCalculator.changeProfit(finScheduleData, amount);
 
+		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
-
 		return finSchdData;
 	}
 

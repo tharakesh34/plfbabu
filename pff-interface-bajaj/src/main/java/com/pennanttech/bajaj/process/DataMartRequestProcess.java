@@ -402,7 +402,6 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_BOUNCE_DETAILS, rs);
-						map.addValue("BATCH_ID", executionStatus.getId());
 						saveOrUpdate(map, DataMartTable.DM_BOUNCE_DETAILS.name(), destinationJdbcTemplate, keyFields);
 						successCount++;
 					} catch (Exception e) {

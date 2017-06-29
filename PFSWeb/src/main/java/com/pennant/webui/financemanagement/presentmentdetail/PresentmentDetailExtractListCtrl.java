@@ -54,6 +54,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -249,8 +250,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 
+		Clients.clearWrongValue(fromdate);
+		Clients.clearWrongValue(toDate);
 		this.fromdate.setConstraint("");
 		this.toDate.setConstraint("");
+		this.fromdate.setErrorMessage("");
+		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
 
 		logger.debug("Leaving");

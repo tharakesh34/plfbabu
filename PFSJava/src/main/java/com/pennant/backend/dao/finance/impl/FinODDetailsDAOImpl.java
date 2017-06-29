@@ -709,14 +709,18 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	}
 
 	@Override
-	public BigDecimal getTotalODPftBal(String finReference) {
+	public BigDecimal getTotalODPftBal(String finReference, List<Date> presentmentDates) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
+		source.addValue("PresentmentDates", presentmentDates);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(LPIBal),0) TotalLatePayPft ");
 		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
+		if(presentmentDates != null && !presentmentDates.isEmpty()){
+			selectSql.append(" AND FinODSchdDate NOT IN ( :PresentmentDates) ");
+		}
 
 		logger.debug("selectSql: " + selectSql.toString());
 		BigDecimal totalPenaltyBal = null;
@@ -733,14 +737,18 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	}
 
 	@Override
-	public BigDecimal getTotalPenaltyBal(String finReference) {
+	public BigDecimal getTotalPenaltyBal(String finReference, List<Date> presentmentDates) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
+		source.addValue("PresentmentDates", presentmentDates);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE(Sum(TotPenaltyBal),0) TotPenaltyAmt ");
 		selectSql.append(" FROM FInODDetails WHERE FinReference = :FinReference ");
+		if(presentmentDates != null && !presentmentDates.isEmpty()){
+			selectSql.append(" AND FinODSchdDate NOT IN ( :PresentmentDates) ");
+		}
 
 		logger.debug("selectSql: " + selectSql.toString());
 		BigDecimal totalPenaltyBal = null;

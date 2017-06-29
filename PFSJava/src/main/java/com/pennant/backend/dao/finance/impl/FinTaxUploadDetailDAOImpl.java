@@ -88,7 +88,7 @@ public class FinTaxUploadDetailDAOImpl extends BasisNextidDaoImpl<FinTaxUploadHe
 	}
 
 	@Override
-	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference, String type) {
+	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference, String type,String status) {
 
 		logger.debug("Entering");
 
@@ -97,12 +97,12 @@ public class FinTaxUploadDetailDAOImpl extends BasisNextidDaoImpl<FinTaxUploadHe
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				" Select BatchReference, TaxCode, AggrementNo, ApplicableFor,Applicant,TaxExempted,AddrLine1,AddrLine2,AddrLine3,AddrLine4,"
-						+ "Country,City,PinCode,Province,");
+						+ "Country,City,PinCode,Province,SeqNo,");
 		sql.append(
 				"  LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTaxUploadDetail");
 		sql.append(type);
-		sql.append(" Where BatchReference = :BatchReference");
+		sql.append(" Where BatchReference = :BatchReference and RecordStatus<>"+status);
 
 		source.addValue("BatchReference", reference);
 		RowMapper<FinTaxUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -181,12 +181,12 @@ public class FinTaxUploadDetailDAOImpl extends BasisNextidDaoImpl<FinTaxUploadHe
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
 				" (BatchReference, TaxCode, AggrementNo, ApplicableFor,Applicant,TaxExempted,AddrLine1,AddrLine2,AddrLine3,AddrLine4,Country,");
-		insertSql.append(" Province,City,PinCode,Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" Province,City,PinCode,SeqNo,Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
 				"  Values(:BatchReference, :TaxCode, :AggrementNo, :ApplicableFor,:Applicant,:TaxExempted,:AddrLine1,:AddrLine2,:AddrLine3,:AddrLine4,:Country,");
 		insertSql.append(
-				":Province, :City, :PinCode,  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				":Province, :City, :PinCode, :SeqNo,  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -231,13 +231,13 @@ public class FinTaxUploadDetailDAOImpl extends BasisNextidDaoImpl<FinTaxUploadHe
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update FinTaxUploadDetail");
 		sql.append(type);
-		sql.append(" set BatchReference=:BatchReference , TaxCode=:TaxCode , AggrementNo=:AggrementNo, ApplicableFor=:ApplicableFor , Applicant=:Applicant ,");
+		sql.append(" set BatchReference=:BatchReference , TaxCode=:TaxCode , AggrementNo=:AggrementNo, ApplicableFor=:ApplicableFor , Applicant=:Applicant ,SeqNo=:SeqNo,");
 		sql.append(" TaxExempted=:TaxExempted ,AddrLine1=:AddrLine1, AddrLine2=:AddrLine2, AddrLine3=:AddrLine3, AddrLine4=:AddrLine4, Country=:Country, Province=:Province,City=:City,PinCode=:PinCode,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where BatchReference =:BatchReference ");
+		sql.append(" where BatchReference =:BatchReference and SeqNo=:SeqNo");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -260,7 +260,7 @@ public class FinTaxUploadDetailDAOImpl extends BasisNextidDaoImpl<FinTaxUploadHe
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("delete from finTaxUploadDetail");
 		sql.append(type);
-		sql.append(" where BatchReference = :BatchReference ");
+		sql.append(" where BatchReference = :BatchReference and SeqNo=:SeqNo ");
 		/* sql.append(QueryUtil.getConcurrencyCondition(tableType)); */
 
 		// Execute the SQL, binding the arguments.

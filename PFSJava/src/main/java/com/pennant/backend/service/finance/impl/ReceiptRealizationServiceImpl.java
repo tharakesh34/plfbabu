@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +12,21 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -32,6 +39,9 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
+	private FinanceMainDAO					financeMainDAO;
+	private FinODDetailsDAO					finODDetailsDAO;
+	private FinanceScheduleDetailDAO		financeScheduleDetailDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
 
 	public ReceiptRealizationServiceImpl() {
@@ -204,6 +214,14 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				break;
 			}
 		}
+		
+		// Making Finance Inactive Incase of Schedule Payment
+		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
+			List<FinanceScheduleDetail> schdList = getFinanceScheduleDetailDAO().getFinScheduleDetails(receiptHeader.getReference(), "", false);
+			if (isSchdFullyPaid(receiptHeader.getReference(), schdList)) {
+				getFinanceMainDAO().updateMaturity(receiptHeader.getReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+			}
+		}
 
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -224,6 +242,73 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	/**
+	 * Method for Checking Schedule is Fully Paid or not
+	 * 
+	 * @param finReference
+	 * @param scheduleDetails
+	 * @return
+	 */
+	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
+		//Check Total Finance profit Amount
+		boolean fullyPaid = true;
+		for (int i = 1; i < scheduleDetails.size(); i++) {
+			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+
+			// Profit
+			if ((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Principal
+			if ((curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Fees
+			if ((curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Insurance
+			if ((curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Supplementary Rent
+			if ((curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Increased Cost
+			if ((curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+		}
+
+		// Check Penalty Paid Fully or not
+		if (fullyPaid) {
+			FinODDetails overdue = getFinODDetailsDAO().getTotals(finReference);
+			if (overdue != null) {
+				BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid())
+						.add(overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
+
+				// Penalty Not fully Paid
+				if (balPenalty.compareTo(BigDecimal.ZERO) > 0) {
+					fullyPaid = false;
+				}
+			}
+		}
+
+		return fullyPaid;
 	}
 
 	/**
@@ -368,6 +453,29 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

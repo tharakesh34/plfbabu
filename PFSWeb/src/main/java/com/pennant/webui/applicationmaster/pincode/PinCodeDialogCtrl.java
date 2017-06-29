@@ -168,7 +168,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.pinCodes.setMaxlength(20);
+		this.pinCodes.setMaxlength(10);
 		this.city.setModuleName("City");
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
@@ -429,7 +429,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		if (!this.pinCodes.isReadonly()) {
 			this.pinCodes.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_PinCode.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM, true,6,20));
+					PennantRegularExpressions.REGEX_ALPHANUM, true,6,10));
 		}
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(

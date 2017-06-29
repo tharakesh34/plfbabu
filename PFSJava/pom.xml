@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennant.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.15.5</version>
+		<version>3.15.7</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -205,6 +205,12 @@
 			<artifactId>pff-interface-bajaj</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-embedded</artifactId>
+			<version>9.0.0.Final</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

@@ -190,8 +190,8 @@
 		<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
  	</menu>
  	
- 	<menu id="menu_Category_CIBIL"  rightName="menuCat_SAPGL" >
-		<menuItem id="menu_Item_CIBILFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
+ 	<menu id="menu_Category_CIBIL"  rightName="menu_Category_CIBIL" >
+		<menuItem id="menu_Item_CIBILFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/CIBILFileDownloadList.zul" rightName="menu_Item_CIBILFileDownloads"/>
  	</menu>
  	
 	<!-- Rules   Factory -->
@@ -423,7 +423,7 @@
 	   <!-- <menuItem id="menu_Item_FairValueRevaluation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FairValueRevaluation"/> -->
 	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
 	   <menuItem id="menu_Item_FinanceTaxDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>
-	   <menuItem id="menu_Item_FinanceTaxDetailUpload" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/> 
+	   <menuItem id="menu_Item_FinanceTaxDetailUpload" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>  
  	</menu>
  
 	<!-- Finance Inquiry Details -->
@@ -520,7 +520,7 @@
 		<!-- <menuItem id="menu_Item_ReportConfiguration" zulNavigation="/WEB-INF/pages/Reports/ReportConfiguration/ReportConfigurationList.zul"  rightName="menuItem_Reports_ReportsConfig"/> -->
 		<menuItem id="menu_Item_DetailListofFINandINV" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DetailListofFINandINV"/>
 		<menuItem id="menu_Item_FinByMaturity" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_FinByMaturity"/>
-		
+		<menuItem id="menu_Item_Presentment" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_FinByMaturity"/>
 		<!-- <menuItem id="menu_Item_DisbursementFinances" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DisbursementFinances"/> -->
 		<menuItem id="menu_Item_PendingFinances" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PendingFinances"/>
 		<!-- <menuItem id="menu_Item_StaffProductivity" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_StaffProductivity"/> -->

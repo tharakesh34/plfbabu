@@ -151,6 +151,7 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		registerField("builderId", listheader_builderId, SortOrder.NONE, builderId, sortOperator_builderId, Operators.NUMERIC);
 		//registerField("builderIdName");
 		registerField("apfNo", listheader_apfNo, SortOrder.NONE, apfNo, sortOperator_apfNo, Operators.STRING);
+		registerField("builderIdName");
 		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
@@ -165,7 +166,6 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 			this.builderId.setValueColumn("Id");
 			this.builderId.setDescColumn("Name");
 			this.builderId.setValidateColumns(new String[] {"Id"});
-			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 			this.apfNo.setMaxlength(20);
 		
 		logger.debug(Literal.LEAVING);

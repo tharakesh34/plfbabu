@@ -8,7 +8,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pff.core.InterfaceException;
 
 public interface FinTaxUploadDetailService {
-	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type);
+	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type,String status);
 	
 	FinTaxUploadHeader getFinTaxUploadHeaderByRef(long ref);
 

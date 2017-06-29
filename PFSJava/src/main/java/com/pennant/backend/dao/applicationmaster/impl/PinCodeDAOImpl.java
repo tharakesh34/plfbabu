@@ -264,5 +264,46 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
+
+	@Override
+	public boolean isPinValid(String code) {
+
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" pinCodeId, pinCode, city, areaName, active, ");
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		sql.append(" From PinCodes_View");
+
+		sql.append(" Where pinCode = :pinCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		PinCode pinCode = new PinCode();
+		pinCode.setPinCode(code);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
+		RowMapper<PinCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PinCode.class);
+
+		try {
+			pinCode = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			pinCode = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		if (pinCode != null) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 	
 }	

@@ -146,6 +146,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
 		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation, Operators.STRING);
 		registerField("groupId", listheader_groupId, SortOrder.NONE, groupId, sortOperator_groupId, Operators.NUMERIC);
+		registerField("groupIdName");
 		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
@@ -171,12 +172,10 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
-		this.segmentation.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		this.groupId.setModuleName("BuilderGroup");
 		this.groupId.setValueColumn("Id");
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
-		this.groupId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		
 		logger.debug("Leaving ");
 	}

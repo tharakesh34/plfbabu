@@ -138,6 +138,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 					break;
 
 				case "bigint":
+				case "int":
 					intbox = new Intbox();
 					intbox.setId(details.getRbFldName());
 					row.appendChild(intbox);

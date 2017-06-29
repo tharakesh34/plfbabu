@@ -71,6 +71,8 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq);
 
+	void updatePresentmentIdAsZero(long presentmentId);
+
 	void deletePresentmentHeader(long id);
 
 	void deletePresentmentDetails(long presentmentId);

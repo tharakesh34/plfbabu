@@ -181,7 +181,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
-		this.segmentation.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -442,7 +441,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.name.isReadonly()){
-			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),PennantRegularExpressions.REGEX_NAME,true));
+			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,true));
 		}
 		if (!this.segmentation.isReadonly()){
 			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_segmentation.value"),null,true, true));

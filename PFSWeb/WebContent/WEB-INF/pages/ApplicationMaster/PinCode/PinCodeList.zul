@@ -54,15 +54,15 @@
 								<row>
 									<label id="label_PinCodeList_PinCode" value="${c:l('label_PinCodeList_PinCode.value')}" />
 									<listbox id="sortOperator_PinCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="pinCode" width="150px" maxlength="20" />
+									<textbox id="pinCode" width="150px" maxlength="10" />
 									<label id="label_PinCodeList_City" value="${c:l('label_PinCodeList_City.value')}" />
 									<listbox id="sortOperator_City" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="city" width="150px" maxlength="8" />
+									<textbox id="city" width="150px" maxlength="20" />
 								</row>
 								<row>
 									<label id="label_PinCodeList_AreaName" value="${c:l('label_PinCodeList_AreaName.value')}" />
 									<listbox id="sortOperator_AreaName" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="areaName" width="90px" maxlength="10" />
+									<textbox id="areaName" width="150px" maxlength="100" />
 									<label id="label_PinCodeList_Active" value="${c:l('label_PinCodeList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<checkbox id="active" checked="false"/>

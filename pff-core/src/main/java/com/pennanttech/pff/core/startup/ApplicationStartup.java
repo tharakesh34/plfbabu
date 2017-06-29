@@ -4,8 +4,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
@@ -15,40 +13,22 @@ public class ApplicationStartup implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		logger.debug("<<<<<< THE APPLICATION STARTED >>>>>>");
+		logger.debug(Literal.LEAVING);
 
 		try {
 			AbstractJobScheduler.servletContext = event.getServletContext();
 			AbstractJobScheduler.schedular = AbstractJobScheduler.sf.getScheduler();
-
-		} catch (Exception se) {
-			logger.error(se.toString());
-			try {
-				if (AbstractJobScheduler.schedular != null && AbstractJobScheduler.schedular.isStarted()) {
-					AbstractJobScheduler.schedular.shutdown();
-				}
-			} catch (SchedulerException e) {
-				logger.error(se.toString());
-			}
+			logger.debug("<<<<<< THE APPLICATION STARTED >>>>>>");
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			AbstractJobScheduler.shutdown();
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		logger.debug("Entering ");
-
-		Scheduler scheduler = (Scheduler) AbstractJobScheduler.contextMap.get("jobScheduler");
-
-		try {
-			if (scheduler != null && scheduler.isStarted()) {
-				scheduler.shutdown();
-			}
-		} catch (SchedulerException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
+		AbstractJobScheduler.shutdown();
 		logger.debug("<<<<<< THE APPLICATION STOPED >>>>>>");
-		logger.debug("Leaving ");
 	}
 }

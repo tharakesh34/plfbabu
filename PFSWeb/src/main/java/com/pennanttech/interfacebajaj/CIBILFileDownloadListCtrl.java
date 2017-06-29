@@ -64,10 +64,9 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
@@ -128,6 +127,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 
+		registerField("ID", SortOrder.DESC);
 		registerField("File_Name");
 		registerField("CreatedOn EndTime");
 		registerField("Status");
@@ -209,7 +209,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 			
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc = new Listcell(DateUtility.formatToLongDate(fileDownlaod.getEndTime()));
 			lc.setParent(item);
 
 
@@ -236,9 +236,9 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 			if (!file.exists()) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("File not available.");
-			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			} else if (!"C".equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("SAPGL request for file generation failed.");
+				downlaod.setTooltiptext("CIBIL request for file generation failed.");
 			}
 
 

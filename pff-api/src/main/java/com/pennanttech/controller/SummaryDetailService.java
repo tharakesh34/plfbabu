@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -18,7 +19,11 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -30,6 +35,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService {
@@ -39,6 +45,7 @@ public class SummaryDetailService {
 	protected FinODDetailsDAO		finODDetailsDAO;
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
 	private AccrualService			accrualService;
+	protected FinExcessAmountDAO	finExcessAmountDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -52,7 +59,20 @@ public class SummaryDetailService {
 			summary.setTotalGracePft(financeMain.getTotalGracePft());
 			summary.setTotalGraceCpz(financeMain.getTotalGraceCpz());
 			summary.setTotalGrossGrcPft(financeMain.getTotalGrossGrcPft());
-			summary.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+			
+			// calculate total paid fees
+			BigDecimal totFeeAmount = BigDecimal.ZERO;
+			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+				for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+					} else {
+						totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+					}
+				}
+			}
+			summary.setFeeChargeAmt(totFeeAmount);
 
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
@@ -82,15 +102,9 @@ public class SummaryDetailService {
 			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
 			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
-
-			// overdue details
-			FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(finReference);
-			if (finODDetails != null) {
-				summary.setOverDuePrincipal(finODDetails.getFinCurODPri());
-				summary.setOverDueProfit(finODDetails.getFinCurODPft());
-				summary.setTotalOverDue(finODDetails.getFinCurODPri().add(finODDetails.getFinCurODPft()));
-			}
-			summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
+			
+			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
+			summary.setAdvPaymentAmount(BigDecimal.ZERO);
 
 			// set Finance closing status
 			if (StringUtils.isBlank(financeMain.getClosingStatus())) {
@@ -129,12 +143,24 @@ public class SummaryDetailService {
 				}
 			}
 
-			// Get FinODDetails
+			// calculate OD Details
+			BigDecimal overDuePrincipal = BigDecimal.ZERO;
+			BigDecimal overDueProfit = BigDecimal.ZERO;
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
-				// ODcharges
+				for (FinODDetails odDetail : finODDetailsList) {
+					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
+					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+				}
+				summary.setOverDuePrincipal(overDuePrincipal);
+				summary.setOverDueProfit(overDueProfit);
+				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 				summary.setFinODDetail(finODDetailsList);
-				summary.setOverDueInstlments(finODDetailsList.size());
+				if(overDuePrincipal.compareTo(BigDecimal.ZERO) > 0) {
+					summary.setOverDueInstlments(finODDetailsList.size());
+				} else {
+					summary.setOverDueInstlments(0);
+				}
 			}
 		}
 		logger.debug("Leaving");
@@ -233,7 +259,133 @@ public class SummaryDetailService {
 			}
 		}
 	}
+	
+	public List<FinanceRepayments> getRepaymentDetails(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount,Date valueDate) {
+		// Repayment Details
+		List<FinanceRepayments> repayments = new ArrayList<>();
+		BigDecimal totReceiptAmt = orgReceiptAmount;
 
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		// Newly Paid Amount Repayment Details
+		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+		if (totReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+			char[] rpyOrder = finScheduleData.getFinanceType().getRpyHierarchy().replace("CS", "C").toCharArray();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i < schdList.size(); i++) {
+				curSchd = schdList.get(i);
+				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+					break;
+				}
+
+				if (totReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+					break;
+				}
+
+				if ((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0
+						|| (curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()))
+								.compareTo(BigDecimal.ZERO) > 0
+						|| (curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0) {
+
+					FinanceRepayments repayment = new FinanceRepayments();
+					repayment.setFinValueDate(valueDate);
+					repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+					repayment.setFinSchdDate(curSchd.getSchDate());
+					repayment.setFinRpyAmount(orgReceiptAmount);
+
+					for (int j = 0; j < rpyOrder.length; j++) {
+
+						char repayTo = rpyOrder[j];
+						if (repayTo == RepayConstants.REPAY_PENALTY) {
+							continue;
+						}
+						BigDecimal balAmount = BigDecimal.ZERO;
+						if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
+							balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+							if (totReceiptAmt.compareTo(balAmount) < 0) {
+								balAmount = totReceiptAmt;
+							}
+							repayment.setFinSchdPriPaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+
+						} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+
+							balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+							if (totReceiptAmt.compareTo(balAmount) < 0) {
+								balAmount = totReceiptAmt;
+							}
+							repayment.setFinSchdPftPaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+
+						} else if (repayTo == RepayConstants.REPAY_FEE) {
+
+							balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+							if (totReceiptAmt.compareTo(balAmount) < 0) {
+								balAmount = totReceiptAmt;
+							}
+							repayment.setSchdFeePaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+						}
+
+					}
+					repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
+					repayment.setFinType(financeMain.getFinType());
+					repayment.setFinBranch(financeMain.getFinBranch());
+					repayment.setFinCustID(financeMain.getCustID());
+					repayment.setFinPaySeq(100);
+					repayments.add(repayment);
+				}
+			}
+		}
+		return repayments;
+	}
+	
+	/**
+	 * Method for calculate and set the paid amounts for fees with below schedule methods.<br>
+	 * 	- DISB(Deduct from disbursemnet).<br>
+	 *  - POSP(Include fees to loan amount).
+	 * 
+	 * @param actualFees
+	 * @return
+	 */
+	public List<FinFeeDetail> getUpdatedFees(List<FinFeeDetail> actualFees) {
+		if (actualFees != null) {
+			for (FinFeeDetail feeDetail : actualFees) {
+				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+				if (StringUtils.isNotBlank(feeDetail.getVasReference())) {
+					feeDetail.setFeeTypeCode(feeDetail.getVasReference());
+				}
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					feeDetail.setPaidAmount(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+					BigDecimal remBalFee = feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()).subtract(feeDetail.getPaidAmount());
+					feeDetail.setRemainingFee(remBalFee);
+				}
+				if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), PennantConstants.List_Select)) {
+					feeDetail.setFeeScheduleMethod("");
+				}
+			}
+		}
+		return actualFees;
+	}
+	
+	/**
+	 * Method for calculating total Advance payment amount(Excess+EMI in Adv)
+	 * 
+	 * @param finReference
+	 * @return
+	 */
+	public BigDecimal getTotalAdvAmount(String finReference) {
+		BigDecimal totAdvAmount = BigDecimal.ZERO;
+		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finReference);
+		if (finExcessAmounts != null && !finExcessAmounts.isEmpty()) {
+			for (FinExcessAmount excessAmount : finExcessAmounts) {
+				totAdvAmount = totAdvAmount.add(excessAmount.getBalanceAmt());
+			}
+		}
+		return totAdvAmount;
+	}
+	
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
 		return financeDisbursementDAO;
 	}
@@ -265,4 +417,8 @@ public class SummaryDetailService {
 		this.accrualService = accrualService;
 	}
 
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
 }

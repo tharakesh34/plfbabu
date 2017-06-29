@@ -3316,7 +3316,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		EarlySettlementReportData earlySettlement = new EarlySettlementReportData();
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		boolean isRetail = false;
+		earlySettlement.setDeptFrom(getFinanceType().getLovDescFinDivisionName());
+	/*	boolean isRetail = false;
 		if (getFinanceType() != null) {
 			String division = getFinanceType().getFinDivision().trim();
 			if (StringUtils.equals(division, FinanceConstants.FIN_DIVISION_RETAIL)) {
@@ -3324,15 +3325,17 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				isRetail = true;
 			}
 			earlySettlement.setDeptFrom(getFinanceType().getLovDescFinDivisionName());
-		}
+		}*/
 
 		if (financeMain != null) {
 			earlySettlement.setAppDate(DateUtility.getAppDate(DateFormat.SHORT_DATE));
 			earlySettlement.setFinReference(financeMain.getFinReference());
 			earlySettlement.setFinType(financeMain.getFinType());
-			earlySettlement.setFinTypeDesc(financeMain.getLovDescFinTypeName());
-			earlySettlement.setCustCIF("CIF " + financeMain.getLovDescCustCIF());
-			earlySettlement.setCustShrtName(financeMain.getLovDescCustShrtName());
+			earlySettlement.setFinTypeDesc(getFinanceType().getFinTypeDesc());
+			if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustomer() != null){
+				earlySettlement.setCustCIF("CIF " + getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
+				earlySettlement.setCustShrtName(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
+			}
 			earlySettlement.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 			earlySettlement.setEarlySettlementDate(DateUtility.formatToLongDate(this.earlySettlementDate.getValue()));
 		}
@@ -3398,11 +3401,11 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		//Word Format
-		if (isRetail) {
+		/*if (isRetail) {
 			try {
 
 				TemplateEngine engine = new TemplateEngine(reportName);
-				reportName = earlySettlement.getFinReference() + "_" + "Memorandum.docx";
+				//reportName = earlySettlement.getFinReference() + "_" + "Memorandum.docx";
 				engine.setTemplate("");
 				//engine.loadTemplateWithFontSize(11);
 				engine.mergeFields(earlySettlement);
@@ -3413,11 +3416,11 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
-		} else {
+		} else {*/
 			// PDF Format
 			ReportGenerationUtil.generateReport(reportName, earlySettlement, new ArrayList<Object>(), true, 1,
 					getUserWorkspace().getLoggedInUser().getFullName(), this.window_ManualPaymentDialog);
-		}
+		//}
 
 		logger.debug("Leaving");
 	}

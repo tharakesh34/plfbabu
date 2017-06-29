@@ -870,7 +870,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setRecordType("");
 
 		// Update Status Details and Profit Details
-		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail);
+		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, receiptHeader.getReceiptPurpose());
 
 		//Finance Main Updation
 		//=======================================
@@ -883,11 +883,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listSave(scheduleData, "", 0);
 		
 		// Overdue Details updation , if Value Date is Back dated.
-		if(DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0){
-			List<FinODDetails> overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, DateUtility.getAppDate());
-			if(overdueList != null && !overdueList.isEmpty()){
-				getFinODDetailsDAO().updateList(overdueList);
-			}
+		List<FinODDetails> overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, DateUtility.getAppDate(), null);
+		if(overdueList != null && !overdueList.isEmpty()){
+			getFinODDetailsDAO().updateList(overdueList);
 		}
 		
 		// Save Receipt Header
@@ -1582,8 +1580,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
 			if(!isSchdDateFound){
 				FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(finScheduleData.getFinanceMain().getFinReference());
-				newSchdlEP.setDefSchdDate(DateUtility.getAppDate());
-				newSchdlEP.setSchDate(DateUtility.getAppDate());
+				newSchdlEP.setDefSchdDate(curBussniessDate);
+				newSchdlEP.setSchDate(curBussniessDate);
 				newSchdlEP.setSchSeq(1);
 				newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 				newSchdlEP.setRepayOnSchDate(true);
@@ -1661,7 +1659,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @param valueDate
 	 * @return
 	 */
-	public List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount, Date valueDate){
+	public List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount, 
+			Date valueDate, List<FinanceRepayments> finRepayments){
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -1672,7 +1671,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Repayment Details
-		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+		List<FinanceRepayments> repayments = new ArrayList<FinanceRepayments>();
+		if(finRepayments != null && !finRepayments.isEmpty()) {
+			repayments = finRepayments;
+		} else {
+			repayments = getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+		}
 		BigDecimal totReceiptAmt = orgReceiptAmount;
 		
 		// Newly Paid Amount Repayment Details
