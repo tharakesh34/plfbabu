@@ -61,7 +61,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.component.Uppercasebox;
-import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.buildergroup.model.BuilderGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -115,12 +114,6 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		super.enquiryTableName = "BuilderGroup_View";
 	}
 
-	@Override
-	protected void doAddFilters() {
-		super.doAddFilters();
-			this.searchObject.addFilter(new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL));
-	}
-	
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 

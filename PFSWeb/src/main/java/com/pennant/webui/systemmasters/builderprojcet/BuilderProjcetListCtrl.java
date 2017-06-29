@@ -166,7 +166,6 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 			this.builderId.setValueColumn("Id");
 			this.builderId.setDescColumn("Name");
 			this.builderId.setValidateColumns(new String[] {"Id"});
-			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 			this.apfNo.setMaxlength(20);
 		
 		logger.debug(Literal.LEAVING);
