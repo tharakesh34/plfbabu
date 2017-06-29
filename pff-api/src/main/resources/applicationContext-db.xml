@@ -75,12 +75,12 @@
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="searchSystemEnvironment" value="true" />
 		<property name="locations">
-			<list>				
+			<list>
 				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
 			</list>
 		</property>
 	</bean>
-
+	
 	<bean id="placeholderConfigMM" class="com.pennant.mqconnection.InterfacePropertiesUtil">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
 		<property name="locations">
@@ -101,26 +101,26 @@
 	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
 		<property name="config" ref="environmentVariablesConfiguration" />
 	</bean>
-
+	
 	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFSEC" />
-		<property name="lookupOnStartup" value="true" />
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFSEC"/>
+		<property name="lookupOnStartup" value="true"/>
 	</bean>
 	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFF" />
-		<property name="lookupOnStartup" value="true" />
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFF"/>
+		<property name="lookupOnStartup" value="true"/>
 	</bean>
 	<bean id="auditDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFAUDIT" />
-		<property name="lookupOnStartup" value="true" />
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFAUDIT"/>
+		<property name="lookupOnStartup" value="true"/>
 	</bean>
 	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFFEXT" />
-		<property name="lookupOnStartup" value="true" />
+	  	<property name="resourceRef" value="true"/>		
+		<property name="jndiName" value="jdbc/PFFEXT"/>
+		<property name="lookupOnStartup" value="true"/>
 	</bean>
 
 	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
@@ -138,21 +138,4 @@
 		<property name="dataSource" ref="auditDatasource" />
 		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
 	</bean>
-
-	<bean id="cacheDAO"
-		class="com.pennant.backend.dao.cacheadministration.impl.CacheDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<bean name="cacheAdministrationService"
-		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
-
-
-	<bean id="genericCacheManager" class="com.pennanttech.cache.GenericCacheManager"
-		init-method="init">
-		<constructor-arg value="API"></constructor-arg>		
-		<constructor-arg ref="cacheAdministrationService"></constructor-arg>
-	</bean>
-
-
 </beans>
