@@ -5201,4 +5201,10 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 	</sql>
 	</changeSet>
 	
+	<changeSet id="134" author="Durgaprasad G">
+		<createIndex tableName="FINSCHEDULEDETAILS" indexName="IX_FINSCHDETAIL_PRESENTMENTID">
+			<column name="PRESENTMENTID"/>
+		</createIndex>
+	</changeSet>
+	
 </databaseChangeLog>
