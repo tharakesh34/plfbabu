@@ -4289,4 +4289,15 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 	</createView>
 
 </changeSet>
+
+<changeSet id="244" author="Siva">
+	<renameColumn columnDataType="int" newColumnName="TOTAL_RECORDS"
+		oldColumnName="TOTALRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="PROCESSED_RECORDS"
+		oldColumnName="PROCESSEDRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="SUCCESS_RECORDS"
+		oldColumnName="SUCCESSRECORDS" tableName="cibil_file_info" />
+	<renameColumn columnDataType="int" newColumnName="FAILED_RECORDS"
+		oldColumnName="FAILEDRECORDS" tableName="cibil_file_info" />
+</changeSet>
 </databaseChangeLog>
