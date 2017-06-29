@@ -92,9 +92,9 @@ public interface FinODDetailsDAO {
 
 	FinODDetails getFinODSummary(String finReference);
 
-	BigDecimal getTotalPenaltyBal(String finReference);
+	BigDecimal getTotalPenaltyBal(String finReference, List<Date> presentmentDates);
 
-	BigDecimal getTotalODPftBal(String finReference);
+	BigDecimal getTotalODPftBal(String finReference, List<Date> presentmentDates);
 
 	//Receipts
 	List<FinODDetails> getFinODBalByFinRef(String finReference);

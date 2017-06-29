@@ -90,6 +90,7 @@ public class RepayConstants {
 	// Allocation Types
 	public static final String	ALLOCATION_PRI			= "PRI";
 	public static final String	ALLOCATION_PFT			= "PFT";
+	public static final String	ALLOCATION_NPFT			= "NPFT";
 	public static final String	ALLOCATION_TDS			= "TDS";
 	public static final String	ALLOCATION_LPFT			= "LPFT";
 	public static final String	ALLOCATION_ODC			= "ODC";

@@ -991,7 +991,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				// Check Current Finance Max Status For updation
 				// ============================================
 				getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(),
-						scheduleData.getFinanceScheduleDetails(), pftDetail);
+						scheduleData.getFinanceScheduleDetails(), pftDetail, null);
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					// Finance Main Details Update

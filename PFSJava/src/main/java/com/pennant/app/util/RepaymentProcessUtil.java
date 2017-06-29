@@ -1049,8 +1049,8 @@ public class RepaymentProcessUtil {
 	 * @return
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail) {
-		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail);
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail, String receiptPurpose) {
+		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, receiptPurpose);
 	}
 
 	/**

@@ -385,9 +385,9 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InterfaceException
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail) {
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, String receiptPurpose) {
 
-		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail);
+		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, receiptPurpose);
 	}
 
 	/**
@@ -401,7 +401,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws Exception
 	 */
 	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail) {
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, String receiptPurpose) {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
@@ -411,12 +411,14 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
-		if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
-			financeMain.setFinIsActive(false);
-			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
-		} else {
-			financeMain.setFinIsActive(true);
-			financeMain.setClosingStatus(null);
+		if(!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+			if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
+				financeMain.setFinIsActive(false);
+				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+			} else {
+				financeMain.setFinIsActive(true);
+				financeMain.setClosingStatus(null);
+			}
 		}
 
 		pftDetail.setFinStatus(financeMain.getFinStatus());

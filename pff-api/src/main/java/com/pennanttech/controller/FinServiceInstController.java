@@ -1557,8 +1557,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			BigDecimal latePayPftBal = BigDecimal.ZERO;
 			BigDecimal penaltyBal = BigDecimal.ZERO;
 			if (DateUtility.compare(curBussniessDate, DateUtility.getAppDate()) == 0) {
-				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference);
-				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference);
+				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference, null);
+				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference, null);
 			} else {
 				// Calculate overdue Penalties
 				List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);

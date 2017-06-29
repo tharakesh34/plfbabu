@@ -870,7 +870,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setRecordType("");
 
 		// Update Status Details and Profit Details
-		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail);
+		financeMain = getRepayProcessUtil().updateStatus(financeMain, valueDate, schdList, profitDetail, receiptHeader.getReceiptPurpose());
 
 		//Finance Main Updation
 		//=======================================

@@ -5732,6 +5732,9 @@
 		class="com.pennant.backend.service.finance.impl.ReceiptRealizationServiceImpl">
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
