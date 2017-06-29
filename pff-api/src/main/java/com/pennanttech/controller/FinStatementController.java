@@ -160,6 +160,7 @@ public class FinStatementController extends SummaryDetailService {
 					financeDetail = getForeClosureDetails(financeDetail, days);
 
 					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+					finScheduleData.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
 					// setting old values
 					financeDetail.setCustomerDetails(aFinanceDetail.getCustomerDetails());
 					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
@@ -173,21 +174,14 @@ public class FinStatementController extends SummaryDetailService {
 					}
 
 					// calculate advPaymentAmount, outstandingPri, overduePft and tdPftAccured
-					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsForSummary(finReference);
-					if (finPftDetail == null) {
-						finPftDetail = new FinanceProfitDetail();
-						finPftDetail.setFinStartDate(finScheduleData.getFinanceMain().getFinStartDate());
-						finPftDetail = getAccrualService().calProfitDetails(finScheduleData.getFinanceMain(),
-								financeDetail.getFinScheduleData().getFinanceScheduleDetails(), finPftDetail,
-								DateUtility.getAppDate());
-					}
-
-					finScheduleData.setAdvPaymentAmount(
-							finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
+					FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
+					finScheduleData.getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					finPftDetail = getAccrualService().calProfitDetails(finScheduleData.getFinanceMain(),
+							financeDetail.getFinScheduleData().getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
+					finScheduleData.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
 					finScheduleData.setOutstandingPri(finPftDetail.getTotalPriBal());
 					finScheduleData.setOverduePft(finPftDetail.getODProfit());
-					finScheduleData
-					.setTdPftAccured(finPftDetail.getAmzTillLBD().subtract(finPftDetail.getTdSchdPftPaid()));
+					finScheduleData.setTdPftAccured(finPftDetail.getAmzTillLBD().subtract(finPftDetail.getTdSchdPftPaid()));
 				}
 
 				// generate response info
@@ -237,6 +231,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 		List<FinODDetails> finOdDetaiList = new ArrayList<FinODDetails>();
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
+		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
 		try {
 			for (int i = 0; i < days; i++) {
 				Cloner cloner = new Cloner();
@@ -244,6 +239,7 @@ public class FinStatementController extends SummaryDetailService {
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
 				aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
 				
+				foreClosureFees = aFinanceDetail.getFinScheduleData().getForeClosureFees();
 				finFeeDetails = aFinanceDetail.getFinScheduleData().getFinFeeDetailList();
 				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
 				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
@@ -251,6 +247,7 @@ public class FinStatementController extends SummaryDetailService {
 
 			scheduleData.setFinReference(finReference);
 			scheduleData.setFinODDetails(finOdDetaiList);
+			scheduleData.setForeClosureFees(foreClosureFees);
 
 			// process fees and charges
 			processFeesAndCharges(financeDetail, scheduleData, finFeeDetails);
@@ -297,22 +294,6 @@ public class FinStatementController extends SummaryDetailService {
 			}
 			scheduleData.setFeeDues(feeDues);
 		}
-
-		// foreclosure fees
-		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
-		financeDetail.getFinScheduleData().getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
-		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL);
-		if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-			for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				if (StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
-					if (StringUtils.equals(fee.getFeeScheduleMethod(), PennantConstants.List_Select)) {
-						fee.setFeeScheduleMethod(null);
-					}
-					foreClosureFees.add(fee);
-				}
-			}
-			scheduleData.setForeClosureFees(foreClosureFees);
-		}
 	}
 
 	/**
@@ -334,9 +315,9 @@ public class FinStatementController extends SummaryDetailService {
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
-		if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
+/*		if (!StringUtils.equals(APIConstants.STMT_REPAY_SCHD, servicName)) {
 			financeDetail.getFinScheduleData().setFinanceScheduleDetails(null);
-		}
+		}*/
 		financeDetail.getFinScheduleData().setRateInstruction(null);
 		financeDetail.getFinScheduleData().setRepayInstructions(null);
 		financeDetail.setFinFlagsDetails(null);
@@ -454,6 +435,26 @@ public class FinStatementController extends SummaryDetailService {
 		ForeClosure foreClosure = new ForeClosure();
 		foreClosure.setValueDate(finServiceInst.getFromDate());
 		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow).add(totFeePayNow);
+		BigDecimal totServFees = BigDecimal.ZERO;
+	
+		// foreclosure fees
+		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
+		financeDetail.getFinScheduleData().getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
+		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL);
+		if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+			for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				if (StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
+					totServFees = totServFees.add(fee.getActualAmount());
+					if (StringUtils.equals(fee.getFeeScheduleMethod(), PennantConstants.List_Select)) {
+						fee.setFeeScheduleMethod(null);
+					}
+					foreClosureFees.add(fee);
+				}
+			}
+			financeDetail.getFinScheduleData().setForeClosureFees(foreClosureFees);
+		}
+		
+		foreCloseAmt = foreCloseAmt.add(totServFees);
 		foreClosure.setForeCloseAmount(foreCloseAmt);
 		foreClosure.setAccuredIntTillDate(totPftPayNow);
 		foreClosure.setChargeAmount(totPenaltyPayNow);
