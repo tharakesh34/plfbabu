@@ -4027,18 +4027,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 				}
 				
-				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
-						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
-					
-					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
-								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-					} else {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
-								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-					}
-				}
-				
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				if(!feesExecuted){
@@ -4048,6 +4036,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aeEvent.setDataMap(dataMap);
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
+				
+				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
+						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
+					
+					aeEvent.getAcSetIDList().clear();
+					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+					} else {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), 
+								AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+					}
+					
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+					returnSetEntries.addAll(aeEvent.getReturnDataSet());
+				}
 				
 				// Reset Payment Details
 				amountCodes.setRpTot(BigDecimal.ZERO);
