@@ -5190,7 +5190,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
         alter table CIBIL_COLLATERAL_TYPES_MAPPING add constraint DF_CIBL_COLT_TYPE_MAPNG_VER default 0 for Version;
     </sql>
 	</changeSet>
-	<changeSet id="133.1" author="Jayant" >
+	<changeSet id="133.1" author="Jayant" dbms="mssql">
     <sql>
 	ALTER TABLE DATA_ENGINE_CONFIG DROP CONSTRAINT FK_DE_CONFIG_PARSER;
 	</sql>
@@ -5456,5 +5456,16 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 		</changeSet>
+	
+	
+	<changeSet id="253" author="Durgaprasad g">
+	<sql>
+     	DELETE FROM DATA_ENGINE_DB_DETAILS WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS');
+		DELETE FROM DATA_ENGINE_CONFIG where Name = 'CUSTOMER_CURD_OPERATIONS';
+		
+		INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CUSTOMER_CURD_OPERATIONS', 'Customer Curd Operations', 0, NULL, NULL, NULL, NULL , 0, 0, NULL, NULL,  NULL, 'A', NULL, 'CUSTOMER', NULL, 0, NULL, '', '0 0/5 * * * ?', 0, NULL, 1, 1);
+		INSERT INTO DATA_ENGINE_DB_DETAILS VALUES ((SELECT ID  FROM DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS'),NULL,NULL,NULL,NULL,NULL,1); 
+	</sql>
+	</changeSet>
 	
 	</databaseChangeLog>
