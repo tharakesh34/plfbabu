@@ -4233,4 +4233,60 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
 		</createTable>
 </changeSet>
+<changeSet id="244" author="Irfan">
+<createView viewName="BUILDERGROUP_VIEW" replaceIfExists="true">
+	SELECT		T1.Id, T1.Name, T1.Segmentation	,T2.ValueDesc SegmentationName	,T2.FieldCode
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup_Temp  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+    
+		UNION ALL
+
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T2.ValueDesc SegmentationName,T2.FieldCode		
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+		WHERE     NOT EXISTS (SELECT 1 FROM BuilderGroup_TEMP WHERE Id = T1.Id)
+
+</createView>
+
+</changeSet>
+<changeSet id="245" author="Irfan">
+	<createView viewName="BUILDERGROUP_AVIEW" replaceIfExists="true">
+	SELECT		T1.Id, T1.Name, T1.Segmentation,T2.ValueDesc SegmentationName	,T2.FieldCode	
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderGroup  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT'
+	
+	</createView>
+</changeSet>
+<changeSet id="246" author="Irfan">
+	<createView viewName="BUILDERCOMPANY_VIEW" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId ,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany_Temp  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+		UNION ALL
+
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE  AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+		WHERE     NOT EXISTS (SELECT 1 FROM BuilderCompany_TEMP WHERE Id = T1.Id)
+	</createView>
+
+</changeSet>
+<changeSet id="247" author="Irfan">
+	<createView viewName="BUILDERCOMPANY_AVIEW" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId,T2.ValueDesc SegmentationName,T2.FieldCode ,T3.Name GroupIdName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 			T1.WorkflowId
+		FROM    	BuilderCompany  T1 INNER JOIN
+		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE AND T2.FieldCode='SEGMENT' INNER JOIN
+		BuilderGroup	T3 ON T1.GroupId = T3.Id
+	
+	</createView>
+
+</changeSet>
 </databaseChangeLog>
