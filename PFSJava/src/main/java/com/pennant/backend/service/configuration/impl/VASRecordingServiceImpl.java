@@ -1681,6 +1681,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 
 			AEEvent aeEvent = new AEEvent();
+			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			aeEvent.setFinReference(vASRecording.getVasReference());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
