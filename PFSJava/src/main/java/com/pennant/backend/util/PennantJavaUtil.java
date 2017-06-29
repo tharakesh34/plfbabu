@@ -1984,7 +1984,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
-						new String[] { "id", "name", "city" }, null, 600));
+						new String[] { "Id", "Name", "City" }, null, 600));
 		
 		ModuleUtil.register("FinFeeReceipt", new ModuleMapping("FinFeeReceipt", FinFeeReceipt.class, new String[] {
 				"FinFeeReceipts", "FinFeeReceipts" }, null, new String[] { "feeID", "id" }, null, 600));
