@@ -206,6 +206,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							successCount++;
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
+							presentmentHeaderService.updateFinanceDetails(presentmentRef);
 						} else {
 							try {
 								detail = presentmentCancellation(presentmentRef, reasonCode);

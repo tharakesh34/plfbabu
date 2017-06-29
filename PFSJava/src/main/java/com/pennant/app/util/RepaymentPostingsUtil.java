@@ -449,7 +449,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @param scheduleDetails
 	 * @return
 	 */
-	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
+	public boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
 		//Check Total Finance profit Amount
 		boolean fullyPaid = true;
 		for (int i = 1; i < scheduleDetails.size(); i++) {

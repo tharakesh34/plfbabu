@@ -9798,6 +9798,9 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 

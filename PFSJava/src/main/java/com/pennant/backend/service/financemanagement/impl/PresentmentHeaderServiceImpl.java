@@ -57,6 +57,9 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -71,6 +74,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.GenericService;
@@ -101,6 +105,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private ReceiptCalculator receiptCalculator;
 	private ReceiptService receiptService;
 	private FinanceDetailService financeDetailService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private FinanceMainDAO financeMainDAO ;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -133,6 +140,22 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		this.financeDetailService = financeDetailService;
 	}
 
+	public RepaymentPostingsUtil getRepaymentPostingsUtil() {
+		return repaymentPostingsUtil;
+	}
+
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 	@Override
 	public PresentmentHeader getPresentmentHeader(long id) {
 		return this.presentmentHeaderDAO.getPresentmentHeader(id, "_View");
@@ -157,7 +180,21 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentIdAsZero(long presentmentId) {
 		presentmentHeaderDAO.updatePresentmentIdAsZero(presentmentId);
 	}
-	
+
+	@Override
+	public void updateFinanceDetails(String presentmentRef) {
+		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail detail = presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
+		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(detail.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+		boolean isFinactive = repaymentPostingsUtil.isSchdFullyPaid(detail.getFinReference(), list);
+
+		if (isFinactive) {
+			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	
 	/* processPresentmentDetails */
 	@Override
@@ -533,4 +570,13 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
 				new HashMap<String, ArrayList<ErrorDetails>>());
 	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+	
 }
