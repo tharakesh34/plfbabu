@@ -43,7 +43,7 @@
 							autodisable="button_FinanceTaxDetailList_FinanceTaxDetailSearch,print,button_FinanceTaxDetailList_NewFinanceTaxDetail,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="help" label="${c:l('label_Help')}"
+						<button id="help" label="${c:l('label_Help')}" visible="false"
 							autodisable="button_FinanceTaxDetailList_FinanceTaxDetailSearch,print,button_FinanceTaxDetailList_NewFinanceTaxDetail,btnRefresh,help"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							sclass="z-toolbarbutton" />
