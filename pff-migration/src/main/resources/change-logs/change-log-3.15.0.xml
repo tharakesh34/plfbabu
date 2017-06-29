@@ -5190,7 +5190,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
         alter table CIBIL_COLLATERAL_TYPES_MAPPING add constraint DF_CIBL_COLT_TYPE_MAPNG_VER default 0 for Version;
     </sql>
 	</changeSet>
-	<changeSet id="133.1" author="Jayant" dbms="mssql">
+	<changeSet id="133.1" author="Jayant" >
     <sql>
 	ALTER TABLE DATA_ENGINE_CONFIG DROP CONSTRAINT FK_DE_CONFIG_PARSER;
 	</sql>
@@ -5255,7 +5255,7 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 
 </changeSet>
 
-	<changeSet id="250" author="jayanth" dbms="oracle">
+	<changeSet id="251" author="jayanth" dbms="oracle">
 	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
