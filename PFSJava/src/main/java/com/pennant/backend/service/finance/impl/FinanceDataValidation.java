@@ -2298,8 +2298,11 @@ public class FinanceDataValidation {
 		errorDetails = repayAdvRateValidation(finScheduleData);
 
 		//Validate BPI
-		if (finMain.isAlwBPI()) {
+		if (financeType.isAlwBPI()) {
 		errorDetails = bpiValidation(finScheduleData);
+		} else if (finMain.isAlwBPI()) {
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90228", null)));
+			return errorDetails;
 		}
 
 		return errorDetails;
@@ -3645,7 +3648,6 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> bpiValidation(FinScheduleData finScheduleData) {
 		List<ErrorDetails> errorDetails = finScheduleData.getErrorDetails();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
 
 		if (!finMain.isAlwBPI()) {
 			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)) {
@@ -3659,21 +3661,17 @@ public class FinanceDataValidation {
 			frqBPI = finMain.getGrcPftFrq();
 			frqDate = finMain.getNextGrcPftDate();
 		} else {
-			frqBPI = finMain.getRepayFrq();
+			frqBPI = finMain.getRepayPftFrq();
 			frqDate = finMain.getNextRepayPftDate();
 		}
+		if(finMain.isAlwBPI()){
 		Date bpiDate = DateUtility.getDate(	DateUtility.formatUtilDate(FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
 										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),PennantConstants.dateFormat));
 		if (DateUtility.compare(bpiDate, frqDate) >= 0) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null)));
 			return errorDetails;
 		}
-
-		if (finMain.isAlwBPI() && !financeType.isAlwBPI()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90228", null)));
-			return errorDetails;
 		}
-
 		if (StringUtils.isNotBlank(finMain.getBpiTreatment())) {
 			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)
 					&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
