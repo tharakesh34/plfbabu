@@ -5592,4 +5592,15 @@ union
 	       ALTER TABLE RejectFinScheduledetails  RENAME COLUMN TMP3 TO SCHDINSPAID;
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="258" author="Siva">
+		<sql>
+			Delete from SMTparameters where SysParmCode = 'FUTUREDAYS_STARTDATE';
+	
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,
+				SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('FUTUREDAYS_STARTDATE','Number of Days Future Days allowed for Start Date','int',1,'25'
+				,2,0,null,null,'Number of Days Future Days allowed for Start Date',1,1000,CURRENT_TIMESTAMP,	'Approved',null,null,null,null,null,0);
+			</sql>
+	</changeSet> 
 	</databaseChangeLog>
