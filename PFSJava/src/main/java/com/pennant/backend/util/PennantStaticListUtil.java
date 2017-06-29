@@ -2711,7 +2711,8 @@ public class PennantStaticListUtil {
 			taxApplicableFor = new ArrayList<ValueLabel>(3);
 			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER, Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
 			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT, Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
-			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
+			//Commented code as for Bajaj Requirement
+			//taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
 		}
 		return taxApplicableFor;
 	}
