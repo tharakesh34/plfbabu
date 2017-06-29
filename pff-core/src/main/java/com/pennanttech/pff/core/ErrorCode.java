@@ -17,6 +17,8 @@ package com.pennanttech.pff.core;
 public enum ErrorCode {
 	// The prefix PPS stands for pennApps Product Suite.
 	PPS_900("900: Unable to process the request. Please try again later or contact the system administrator."),
+	PPS_901("901: Unable to process the request due to issues with cache manager. Please try again later or contact the system administrator."),
+	PPS_902("902: Cache manager Already Started."),
 	PPS_801("801: The record has been modified by another user. Please refresh the list to get the latest details of the record."),
 	PPS_802("802: The record is in use and therefore cannot be deleted."),
 	PPS_899("899: Unable to process the request due to invalid {0} configuration. Please contact the system administrator.");
