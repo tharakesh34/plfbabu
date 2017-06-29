@@ -205,6 +205,12 @@
 			<artifactId>pff-interface-bajaj</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-embedded</artifactId>
+			<version>9.0.0.Final</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

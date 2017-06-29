@@ -10251,4 +10251,16 @@
 	</bean>
 	
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl"/>
+
+	<!-- Cache Administartion -->
+
+	<bean id="cacheDAO"
+		class="com.pennant.backend.dao.cacheadministration.impl.CacheDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean name="cacheAdministrationService"
+		class="com.pennant.backend.service.cacheadministration.impl.CacheAdministrationServiceImpl" />
+	
+	
 </beans>
