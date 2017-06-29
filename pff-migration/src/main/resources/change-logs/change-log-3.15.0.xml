@@ -846,7 +846,36 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet author="Madhubabu" id="31">
+	<changeSet author="Madhubabu" id="31" dbms="oracle">
+		<createTable tableName="FinTaxDetailUpload_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="31" dbms="mssql">
 		<createTable tableName="FinTaxDetailUpload_temp">
 			<column name="TaxCode" type="varchar2(50)" />
 			<column name="AggrementNo" type="nvarchar(20)">
@@ -1707,7 +1736,7 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 	<dropTable tableName="FinTaxDetailUpload_temp"/>
 	<dropTable tableName="FinTaxDetailUpload"/>
 	</changeSet>
-<changeSet author="Madhubabu" id="99">
+<changeSet author="Madhubabu" id="99" dbms="oracle">
 	<createTable tableName="FinTaxDetailUploadHeader">
 		<column name="BatchReference" type="varchar(20)" />
 		<column name="FileName" type="varchar(20)" />
@@ -1715,6 +1744,25 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="BatchCreatedDate" type="datetime" />
 		<column name="BatchApprovedDate" type="datetime" />
 		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet author="Madhubabu" id="99" dbms="mssql">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Version" type="int" />
 		<column name="LastMntBy" type="bigint" />
 		<column name="LastMntOn" type="datetime" />
 		<column name="RecordStatus" type="nvarchar(50)" />
@@ -1762,7 +1810,7 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		</createTable>
 	</changeSet>
 	
-	<changeSet author="Madhubabu" id="101">
+	<changeSet author="Madhubabu" id="101" dbms="oracle">
 		<createTable tableName="FinTaxUploadDetail_temp">
 			<column name="TaxCode" type="varchar2(50)" />
 			<column name="AggrementNo" type="nvarchar(20)">
@@ -1791,11 +1839,39 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet author="Madhubabu" id="101" dbms="mssql">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="102" author="Madhubabu">
 	<dropTable tableName="FinTaxUploadDetail_temp"/>
 	</changeSet>
-	<changeSet author="Madhubabu" id="103">
+	<changeSet author="Madhubabu" id="103" dbms="oracle">
 		<createTable tableName="FinTaxUploadDetail_temp">
 			<column name="BatchReference" type="varchar(20)"/>
 			<column name="TaxCode" type="varchar2(50)" />
@@ -1825,10 +1901,40 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet author="Madhubabu" id="103" dbms="mssql">
+		<createTable tableName="FinTaxUploadDetail_temp">
+			<column name="BatchReference" type="varchar(20)"/>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="104" author="Madhubabu">
 	<dropTable tableName="FinTaxDetailUploadHeader"/>
 	</changeSet>
-	<changeSet author="Madhubabu" id="105">
+	<changeSet author="Madhubabu" id="105" dbms="oracle">
 	<createTable tableName="FinTaxDetailUploadHeader">
 		<column name="BatchReference" type="varchar(20)" />
 		<column name="FileName" type="varchar(20)" />
@@ -1837,6 +1943,26 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="BatchApprovedDate" type="datetime" />
 		<column name="Status" type="nvarchar(10)" />
 		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet author="Madhubabu" id="105" dbms="mssql">
+	<createTable tableName="FinTaxDetailUploadHeader">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int" />
 		<column name="LastMntBy" type="bigint" />
 		<column name="LastMntOn" type="datetime" />
 		<column name="RecordStatus" type="nvarchar(50)" />
@@ -2112,7 +2238,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</changeSet>
 	
 	
-	<changeSet id="123" author="Manoj.P">
+	<changeSet id="123" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBAM_CD" nullable="false"/>
@@ -2135,7 +2261,29 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="123" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBAM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AddrTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	<changeSet id="124" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBAM_ADT"
 			referencedTableName="BMTADDRESSTYPES" referencedColumnNames="AddrTypeCode"
@@ -2144,7 +2292,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	
 	
 	
-<changeSet id="125" author="Manoj.P">
+<changeSet id="125" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBPM_CD" nullable="false"/>
@@ -2167,17 +2315,35 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
-	
+	<changeSet id="125" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBPM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PhoneTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
 	<changeSet id="126" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBAM_PT"
 			referencedTableName="BMTPHONETYPES" referencedColumnNames="PhoneTypeCode"
 			baseTableName="CIBIL_PHONE_TYPES_MAPPING" baseColumnNames="PhoneTypeCode" />
 	</changeSet>
-	
-	
-	
-	<changeSet id="127" author="Manoj.P">
+	<changeSet id="127" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_EMAIL_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBEM_CD" nullable="false"/>
@@ -2200,7 +2366,29 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
+	<changeSet id="127" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_EMAIL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBEM_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>	
 	
 	<changeSet id="128" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CBEM_ET"
@@ -2208,7 +2396,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			baseTableName="CIBIL_EMAIL_TYPES_MAPPING" baseColumnNames="EmailTypeCode" />
 	</changeSet>
 	
-	<changeSet id="129" author="Manoj.P">
+	<changeSet id="129" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				
@@ -2231,8 +2419,33 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	
+	<changeSet id="129" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Manoj.P" id="130.1" dbms="mssql">
+		<addNotNullConstraint tableName="CIBIL_ACCOUNT_TYPES_MAPPING" columnName="Code" columnDataType="char(2)"/>
+		<addNotNullConstraint tableName="CIBIL_ACCOUNT_TYPES_MAPPING" columnName="FinType" columnDataType="VARCHAR2(8)"/>
+	</changeSet>
 	<changeSet author="Manoj.P" id="130">
 		<addPrimaryKey columnNames="Code,FinType" constraintName="PK_CB_CD_FT"
 		tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
@@ -2244,7 +2457,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			baseTableName="CIBIL_ACCOUNT_TYPES_MAPPING" baseColumnNames="FinType"/>
 	</changeSet>
 	
-	<changeSet id="132" author="Manoj.P">
+	<changeSet id="132" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBCT_CD" nullable="false"/>
@@ -2266,9 +2479,30 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>		
+	<changeSet id="132" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBCT_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
 	</changeSet>	
-	
-	
 	<changeSet id="133" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_CS"
 			referencedTableName="COLLATERALSTRUCTURE" referencedColumnNames="CollateralType"
@@ -2282,7 +2516,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</sql>
 	</changeSet>
 	
-	<changeSet id="134" author="Manoj.P">
+	<!-- <changeSet id="134" author="Manoj.P">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 			SELECT M.MANDATEID, 
 			BD.BANKSHORTCODE BANKCODE,
@@ -2331,7 +2565,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 			
 		</createView>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="135" author="Manoj.P">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES">
@@ -2374,7 +2608,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</changeSet>
 	
 	
-	<changeSet id="140" author="Manoj.P">
+	<changeSet id="140" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBDM_DT" nullable="false"/>
@@ -2397,7 +2631,29 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="140" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_DOCUMENT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBDM_DT" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocTypeCode" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	
 	
 	<changeSet id="141" author="Manoj.P">
@@ -4892,5 +5148,46 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
 			INSERT INTO SMTPARAMETERS VALUES ('GST_TAXDETAIL_DOWNLOAD', 'Taxdetail download daily(Y) or monthly(N)', 'String', 1, 'Y', '1', 0, NULL, NULL, 'Taxdetail download daily(Y) or monthly(N).', 1, 1000,
 			CURRENT_TIMESTAMP, 'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
+	</changeSet>
+<changeSet id="101.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxUploadDetail_temp add constraint DF_FinTaxUpldDet_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="103.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxUploadDetail_temp add constraint DF_FinTaxUpldDet_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+
+<changeSet id="105.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxDetailUploadHeader add constraint DF_FinTaxDetUpldHdr_T_Ver default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="123.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_ADDRESS_TYPES_MAPPING add constraint DF_CIBL_ADDR_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+</changeSet>
+<changeSet id="125.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_PHONE_TYPES_MAPPING add constraint DF_CIBL_PHN_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+		<changeSet id="127.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_EMAIL_TYPES_MAPPING add constraint DF_CIBL_EML_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+	<changeSet id="129.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_ACCOUNT_TYPES_MAPPING add constraint DF_CIBL_ACC_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
+	</changeSet>
+	<changeSet id="132.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table CIBIL_COLLATERAL_TYPES_MAPPING add constraint DF_CIBL_COLT_TYPE_MAPNG_VER default 0 for Version;
+    </sql>
 	</changeSet>
 </databaseChangeLog>
