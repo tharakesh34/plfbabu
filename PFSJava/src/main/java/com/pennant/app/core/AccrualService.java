@@ -419,7 +419,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalRbtSchd(pftDetail.getTotalRbtSchd().add(curSchd.getRebate()));
 
 		//Schedule Information
-		if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
 			//Installments, Paid and OD
 			pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
@@ -429,8 +429,7 @@ public class AccrualService extends ServiceHelper {
 
 			//First Repayments Date and Amount
 			if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
-				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0 &&
-						curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) {
+				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
 					pftDetail.setFirstRepayDate(curSchd.getSchDate());
 					pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 				}
@@ -505,7 +504,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
 
 		//NEXT Schedule Details
-		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (!isHoliday(curSchd.getBpiOrHoliday()))) {
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
 			if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 				pftDetail.setNSchdDate(curSchd.getSchDate());
 				pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
