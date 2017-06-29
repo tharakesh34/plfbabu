@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.taxdownload;
 
 public interface TaxDownlaodDetailService {
-	void process(Object... params) throws Exception;
+	public void sendReqest(Object... params) throws Exception;
 }

@@ -26,7 +26,7 @@ public class TestTaxDownlaodDetailService {
 	@Test
 	public void process() {
 		try {
-			this.taxDownlaodDetailServiceImpl.process(new Long(1000),  DateUtil.parse("03-JUL-17", "dd-MMM-yy"));
+			this.taxDownlaodDetailServiceImpl.sendReqest(new Long(1000), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

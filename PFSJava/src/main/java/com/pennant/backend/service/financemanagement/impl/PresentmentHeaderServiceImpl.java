@@ -358,18 +358,15 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
 			}
 			if (excludeList != null && !excludeList.isEmpty()) {
-				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList,
-						RepayConstants.PEXC_MANUAL_EXCLUDE);
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
 			}
-			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
-					partnerBankId);
+			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Submit".equals(userAction)) {
 			if (includeList != null && !includeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
 			}
 			if (excludeList != null && !excludeList.isEmpty()) {
-				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList,
-						RepayConstants.PEXC_MANUAL_EXCLUDE);
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
 			}
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF,
 					partnerBankId);

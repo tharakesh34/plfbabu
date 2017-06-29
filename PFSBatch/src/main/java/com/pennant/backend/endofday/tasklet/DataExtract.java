@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -250,8 +251,18 @@ public class DataExtract implements Tasklet {
 
 		public void run() {
 			try {
-				logger.debug("Trail Balance Request Service started...");
-				this.taxDownlaodDetailService.process(userId, DateUtility.getAppValueDate());
+				logger.debug("TaxDownlaodDetail Service started...");
+
+				Date appDate = DateUtility.getAppValueDate();
+				Date monthEndDate = DateUtility.getMonthEndDate(appDate);
+				String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
+				
+				if (StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {
+					this.taxDownlaodDetailService.sendReqest(userId, appDate, appDate, appDate);
+				} else if (DateUtility.compare(appDate, monthEndDate) == 0) {
+					Date monthStartDate = DateUtility.getMonthEndDate(appDate);
+					this.taxDownlaodDetailService.sendReqest(userId, appDate, monthStartDate, monthEndDate);
+				}
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
