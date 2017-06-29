@@ -5190,6 +5190,11 @@ T1.LastMntBy ,T1.LastMntOn ,T1.RoleCode ,T1.RecordStatus ,T1.NextRoleCode ,T1.Ta
         alter table CIBIL_COLLATERAL_TYPES_MAPPING add constraint DF_CIBL_COLT_TYPE_MAPNG_VER default 0 for Version;
     </sql>
 	</changeSet>
+	<changeSet id="133.1" author="Jayant" dbms="mssql">
+    <sql>
+	ALTER TABLE DATA_ENGINE_CONFIG DROP CONSTRAINT FK_DE_CONFIG_PARSER;
+	</sql>
+	</changeSet>
 	
 	<changeSet id="133" author="Durgaprasad G">
 	<sql>
