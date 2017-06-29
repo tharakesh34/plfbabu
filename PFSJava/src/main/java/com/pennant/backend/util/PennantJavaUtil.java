@@ -407,7 +407,7 @@ public class PennantJavaUtil {
 		"BuilderGroup_AView" }, masterWF, new String[] {"Id","Name"},null, 350));
 		
 		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
-		"BuilderCompany_AView" }, masterWF, new String[] {"Name","Segmentation","GroupId","Id"},null, 600));
+		"BuilderCompany_AView" }, masterWF, new String[] {"Id","Name","Segmentation","GroupId"},null, 600));
 
 		ModuleUtil.register("BuilderProjcet", new ModuleMapping("BuilderProjcet", BuilderProjcet.class, new String[] { "BuilderProjcet",
 		"BuilderProjcet_AView" }, masterWF, new String[] {"Id","Name","BuilderId","ApfNo"},null, 600));
