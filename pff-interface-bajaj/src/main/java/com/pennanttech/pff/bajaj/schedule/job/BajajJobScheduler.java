@@ -18,7 +18,6 @@ import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 import com.pennanttech.pff.core.job.scheduler.JobSchedulerDetails;
 
 public class BajajJobScheduler extends AbstractJobScheduler {
-
 	private static final Logger	logger		= Logger.getLogger(BajajJobScheduler.class);
 
 	protected DataSource		dataSource;
@@ -31,7 +30,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	@Override
 	public void addJobs() throws ParseException {
 		logger.debug(Literal.ENTERING);
-
+		
 		autoDisbursementJob();
 		impsDisbursementRespJob();
 		posidexCustomerUpdateRespJob();
