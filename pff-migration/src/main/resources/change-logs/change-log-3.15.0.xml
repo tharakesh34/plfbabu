@@ -904,7 +904,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="31.1" author="Jayant">
+	<changeSet id="31.1" author="Jayant" dbms="mssql">
 	    <sql>
 	        alter table FinTaxDetailUpload_temp add constraint DF_FINTAXDETUPLD_T_VER default 0 for Version;
 	    </sql>
@@ -1774,7 +1774,7 @@ Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfi
 		<column name="WorkflowId" type="bigint" />
 	</createTable>
 </changeSet>
-<changeSet id="99.1" author="Jayant">
+<changeSet id="99.1" author="Jayant" dbms="mssql">
     <sql>
         alter table FinTaxDetailUploadHeader add constraint DF_FinTaxDetUpld_Ver default 0 for Version;
     </sql>
