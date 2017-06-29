@@ -231,12 +231,11 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
-
+	
 	// Preparing the SQL Query.
-	private StringBuilder getSql(String table) {
+	private StringBuilder getTaxDownLoadDetailSql() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO ");
-		sql.append(table);
+		sql.append(" INSERT INTO TAXDOWNLOADDETAIL");
 		sql.append(" (HEADERID,  TRANSACTION_DATE,  HOST_SYSTEM_TRANSACTION_ID,  TRANSACTION_TYPE,  BUSINESS_AREA,");
 		sql.append(" SOURCE_SYSTEM,  COMPANY_CODE,  REGISTERED_CUSTOMER,  CUSTOMER_ID,  CUSTOMER_NAME,");
 		sql.append(" CUSTOMER_GSTIN,  CUSTOMER_ADDRESS,  CUSTOMER_STATE_CODE,  ADDRESS_CHANGE_DATE,  PAN_NO,");
@@ -245,6 +244,27 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE, ORIGINAL_INVOICE_NO)");
 		sql.append(" values(");
 		sql.append(":HEADERID, :TRANSACTION_DATE, :HOST_SYSTEM_TRANSACTION_ID, :TRANSACTION_TYPE, :BUSINESS_AREA,");
+		sql.append(":SOURCE_SYSTEM, :COMPANY_CODE, :REGISTERED_CUSTOMER, :CUSTOMER_ID, :CUSTOMER_NAME,");
+		sql.append(":CUSTOMER_GSTIN, :CUSTOMER_ADDRESS, :CUSTOMER_STATE_CODE, :ADDRESS_CHANGE_DATE, :PAN_NO,");
+		sql.append(":LEDGER_CODE, :HSN_SAC_CODE, :NATURE_OF_SERVICE, :LOAN_ACCOUNT_NO, :PRODUCT_CODE,:CHARGE_CODE,");
+		sql.append(":LOAN_BRANCH, :LOAN_BRANCH_STATE, :LOAN_SERVICING_BRANCH, :BFL_GSTIN_NO, :TXN_BRANCH_ADDRESS,");
+		sql.append(":TXN_BRANCH_STATE_CODE, :TRANSACTION_AMOUNT, :REVERSE_CHARGE_APPLICABLE, :INVOICE_TYPE, :ORIGINAL_INVOICE_NO)");
+		
+		return sql;
+	}
+
+	// Preparing the SQL Query.
+	private StringBuilder getGSTSql() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO LEA_GST_TMP_DTL");
+		sql.append(" (TRANSACTION_DATE,  HOST_SYSTEM_TRANSACTION_ID,  TRANSACTION_TYPE,  BUSINESS_AREA,");
+		sql.append(" SOURCE_SYSTEM,  COMPANY_CODE,  REGISTERED_CUSTOMER,  CUSTOMER_ID,  CUSTOMER_NAME,");
+		sql.append(" CUSTOMER_GSTIN,  CUSTOMER_ADDRESS,  CUSTOMER_STATE_CODE,  ADDRESS_CHANGE_DATE,  PAN_NO,");
+		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
+		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
+		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE, ORIGINAL_INVOICE_NO)");
+		sql.append(" values(");
+		sql.append(":TRANSACTION_DATE, :HOST_SYSTEM_TRANSACTION_ID, :TRANSACTION_TYPE, :BUSINESS_AREA,");
 		sql.append(":SOURCE_SYSTEM, :COMPANY_CODE, :REGISTERED_CUSTOMER, :CUSTOMER_ID, :CUSTOMER_NAME,");
 		sql.append(":CUSTOMER_GSTIN, :CUSTOMER_ADDRESS, :CUSTOMER_STATE_CODE, :ADDRESS_CHANGE_DATE, :PAN_NO,");
 		sql.append(":LEDGER_CODE, :HSN_SAC_CODE, :NATURE_OF_SERVICE, :LOAN_ACCOUNT_NO, :PRODUCT_CODE,:CHARGE_CODE,");
@@ -340,20 +360,13 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 	// Saving TAXDOWNLOADDETAIL in to DB
 	private void saveDetails(MapSqlParameterSource map) {
-		saveTaxDetails(map, "TAXDOWNLOADDETAIL");
-		saveTaxDetails(map, "LEA_GST_TMP_DTL");
-	}
-
-	private void saveTaxDetails(MapSqlParameterSource map, String tableName) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = null;
-		sql = getSql(tableName);
+		sql = getTaxDownLoadDetailSql();
 		destinationJdbcTemplate.update(sql.toString(), map);
 		
-		logger.debug(Literal.LEAVING);
+		sql = getGSTSql();
+		destinationJdbcTemplate.update(sql.toString(), map);
 	}
-
 
 	// Saving TAXDOWNLOADHAEDER in to DB
 	private long saveHeader() {
