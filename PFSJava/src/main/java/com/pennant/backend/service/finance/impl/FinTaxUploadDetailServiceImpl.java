@@ -370,55 +370,55 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			}
 			if (taxuploadDetail.getApplicant().length() > 20) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Applicant.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 20 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine1().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine1.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine2().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine2.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine3().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine3.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine4().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine4.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getCountry().length() > 2) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Country.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 2 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getProvince().length() > 8) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Province.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 8 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getCity().length() > 50) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_City.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 50 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getPinCode().length() > 10) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_PinCode.label");
-				errParm[2] = 1 + "";
+				errParm[2] = 10 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
@@ -578,7 +578,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				getListAuditDetails(listDeletion(finTaxUploadHeader, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-			//update or insert based on availability.
+		//update or insert based on availability.
 		for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
 			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
 					.getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View");
@@ -586,13 +586,13 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
 				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
 			} else {
-				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
-				getFinanceTaxDetailDAO().save(financeTaxDetail, TableType.MAIN_TAB);
+				FinanceTaxDetail detail = new FinanceTaxDetail();
+				preparefinTaxDetail(finTaxUploadDetail, detail);
+				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
 			}
 
 		}
 
-		
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(finTaxUploadHeader);
