@@ -116,11 +116,11 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFeeID(feeId);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			deleteSql.append(" DELETE FROM WIFFinFeeScheduleDetail");
-		}else{
+		} else {
 			deleteSql.append(" DELETE FROM FinFeeScheduleDetail");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
@@ -129,7 +129,43 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for saving Fee schedule Details list
+	 */
+	@Override
+	public void deleteFeeScheduleBatchByFinRererence(String finReference, boolean isWIF, String tableType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource parameter = null;
+		StringBuilder selectSql = new StringBuilder();
+
+		try {
+			if (isWIF) {
+				selectSql.append("Delete from WIFFINFEESCHEDULEDETAIL" + StringUtils.trimToEmpty(tableType));
+				selectSql.append(" Where FeeId IN (Select FeeID from WIFFinFeeDetail" + StringUtils.trimToEmpty(tableType));
+			} else {
+				selectSql.append("Delete from FINFEESCHEDULEDETAIL" + StringUtils.trimToEmpty(tableType));
+				selectSql.append(" Where FeeId IN (Select FeeID from FinFeeDetail" + StringUtils.trimToEmpty(tableType));
+			}
+			selectSql.append(" Where FinReference = :FinReference)");
+
+			logger.debug("selectSql: " + selectSql.toString());
+
+			parameter = new MapSqlParameterSource();
+			parameter.addValue("FinReference", finReference);
+
+			this.namedParameterJdbcTemplate.update(selectSql.toString(), parameter);
+		} catch (Exception e) {
+			// logger.error("Exception: ", e);
+		} finally {
+			selectSql = null;
+			parameter = null;
+			logger.debug("Leaving");
+		}
 	}
 	
 	/**

@@ -92,12 +92,14 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public FinFeeDetail getFinFeeDetail() {
 		logger.debug("Entering");
+		
 		WorkFlowDetails workFlowDetails=WorkFlowUtil.getWorkFlowDetails("FinFeeDetail");
 		FinFeeDetail finFeeDetail= new FinFeeDetail();
 		if (workFlowDetails!=null){
 			finFeeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
+		
 		return finFeeDetail;
 	}
 
@@ -111,9 +113,11 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public FinFeeDetail getNewFinFeeDetail() {
 		logger.debug("Entering");
+		
 		FinFeeDetail finFeeDetail = getFinFeeDetail();
 		finFeeDetail.setNewRecord(true);
 		logger.debug("Leaving");
+		
 		return finFeeDetail;
 	}
 
@@ -134,12 +138,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference, Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",FeeTypeCode,FeeTypeDesc ");
 		}
-		if(isWIF){
+		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");
-		}else{
+		} else {
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -149,18 +153,21 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		
-		try{
-			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			finFeeDetail = null;
 		}
+		
 		logger.debug("Leaving");
+		
 		return finFeeDetail;
 	}
 	
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference,boolean isWIF, String type) {
 		logger.debug("Entering");
+		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
 		
@@ -169,12 +176,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status, " );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
-		if(isWIF){
+		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");
-		}else{
+		} else {
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -184,12 +191,14 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		logger.debug("Leaving");
+		
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(final String reference,boolean isWIF, String type, String finEvent) {
 		logger.debug("Entering");
+		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
 		finFeeDetail.setFinEvent(finEvent);
@@ -199,21 +208,23 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
-		if(isWIF){
+		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");
-		}else{
+		} else {
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference And FinEvent = :FinEvent");
-		
 		logger.debug("selectSql: " + selectSql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		
 		logger.debug("Leaving");
+		
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
@@ -221,6 +232,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public List<FinFeeDetail> getFinScheduleFees(final String reference,boolean isWIF, String type) {
 		logger.debug("Entering");
+		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
 		
@@ -229,21 +241,23 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 		}
-		if(isWIF){
+		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");
-		}else{
+		} else {
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference And FeeScheduleMethod IN ('STFI', 'STNI', 'STET', 'POSP')");
-		
 		logger.debug("selectSql: " + selectSql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		
 		logger.debug("Leaving");
+		
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
@@ -256,22 +270,25 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public List<FinFeeDetail> getPaidFinFeeDetails(final String reference, String type) {
 		logger.debug("Entering");
+		
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference,Status " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,FeeTypeCode, FeeTypeDesc ");
 		}
 		selectSql.append(" From FinFeeDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference And PaidAmount > 0 ");
-		
 		logger.debug("selectSql: " + selectSql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		
 		logger.debug("Leaving");
+		
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
@@ -283,15 +300,6 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public void refresh(FinFeeDetail finFeeDetail) {
 		
-	}
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	/**
@@ -309,10 +317,11 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	@Override
 	public void delete(FinFeeDetail finFeeDetail,boolean isWIF,String type) {
 		logger.debug("Entering");
+		
 		StringBuilder deleteSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			deleteSql.append("Delete From WIFFinFeeDetail");
-		}else{
+		} else {
 			deleteSql.append("Delete From FinFeeDetail");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -320,11 +329,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		try{
+		try {
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
+		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 	
@@ -351,9 +361,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		}	
 		
 		StringBuilder insertSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			insertSql.append(" Insert Into WIFFinFeeDetail");
-		}else{
+		} else {
 			insertSql.append(" Insert Into FinFeeDetail");
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -372,6 +382,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
+		
 		return finFeeDetail.getFeeID();
 	}
 	
@@ -390,13 +401,13 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	
 	@Override
 	public void update(FinFeeDetail finFeeDetail,boolean isWIF,String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		
+		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			updateSql.append("Update WIFFinFeeDetail");
-		}else{
+		} else {
 			updateSql.append("Update FinFeeDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
@@ -422,6 +433,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+		
 		logger.debug("Leaving");
 	}
 	
@@ -440,17 +452,17 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	
 	@Override
 	public void statusUpdate(long feeID, String status, boolean isWIF,String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		
+		int recordCount = 0;
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFeeID(feeID);
 		finFeeDetail.setStatus(status);
 		
 		StringBuilder updateSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			updateSql.append("Update WIFFinFeeDetail");
-		}else{
+		} else {
 			updateSql.append("Update FinFeeDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
@@ -464,31 +476,56 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+		
 		logger.debug("Leaving");
 	}
 	
 	@Override
-    public void deleteByFinRef(String loanReference,boolean isWIF, String tableType) {
+	public void deleteByFinRef(String loanReference, boolean isWIF, String tableType) {
 		logger.debug("Entering");
+
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(loanReference);
-		
+
 		StringBuilder deleteSql = new StringBuilder();
-		if(isWIF){
+		if (isWIF) {
 			deleteSql.append("Delete From WIFFinFeeDetail");
-		}else{
+		} else {
 			deleteSql.append("Delete From FinFeeDetail");
 		}
 		deleteSql.append(StringUtils.trimToEmpty(tableType));
 		deleteSql.append(" Where FinReference = :FinReference ");
 		logger.debug("deleteSql: " + deleteSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public void deleteServiceFeesByFinRef(String loanReference, boolean isWIF, String tableType) {
+		logger.debug("Entering");
+		
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setFinReference(loanReference);
+		
+		StringBuilder deleteSql = new StringBuilder();
+		if (isWIF) {
+			deleteSql.append("Delete From WIFFinFeeDetail");
+		} else {
+			deleteSql.append("Delete From FinFeeDetail");
+		}
+		deleteSql.append(StringUtils.trimToEmpty(tableType));
+		deleteSql.append(" Where FinReference = :FinReference AND OriginationFee = 0");
+		logger.debug("deleteSql: " + deleteSql.toString());
 		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		
 		logger.debug("Leaving");
-	    
-    }
-
+	}
+	
 
 	@Override
 	public int getFeeSeq(FinFeeDetail finFeeDetail, boolean isWIF, String type) {
@@ -509,14 +546,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			
 			selectSql.append(StringUtils.trimToEmpty(type));
 			selectSql.append(" Where FinReference = :FinReference AND FinEvent = :FinEvent");
-			//selectSql.append(" FeeID = :FeeID");
 			
 			logger.debug("selectSql: " + selectSql.toString());
 
 			parameter = new MapSqlParameterSource();
 			parameter.addValue("FinReference", finFeeDetail.getFinReference());
 			parameter.addValue("FinEvent", finFeeDetail.getFinEvent());
-			//parameter.addValue("FeeID", finFeeDetail.getFeeID());
 
 			finSeq = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, Integer.class);
 		} catch (Exception e) {
@@ -557,7 +592,9 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			logger.error("Exception: ", e);
 			summary = null;
 		}
+		
 		logger.debug("Leaving");
+		
 		return finSummary;
     }
 	
@@ -578,12 +615,12 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference,Status," );
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
-		if(StringUtils.trimToEmpty(type).contains("View")){
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",FeeTypeCode,FeeTypeDesc ");
 		}
-		if(isWIF){
+		if (isWIF) {
 			selectSql.append(" From WIFFinFeeDetail");
-		}else{
+		} else {
 			selectSql.append(" From FinFeeDetail");
 		}
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -596,13 +633,23 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		parameter.addValue("VasReference", vasReference);
 		
 		FinFeeDetail finFeeDetail = null;
-		try{
-			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, typeRowMapper);	
-		}catch (EmptyResultDataAccessException e) {
+		try {
+			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
 			finFeeDetail = null;
 		}
+		
 		logger.debug("Leaving");
+		
 		return finFeeDetail;
 	}
 	
+	/**
+	 * To Set  dataSource
+	 * @param dataSource
+	 */
+	
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
 }
