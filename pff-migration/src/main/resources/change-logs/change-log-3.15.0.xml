@@ -6787,4 +6787,9 @@ union
 				<column name="STATUS" type="Char(1)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="294" author=" Jayant">
+	    <sql>
+	        update rmtfinancetypes set manualschedule=0;
+	    </sql>
+	</changeSet>
 	</databaseChangeLog>
