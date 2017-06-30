@@ -5603,4 +5603,10 @@ union
 				,2,0,null,null,'Number of Days Future Days allowed for Start Date',1,1000,CURRENT_TIMESTAMP,	'Approved',null,null,null,null,null,0);
 			</sql>
 	</changeSet> 
+	<changeSet author="Madhubabu" id="259">
+		<sql>
+			delete from errordetails where errorcode='99007'
+			INSERT INTO ErrorDetails VALUES('99007','EN','E','{0} not valid for Aggrement no : {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
