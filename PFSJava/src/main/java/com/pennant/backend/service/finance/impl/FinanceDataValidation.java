@@ -2552,9 +2552,22 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 				return errorDetails;
 			}
+			if (!financeType.isPlanEMICpz()) {
+				if (finMain.isPlanEMICpz()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "planEMICpz";
+					valueParm[1] = financeType.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+					return errorDetails;
+				}
+			}
+			if(!finMain.isPlanEMICpz()){
+			finMain.setPlanEMICpz(financeType.isPlanEMICpz());
+			}
 			if (finMain.getPlanEMIHMax() == 0) {
 				finMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
 			}
+			
 			if(finMain.getPlanEMIHMax() < 0){
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHMax";
