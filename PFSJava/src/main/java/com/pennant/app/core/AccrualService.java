@@ -739,8 +739,8 @@ public class AccrualService extends ServiceHelper {
 			}
 			prjAcc.setCumulativeAccrued(cummAccAmt);
 			prjAcc.setSchdTot(prjAcc.getSchdPri().add(prjAcc.getSchdPft()));
-			System.out.println(DateUtility.formatToShortDate(prjAcc.getAccruedOn())
-					 + " ," + prjAcc.getPftAccrued() + "," + prjAcc.getCumulativeAccrued());
+//			System.out.println(DateUtility.formatToShortDate(prjAcc.getAccruedOn())
+//					 + " ," + prjAcc.getPftAccrued() + "," + prjAcc.getCumulativeAccrued());
 			list.add(prjAcc);
 			cummAccAmt = cummAccAmt.add(prjAcc.getPftAccrued());
 
