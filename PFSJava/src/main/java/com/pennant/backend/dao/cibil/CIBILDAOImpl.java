@@ -19,6 +19,8 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.dataengine.model.DataEngineLog;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
@@ -136,16 +138,17 @@ public class CIBILDAOImpl implements CIBILDAO {
 	}
 
 	@Override
-	public long logFileInfo(String fileName, String memberId, String memberName, String memberPwd) {
-		
+	public long logFileInfo(String fileName, String memberId, String memberName, String memberPwd, String reportPath) {
+
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 
 		logger.trace(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder("Insert Into CIBIL_FILE_INFO");
-		sql.append(" (FILE_NAME, MEMBER_ID, MEMBER_NAME, MEMBER_PASSWORD, CREATEDON, STATUS)");
-		sql.append(" Values(:FILE_NAME, :MEMBER_ID, :MEMBER_NAME, :MEMBER_PASSWORD, :CREATEDON, :STATUS)");
+		sql.append(" (FILE_NAME, MEMBER_ID, MEMBER_NAME, MEMBER_PASSWORD, CREATEDON, STATUS, FILE_LOCATION, START_TIME)");
+		sql.append(" Values(:FILE_NAME, :MEMBER_ID, :MEMBER_NAME, :MEMBER_PASSWORD, :CREATEDON, :STATUS,");
+		sql.append(":FILE_LOCATION, :START_TIME)");
 
 		paramMap.addValue("MEMBER_ID", memberId);
 		paramMap.addValue("FILE_NAME", fileName);
@@ -154,6 +157,8 @@ public class CIBILDAOImpl implements CIBILDAO {
 		paramMap.addValue("MEMBER_PASSWORD", memberPwd);
 		paramMap.addValue("CREATEDON", DateUtility.getAppDate());
 		paramMap.addValue("STATUS", "I");
+		paramMap.addValue("FILE_LOCATION", reportPath);
+		paramMap.addValue("START_TIME",  DateUtil.getSysDate());
 
 		try {
 			this.namedJdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "ID" });
@@ -165,21 +170,106 @@ public class CIBILDAOImpl implements CIBILDAO {
 	}
 	
 	@Override
-	public void updateFileStatus(long headerid,String status) {
+	public void logFileInfoException(long id, String finReference, String reason) {
+
+		logger.trace(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Insert Into CIBIL_FILE_INFO_LOG");
+		sql.append(" (ID, FINREFERENCE, REASON, STATUS)");
+		sql.append(" Values(:ID, :FINREFERENCE, :REASON, :STATUS)");
+
+		paramMap.addValue("ID", id);
+		paramMap.addValue("FINREFERENCE", finReference);
+		paramMap.addValue("REASON", reason);
+		paramMap.addValue("STATUS", "F");
+
+		try {
+			this.namedJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.trace(Literal.LEAVING);
+
+	}
+	
+	@Override
+	public DataEngineStatus getLatestExecution() {
+		DataEngineStatus dataStatus = null;
+		RowMapper<DataEngineStatus> rowMapper = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder("Select ID, TOTAL_RECORDS, PROCESSED_RECORDS, SUCCESS_RECORDS, FAILED_RECORDS,");
+		sql.append(" REMARKS, START_TIME, END_TIME from CIBIL_FILE_INFO");
+		sql.append(" where Id = (Select MAX(Id) from CIBIL_FILE_INFO)");
+
+		rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineStatus.class);
+
+		try {
+			dataStatus = namedJdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), rowMapper);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (dataStatus != null) {
+			List<DataEngineLog> list = getExceptions(dataStatus.getId());
+			if (list != null && !list.isEmpty()) {
+				dataStatus.setDataEngineLogList(list);
+			}
+		} else {
+			dataStatus = new DataEngineStatus();
+		}
+
+		return dataStatus;
+	}
+
+	public List<DataEngineLog> getExceptions(long Id) {
+		RowMapper<DataEngineLog> rowMapper = null;
+		MapSqlParameterSource parameterMap = null;
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder("Select * from CIBIL_FILE_INFO_LOG where ID = :ID");
+
+			parameterMap = new MapSqlParameterSource();
+			parameterMap.addValue("ID", Id);
+
+			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
+
+			return namedJdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
+
+		} catch (Exception e) {
+		} finally {
+			rowMapper = null;
+			sql = null;
+		}
+		return null;
+	}
+	
+	@Override
+	public void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords,
+			long successCount, long failedCount, String remarks) {
 		logger.trace(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder("UPDATE  CIBIL_FILE_INFO");
-		sql.append(" SET STATUS = :STATUS WHERE ID = :ID");
-		
-		
-		if("S".equals(status)) {
+		sql.append(" SET STATUS = :STATUS , TOTAL_RECORDS = :TOTALRECORDS, PROCESSED_RECORDS = :PROCESSEDRECORDS,");
+		sql.append(" SUCCESS_RECORDS = :SUCCESSCOUNT, FAILED_RECORDS = :FAILEDCOUNT, REMARKS = :REMARKS,");
+		sql.append("END_TIME = :END_TIME WHERE ID = :ID");
+
+		if ("S".equals(status)) {
 			paramMap.addValue("STATUS", "C");
 		} else {
 			paramMap.addValue("STATUS", "F");
 		}
-		
+
+		paramMap.addValue("TOTALRECORDS", totalRecords);
+		paramMap.addValue("PROCESSEDRECORDS", processedRecords);
+		paramMap.addValue("SUCCESSCOUNT", successCount);
+		paramMap.addValue("FAILEDCOUNT", failedCount);
+		paramMap.addValue("REMARKS", remarks);
 		paramMap.addValue("ID", headerid);
+		paramMap.addValue("END_TIME", DateUtil.getSysDate());
 
 		try {
 			this.namedJdbcTemplate.update(sql.toString(), paramMap);
