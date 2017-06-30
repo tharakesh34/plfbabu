@@ -766,7 +766,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="34.1" author="Jayant">
+	<changeSet id="34.1" author="Jayant" dbms="mssql">
 	    <sql>
 	        alter table AdtFinTaxUploadDetail add constraint ADTFINTAXUPLDDET_VER default 0 for Version;
 	    </sql>
