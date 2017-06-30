@@ -58,6 +58,7 @@ import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -432,10 +433,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getPinCode() != null) {
-				boolean pinValid = getPinCodeDAO().isPinValid(taxuploadDetail.getPinCode());
-
-				if (!pinValid) {
-					String[] errParams = new String[2];
+				PinCode pincode = getPinCodeDAO().getPinCode(taxuploadDetail.getPinCode(), "_View");
+				String[] errParams = new String[2];
+				if (pincode == null) {
 					errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
 							+ taxuploadDetail.getPinCode();
 					errParams[1] = taxuploadDetail.getAggrementNo();
@@ -443,7 +443,37 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 				} else {
 
+					if (!StringUtils.equals(pincode.getPCCityName(), taxuploadDetail.getCity())) {
+						errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":"
+								+ taxuploadDetail.getCity();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+								usrLanguage));
+					}
+					if (!StringUtils.equals(pincode.getPCProvince(), taxuploadDetail.getProvince())) {
+						errParams[0] = PennantJavaUtil.getLabel("listheader_Province.label") + ":"
+								+ taxuploadDetail.getProvince();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+								usrLanguage));
+					}
+					if (!StringUtils.equals(pincode.getpCCountry(), taxuploadDetail.getCountry())) {
+						errParams[0] = PennantJavaUtil.getLabel("listheader_Country.label") + ":"
+								+ taxuploadDetail.getCountry();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+								usrLanguage));
+					}
+
 				}
+			} else {
+				String[] errParams = new String[1];
+				errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label");
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "30561", errParams, valueParm), usrLanguage));
 			}
 
 		}
