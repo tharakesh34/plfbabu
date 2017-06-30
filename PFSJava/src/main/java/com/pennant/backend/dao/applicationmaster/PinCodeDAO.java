@@ -73,6 +73,6 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 	boolean isDuplicateKey(long pinCodeId, String pinCode, TableType tableType);
 	boolean isCityCodeExists(String pcCity);
 	
-	boolean isPinValid(String pinCode);
+	PinCode getPinCode(String pinCode,String type);
 	
 }

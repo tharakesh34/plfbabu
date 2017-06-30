@@ -266,7 +266,7 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 	}
 
 	@Override
-	public boolean isPinValid(String code) {
+	public PinCode getPinCode(String code, String type) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -298,12 +298,7 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		}
 
 		logger.debug(Literal.LEAVING);
-		if (pinCode != null) {
-			return true;
-		} else {
-			return false;
-		}
-
+		return pinCode;
 	}
 	
 }	
