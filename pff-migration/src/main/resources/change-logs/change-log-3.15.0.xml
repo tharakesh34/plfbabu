@@ -2757,7 +2757,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</changeSet> -->
 	
 	
-	<changeSet id="145" author="Manoj.P" dbsm="oracle">
+	<changeSet id="145" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBACM_CD" nullable="false"/>
@@ -2778,7 +2778,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="145" author="Manoj.P" dbsm="mssql">
+	<changeSet id="145" author="Manoj.P" dbms="mssql">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBACM_CD" nullable="false"/>
@@ -2787,7 +2787,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 				<constraints nullable="false" />
 			</column>
 			
-			<column name="Version" type="int" defaultValue="0" />
+			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -2865,7 +2865,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="150.1" author="Jayant">
+	<changeSet id="150.1" author="Jayant" dbms="mssql">
 	    <sql>
 	        alter table CIBIL_PHONE_TYPES add constraint CIBL_PHN_TYPE_VER default 0 for Version;
 	    </sql>
@@ -2891,7 +2891,11 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
+	<changeSet id="151.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table CIBIL_PHONE_TYPES_MAPPING add constraint CIBL_PHN_TYPE_VER default 0 for Version;
+	    </sql>
+	</changeSet>
 	
 	<changeSet id="152" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_PT"
