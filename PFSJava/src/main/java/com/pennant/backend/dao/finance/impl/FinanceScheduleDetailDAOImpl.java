@@ -1344,4 +1344,44 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Leaving");
 		return true;
 	}
+	
+	/**
+	 * Method for fetch Finance Schedule details when Principal Payment greater
+	 * than zero
+	 * 
+	 */
+	@Override
+	public List<FinanceScheduleDetail> getPriPaidSchdDetails(String finReference, String type) {
+		logger.debug("Entering");
+
+		FinanceScheduleDetail detail = new FinanceScheduleDetail();
+		detail.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
+		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
+		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
+		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
+		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, ClosingBalance, ProfitFraction, PrvRepayAmount, ");
+		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
+		selectSql.append(" DefSchdDate,SchdMethod, CalculatedRate,FeeChargeAmt,InsuranceAmt,");
+		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , InsSchd, SchdInsPaid,AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
+		selectSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,  ");
+		selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, ");
+		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
+		selectSql.append(" RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
+		selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee,PartialPaidAmt ");
+		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" Where FinReference = :FinReference AND SchdPriPaid > 0");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
+
+		logger.debug("Leaving");
+		return finSchdDetails;
+	}
 }
