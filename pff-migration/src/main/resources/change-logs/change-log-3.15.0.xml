@@ -6874,4 +6874,9 @@ union
 	        update rmtfinancetypes set manualschedule=0;
 	    </sql>
 	</changeSet>
+	<changeSet id="295" author="Durgaprasad.G">
+	<createView viewName="FileBatchStatus_AView" replaceIfExists="true">
+	 SELECT ID, FILENAME FROM BATCHFILEHEADER
+	</createView>
+	</changeSet>
 	</databaseChangeLog>
