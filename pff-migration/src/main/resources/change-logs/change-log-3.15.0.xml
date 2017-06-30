@@ -3203,7 +3203,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</changeSet>
 	<changeSet id="167.1" author="Jayant" dbms="mssql">
 	    <sql>
-	        alter table CIBIL_DOCUMENT_TYPES add constraint CBL_DOC_TYPE default 0 Version;
+	        alter table CIBIL_DOCUMENT_TYPES add constraint CBL_DOC_TYPE default 0 for Version;
 	    </sql>
 	</changeSet>
 	<changeSet id="168" author="Manoj.P">
