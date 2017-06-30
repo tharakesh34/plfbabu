@@ -1799,7 +1799,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		for (FinAdvancePayments finAdvPayments : list) {
-			if (finAdvPayments.getDisbSeq() == finAdvPayments.getDisbSeq()) {
+			if (finAdvPayments.getDisbSeq() == disbursement.getDisbSeq()) {
 				if (this.paymentSequence.intValue() == finAdvPayments.getPaymentSeq()) {
 					continue;
 				}
