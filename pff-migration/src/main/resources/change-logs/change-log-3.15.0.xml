@@ -5609,4 +5609,7 @@ union
 			INSERT INTO ErrorDetails VALUES('99007','EN','E','{0} not valid for Aggrement no : {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="260" author="Manoj.P">
+		<dropColumn tableName="FINSCHEDULEDETAILS_TEMP" columnName="END_TIME"/>
+	</changeSet>	
 	</databaseChangeLog>
