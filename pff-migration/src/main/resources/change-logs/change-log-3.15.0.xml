@@ -2719,7 +2719,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 <changeSet id="137" author="Madhubabu">
 	<dropTable tableName="FinTaxDetailUploadHeader_Temp"/>
 	</changeSet>
-	<changeSet author="Madhubabu" id="138">
+	<changeSet author="Madhubabu" id="138" dbms="oracle">
 	<createTable tableName="FinTaxUploadHeader_Temp">
 		<column name="BatchReference" type="varchar(20)" />
 		<column name="FileName" type="varchar(20)" />
@@ -2740,7 +2740,31 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	</createTable>
 </changeSet>
 
-
+	<changeSet author="Madhubabu" id="138" dbms="mssql">
+	<createTable tableName="FinTaxUploadHeader_Temp">
+		<column name="BatchReference" type="varchar(20)" />
+		<column name="FileName" type="varchar(20)" />
+		<column name="NumberofRecords" type="nvarchar(10)" />
+		<column name="BatchCreatedDate" type="datetime" />
+		<column name="BatchApprovedDate" type="datetime" />
+		<column name="Status" type="nvarchar(10)" />
+		<column name="Version" type="int"  />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="nvarchar(50)" />
+		<column name="RoleCode" type="nvarchar(100)" />
+		<column name="NextRoleCode" type="nvarchar(200)" />
+		<column name="TaskId" type="nvarchar(50)" />
+		<column name="NextTaskId" type="nvarchar(200)" />
+		<column name="RecordType" type="nvarchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+<changeSet id="138.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table FinTaxUploadHeader_Temp add constraint DF_FINTAXUPLDHDR_T_VER default 0 for Version;
+    </sql>
+</changeSet>
 <changeSet id="143" author="Manoj.P">
 		<createTable tableName="CIBIL_STATES_MAPPING">
 			<column name="Code" type="char(2)">
