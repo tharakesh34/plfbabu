@@ -1629,6 +1629,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void onCheck$bankCustomer(Event event) {
 		logger.debug("Entering");
 		doClearMessage();
+		doRemoveValidation();
 		if (this.bankCustomer.isChecked()) {
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorCIF.setReadonly(true);
