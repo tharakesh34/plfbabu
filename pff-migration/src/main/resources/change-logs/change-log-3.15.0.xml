@@ -5628,4 +5628,12 @@ union
 </sql>
 
 </changeSet>
+
+<changeSet id="263" author="Durgaprasad.g">
+<sql>
+  UPDATE DATA_ENGINE_DB_DETAILS SET PASSWORD = 'ENC(Mvc/obOhI+nxJ3AByJh7Wg==)' WHERE
+  CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS');
+</sql>
+
+</changeSet>
 	</databaseChangeLog>
