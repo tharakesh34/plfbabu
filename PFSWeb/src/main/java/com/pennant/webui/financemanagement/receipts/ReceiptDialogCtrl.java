@@ -788,7 +788,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptData.setAccruedTillLBD(aFinScheduleData.getFinanceMain().getLovDescAccruedTillLBD());
 		receiptData.setFinanceDetail(getFinanceDetail());
 		
-		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		receiptData.setTotReceiptAmount(totReceiptAmount);
 		
 		receiptData = getReceiptCalculator().initiateReceipt(receiptData, aFinScheduleData, valueDate, getReceiptHeader().getReceiptPurpose());
@@ -964,17 +964,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Processing Calculation button visible , if amount modified
 	 * @param event
+	 * @throws InterruptedException 
 	 */
-	public void onFulfill$receiptAmount(Event event) {
+	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
 		logger.debug("Entering");
+		
+		percentageFees(); 
+		
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnReceipt.setDisabled(true);
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
 		
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		
-		// Check Auto Allocation Process existence
 		setAutoAllocationPayments();
 		
 		logger.debug("Leaving");
@@ -1127,7 +1129,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
 		}
 		
-		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		BigDecimal totReceivable = BigDecimal.ZERO;
 		if(totReceiptAmount.compareTo(BigDecimal.ZERO) > 0){
 			totReceivable = totReceiptAmount.add(feeToBePaid);
@@ -1196,25 +1198,36 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException 
 	 */
 	public void onChange$receiptPurpose(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose, true);
 		
 		boolean makeFeeRender = false;
 		eventCode = "";
-		if(this.receiptPurpose.getSelectedIndex() > 0){ 
-			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+		
+		if (this.receiptPurpose.getSelectedIndex() > 0) {
+			if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
-			}else if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-			}else if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 			}
 
 			makeFeeRender = true;
 		}
 		
+		feesRecalculation(makeFeeRender);
+		
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void feesRecalculation(boolean makeFeeRender) throws InterruptedException {
+		logger.debug("Entering");
+		
 		List<FinTypeFees> finTypeFeesList = null;
-		if(StringUtils.isNotEmpty(eventCode)){
+		if (StringUtils.isNotEmpty(eventCode)) {
 			
 			int moduleID = FinanceConstants.MODULEID_FINTYPE;
 			if (StringUtils.isNotBlank(getFinanceDetail().getFinScheduleData().getFinanceMain().getPromotionCode())) {
@@ -1278,6 +1291,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// To set Payment details by default using Auto Allocation mode , if exists
 		setAutoAllocationPayments();
+		
+		logger.debug("Leaving");
 	}
 	
 	/**
@@ -1498,7 +1513,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		receiptData.setAccruedTillLBD(schData.getFinanceMain().getLovDescAccruedTillLBD());
 		receiptData.setFinanceDetail(getFinanceDetail());
-		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		receiptData.setTotReceiptAmount(totReceiptAmount);
 		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, valueDate, tempReceiptPurpose));
 
@@ -1535,7 +1550,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for fetch sum of Total user entered Receipts amounts
 	 * @return
 	 */
-	private BigDecimal getTotalReceiptAmount(){
+	public BigDecimal getTotalReceiptAmount(boolean feeSch){
 		
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal totalReceiptAmount = BigDecimal.ZERO;
@@ -1565,14 +1580,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		// Fee Details
-		if(getFinFeeDetailListCtrl() != null){
-			BigDecimal feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
-			totalReceiptAmount = totalReceiptAmount.subtract(feeToBePaid);
-			
-			// Actual Fee Paid Amount is more than Receipt Amount then Make Zero
-			if(totalReceiptAmount.compareTo(BigDecimal.ZERO) < 0){
-				totalReceiptAmount = BigDecimal.ZERO;
+		if (feeSch) {
+			// Fee Details
+			if(getFinFeeDetailListCtrl() != null){
+				BigDecimal feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
+				totalReceiptAmount = totalReceiptAmount.subtract(feeToBePaid);
+				
+				// Actual Fee Paid Amount is more than Receipt Amount then Make Zero
+				if(totalReceiptAmount.compareTo(BigDecimal.ZERO) < 0){
+					totalReceiptAmount = BigDecimal.ZERO;
+				}
 			}
 		}
 		
@@ -1909,7 +1926,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doSetValidation();
 		FinReceiptHeader receiptHeader = doWriteComponentsToBean();
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		receiptHeader.setReceiptAmount(getTotalReceiptAmount());
+		receiptHeader.setReceiptAmount(getTotalReceiptAmount(true));
 		BigDecimal feeAmount = BigDecimal.ZERO;
 		if(getFinFeeDetailListCtrl() != null){
 			feeAmount = getFinFeeDetailListCtrl().getFeePaidAmount(finFormatter);
@@ -2419,7 +2436,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
 				
 				int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-				BigDecimal totReceiptAmt = getTotalReceiptAmount();
+				BigDecimal totReceiptAmt = getTotalReceiptAmount(true);
 				BigDecimal feeAmount = BigDecimal.ZERO;
 				if(getFinFeeDetailListCtrl() != null){
 					feeAmount = getFinFeeDetailListCtrl().getFeePaidAmount(finFormatter);
@@ -3269,7 +3286,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Setting Valid Components to open based upon Remaining Balance
-		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaidAmount).subtract(totalAdvPaidAmount);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
@@ -3363,7 +3380,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unchecked")
 	public void onExcessPayableAmountChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
-
+		
+		percentageFees();
+		
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		
 		waivedAllocationMap = new HashMap<>();
@@ -3385,6 +3404,27 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// Setting Auto Allocation Process
 		setAutoAllocationPayments();
+		
+		logger.debug("Leaving");
+	}
+
+	private void percentageFees() throws InterruptedException {
+		logger.debug("Entering");
+		
+		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
+			boolean percentageExist = false;
+
+			for (FinFeeDetail finFeeDeatil : finFeeDetails) {
+				if (StringUtils.equals(finFeeDeatil.getCalculateOn(), PennantConstants.FEE_CALCULATEDON_PAYAMOUNT)) {
+					percentageExist = true;
+					break;
+				}
+			}
+			if (percentageExist) {
+				feesRecalculation(true);
+			}
+		}
 		
 		logger.debug("Leaving");
 	}
@@ -4834,7 +4874,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// Entered Receipt Amount Match case test with allocations
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		if(totReceiptAmount.compareTo(BigDecimal.ZERO) == 0){
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_NoReceiptAmount"));
 			return false;

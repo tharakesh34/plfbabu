@@ -2487,7 +2487,7 @@ public class PennantStaticListUtil {
 	
 	
 	public static ArrayList<ValueLabel> getFeeCalculationTypes() {
-		if(feeCalculationTypes == null){
+		if (feeCalculationTypes == null) {
 			feeCalculationTypes = new ArrayList<ValueLabel>(3);
 			feeCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_RULE, Labels.getLabel("Fee_Calculation_Type_Rule")));
 			feeCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, Labels.getLabel("Fee_Calculation_Type_FixedAmount")));
@@ -2497,11 +2497,12 @@ public class PennantStaticListUtil {
 	}
 	
 	public static ArrayList<ValueLabel> getFeeCalculatedOnList() {
-		if(feeCalculatedOn == null){
-			feeCalculatedOn = new ArrayList<ValueLabel>(2);
+		if (feeCalculatedOn == null) {
+			feeCalculatedOn = new ArrayList<ValueLabel>(4);
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE, Labels.getLabel("Fee_CalculatedOn_TotalAssetValue")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_LOANAMOUNT, Labels.getLabel("Fee_CalculatedOn_LoanAmount")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL, Labels.getLabel("Fee_CalculatedOn_OutStandingPrincipal")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_PAYAMOUNT, Labels.getLabel("Fee_CalculatedOn_PayAmount")));
 		}
 		return feeCalculatedOn;
 	}

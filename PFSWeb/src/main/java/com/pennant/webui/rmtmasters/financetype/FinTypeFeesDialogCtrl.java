@@ -393,17 +393,22 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.percentage.setValue(aFinTypeFees.getPercentage()); 
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
 		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc()); 
-		String calOnExcludeFields = "";
+		String calOnExcludeFields = "," + PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE + ",";
 		fillComboBox(this.calculationType, aFinTypeFees.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes(), "");
 		
 		if (isOriginationFee) {
-			calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
+			calOnExcludeFields = calOnExcludeFields + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
 			if (isOverdraft) {
 				this.finEvent.setList(PennantAppUtil.getOverdraftOrgAccountingEvents());
 			} else {
 				this.finEvent.setList(PennantAppUtil.getOriginationAccountingEvents());
 			}
 		} else {
+			if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_REPAY)
+					|| StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYPAY)
+					|| StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
+				calOnExcludeFields = "";
+			}
 			this.finEvent.setList(PennantAppUtil.getAccountingEvents());
 		}
 		
@@ -1026,19 +1031,31 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	
 	public void onFulfill$finEvent(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		String excluedeFields = "";
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
-		
+
 		doSetRuleFilters();
-		
-		if (StringUtils.equals(this.finEvent.getValue(), AccountEventConstants.ACCEVENT_CMTDISB)) {
+		String finEventValue = this.finEvent.getValue();
+		String calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_PAYAMOUNT + ",";
+
+		if (isOriginationFee) {
+			calOnExcludeFields = calOnExcludeFields + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
+		} else {
+			if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_REPAY)
+					|| StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_EARLYPAY)
+					|| StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_EARLYSTL)) {
+				calOnExcludeFields = "";
+			}
+		}
+		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
 		}
-		
+
 		fillComboBox(this.feeScheduleMethod, "", PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
-		
+		fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
+
 		logger.debug("Leaving" + event.toString());
 	}
 	
