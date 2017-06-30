@@ -673,6 +673,7 @@
 		<menuItem id="menu_Item_PresentmentHeaderApprove" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A" rightName="menuItem_PresentmentDetail_PresentmentApprove"/>
 		<menuItem id="menu_Item_PresentmentHeaderEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E" rightName="menuItem_PresentmentDetail_PresentmentEnquiry"/>
 		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_PresentmentFileImport" />													
+		<menuItem id="menu_Item_PresentmentFileImport_Report" 	zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_PresentmentDetail_PresentmentFileImport"/>													
 	</menu>												
  
 	<!-- PaymentInstructions -->

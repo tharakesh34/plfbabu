@@ -232,6 +232,7 @@ import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
+import com.pennant.backend.model.financemanagement.FileBatchStatus;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
@@ -2001,6 +2002,9 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("TaxDetail", new ModuleMapping("TaxDetail", TaxDetail.class, new String[] { "TAXDETAIL",
 		"TAXDETAIL_AView" }, masterWF, new String[] {"PCCity","PCCityName","CountryCode","CountryDesc","EntityCode","EntityDesc","CPProvince","CPProvinceName","ZipCode"},null, 600));
+		
+		ModuleUtil.register("FileBatchStatus", new ModuleMapping("FileBatchStatus", FileBatchStatus.class, new String[] { "FileBatchStatus",
+		"FileBatchStatus_AView" }, null, new String[] {"Id","FileName"},null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

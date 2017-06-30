@@ -195,6 +195,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> postingPurposeList;
 	private static ArrayList<ValueLabel> authTypes;
 	private static ArrayList<ValueLabel> presentmentsStatusList;
+	private static ArrayList<ValueLabel> presentmentsStatusListReport;
 	private static ArrayList<ValueLabel> taxApplicableFor;
 	private static ArrayList<ValueLabel> channelTypes;
 
@@ -2705,6 +2706,17 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
 		}
 		return presentmentsStatusList;
+	}
+	
+	
+	public static ArrayList<ValueLabel> getPresentmentsStatusListForReport() {
+		if (presentmentsStatusListReport == null) {
+			presentmentsStatusListReport = new ArrayList<ValueLabel>(5);
+			presentmentsStatusListReport.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusListReport.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
+			presentmentsStatusListReport.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
+		}
+		return presentmentsStatusListReport;
 	}
 	
 	public static ArrayList<ValueLabel> getTaxApplicableFor() {
