@@ -19,7 +19,10 @@
 	<modifyDataType tableName="ADTSECUSERS" columnName="AUTHTYPE" newDataType="CHAR(4)"/>
 </changeSet>
 
-<changeSet id="03" author="Durgaprasad G">
+<changeSet id="03" author="Durgaprasad G" dbms="oracle">
+ <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
+</changeSet>
+<changeSet id="03" author="Durgaprasad G" dbms="mssql">
  <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
 </changeSet>
 <changeSet id="04" author="Irfan">
