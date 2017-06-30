@@ -5605,11 +5605,16 @@ union
 	</changeSet> 
 	<changeSet author="Madhubabu" id="259">
 		<sql>
-			delete from errordetails where errorcode='99007'
+			delete from errordetails where errorcode='99007';
 			INSERT INTO ErrorDetails VALUES('99007','EN','E','{0} not valid for Aggrement no : {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
 	<changeSet id="260" author="Manoj.P">
 		<dropColumn tableName="FINSCHEDULEDETAILS_TEMP" columnName="END_TIME"/>
-	</changeSet>	
+	</changeSet>
+	<changeSet id="261" author="Manoj.P">
+	<addColumn tableName="cibil_file_info">
+		<column name="END_TIME" type="datetime" />
+	</addColumn>
+</changeSet>	
 	</databaseChangeLog>
