@@ -298,10 +298,10 @@ public class ReceiptCalculator implements Serializable {
 					
 					if(finScheduleData.getFinanceMain().isTDSApplicable()){
 						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-						BigDecimal actualPft = pft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
+						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 						
-						actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-								finScheduleData.getFinanceMain().getRoundingTarget());
+						/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());*/
 						tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
 					}
 					
@@ -325,9 +325,9 @@ public class ReceiptCalculator implements Serializable {
 					}
 					
 					if(finScheduleData.getFinanceMain().isTDSApplicable()){
-						BigDecimal actualPft = remPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
-						actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-								finScheduleData.getFinanceMain().getRoundingTarget());
+						BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());*/
 						tdsAccruedTillNow = tdsAccruedTillNow.add(remPft.subtract(actualPft));
 						
 					}
@@ -349,9 +349,9 @@ public class ReceiptCalculator implements Serializable {
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 						
 						if(finScheduleData.getFinanceMain().isTDSApplicable()){
-							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
-							actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-									finScheduleData.getFinanceMain().getRoundingTarget());
+							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+									finScheduleData.getFinanceMain().getRoundingTarget());*/
 							tdsAccruedTillNow = tdsAccruedTillNow.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
 						}
 					}
@@ -389,9 +389,9 @@ public class ReceiptCalculator implements Serializable {
 
 					// TDS Calculation
 					BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-					BigDecimal actualPft = unpaidPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
-					actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
-							finScheduleData.getFinanceMain().getRoundingTarget());
+					BigDecimal actualPft = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					/*actualPft = CalculationUtil.roundAmount(actualPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+							finScheduleData.getFinanceMain().getRoundingTarget());*/
 					tdsAmount = tdsAmount.add(unpaidPft.subtract(actualPft));
 				}
 				
@@ -1648,11 +1648,11 @@ public class ReceiptCalculator implements Serializable {
 
 								BigDecimal actPftAdjust = BigDecimal.ZERO;
 								if(isLastTermForES){
-									actPftAdjust = balPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
-									actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+									actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+									//actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 								}else{
-									actPftAdjust = balPft.divide(tdsMultiplier, 9, RoundingMode.HALF_DOWN);
-									actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+									actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+									//actPftAdjust = CalculationUtil.roundAmount(actPftAdjust, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 								}
 								
 								// TDS Adjustments
