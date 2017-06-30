@@ -1409,25 +1409,30 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			Date valueDate = finServiceInst.getReceiptDetail().getReceivedDate();
 			
-			List<FinanceRepayments> repayments = getRepaymentDetails(aFinanceDetail.getFinScheduleData(), totReceiptAmt, valueDate);
-			List<FinODDetails> finODDetailsList = receiptService.getValueDatePenalties(financeDetail.getFinScheduleData(), totReceiptAmt,
-					valueDate, repayments);
+			List<FinODDetails> finODDetailsList  = financeDetail.getFinScheduleData().getFinODDetails();
+			if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
+				List<FinanceRepayments> repayments = getRepaymentDetails(aFinanceDetail.getFinScheduleData(), totReceiptAmt, valueDate);
+				finODDetailsList = receiptService.getValueDatePenalties(financeDetail.getFinScheduleData(),totReceiptAmt, 
+						valueDate, repayments);
+			}
 			
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
-			for (FinODDetails finODDetails : finODDetailsList) {
-				Date finOdDate = DateUtility.getDBDate(DateUtility.formatDate(finODDetails.getFinODSchdDate(),
-						PennantConstants.DBDateFormat));
-				if(odChargePaidMap.containsKey(finOdDate)){
-					BigDecimal penaltyPayNow = odChargePaidMap.get(finOdDate);
-					finODDetails.setTotPenaltyPaid(finODDetails.getTotPenaltyPaid().add(penaltyPayNow));
+			if(finODDetailsList != null) {
+				for (FinODDetails finODDetails : finODDetailsList) {
+					Date finOdDate = DateUtility.getDBDate(DateUtility.formatDate(finODDetails.getFinODSchdDate(),
+							PennantConstants.DBDateFormat));
+					if(odChargePaidMap.containsKey(finOdDate)){
+						BigDecimal penaltyPayNow = odChargePaidMap.get(finOdDate);
+						finODDetails.setTotPenaltyPaid(finODDetails.getTotPenaltyPaid().add(penaltyPayNow));
+					}
+					if(odPenaltyPaidMap.containsKey(finOdDate)){
+						BigDecimal latePenaltyPayNow = odPenaltyPaidMap.get(finOdDate);
+						finODDetails.setLPIPaid(finODDetails.getLPIPaid().add(latePenaltyPayNow));
+					}
+					overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
+					overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
 				}
-				if(odPenaltyPaidMap.containsKey(finOdDate)){
-					BigDecimal latePenaltyPayNow = odPenaltyPaidMap.get(finOdDate);
-					finODDetails.setLPIPaid(finODDetails.getLPIPaid().add(latePenaltyPayNow));
-				}
-				overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
-				overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
 			}
 			
 			FinanceSummary summary = financeDetail.getFinScheduleData().getFinanceSummary();
@@ -1699,7 +1704,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setInsuranceList(null);
-		finScheduleData.setFinODDetails(null);
 
 		logger.debug("Entering");
 		return response;

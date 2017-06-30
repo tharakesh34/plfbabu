@@ -113,7 +113,6 @@ public class SummaryDetailService {
 				summary.setFinStatus(financeMain.getClosingStatus());
 			}
 
-
 			// setting first and last disbursement dates
 			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false);
 			if (disbList != null && disbList.size() > 0) {
@@ -161,6 +160,8 @@ public class SummaryDetailService {
 				} else {
 					summary.setOverDueInstlments(0);
 				}
+				
+				financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 			}
 		}
 		logger.debug("Leaving");
