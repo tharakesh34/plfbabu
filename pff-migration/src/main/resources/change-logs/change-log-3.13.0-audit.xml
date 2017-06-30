@@ -23,7 +23,7 @@
  <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
 </changeSet>
 <changeSet id="03" author="Durgaprasad G" dbms="mssql">
- <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD"/>
+ <dropNotNullConstraint tableName="ADTSECUSERS" columnName="USRPWD" columnDataType="varchar(100)"/>
 </changeSet>
 <changeSet id="04" author="Irfan">
 	<addColumn tableName="ADTRMTACCOUNTTYPES">
