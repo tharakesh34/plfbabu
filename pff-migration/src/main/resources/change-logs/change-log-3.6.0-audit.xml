@@ -142,7 +142,7 @@
 		<createView viewName="AdtLocality_View" replaceIfExists="true">
 			SELECT     TH.AuditId, TH.AuditDate  AuditDateTime, TH.AuditDate AuditDate,  TH.AuditDate AuditTime, 
             coalesce(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, dbo.FN_CustomerName(T1.UsrFName, T1.UsrMName, 
-                      T1.UsrLName)   AuditUserName,FN_TranType(TH.AuditTranType)  AuditTranType, 
+                      T1.UsrLName)   AuditUserName,dbo.FN_TranType(TH.AuditTranType)  AuditTranType, 
                       Aft.id  Aftid, Aft.name  Aftname, Aft.city  Aftcity, 
                       Bef.id  Befid, Bef.name  Befname, Bef.city  Befcity 
 			FROM         AuditHeader  TH INNER JOIN
