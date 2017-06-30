@@ -3918,7 +3918,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			WHERE     NOT EXISTS (SELECT 1 FROM FinTaxDetail_TEMP WHERE FinReference = T1.FinReference)
 		</createView>
 	</changeSet>
-	<changeSet id="191" author="Manoj.P">
+	<changeSet id="191" author="Manoj.P" dbms="oracle">
 		<sql>
 DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
 
@@ -4128,7 +4128,216 @@ insert into CIBIL_COLLATERAL_TYPES values ('04','Saving Account and Fixed Deposi
 
 		</sql>
 	</changeSet>
-	
+	<changeSet id="191" author="Manoj.P" dbms="mssql">
+		<sql>
+DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('CBIL_REPORT_PATH', 'CBIL_REPORT_MEMBER_ID', 'CBIL_REPORT_MEMBER_CODE','CBIL_REPORT_MEMBER_SHORT_NAME', 'CBIL_REPORT_MEMBER_PASSWORD', 'ADDRESS_TYPE_PERMANENT', 'ADDRESS_TYPE_RESIDENCE', 'ADDRESS_TYPE_OFFICE');
+
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_PATH', 				'Location of the CIBIL report to be placed', 		'String', 1,  'D:/PFF/Reports/CIBIL', 	'200', 	0, NULL, NULL, 'Location of the CIBIL report to be placed', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_ID', 			'Reporting member id', 								'String', 1,  'NB68030221', 			'30', 	0, NULL, NULL, 'Reporting member id', 							1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_CODE', 		'Reporting member Code', 							'String', 1,  'BAJAJ FIN LTD', 			'30', 	0, NULL, NULL, 'Reporting member Code', 						1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_SHORT_NAME', 	'Reporting member short name', 						'String', 1,  'BAJAJ FIN LTD', 			'16', 	0, NULL, NULL, 'Reporting member short name', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SMTPARAMETERS VALUES ('CBIL_REPORT_MEMBER_PASSWORD', 	'Reporting member password', 						'String', 1,  'A6K48', 					'30', 	0, NULL, NULL, 'Reporting member password', 					1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+
+DELETE FROM CIBIL_ACCOUNT_TYPES;
+insert into CIBIL_ACCOUNT_TYPES values ('01', 	'Auto Loan (Personal)',             			1, 1000,getdate(),'Approved','','','','','', 0);	
+insert into CIBIL_ACCOUNT_TYPES values ('02', 	'Housing Loan',                     			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('03', 	'Property Loan',                    			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('04', 	'Loan Against Shares / Securities', 			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('05', 	'Personal Loan',                    			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('06', 	'Consumer Loan',                    			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('07', 	'Gold Loan',                        			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('08', 	'Education Loan',                   			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('09', 	'Loan to Professional',             			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('10', 	'Credit Card',                      			1, 1000,getdate(),'Approved','','','','','', 0);			
+insert into CIBIL_ACCOUNT_TYPES values ('11', 	'Leasing',                          			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('12', 	'Overdraft',                        			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('13', 	'Two-Wheeler Loan',                 			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('14', 	'Non-Funded Credit Facility',       			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('15', 	'Loan Against Bank Deposits',       			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('16', 	'Fleet Card',                       			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('17', 	'Commercial Vehicle Loan',          			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('18', 	'Telco – Wireless',                 			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('19', 	'Telco – Broadband',                			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('20', 	'Telco – Landline'	,               			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('31', 	'Secured Credit Card',              			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('32', 	'Used Car Loan',                    			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('33', 	'Construction Equipment Loan',      			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('34', 	'Tractor Loan',                     			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('35', 	'Corporate Credit Card',            			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('36', 	'Kisan Credit Card',                            1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('37', 	'Loan on Credit Card',                          1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('38', 	'Prime Minister Jaan Dhan Yojana - Overdraft',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('39', 	'Mudra Loans – Shishu / Kishor / Tarun',        1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('40', 	'Microfinance – Business Loan'	,               1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('41', 	'Microfinance – Personal Loan'	,               1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('42', 	'Microfinance – Housing Loan',                  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('43', 	'Microfinance – Others',                        1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('44', 	'Pradhan Mantri Awas Yojana - Credit Link Su', 	1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('50', 	'Business Loan - Secured',           			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('51', 	'Business Loan – General',           			1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('52', 	'Business Loan – Priority Sector – Small Bus',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('53', 	'Business Loan – Priority Sector – Agricultu',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('54', 	'Business Loan – Priority Sector – Others',   	1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('55', 	'Business Non-Funded Credit Facility – Gener',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('56', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('57', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('58', 	'Business Non-Funded Credit Facility-Priorit',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('59', 	'Business Loan Against Bank Deposits',          1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('61', 	'Business Loan - Unsecured',                    1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ACCOUNT_TYPES values ('0'	, 'Other',                                          1, 1000,getdate(),'Approved','','','','','', 0);
+
+delete from CIBIL_PHONE_TYPES_MAPPING;
+delete from CIBIL_PHONE_TYPES;
+insert into CIBIL_PHONE_TYPES values ('01','MOBILE',                     1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES values ('02','Home Landline No.',          1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES values ('03','Office Landline No.',        1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'MOBILE1', 1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'MOBILE2', 1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('01', 'OFFMOB',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('02', 'HOME',    1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('03', 'OFFICE',  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_PHONE_TYPES_MAPPING values('03', 'OFFFAX',  1, 1000,getdate(),'Approved','','','','','', 0);
+
+delete from CIBIL_ADDRESS_TYPES_MAPPING;
+delete from CIBIL_ADDRESS_TYPES;
+insert into CIBIL_ADDRESS_TYPES values ('01','PERMANENT ADDRESS',       1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES values ('02','RESIDENCE ADDRESS',       1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES values ('03','OFFICE ADDRESS',          1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('01', 'PER',                      1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('02', 'CURRES',                  1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_ADDRESS_TYPES_MAPPING values ('03', 'OFFICE',                  1, 1000,getdate(),'Approved','','','','','', 0);
+
+
+delete from CIBIL_DOCUMENT_TYPES_MAPPING;
+delete from CIBIL_DOCUMENT_TYPES;
+delete from BMTDocumentTypes where DOCTYPECODE IN (
+'SP001'
+,'SP002'
+,'SP003'
+,'SP004'
+,'SP005'
+,'SP006'
+,'SP007'
+,'SP008'
+,'SP009'
+,'SP010'
+,'IN001'
+,'IN002'
+,'IN004'
+,'IN005'
+,'IN006'
+,'IN007'
+,'IN008'
+,'IN009'
+,'IN003'
+,'IN010'
+,'IN011'
+,'IN012'
+,'IN013'
+,'IN014'
+,'IN015'
+,'IN016'
+,'IN017'
+,'IN018'
+,'IN019'
+,'IN020'
+,'IN021'
+,'IN022'
+,'CO001'
+,'CO002'
+,'CO003'
+,'CO004'
+,'CO005'
+,'PF001'
+,'PF002'
+,'PF003'
+,'PF004'
+,'PF005'
+,'PF006'
+,'PF007'
+,'PF008'
+,'PF009'
+,'PF010'
+,'PF011'
+,'PF012'
+,'TR001'
+,'TR002'
+,'TR003'
+,'TR004'
+,'HF001'
+,'HF002'
+,'HF003'
+,'HF004'
+,'LA001');
+
+
+insert into CIBIL_DOCUMENT_TYPES values ('01','Income Tax ID Number (PAN)',           1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('02','Passport Number',                      1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('03','Voter ID Number',                      1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('04','Driver’s License Number',              1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('05','Ration Card Number',                   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('06','Universal ID Number (UID)',            1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('07','Additional ID #1 (For Future Use',     1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES values ('08','Additional ID #2 (For Future Use',     1, 1000,getdate(),'Approved','','','','','', 0);
+
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('01', '03',                         1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('02', '02',                         1, 1000,getdate(),'Approved','','','','','', 0);
+alter table CustomerDocuments disable constraint FK_CUSTDOCS_BMTDOCTYPES;
+update CustomerDocuments set CustDocCategory ='01' where CustDocCategory in (select DOCTYPECODE from BMTDOCUMENTTYPES where DOCTYPEDESC='Aadhar Card');
+update BMTDOCUMENTTYPES set DOCTYPECODE ='01' where DOCTYPEDESC='Aadhar Card';
+alter table CustomerDocuments enable constraint FK_CUSTDOCS_BMTDOCTYPES;
+insert into CIBIL_DOCUMENT_TYPES_MAPPING values ('06', '01',                         1, 1000,getdate(),'Approved','','','','','', 0);
+
+delete from CIBIL_STATES_MAPPING;
+insert into CIBIL_STATES_MAPPING values ('01','Jammu and Kashmir', 				'11', 18,19,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('02','Himachal Pradesh',				'3', 17,17,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('03','Punjab',          				'12', 14,16,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('04','Chandigarh',      				'13', 16,16,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('05','Uttaranchal',     				'14', 24,26,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('06','Haryana',         				'37', 12,13,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('07','Delhi',			 				'6',  11,11,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('08','Rajasthan',		 				'15', 30,34,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('09','Uttar Pradesh',	 				'38', 20,28,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('10','Bihar',			 				'16', 80,85,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('11','Sikkim',							'17', 73,73,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('12','Arunachal Pradesh',				'18', 78,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('13','Nagaland',						'19', 79,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('14','Manipur',						'20', 79,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('15','Mizoram',						'21', 79,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('16','Tripura',						'22', 72,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('17','Meghalaya',						'23', 79,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('18','Assam',							'24', 78,79,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('19','West Bengal',					'8',  70,74,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('20','Jharkhand',						'25', 81,83,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('21','Orissa',							'26', 75,77,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('22','Chhattisgarh',					'27', 46,49,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('23','Madhya Pradesh',					'28', 45,48,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('24','Gujarat',						'29', 36,39,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('25','Daman and Diu',					'30', 36,39,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('26','Dadra and Nagar Haveli',			'31', 39,39,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('27','Maharashtra',					'5',  40,44,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('28','Andhra Pradesh',					'32', 50,56,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('29','Karnataka',						'7',  53,59,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('30','Goa',							'33', 40,40,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('31','Lakshadweep',					'34', 67,68,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('32','Kerala',							'10', 67,69,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('33','Tamil Nadu',						'9',  53,66,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('34','Pondicherry',					'35', 60,60,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('35','Andaman and Nicobar Islands',	'36', 74,74,   1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_STATES_MAPPING values ('36','Telangana',						'TS', 50,56,   1, 1000,getdate(),'Approved','','','','','', 0);
+
+
+delete from CIBIL_COLLATERAL_TYPES_MAPPING;
+delete from CIBIL_COLLATERAL_TYPES;
+
+insert into CIBIL_COLLATERAL_TYPES values ('00','No Collateral',           					1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('01','Property',                					1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('02','Gold',         								1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('03','Shares',          							1, 1000,getdate(),'Approved','','','','','', 0);
+insert into CIBIL_COLLATERAL_TYPES values ('04','Saving Account and Fixed Deposit',           1, 1000,getdate(),'Approved','','','','','', 0);
+
+		</sql>
+	</changeSet>
 	<changeSet id="194" author="Manoj.P">
 		<createView viewName="CIBIL_CUSTOMER_EXTARCT_VIEW" replaceIfExists="true"> 
 			 	select C.CUSTID, FM.FINREFERENCE, 1 OWNERSHIP, PD.LATESTRPYDATE from FINANCEMAIN FM
