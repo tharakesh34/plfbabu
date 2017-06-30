@@ -55,11 +55,13 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -99,6 +101,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -121,6 +124,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Window							window_FinAdvancePaymentsDialog;
 
 	protected Combobox							disbDate;
+	protected Decimalbox						disbDateAmount;
 	protected Intbox							disbSeq;
 	protected Intbox							paymentSequence;
 	protected Combobox							paymentDetail;
@@ -616,12 +620,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.description.setMaxlength(500);
 		this.llReferenceNo.setMaxlength(6);
 		this.remarks.setMaxlength(500);
-		this.transactionRef.setReadonly(true);;
+		this.transactionRef.setReadonly(true);
 
 		this.amtToBeReleased.setMandatory(true);
 		this.amtToBeReleased.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.amtToBeReleased.setScale(ccyFormatter);
 		this.amtToBeReleased.setTextBoxWidth(150);
+
+		this.disbDateAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.disbDateAmount.setScale(ccyFormatter);
 
 		this.beneficiaryAccNo.setMaxlength(50);
 
@@ -728,6 +735,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 			fillComboBox(this.disbDate, seq, financeDisbursement, isNewRecord());
 		}
+		setDisbursmentAmount();
 
 		this.amtToBeReleased.setValue(formate(aFinAdvnancePayments.getAmtToBeReleased()));
 		if (aFinAdvnancePayments.isNewRecord() && aFinAdvnancePayments.getLlDate() == null) {
@@ -909,24 +917,23 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		try {
-			aFinAdvancePayments.setAmtToBeReleased(PennantAppUtil.unFormateAmount(
-					this.amtToBeReleased.isReadonly() ? this.amtToBeReleased.getActualValue() : this.amtToBeReleased
-							.getValidateValue(), ccyFormatter));
+			aFinAdvancePayments.setAmtToBeReleased(PennantAppUtil.unFormateAmount(this.amtToBeReleased.isReadonly()
+					? this.amtToBeReleased.getActualValue() : this.amtToBeReleased.getValidateValue(), ccyFormatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aFinAdvancePayments.setCustContribution(PennantApplicationUtil.unFormateAmount(
-					this.custContribution.getActualValue(), ccyFormatter));
+			aFinAdvancePayments.setCustContribution(
+					PennantApplicationUtil.unFormateAmount(this.custContribution.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aFinAdvancePayments.setSellerContribution(PennantApplicationUtil.unFormateAmount(
-					this.sellerContribution.getActualValue(), ccyFormatter));
+			aFinAdvancePayments.setSellerContribution(
+					PennantApplicationUtil.unFormateAmount(this.sellerContribution.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -953,28 +960,42 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if (this.llDate.getValue() != null) {
-				if (financeMain != null && financeMain.getMaturityDate() != null) {
-					Comboitem item = this.disbDate.getSelectedItem();
-					if (item != null) {
-						Object data = item.getAttribute("data");
-						if (data != null) {
-							FinanceDisbursement disbursement = (FinanceDisbursement) data;
+			Comboitem item = this.disbDate.getSelectedItem();
+			if (item != null) {
+				Object data = item.getAttribute("data");
+				if (data != null) {
+					FinanceDisbursement disbursement = (FinanceDisbursement) data;
+					if (this.llDate.getValue() != null) {
+						if (financeMain != null && financeMain.getMaturityDate() != null) {
 							if (this.llDate.getValue().before(disbursement.getDisbDate())
 									|| this.llDate.getValue().after(financeMain.getMaturityDate())) {
-								
-								String maturityDate =DateUtility.formatToLongDate(financeMain.getMaturityDate());
+
+								String maturityDate = DateUtility.formatToLongDate(financeMain.getMaturityDate());
 								String disbDate = DateUtility.formatToLongDate(disbursement.getDisbDate());
-								
-								throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
-										new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
-												disbDate,maturityDate }));
+
+								throw new WrongValueException(this.llDate,
+										Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+												new String[] {
+														Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
+														disbDate, maturityDate }));
 							}
 						}
 						aFinAdvancePayments.setLLDate(this.llDate.getValue());
 					}
+
+					BigDecimal disAmt = FinAdvancePaymentsCtrl.getTotalByDisbursment(disbursement, financeMain);
+					BigDecimal insAmt = getAdjustedAmount(disbursement);
+					insAmt=insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
+					if (insAmt.compareTo(disAmt) > 0) {
+						throw new WrongValueException(this.amtToBeReleased,
+								Labels.getLabel("NUMBER_MAXVALUE_EQ",
+										new String[] {
+												Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
+												Labels.getLabel("label_FinAdvancePaymentsDialog_DisbAmount.value") }));
+					}
+
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1055,8 +1076,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.phoneNumber.setErrorMessage("");
 
 			if (!this.phoneNumber.isReadonly()) {
-				this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
+				this.phoneNumber.setConstraint(new PTMobileNumberValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
 			}
 
 			aFinAdvancePayments.setPhoneNumber(this.phoneNumber.getValue());
@@ -1068,7 +1089,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			this.partnerBankID.getValidatedValue();
 			Object obj = this.partnerBankID.getAttribute("partnerBankId");
@@ -1078,13 +1099,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinAdvancePayments.setTransactionRef(this.transactionRef.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
 		doClearMessage();
@@ -1159,8 +1180,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					Labels.getLabel("label_FinAdvancePaymentsDialog_LLReferenceNo.value"), null, false));
 		}
 		if (this.hbox_llDate.isVisible() && !this.llDate.isDisabled()) {
-			this.llDate
-					.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), true));
+			this.llDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), true));
 		}
 		if (this.hbox_custContribution.isVisible() && !this.custContribution.isDisabled()) {
 			this.custContribution.setConstraint(
@@ -1743,6 +1764,54 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				}
 			}
 		}
+	}
+
+	public void onSelect$disbDate(ForwardEvent event) {
+		setDisbursmentAmount();
+	}
+
+	private void setDisbursmentAmount() {
+		Comboitem item = this.disbDate.getSelectedItem();
+		if (item != null && item.getValue() != null) {
+			FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
+			if (disbursement != null) {
+				BigDecimal disAmt = FinAdvancePaymentsCtrl.getTotalByDisbursment(disbursement, financeMain);
+				disAmt = disAmt.subtract(getAdjustedAmount(disbursement));
+
+				this.disbDateAmount.setValue(PennantAppUtil.formateAmount(disAmt, ccyFormatter));
+			}
+		} else {
+			this.disbDateAmount.setValue(BigDecimal.ZERO);
+		}
+	}
+
+	public BigDecimal getAdjustedAmount(FinanceDisbursement disbursement) {
+		BigDecimal adjustedAmount = BigDecimal.ZERO;
+
+		List<FinAdvancePayments> list = null;
+		if (this.moduleType.equals("LOAN")) {
+			list = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
+		} else {
+			list = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
+		}
+		if (list == null || list.isEmpty()) {
+			return adjustedAmount;
+		}
+
+		for (FinAdvancePayments finAdvPayments : list) {
+			if (finAdvPayments.getDisbSeq() == finAdvPayments.getDisbSeq()) {
+				if (this.paymentSequence.intValue() == finAdvPayments.getPaymentSeq()) {
+					continue;
+				}
+				if (FinAdvancePaymentsCtrl.isDeleteRecord(finAdvPayments)) {
+					continue;
+				}
+				adjustedAmount = adjustedAmount.add(finAdvPayments.getAmtToBeReleased());
+			}
+
+		}
+		return adjustedAmount;
+
 	}
 
 	// ******************************************************//

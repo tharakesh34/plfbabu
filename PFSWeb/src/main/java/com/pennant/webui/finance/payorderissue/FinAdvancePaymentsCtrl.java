@@ -251,7 +251,7 @@ public class FinAdvancePaymentsCtrl {
 
 				for (FinAdvancePayments detail : list) {
 
-					if (!isDeleteRecord(detail)) {
+					if (!FinAdvancePaymentsCtrl.isDeleteRecord(detail)) {
 						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
 						subTotal = subTotal.add(detail.getAmtToBeReleased());
 					}
@@ -378,6 +378,7 @@ public class FinAdvancePaymentsCtrl {
 			map.put("finAdvancePaymentsListCtrl", listCtrl);
 			map.put("financeMainDialogCtrl", dialogCtrl);
 		}
+		map.put("finAdvancePaymentsCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -459,7 +460,7 @@ public class FinAdvancePaymentsCtrl {
 		return idNumber + 1;
 	}
 
-	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
+	public static boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
@@ -503,7 +504,7 @@ public class FinAdvancePaymentsCtrl {
 		return false;
 	}
 
-	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq,
+	public static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq,
 			boolean group) {
 
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
@@ -542,6 +543,26 @@ public class FinAdvancePaymentsCtrl {
 			disbursement.setDisbDate(date);
 		}
 		return disbursement;
+
+	}
+
+	public static BigDecimal getTotalByDisbursment(FinanceDisbursement financeDisbursement, FinanceMain main) {
+
+		BigDecimal totdisbAmt = BigDecimal.ZERO;
+
+		//check is first disbursement
+		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
+				&& financeDisbursement.getDisbSeq() == 1) {
+
+			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+			totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
+			if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
+			}
+		}
+		totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
+		return totdisbAmt;
 
 	}
 
