@@ -2750,11 +2750,11 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	
 	
 	
-<!-- 	<changeSet id="144" author="Manoj.P">
+<changeSet id="144" author="Manoj.P" dbms="oracle">
 		<addForeignKeyConstraint constraintName="FK_RMT_CP"
 			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
 			baseTableName="CIBIL_STATES_MAPPING" baseColumnNames="CPProvince" />
-	</changeSet> -->
+	</changeSet> 
 	
 	
 	<changeSet id="145" author="Manoj.P" dbms="oracle">
