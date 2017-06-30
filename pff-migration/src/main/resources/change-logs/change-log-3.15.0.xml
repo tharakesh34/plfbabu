@@ -2750,14 +2750,14 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 	
 	
 	
-	<changeSet id="144" author="Manoj.P">
+<!-- 	<changeSet id="144" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_RMT_CP"
 			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPProvince"
 			baseTableName="CIBIL_STATES_MAPPING" baseColumnNames="CPProvince" />
-	</changeSet>
+	</changeSet> -->
 	
 	
-	<changeSet id="145" author="Manoj.P">
+	<changeSet id="145" author="Manoj.P" dbsm="oracle">
 		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBACM_CD" nullable="false"/>
@@ -2778,7 +2778,32 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="145" author="Manoj.P" dbsm="mssql">
+		<createTable tableName="CIBIL_ACCOUNT_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBACM_CD" nullable="false"/>
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="145.1" author="Jayant">
+	    <sql>
+	        alter table CIBIL_ACCOUNT_TYPES_MAPPING add constraint DF_CIBL_ACC_TYPE_MAPNG_VER default 0 for Version;
+	    </sql>
+	</changeSet>
 	<changeSet id="146" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CB_ACTM_FT"
 			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE"
@@ -2800,7 +2825,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		constraintName="UK_CBFINTYPE" tableName="CIBIL_ACCOUNT_TYPES_MAPPING" />
 	</changeSet>
 	
-	<changeSet id="150" author="Manoj.P">
+	<changeSet id="150" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_PHONE_TYPES">
 			<column name="Code" type="char(2)">
 				<constraints primaryKey="true" primaryKeyName="PK_CBPC" nullable="false"/>
@@ -2820,8 +2845,31 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>	
-	
-	
+		<changeSet id="150" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_PHONE_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CBPC" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="150.1" author="Jayant">
+	    <sql>
+	        alter table CIBIL_PHONE_TYPES add constraint CIBL_PHN_TYPE_VER default 0 for Version;
+	    </sql>
+	</changeSet>
 	<changeSet id="151" author="Manoj.P">
 		<createTable tableName="CIBIL_PHONE_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
