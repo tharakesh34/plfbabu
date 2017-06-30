@@ -561,7 +561,7 @@
 	</changeSet>
 	<changeSet id="18.1" author=" Jayant">
 	    <sql>
-	        alter table AdtPaymentInstructions add cosntraint DF_PAYMNTINST_VER default 0 for Version;
+	        alter table AdtPaymentInstructions add constraint DF_PAYMNTINST_VER default 0 for Version;
 	    </sql>
 	</changeSet>
 	<changeSet id="06" author="Durgaprasad G">
