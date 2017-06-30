@@ -5779,4 +5779,62 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	
+	
+	<changeSet id="266" author="Durgaprasad.G">
+	<createTable tableName="BatchFileHeader">
+		<column name="ID" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="FileName" type="varchar(100)">
+			<constraints nullable="false" />
+		</column>
+		<column name="StartTime" type="datetime" />
+		<column name="EndTime" type="datetime" />
+		<column name="TotalRecords" type="int" />
+		<column name="SucessRecords" type="int" />
+		<column name="FailedRecords" type="int" />
+		<column name="Remarks" type="varchar(2000)" />
+	</createTable>
+</changeSet>
+
+	<changeSet id="277" author="Durgaprasad.G">
+		<addPrimaryKey tableName="BatchFileHeader" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="288" author="Durgaprasad.G">
+		<createTable tableName="BatchFileDetails">
+			<column name="FileId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorDesc" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="289" author="Durgaprasad.G">
+		<addForeignKeyConstraint constraintName="FK_BATCH_FILE_DETAILS_ID"
+			referencedTableName="BatchFileHeader" referencedColumnNames="ID"
+			baseTableName="BatchFileDetails" baseColumnNames="FileId" />
+	</changeSet>
+
+	<changeSet id="290" author="Durgaprasad.G">
+		<createTable tableName="SeqBatchFileHeader">
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="291" author="Durgaprasad.G">
+	 <sql>
+	  Insert into SeqBatchFileHeader Values (0);
+	 </sql>
+	</changeSet>
 	</databaseChangeLog>
