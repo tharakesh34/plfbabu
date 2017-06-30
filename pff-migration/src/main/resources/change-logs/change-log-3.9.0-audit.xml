@@ -450,11 +450,6 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="15.1" author="Jayant" dbms="mssql">
-	    <sql>
-	        alter table ADTPaymentInstructions add constraint ADTPAYMNTINST_VER default 0 for Version;
-	    </sql>
-	</changeSet>
 	<changeSet id="16" author="Durgaprasad G">
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
