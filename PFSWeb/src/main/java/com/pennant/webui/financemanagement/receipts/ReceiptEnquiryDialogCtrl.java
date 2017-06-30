@@ -448,9 +448,9 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 					totalAdvWaivedAmount = totalAdvWaivedAmount.add(allocation.getWaivedAmount());
 				}else{
 					this.listBoxPastdues.appendChild(item);
-					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_TDS)){
-						totalPaidAmount = totalPaidAmount.subtract(allocation.getPaidAmount());
-						totalWaivedAmount = totalWaivedAmount.subtract(allocation.getWaivedAmount());
+					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_TDS) ||
+							StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PFT)){
+						//Nothing TO DO
 					}else{
 						totalPaidAmount = totalPaidAmount.add(allocation.getPaidAmount());
 						totalWaivedAmount = totalWaivedAmount.add(allocation.getWaivedAmount());
