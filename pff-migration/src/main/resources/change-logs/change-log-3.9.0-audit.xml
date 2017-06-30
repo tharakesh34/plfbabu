@@ -450,7 +450,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="15" author="Jayant" dbms="mssql">
+	<changeSet id="15.1" author="Jayant" dbms="mssql">
 	    <sql>
 	        alter table ADTPaymentInstructions add constraint ADTPAYMNTINST_VER default 0 for Version;
 	    </sql>
