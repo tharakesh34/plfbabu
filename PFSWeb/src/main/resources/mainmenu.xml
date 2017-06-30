@@ -18,6 +18,8 @@
 	
 	<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataExtraction"/>
 	
+	<menuItem id="menu_Item_DataEngine_MasterExport" zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul" rightName="menuItem_DataExtraction"/>
+	
 	
 	<!-- System Masters Menu Tree -->
 	<menu id="menu_Category_SystemMaster" rightName="menuCat_SystemMaster" >
