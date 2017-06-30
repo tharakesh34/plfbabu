@@ -3656,7 +3656,7 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 		</createTable>
 	</changeSet>
 	<changeSet id="178.1" author="Jayant"><sql>
-	    alter table CIBIL_COLLATERAL_TYPES add constriant CBL_COL_TYPE_VER default 0 for Version;
+	    alter table CIBIL_COLLATERAL_TYPES add constraint CBL_COL_TYPE_VER default 0 for Version;
 	</sql></changeSet>
 	<changeSet id="179" author="Manoj.P">
 		<dropTable tableName="CIBIL_COLLATERAL_TYPES_MAPPING"/>
