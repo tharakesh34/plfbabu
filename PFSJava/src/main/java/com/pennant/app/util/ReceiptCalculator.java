@@ -1670,6 +1670,11 @@ public class ReceiptCalculator implements Serializable {
 									tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
 									totalReceiptAmt = BigDecimal.ZERO;
 								}
+								
+								// TDS Re-adjust(minor difference) TEMP FIX
+								if(balPft.compareTo(actPftAdjust.add(tdsAdjust)) < 0){
+									tdsAdjust = tdsAdjust.add(balPft.subtract(actPftAdjust.add(tdsAdjust)));
+								}
 
 								// Profit Amount Payments
 								BigDecimal totPftPayNow = BigDecimal.ZERO;
