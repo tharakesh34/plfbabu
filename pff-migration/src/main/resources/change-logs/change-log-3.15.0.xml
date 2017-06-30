@@ -6464,4 +6464,10 @@ union
 	<changeSet id="292" author="Durgaprasad.G">
 	<dropNotNullConstraint tableName="BatchFileDetails" columnName="ErrorDesc"/>
 	</changeSet>
+	
+	<changeSet id="293" author="Manoj">
+  		 <addColumn tableName="CIBIL_FILE_INFO_LOG">
+				<column name="STATUS" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
