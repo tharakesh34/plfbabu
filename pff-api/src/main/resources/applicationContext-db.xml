@@ -76,6 +76,7 @@
 		<property name="searchSystemEnvironment" value="true" />
 		<property name="locations">
 			<list>
+				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/pff.properties</value>
 				<value>file:${APP_ROOT_PATH}/PFF/BASE/config/mail.properties</value>
 			</list>
 		</property>
