@@ -3077,8 +3077,27 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="163" author="Manoj.P">
+		<changeSet id="162" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ADDRESS_TYPES">
+			<column name="Code" type="char(2)">
+				<constraints primaryKey="true" primaryKeyName="PK_CAT_CD" nullable="false"/>
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="163" author="Manoj.P" dbms="oracle">
 		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints nullable="false"/>
@@ -3098,8 +3117,31 @@ SELECT		T1.FinReference, T1.ApplicableFor,T1.ApplicableForCustId, T1.TaxExempted
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	
+		<changeSet id="163" author="Manoj.P" dbms="mssql">
+		<createTable tableName="CIBIL_ADDRESS_TYPES_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="AddrTypeCode" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="163.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table CIBIL_ADDRESS_TYPES_MAPPING add constraint CBL_ADRS_TYPE_MAPNG_VER default 0 for Version;
+	    </sql>
+	</changeSet>
 	<changeSet id="164" author="Manoj.P">
 		<addForeignKeyConstraint constraintName="FK_CADTM_CD"
 			referencedTableName="BMTADDRESSTYPES" referencedColumnNames="AddrTypeCode"
