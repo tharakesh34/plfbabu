@@ -505,7 +505,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aPinCode.getPinCodeId();
+				+ aPinCode.getPinCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aPinCode.getRecordType()).equals("")) {
 				aPinCode.setVersion(aPinCode.getVersion() + 1);
