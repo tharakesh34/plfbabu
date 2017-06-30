@@ -764,6 +764,11 @@ public class ReceiptCalculator implements Serializable {
 				FinanceScheduleDetail curSchd = tempScheduleDetails.get(s);
 				Date schdDate = curSchd.getSchDate();
 				RepayScheduleDetail rsd = null;
+				
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
+						curSchd.getPresentmentId() > 0){
+					continue;
+				}
 
 				// Skip if repayment date after Current Business date
 				if (schdDate.compareTo(valueDate) > 0 && 
