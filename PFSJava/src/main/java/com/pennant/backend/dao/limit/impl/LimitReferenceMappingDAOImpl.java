@@ -18,15 +18,13 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
 
-public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitReferenceMapping> implements
-		LimitReferenceMappingDAO {
+public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitReferenceMapping>
+		implements LimitReferenceMappingDAO {
 	private static Logger				logger	= Logger.getLogger(LimitReferenceMappingDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
 
-
-	
 	public LimitReferenceMappingDAOImpl() {
 		super();
 	}
@@ -124,6 +122,24 @@ public class LimitReferenceMappingDAOImpl extends BasisNextidDaoImpl<LimitRefere
 		try {
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
 
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean deleteByHeaderID(long headerID) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("HeaderID", headerID);
+		StringBuilder deleteSql = new StringBuilder("Delete From LimitReferenceMapping");
+		deleteSql.append(" Where HeaderID =:HeaderID");
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 		}
