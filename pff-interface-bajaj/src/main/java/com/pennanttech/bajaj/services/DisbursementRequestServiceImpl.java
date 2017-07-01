@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -300,14 +301,16 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	private String getSTPFileSequence() {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
+		
+		Date date = DateUtil.getSysDate();
 
 		sql.append(" select COALESCE(FILESEQUENCENO, 0) +1 from DATA_ENGINE_CONFIG");
 		sql.append(" where Name = :Name");
 		sql.append(" and LASTPROCESSEDON >= :TODAY and LASTPROCESSEDON <= :NEXTDAY");
 
 		parmMap.addValue("Name", "DISB_HDFC_EXPORT");
-		parmMap.addValue("TODAY", new java.sql.Date(DateUtil.getSysDate().getTime()));
-		parmMap.addValue("NEXTDAY", new java.sql.Date(DateUtil.addDays(DateUtil.getSysDate(), 1).getTime()));
+		parmMap.addValue("TODAY", DateUtil.getDatePart(date));
+		parmMap.addValue("NEXTDAY", DateUtil.getDatePart(DateUtil.addDays(date, 1)));
 		
 		try {
 			return namedJdbcTemplate.queryForObject(sql.toString(), parmMap, String.class);

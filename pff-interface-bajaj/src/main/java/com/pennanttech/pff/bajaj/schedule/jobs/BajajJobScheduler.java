@@ -31,7 +31,8 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	public void addJobs() throws ParseException {
 		logger.debug(Literal.ENTERING);
 		
-		autoDisbursementJob();
+		//autoDisbursementJob();
+		
 		impsDisbursementRespJob();
 		posidexCustomerUpdateRespJob();
 

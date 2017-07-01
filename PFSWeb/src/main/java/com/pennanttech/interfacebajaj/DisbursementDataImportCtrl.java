@@ -106,11 +106,12 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 					BajajInterfaceConstants.DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
 					valueLabel = new ValueLabel(configName, "HDFC Bank Disbursement Response");
 					doFillPanel(config, BajajInterfaceConstants.DISB_STP_IMPORT_STATUS);
+					menuList.add(valueLabel);
 				} else {
 					BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
 					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
 					doFillPanel(config, BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS);
-					 menuList.add(valueLabel);
+					menuList.add(valueLabel);
 				}
 			}
 		}
