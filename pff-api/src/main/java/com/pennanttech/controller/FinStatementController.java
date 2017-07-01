@@ -250,7 +250,7 @@ public class FinStatementController extends SummaryDetailService {
 			scheduleData.setForeClosureFees(foreClosureFees);
 
 			// process fees and charges
-			processFeesAndCharges(financeDetail, scheduleData, finFeeDetails);
+			processFeesAndCharges(scheduleData, finFeeDetails);
 
 			finStmtDetail.setForeClosureDetails(foreClosureList);
 			finStmtDetail.setFinScheduleData(scheduleData);
@@ -263,7 +263,7 @@ public class FinStatementController extends SummaryDetailService {
 		return finStmtDetail;
 	}
 
-	private void processFeesAndCharges(FinanceDetail financeDetail, FinScheduleData scheduleData,
+	private void processFeesAndCharges(FinScheduleData scheduleData,
 			List<FinFeeDetail> finFeeDetails) throws IllegalAccessException, InvocationTargetException {
 		// finance level fees and charges
 		scheduleData.setFeeDues(finFeeDetails);
@@ -308,7 +308,7 @@ public class FinStatementController extends SummaryDetailService {
 		return getStatement(references, serviceName, statementRequest.getDays());
 	}
 
-	private void prepareResponse(FinanceDetail financeDetail, String servicName) {
+	private void prepareResponse(FinanceDetail financeDetail, String servicName) throws IllegalAccessException, InvocationTargetException {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
 		financeDetail.getFinScheduleData().setInsuranceList(null);
@@ -350,6 +350,12 @@ public class FinStatementController extends SummaryDetailService {
 
 		if (StringUtils.equals(APIConstants.STMT_ACCOUNT, servicName)) {
 			List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
+			FinScheduleData finScheduleData=financeDetail.getFinScheduleData();
+			processFeesAndCharges(finScheduleData, finFeeDetail);
+			if(financeDetail.getFinScheduleData().getFeeDues() != null){
+				finFeeDetail.addAll(financeDetail.getFinScheduleData().getFeeDues());
+			}
+			financeDetail.getFinScheduleData().setFeeDues(null);
 			financeDetail.setFinFeeDetails(finFeeDetail);
 		}
 

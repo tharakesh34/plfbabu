@@ -67,7 +67,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList", "returnStatus" })
+		"customerChequeInfoList", "customerExtLiabilityList","dedupReq","returnStatus","customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -141,6 +141,8 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement(name = "customerExtLiability")
 	private List<CustomerExtLiability> customerExtLiabilityList;
 	private List<FinanceEnquiry> custFinanceExposureList;
+	@XmlElementWrapper(name = "dedup")
+	@XmlElement(name = "dedup")
 	private List<CustomerDedup> customerDedupList;
 	private CoreCustomer coreCustomer;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -152,6 +154,8 @@ public class CustomerDetails implements java.io.Serializable {
 
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
+	@XmlElement
+	private boolean dedupReq;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -477,4 +481,13 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setCustomerFinance(FinanceEnquiry customerFinance) {
 		this.customerFinance = customerFinance;
 	}
+
+	public boolean isDedupReq() {
+		return dedupReq;
+	}
+
+	public void setDedupReq(boolean dedupReq) {
+		this.dedupReq = dedupReq;
+	}
+
 }
