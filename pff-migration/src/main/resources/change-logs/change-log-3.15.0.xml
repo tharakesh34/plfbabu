@@ -7049,4 +7049,33 @@ union
 		INSERT INTO ErrorDetails VALUES('90343','EN','E','Customer dedup found.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="301" author="murthy.y">
+		<dropPrimaryKey tableName="ALM"/>
+	</changeSet>
+	<changeSet id="302" author="murthy.y">
+		<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+			SELECT 
+			FM.FINREFERENCE,
+			FM.FINTYPE,
+			FM.FINSTARTDATE,
+			FM.MATURITYDATE,
+			CASE  WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END CLOSINGSTATUS,
+			CASE
+			    WHEN (SELECT COUNT(RH.REFERENCE) EMIADV
+			      FROM FINRECEIPTDETAIL RD
+			      INNER JOIN FINRECEIPTHEADER RH
+			      ON RH.RECEIPTID  =RH.RECEIPTID
+			      WHERE PAYMENTTYPE='EMIINADV'
+			      AND RH.REFERENCE = FM.FINREFERENCE) > 0
+			    THEN 'Y'
+			    ELSE 'N'
+			  END ADVFLAG,
+			CCY.CCYMINORCCYUNITS,
+			CCY.CCYEDITFIELD
+			FROM FINANCEMAIN FM 
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY
+			where FINISACTIVE=1
+		</createView>
+	</changeSet>
+	
 	</databaseChangeLog>
