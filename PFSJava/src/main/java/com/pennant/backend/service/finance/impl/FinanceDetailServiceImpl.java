@@ -3623,12 +3623,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Fee Receipt Details
-			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null
-					|| financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
-				getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null);
-			} else {
-				getFinFeeDetailService().doApproveFinFeeReceipts(financeDetail.getFinScheduleData().getFinFeeReceipts(),
-						"", tranType, financeMain.getFinReference());
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+				if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null
+						|| financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
+					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null);
+				} else {
+					getFinFeeDetailService().doApproveFinFeeReceipts(
+							financeDetail.getFinScheduleData().getFinFeeReceipts(), "", tranType, financeMain.getFinReference());
+				}
 			}
 		}
 
@@ -4557,6 +4559,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
+		
+		getPostingsPreparationUtil().postReveralsByFinreference(financeMain.getFinReference());
 
 		// Save Finance Details Data on Reject Tables
 		//=======================================

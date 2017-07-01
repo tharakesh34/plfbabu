@@ -452,9 +452,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
 				createPayableAdvise(finReference, map);
-			} else {
-				createExcessAmount(finReference, map);
 			}
+		}
+		
+		if (!ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
+			createExcessAmount(finReference, map);
 		}
 		
 		auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
@@ -527,7 +529,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 		}
 
-		if (excessAmount.compareTo(BigDecimal.ZERO) != 0) {
+		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finExcessAmount = new FinExcessAmount();
 			finExcessAmount.setFinReference(finReference);
 			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
