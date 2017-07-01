@@ -18,12 +18,12 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.bajaj.services.ALMRequestService;
-import com.pennanttech.bajaj.services.ControlDumpRequestService;
-import com.pennanttech.bajaj.services.DataMartRequestService;
-import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.generalledger.TrailBalanceReportService;
+import com.pennanttech.pff.core.services.ALMRequestService;
+import com.pennanttech.pff.core.services.ControlDumpRequestService;
+import com.pennanttech.pff.core.services.DataMartRequestService;
+import com.pennanttech.pff.core.services.PosidexRequestService;
+import com.pennanttech.pff.core.services.TrailBalanceReportService;
 import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 
@@ -88,15 +88,15 @@ public class DataExtract implements Tasklet {
 
 			}
 
-			new AMLRequest(new Long(1000), almRequestService).start();
-			new TrailBalanceReport(new Long(1000), trailBalanceReportService).start();
-			new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
-			new TaxDownlaodDetail(new Long(1000), taxDownlaodDetailService).start();
+			new AMLRequestThread(new Long(1000), almRequestService).start();
+			new TrailBalanceReportThread(new Long(1000), trailBalanceReportService).start();
+			new ControlDumpRequestThread(new Long(1000), controlDumpRequestService).start();
+			new TaxDownlaodDetailThread(new Long(1000), taxDownlaodDetailService).start();
 
 			// PosidexRequestService
-			new PosidexRequest(new Long(1000), posidexRequestService).start();
-			new DataMartRequest(new Long(1000), dataMartRequestService).start();
-			new CibilReport(cibilReport).start();
+			new PosidexRequestThread(new Long(1000), posidexRequestService).start();
+			new DataMartRequestThread(new Long(1000), dataMartRequestService).start();
+			new CibilReportThread(cibilReport).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -118,12 +118,12 @@ public class DataExtract implements Tasklet {
 		return dataSource;
 	}
 
-	public class AMLRequest extends Thread {
+	public class AMLRequestThread extends Thread {
 
 		private long userId;
 		private ALMRequestService almRequestService;
 
-		public AMLRequest(long userId, ALMRequestService almRequestService) {
+		public AMLRequestThread(long userId, ALMRequestService almRequestService) {
 			this.userId = userId;
 			this.almRequestService = almRequestService;
 		}
@@ -139,11 +139,11 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class ControlDumpRequest extends Thread {
+	public class ControlDumpRequestThread extends Thread {
 		private long userId;
 		private ControlDumpRequestService controlDumpRequestService;
 
-		public ControlDumpRequest(long userId, ControlDumpRequestService controlDumpRequestService) {
+		public ControlDumpRequestThread(long userId, ControlDumpRequestService controlDumpRequestService) {
 			this.userId = userId;
 			this.controlDumpRequestService = controlDumpRequestService;
 		}
@@ -163,11 +163,11 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class PosidexRequest extends Thread {
+	public class PosidexRequestThread extends Thread {
 		private long userId;
 		private PosidexRequestService posidexRequestService;
 
-		public PosidexRequest(long userId, PosidexRequestService posidexRequestService) {
+		public PosidexRequestThread(long userId, PosidexRequestService posidexRequestService) {
 			this.userId = userId;
 			this.posidexRequestService = posidexRequestService;
 		}
@@ -183,11 +183,11 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class DataMartRequest extends Thread {
+	public class DataMartRequestThread extends Thread {
 		private long userId;
 		private DataMartRequestService dataMartRequestService;
 
-		public DataMartRequest(long userId, DataMartRequestService dataMartRequestService) {
+		public DataMartRequestThread(long userId, DataMartRequestService dataMartRequestService) {
 			this.userId = userId;
 			this.dataMartRequestService = dataMartRequestService;
 		}
@@ -203,19 +203,19 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class TrailBalanceReport extends Thread {
+	public class TrailBalanceReportThread extends Thread {
 		private long userId;
-		private TrailBalanceReportService trailBalanceReportservice;
+		private TrailBalanceReportService trailBalanceReportService;
 
-		public TrailBalanceReport(long userId, TrailBalanceReportService trailBalanceReportService) {
+		public TrailBalanceReportThread(long userId, TrailBalanceReportService trailBalanceReportService) {
 			this.userId = userId;
-			this.trailBalanceReportservice = trailBalanceReportService;
+			this.trailBalanceReportService = trailBalanceReportService;
 		}
 
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				this.trailBalanceReportservice.generateReport(userId);
+				this.trailBalanceReportService.generateReport(userId);
 
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -223,10 +223,10 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class CibilReport extends Thread {
+	public class CibilReportThread extends Thread {
 		private CIBILReport cibilReport;
 
-		public CibilReport(CIBILReport cibilReport) {
+		public CibilReportThread(CIBILReport cibilReport) {
 			this.cibilReport = cibilReport;
 		}
 
@@ -240,11 +240,11 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class TaxDownlaodDetail extends Thread {
+	public class TaxDownlaodDetailThread extends Thread {
 		private long userId;
 		private TaxDownlaodDetailService taxDownlaodDetailService;
 
-		public TaxDownlaodDetail(long userId, TaxDownlaodDetailService taxDownlaodDetailService) {
+		public TaxDownlaodDetailThread(long userId, TaxDownlaodDetailService taxDownlaodDetailService) {
 			this.userId = userId;
 			this.taxDownlaodDetailService = taxDownlaodDetailService;
 		}
