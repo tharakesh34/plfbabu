@@ -7140,4 +7140,10 @@ union
 	<changeSet id="307" author="murthy.y">
 		<sql>update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'C' WHERE NAME = 'DISB_HDFC_EXPORT';</sql>
 	</changeSet>
+	<changeSet id="308" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'C' WHERE NAME = 'DISB_HDFC_IMPORT';
+			update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'A' WHERE NAME = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
