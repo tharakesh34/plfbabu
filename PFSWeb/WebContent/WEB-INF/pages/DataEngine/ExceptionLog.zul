@@ -28,7 +28,7 @@
 					<listheader id="listheader_Id" label="ID" hflex="min" />
 					<listheader id="listheader_KeyId" label="Reference" hflex="min" />
 					<listheader id="listheader_Status" label="Status" hflex="min" />
-					<listheader id="Reason" label="Reason" hflex="min" />
+					<listheader id="Reason" label="Reason" hflex="max" />
 				</listhead>
 			</listbox>
 		</center>

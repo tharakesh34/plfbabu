@@ -87,16 +87,16 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 				doFillPanel(config, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
 			}
 
-			if ("POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)) {
-				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS = dataEngineConfig
-						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
-				doFillPanel(config, BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
-			}
-
 			if ("POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName)) {
 				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 				doFillPanel(config, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
+			}
+			
+			if ("POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)) {
+				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS = dataEngineConfig
+						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
+				doFillPanel(config, BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
 			}
 
 			if ("DATA_MART_REQUEST".equals(configName)) {
@@ -136,7 +136,7 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		pannel.setId(ds.getName());
 		pannel.setBorder("normal");
 		pannel.setTitle(ds.getName());
-		pannel.setWidth("460px");
+		pannel.setWidth("420px");
 		pannel.setProcess(ds);
 		pannel.render();
 
@@ -154,7 +154,7 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			Hbox hbox = null;
 			List<Hbox> item = rows.getChildren();
 			hbox = (Hbox) item.get(0);
-			if (hbox.getChildren().size() == 2) {
+			if (hbox.getChildren().size() == 3) {
 				rows = new Row();
 				rows.setStyle("overflow: visible !important");
 				hbox = new Hbox();
