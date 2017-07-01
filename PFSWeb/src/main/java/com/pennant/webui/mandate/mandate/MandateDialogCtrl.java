@@ -1256,13 +1256,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Account Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MandateDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_NAME,
+					.getLabel("label_MandateDialog_AccHolderName.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,
 					validate));
 		}
 		// Joint Account Holder Name
 		if (!this.jointAccHolderName.isReadonly()) {
 			this.jointAccHolderName.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_MandateDialog_JointAccHolderName.value"), PennantRegularExpressions.REGEX_NAME,
+					.getLabel("label_MandateDialog_JointAccHolderName.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME,
 					false));
 		}
 		// Account Type

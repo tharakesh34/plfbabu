@@ -1,5 +1,9 @@
 package com.pennant.webui.finance.financemain;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +41,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
@@ -81,6 +86,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	protected Label								status;
 	protected Listheader						listheader_Select;
 	private FinTaxUploadHeader					finTaxUploadHeader;
+	private Media								media;
 
 	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
 
@@ -181,7 +187,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		boolean isSupported = false;
 		int totalCount = 0;
 		String status = null;
-		Media media = event.getMedia();
+		media = event.getMedia();
 		if ("xls".equals(media.getFormat())) {
 			isSupported = true;
 		}
@@ -395,6 +401,11 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.listBoxFileData.getItems().isEmpty()) {
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
+		if(afinTaxUploadHeader.isNew()){
+			copyInputStreamToFile(media.getStreamData(), new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")+media.getName()+".xls"));
+		}
+			
+
 		doSetValidation(userAction);
 		doWriteComponentsToBean(finTaxUploadDetailList, userAction, afinTaxUploadHeader);
 
@@ -444,6 +455,21 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 	}
 
+	
+	private void copyInputStreamToFile( InputStream in, File file ) {
+	    try {
+	        OutputStream out = new FileOutputStream(file);
+	        byte[] buf = new byte[1024];
+	        int len;
+	        while((len=in.read(buf))>0){
+	            out.write(buf,0,len);
+	        }
+	        out.close();
+	        in.close();
+	    } catch (Exception e) {
+	        logger.debug(e);
+	    }
+	}
 	private void doSetValidation(String userAction) {
 		List<Listitem> Listitems = this.listBoxFileData.getItems();
 		boolean selected = false;
