@@ -7137,4 +7137,7 @@ union
 	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','CC','Cash Credit Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
 	</sql>
 	</changeSet>
+	<changeSet id="307" author="murthy.y">
+		<sql>update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'C' WHERE NAME = 'DISB_HDFC_EXPORT';</sql>
+	</changeSet>
 	</databaseChangeLog>
