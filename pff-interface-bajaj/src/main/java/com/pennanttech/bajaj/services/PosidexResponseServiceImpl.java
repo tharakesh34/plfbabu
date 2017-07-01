@@ -6,10 +6,10 @@ import org.quartz.JobExecutionException;
 
 import com.pennanttech.bajaj.process.PosidexResponseProcess;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.PosidexResponse;
+import com.pennanttech.pff.core.services.PosidexResponseService;
 
-public class PosidexResponseService extends BajajService implements PosidexResponse {
-	private static final Logger	logger	= Logger.getLogger(PosidexResponseService.class);
+public class PosidexResponseServiceImpl extends BajajService implements PosidexResponseService {
+	private static final Logger logger = Logger.getLogger(PosidexResponseServiceImpl.class);
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);

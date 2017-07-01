@@ -6,17 +6,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.pff.core.services.DataMartRequest;
+import com.pennanttech.pff.core.services.DataMartRequestService;
 
 public class TestDataMart {
 
-	DataMartRequest requestService;
+	DataMartRequestService dataMartRequestService;
 
 	@Before
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			requestService = context.getBean(DataMartRequest.class);
+			dataMartRequestService = context.getBean(DataMartRequestService.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -25,7 +25,7 @@ public class TestDataMart {
 	@Test
 	public void process() {
 		try {
-			requestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
+			dataMartRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,4 +1,4 @@
-package com.pennanttech.pff.bajaj.schedule.job;
+package com.pennanttech.pff.bajaj.schedule.jobs;
 
 import java.io.Serializable;
 

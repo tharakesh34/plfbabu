@@ -6,17 +6,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.pff.core.services.PosidexRequest;
+import com.pennanttech.pff.core.services.PosidexRequestService;
 
 public class TestPosidexRequestService  {
 
-	PosidexRequest requestService;
+	PosidexRequestService requestService;
 
 	@Before
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			requestService = context.getBean(PosidexRequest.class);
+			requestService = context.getBean(PosidexRequestService.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

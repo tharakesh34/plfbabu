@@ -167,8 +167,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				processedCount++;
-				executionStatus.setProcessedRecords(processedCount);
+				executionStatus.setProcessedRecords(processedCount++);
 
 				long customerId = 0;
 				boolean isExist = false;
@@ -194,11 +193,11 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					custMap.addValue("FILLER_STRING_1", rs.getObject("FILLER_STRING_1"));
 					extractCustomerReportDetails(customerId, custMap);
 					transManager.commit(txnStatus);
-					successCount++;
+					executionStatus.setSuccessRecords(successCount++);
 				} catch (Exception e) {
 					transManager.rollback(txnStatus);
 					logger.error(Literal.EXCEPTION);
-					failedCount++;
+					executionStatus.setFailedRecords(failedCount++);
 					saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
 				} finally {
 					txnStatus.flush();
@@ -273,9 +272,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * from INT_POSIDEX_CUST_LOAN_VIEW");
-		//sql.append(" WHERE CUSTOMER_NO = :CUSTOMER_NO");
-		//parmMap.addValue("CUSTOMER_NO", customerId);
-
+		
 		if (lastRunDate != null) {
 			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 			parmMap.addValue("LASTMNTON", lastRunDate);
@@ -284,8 +281,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				processedCount++;
-				executionStatus.setProcessedRecords(processedCount);
+				executionStatus.setProcessedRecords(processedCount++);
 
 				boolean isExist;
 				String finreferenceNo = null;
@@ -303,14 +299,14 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 							loanMap.addValue("PROCESS_TYPE", "I");
 							save(loanMap, CUSTOMER_LOAN_DETAILS, destinationJdbcTemplate);
 						}
-						successCount++;
+						executionStatus.setSuccessRecords(successCount++);
 					} catch (Exception e) {
 						throw e;
 					}
 
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-					failedCount++;
+					executionStatus.setFailedRecords(failedCount++);
 					saveBatchLog(finreferenceNo, "F", e.getMessage());
 				}
 			}
@@ -344,7 +340,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		try {
 			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
-			executionStatus.setTotalRecords(totalRecords);
+			BajajInterfaceConstants.POSIDEX_REQUEST_STATUS.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

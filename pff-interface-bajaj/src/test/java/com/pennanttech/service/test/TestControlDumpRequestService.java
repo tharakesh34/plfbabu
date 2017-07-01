@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.ControlDumpRequestService;
+import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class TestControlDumpRequestService {

@@ -3,9 +3,9 @@ package com.pennanttech.bajaj.services;
 import java.util.Date;
 
 import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
-import com.pennanttech.pff.core.services.ControlDumpRequest;
+import com.pennanttech.pff.core.services.ControlDumpRequestService;
 
-public class ControlDumpRequestService extends BajajService implements ControlDumpRequest {
+public class ControlDumpRequestServiceImpl extends BajajService implements ControlDumpRequestService {
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {

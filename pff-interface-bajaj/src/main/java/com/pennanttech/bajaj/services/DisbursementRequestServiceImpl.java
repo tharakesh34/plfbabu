@@ -21,18 +21,18 @@ import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.DisbursementRequest;
+import com.pennanttech.pff.core.services.DisbursementRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class DisbursementRequestService extends BajajService implements DisbursementRequest {
+public class DisbursementRequestServiceImpl extends BajajService implements DisbursementRequestService {
 	private final Logger	logger	= Logger.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I;
 	}
 
-	public DisbursementRequestService() {
+	public DisbursementRequestServiceImpl() {
 		super();
 	}
 

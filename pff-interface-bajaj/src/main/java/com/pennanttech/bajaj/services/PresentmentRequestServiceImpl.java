@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennanttech.bajaj.process.PresentmentRequestProcess;
-import com.pennanttech.pff.core.services.PresentmentRequest;
+import com.pennanttech.pff.core.services.PresentmentRequestService;
 
-public class PresentmentRequestService extends BajajService implements PresentmentRequest {
+public class PresentmentRequestServiceImpl extends BajajService implements PresentmentRequestService {
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {

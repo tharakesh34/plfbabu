@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
@@ -22,7 +23,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(PosidexResponseProcess.class);
 
 	public PosidexResponseProcess(DataSource dataSource, long userId, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, false, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, false, valueDate, BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 					MapSqlParameterSource custMap = null;
 					MapSqlParameterSource dataMap = null;
 
-					processedCount++;
+					executionStatus.setProcessedRecords(processedCount++);
 					txnStatus = transManager.getTransaction(transDef);
 					try {
 						custMap = mapCustData(rs);
@@ -55,12 +56,12 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 						updateCustomer(custMap);
 						updateDataStatus(dataMap);
 
-						successCount++;
+						executionStatus.setSuccessRecords(successCount++);
 						transManager.commit(txnStatus);
 					} catch (Exception e) {
 						logger.error(Literal.ENTERING);
 						transManager.rollback(txnStatus);
-						failedCount++;
+						executionStatus.setFailedRecords(failedCount++);
 
 						String keyId = rs.getString("CUSTOMER_ID");
 						if (StringUtils.trimToNull(keyId) == null) {

@@ -16,13 +16,13 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.MandateResponse;
+import com.pennanttech.pff.core.services.MandateResponseService;
 import com.pennanttech.pff.core.util.DateUtil;
 
-public class MandateResponseService extends BajajService implements MandateResponse {
+public class MandateResponseServiceImpl extends BajajService implements MandateResponseService {
 	private final Logger	logger	= Logger.getLogger(getClass());
 
-	public MandateResponseService() {
+	public MandateResponseServiceImpl() {
 		super();
 	}
 

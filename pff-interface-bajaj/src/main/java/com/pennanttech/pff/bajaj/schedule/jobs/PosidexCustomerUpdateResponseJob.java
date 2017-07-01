@@ -1,4 +1,4 @@
-package com.pennanttech.pff.bajaj.schedule.job;
+package com.pennanttech.pff.bajaj.schedule.jobs;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.pennanttech.bajaj.services.PosidexResponseService;
+import com.pennanttech.bajaj.services.PosidexResponseServiceImpl;
 import com.pennanttech.pff.core.Literal;
 
 public class PosidexCustomerUpdateResponseJob implements Job, Serializable {
@@ -15,7 +15,7 @@ public class PosidexCustomerUpdateResponseJob implements Job, Serializable {
 
 	private static final long				serialVersionUID	= 1L;
 
-	private static PosidexResponseService	posidexResponseService;
+	private static PosidexResponseServiceImpl	posidexResponseService;
 
 	public PosidexCustomerUpdateResponseJob() {
 		super();
@@ -28,7 +28,7 @@ public class PosidexCustomerUpdateResponseJob implements Job, Serializable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public static void setPosidexResponseService(PosidexResponseService posidexResponseService) {
+	public static void setPosidexResponseService(PosidexResponseServiceImpl posidexResponseService) {
 		PosidexCustomerUpdateResponseJob.posidexResponseService = posidexResponseService;
 	}
 

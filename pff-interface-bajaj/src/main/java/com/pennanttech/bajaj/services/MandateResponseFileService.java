@@ -12,6 +12,7 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.file.service.FileService;
+import com.pennanttech.pff.core.services.MandateResponseService;
 
 public class MandateResponseFileService extends BajajService implements FileService {
 	private static final Logger logger = Logger.getLogger(MandateResponseFileService.class);

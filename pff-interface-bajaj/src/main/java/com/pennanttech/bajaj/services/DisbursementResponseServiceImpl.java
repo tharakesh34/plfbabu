@@ -11,11 +11,11 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.DisbursementResponse;
-import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
-import com.pennanttech.pff.core.services.payments.PaymentProcess;
+import com.pennanttech.pff.core.process.DisbursementProcess;
+import com.pennanttech.pff.core.process.PaymentProcess;
+import com.pennanttech.pff.core.services.DisbursementResponseService;
 
-public class DisbursementResponseService extends BajajService implements DisbursementResponse {
+public class DisbursementResponseServiceImpl extends BajajService implements DisbursementResponseService {
 	private final Logger		logger	= Logger.getLogger(getClass());
 
 	@Autowired
@@ -24,7 +24,7 @@ public class DisbursementResponseService extends BajajService implements Disburs
 	@Autowired
 	private PaymentProcess paymentProcess;
 
-	public DisbursementResponseService() {
+	public DisbursementResponseServiceImpl() {
 		super();
 	}
 
