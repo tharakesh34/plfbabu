@@ -68,4 +68,5 @@ public interface FinFeeScheduleDetailDAO {
 
 	List<FinFeeScheduleDetail> getFeeSchdTPost(String finReference, Date schDate);
 
+	void deleteFeeScheduleBatchByFinRererence(String finReference, boolean isWIF, String tableType);
 }

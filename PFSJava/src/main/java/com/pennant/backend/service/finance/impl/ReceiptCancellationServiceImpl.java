@@ -838,12 +838,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 							// Principal Payment 
 							if(rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
 								curSchd.setSchdPriPaid(curSchd.getSchdPriPaid().subtract(rpySchd.getPrincipalSchdPayNow()));
+								curSchd.setSchPriPaid(false);
 								schdUpdated = true;
 							}
 							
 							// Profit Payment 
 							if(rpySchd.getProfitSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
 								curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().subtract(rpySchd.getProfitSchdPayNow()));
+								curSchd.setSchPftPaid(false);
 								schdUpdated = true;
 							}
 							

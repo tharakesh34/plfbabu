@@ -139,6 +139,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	private FinanceDetail	financeDetail;
 	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<GuarantorDetail>();
 	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
+	
+	private String custCif = "";
 
 	/**
 	 * default constructor.<br>
@@ -486,13 +488,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		
 		if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(applicable)) {
 			Customer customer = this.financeDetail.getCustomerDetails().getCustomer();
-			readOnlyComponent(true, this.custRef);
 			
 			this.custRef.setValue(customer.getCustCIF());
+			this.custCif = customer.getCustCIF();
 			this.custRef.setDescription(customer.getCustShrtName());
 			this.taxCustId = customer.getCustID();
 			
 			readOnlyComponentChecking();
+			readOnlyComponent(true, this.custRef);
 		} else if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicable)) {
 			List<String> custCIFList = new ArrayList<>();
 
@@ -570,11 +573,13 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		Object dataObject = custRef.getObject();
 		if (dataObject instanceof String) {
 			this.custRef.setValue(dataObject.toString());
+			this.custCif = dataObject.toString();
 			this.custRef.setDescription(dataObject.toString());
 			//this.taxNumber.setValue("");
 		} else {
 			Customer customer = (Customer) dataObject;
 			if (customer != null) {
+				this.custCif = customer.getCustCIF();
 				this.custRef.setValue(customer.getCustCIF());
 				this.custRef.setDescription(customer.getCustShrtName());
 				this.taxCustId = customer.getCustID();
@@ -806,6 +811,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			this.custRef.setValue(aFinanceTaxDetail.getCustCIF());
 			this.custRef.setDescription(aFinanceTaxDetail.getCustShrtName());
 			this.taxCustId = aFinanceTaxDetail.getTaxCustId();
+			this.custCif = aFinanceTaxDetail.getCustCIF();
 		}
 		
 		this.taxExempted.setChecked(aFinanceTaxDetail.isTaxExempted());
@@ -859,6 +865,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 		try {
 			aFinanceTaxDetail.setTaxCustId(this.taxCustId);
+			aFinanceTaxDetail.setCustCIF(this.custCif);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

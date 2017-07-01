@@ -36,4 +36,8 @@ public interface LimitDetailDAO {
 	LimitDetails getLimitLineByDetailId(final long id, String type);
 
 	List<LimitDetails> getLimitByLineAndgroup(long headerId, String limitline, List<String> groupcode);
+	
+	public List<LimitDetails> getLimitDetails(long headerId);
+	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type);
+	public void saveList(List<LimitDetails> limitDetailsList, String type);
 }

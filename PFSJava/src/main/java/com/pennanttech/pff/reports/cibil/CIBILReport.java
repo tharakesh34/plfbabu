@@ -33,7 +33,6 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
@@ -49,14 +48,12 @@ public class CIBILReport {
 	private String CBIL_REPORT_MEMBER_CODE;
 
 	private long headerId;
-	private String status= "S";
-	
+	private String status = "S";
+
 	private long totalRecords;
 	private long processedRecords;
 	private long successCount;
 	private long failedCount;
-
-	public static DataEngineStatus CIBIL_EXPORT_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
 
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -83,13 +80,12 @@ public class CIBILReport {
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
 		try {
 
-			headerId = cibilService.logFileInfo(reportName.getName(), CBIL_REPORT_MEMBER_ID, CBIL_REPORT_MEMBER_SHORT_NAME,
-					CBIL_REPORT_MEMBER_PASSWORD);
+			headerId = cibilService.logFileInfo(reportName.getName(), CBIL_REPORT_MEMBER_ID,
+					CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD,CBIL_REPORT_PATH);
 
 			cibilService.deleteDetails();
 
 			totalRecords = cibilService.extractCustomers();
-			CIBIL_EXPORT_STATUS.setTotalRecords(totalRecords);
 
 			new CBILHeader(writer).write();
 
@@ -110,6 +106,7 @@ public class CIBILReport {
 
 						if (customer == null) {
 							failedCount++;
+							cibilService.logFileInfoException(headerId, finreference, "Unable to fetch the details.");
 							return;
 						}
 
@@ -123,11 +120,11 @@ public class CIBILReport {
 						new AccountSegmentHistory(writer, list).write();
 						new EndofSubjectSegment(writer).write();
 						successCount++;
-					} catch (IOException e) {
+					} catch (Exception e) {
 						failedCount++;
+						cibilService.logFileInfoException(headerId, finreference, e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
 					} finally {
-						CIBIL_EXPORT_STATUS.setProcessedRecords(processedRecords);
 					}
 				}
 			});
@@ -142,9 +139,10 @@ public class CIBILReport {
 				writer.flush();
 				writer.close();
 			}
-			
-			updateRemarks();
-			cibilService.updateFileStatus(headerId, status);
+
+			String remarks = updateRemarks();
+			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
+					remarks);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -540,13 +538,11 @@ public class CIBILReport {
 		this.CBIL_REPORT_MEMBER_CODE = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_CODE");
 		this.CBIL_REPORT_MEMBER_SHORT_NAME = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_SHORT_NAME");
 		this.CBIL_REPORT_MEMBER_PASSWORD = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_PASSWORD");
-		
-		CIBIL_EXPORT_STATUS.setStartTime(DateUtil.getSysDate());
-		totalRecords= 0;
+
+		totalRecords = 0;
 		processedRecords = 0;
 		successCount = 0;
 		failedCount = 0;
-		CIBIL_EXPORT_STATUS.reset();
 	}
 
 	private int getOdDays(int odDays) {
@@ -603,7 +599,7 @@ public class CIBILReport {
 		}
 	}
 
-	private void updateRemarks() {
+	private String updateRemarks() {
 		StringBuilder remarks = new StringBuilder();
 		if (failedCount > 0) {
 			remarks.append("Completed with exceptions, total Records: ");
@@ -612,16 +608,15 @@ public class CIBILReport {
 			remarks.append(successCount);
 			remarks.append(", Failure: ");
 			remarks.append(failedCount);
-			CIBIL_EXPORT_STATUS.setStatus(status);
+		//	CIBIL_EXPORT_STATUS.setStatus(status);
 
 		} else {
 			remarks.append("Completed successfully, total Records: ");
 			remarks.append(totalRecords);
 			remarks.append(", Sucess: ");
 			remarks.append(successCount);
-			CIBIL_EXPORT_STATUS.setStatus(status);
+			//CIBIL_EXPORT_STATUS.setStatus(status);
 		}
-		CIBIL_EXPORT_STATUS.setEndTime(DateUtil.getSysDate());
-		CIBIL_EXPORT_STATUS.setRemarks(remarks.toString());
+		return remarks.toString();
 	}
 }

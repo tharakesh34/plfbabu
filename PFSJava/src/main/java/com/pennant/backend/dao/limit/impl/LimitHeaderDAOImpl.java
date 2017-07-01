@@ -467,4 +467,31 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 			return 0;
 		}
 	}
+	
+	/**
+	 * Method for fetch limitHeaders
+	 * 
+	 * @param type
+	 * 
+	 * @return List<LimitHeader>
+	 */
+	@Override
+	public List<LimitHeader> getLimitHeaders(String type) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate,");
+		selectSql.append(" LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active");
+
+		selectSql.append(" From LimitHeader");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where RuleCode IS NOT NULL");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new LimitHeader());
+		RowMapper<LimitHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitHeader.class);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
 }

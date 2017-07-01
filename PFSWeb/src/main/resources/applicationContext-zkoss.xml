@@ -4807,7 +4807,10 @@
 	    <property name="dataEngineConfig" ref="dataEngineConfig" />
 	  	<property name="dataSource" ref="pfsDatasource" />
 	  </bean> -->
-	  	
+	  
+	  <bean id="masterDataExtractionCtrl" class="com.pennanttech.framework.component.dataengine.MasterDataExtractionCtrl"  parent="basisCtrl" scope="prototype" >
+	  	<property name="dataEngineConfig" ref="dataEngineConfig" />
+	  </bean>	
 	<!-- TaxDetail -->
 	<bean id="taxDetailListCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">

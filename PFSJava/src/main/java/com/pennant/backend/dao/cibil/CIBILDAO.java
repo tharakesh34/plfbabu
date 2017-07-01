@@ -8,6 +8,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public interface CIBILDAO {
 
@@ -21,20 +22,19 @@ public interface CIBILDAO {
 
 	List<CustomerAddres> getCustomerAddres(long customerId);
 
-	FinanceEnquiry getFinanceSummary(String financeReference,long customerId);
-	
-	 long logFileInfo(String fileName, String memberId, String memberName, String memberPwd);
-	 
-	 void deleteDetails();
-	 
-	 int extractCustomers() throws Exception;
+	FinanceEnquiry getFinanceSummary(String financeReference, long customerId);
 
-	void updateFileStatus(long headerid, String status);
- 
-	 
-	 
-	 
- 
+	long logFileInfo(String fileName, String memberId, String memberName, String memberPwd, String reportPath);
 
+	void deleteDetails();
+
+	int extractCustomers() throws Exception;
+
+	void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords, long successCount,
+			long failedCount, String remarks);
+
+	void logFileInfoException(long id, String finReference, String reason);
+
+	DataEngineStatus getLatestExecution();
 
 }

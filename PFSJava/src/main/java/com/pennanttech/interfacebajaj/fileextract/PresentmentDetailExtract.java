@@ -173,6 +173,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	int recordCount = 0;
 	int successCount = 0;
 	int failedCount = 0;
+	long batchId = 0;
 	
 	// After file import, processing the data from staging table
 	private void processingPrsentments() {
@@ -181,6 +182,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		recordCount = 0;
 		successCount = 0;
 		failedCount = 0;
+		batchId = 0;
+		remarks = null;
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED, ");
 		sql.append(" CLEARINGDATE, STATUS, REASONCODE  FROM PRESENTMENT_FILEIMPORT ");
@@ -188,6 +192,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				batchId = saveFileHeader(getFile().getName());
+				
 				while (rs.next()) {
 					recordCount++;
 					try {
@@ -207,6 +213,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							updatePresentmentDetails(presentmentRef, status);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentHeaderService.updateFinanceDetails(presentmentRef);
+							saveBatchLog(batchId, status, presentmentRef, null);
 						} else {
 							try {
 								detail = presentmentCancellation(presentmentRef, reasonCode);
@@ -215,16 +222,19 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									detail.setErrorDesc(reasonCode + " - " + detail.getBounceReason());
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_BOUNCE, detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
 									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_BOUNCE, detail.getStatus());
+									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef, detail.getErrorDesc());
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001", detail.getErrorDesc());
 									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE, detail.getStatus());
+									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, detail.getErrorDesc());
 								}
 							} catch (Exception e) {
 								logger.error(Literal.EXCEPTION, e);
 								failedCount++;
 								updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0002", e.getMessage());
 								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE, detail.getStatus());
+								saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
 							}
 						}
 					} catch (Exception e) {
@@ -254,10 +264,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					remarks.append(successCount + ".");
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
-					remarks = null;
 				}
+				updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
+				
 				return 0;
 			}
+
 		});
 		logger.debug(Literal.LEAVING);
 	}
@@ -467,4 +479,85 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			logger.debug(Literal.LEAVING);
 		}
 	}
+	
+	private long saveFileHeader(String fileName) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append(" INSERT INTO BatchFileHeader");
+		sql.append(" (ID, FileName, StartTime)");
+		sql.append(" VALUES( :ID, :FileName, :StartTime)");
+
+		long batchId = presentmentHeaderService.getSeqNumber("SeqBatchFileHeader");
+
+		source.addValue("ID", batchId);
+		source.addValue("FileName", fileName);
+		source.addValue("StartTime", DateUtility.getSysDate());
+
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+
+		return batchId;
+	}
+	
+	
+	private void saveBatchLog(long batchId, String status, String reference, String errDesc) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append(" INSERT INTO BatchFileDetails");
+		sql.append(" (FileId, Reference, Status, ErrorDesc)");
+		sql.append(" VALUES( :FileId, :Reference, :Status, :ErrorDesc)");
+
+		source.addValue("FileId", batchId);
+		source.addValue("Reference", reference);
+		source.addValue("Status", status);
+		if (StringUtils.trimToNull(errDesc) != null) {
+			errDesc = (errDesc.length() >= 1000) ? errDesc.substring(0, 988) : errDesc;
+		}
+		source.addValue("ErrorDesc", errDesc);
+
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private void updateFileHeader(long batchId, int recordCount, int successCount, int failedCount, String remarks) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuffer query = new StringBuffer();
+		query.append(" UPDATE BatchFileHeader SET EndTime = :EndTime, TotalRecords = :TotalRecords,");
+		query.append(" SucessRecords = :SucessRecords, FailedRecords = :FailedRecords, Remarks = :Remarks Where ID = :ID");
+
+		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("TotalRecords", recordCount);
+		source.addValue("SucessRecords", successCount);
+		source.addValue("FailedRecords", failedCount);
+		if (StringUtils.trimToNull(remarks) != null) {
+			remarks = (remarks.length() >= 2000) ? remarks.substring(0, 1988) : remarks;
+		}
+		source.addValue("Remarks", remarks);
+		source.addValue("ID", batchId);
+
+		try {
+			this.jdbcTemplate.update(query.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 }

@@ -57,6 +57,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
@@ -477,4 +478,85 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		
 	}
 
+	/**
+	 * Method for fetching LimitDetails for Institution Limits
+	 */
+	@Override
+	public List<LimitDetails> getLimitDetails(long headerId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("HeaderId", headerId);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitLine, LimitLineDesc, SqlRule,");
+		selectSql.append(" LimitSanctioned, ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod");
+
+		selectSql.append(" From LimitLines_View");
+		selectSql.append(" Where LimitHeaderId = :HeaderId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		List<LimitDetails> limitDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+				typeRowMapper);
+
+		logger.debug("Leaving");
+		return limitDetailsList;
+	}
+
+	/**
+	 * 
+	 * @param limitDetailsList
+	 * @param type
+	 */
+	@Override
+	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append(" Set   ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
+		updateSql.append(" Where DetailId = :DetailId");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+ 	/**
+	 * 
+	 * @param limitDetailsLists
+	 * @param type
+	 * @return
+	 */
+	@Override
+	public void saveList(List<LimitDetails> limitDetailsList, String type) {
+		logger.debug("Entering");
+
+		for (LimitDetails limitDetail : limitDetailsList) {
+			if (limitDetail.getId() == Long.MIN_VALUE) {
+				limitDetail.setId(getNextidviewDAO().getNextId("SeqLimitDetails"));
+				logger.debug("get NextID:" + limitDetail.getId());
+			}
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into LimitDetails");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(
+				" (DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,  ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
+		insertSql.append(
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:DetailId, :LimitHeaderId, :LimitStructureDetailsID, :ExpiryDate,:Revolving, :LimitSanctioned,  :ReservedLimit, :UtilisedLimit, :LimitCheck, :LimitChkMethod ");
+		insertSql.append(
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("updateSql: " + insertSql.toString());
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 }

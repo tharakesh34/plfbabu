@@ -53,7 +53,7 @@
 			<column name="PartialPaidAmt" type="decimal(18, 0)" />
 		</addColumn>
 	</changeSet>
-	<changeSet author="Madhubabu" id="03">
+	<changeSet author="Madhubabu" id="03" dbms="oracle">
 		<createTable tableName="AdtFinTaxDetailUpload">
 			<column name="AuditId" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -93,6 +93,52 @@
 			<column name="RecordType" type="nvarchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="03" dbms="mssql">
+		<createTable tableName="AdtFinTaxDetailUpload">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="03.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table AdtFinTaxDetailUpload add constraint DF_ADTFINTAXDETUPLD_VER default 0 for Version;
+	    </sql>
 	</changeSet>
 	<changeSet id="04" author="Satya">
 		<addColumn tableName="AdtDocumentDetails">
@@ -543,12 +589,16 @@
 <changeSet id="28" author="Jayant">
     	<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE" constraintName="PK_ADTVAS_FWGI_ED" tableName="ADTVAS_FWGI_ED"/>
 	</changeSet> 
-<changeSet id="29" author="Jayant">
+<changeSet id="29" author="Jayant" dbms="oracle">
     <sql>
          Update ADTvasStructure set Productdesc=substr(productdesc,1,20);
     </sql>
 </changeSet>
-
+<changeSet id="29" author="Jayant" dbms="mssql">
+    <sql>
+         Update ADTvasStructure set Productdesc=substring(productdesc,1,20);
+    </sql>
+</changeSet>
 <changeSet id="30" author="SreeRavali">
 	<addColumn tableName="ADTFinTaxDetail">
 			<column name="ApplicableForCustId" type="NUMBER(19)" />
@@ -560,7 +610,7 @@
 		Update ADTFinTaxDetail set ApplicableForCustId = 0;
 	</sql>
 </changeSet>
-<changeSet author="Madhubabu" id="32">
+<changeSet author="Madhubabu" id="32" dbms="oracle">
 	<createTable tableName="ADTFinTaxUploadHeader">
 	<column name="AuditId" type="bigint">
 		<constraints primaryKey="true" nullable="false" />
@@ -592,13 +642,49 @@
 	<column name="WorkflowId" type="bigint" />
 </createTable>
 </changeSet>
-
+<changeSet author="Madhubabu" id="32" dbms="mssql">
+	<createTable tableName="ADTFinTaxUploadHeader">
+	<column name="AuditId" type="bigint">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="AuditDate" type="datetime">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="AuditSeq" type="int">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="AuditImage" type="varchar(2)">
+		<constraints primaryKey="true" nullable="false" />
+	</column>
+	<column name="BatchReference" type="varchar(20)" />
+	<column name="FileName" type="varchar(20)" />
+	<column name="NumberofRecords" type="nvarchar(10)" />
+	<column name="BatchCreatedDate" type="datetime" />
+	<column name="BatchApprovedDate" type="datetime" />
+	<column name="Status" type="nvarchar(10)" />
+	<column name="Version" type="int" />
+	<column name="LastMntBy" type="bigint" />
+	<column name="LastMntOn" type="datetime" />
+	<column name="RecordStatus" type="nvarchar(50)" />
+	<column name="RoleCode" type="nvarchar(100)" />
+	<column name="NextRoleCode" type="nvarchar(200)" />
+	<column name="TaskId" type="nvarchar(50)" />
+	<column name="NextTaskId" type="nvarchar(200)" />
+	<column name="RecordType" type="nvarchar(50)" />
+	<column name="WorkflowId" type="bigint" />
+</createTable>
+</changeSet>
+<changeSet id="32.1" author="Jayant" dbms="mssql">
+    <sql>
+        alter table ADTFinTaxUploadHeader add constraint ADTFINTAXUPLDHDR_VER default 0 for Version;
+    </sql>
+</changeSet>
 <changeSet id="33" author="Madhubabu">
 	<dropTable tableName="AdtFinTaxDetailUpload"/>
 	</changeSet>
 
 
-<changeSet author="Madhubabu" id="34">
+<changeSet author="Madhubabu" id="34" dbms="oracle">
 		<createTable tableName="AdtFinTaxUploadDetail">
 			<column name="AuditId" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -639,7 +725,52 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet author="Madhubabu" id="34" dbms="mssql">
+		<createTable tableName="AdtFinTaxUploadDetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="34.1" author="Jayant" dbms="mssql">
+	    <sql>
+	        alter table AdtFinTaxUploadDetail add constraint ADTFINTAXUPLDDET_VER default 0 for Version;
+	    </sql>
+	</changeSet>
 	<changeSet author="Kesav" id="35">
 		<renameColumn columnDataType="number(19,0)" newColumnName="TAXCUSTID"
 			oldColumnName="APPLICABLEFORCUSTID" tableName="AdtFinTaxDetail" />

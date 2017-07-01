@@ -182,6 +182,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
+	public long getSeqNumber(String tableNme) {
+		return presentmentHeaderDAO.getSeqNumber(tableNme);
+	}
+
+	@Override
 	public void updateFinanceDetails(String presentmentRef) {
 		logger.debug(Literal.ENTERING);
 

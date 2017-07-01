@@ -114,6 +114,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.rits.cloning.Cloner;
@@ -2286,6 +2287,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	
 	
 	private void calculateFeePercentageAmount(FinScheduleData finScheduleData){
+		logger.debug("Entering");
+		
 		if(getFinFeeDetailList() != null && !getFinFeeDetailList().isEmpty()){
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 				if(StringUtils.equals(finFeeDetail.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)){
@@ -2299,9 +2302,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
+		
+		logger.debug("Leaving");
 	}
 	
 	private BigDecimal getCalculatedPercentageFee(FinFeeDetail finFeeDetail,FinScheduleData finScheduleData){
+		logger.debug("Entering");
+		
 		BigDecimal calculatedAmt = BigDecimal.ZERO;
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		switch (finFeeDetail.getCalculateOn()) {
@@ -2314,10 +2321,23 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		case PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL:
 			calculatedAmt = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()).subtract(financeMain.getFinRepaymentAmount());
 			break;
+		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
+			try {
+				ReceiptDialogCtrl rec = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
+				calculatedAmt = rec.getTotalReceiptAmount(false);
+				//calculatedAmt = (BigDecimal) getFinanceMainDialogCtrl().getClass().getMethod("getTotalReceiptAmount", Boolean.class).invoke(getFinanceMainDialogCtrl(), false);
+			} catch (Exception e) {
+				logger.info(e);
+			}
+			break;
 		default:
 			break;
 		}
+		
 		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_DOWN);
+		
+		logger.debug("Leaving");
+		
 		return calculatedAmt;
 	}
 	

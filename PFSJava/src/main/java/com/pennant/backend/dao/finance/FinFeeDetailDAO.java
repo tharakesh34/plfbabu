@@ -65,4 +65,5 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type);
 	FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type);
 	void statusUpdate(long feeID, String status, boolean isWIF, String type);
+	void deleteServiceFeesByFinRef(String loanReference, boolean isWIF, String tableType);
 }

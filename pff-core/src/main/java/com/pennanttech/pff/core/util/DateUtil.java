@@ -284,6 +284,28 @@ public class DateUtil {
 
 		return calendar.getTime();
 	}
+	
+	/**
+	 * Returns a {@link Date} object with the date part of the specified date.
+	 * 
+	 * @param date
+	 *            The date object.
+	 * @return A {@link Date} representing the date part. <code>null</code> if <code>null</code> input.
+	 */
+	public static Date getDatePart(Date date) {
+		if (date == null) {
+			return null;
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return calendar.getTime();
+	}
 
 	/**
 	 * Returns month start {@link Date} for the specified {@link Date}.

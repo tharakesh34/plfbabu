@@ -124,11 +124,25 @@
 			<column name="Workflowid" type="NUMBER(19,0)" />
 	</createTable>
 </changeSet>
-	<changeSet id="10" author="ahmad">
+	<changeSet id="10" author="ahmad" dbms="oracle">
 		<createView viewName="AdtLocality_View" replaceIfExists="true">
 			SELECT     TH.AuditId, TH.AuditDate  AuditDateTime, TH.AuditDate AuditDate,  TH.AuditDate AuditTime, 
             coalesce(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, FN_CustomerName(T1.UsrFName, T1.UsrMName, 
                       T1.UsrLName)   AuditUserName,FN_TranType(TH.AuditTranType)  AuditTranType, 
+                      Aft.id  Aftid, Aft.name  Aftname, Aft.city  Aftcity, 
+                      Bef.id  Befid, Bef.name  Befname, Bef.city  Befcity 
+			FROM         AuditHeader  TH INNER JOIN
+                      SecUsers_View  T1 ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+                      ADTLocality  AFT ON  TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+                      ADTLocality  BEF ON  TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+                      WHERE     (TH.AuditTranType != 'W')AND(TH.AuditModule ='Locality')
+	</createView>
+	</changeSet>
+	<changeSet id="10" author="ahmad" dbms="mssql">
+		<createView viewName="AdtLocality_View" replaceIfExists="true">
+			SELECT     TH.AuditId, TH.AuditDate  AuditDateTime, TH.AuditDate AuditDate,  TH.AuditDate AuditTime, 
+            coalesce(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, dbo.FN_CustomerName(T1.UsrFName, T1.UsrMName, 
+                      T1.UsrLName)   AuditUserName,dbo.FN_TranType(TH.AuditTranType)  AuditTranType, 
                       Aft.id  Aftid, Aft.name  Aftname, Aft.city  Aftcity, 
                       Bef.id  Befid, Bef.name  Befname, Bef.city  Befcity 
 			FROM         AuditHeader  TH INNER JOIN

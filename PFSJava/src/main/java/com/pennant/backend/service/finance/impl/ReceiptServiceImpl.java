@@ -577,9 +577,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// =======================================
 		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null
 				&& !rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().isEmpty()) {
-			auditDetails.addAll(getFinFeeDetailService().saveOrUpdate(
+			
+			saveOrUpdateFees(rceiptData, tableType.getSuffix());
+			
+			/*auditDetails.addAll(getFinFeeDetailService().saveOrUpdate(
 					rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList(), tableType.getSuffix(),
-					auditHeader.getAuditTranType(), false));
+					auditHeader.getAuditTranType(), false));*/
 		}
 		
 		// Receipt Header Audit Details Preparation
@@ -613,7 +616,70 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	public void saveOrUpdateFees(FinReceiptData receiptData , String tableType) {
+		logger.debug("Entering ");
 
+		List<FinFeeDetail> feeDetailsList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		String finReference = receiptData.getFinReference();
+		boolean newRecord = receiptData.getReceiptHeader().isNew();
+		getFinFeeScheduleDetailDAO().deleteFeeScheduleBatchByFinRererence(finReference, false, tableType);
+		getFinFeeDetailDAO().deleteServiceFeesByFinRef(finReference, false, tableType);
+		
+		for (FinFeeDetail finFeeDetail : feeDetailsList) {
+			if (!newRecord && finFeeDetail.isOriginationFee()) {
+				getFinFeeDetailDAO().update(finFeeDetail, false, tableType);
+			} else {
+				if(!finFeeDetail.isOriginationFee()) {
+					finFeeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(finFeeDetail, false, tableType) + 1);
+				}
+				finFeeDetail.setFeeID(getFinFeeDetailDAO().save(finFeeDetail, false, tableType));
+			}
+
+			if (!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
+				for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
+					finFeeSchDetail.setFeeID(finFeeDetail.getFeeID());
+				}
+				getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(finFeeDetail.getFinFeeScheduleDetailList(), false, tableType);
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public void approveFees(FinReceiptData receiptData , String tableType) {
+		logger.debug("Entering ");
+		
+		List<FinFeeDetail> feeDetailsList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		String finReference = receiptData.getFinReference();
+		getFinFeeScheduleDetailDAO().deleteFeeScheduleBatchByFinRererence(finReference, false, tableType);
+		
+		for (FinFeeDetail finFeeDetail : feeDetailsList) {
+			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			finFeeDetail.setRecordType("");
+			finFeeDetail.setRoleCode("");
+			finFeeDetail.setNextRoleCode("");
+			finFeeDetail.setTaskId("");
+			finFeeDetail.setNextTaskId("");
+			finFeeDetail.setWorkflowId(0);
+			
+			if (finFeeDetail.isOriginationFee()) {
+				getFinFeeDetailDAO().update(finFeeDetail, false, tableType);
+			} else {
+				getFinFeeDetailDAO().save(finFeeDetail, false, tableType);
+			}
+			
+			if (!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
+				for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
+					finFeeSchDetail.setFeeID(finFeeDetail.getFeeID());
+				}
+				getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(finFeeDetail.getFinFeeScheduleDetailList(), false, tableType);
+			}
+		}
+		
+		logger.debug("Leaving");
+	}
+	
 	/**
 	 * Method to delete schedule, disbursement, deferment header, deferment detail,repay instruction, rate changes
 	 * lists.
@@ -726,9 +792,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Delete Fee Details
 		if (receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
-			auditDetails.addAll(getFinFeeDetailService().delete(
-					receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList(), "_Temp",
-					auditHeader.getAuditTranType(), false));
+			String finReference = receiptData.getFinReference();
+			getFinFeeScheduleDetailDAO().deleteFeeScheduleBatchByFinRererence(finReference, false, "_Temp");
+			getFinFeeDetailDAO().deleteByFinRef(finReference, false, "_Temp");
 		}
 
 		// Delete Document Details
@@ -909,8 +975,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Fee Details
 		if (scheduleData.getFinFeeDetailList() != null) {
-			getFinFeeDetailService().doApprove(scheduleData.getFinFeeDetailList(), 
-					TableType.MAIN_TAB.getSuffix(), tranType, false);
+			approveFees(rceiptData, TableType.MAIN_TAB.getSuffix());
 		}
 		
 		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
@@ -942,9 +1007,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			//Fin Fee Details Deletion
 			if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
-				auditDetails.addAll(getFinFeeDetailService().delete(
-						rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList(), "_Temp",
-						auditHeader.getAuditTranType(), false));
+				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatchByFinRererence(finReference, false, "_Temp");
+				getFinFeeDetailDAO().deleteByFinRef(finReference, false, "_Temp");
 			}
 			
 			// Checklist Details delete

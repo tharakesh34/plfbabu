@@ -206,7 +206,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		setPageComponents(window_DisbursementRegistrationList, borderLayout_DisbursementList,
 				listBoxDisbursementRegistration, pagingDisbursementList);
 		setItemRender(new DisbursementListModelItemRenderer());
-
+		
 		// Register buttons and fields.
 		registerButton(button_Search);
 		registerField("paymentId");
@@ -228,8 +228,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("AMTTOBERELEASED");
 		registerField("channel", listheader_Disbursement_Channel, SortOrder.NONE, channelTypes,
 				sortOperator_Channel, Operators.STRING);
-
-
 		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
@@ -520,6 +518,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.toDate.setValue(null);
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
+		this.listheader_Disbursement_DisbTypes.setSort("none");
+		this.listheader_Disbursement_FinRef.setSort("none");
+		this.listheader_Disbursement_FinType.setSort("none");
+		this.listheader_Disbursement_Custname.setSort("none");
+		this.listheader_Disbursement_BenName.setSort("none");
+		this.listheader_Disbursement_BenAcctno.setSort("none");
+		this.listheader_Disbursement_Branch.setSort("none");
 		this.listBoxDisbursementRegistration.getItems().clear();
 
 		if (listBoxDisbursementRegistration.getItems().size() > 0) {

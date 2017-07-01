@@ -67,4 +67,6 @@ public interface PresentmentHeaderService {
 	void updatePresentmentIdAsZero(long presentmentId);
 
 	void updateFinanceDetails(String presentmentRef);
+	
+	long getSeqNumber(String tableNme);
 }

@@ -262,7 +262,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	}
 	
 	public void onTimer$timer(Event event) {
-		Events.postEvent("onCreate", this.window_DisbursementFileDownloadList, event);
-		  searchObject.clearFields();
+		if (pagingFileDownloadList.getActivePage() == 0) {
+			Events.postEvent("onCreate", this.window_DisbursementFileDownloadList, event);
+			searchObject.clearFields();
+		}
 	}
 }

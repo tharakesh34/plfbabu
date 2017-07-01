@@ -58,6 +58,7 @@
 											<space spacing="2px" sclass="mandatory" />
 											<combobox id="disbDate" width="155px" />
 											<intbox id="disbSeq" visible="false" />
+											<decimalbox id="disbDateAmount" readonly="true"  width="155px" style="border:none; background-color:white ;font-weight:bold; text-align:left;"/>
 										</hbox>
 										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">

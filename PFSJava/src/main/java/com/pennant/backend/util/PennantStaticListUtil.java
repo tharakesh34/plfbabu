@@ -195,6 +195,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> postingPurposeList;
 	private static ArrayList<ValueLabel> authTypes;
 	private static ArrayList<ValueLabel> presentmentsStatusList;
+	private static ArrayList<ValueLabel> presentmentsStatusListReport;
 	private static ArrayList<ValueLabel> taxApplicableFor;
 	private static ArrayList<ValueLabel> channelTypes;
 
@@ -2487,7 +2488,7 @@ public class PennantStaticListUtil {
 	
 	
 	public static ArrayList<ValueLabel> getFeeCalculationTypes() {
-		if(feeCalculationTypes == null){
+		if (feeCalculationTypes == null) {
 			feeCalculationTypes = new ArrayList<ValueLabel>(3);
 			feeCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_RULE, Labels.getLabel("Fee_Calculation_Type_Rule")));
 			feeCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT, Labels.getLabel("Fee_Calculation_Type_FixedAmount")));
@@ -2497,11 +2498,12 @@ public class PennantStaticListUtil {
 	}
 	
 	public static ArrayList<ValueLabel> getFeeCalculatedOnList() {
-		if(feeCalculatedOn == null){
-			feeCalculatedOn = new ArrayList<ValueLabel>(2);
+		if (feeCalculatedOn == null) {
+			feeCalculatedOn = new ArrayList<ValueLabel>(4);
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE, Labels.getLabel("Fee_CalculatedOn_TotalAssetValue")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_LOANAMOUNT, Labels.getLabel("Fee_CalculatedOn_LoanAmount")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL, Labels.getLabel("Fee_CalculatedOn_OutStandingPrincipal")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_PAYAMOUNT, Labels.getLabel("Fee_CalculatedOn_PayAmount")));
 		}
 		return feeCalculatedOn;
 	}
@@ -2704,6 +2706,17 @@ public class PennantStaticListUtil {
 			presentmentsStatusList.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
 		}
 		return presentmentsStatusList;
+	}
+	
+	
+	public static ArrayList<ValueLabel> getPresentmentsStatusListForReport() {
+		if (presentmentsStatusListReport == null) {
+			presentmentsStatusListReport = new ArrayList<ValueLabel>(5);
+			presentmentsStatusListReport.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Sucess")));
+			presentmentsStatusListReport.add(new ValueLabel("F", Labels.getLabel("label_Presentment_Status_Failed")));
+			presentmentsStatusListReport.add(new ValueLabel("B", Labels.getLabel("label_Presentment_Status_Bounce")));
+		}
+		return presentmentsStatusListReport;
 	}
 	
 	public static ArrayList<ValueLabel> getTaxApplicableFor() {
