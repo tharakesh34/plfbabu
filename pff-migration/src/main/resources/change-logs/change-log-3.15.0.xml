@@ -7044,4 +7044,9 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	<changeSet id="300" author="Sriklanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90343','EN','E','Customer dedup found.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
