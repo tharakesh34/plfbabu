@@ -170,4 +170,6 @@ public interface CustomerDAO {
 
 	void updateCustAppDate(long custId, Date custAppDate, String newCustStatus);
 
+	List<Customer> getCustomerByGroupID(long custGroupID);
+
 }
