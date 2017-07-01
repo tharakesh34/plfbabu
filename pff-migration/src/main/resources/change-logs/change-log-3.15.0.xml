@@ -7131,5 +7131,10 @@ union
 			  WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
 		</createView>
 	</changeSet>
-	
+	<changeSet id="306" author="Madhubabu">
+	<sql>
+	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','OD','OverDraft Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
+	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','CC','Cash Credit Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
