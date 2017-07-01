@@ -2791,4 +2791,68 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 
 	}
+	
+	
+	/**
+	 * Fetch the Record Finance Main Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinanceMain
+	 */
+	@Override
+	public List<FinanceMain> getBYCustIdForLimitRebuild(final long id, boolean orgination) {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setCustID(id);
+
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" SELECT FinReference, GrcPeriodEndDate, AllowGrcPeriod,");
+		sql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw,");
+		sql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate,");
+		sql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
+		sql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
+		sql.append(" MaturityDate, CpzAtGraceEnd, GrcRateBasis, RepayRateBasis, FinType, FinCcy, ");
+		sql.append(" ProfitDaysBasis, FirstRepay, LastRepay, ScheduleMethod,DownPayment,");
+		sql.append(" FinStartDate, FinAmount, CustID, FinBranch, FinSourceID, RecalType, FinIsActive, ");
+		sql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
+		sql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq, GrcProfitDaysBasis,");
+		sql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate, ManualSchedule,");
+		sql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw,FinAssetValue, ");
+		sql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
+		sql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
+		sql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
+		sql.append(" FinCategory, ProductCategory, ReAgeBucket,TDSApplicable  ");
+		if (orgination) {
+			sql.append(" , 1 LimitValid  ");
+		}
+		sql.append(" FROM FinanceMain");
+		if (orgination) {
+			sql.append(TableType.TEMP_TAB.getSuffix());
+		}
+		sql.append(" Where CustID=:CustID ");
+		if (orgination) {
+			if (App.DATABASE == Database.ORACLE) {
+				sql.append(" AND RcdMaintainSts IS NULL ");
+			} else {
+				sql.append(" AND RcdMaintainSts = '' ");
+			}
+		}
+
+		logger.debug("selectSql: " + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		try {
+			return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return null;
+		}
+
+	}
+	
 }

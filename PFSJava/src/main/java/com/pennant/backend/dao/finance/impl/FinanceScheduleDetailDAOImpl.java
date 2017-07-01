@@ -1351,37 +1351,22 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 	 * 
 	 */
 	@Override
-	public List<FinanceScheduleDetail> getPriPaidSchdDetails(String finReference, String type) {
+	public BigDecimal getPriPaidAmount(String finReference) {
 		logger.debug("Entering");
 
-		FinanceScheduleDetail detail = new FinanceScheduleDetail();
-		detail.setFinReference(finReference);
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
-		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, ClosingBalance, ProfitFraction, PrvRepayAmount, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
-		selectSql.append(" DefSchdDate,SchdMethod, CalculatedRate,FeeChargeAmt,InsuranceAmt,");
-		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , InsSchd, SchdInsPaid,AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
-		selectSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,  ");
-		selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, ");
-		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
-		selectSql.append(" RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
-		selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee,PartialPaidAmt ");
+		StringBuilder selectSql = new StringBuilder(" Select SUM(SchdPriPaid)  ");
 		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference = :FinReference AND SchdPriPaid > 0");
+		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceScheduleDetail.class);
-		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		BigDecimal schdPriPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, BigDecimal.class);
 
 		logger.debug("Leaving");
-		return finSchdDetails;
+		return schdPriPaid;
 	}
 }

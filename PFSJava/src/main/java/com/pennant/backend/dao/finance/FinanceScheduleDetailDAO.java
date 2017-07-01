@@ -118,6 +118,6 @@ public interface FinanceScheduleDetailDAO {
 	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
 
 	void updateListForRpy(List<FinanceScheduleDetail> schdList);
-	
-	List<FinanceScheduleDetail> getPriPaidSchdDetails(String finReference, String type);
+
+	BigDecimal getPriPaidAmount(String finReference);
 }
