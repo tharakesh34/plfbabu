@@ -205,17 +205,23 @@ public class GenericCacheManager {
 	public static CacheStats getNodeDetails() {
 		CacheStats stats = new CacheStats();
 		stats.setAppNode(true);
-
+		
 		if (cacheManager != null) {
 			stats.setClusterName(cacheManager.getClusterName());
 			stats.setClusterNode(cacheManager.getNodeAddress());
 			stats.setIpAddress(cacheManager.getPhysicalAddresses());
 			stats.setClusterSize(cacheManager.getClusterSize());
 			stats.setClusterMembers(cacheManager.getClusterMembers());
-			stats.setCacheNames(new ArrayList<>(cacheManager.getCacheNames()));
-			String citiesCommaSeparated = String.join(",", stats.getCacheNames());
-			stats.setCacheNamesDet(citiesCommaSeparated);
-			stats.setCacheCount(stats.getCacheNames().size() - 1);
+			for (String cacheName : cacheManager.getCacheNames()) {
+				if(!"DefaultCache".equals(cacheName)){
+					stats.setCacheNames(cacheName);
+					logger.debug(cacheName+"-Hi "+ applicationType);
+				}else{
+					logger.debug(cacheName+"-Skip "+ applicationType);
+				}
+			}
+			stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));
+			stats.setCacheCount(stats.getCacheNames().size());
 			stats.setManagerStatus(cacheManager.getCacheManagerStatus());
 			stats.setActive(GenericCacheManager.isActivated());
 			stats.setEnabled(GenericCacheManager.isEnabled());

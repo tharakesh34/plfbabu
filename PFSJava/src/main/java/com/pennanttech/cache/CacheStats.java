@@ -227,11 +227,9 @@ public class CacheStats {
 		buffer.append(getCacheCount());
 		
 		for (String cacheName : cacheNames) {
-			if(!"DefaultCache".equals(cacheName)){
-				buffer.append("\n");
-				buffer.append("Cache Name     : " );
-				buffer.append(cacheName);
-			}
+			buffer.append("\n");
+			buffer.append("Cache Name     : " );
+			buffer.append(cacheName);
 		}		
 		buffer.append("\n");
 		buffer.append("Enabled    : " );
