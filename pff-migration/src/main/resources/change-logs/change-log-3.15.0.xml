@@ -7077,5 +7077,10 @@ union
 			where FINISACTIVE=1
 		</createView>
 	</changeSet>
-	
+	<changeSet id="303" author="Madhubabu">
+	<sql>
+	delete from SMTPARAMETERS where sysparmcode='GST_FILEUPLOAD_PATH';
+	INSERT INTO SMTPARAMETERS VALUES ('GST_FILEUPLOAD_PATH','GST File Uplaod path','String',1,'/opt/PFF/GST/backUp','200',0,NULL, NULL, 'GST File Uplaod path',1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
