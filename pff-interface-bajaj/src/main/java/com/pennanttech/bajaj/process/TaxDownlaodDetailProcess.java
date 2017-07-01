@@ -401,7 +401,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PROCESSDATE_FROM", fromDate);
 		source.addValue("PROCESSDATE_TO", toDate);
-		jdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= PROCESSDATE_TO", source);
+		jdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO", source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -413,8 +413,8 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
-		jdbcTemplate.update("DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= TRANSACTION_DATE_TO", source);
-		jdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= TRANSACTION_DATE_TO", source);
+		jdbcTemplate.update("DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO", source);
+		jdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO", source);
 
 		logger.debug(Literal.LEAVING);
 
