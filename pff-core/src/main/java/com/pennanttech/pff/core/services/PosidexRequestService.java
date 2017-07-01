@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.services;
 
-public interface PosidexRequest {
+public interface PosidexRequestService {
 	public void sendReqest(Object... params) throws Exception;
 }

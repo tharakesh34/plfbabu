@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.services;
 
-public interface ALMRequest {
+public interface DisbursementRequestService {
 	public void sendReqest(Object... params) throws Exception;
 }

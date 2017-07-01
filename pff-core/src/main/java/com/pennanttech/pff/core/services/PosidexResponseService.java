@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.services;
 
-public interface MandateResponse {
+public interface PosidexResponseService {
 	public void receiveResponse(Object... params) throws Exception;
 }
