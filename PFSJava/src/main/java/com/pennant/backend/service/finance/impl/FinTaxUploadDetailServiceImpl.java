@@ -443,7 +443,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 				} else {
 
-					if (!StringUtils.equals(pincode.getPCCityName(), taxuploadDetail.getCity())) {
+					if (!StringUtils.equals(pincode.getCity(), taxuploadDetail.getCity())) {
 						errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":"
 								+ taxuploadDetail.getCity();
 						errParams[1] = taxuploadDetail.getAggrementNo();
