@@ -224,9 +224,6 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		scheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		scheduleData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
 		
-		scheduleData.getFinanceMain().setCalRoundingMode(scheduleData.getFinanceType().getRoundingMode());
-		scheduleData.getFinanceMain().setRoundingTarget(scheduleData.getFinanceType().getRoundingTarget());
-
 		// Schedule Recalculation Depends on Frequency Change
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 

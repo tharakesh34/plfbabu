@@ -207,9 +207,6 @@ public class ExtFinanceUploadService {
 		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 		if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 			
-			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-			
 			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 			finScheduleData.setSchduleGenerated(true);
 		}
@@ -839,9 +836,6 @@ public class ExtFinanceUploadService {
 
 		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 		if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-			
-			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 			
 			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 			finScheduleData.setSchduleGenerated(true);

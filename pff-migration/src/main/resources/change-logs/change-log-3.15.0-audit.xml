@@ -781,5 +781,10 @@
 		<column name="seqno" type="bigint"/>
 	</addColumn>
 	</changeSet>
+		<changeSet author="Siva" id="37">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>

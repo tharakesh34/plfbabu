@@ -32,10 +32,6 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
-		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		finSchdData = ScheduleCalculator.deleteTerm(finScheduleData);
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");

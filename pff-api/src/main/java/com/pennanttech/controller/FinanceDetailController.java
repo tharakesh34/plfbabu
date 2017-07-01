@@ -111,9 +111,6 @@ public class FinanceDetailController extends SummaryDetailService {
 				finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 					
-					finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-					finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-					
 					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 					finScheduleData.setSchduleGenerated(true);
 					if(!finScheduleData.getFinanceMain().isAllowGrcPeriod()){

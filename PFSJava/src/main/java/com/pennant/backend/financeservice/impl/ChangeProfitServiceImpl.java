@@ -34,9 +34,6 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 
 		FinScheduleData finSchdData = null;
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		finSchdData = ScheduleCalculator.changeProfit(finScheduleData, amount);
 
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);

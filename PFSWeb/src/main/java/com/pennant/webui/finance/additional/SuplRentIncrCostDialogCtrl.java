@@ -414,10 +414,6 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 		//Schedule Calculation Process
-		
-		getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
-		getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
-		
 		setFinScheduleData(ScheduleCalculator.calSuplRentIncrCost(getFinScheduleData()));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		//Show Error Details in Schedule Maintainance

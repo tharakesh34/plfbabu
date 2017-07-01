@@ -5851,9 +5851,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.getFinanceScheduleDetails();
 			getFinanceScheduleDetailDAO().saveList(oldScheduleDetails, "_Log", false);
 			
-			financeDetail.getFinScheduleData().getFinanceMain().setCalRoundingMode(financeDetail.getFinScheduleData().getFinanceType().getRoundingMode());
-			financeDetail.getFinScheduleData().getFinanceMain().setRoundingTarget(financeDetail.getFinScheduleData().getFinanceType().getRoundingTarget());
-
 			//Schedule Re-calculation based on Applied parameters
 			financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), "", "",
 					BigDecimal.ZERO, rateChange == null ? BigDecimal.ZERO : rateChange, true));

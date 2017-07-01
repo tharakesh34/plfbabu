@@ -250,10 +250,6 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 		//Schedule Calculation Process
-		
-		getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
-		getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
-
 		setFinScheduleData(ScheduleCalculator.addSubSchedule(getFinScheduleData(), this.numOfTerms.getValue(),
 				this.firstDate.getValue(), this.termFrq.getValue()));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

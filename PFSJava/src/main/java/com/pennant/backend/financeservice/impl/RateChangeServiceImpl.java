@@ -49,10 +49,6 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 		FinScheduleData finSchData = null;
-
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-
 		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(), finServiceInst.getSplRate(),
 				finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin(),
 						finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), true);

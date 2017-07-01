@@ -44,10 +44,6 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
-		
-		finscheduleData.getFinanceMain().setCalRoundingMode(finscheduleData.getFinanceType().getRoundingMode());
-		finscheduleData.getFinanceMain().setRoundingTarget(finscheduleData.getFinanceType().getRoundingTarget());
-		
 		finSchdData = ScheduleCalculator.changeRepay(finscheduleData, finServiceInstruction.getAmount(), 
 				finServiceInstruction.getSchdMethod());
 
