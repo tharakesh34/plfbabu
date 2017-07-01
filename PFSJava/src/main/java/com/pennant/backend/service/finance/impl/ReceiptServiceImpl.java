@@ -1472,10 +1472,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocationDetail.setPaidAmount(finReceiptData.getAllocationMap().get(allocateTypes.get(i)));
 			if (allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 				receiptHeader.getAllocations().add(allocationDetail);
-				if(!StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
-					totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) ||
+						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
+					//Nothing to do
 				}else{
-					totalPaid = totalPaid.subtract(allocationDetail.getPaidAmount());
+					totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
 				}
 			}
 		}
@@ -1552,10 +1553,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
 				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
 				for (int i = 0; i < allocationKeys.size(); i++) {
-					if(!StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS)){
-						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+					if(StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS) || 
+							StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_PFT)){
+						//Nothing todo
 					}else{
-						totalBal = totalBal.add(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
 					}
 				}
 			}
