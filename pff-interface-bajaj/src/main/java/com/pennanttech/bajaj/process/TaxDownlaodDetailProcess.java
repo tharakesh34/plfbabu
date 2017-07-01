@@ -49,7 +49,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 				long id = saveHeader();
 				processTaxDownloadData(id);
 				if (recordCount <= 0) {
-					throw new Exception("No records are available for the POSTDATE :" + appDate);
+					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
 				}
 				updateHeader(id, recordCount);
 			} catch (Exception e) {
