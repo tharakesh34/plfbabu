@@ -1,6 +1,7 @@
 package com.pennanttech.pff.bajaj.schedule.jobs;
 
 import java.text.ParseException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -8,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.TriggerBuilder;
 
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -35,11 +37,43 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		
 		impsDisbursementRespJob();
 		posidexCustomerUpdateRespJob();
+		masterExtractJob();
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	private void masterExtractJob() {
+		logger.debug(Literal.ENTERING);
+		
+		List<Configuration> list = getConfigurations();
+		
+		for (Configuration config : list) {
+			String name = config.getName();
+			if(!name.startsWith("ME_") || config.getCronExpression() == null) {
+				continue;
+			}
+			
+			JobDataMap args = new JobDataMap();
+			args.put("dataSource", dataSource);
+			args.put("configuration", name);
+			
+			JobSchedulerDetails jobDetails = new JobSchedulerDetails();
+			jobDetails.setJobDetail(JobBuilder.newJob(MasterExtractSchedulerJob.class)
+					.withIdentity(name, "MASTER_FILE_EXTRACT")
+					.withDescription(config.getDescription()).setJobData(args).build());
+			jobDetails.setTrigger(TriggerBuilder.newTrigger()
+					.withIdentity(name, "MASTER_FILE_EXTRACT")
+					.withDescription(config.getDescription())
+					.withSchedule(CronScheduleBuilder.cronSchedule(config.getCronExpression())).build());
+			JOB_SCHEDULER_MAP.put("DE_"+name, jobDetails);
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
 
-	private void autoDisbursementJob() {
+	protected void autoDisbursementJob() {
 		logger.debug(Literal.ENTERING);
 
 		// Auto Disbrsement response file 
@@ -137,6 +171,22 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		}
 		logger.debug(Literal.LEAVING);
 		return configuration;
+	}
+	
+	private List<Configuration> getConfigurations() {
+		logger.debug(Literal.ENTERING);
+		List<Configuration> list = null;
+		try {
+			if (datEngine == null) {
+				datEngine = new DataEngineConfig(dataSource);
+			}
+			
+			list = datEngine.getConfigurationList();
+		} catch (Exception e) {
+			logger.warn("Data engine configuration details not avilable");
+		}
+		logger.debug(Literal.LEAVING);
+		return list;
 	}
 
 	public void setDataSource(DataSource dataSource) {
