@@ -521,6 +521,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			Filter custRefFilter[] = new Filter[1];
 			custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
 			this.custRef.setFilters(custRefFilter);
+			readOnlyComponentChecking();
 		} else {
 			readOnlyComponent(true, this.custRef);
 			readOnlyComponent(true, this.taxExempted);
