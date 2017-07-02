@@ -8488,5 +8488,6 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),2,'FinReference','LOVSEARCH','Loan Reference','FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),3,'Finance Status','STATICLIST','Loan Status','STATUS','getPresentmentsStatusListForReport',null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		    
-		</sql></changeSet>
+		</sql>
+		</changeSet>
 	</databaseChangeLog>
