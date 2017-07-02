@@ -8359,6 +8359,23 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 				Update WIFFinanceMain_Temp Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE WIFFinanceMain_Temp.FinType = rmtfinancetypes.FinType);
        		</sql>
        </changeSet>
-	
-	
+		<changeSet id="451" author="murthy.y">			
+			<createTable tableName="DATA_ENGINE_EVENT_PROPERTIES">
+				 <column name="CONFIG_ID" type="bigint">
+				 	<constraints nullable="false" />
+				 </column>
+				 <column name="STORAGE_TYPE" type="varchar(10)" />
+				 <column name="REGION_NAME" type="varchar(50)" />
+				 <column name="BUCKET_NAME" type="varchar(100)" />
+				 <column name="ACCESS_KEY" type="varchar(250)" />
+				 <column name="SECRET_KEY" type="varchar(250)" />
+			</createTable>
+		</changeSet>
+
+		<changeSet id="452" author="murthy.y">
+				<addForeignKeyConstraint constraintName="FK_DE_EP_ID"
+					referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID"
+					baseTableName="DATA_ENGINE_EVENT_PROPERTIES" baseColumnNames="CONFIG_ID" />
+		</changeSet>
+		
 	</databaseChangeLog>
