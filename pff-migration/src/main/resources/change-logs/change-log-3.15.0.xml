@@ -6879,4 +6879,1615 @@ union
 	 SELECT ID, FILENAME FROM BATCHFILEHEADER
 	</createView>
 	</changeSet>
+	
+	<changeSet id="296" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_AVIEW" replaceIfExists="true">
+			SELECT	      T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="297" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			SELECT	      T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="298" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+			SELECT	      T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+			  
+			  UNION ALL
+			  
+			  SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID		
+
+			  WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="299" author="Prasad">
+	    <createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and (t2.closingstatus!='C' or t2.closingstatus is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+     Select T1.Finreference,Schdate,  'Bulk Amount Due ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,2 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,3 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and (t2.closingstatus!='C' or t2.closingstatus is null)
+	union 	
+  Select REFERENCE,T3.Postdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||'('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID
+       Where T1.ReceiptModeStatus  IN ('B') and Advisetype=1 and Bounceid>0
+  union
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,5 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID	where M.AdviseType <> 2 and 	m.ADVISEAMOUNT >0 
+  union
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,6 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,7 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,8 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,9 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
+union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,10 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,11 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   (t2.closingstatus!='C' or t2.closingstatus is null)
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,12 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,13 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="300" author="Sriklanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90343','EN','E','Customer dedup found.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="301" author="murthy.y">
+		<dropPrimaryKey tableName="ALM"/>
+	</changeSet>
+	<changeSet id="302" author="murthy.y">
+		<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+			SELECT 
+			FM.FINREFERENCE,
+			FM.FINTYPE,
+			FM.FINSTARTDATE,
+			FM.MATURITYDATE,
+			CASE  WHEN FM.CLOSINGSTATUS='W' THEN 'WRITEOFF' ELSE 'REGULAR' END CLOSINGSTATUS,
+			CASE
+			    WHEN (SELECT COUNT(RH.REFERENCE) EMIADV
+			      FROM FINRECEIPTDETAIL RD
+			      INNER JOIN FINRECEIPTHEADER RH
+			      ON RH.RECEIPTID  =RH.RECEIPTID
+			      WHERE PAYMENTTYPE='EMIINADV'
+			      AND RH.REFERENCE = FM.FINREFERENCE) > 0
+			    THEN 'Y'
+			    ELSE 'N'
+			  END ADVFLAG,
+			CCY.CCYMINORCCYUNITS,
+			CCY.CCYEDITFIELD
+			FROM FINANCEMAIN FM 
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY
+			where FINISACTIVE=1
+		</createView>
+	</changeSet>
+	<changeSet id="303" author="Madhubabu">
+	<sql>
+	delete from SMTPARAMETERS where sysparmcode='GST_FILEUPLOAD_PATH';
+	INSERT INTO SMTPARAMETERS VALUES ('GST_FILEUPLOAD_PATH','GST File Uplaod path','String',1,'/opt/PFF/GST/backUp','200',0,NULL, NULL, 'GST File Uplaod path',1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="304" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			SELECT	      T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail_Temp T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="305" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+			SELECT	      T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts_Temp  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail_Temp T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+			  
+			  UNION ALL
+			  
+			  SELECT	  T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+		                  T3.FEETYPEID,
+						  T4.FeeTypeCode, T4.FeeTypeDesc FeeType, 
+		                  T5.RECEIPTMODE ReceiptType
+		      FROM    	  FinFeeReceipts  T1 
+		      Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			  Inner Join  FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			  Inner JOin  FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+		      Inner Join  FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID		
+
+			  WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>
+	</changeSet>
+	<changeSet id="306" author="Madhubabu">
+	<sql>
+	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','OD','OverDraft Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
+	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','CC','Cash Credit Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
+	</sql>
+	</changeSet>
+	<changeSet id="307" author="murthy.y">
+		<sql>update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'C' WHERE NAME = 'DISB_HDFC_EXPORT';</sql>
+	</changeSet>
+	<changeSet id="308" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'C' WHERE NAME = 'DISB_HDFC_IMPORT';
+			update DATA_ENGINE_CONFIG set UPLOADLOCATION = 'A' WHERE NAME = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
+	<changeSet id="313" author="Sai">
+		<createView viewName="ETL_RMTFINANCETYPES" replaceIfExists="true">
+			select FinType, FinCategory, FinTypeDesc, ${add.schema}UDF_CONVERTCURRENCY(FinMaxAmount, FinCcy, FinCcy) FinMaxAmount
+  , ${add.schema}UDF_CONVERTCURRENCY(FinMinAmount, FinCcy, FinCcy) FinMinAmount, FinIsAlwMD
+  , FinBaseRate, FinSplRate, FinMargin, FinIntRate, FinSchdMthd, FinGrcBaseRate
+  , FinGrcSplRate, FinGrcMargin, FinGrcIntRate, FinIsAlwGrcRepay, FinGrcSchdMthd
+  , FinRepayMethod, FinIsAlwPartialRpy, FinIsActive, StepFinance, SteppingMandatory
+  , AlwdStepPolicies, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod
+  , UnPlanEMIHLockPeriod, UnPlanEMICpz, MaxUnplannedEmi, AlwUnPlanEmiHoliday, AlwMaxDisbCheckReq
+from RMTFINANCETYPES
+		</createView>
+	</changeSet>
+	<changeSet id="309" author="Sai">
+		<createView viewName="ETL_PROMOTIONS" replaceIfExists="true">
+			select P.PROMOTIONCODE FinType, LT.FinCategory, P.PROMOTIONDESC FinTypeDesc
+  , ${add.schema}UDF_CONVERTCURRENCY(P.FINMAXAMOUNT, LT.FinCcy, LT.FinCcy) FinMaxAmount
+  , ${add.schema}UDF_CONVERTCURRENCY(P.FINMINAMOUNT, LT.FinCcy, LT.FinCcy) FinMinAmount
+  , LT.FinIsAlwMD, LT.FInIsAlwGrace, LT.FinRateType, P.FinBaseRate, P.FinSplRate
+  , P.FinMargin, P.ACTUALINTERESTRATE FinIntRate, P.FInMinRate, P.FinMaxRate
+  , LT.FinSchdMthd, LT.FinGrcRateType, LT.FinGrcBaseRate, LT.FinGrcSplRate
+  , LT.FinGrcMargin, P.FinMinTerm, P.FinMaxTerm, LT.FInRepayMethod, P.ACTIVE FinIsActive
+  , LT.StepFinance, LT.SteppingMandatory, LT.AlwManualSteps, LT.AlwdStepPolicies, LT.DftStepPolicy
+  , P.FINTYPE Product, P.StartDate, P.EndDate, LT.AlwMultiPartyDisb, LT.PlanEMIHAlw
+  , LT.PlanEMIHMethod, LT.PlanEMIHMaxPerYear, LT.PlanEMIHMax, LT.PlanEMIHLockPeriod
+  , LT.UnPlanEMIHLockPeriod, LT.UnPlanEMICpz, LT.MaxUnplannedEmi, LT.AlwUnPlanEmiHoliday
+  , LT.AlwMaxDisbCheckReq
+from PROMOTIONS P
+  inner join RMTFINANCETYPES LT on LT.FinType = P.FinType
+		</createView>
+	</changeSet>
+	<changeSet id="310" author="Sai">
+		<createView viewName="ETL_VASSTRUCTURE" replaceIfExists="true">
+			select PRODUCTCODE, PRODUCTTYPE, PRODUCTDESC, FREELOCKPERIOD, REMARKS, ACTIVE
+  , ${add.schema}UDF_CONVERTCURRENCY(VASFEE, sys_param.APP_CCY, sys_param.APP_CCY) VASFEE
+  , ALLOWFEETOMODIFY, MANUFACTURERID
+from VASSTRUCTURE
+  cross join (select SYSPARMVALUE APP_CCY from SMTPARAMETERS where SYSPARMCODE = 'APP_DFT_CURR') sys_param
+		</createView>
+	</changeSet>
+	<changeSet id="311" author="Sai">
+		<createView viewName="ETL_VAS_MANUFACTURER" replaceIfExists="true">
+			select DEALERID, DEALERNAME, DEALERTELEPHONE, DEALERFAX, DEALERADDRESS1, DEALERADDRESS2
+  , DEALERTYPE, DEALERADDRESS3, DEALERCOUNTRY, DEALERPROVINCE, DEALERCITY, EMAIL
+  , POBOX, ZIPCODE, Active
+from AMTVEHICLEDEALER where DEALERTYPE = 'VASM'
+		</createView>
+	</changeSet>
+	
+	<changeSet id="314" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBRANCHES', 'Branches extract', 2, '"', '~', 0, 0, 'BranchCode,BranchDesc,BranchAddrLine1,BranchAddrLine2,BranchPOBox,BranchCity,BranchProvince,BranchCountry,BranchTel,BranchIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBRANCHES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBRANCHES'), 'RMTBRANCHES', 0, 'BranchCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchAddrLine1', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchAddrLine2', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchPOBox', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCity', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchTel', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBRANCHES' and configid = (select id from data_engine_config where name = 'ME_RMTBRANCHES')), 'BranchIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="315" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTBANKDETAIL', 'Banks extract', 2, '"', '~', 0, 0, 'BankCode,BankName,Active,AccNoLength', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTBANKDETAIL_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTBANKDETAIL'), 'BMTBANKDETAIL', 0, 'BankCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'BankCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'BankName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'Active', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTBANKDETAIL' and configid = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL')), 'AccNoLength', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="316" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BANKBRANCHES', 'Bank Branches extract', 2, '"', '~', 0, 0, 'BankCode,BranchCode,BranchDesc,City,MICR,IFSC,Active,AddOfBranch', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BANKBRANCHES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BANKBRANCHES'), 'BANKBRANCHES', 0, 'BankCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BankCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BranchCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'BranchDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'City', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'MICR', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'IFSC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'Active', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BANKBRANCHES' and configid = (select id from data_engine_config where name = 'ME_BANKBRANCHES')), 'AddOfBranch', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="317" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTCOUNTRYVSPROVINCE', 'Country States extract', 2, '"', '~', 0, 0, 'CPCountry,CPProvince,CPProvinceName,CPIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTCOUNTRYVSPROVINCE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE'), 'RMTCOUNTRYVSPROVINCE', 0, 'CPCountry', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPProvinceName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTCOUNTRYVSPROVINCE' and configid = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE')), 'CPIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="318" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTPROVINCEVSCITY', 'State Cities extract', 2, '"', '~', 0, 0, 'PCCountry,PCProvince,PCCity,PCCityName,BankRefNo,CITYISACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTPROVINCEVSCITY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY'), 'RMTPROVINCEVSCITY', 0, 'PCCountry', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCountry', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCProvince', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCity', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'PCCityName', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'BankRefNo', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTPROVINCEVSCITY' and configid = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY')), 'CITYISACTIVE', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="319" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTCUSTCATEGORIES', 'Customer Categories extract', 2, '"', '~', 0, 0, 'CustCtgCode,CustCtgDesc,CustCtgType,CustCtgIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTCUSTCATEGORIES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES'), 'BMTCUSTCATEGORIES', 0, 'CustCtgCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTCUSTCATEGORIES' and configid = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES')), 'CustCtgIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="320" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBASERATECODES', 'Base Rate Codes extract', 2, '"', '~', 0, 0, 'BRType,BRTypeDesc,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATECODES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBASERATECODES'), 'RMTBASERATECODES', 0, 'BRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATECODES')), 'BRTypeIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="321" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTBASERATES', 'Base Rates extract', 2, '"', '~', 0, 0, 'BRType,Currency,BREffDate,BRRate,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTBASERATES'), 'RMTBASERATES', 0, 'BRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'Currency', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BREffDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTBASERATES' and configid = (select id from data_engine_config where name = 'ME_RMTBASERATES')), 'BRTypeIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="322" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTSPLRATECODES', 'Special Rate Codes extract', 2, '"', '~', 0, 0, 'SRType,SRTypeDesc,SRIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATECODES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTSPLRATECODES'), 'RMTSPLRATECODES', 0, 'SRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATECODES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES')), 'SRIsActive', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="323" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTSPLRATES', 'Special Rates extract', 2, '"', '~', 0, 0, 'SRType,SREffDate,SRRate', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTSPLRATES'), 'RMTSPLRATES', 0, 'SRType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SRType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SREffDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'RMTSPLRATES' and configid = (select id from data_engine_config where name = 'ME_RMTSPLRATES')), 'SRRate', 0, 'N', 0, 'NUMBER:###0.#########');
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="324" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BMTPRODUCT', 'Products extract', 2, '"', '~', 0, 0, 'ProductCode,ProductDesc', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTPRODUCT_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BMTPRODUCT'), 'BMTPRODUCT', 0, 'ProductCode', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTPRODUCT' and configid = (select id from data_engine_config where name = 'ME_BMTPRODUCT')), 'ProductCode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BMTPRODUCT' and configid = (select id from data_engine_config where name = 'ME_BMTPRODUCT')), 'ProductDesc', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="325" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_RMTFINANCETYPES', 'Loan Types extract', 2, '"', '~', 0, 0, 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FinSchdMthd,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinGrcIntRate,FinIsAlwGrcRepay,FinGrcSchdMthd,FinRepayMethod,FinIsAlwPartialRpy,FinIsActive,StepFinance,SteppingMandatory,AlwdStepPolicies,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTFINANCETYPES_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_RMTFINANCETYPES'), 'ETL_RMTFINANCETYPES', 0, 'FinType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinCategory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMaxAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMinAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwMD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwGrcRepay', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinGrcSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinRepayMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsAlwPartialRpy', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'FinIsActive', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'StepFinance', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'SteppingMandatory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwdStepPolicies', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHMaxPerYear', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHMax', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'PlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'UnPlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'UnPlanEMICpz', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'MaxUnplannedEmi', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwUnPlanEmiHoliday', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_RMTFINANCETYPES' and configid = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES')), 'AlwMaxDisbCheckReq', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="326" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_PROMOTIONS', 'Promotions extract', 2, '"', '~', 0, 0, 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FInIsAlwGrace,FinRateType,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FInMinRate,FinMaxRate,FinSchdMthd,FinGrcRateType,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinMinTerm,FinMaxTerm,FInRepayMethod,FinIsActive,StepFinance,SteppingMandatory,AlwManualSteps,AlwdStepPolicies,DftStepPolicy,Product,StartDate,EndDate,AlwMultiPartyDisb,PlanEMIHAlw,PlanEMIHMethod,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'PROMOTIONS_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_PROMOTIONS'), 'ETL_PROMOTIONS', 0, 'FinType', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinCategory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinTypeDesc', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMinAmount', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIsAlwMD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInIsAlwGrace', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinRateType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIntRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInMinRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxRate', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinSchdMthd', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcRateType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcBaseRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcSplRate', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinGrcMargin', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMinTerm', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinMaxTerm', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FInRepayMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'FinIsActive', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'StepFinance', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'SteppingMandatory', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwManualSteps', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwdStepPolicies', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'DftStepPolicy', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'Product', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'StartDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'EndDate', 0, 'N', 0, 'DATE:dd/MM/yyyy');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwMultiPartyDisb', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHAlw', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMethod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMaxPerYear', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHMax', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'PlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'UnPlanEMIHLockPeriod', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'UnPlanEMICpz', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'MaxUnplannedEmi', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwUnPlanEmiHoliday', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_PROMOTIONS' and configid = (select id from data_engine_config where name = 'ME_PROMOTIONS')), 'AlwMaxDisbCheckReq', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="327" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_FINTYPEPARTNERBANKS', 'Loan Type Partner Banks extract', 2, '"', '~', 0, 0, 'Id,FinType,Purpose,PaymentMode,PartnerBankID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'FINTYPEPARTNERBANKS_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS'), 'FINTYPEPARTNERBANKS', 0, 'Id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'Id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'FinType', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'Purpose', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'PaymentMode', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'FINTYPEPARTNERBANKS' and configid = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS')), 'PartnerBankID', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+<changeSet id="328" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_VASPRODUCTTYPE', 'VAS Product Types extract', 2, '"', '~', 0, 0, 'PRODUCTTYPE,PRODUCTTYPEDESC,PRODUCTCTG,ACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASPRODUCTTYPE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE'), 'VASPRODUCTTYPE', 0, 'PRODUCTTYPE', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTTYPEDESC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'PRODUCTCTG', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'VASPRODUCTTYPE' and configid = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE')), 'ACTIVE', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="329" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_VASSTRUCTURE', 'VAS Structure extract', 2, '"', '~', 0, 0, 'PRODUCTCODE,PRODUCTTYPE,PRODUCTDESC,FREELOCKPERIOD,REMARKS,ACTIVE,VASFEE,ALLOWFEETOMODIFY,MANUFACTURERID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASSTRUCTURE_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_VASSTRUCTURE'), 'ETL_VASSTRUCTURE', 0, 'PRODUCTCODE', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTCODE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'PRODUCTDESC', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'FREELOCKPERIOD', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'REMARKS', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'ACTIVE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex, format) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'VASFEE', 0, 'N', 0, 'NUMBER:###0.#########');
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'ALLOWFEETOMODIFY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VASSTRUCTURE' and configid = (select id from data_engine_config where name = 'ME_VASSTRUCTURE')), 'MANUFACTURERID', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="330" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_AMTVEHICLEDEALER_VASMANF', 'VAS Manufacturers extract', 2, '"', '~', 0, 0, 'DEALERID,DEALERNAME,DEALERTELEPHONE,DEALERFAX,DEALERADDRESS1,DEALERADDRESS2,DEALERTYPE,DEALERADDRESS3,DEALERCOUNTRY,DEALERPROVINCE,DEALERCITY,EMAIL,POBOX,ZIPCODE,Active', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'AMTVEHICLEDEALER_VASMANF_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF'), 'ETL_VAS_MANUFACTURER', 0, 'DEALERID', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERID', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERNAME', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERTELEPHONE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERFAX', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS1', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS2', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERTYPE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERADDRESS3', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERCOUNTRY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERPROVINCE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'DEALERCITY', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'EMAIL', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'POBOX', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'ZIPCODE', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'ETL_VAS_MANUFACTURER' and configid = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF')), 'Active', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="331" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERGROUP', 'Builder Groups extract', 2, '"', '~', 0, 0, 'id,name,segmentation', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERGROUP_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERGROUP'), 'BUILDERGROUP', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERGROUP' and configid = (select id from data_engine_config where name = 'ME_BUILDERGROUP')), 'segmentation', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="332" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERCOMPANY', 'Builder Companies extract', 2, '"', '~', 0, 0, 'id,name,segmentation,groupId', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERCOMPANY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERCOMPANY'), 'BUILDERCOMPANY', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'segmentation', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERCOMPANY' and configid = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY')), 'groupId', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="333" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_BUILDERPROJCET', 'Builder Projects extract', 2, '"', '~', 0, 0, 'id,name,builderId,apfNo', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERPROJCET_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_BUILDERPROJCET'), 'BUILDERPROJCET', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'builderId', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'BUILDERPROJCET' and configid = (select id from data_engine_config where name = 'ME_BUILDERPROJCET')), 'apfNo', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	<changeSet id="334" author="Sai">
+	<sql>
+	insert into data_engine_config 
+	(id, name, description, parser, textqualifier, columndelimiter, startingrow, skipheaderrow, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, filenameformat, notificationstatusemail, postevent, backupfile, active) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_config), 'ME_LOCALITY', 'Localities extract', 2, '"', '~', 0, 0, 'id,name,city', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'LOCALITY_', '.dat', 0, '${SEQ_FILE},_${yyyyMMddHHmmss}', 0, 'MOVE_TO_S3_BUCKET', 0, 1);
+insert into data_engine_table 
+	(id, configid, name, operation, keyfields, recordlength, multirow, headertable) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_table), (select id from data_engine_config where name = 'ME_LOCALITY'), 'LOCALITY', 0, 'id', 0, 0, 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'id', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'name', 0, 'N', 0);
+insert into data_engine_column 
+	(id, tableid, name, skip, seqtype, startindex) 
+	values ((select coalesce(max(id), 0) + 1 from data_engine_column), (select id from data_engine_table where name = 'LOCALITY' and configid = (select id from data_engine_config where name = 'ME_LOCALITY')), 'city', 0, 'N', 0);
+
+update seq_data_engine_config set seqno = (select coalesce(max(id), 1) from data_engine_config);
+update seq_data_engine_table  set seqno = (select coalesce(max(id), 1) from data_engine_table);
+update seq_data_engine_column set seqno = (select coalesce(max(id), 1) from data_engine_column);
+	</sql>
+	</changeSet>
+	
+	
+	<changeSet author="Siva" id="296">
+		<addColumn tableName="FinanceMain">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="297">
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="298">
+		<addColumn tableName="FinanceMain_PA">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="299">
+		<addColumn tableName="RejectFinanceMain">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="300">
+		<addColumn tableName="WIFFinanceMain">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="301">
+		<addColumn tableName="WIFFinanceMain_Temp">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="302" author="Siva">
+		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
+	 		SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, 
+                      T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, 
+                      T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment  lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T7.FinTypeDesc  lovDescFinTypeName, T7.FinMaxAmount  lovDescFinMaxAmt, T7.FinMinAmount  lovDescFinMinAmount, 
+                      T1.MinDownpayPerc, T7.FinIsAlwDifferment  lovDescFinAlwDeferment, T7.FinIsDwPayRequired  lovDescDwnPayReq, 
+                      T7.FinMaxDifferment  lovDescFinMaxDifferment,T12.BranchDesc  lovDescFinBranchName, T1.LastRepayDate, T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, 
+                       T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef, T1.DepreciationFrq, T1.FinContractDate, 
+                      T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,   T17.AcrTillLBD  lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor,  T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, 
+                      T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose, 
+                     T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.bankName, T1.iban, T1.accountType, T1.DdaReferenceNo, 
+                      T7.FinScheduleOn  LovDescFinScheduleOn, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, T1.SecurityCollateral, 
+                       T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.InvestmentRef, T1.GraceTerms, 
+                      T7.FinDivision  lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps,  T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc  LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                    T1.SupplementRent, T1.IncreasedCost, T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FINPREAPPROVEDREF, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId,T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T29.AgreeName,T29.MMAReference LovDescMMAReference,
+					  T1.DSACode,T30.ROfficerDesc DSACodeDesc,T1.TDSApplicable,  T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor, T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes  T7 ON T1.FinType = T7.FinType  LEFT OUTER JOIN
+                      RMTBranches  T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FinPftDetails  T17 ON T17.FinReference = T1.FinReference LEFT OUTER JOIN
+                      StepPolicyHeader  T24 ON T1.StepPolicy = T24.PolicyCode  LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN 
+					  RMTGENDEPARTMENTS T28 ON T1.ACCOUNTSOFFICER = T28.GENDEPARTMENT LEFT OUTER JOIN
+					  MMAgreements T29 ON T1.MMAId = T29.MMAId LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGENDEPARTMENTS T35 ON T1.SalesDepartment = T35.GENDEPARTMENT
+		</createView>
+	</changeSet>
+	
+	<changeSet id="303" author="Siva">
+		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
+			SELECT	T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount,  T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T2.FinTypeDesc lovDescFinTypeName, T2.FinMaxAmount lovDescFinMaxAmt, T2.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T4.BranchDesc lovDescFinBranchName, T1.LastRepayDate,  T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate,  T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,  
+                      T1.TotalRepayAmt,T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                      T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose,T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T2.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T5.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval,T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                      T1.SupplementRent, T1.IncreasedCost, T1.CreditInsAmt, T1.RolloverFrq, 
+                      T1.NextRolloverDate,  T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc, T6.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T7.ROfficerDesc DSACodeDesc,
+					  T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T8.ROfficerDesc ReferralIdDesc, T1.DmaCode , T9.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T10.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget
+			FROM      FinanceMain_Temp T1 INNER JOIN
+                      RMTFinanceTypes T2 ON T1.FinType = T2.FinType  INNER JOIN
+                      RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN
+                      StepPolicyHeader T5 ON T1.StepPolicy = T5.PolicyCode LEFT OUTER JOIN
+                      RMTGenDepartments T6 ON T1.AccountsOfficer = T6.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T7 ON T1.DSACode = T7.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T8 ON T1.ReferralId = T8.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T9 ON T1.DmaCode = T9.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T10 ON T1.SalesDepartment = T10.GenDepartment
+		</createView>
+	</changeSet>
+	<changeSet id="304" author="Siva">
+		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
+	SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor,  T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR, 
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory,T1.RoundingTarget
+						FROM         FinanceMain_Temp T1   INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      RMTGenDepartments T28 ON T1.AccountsOfficer = T28.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment 
+			 
+	UNION ALL
+			SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR,  
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      RMTGenDepartments T28 ON T1.AccountsOfficer = T28.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment 
+						WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          FinanceMain_Temp
+                            WHERE      (FINREFERENCE = T1.FINREFERENCE)))
+            </createView>
+       </changeSet>
+       <changeSet id="305" author="Siva">
+		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, T1.FinType, 
+                      T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, T1.FinStartDate, 
+                      T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T15.CustCIF lovDescCustCIF, 
+                     T7.FinTypeDesc lovDescFinTypeName,T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId, T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.DepreciationFrq, T1.FinCommitmentRef, T1.FinCurrAssetValue, T1.FinContractDate, T1.NextDepDate, 
+                      T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,    
+                        T7.FinRvwRateApplFor,
+                      T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, 
+                      T1.EffectiveRateOfReturn, T1.DownPayBank, T1.DownPaySupl, T7.FinDivision LovDescFinDivisionName, T1.GraceTerms, 
+                      T14.FacilityType, T15.CustShrtName lovDescCustShrtName, T16.BranchDesc lovDescFinBranchName,
+                      T1.TotalGrossGrcPft, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps, 
+                     T1.LinkedFinRef, T7. Product LovDescFinProduct, 
+                      T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+                      T1.RpyAdvMargin, T1.RpyAdvPftRate,T1.SupplementRent, T1.IncreasedCost, 
+                       T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , 
+                      T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,
+                      T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.RoundingTarget
+FROM          WIFFinanceMain T1 LEFT OUTER JOIN
+                       WIFIndicativeTermDetail_Temp T14 ON T14.FinReference = T1.FinReference LEFT OUTER JOIN
+                       Customers T15 ON T15.CustID = T1.CustID INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                       RMTBranches T16 ON T1.FinBranch = T16.BranchCode 
+         </createView>
+         </changeSet>
+         
+         <changeSet id="306" author="Siva">
+		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
+         SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, T1.FinType, 
+                      T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, T1.FinStartDate, 
+                      T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T15.CustCIF lovDescCustCIF, 
+                     T7.FinTypeDesc lovDescFinTypeName, T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId, T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.DepreciationFrq, T1.FinCommitmentRef, T1.FinCurrAssetValue, T1.FinContractDate, T1.NextDepDate, 
+                      T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,T7.FinRvwRateApplFor, 
+                      T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, 
+                      T1.EffectiveRateOfReturn, T1.DownPayBank, T1.DownPaySupl, T7.FinDivision LovDescFinDivisionName, T1.GraceTerms, 
+                      T14.FacilityType, T15.CustShrtName lovDescCustShrtName, T16.BranchDesc lovDescFinBranchName,
+                      T1.TotalGrossGrcPft, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps, 
+                     T1.LinkedFinRef, T7. Product LovDescFinProduct, 
+                      T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate,  T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+                      T1.RpyAdvMargin, T1.RpyAdvPftRate,T1.SupplementRent, T1.IncreasedCost, 
+                     T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay,
+                      T1.FinCategory, T1.ProductCategory, T1.RoundingTarget
+FROM          WIFFinanceMain_Temp T1 LEFT OUTER JOIN
+                       WIFIndicativeTermDetail_Temp T14 ON T14.FinReference = T1.FinReference LEFT OUTER JOIN
+                       Customers T15 ON T15.CustID = T1.CustID INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                       RMTBranches T16 ON T1.FinBranch = T16.BranchCode 
+UNION ALL
+SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, T1.FinType, 
+                      T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, T1.FinStartDate, 
+                      T1.FinAmount, T1.FinRepaymentAmount, T1.CustID, T1.Defferments, T1.PlanDeferCount, T1.FinIsActive, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  T15.CustCIF lovDescCustCIF, 
+                     T7.FinTypeDesc lovDescFinTypeName,T1.FinBranch, T1.FinSourceID, 
+                      T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, T1.AvailedDefFrqChange, T7.FinMaxAmount lovDescFinMaxAmt, 
+                      T7.FinMinAmount lovDescFinMinAmount, T7.FinIsAlwDifferment lovDescFinAlwDeferment, T1.MinDownpayPerc, 
+                      T7.FinIsDwPayRequired lovDescDwnPayReq, T1.RecalType, T1.FinAssetValue, T7.FinMaxDifferment lovDescFinMaxDifferment, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, T1.DisbAccountId, T1.RepayAccountId, T1.AllowGrcRepay, 
+                      T1.GrcSchdMthd, T1.RepayMargin, T1.GrcMargin, T1.DepreciationFrq, T1.FinCommitmentRef, T1.FinCurrAssetValue, T1.FinContractDate, T1.NextDepDate, 
+                      T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, T7.FinRvwRateApplFor, 
+                      T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, 
+                      T1.EffectiveRateOfReturn, T1.DownPayBank, T1.DownPaySupl, T7.FinDivision LovDescFinDivisionName, T1.GraceTerms, 
+                      T14.FacilityType, T15.CustShrtName lovDescCustShrtName, T16.BranchDesc lovDescFinBranchName,
+                      T1.TotalGrossGrcPft, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, T1.NoOfSteps, 
+                     T1.LinkedFinRef, T7. Product LovDescFinProduct, 
+                      T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+                      T1.RpyAdvMargin, T1.RpyAdvPftRate,T1.SupplementRent, T1.IncreasedCost, 
+                       T1.feeAccountId, T1.TDSApplicable,T1.InsuranceAmt,T1.DeductInsDisb,
+                      T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod ,  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb, T1.BpiAmount, T1.DeductFeeDisb, T1.FeeChargeAmt,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay,
+                      T1.FinCategory, T1.ProductCategory, T1.RoundingTarget
+FROM          WIFFinanceMain T1 LEFT OUTER JOIN
+                       WIFIndicativeTermDetail_Temp T14 ON T14.FinReference = T1.FinReference LEFT OUTER JOIN
+                       Customers T15 ON T15.CustID = T1.CustID INNER JOIN
+                       RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                       RMTBranches T16 ON T1.FinBranch = T16.BranchCode 
+                      WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          WIFFinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+       </createView>
+       </changeSet>
+       
+       <changeSet id="307" author="Siva">
+       		<sql>
+				Update FinanceMain Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE FinanceMain.FinType = rmtfinancetypes.FinType);
+				Update FinanceMain_Temp Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE FinanceMain_Temp.FinType = rmtfinancetypes.FinType);
+				Update RejectFinanceMain Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE RejectFinanceMain.FinType = rmtfinancetypes.FinType);
+				Update WIFFinanceMain Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE WIFFinanceMain.FinType = rmtfinancetypes.FinType);
+				Update WIFFinanceMain_Temp Set roundingtarget = (Select RoundingTarget From rmtfinancetypes WHERE WIFFinanceMain_Temp.FinType = rmtfinancetypes.FinType);
+       		</sql>
+       </changeSet>
+		<changeSet id="451" author="murthy.y">			
+			<createTable tableName="DATA_ENGINE_EVENT_PROPERTIES">
+				 <column name="CONFIG_ID" type="bigint">
+				 	<constraints nullable="false" />
+				 </column>
+				 <column name="STORAGE_TYPE" type="varchar(10)" />
+				 <column name="REGION_NAME" type="varchar(50)" />
+				 <column name="BUCKET_NAME" type="varchar(100)" />
+				 <column name="ACCESS_KEY" type="varchar(250)" />
+				 <column name="SECRET_KEY" type="varchar(250)" />
+			</createTable>
+		</changeSet>
+
+		<changeSet id="452" author="murthy.y">
+				<addForeignKeyConstraint constraintName="FK_DE_EP_ID"
+					referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID"
+					baseTableName="DATA_ENGINE_EVENT_PROPERTIES" baseColumnNames="CONFIG_ID" />
+		</changeSet>
+		<changeSet id="453" author="Sai">
+			<sql>
+				insert into data_engine_event_properties values (193, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (194, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (195, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (196, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (197, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (198, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (199, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (200, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (201, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (202, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (203, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (204, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (205, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (206, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (207, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (208, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (209, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (210, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (211, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (212, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+				insert into data_engine_event_properties values (213, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			</sql>
+		</changeSet>
+		<changeSet id="454" author="Sai">
+			<sql>
+				update data_engine_config set backupfile = 1 where id = 193;
+				update data_engine_config set backupfile = 1 where id = 194;
+				update data_engine_config set backupfile = 1 where id = 195;
+				update data_engine_config set backupfile = 1 where id = 196;
+				update data_engine_config set backupfile = 1 where id = 197;
+				update data_engine_config set backupfile = 1 where id = 198;
+				update data_engine_config set backupfile = 1 where id = 199;
+				update data_engine_config set backupfile = 1 where id = 200;
+				update data_engine_config set backupfile = 1 where id = 201;
+				update data_engine_config set backupfile = 1 where id = 202;
+				update data_engine_config set backupfile = 1 where id = 203;
+				update data_engine_config set backupfile = 1 where id = 204;
+				update data_engine_config set backupfile = 1 where id = 205;
+				update data_engine_config set backupfile = 1 where id = 206;
+				update data_engine_config set backupfile = 1 where id = 207;
+				update data_engine_config set backupfile = 1 where id = 208;
+				update data_engine_config set backupfile = 1 where id = 209;
+				update data_engine_config set backupfile = 1 where id = 210;
+				update data_engine_config set backupfile = 1 where id = 211;
+				update data_engine_config set backupfile = 1 where id = 212;
+				update data_engine_config set backupfile = 1 where id = 213;
+			</sql>
+		</changeSet>
+		<changeSet id="455" author="murthy.y">
+			<sql>
+				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 193;
+				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 194;
+				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 195;
+				update data_engine_config set cronexpression = '0 0 3 1 ? ?' where id = 196;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 197;
+				update data_engine_config set cronexpression = '0 0 3 1 ? ?' where id = 198;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 199;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 200;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 201;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 202;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 203;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 204;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 205;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 206;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 207;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 208;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 209;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 210;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 211;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 212;
+				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 213;
+			</sql>
+		</changeSet>
+		<changeSet id="456" author="Sai">
+			<sql>
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 193;
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 194;
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 195;
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 196;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 197;
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 198;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 199;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 200;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 201;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 202;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 203;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 204;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 205;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 206;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 207;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 208;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 209;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 210;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 211;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 212;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 213;
+			</sql>
+		</changeSet>
+		<changeSet id="457" author="Jayant"><sql>
+		    delete  from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report';
+
+			Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Presentment File Import','Presentment File Import',1,'PresentmentFileImport','pfsDatasource',1,'menu_Item_PresentmentFileImport_Report',2,1000,null,null,null,null,null,null,0,current_timestamp,0);
+
+			delete from REPORTFILTERFIELDS where reportid = (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentmentFileImport_Report');
+
+			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),1,'File Name','LOVSEARCH','File Name','ID',null,'FileBatchStatus','getId','getFileName',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),2,'FinReference','LOVSEARCH','Loan Reference','FINREFERENCE',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),3,'Finance Status','STATICLIST','Loan Status','STATUS','getPresentmentsStatusListForReport',null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+		    
+		</sql>
+		</changeSet>
 	</databaseChangeLog>

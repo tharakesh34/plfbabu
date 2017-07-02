@@ -37,9 +37,6 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 
 		FinScheduleData finSchdData = null;
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		//TODO: PV 19JAN17 schdMethod to be added
 		finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");
 		finSchdData.getFinanceMain().setScheduleRegenerated(true);

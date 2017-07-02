@@ -201,9 +201,6 @@ public class ReceiptCalculator implements Serializable {
 		Boolean isNextDueSet = false;
 		boolean isSkipLastDateSet = false;
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
 		if(finScheduleData.getFinanceMain().isTDSApplicable()){
 
@@ -611,9 +608,6 @@ public class ReceiptCalculator implements Serializable {
 	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
 		logger.debug("Entering");
 		
-		scheduleData.getFinanceMain().setCalRoundingMode(scheduleData.getFinanceType().getRoundingMode());
-		scheduleData.getFinanceMain().setRoundingTarget(scheduleData.getFinanceType().getRoundingTarget());
-
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();
 		List<FinReceiptDetail> receiptDetailList = receiptData.getReceiptHeader().getReceiptDetails();
@@ -1493,9 +1487,6 @@ public class ReceiptCalculator implements Serializable {
 	 */
 	public Map<String, BigDecimal> recalAutoAllocation(FinScheduleData scheduleData, BigDecimal totalReceiptAmt, Date valueDate, String receiptPurpose, boolean isPresentment) {
 		logger.debug("Entering");
-		
-		scheduleData.getFinanceMain().setCalRoundingMode(scheduleData.getFinanceType().getRoundingMode());
-		scheduleData.getFinanceMain().setRoundingTarget(scheduleData.getFinanceType().getRoundingTarget());
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> scheduleDetails = scheduleData.getFinanceScheduleDetails();

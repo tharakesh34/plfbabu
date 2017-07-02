@@ -10253,7 +10253,7 @@
 	</bean>
 
 
-   <!-- Beneficiary -->
+   <!-- CIBIL -->
 	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -10289,4 +10289,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- GCDCustomers END -->
+	
+	<!-- <bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/> -->
+	
 </beans>

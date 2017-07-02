@@ -65,7 +65,6 @@ import com.pennanttech.pff.core.Literal;
 public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 	private static Logger logger = Logger.getLogger(GCDCustomerBajjajDAOImpl.class);
 
-	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private SimpleJdbcCall simpleJdbcCall;
 
@@ -77,7 +76,6 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 	@Override
 	public void callStoredProcedure(GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
-		// SqlParameterSource inParam = new MapSqlParameterSource();
 		MapSqlParameterSource inParam = new MapSqlParameterSource();
 		inParam.addValue("P_FINN_CUSTID", gcdCustomer.getFinCustId());
 		inParam.addValue("P_SOURCE_SYSTEM", gcdCustomer.getSourceSystem());
@@ -133,16 +131,10 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 				+ " :P_DATELASTUPDT, :P_P_NATIONALID, :P_PASSPORTNO, :P_NATIONALITY, :P_PP_AN_NO, :P_REGIONID, :P_BANK_TYPE, :P_ENTITYFLAG, :P_CONTACT_PERSON, :P_CUSTSEARCHID,"
 				+ " :P_ECONOMIC_SEC_ID, :P_FRAUD_FLAG, :P_FRAUD_SCORE, :P_EMI_CARD_ELIG, :P_ADDRESS_DTL, :P_BANK_DTL, :P_N_NAME, :P_N_ADDRESS, :P_N_RELATION, :P_N_FIELD9,"
 				+ " :P_N_FIELD10, :P_INS_UPD_FLAG, :P_SUCCESS_REJECT, :P_REJECTION_REASON, :P_FINN_CUST_ID, :P_SFDC_CUSTOMERID, :P_BRANCHID)}"; // not
-																																				// using
 
 		logger.trace(Literal.SQL + procedure.toString());
 		try {
 			Map<String, Object> outParam = simpleJdbcCall.execute(inParam);
-
-			System.out.println((String) outParam.get("P_SUCCESS_REJECT")); // result from Sproc
-			System.out.println((String) outParam.get("P_REJECTION_REASON")); // result from Sproc
-			System.out.println((String) outParam.get("P_FINN_CUST_ID"));// result from Sproc
-
 			if (!outParam.isEmpty()) {
 				gcdCustomer.setStatusFromFinnOne(String.valueOf(outParam.get("P_SUCCESS_REJECT")));
 				gcdCustomer.setRejectionReason(String.valueOf(outParam.get("P_REJECTION_REASON")));

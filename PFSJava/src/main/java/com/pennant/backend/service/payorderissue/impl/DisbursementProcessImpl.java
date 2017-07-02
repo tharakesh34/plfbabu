@@ -19,7 +19,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
+import com.pennanttech.pff.core.process.DisbursementProcess;
 
 public class DisbursementProcessImpl implements DisbursementProcess {
 	private static Logger				logger	= Logger.getLogger(DisbursementProcessImpl.class);

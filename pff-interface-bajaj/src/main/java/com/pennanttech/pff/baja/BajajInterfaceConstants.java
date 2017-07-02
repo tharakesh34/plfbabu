@@ -31,5 +31,6 @@ public class BajajInterfaceConstants {
 	public static DataEngineStatus DATA_MART_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
 	public static DataEngineStatus TRAIL_BALANCE_EXPORT_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
 	public static DataEngineStatus CIBIL_EXPORT_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
+	public static DataEngineStatus GST_TAXDOWNLOAD_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
 
 }

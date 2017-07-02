@@ -5576,11 +5576,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 				
-				getFinanceDetail().getFinScheduleData().getFinanceMain()
-						.setCalRoundingMode(getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingMode());
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setRoundingTarget(
-						getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingTarget());
-
 				getFinanceDetail().setFinScheduleData(
 						ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));
 

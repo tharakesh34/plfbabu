@@ -2323,9 +2323,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinScheduleData().getFinanceMain().getScheduleMethod());
 			
-			getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
-			getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
-			
 			if(this.grid_monthDetails.isVisible()){
 				getFinScheduleData().setPlanEMIHmonths(getPlanEMIHMonths());
 				getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());

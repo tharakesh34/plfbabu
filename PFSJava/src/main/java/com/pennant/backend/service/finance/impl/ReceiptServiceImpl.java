@@ -896,7 +896,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeMain.setWorkflowId(0);
 		
 		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
 			int size = scheduleData.getFinanceScheduleDetails().size();
 			for (int i = size - 1; i >= 0; i--) {
 				FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
@@ -1472,10 +1472,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocationDetail.setPaidAmount(finReceiptData.getAllocationMap().get(allocateTypes.get(i)));
 			if (allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 				receiptHeader.getAllocations().add(allocationDetail);
-				if(!StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
-					totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) ||
+						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
+					//Nothing to do
 				}else{
-					totalPaid = totalPaid.subtract(allocationDetail.getPaidAmount());
+					totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
 				}
 			}
 		}
@@ -1535,9 +1536,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
@@ -1552,10 +1550,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
 				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
 				for (int i = 0; i < allocationKeys.size(); i++) {
-					if(!StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS)){
-						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+					if(StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS) || 
+							StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_PFT)){
+						//Nothing todo
 					}else{
-						totalBal = totalBal.add(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
 					}
 				}
 			}

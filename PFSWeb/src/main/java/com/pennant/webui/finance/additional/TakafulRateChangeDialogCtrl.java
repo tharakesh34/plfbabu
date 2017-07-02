@@ -386,10 +386,6 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		//Schedule Calculation Process
 		if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_INSCHANGE)){
-			
-			getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
-			getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
-			
 			setFinScheduleData(ScheduleCalculator.recalInsuranceSchedule(getFinScheduleData()));
 		}
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

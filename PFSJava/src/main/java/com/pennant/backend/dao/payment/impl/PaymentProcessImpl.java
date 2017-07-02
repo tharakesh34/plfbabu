@@ -18,7 +18,7 @@ import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.services.payments.PaymentProcess;
+import com.pennanttech.pff.core.process.PaymentProcess;
 
 public class PaymentProcessImpl implements PaymentProcess {
 	private static Logger logger = Logger.getLogger(PaymentProcessImpl.class);

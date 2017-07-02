@@ -161,7 +161,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Iframe	finDocumentPdfView;
 	protected Div		finDocumentDiv;	            
 	protected Div       docDiv;
-
+	protected Space		space_documnetName;	
 
 	protected Space     space_CustDocExpDate;       
 	protected Space     space_custDocIssuedOn;		
@@ -587,6 +587,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}else{
 			this.custDocType.setDescription(aCustomerDocument.getLovDescCustDocCategory());
 		}
+		if(StringUtils.equals(aCustomerDocument.getCustDocCategory(), PennantConstants.PANNUMBER)){
+			this.space_documnetName.setSclass("mandatory");
+		}
 		if(StringUtils.isNotBlank(aCustomerDocument.getCustDocIssuedCountry())){
 			this.custDocIssuedCountry.setDescription(aCustomerDocument.getLovDescCustDocIssuedCountry());
 		}
@@ -716,7 +719,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			wve.add(we);
 		}
 		try {
-			if (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null) {
+			if (StringUtils.equals(this.custDocType.getValidatedValue(), PennantConstants.PANNUMBER)
+					&& (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()))){
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aCustomerDocument.setCustDocName(this.documnetName.getValue());
@@ -1940,6 +1944,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				if(details.isDocIssuedAuthorityMand()){
 					isIssuedAuth=true;
 					this.space_CustDocSysName.setSclass(PennantConstants.mandateSclass);
+				}
+				if(StringUtils.equals(details.getDocTypeCode(), PennantConstants.PANNUMBER)){
+					this.space_documnetName.setSclass("mandatory");
+				}else{
+					this.space_documnetName.setSclass("");
+					this.documnetName.setErrorMessage("");
 				}
 			}
 		}

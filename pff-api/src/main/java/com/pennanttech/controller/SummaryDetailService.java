@@ -82,15 +82,15 @@ public class SummaryDetailService {
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-			summary.setNumberOfTerms(finPftDetail.getNOInst());
-			summary.setLoanTenor(finPftDetail.getTotalTenor());
+			summary.setNumberOfTerms(financeMain.getCalTerms());
+			summary.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
 			summary.setMaturityDate(finPftDetail.getMaturityDate());
 			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
 			summary.setNextSchDate(finPftDetail.getNSchdDate());
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			//int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			//int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
 					finPftDetail.getMaturityDate()));
@@ -249,9 +249,6 @@ public class SummaryDetailService {
 			finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
 			finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
 			
-			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-
 			if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 				finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
@@ -351,7 +348,9 @@ public class SummaryDetailService {
 	public List<FinFeeDetail> getUpdatedFees(List<FinFeeDetail> actualFees) {
 		if (actualFees != null) {
 			for (FinFeeDetail feeDetail : actualFees) {
-				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+				if(StringUtils.isBlank(feeDetail.getFeeCategory())) {
+					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+				}
 				if (StringUtils.isNotBlank(feeDetail.getVasReference())) {
 					feeDetail.setFeeTypeCode(feeDetail.getVasReference());
 				}

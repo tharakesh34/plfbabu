@@ -2,14 +2,17 @@ package com.pennanttech.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -18,6 +21,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerChequeInfo;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -25,6 +29,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -36,6 +41,8 @@ import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.PersionalInfoGroup;
@@ -78,6 +85,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	private CustomerBankInfoService			customerBankInfoService;
 	private CustomerExtLiabilityService		customerExtLiabilityService;
 	private CustomerChequeInfoDAO			customerChequeInfoDAO;
+	private DedupParmDAO					dedupParmDAO;
+	private CustomerDedupDAO				customerDedupDAO;
+
 
 
 	/**
@@ -109,7 +119,25 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return response;
 			}
 		}
-
+		//call dedup service for customer duplication
+		if(customerDetails.isDedupReq()){
+			List<CustomerDedup> dedupList=null;
+			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
+			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER, customerDedup.getCustCtgCode(), "");
+			//TO Check duplicate customer  in Local database
+			for (DedupParm dedupParm : dedupParmList) {
+				dedupList = customerDedupDAO.fetchCustomerDedupDetails(customerDedup, dedupParm.getSQLQuery());
+			}        
+			if(dedupList!=null && !dedupList.isEmpty()){
+				response = new CustomerDetails();
+				doEmptyResponseObject(response);
+				response.setDedupReq(customerDetails.isDedupReq());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343"));
+				response.setCustomerDedupList(dedupList);
+				return response;
+			}
+		}
+		
 		// call create customer method in case of no errors
 		response = customerController.createCustomer(customerDetails);
 
@@ -1932,7 +1960,51 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+	private CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
+		logger.debug("Entering");
+		String mobileNumber = "";
+		Customer customer = customerDetails.getCustomer();
+		if (customerDetails.getCustomerPhoneNumList() != null) {
+			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
+				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+					mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(), custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					break;
+				}
+			}
+		}
+		
+		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
+		if (customerDocumentsList != null) {
+			for (CustomerDocument curCustDocument : customerDocumentsList) {
+					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
+					}
+			}
+		}		
 
+		CustomerDedup customerDedup = new CustomerDedup();
+		customerDedup.setCustFName(customer.getCustFName());
+		customerDedup.setCustLName(customer.getCustLName());
+		customerDedup.setCustShrtName(customer.getCustShrtName());
+		customerDedup.setCustDOB(customer.getCustDOB());
+		customerDedup.setCustCRCPR(customer.getCustCRCPR());
+		customerDedup.setCustCtgCode(customer.getCustCtgCode());
+		customerDedup.setCustDftBranch(customer.getCustDftBranch());
+		customerDedup.setCustSector(customer.getCustSector());
+		customerDedup.setCustSubSector(customer.getCustSubSector());
+		customerDedup.setCustNationality(customer.getCustNationality());
+		customerDedup.setCustPassportNo(customer.getCustPassportNo());
+		customerDedup.setCustTradeLicenceNum(customer.getCustTradeLicenceNum());
+		customerDedup.setCustVisaNum(customer.getCustVisaNum());
+		customerDedup.setMobileNumber(mobileNumber);
+		customerDedup.setCustPOB(customer.getCustPOB());
+		customerDedup.setCustResdCountry(customer.getCustResdCountry());
+		customerDedup.setCustEMail(customer.getEmailID());
+
+		logger.debug("Leaving");
+		return customerDedup;
+
+	}
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2166,6 +2238,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
 		this.customerChequeInfoDAO = customerChequeInfoDAO;
 	}
-
+	@Autowired
+	public void setDedupParmDAO(DedupParmDAO dedupParmDAO) {
+		this.dedupParmDAO = dedupParmDAO;
+	}
+	@Autowired
+	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
+		this.customerDedupDAO = customerDedupDAO;
+	}
 
 }

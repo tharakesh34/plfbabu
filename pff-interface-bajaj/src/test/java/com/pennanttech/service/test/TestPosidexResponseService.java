@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.PosidexResponseService;
 import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pff.core.services.PosidexResponseService;
 
 public class TestPosidexResponseService {
 

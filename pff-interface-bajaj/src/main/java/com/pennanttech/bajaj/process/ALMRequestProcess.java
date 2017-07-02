@@ -1,83 +1,82 @@
 package com.pennanttech.bajaj.process;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
-	private static final Logger	logger	= Logger.getLogger(ALMRequestProcess.class);
+	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
 
-	private Date				appDate;
+	private Date appDate;
 
-	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	ProjectedAccrualProcess projectedAccrualProcess;
+
+	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
+			ProjectedAccrualProcess projectedAccrualProcess) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
 		this.appDate = appDate;
+		this.projectedAccrualProcess = projectedAccrualProcess;
 	}
 
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
-		
+
+		delete(new MapSqlParameterSource(), "ALM", destinationJdbcTemplate, new String[0]);
+
 		loadCount();
-		
-		MapSqlParameterSource parmMap;
+
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from INT_ALM_VIEW");
+		sql.append(" select * from INT_ALM_VIEW");
 
-		parmMap = new MapSqlParameterSource();
-
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
-			MapSqlParameterSource	map	= null;
+		jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 
 			@Override
-			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-				String[] filterFields = new String[1];
-				filterFields[0] = "AGREEMENTNO";
-				while (rs.next()) {
-					processedCount++;
-					executionStatus.setProcessedRecords(processedCount);
-					try {
-						map = mapData(rs);
-						saveOrUpdate(map, "ALM", destinationJdbcTemplate, filterFields);
-						successCount++;
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-						failedCount++;
-						String keyId = rs.getString("AGREEMENTNO");
+			public void processRow(ResultSet rs) throws SQLException {
+				executionStatus.setProcessedRecords(processedCount++);
+				try {
+					saveAccrualDetails(rs);
+					executionStatus.setSuccessRecords(successCount++);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					executionStatus.setFailedRecords(failedCount++);
+					String keyId = rs.getString("FINREFERENCE");
 
-						if (StringUtils.trimToNull(keyId) == null) {
-							keyId = String.valueOf(processedCount);
-						}
-
-						saveBatchLog(keyId, "F", e.getMessage());
-					} finally {
-						map = null;
+					if (StringUtils.trimToNull(keyId) == null) {
+						keyId = String.valueOf(processedCount);
 					}
+
+					saveBatchLog(keyId, "F", e.getMessage());
 				}
-				return totalRecords;
+
 			}
 		});
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void loadCount() {
-		StringBuilder sql = new StringBuilder();
-
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-		sql.append(" SELECT count(*) from INT_ALM_VIEW");
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select count(*) from INT_ALM_VIEW");
 
 		try {
 			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
@@ -87,22 +86,63 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
+	private void saveAccrualDetails(ResultSet rs) throws Exception {
+		String finReference = rs.getString("FINREFERENCE");
+		String agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+		Date startDate = rs.getDate("FINSTARTDATE");
+		Date maturityDate = rs.getDate("MATURITYDATE");
+		String clostingStatus = rs.getString("CLOSINGSTATUS");
+		String finType = rs.getString("FINTYPE");
+		String advanceFlag = rs.getString("ADVFLAG");
+		BigDecimal minorCcyUnits = rs.getBigDecimal("CCYMINORCCYUNITS");
+		int editField = rs.getInt("CCYEDITFIELD");
+
+		List<ProjectedAccrual> accrualDetails = null;
+		accrualDetails = projectedAccrualProcess.calculateAccrualsOnMonthEnd(finReference, startDate, maturityDate,
+				appDate);
+
+		if (accrualDetails.isEmpty()) {
+			return;
+		}
+
+		List<Object[]> parameters = new ArrayList<Object[]>();
+
+		BigDecimal schdTot = null;
+		BigDecimal schdPri = null;
+		BigDecimal schdPft = null;
+		BigDecimal pftAccrued = null;
+		BigDecimal cumulativeAccrued = null;
+
+		for (ProjectedAccrual accrual : accrualDetails) {
+			schdTot = getAmount(accrual.getSchdTot(), minorCcyUnits, editField);
+			schdPri = getAmount(accrual.getSchdPri(), minorCcyUnits, editField);
+			schdPft = getAmount(accrual.getSchdPft(), minorCcyUnits, editField);
+			pftAccrued = getAmount(accrual.getPftAccrued(), minorCcyUnits, editField);
+			cumulativeAccrued = getAmount(accrual.getCumulativeAccrued(), minorCcyUnits, editField);
+
+			parameters.add(new Object[] { agreementId, finReference, finType, clostingStatus, schdTot, schdPri, schdPft,
+					accrual.getSchdDate(), pftAccrued, accrual.getAccruedOn(), cumulativeAccrued, advanceFlag });
+		}
+
+		StringBuilder query = new StringBuilder();
+		query.append("INSERT INTO ALM VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		destinationJdbcTemplate.getJdbcOperations().batchUpdate(query.toString(), parameters);
+
+	}
+
+	private BigDecimal getAmount(BigDecimal amount, BigDecimal minorCcyUnits, int editField) {
+		if (amount == null) {
+			amount = BigDecimal.ZERO;
+		}
+
+		amount = amount.divide(minorCcyUnits, editField, RoundingMode.HALF_DOWN);
+
+		return amount;
+	}
+
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
-		map.addValue("INSTLAMT", rs.getObject("INSTLAMT"));
-		map.addValue("PRINCOMP", rs.getObject("PRINCOMP"));
-		map.addValue("INTCOMP", rs.getObject("INTCOMP"));
-		map.addValue("DUEDATE", rs.getObject("DUEDATE"));
-		map.addValue("ACCRUEDAMT", rs.getObject("ACCRUEDAMT"));
-		map.addValue("ACCRUEDON", appDate);
-		map.addValue("CUMULATIVE_ACCRUAL_AMT", rs.getObject("CUMULATIVE_ACCRUAL_AMT"));
-		map.addValue("ADVFLAG", rs.getObject("ADVFLAG"));
-		return map;
+		return null;
 	}
+
 }

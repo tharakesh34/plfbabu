@@ -43,9 +43,6 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
@@ -74,9 +71,6 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			}
 		}
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		// call schedule calculator
 		finScheduleData = ScheduleCalculator.unPlannedEMIH(finScheduleData, BigDecimal.ZERO, scheduleMethod);
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
@@ -98,9 +92,6 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
 		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
-		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		
 		finScheduleData = ScheduleCalculator.reAging(finScheduleData);
 		finScheduleData.getFinanceMain().setScheduleRegenerated(true);

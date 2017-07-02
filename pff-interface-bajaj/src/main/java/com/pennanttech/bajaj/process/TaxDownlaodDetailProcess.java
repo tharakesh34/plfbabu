@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
@@ -29,7 +30,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private int recordCount = 0;
 
 	public TaxDownlaodDetailProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.GST_TAXDOWNLOAD_STATUS);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.appDate = valueDate;
@@ -37,19 +38,19 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 	@Override
 	protected void processData() {
-
 		this.recordCount = 0;
 		boolean isError = false;
 		taxStateCodesMap = null;
 		try {
 			loadDefaults();
+			
 			clearTables();
 			try {
 				preparePosingsData();
 				long id = saveHeader();
 				processTaxDownloadData(id);
 				if (recordCount <= 0) {
-					throw new Exception("No records are available for the POSTDATE :" + appDate);
+					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
 				}
 				updateHeader(id, recordCount);
 			} catch (Exception e) {
@@ -401,7 +402,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PROCESSDATE_FROM", fromDate);
 		source.addValue("PROCESSDATE_TO", toDate);
-		jdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= PROCESSDATE_TO", source);
+		jdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO", source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -413,8 +414,8 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
-		jdbcTemplate.update("DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= TRANSACTION_DATE_TO", source);
-		jdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= TRANSACTION_DATE_TO", source);
+		jdbcTemplate.update("DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO", source);
+		jdbcTemplate.update("DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO", source);
 
 		logger.debug(Literal.LEAVING);
 

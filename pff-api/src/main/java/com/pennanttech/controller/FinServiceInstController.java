@@ -1167,8 +1167,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		String rpyHierarchy = finScheduleData.getFinanceType().getRpyHierarchy();
 		finScheduleData.getFinanceType().setRpyHierarchy(rpyHierarchy);
 		finScheduleData.getFinanceMain().setRcdMaintainSts(purpose);
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();

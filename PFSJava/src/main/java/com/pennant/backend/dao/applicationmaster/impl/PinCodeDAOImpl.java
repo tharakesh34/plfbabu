@@ -273,11 +273,13 @@ public class PinCodeDAOImpl extends BasisNextidDaoImpl<PinCode> implements PinCo
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" pinCodeId, pinCode, city, areaName, active, ");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		sql.append(" From PinCodes_View");
+		
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append("pCCountry,pCProvince,");
+		}
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From PinCodes");
+		sql.append(type);
 
 		sql.append(" Where pinCode = :pinCode");
 

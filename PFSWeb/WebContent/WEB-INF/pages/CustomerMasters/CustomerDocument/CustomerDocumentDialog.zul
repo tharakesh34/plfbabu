@@ -95,8 +95,7 @@
 										id="label_FinDocumentDetailDialog_DocumnetName"
 										value="${c:l('label_FinDocumentDetailDialog_DocumnetName.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space id="space_documnetName" spacing="2px" />
 										<textbox id="documnetName"
 											width="150px" maxlength="200" readonly="true" />
 										<button upload="true"

@@ -298,9 +298,6 @@ public class DesiredProfitCalculation {
 			}			
 		}
 		
-		planDeferSchdData.getFinanceMain().setCalRoundingMode(planDeferSchdData.getFinanceType().getRoundingMode());
-		planDeferSchdData.getFinanceMain().setRoundingTarget(planDeferSchdData.getFinanceType().getRoundingTarget());
-
 		planDeferSchdData = ScheduleGenerator.getNewSchd(planDeferSchdData);
 		planDeferSchdData = ScheduleCalculator.getPlanDeferPft(planDeferSchdData);
 

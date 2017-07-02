@@ -264,4 +264,6 @@ public interface FinanceMainDAO {
 	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 
 	void updatePaymentInEOD(FinanceMain financeMain);
+
+	List<FinanceMain> getBYCustIdForLimitRebuild(long id, boolean orgination);
 }

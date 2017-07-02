@@ -47,6 +47,7 @@ package com.pennanttech.cache;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.service.cacheadministration.CacheAdministrationService;
+import com.pennanttech.pff.core.Literal;
 
 public class GenericCacheMonitor implements Runnable {
 	private static final Logger logger = Logger.getLogger(GenericCacheMonitor.class);
@@ -67,6 +68,7 @@ public class GenericCacheMonitor implements Runnable {
 
 
 	private void monitorManager() {
+		logger.debug("Entering ");
 		try {
 
 			CacheStats stats = GenericCacheManager.getNodeDetails();
@@ -82,10 +84,7 @@ public class GenericCacheMonitor implements Runnable {
 			while (GenericCacheManager.isEnabled()) {
 				GenericCacheManager.verifyCache();
 				
-				stats = GenericCacheManager.getNodeDetails();
-
-				logger.debug("STATS VALUE :::: " + stats.getStringValue());
-				System.out.println("STATS VALUE :::: " + stats.getStringValue());
+				stats = GenericCacheManager.getNodeDetails();				
 
 				// Insert / Update
 
@@ -104,6 +103,7 @@ public class GenericCacheMonitor implements Runnable {
 		} catch (Exception e) {
 			logger.error(e);
 		}
+		logger.debug("Leaving ");
 	}
 
 	

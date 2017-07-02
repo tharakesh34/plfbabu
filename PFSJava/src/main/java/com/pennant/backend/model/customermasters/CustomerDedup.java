@@ -4,21 +4,31 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDedup {
-	
+	@XmlElement
 	private String custCIF ;
 	private String finReference;
+	@XmlElement
 	private String custLName;
+	@XmlElement
 	private String custFName;
+	@XmlElement
 	private String custShrtName;
 	private String custMotherMaiden;
+	@XmlElement
 	private Date custDOB;
+	@XmlElement
 	private String custCRCPR;
 	private String custPassportNo;
 	private String mobileNumber;
@@ -40,9 +50,13 @@ public class CustomerDedup {
 	// For Internal use //Not in the table should be exculed for audit
 	private long custId =Long.MIN_VALUE;
 	private String custCoreBank;
+	@XmlElement
 	private String custCtgCode;
+	@XmlElement
 	private String custDftBranch;
+	@XmlElement
 	private String custSector;
+	@XmlElement
 	private String custSubSector;
 	private String custDocType;
 	private String custDocTitle;	

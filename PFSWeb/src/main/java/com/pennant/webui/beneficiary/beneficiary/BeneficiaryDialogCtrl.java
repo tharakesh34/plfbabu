@@ -510,7 +510,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_BeneficiaryDialog_AccNumber.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
-					true,accNoLength,accNoLength));
+					true));
 		}
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {

@@ -15,4 +15,7 @@ public interface LimitReferenceMappingDAO {
 	List<LimitReferenceMapping> getLimitReferences(long headerid,String limitLine);
 	
 	int isLimitLineExist(String lmtline);
+
+	boolean deleteByHeaderID(long headerID);
+
 }

@@ -9,17 +9,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennanttech.bajaj.services.DisbursementRequestService;
+import com.pennanttech.pff.core.services.DisbursementRequestService;
 
 public class TestDisbursement {
 
-	private DisbursementRequestService	disbursementRequest;
+	private DisbursementRequestService	disbursementRequestService;
 
 	@Before
 	public void startAHI() {
 		try {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		disbursementRequest = context.getBean(DisbursementRequestService.class);
+		disbursementRequestService = context.getBean(DisbursementRequestService.class);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -105,7 +105,7 @@ public class TestDisbursement {
 			list.add(fa);
 			
 			
-			disbursementRequest.sendReqest("PBD", list, new Long(1000));
+			disbursementRequestService.sendReqest("PBD", list, new Long(1000));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

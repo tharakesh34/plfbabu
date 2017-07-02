@@ -55,9 +55,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
 		finSchData.getFinanceMain().setScheduleRegenerated(true);

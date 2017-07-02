@@ -250,7 +250,7 @@ public class FinStatementController extends SummaryDetailService {
 			scheduleData.setForeClosureFees(foreClosureFees);
 
 			// process fees and charges
-			processFeesAndCharges(financeDetail, scheduleData, finFeeDetails);
+			processFeesAndCharges(scheduleData, finFeeDetails);
 
 			finStmtDetail.setForeClosureDetails(foreClosureList);
 			finStmtDetail.setFinScheduleData(scheduleData);
@@ -263,15 +263,15 @@ public class FinStatementController extends SummaryDetailService {
 		return finStmtDetail;
 	}
 
-	private void processFeesAndCharges(FinanceDetail financeDetail, FinScheduleData scheduleData,
+	private void processFeesAndCharges(FinScheduleData scheduleData,
 			List<FinFeeDetail> finFeeDetails) throws IllegalAccessException, InvocationTargetException {
 		// finance level fees and charges
-		scheduleData.setFeeDues(finFeeDetails);
-		for (FinFeeDetail feeDetail : scheduleData.getFeeDues()) {
+		for (FinFeeDetail feeDetail : finFeeDetails) {
 			feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
 		}
 
-		String finReference = scheduleData.getFinReference();
+		scheduleData.setFeeDues(finFeeDetails);
+		String finReference = scheduleData.getFinanceMain().getFinReference();
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 
 		// Bounce and manual advice fees if applicable
@@ -292,7 +292,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				feeDues.add(feeDetail);
 			}
-			scheduleData.setFeeDues(feeDues);
+			scheduleData.getFeeDues().addAll(feeDues);
 		}
 	}
 
@@ -308,7 +308,7 @@ public class FinStatementController extends SummaryDetailService {
 		return getStatement(references, serviceName, statementRequest.getDays());
 	}
 
-	private void prepareResponse(FinanceDetail financeDetail, String servicName) {
+	private void prepareResponse(FinanceDetail financeDetail, String servicName) throws IllegalAccessException, InvocationTargetException {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
 		financeDetail.getFinScheduleData().setInsuranceList(null);
@@ -350,7 +350,10 @@ public class FinStatementController extends SummaryDetailService {
 
 		if (StringUtils.equals(APIConstants.STMT_ACCOUNT, servicName)) {
 			List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
-			financeDetail.setFinFeeDetails(finFeeDetail);
+			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			processFeesAndCharges(finScheduleData, finFeeDetail);
+			financeDetail.setFinFeeDetails(getUpdatedFees(financeDetail.getFinScheduleData().getFeeDues()));
+			financeDetail.getFinScheduleData().setFeeDues(null);
 		}
 
 		// Fetch summary details

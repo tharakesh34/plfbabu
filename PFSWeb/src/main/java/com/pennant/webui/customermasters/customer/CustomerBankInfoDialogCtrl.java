@@ -578,7 +578,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
 							PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
-							true, accNoLength));
+							true));
 			
 		}
 		logger.debug("Leaving");

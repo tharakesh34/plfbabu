@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.ALMRequestService;
+import com.pennanttech.pff.core.services.ALMRequestService;
 
 public class TestAMLRequest {
 

@@ -724,8 +724,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("receiptMode");
 		excludeFields.add("receiptPurpose");
 		excludeFields.add("waivedAmt");
-		
-		excludeFields.add("roundingTarget");
 		excludeFields.add("recalFee");
 		excludeFields.add("recalTerms");
 

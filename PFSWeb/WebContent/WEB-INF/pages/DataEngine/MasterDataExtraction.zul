@@ -16,7 +16,7 @@
 					<button id="btnDownload"
 						label="Download"
 						tooltiptext="${c:l('btnImport.tooltiptext')}"
-						autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton"/>
+						autodisable="btnDownload" sclass="z-toolbarbutton"/>
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center" />
 			</hbox>
@@ -44,22 +44,6 @@
 											width="350px" readonly="true" />
 									</hbox>
 								</row>
-							<!-- 	<row id="row1" visible="false">
-									<label id="label_FileName"
-										value="${c:l('label_FileName.value')}" />
-									<hbox spacing="2px">
-										<space spacing="2px"
-											sclass="mandatory" />
-										<textbox id="fileName"
-											height="21px" width="250px" readonly="true" />
-										<button id="btnFileUpload"
-											label="Upload" upload="true"
-											autodisable="btnFileUpload,btnImport"
-											sclass="z-toolbarbutton" />
-										<combobox id="serverFileName"
-											width="300px" readonly="true" />
-									</hbox>
-								</row> -->
 							</rows>
 						</grid>
 					</groupbox>

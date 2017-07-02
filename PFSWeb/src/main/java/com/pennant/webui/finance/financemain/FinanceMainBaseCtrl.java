@@ -5501,11 +5501,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							aFinanceDetail.getFinScheduleData().getFinanceMain()
 									.setEventFromDate(aFinanceMain.getFinStartDate());
 							
-							aFinanceDetail.getFinScheduleData().getFinanceMain().setCalRoundingMode(
-									aFinanceDetail.getFinScheduleData().getFinanceType().getRoundingMode());
-							aFinanceDetail.getFinScheduleData().getFinanceMain().setRoundingTarget(
-									aFinanceDetail.getFinScheduleData().getFinanceType().getRoundingTarget());
-
 							aFinanceDetail.setFinScheduleData(ScheduleCalculator.buildODSchedule(aFinanceDetail
 									.getFinScheduleData()));
 						}
@@ -14776,11 +14771,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									getFinanceDetail().getFinScheduleData(), true));
 
 					if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 2) {
-						
-						getFinanceDetail().getFinScheduleData().getFinanceMain().setCalRoundingMode(
-								getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingMode());
-						getFinanceDetail().getFinScheduleData().getFinanceMain().setRoundingTarget(
-								getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingTarget());
 
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));
@@ -14813,11 +14803,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					//To Rebuild the overdraft if any fields are changed
 					getFinanceDetail().getFinScheduleData().getFinanceMain().setEventFromDate(
 									getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate());
-					
-					getFinanceDetail().getFinScheduleData().getFinanceMain().setCalRoundingMode(
-							getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingMode());
-					getFinanceDetail().getFinScheduleData().getFinanceMain().setRoundingTarget(
-							getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingTarget());
 					
 					scheduleData = ScheduleCalculator.buildODSchedule(getFinanceDetail().getFinScheduleData());
 				}
@@ -14879,11 +14864,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//Build Finance Schedule Details List
 				if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 					
-					getFinanceDetail().getFinScheduleData().getFinanceMain().setCalRoundingMode(
-							getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingMode());
-					getFinanceDetail().getFinScheduleData().getFinanceMain().setRoundingTarget(
-							getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingTarget());
-
 					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
 						validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
 						getFinanceDetail().setFinScheduleData(
@@ -14978,10 +14958,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Overdraft Schedule Recalculation
 		finScheduleData.getFinanceMain().setEventFromDate(appDate);
-		
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		
 		finScheduleData = ScheduleCalculator.buildODSchedule(finScheduleData);
 
 		//If any Errors on Overdraft Schedule build

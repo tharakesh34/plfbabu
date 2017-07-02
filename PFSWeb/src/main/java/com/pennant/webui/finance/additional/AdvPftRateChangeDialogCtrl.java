@@ -464,10 +464,6 @@ public class AdvPftRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		// Service details calling for Schedule calculation
-		
-		getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
-		getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
-		
 		setFinScheduleData(ScheduleCalculator.recalAdvPftRateSchedule(getFinScheduleData()));
 	
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();

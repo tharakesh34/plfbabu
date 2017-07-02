@@ -12,6 +12,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.model.Configuration;
@@ -19,14 +20,14 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.Literal;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
-	private static final Logger logger = Logger.getLogger(MasterDataExtractionCtrl.class);
-	private static final long serialVersionUID = 1297405999029019920L;
+	private static final Logger	logger				= Logger.getLogger(MasterDataExtractionCtrl.class);
+	private static final long	serialVersionUID	= 1297405999029019920L;
 
-	protected Window window_MasterDataExtractCtrl;
-	protected Button btnDownload;
+	protected Window			window_MasterDataExtractCtrl;
+	protected Button			btnDownload;
 
-	protected Combobox masterConfiguration;
-	protected DataEngineConfig dataEngineConfig;
+	protected Combobox			masterConfiguration;
+	protected DataEngineConfig	dataEngineConfig;
 
 	/**
 	 * default constructor.<br>
@@ -76,23 +77,39 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * When user clicks on "btnImport"
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$btnDownload(Event event) throws InterruptedException {
-		if(masterConfiguration.getSelectedItem().getValue() == null) {
+	public void onClick$btnDownload(Event event) throws Exception {
+		if (masterConfiguration.getSelectedItem().getValue() == null) {
 			MessageUtil.showError("Please Select any Master.");
 			return;
+		}
+
+		String config = masterConfiguration.getSelectedItem().getValue();
+		DataEngineStatus status = new DataEngineStatus(config);
+		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, "ORACLE", true, null,
+				status);
+
+		export.exportData(config);
+
+		while ("I".equals(status.getStatus())) {
+			Thread.sleep(100);
+		}
+
+		if ("S".equals(status.getStatus())) {
+			MessageUtil.showMessage("Download completed successfully.");
+		} else {
+			MessageUtil.showError("Download failed with the following reason:\n\n" + status.getRemarks());
 		}
 	}
 
 	public class ProcessData implements Runnable {
-		private long userId;
-		private DataEngineStatus status;
+		private long				userId;
+		private DataEngineStatus	status;
 
 		public ProcessData(long userId, DataEngineStatus status) {
 			this.userId = userId;
@@ -102,7 +119,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				
+
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
