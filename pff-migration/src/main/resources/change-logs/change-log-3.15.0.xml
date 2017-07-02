@@ -7193,12 +7193,7 @@ from VASSTRUCTURE
 from AMTVEHICLEDEALER where DEALERTYPE = 'VASM'
 		</createView>
 	</changeSet>
-	<changeSet id="312" author="Sai">
-	<sql>
-	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','OD','OverDraft Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
-	Insert into RMTLovfielddetail values ((select max(fieldcodeid)+1 from RMTLovfielddetail),'ACC_TYPE','CC','Cash Credit Account',1,1,1000,Current_Timestamp,'Approved',null,null,null,null,null,0,0);
-	</sql>
-	</changeSet>
+	
 	<changeSet id="314" author="Sai">
 	<sql>
 	insert into data_engine_config 
