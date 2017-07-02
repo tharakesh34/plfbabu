@@ -8452,4 +8452,29 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 213;
 			</sql>
 		</changeSet>
+		<changeSet id="456" author="Sai">
+			<sql>
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 193;
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 194;
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 195;
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 196;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 197;
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 198;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 199;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 200;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 201;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 202;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 203;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 204;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 205;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 206;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 207;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 208;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 209;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 210;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 211;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 212;
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 213;
+			</sql>
+		</changeSet>
 	</databaseChangeLog>
