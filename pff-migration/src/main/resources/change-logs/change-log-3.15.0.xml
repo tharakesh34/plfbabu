@@ -8402,5 +8402,29 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 				insert into data_engine_event_properties values (213, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
 			</sql>
 		</changeSet>
-		
+		<changeSet id="454" author="Sai">
+			<sql>
+				update data_engine_config set backupfile = 1 where id = 193;
+				update data_engine_config set backupfile = 1 where id = 194;
+				update data_engine_config set backupfile = 1 where id = 195;
+				update data_engine_config set backupfile = 1 where id = 196;
+				update data_engine_config set backupfile = 1 where id = 197;
+				update data_engine_config set backupfile = 1 where id = 198;
+				update data_engine_config set backupfile = 1 where id = 199;
+				update data_engine_config set backupfile = 1 where id = 200;
+				update data_engine_config set backupfile = 1 where id = 201;
+				update data_engine_config set backupfile = 1 where id = 202;
+				update data_engine_config set backupfile = 1 where id = 203;
+				update data_engine_config set backupfile = 1 where id = 204;
+				update data_engine_config set backupfile = 1 where id = 205;
+				update data_engine_config set backupfile = 1 where id = 206;
+				update data_engine_config set backupfile = 1 where id = 207;
+				update data_engine_config set backupfile = 1 where id = 208;
+				update data_engine_config set backupfile = 1 where id = 209;
+				update data_engine_config set backupfile = 1 where id = 210;
+				update data_engine_config set backupfile = 1 where id = 211;
+				update data_engine_config set backupfile = 1 where id = 212;
+				update data_engine_config set backupfile = 1 where id = 213;
+			</sql>
+		</changeSet>
 	</databaseChangeLog>
