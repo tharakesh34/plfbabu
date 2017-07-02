@@ -90,8 +90,8 @@ public class SummaryDetailService {
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
-			summary.setFutureInst(futureInst);
+			//int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
 					finPftDetail.getMaturityDate()));
 			summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
@@ -348,7 +348,9 @@ public class SummaryDetailService {
 	public List<FinFeeDetail> getUpdatedFees(List<FinFeeDetail> actualFees) {
 		if (actualFees != null) {
 			for (FinFeeDetail feeDetail : actualFees) {
-				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+				if(StringUtils.isBlank(feeDetail.getFeeCategory())) {
+					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+				}
 				if (StringUtils.isNotBlank(feeDetail.getVasReference())) {
 					feeDetail.setFeeTypeCode(feeDetail.getVasReference());
 				}
