@@ -10556,18 +10556,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					if (aFinanceSchData.getFinFeeDetailList() != null
 							&& !aFinanceSchData.getFinFeeDetailList().isEmpty()) {
+						BigDecimal assetValue = BigDecimal.ZERO;
 						for (FinFeeDetail feeDetail : aFinanceSchData.getFinFeeDetailList()) {
 							if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
 									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-								this.finCurrentAssetValue.getActualValue().add(feeDetail.getActualAmount());
+								assetValue = assetValue.add(feeDetail.getActualAmount());
 							}
-							aFinanceMain.setFinAssetValue(PennantAppUtil
-									.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 						}
+						aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+								this.finCurrentAssetValue.getActualValue().add(assetValue), formatter));
 					} else {
 						aFinanceMain.setFinAssetValue(
 								PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 					}
+
+					aFinanceMain.setFinAssetValue(
+							PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 
 				}
 			}
