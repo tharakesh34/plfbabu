@@ -10569,10 +10569,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setFinAssetValue(
 								PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 					}
-
-					aFinanceMain.setFinAssetValue(
-							PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
-
 				}
 			}
 
