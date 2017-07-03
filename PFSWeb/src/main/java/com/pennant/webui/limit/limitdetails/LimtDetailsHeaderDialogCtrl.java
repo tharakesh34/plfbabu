@@ -71,7 +71,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		
 		setPageComponents(window_LimtDetailsHeaderDialog);
 
-		limitHeader=new LimitHeader();
+		limitHeader=(LimitHeader) arguments.get("limitHeader");
 		limitHeader.setNewRecord(true);
 
 		// READ OVERHANDED params !

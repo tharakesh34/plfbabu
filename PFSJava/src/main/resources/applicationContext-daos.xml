@@ -7814,6 +7814,7 @@
 		<property name="currencyService" ref="currencyService" />
 		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
 		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
+		<property name="limitRebuild" ref="limitRebuild" />
 	</bean>
 
 	<bean id="limitTransactionDetailDAO"
