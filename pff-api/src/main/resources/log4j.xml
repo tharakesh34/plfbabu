@@ -56,7 +56,9 @@
 	<category name="org.springframework">
 		<priority value="INFO" />
 	</category>
-
+	 <category name="org.zkoss" additivity="false">
+                <priority value="DEBUG" />
+	</category>
 	<root>
 		<level value="ALL" />
 		<appender-ref ref="STDOUT" />
