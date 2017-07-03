@@ -8476,4 +8476,24 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			update DATA_ENGINE_PARSERS set className = 'com.pennanttech.dataengine.writer.ExcelFileWriter' where className = 'com.pennanttech.dataengine.writer.ExelFileWriter';
 		</sql>
 	</changeSet>	
+	
+	<changeSet id="463" author="sreeRavali">
+		<addColumn tableName="BMTPhoneTypes">
+			<column name="PhoneTypeRegex" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="464" author="sreeRavali">
+	 <addColumn tableName="BMTPhoneTypes_Temp">
+	  <column name="PhoneTypeRegex" type="varchar(30)"/>
+	 </addColumn>
+	</changeSet>
+	
+	<changeSet id="465" author="SreeRavali">
+		<createView replaceIfExists="true" viewName="BMTPHONETYPES_AVIEW">
+	SELECT  PhoneTypeCode, PhoneTypeDesc, PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive, Version, 
+	LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,  TaskId, NextTaskId, RecordType, WorkflowId FROM    BMTPhoneTypes
+</createView>  
+ </changeSet>
 </databaseChangeLog>
