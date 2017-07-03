@@ -2313,7 +2313,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (isValid(appCustomer.getCustGroupID()) && isValid(customer.getCustGroupID())
 					&& appCustomer.getCustGroupID() != customer.getCustGroupID()) {
 				limitRebuild.processCustomerGroupSwap(customer.getCustGroupID(), appCustomer.getCustGroupID());
-				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), false, false);
+				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), true, false);
 			}
 
 		} else {

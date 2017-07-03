@@ -234,6 +234,11 @@ public class LimitRebuildService implements LimitRebuild {
 
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(rebuildGroupID, "");
 		LimitHeader prvlimitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(prvGroupID, "");
+		long prvLimitHeaderID = 0;
+		if (prvlimitHeader != null) {
+			prvLimitHeaderID = prvlimitHeader.getHeaderId();
+		}
+
 		if (limitHeader != null) {
 			//get the limit details
 			long headerId = limitHeader.getHeaderId();
@@ -268,15 +273,13 @@ public class LimitRebuildService implements LimitRebuild {
 				if (custHeader != null) {
 					transactionID = custHeader.getHeaderId();
 				} else {
-					transactionID = prvlimitHeader.getHeaderId();
+					transactionID = prvLimitHeaderID;
 				}
 
 				//process rebuild
 				processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
-				//update the transaction with the limit headerid
-				limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(),
-						prvlimitHeader.getHeaderId(), limitHeader.getHeaderId());
-
+				//update the transaction with the limit header id
+				limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), prvLimitHeaderID, headerId);
 				// add the mapping
 				mappings.add(mapping);
 			}
