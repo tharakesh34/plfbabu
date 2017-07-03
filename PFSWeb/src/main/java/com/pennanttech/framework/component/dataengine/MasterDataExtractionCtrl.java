@@ -84,8 +84,9 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onClick$btnDownload(Event event) throws Exception {
-		if (masterConfiguration.getSelectedItem().getValue() == null) {
-			MessageUtil.showError("Please Select any Master.");
+		if (masterConfiguration.getSelectedItem().getValue() == null
+				|| "#".equals(masterConfiguration.getSelectedItem().getValue())) {
+			MessageUtil.showError("Please select the master configuration to download.");
 			return;
 		}
 
@@ -104,25 +105,6 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showMessage("Download completed successfully.");
 		} else {
 			MessageUtil.showError("Download failed with the following reason:\n\n" + status.getRemarks());
-		}
-	}
-
-	public class ProcessData implements Runnable {
-		private long				userId;
-		private DataEngineStatus	status;
-
-		public ProcessData(long userId, DataEngineStatus status) {
-			this.userId = userId;
-			this.status = status;
-		}
-
-		@Override
-		public void run() {
-			try {
-
-			} catch (Exception e) {
-				logger.error("Exception:", e);
-			}
 		}
 	}
 
