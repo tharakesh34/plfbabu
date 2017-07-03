@@ -42,7 +42,13 @@
 */
 package com.pennant.backend.service.finance;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 
 public interface FinanceTaxDetailService {
@@ -53,4 +59,9 @@ public interface FinanceTaxDetailService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
+	Customer getCustomerByID(long id);
 }

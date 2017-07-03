@@ -123,6 +123,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	@SuppressWarnings("unused")
 	private GuarantorDetail validateGuarantor = this;
 	private long custID;
+	private String custShrtName;
 
 	public GuarantorDetail() {
 		super();
@@ -146,6 +147,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("name");
 		excludeFields.add("validateGuarantor");
 		excludeFields.add("custID");
+		excludeFields.add("custShrtName");
 		return excludeFields;
 	}
 
@@ -520,5 +522,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
 	}
 }

@@ -2385,7 +2385,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT FinReference, GrcPeriodEndDate, AllowGrcPeriod, MaturityDate, ");
-		selectSql.append(" AllowGrcPeriod, RepayFrq, FinStartDate ");
+		selectSql.append(" AllowGrcPeriod, RepayFrq, FinStartDate, CustID ");
 		if (isWIF) {
 			selectSql.append(" From WIFFinanceMain");
 		} else {

@@ -8619,6 +8619,10 @@
 		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- CollateralStructure -->

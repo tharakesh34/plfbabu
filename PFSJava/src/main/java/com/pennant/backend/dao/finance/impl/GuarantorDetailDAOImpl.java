@@ -306,7 +306,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql
 		        .append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",GuarantorIDTypeName, custID");
+			selectSql.append(",GuarantorIDTypeName, custID, CustShrtName");
 		}
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -376,7 +376,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		selectSql.append(" RecordType, WorkflowId,GuarantorIDTypeName,GuarantorProof");
 		
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(", custID ");
+			selectSql.append(", custID, CustShrtName ");
 		}
 		
 		selectSql.append(" From FinGuarantorsDetails");
