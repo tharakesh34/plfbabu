@@ -8596,4 +8596,25 @@ WHERE     NOT EXISTS
                             WHERE      PhoneCustID = T1.PhoneCustID AND PhoneTypeCode = T1.PhoneTypeCode)		
 		</createView>
 	</changeSet>
+<changeSet id="472" author="Madhubabu">
+		<createView viewName="CUSTOMERPHONENUMBERS_VIEW" replaceIfExists="true">
+		SELECT     T1.PhoneCustID, T1.PhoneTypeCode, T1.PhoneCountryCode, T1.PhoneAreaCode, 
+                      T1.PhoneNumber, T1.PhoneTypePriority, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                      T1.WorkflowId, T2.PhoneTypeDesc lovDescPhoneTypeCodeName, T3.CountryDesc lovDescPhoneCountryName,T2.phoneTypeRegex phoneRegex
+FROM         CustomerPhoneNumbers_TEMP T1 INNER JOIN
+                      BMTPhoneTypes T2 ON T1.PhoneTypeCode = T2.PhoneTypeCode LEFT OUTER JOIN
+                      BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
+UNION ALL
+SELECT     T1.PhoneCustID, T1.PhoneTypeCode, T1.PhoneCountryCode, T1.PhoneAreaCode, 
+                      T1.PhoneNumber, T1.PhoneTypePriority, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                      T1.WorkflowId, T2.PhoneTypeDesc lovDescPhoneTypeCodeName, T3.CountryDesc lovDescPhoneCountryName,T2.phoneTypeRegex phoneRegex
+FROM         CustomerPhoneNumbers T1 INNER JOIN
+                      BMTPhoneTypes T2 ON T1.PhoneTypeCode = T2.PhoneTypeCode LEFT OUTER JOIN
+                      BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          CustomerPhoneNumbers_TEMP
+                            WHERE      PhoneCustID = T1.PhoneCustID AND PhoneTypeCode = T1.PhoneTypeCode)		
+		</createView>
+	</changeSet>
 </databaseChangeLog>
