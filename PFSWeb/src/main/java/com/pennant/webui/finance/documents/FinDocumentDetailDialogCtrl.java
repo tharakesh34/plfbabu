@@ -561,7 +561,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		
 		try {
 			if (!this.docReceived.isChecked() && (StringUtils.isBlank(this.documnetName.getValue()))) {
-				throw new WrongValueException(this.docReceived, "Please mention whether document is received or not");
+				throw new WrongValueException(this.docReceived, "Please check whether document is received or not");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
