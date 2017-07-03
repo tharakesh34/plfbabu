@@ -83,13 +83,31 @@
 										id="label_FinDocumentDetailDialog_DocumnetName"
 										value="${c:l('label_FinDocumentDetailDialog_DocumnetName.value')}" />
 									<hbox>
-										<space spacing="2px"
-											sclass="mandatory" />
+										<space spacing="2px" id = "space_documentName"
+											/>
 										<textbox id="documnetName"
 											width="150px" maxlength="200" readonly="true" />
 										<button upload="true"
 											label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
 										<a id="btnDownload"/>
+									</hbox>
+								</row>
+								
+								<row>
+									<label
+										id="label_FinDocumentDetailDialog_isDocReceived"
+										value="${c:l('label_FinDocumentDetailDialog_isDocReceived')}" />
+									<hbox>
+										<checkbox
+											id="docReceived" />
+									</hbox>
+									<label
+										id="label_FinDocumentDetailDialog_DocumentRecievedDate"
+										value="${c:l('label_FinDocumentDetailDialog_DocumentRecievedDate')}" />
+									<hbox>
+										<space spacing="2px"/>
+										<datebox id="docReceivedDt" readonly="true"
+											width="150px"/>
 									</hbox>
 								</row>
 

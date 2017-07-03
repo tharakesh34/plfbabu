@@ -561,14 +561,15 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docIsCustDoc.setDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		this.docExpDateIsMand.setDisabled(true);
 		this.docIssueDateMand.setDisabled(true);
-		this.docIdNumMand.setDisabled(true);
+	//	this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
 		if(getDocumentType().isDocIsCustDoc()){
 			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
 			this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
-			this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
+			
 			this.docIssuedAuthorityMand.setDisabled(isReadOnly("DocumentTypeDialog_docIssuedAuthorityMand"));
 		}
+		this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
