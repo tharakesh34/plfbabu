@@ -2741,8 +2741,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getPhoneTypeRegex(){
 		if(phoneTypeRegex == null){
 			phoneTypeRegex = new ArrayList<ValueLabel>(2);
-			phoneTypeRegex.add(new ValueLabel("[0-9]{10}","Phone"));
-			phoneTypeRegex.add(new ValueLabel("[0-9]{11}","Telephone"));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{10}", Labels.getLabel("listheader_MobileNumber.label")));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{11}", Labels.getLabel("listheader_DealerTelephone.label")));
 		}
 		return phoneTypeRegex;
 	}
