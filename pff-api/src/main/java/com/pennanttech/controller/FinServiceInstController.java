@@ -1370,6 +1370,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 			Map<Date, BigDecimal> odChargePaidMap = new HashMap<>();
 			Map<Date, BigDecimal> odPenaltyPaidMap = new HashMap<>();
+			Map<Date, BigDecimal> odPriPaidMap = new HashMap<>();
+			Map<Date, BigDecimal> odPftPaidMap = new HashMap<>();
 			for(FinanceScheduleDetail actFinSchedule: actualSchedules) {
 				for(RepayScheduleDetail chgdFinSchedule: rpySchdList) {
 					if(DateUtility.compare(actFinSchedule.getSchDate(), chgdFinSchedule.getSchDate()) == 0) {
@@ -1396,6 +1398,24 @@ public class FinServiceInstController extends SummaryDetailService {
 						}
 						odPenaltyPaid = odPenaltyPaid.add(chgdFinSchedule.getLatePftSchdPayNow());
 						odPenaltyPaidMap.put(chgdFinSchedule.getSchDate(), odPenaltyPaid);
+						
+						// Preparing OD Principle Amount Paid Now
+						BigDecimal odPriPaid = BigDecimal.ZERO;
+						if(odPriPaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odPriPaid = odPriPaidMap.get(chgdFinSchedule.getSchDate());
+							odPriPaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odPriPaid = odPriPaid.add(chgdFinSchedule.getPrincipalSchdPayNow());
+						odPriPaidMap.put(chgdFinSchedule.getSchDate(), odPriPaid);
+						
+						// Preparing OD Principle Amount Paid Now
+						BigDecimal odPftPaid = BigDecimal.ZERO;
+						if(odPftPaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odPftPaid = odPftPaidMap.get(chgdFinSchedule.getSchDate());
+							odPftPaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odPftPaid = odPftPaid.add(chgdFinSchedule.getProfitSchdPayNow());
+						odPftPaidMap.put(chgdFinSchedule.getSchDate(), odPftPaid);
 					}
 				}
 			}
@@ -1428,6 +1448,19 @@ public class FinServiceInstController extends SummaryDetailService {
 						BigDecimal latePenaltyPayNow = odPenaltyPaidMap.get(finOdDate);
 						finODDetails.setLPIPaid(finODDetails.getLPIPaid().add(latePenaltyPayNow));
 					}
+					
+					if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
+						if(odPriPaidMap.containsKey(finOdDate)){
+							BigDecimal priPayNow = odPriPaidMap.get(finOdDate);
+							finODDetails.setFinCurODPri(finODDetails.getFinCurODPri().subtract(priPayNow));
+						}
+						
+						if(odPftPaidMap.containsKey(finOdDate)){
+							BigDecimal pftPayNow = odPftPaidMap.get(finOdDate);
+							finODDetails.setFinCurODPft(finODDetails.getFinCurODPft().subtract(pftPayNow));
+						}
+					}
+					finODDetails.setFinCurODAmt(finODDetails.getFinCurODPri().add(finODDetails.getFinCurODPft()));
 					overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
 					overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
 				}
@@ -1438,6 +1471,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			summary.setOverDueProfit(overDueProfit);
 			summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 			summary.setFinODDetail(finODDetailsList);
+			if(overDuePrincipal.compareTo(BigDecimal.ZERO) > 0) {
+				summary.setOverDueInstlments(finODDetailsList.size());
+			} else {
+				summary.setOverDueInstlments(0);
+			}
 			financeDetail.getFinScheduleData().setFinanceMain(null);
 			
 		}
