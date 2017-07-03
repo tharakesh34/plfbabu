@@ -1480,7 +1480,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			// Name
 			if (!this.guarantorCIFName.isReadonly()) {
-				this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"), PennantRegularExpressions.REGEX_NAME, true));
+				this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 			// Mobile No
 			/*if (!this.mobileNo.isReadonly()) {

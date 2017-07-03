@@ -974,7 +974,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			}
 			
 			if (!this.coOwnerCIFName.isReadonly()) {
-				this.coOwnerCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_Name.value"), PennantRegularExpressions.REGEX_NAME, true));
+				this.coOwnerCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_Name.value"), PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 			}
 
 			if (!this.mobileNo.isReadonly()) {
