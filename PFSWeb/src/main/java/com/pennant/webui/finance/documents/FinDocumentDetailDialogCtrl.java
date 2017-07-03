@@ -118,6 +118,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Checkbox                    docReceived;
 	protected Datebox                     docReceivedDt;
 	protected Space                       space_documentName;
+	protected Space                       space_docReceivedDt;
 	
 	protected Div		                  finDocumentDiv;	                                                             // autowired
 
@@ -536,6 +537,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 			if (!(this.docReceived.isChecked())  && this.docIdNumMand &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
@@ -556,6 +558,15 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		
+		try {
+			if (!this.docReceived.isChecked() && (StringUtils.isBlank(this.documnetName.getValue()))) {
+				throw new WrongValueException(this.docReceived, "Please mention whether document is received or not");
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -1091,6 +1102,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void onCheck$docReceived(Event event) throws Exception {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
+			this.space_docReceivedDt.setSclass("mandatory");
 			this.documnetName.setReadonly(true);
 			this.documnetName.setValue("");
 			this.space_documentName.setSclass("");
@@ -1102,6 +1114,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		} else {
 			this.docReceivedDt.setReadonly(true);
+			this.space_docReceivedDt.setSclass("");
 			this.documnetName.setReadonly(false);
 			this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);

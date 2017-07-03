@@ -105,7 +105,7 @@
 										id="label_FinDocumentDetailDialog_DocumentRecievedDate"
 										value="${c:l('label_FinDocumentDetailDialog_DocumentRecievedDate')}" />
 									<hbox>
-										<space spacing="2px"/>
+										<space spacing="2px" id = "space_docReceivedDt"/>
 										<datebox id="docReceivedDt" readonly="true"
 											width="150px"/>
 									</hbox>
