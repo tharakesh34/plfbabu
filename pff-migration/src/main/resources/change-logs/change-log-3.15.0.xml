@@ -8471,4 +8471,9 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_LOCALITY');
 			</sql>
 		</changeSet>
+	<changeSet id="462" author="Manoj">
+		<sql>
+			update DATA_ENGINE_PARSERS set className = 'com.pennanttech.dataengine.writer.ExcelFileWriter' where className = 'com.pennanttech.dataengine.writer.ExelFileWriter';
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
