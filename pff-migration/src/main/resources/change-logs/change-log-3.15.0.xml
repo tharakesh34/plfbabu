@@ -8617,4 +8617,9 @@ WHERE     NOT EXISTS
                             WHERE      PhoneCustID = T1.PhoneCustID AND PhoneTypeCode = T1.PhoneTypeCode)		
 		</createView>
 	</changeSet>
+	<changeSet id="473" author="Madhubabu">
+	<sql>
+	update BMTPhoneTypes set PHONETYPEREGEX='[0-9]{10}';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
