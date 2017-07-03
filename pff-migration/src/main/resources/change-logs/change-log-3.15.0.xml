@@ -8377,107 +8377,8 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 					referencedTableName="DATA_ENGINE_CONFIG" referencedColumnNames="ID"
 					baseTableName="DATA_ENGINE_EVENT_PROPERTIES" baseColumnNames="CONFIG_ID" />
 		</changeSet>
-		<changeSet id="453" author="Sai">
-			<sql>
-				insert into data_engine_event_properties values (193, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (194, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (195, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (196, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (197, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (198, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (199, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (200, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (201, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (202, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (203, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (204, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (205, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (206, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (207, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (208, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (209, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (210, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (211, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (212, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-				insert into data_engine_event_properties values (213, 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
-			</sql>
-		</changeSet>
-		<changeSet id="454" author="Sai">
-			<sql>
-				update data_engine_config set backupfile = 1 where id = 193;
-				update data_engine_config set backupfile = 1 where id = 194;
-				update data_engine_config set backupfile = 1 where id = 195;
-				update data_engine_config set backupfile = 1 where id = 196;
-				update data_engine_config set backupfile = 1 where id = 197;
-				update data_engine_config set backupfile = 1 where id = 198;
-				update data_engine_config set backupfile = 1 where id = 199;
-				update data_engine_config set backupfile = 1 where id = 200;
-				update data_engine_config set backupfile = 1 where id = 201;
-				update data_engine_config set backupfile = 1 where id = 202;
-				update data_engine_config set backupfile = 1 where id = 203;
-				update data_engine_config set backupfile = 1 where id = 204;
-				update data_engine_config set backupfile = 1 where id = 205;
-				update data_engine_config set backupfile = 1 where id = 206;
-				update data_engine_config set backupfile = 1 where id = 207;
-				update data_engine_config set backupfile = 1 where id = 208;
-				update data_engine_config set backupfile = 1 where id = 209;
-				update data_engine_config set backupfile = 1 where id = 210;
-				update data_engine_config set backupfile = 1 where id = 211;
-				update data_engine_config set backupfile = 1 where id = 212;
-				update data_engine_config set backupfile = 1 where id = 213;
-			</sql>
-		</changeSet>
-		<changeSet id="455" author="murthy.y">
-			<sql>
-				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 193;
-				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 194;
-				update data_engine_config set cronexpression = '0 0 3 ? ? 1' where id = 195;
-				update data_engine_config set cronexpression = '0 0 3 1 ? ?' where id = 196;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 197;
-				update data_engine_config set cronexpression = '0 0 3 1 ? ?' where id = 198;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 199;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 200;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 201;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 202;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 203;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 204;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 205;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 206;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 207;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 208;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 209;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 210;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 211;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 212;
-				update data_engine_config set cronexpression = '0 0 3 ? ? *' where id = 213;
-			</sql>
-		</changeSet>
-		<changeSet id="456" author="Sai">
-			<sql>
-				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 193;
-				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 194;
-				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = 195;
-				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 196;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 197;
-				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = 198;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 199;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 200;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 201;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 202;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 203;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 204;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 205;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 206;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 207;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 208;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 209;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 210;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 211;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 212;
-				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = 213;
-			</sql>
-		</changeSet>
-		<changeSet id="457" author="Jayant"><sql>
+	<changeSet id="457" author="Jayant">
+		<sql>
 		    delete  from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report';
 
 			Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:Presentment File Import','Presentment File Import',1,'PresentmentFileImport','pfsDatasource',1,'menu_Item_PresentmentFileImport_Report',2,1000,null,null,null,null,null,null,0,current_timestamp,0);
@@ -8489,5 +8390,85 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PresentmentFileImport_Report'),3,'Finance Status','STATICLIST','Loan Status','STATUS','getPresentmentsStatusListForReport',null,null,null,0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		    
 		</sql>
+	</changeSet>
+	<changeSet id="458" author="Sai">
+		<sql>
+			delete from data_engine_event_properties;
+		</sql>
+	</changeSet>
+	<changeSet id="459" author="Sai">
+		<sql>
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BANKBRANCHES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTBANKDETAIL'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BMTPRODUCT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERCOMPANY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERGROUP'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_BUILDERPROJCET'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_LOCALITY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_PROMOTIONS'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBASERATECODES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBASERATES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTBRANCHES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTFINANCETYPES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTSPLRATECODES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_RMTSPLRATES'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_VASPRODUCTTYPE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'ME_VASSTRUCTURE'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O');
+		</sql>
+	</changeSet>
+	<changeSet id="460" author="Sai">
+		<sql>
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BANKBRANCHES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BMTPRODUCT');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BUILDERGROUP');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_BUILDERPROJCET');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_LOCALITY');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_PROMOTIONS');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTBASERATECODES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTBASERATES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTBRANCHES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_RMTSPLRATES');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE');
+			update data_engine_config set backupfile = 1 where id = (select id from data_engine_config where name = 'ME_VASSTRUCTURE');
+		</sql>
+	</changeSet>
+		<changeSet id="461" author="Sai">
+			<sql>
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = (select id from data_engine_config where name = 'ME_RMTBRANCHES');
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = (select id from data_engine_config where name = 'ME_BMTBANKDETAIL');
+				update data_engine_config set cronexpression = '0 0 3 ? * 1' where id = (select id from data_engine_config where name = 'ME_BANKBRANCHES');
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = (select id from data_engine_config where name = 'ME_RMTCOUNTRYVSPROVINCE');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTPROVINCEVSCITY');
+				update data_engine_config set cronexpression = '0 0 3 1 * ?' where id = (select id from data_engine_config where name = 'ME_BMTCUSTCATEGORIES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTBASERATECODES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTBASERATES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTSPLRATECODES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTSPLRATES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_BMTPRODUCT');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_RMTFINANCETYPES');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_PROMOTIONS');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_FINTYPEPARTNERBANKS');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_VASPRODUCTTYPE');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_VASSTRUCTURE');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_AMTVEHICLEDEALER_VASMANF');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_BUILDERGROUP');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_BUILDERCOMPANY');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_BUILDERPROJCET');
+				update data_engine_config set cronexpression = '0 0 3 ? * *' where id = (select id from data_engine_config where name = 'ME_LOCALITY');
+			</sql>
 		</changeSet>
-	</databaseChangeLog>
+</databaseChangeLog>
