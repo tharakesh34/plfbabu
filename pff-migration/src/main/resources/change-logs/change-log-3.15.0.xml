@@ -8496,4 +8496,19 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 	LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,  TaskId, NextTaskId, RecordType, WorkflowId FROM    BMTPhoneTypes
 </createView>  
  </changeSet>
+
+	<changeSet id="466" author="SreeRavali">
+		<createView replaceIfExists="true" viewName="BMTPHONETYPES_VIEW">
+ SELECT     PhoneTypeCode, PhoneTypeDesc,PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+FROM         BMTPhoneTypes_Temp
+UNION ALL
+SELECT     PhoneTypeCode, PhoneTypeDesc,PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,  TaskId, NextTaskId, RecordType, WorkflowId
+FROM         BMTPhoneTypes
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          BMTPhoneTypes_Temp
+                            WHERE      PhoneTypeCode = BMTPhoneTypes.PhoneTypeCode)
+</createView>
+	</changeSet>
+
 </databaseChangeLog>
