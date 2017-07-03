@@ -271,7 +271,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 
 		scheduleData.setFeeDues(finFeeDetails);
-		String finReference = scheduleData.getFinanceMain().getFinReference();
+		String finReference = scheduleData.getFinReference();
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 
 		// Bounce and manual advice fees if applicable
@@ -351,6 +351,7 @@ public class FinStatementController extends SummaryDetailService {
 		if (StringUtils.equals(APIConstants.STMT_ACCOUNT, servicName)) {
 			List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			finScheduleData.setFinReference(finScheduleData.getFinanceMain().getFinReference());
 			processFeesAndCharges(finScheduleData, finFeeDetail);
 			financeDetail.setFinFeeDetails(getUpdatedFees(financeDetail.getFinScheduleData().getFeeDues()));
 			financeDetail.getFinScheduleData().setFeeDues(null);
