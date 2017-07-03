@@ -109,6 +109,7 @@ import com.pennant.backend.service.customermasters.validation.CustomerIncomeVali
 import com.pennant.backend.service.customermasters.validation.CustomerPRelationValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerRatingValidation;
+import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -180,6 +181,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private LovFieldDetailService lovFieldDetailService;
 	private BankDetailService	bankDetailService;
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
+	private LimitRebuild limitRebuild;
+	
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -2147,7 +2150,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		Customer customer = customerDetails.getCustomer();
-
+		
+		// Fetched from the approved list for rebuild. Since rebuild should after the transaction but it is happening in the transaction 
+		Customer appCustomer = getCustomerDAO().getCustomerByID(customer.getCustID());
+		
 		if (PennantConstants.RECORD_TYPE_DEL.equals(customer.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(listDeletion(customerDetails, "", tranType));
@@ -2285,8 +2291,44 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				.getBefImage(), customer));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		processLimitRebuild(customer,appCustomer);
+		
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private void processLimitRebuild(Customer customer, Customer appCustomer) {
+		if (appCustomer != null) {
+			// removed from group
+			if (isValid(appCustomer.getCustGroupID()) && !isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), true, false);
+			}
+
+			// newly added to group
+			if (!isValid(appCustomer.getCustGroupID()) && isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(customer.getCustGroupID(), false, true);
+			}
+			// group swapped
+			if (isValid(appCustomer.getCustGroupID()) && isValid(customer.getCustGroupID())
+					&& appCustomer.getCustGroupID() != customer.getCustGroupID()) {
+				limitRebuild.processCustomerGroupSwap(customer.getCustGroupID(), appCustomer.getCustGroupID());
+				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), false, false);
+			}
+
+		} else {
+			//new record
+			if (isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(customer.getCustGroupID(), false, false);
+			}
+		}
+	}
+
+	private boolean isValid(Long vale){
+		if (vale!=null && vale!=Long.MIN_VALUE && vale !=0) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -5001,6 +5043,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	
+
+	public LimitRebuild getLimitRebuild() {
+		return limitRebuild;
+	}
+
+	public void setLimitRebuild(LimitRebuild limitRebuild) {
+		this.limitRebuild = limitRebuild;
 	}
 
 
