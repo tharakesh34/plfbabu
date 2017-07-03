@@ -787,4 +787,9 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="38" author="Durgaprsasd.g">
+	<addColumn tableName="ADTBMTPhoneTypes">
+			<column name="PhoneTypeRegex" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
