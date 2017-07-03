@@ -86,11 +86,11 @@ public class MicroEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Micro EOD On : " + valueDate);
+		Date appDate = DateUtility.getAppDate();
+		logger.debug("START: Micro EOD On : " + appDate);
 
 		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
-		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
+		logger.info("process Statred by the Thread : " + threadId + " with date " + appDate.toString());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -124,10 +124,10 @@ public class MicroEOD implements Tasklet {
 				CustEODEvent custEODEvent = new CustEODEvent();
 				Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custID);
 				custEODEvent.setCustomer(customer);
-				custEODEvent.setEodDate(valueDate);
-				custEODEvent.setEodValueDate(valueDate);
+				custEODEvent.setEodDate(appDate);
+				custEODEvent.setEodValueDate(appDate);
 
-				eodService.doProcess(custEODEvent, valueDate);
+				eodService.doProcess(custEODEvent);
 
 				eodService.doUpdate(custEODEvent);
 
@@ -159,7 +159,7 @@ public class MicroEOD implements Tasklet {
 			throw exception;
 		}
 
-		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
+		logger.debug("COMPLETE: Micro EOD On :" + appDate);
 
 		return RepeatStatus.FINISHED;
 	}
