@@ -259,7 +259,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneTypeCode.setDescColumn("PhoneTypeDesc");
 		this.phoneTypeCode.setValidateColumns(new String[] { "PhoneTypeCode" });
 
-		this.phoneNumber.setMaxlength(10);
+		this.phoneNumber.setMaxlength(11);
 		
 		this.mobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 
@@ -389,15 +389,14 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 		this.phoneTypeCode.setValue(aCustomerPhoneNumber.getPhoneTypeCode());
 		this.phoneNumber.setValue(aCustomerPhoneNumber.getPhoneNumber());
-		
-		this.custCIF.setValue(aCustomerPhoneNumber.getLovDescCustCIF() == null ? "" : aCustomerPhoneNumber
-				.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerPhoneNumber.getLovDescCustShrtName() == null ? "" : aCustomerPhoneNumber
-				.getLovDescCustShrtName().trim());
-		fillComboBox(this.custPhonePriority,
-				String.valueOf(aCustomerPhoneNumber.getPhoneTypePriority()),
+
+		this.custCIF.setValue(aCustomerPhoneNumber.getLovDescCustCIF() == null ? ""
+				: aCustomerPhoneNumber.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerPhoneNumber.getLovDescCustShrtName() == null ? ""
+				: aCustomerPhoneNumber.getLovDescCustShrtName().trim());
+		fillComboBox(this.custPhonePriority, String.valueOf(aCustomerPhoneNumber.getPhoneTypePriority()),
 				CustomerPriorityList, "");
-		
+		regex = aCustomerPhoneNumber.getPhoneRegex();
 
 		if (isNewRecord()) {
 			this.phoneTypeCode.setDescription("");
@@ -442,7 +441,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+		aCustomerPhoneNumber.setPhoneRegex(regex);
 		try {
 			if ("#".equals(getComboboxValue(this.custPhonePriority))) {
 				throw new WrongValueException(this.custPhonePriority, Labels.getLabel("STATIC_INVALID",
@@ -542,6 +541,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
+		doClearMessage();
 
 		if (!this.phoneCustID.isReadonly()) {
 			this.custCIF.setConstraint(new PTStringValidator(Labels
@@ -1137,6 +1137,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				this.phoneTypeCode.setValue(details.getPhoneTypeCode());
 				this.phoneTypeCode.setDescription(details.getPhoneTypeDesc());
 				regex = details.getPhoneTypeRegex();
+				this.phoneTypeCode.setAttribute("Regex", regex);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
