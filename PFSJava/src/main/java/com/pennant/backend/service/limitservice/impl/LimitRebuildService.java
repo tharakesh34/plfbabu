@@ -347,7 +347,7 @@ public class LimitRebuildService implements LimitRebuild {
 		}
 		tranUtilisedAmt = tranUtilisedAmt.subtract(finMain.getDownPayment());
 
-		if (tranUtilisedAmt.compareTo(tranReseervAmt) == 0) {
+		if (finMain.getFinCurrAssetValue().compareTo(tranReseervAmt) == 0) {
 			addTempblock = true;
 		}
 

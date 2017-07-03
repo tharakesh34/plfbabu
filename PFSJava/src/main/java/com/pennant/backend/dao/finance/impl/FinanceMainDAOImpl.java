@@ -2821,7 +2821,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
 		sql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq, GrcProfitDaysBasis,");
 		sql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate, ManualSchedule,");
-		sql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw,FinAssetValue, ");
+		sql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw,FinAssetValue,FinCurrAssetValue, ");
 		sql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
 		sql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
 		sql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
