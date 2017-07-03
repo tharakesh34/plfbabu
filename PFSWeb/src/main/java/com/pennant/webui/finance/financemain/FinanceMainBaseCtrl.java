@@ -1481,12 +1481,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Joint Account and Guaranteer  Tab Addition
-		if (!StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
-				&& !StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
+		/*if (!StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
+				&& !StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {*/
 			if (StringUtils.isEmpty(moduleDefiner)) {
 				appendJointGuarantorDetailTab(onLoad);
 			}
-		}
+		//}
 
 		// Finance Tax Details
 		if (StringUtils.isEmpty(moduleDefiner)) {
