@@ -43,6 +43,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,10 +51,18 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.GuarantorDetailDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
@@ -71,37 +80,10 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
-
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-	
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-	
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-	/**
-	 * @return the financeTaxDetailDAO
-	 */
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
-	}
-	/**
-	 * @param financeTaxDetailDAO the financeTaxDetailDAO to set
-	 */
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
+	private GuarantorDetailDAO guarantorDetailDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
+	private CustomerDAO customerDAO;
+	private FinanceMainDAO	financeMainDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
@@ -415,6 +397,83 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
+		}
+		
+		@Override
+		public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type) {
+			logger.debug(Literal.ENTERING);
+			logger.debug(Literal.LEAVING);
+			return this.guarantorDetailDAO.getGuarantorDetailByFinRef(finReference, type);
+		}
+		
+		public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type)  {
+			logger.debug(Literal.ENTERING);
+			logger.debug(Literal.LEAVING);
+			
+			return this.jountAccountDetailDAO.getJountAccountDetailByFinRef(finReference, type);
+			
+		}
+		
+		@Override
+		public Customer getCustomerByID(long id) {
+			logger.debug(Literal.ENTERING);
+			logger.debug(Literal.LEAVING);
+			
+			return this.customerDAO.getCustomerByID(id);
+		}
+		
+		@Override
+		public FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF) {
+			logger.debug(Literal.ENTERING);
+			logger.debug(Literal.LEAVING);
+			
+			return this.financeMainDAO.getFinanceDetailsForService(finReference, type, isWIF);
+		}
+
+		// ******************************************************//
+		// ****************** getter / setter *******************//
+		// ******************************************************//
+		
+		/**
+		 * @return the auditHeaderDAO
+		 */
+		public AuditHeaderDAO getAuditHeaderDAO() {
+			return auditHeaderDAO;
+		}
+		
+		/**
+		 * @param auditHeaderDAO the auditHeaderDAO to set
+		 */
+		public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+			this.auditHeaderDAO = auditHeaderDAO;
+		}
+		/**
+		 * @return the financeTaxDetailDAO
+		 */
+		public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+			return financeTaxDetailDAO;
+		}
+		/**
+		 * @param financeTaxDetailDAO the financeTaxDetailDAO to set
+		 */
+		public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+			this.financeTaxDetailDAO = financeTaxDetailDAO;
+		}
+
+		public void setGuarantorDetailDAO(GuarantorDetailDAO guarantorDetailDAO) {
+			this.guarantorDetailDAO = guarantorDetailDAO;
+		}
+
+		public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+			this.jountAccountDetailDAO = jountAccountDetailDAO;
+		}
+
+		public void setCustomerDAO(CustomerDAO customerDAO) {
+			this.customerDAO = customerDAO;
+		}
+
+		public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+			this.financeMainDAO = financeMainDAO;
 		}
 
 }
