@@ -198,7 +198,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> presentmentsStatusListReport;
 	private static ArrayList<ValueLabel> taxApplicableFor;
 	private static ArrayList<ValueLabel> channelTypes;
-
+	private static ArrayList<ValueLabel> phoneTypeRegex;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2736,6 +2736,15 @@ public class PennantStaticListUtil {
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT, Labels.getLabel("label_Disbursement_Disbursement.label")));
 		}
 		return channelTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getPhoneTypeRegex(){
+		if(phoneTypeRegex == null){
+			phoneTypeRegex = new ArrayList<ValueLabel>(2);
+			phoneTypeRegex.add(new ValueLabel("[0-9]{10}","Phone"));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{11}","Telephone"));
+		}
+		return phoneTypeRegex;
 	}
 }
 

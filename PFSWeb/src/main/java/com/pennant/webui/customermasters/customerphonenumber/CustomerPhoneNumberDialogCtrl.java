@@ -139,7 +139,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	protected Row row_phoneNumber;
 	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
 			.getCustomerEmailPriority();
-
+	private String regex;
 
 	/**
 	 * default constructor.<br>
@@ -549,7 +549,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		}
 		if (this.row_phoneNumber.isVisible() && !this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true));
+					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,regex));
 		}
 		
 		if (!this.custPhonePriority.isDisabled()) {
@@ -1136,6 +1136,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			if (details != null) {
 				this.phoneTypeCode.setValue(details.getPhoneTypeCode());
 				this.phoneTypeCode.setDescription(details.getPhoneTypeDesc());
+				regex = details.getPhoneTypeRegex();
 			}
 		}
 		logger.debug("Leaving" + event.toString());

@@ -12,12 +12,19 @@ import org.zkoss.zul.Constraint;
 public class PTMobileNumberValidator implements Constraint{
 	private String fieldParm;
 	private boolean mandatory=false;
+	private String regex;
 	private final String MOBILE_INDIAN_REGEX = "[0-9]{10}";
 	private int maxLength=10;
 	
 	public PTMobileNumberValidator(String fieldParm,boolean mandatory) {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
+	}
+	
+	public PTMobileNumberValidator(String fieldParm,boolean mandatory,String regex) {
+		setFieldParm(fieldParm);
+		setMandatory(mandatory);
+		setRegex(regex);
 	}
 	
 	@Override
@@ -47,8 +54,10 @@ public class PTMobileNumberValidator implements Constraint{
 				return null;
 			}
 		} else{
-	
-			Pattern pattern = Pattern.compile(MOBILE_INDIAN_REGEX);
+			if(StringUtils.isBlank(regex)){
+				regex  = MOBILE_INDIAN_REGEX;
+			}
+			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher =  pattern.matcher(compValue);
 			validRegex=matcher.matches();
 			
@@ -57,7 +66,7 @@ public class PTMobileNumberValidator implements Constraint{
 			}
 			
 			if(!validRegex){
-					return Labels.getLabel("FIELD_MOBILE", new String[] {fieldParm});
+					return Labels.getLabel("FIELD_MOBILE", new String[] {fieldParm,String.valueOf(pattern)});
 			}
 	
 			
@@ -80,5 +89,14 @@ public class PTMobileNumberValidator implements Constraint{
 	void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+	
 }
 

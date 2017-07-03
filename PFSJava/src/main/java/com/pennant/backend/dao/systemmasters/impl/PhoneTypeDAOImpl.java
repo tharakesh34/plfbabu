@@ -97,7 +97,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 		phoneType.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append("Select PhoneTypeCode, PhoneTypeDesc, PhoneTypePriority, PhoneTypeIsActive,");
+		selectSql.append("Select PhoneTypeCode, PhoneTypeDesc, PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTPhoneTypes");
@@ -185,10 +185,10 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 
 		insertSql.append("Insert Into BMTPhoneTypes");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (PhoneTypeCode, PhoneTypeDesc, PhoneTypePriority, PhoneTypeIsActive,");
+		insertSql.append(" (PhoneTypeCode, PhoneTypeDesc, PhoneTypeRegex, PhoneTypePriority, PhoneTypeIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:PhoneTypeCode, :PhoneTypeDesc, :PhoneTypePriority, :PhoneTypeIsActive,");
+		insertSql.append(" Values(:PhoneTypeCode, :PhoneTypeDesc, :PhoneTypeRegex,:PhoneTypePriority, :PhoneTypeIsActive,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 		
@@ -225,7 +225,7 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 		updateSql.append("Update BMTPhoneTypes");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set PhoneTypeDesc = :PhoneTypeDesc,");
-		updateSql.append(" PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
+		updateSql.append(" PhoneTypeRegex =:PhoneTypeRegex,PhoneTypePriority = :PhoneTypePriority, PhoneTypeIsActive = :PhoneTypeIsActive,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

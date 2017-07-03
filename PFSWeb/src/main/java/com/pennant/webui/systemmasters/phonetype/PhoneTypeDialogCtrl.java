@@ -54,6 +54,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -67,6 +68,7 @@ import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.systemmasters.PhoneTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -88,7 +90,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 */
 	protected Window 	window_PhoneTypeDialog; 		
 	protected Textbox 	phoneTypeCode; 					
-	protected Textbox 	phoneTypeDesc; 					
+	protected Textbox 	phoneTypeDesc; 		
+	protected Combobox  phoneTypeRegex;
 	protected Intbox 	phoneTypePriority; 				
 	protected Checkbox 	phoneTypeIsActive; 	
 	protected Row		row_PhoneTypePriority;
@@ -306,6 +309,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 		this.phoneTypeCode.setValue(aPhoneType.getPhoneTypeCode());
 		this.phoneTypeDesc.setValue(aPhoneType.getPhoneTypeDesc());
+		fillComboBox(this.phoneTypeRegex, aPhoneType.getPhoneTypeRegex(), PennantStaticListUtil.getPhoneTypeRegex(), "");
 		if (ImplementationConstants.ALLOW_PHONETYPE_PRIORITY) {
 			this.phoneTypePriority.setValue(aPhoneType.getPhoneTypePriority());
 			this.row_PhoneTypePriority.setVisible(true);
@@ -341,6 +345,14 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		}
 		try {
 			aPhoneType.setPhoneTypeDesc(this.phoneTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.phoneTypeRegex.getSelectedItem()==null || StringUtils.trimToEmpty(this.phoneTypeRegex.getSelectedItem().getValue().toString()).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.phoneTypeRegex,Labels.getLabel("STATIC_INVALID",new String[]{Labels.getLabel("label_PhoneTypeDialog_PhoneTypeRegex.value")}));
+			}
+			aPhoneType.setPhoneTypeRegex(this.phoneTypeRegex.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -532,6 +544,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			this.btnCancel.setVisible(true);
 		}
 		this.phoneTypeDesc.setReadonly(isReadOnly("PhoneTypeDialog_phoneTypeDesc"));
+		readOnlyComponent(isReadOnly("PhoneTypeDialog_phoneTypeDesc"), this.phoneTypeRegex);
 		this.phoneTypePriority.setReadonly(isReadOnly("PhoneTypeDialog_phoneTypePriority"));
 		this.phoneTypeIsActive.setDisabled(isReadOnly("PhoneTypeDialog_phoneTypeIsActive"));
 		if (isWorkFlowEnabled()) {
@@ -559,6 +572,8 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 		this.phoneTypeCode.setReadonly(true);
 		this.phoneTypeDesc.setReadonly(true);
+		readOnlyComponent(true, this.phoneTypeRegex);
+		this.phoneTypeRegex.setReadonly(true);
 		this.phoneTypePriority.setReadonly(true);
 		this.phoneTypeIsActive.setDisabled(true);
 

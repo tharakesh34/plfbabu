@@ -90,6 +90,16 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_PhoneTypeDialog_PhoneTypeRegex"
+									value="${c:l('label_PhoneTypeDialog_PhoneTypeRegex.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox readonly="true" width="200px" id="phoneTypeRegex" />
+								</hbox>
+							</row>
 							<row id="row_PhoneTypePriority">
 								<label
 									id="label_PhoneTypeDialog_PhoneTypePriority"
