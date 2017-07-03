@@ -1864,7 +1864,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,");
 		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
-		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger, " );
+		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 		

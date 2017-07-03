@@ -28,4 +28,8 @@ public interface LimitTransactionDetailsDAO {
 	List<LimitTransactionDetail> getPreviousReservedAmt(String finReference, String transtype, long limitId);
 
 	void deleteReservedLogs(String referenceNumber);
+
+	void updateHeaderIDWithFin(String finReference, long prvHeaderID, long headerId);
+
+	void updateHeaderID(long updateFrom, long updateTo);
 }

@@ -340,4 +340,47 @@ public class LimitTransactionDetailsDAOImpl extends BasisNextidDaoImpl<LimitTran
 		
 	}
 
+	@Override
+	public void updateHeaderIDWithFin(String finReference, long updateFrom, long updateTo) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReferenceNumber", finReference);
+		source.addValue("UpdateFrom", updateFrom);
+		source.addValue("UpdateTo", updateTo);
+		
+		StringBuilder deleteSql = new StringBuilder("Update LimitTransactionDetails");
+		deleteSql.append(" set HEADERID=:UpdateTo");
+		deleteSql.append(" Where ReferenceNumber = :ReferenceNumber AND HEADERID =:UpdateFrom");
+		
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		
+	}
+	
+	@Override
+	public void updateHeaderID(long updateFrom, long updateTo) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("UpdateFrom", updateFrom);
+		source.addValue("UpdateTo", updateTo);
+		
+		StringBuilder deleteSql = new StringBuilder("Update LimitTransactionDetails");
+		deleteSql.append(" set HEADERID=:UpdateTo");
+		deleteSql.append(" Where  HEADERID =:UpdateFrom");
+		
+		logger.debug("deleteSql: " + deleteSql.toString());
+		
+		try {
+			this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		
+	}
+
 }

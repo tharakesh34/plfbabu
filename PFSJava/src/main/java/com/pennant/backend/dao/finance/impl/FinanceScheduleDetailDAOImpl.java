@@ -1363,8 +1363,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		BigDecimal schdPriPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),beanParameters, BigDecimal.class);
+		BigDecimal schdPriPaid = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
 
 		logger.debug("Leaving");
 		return schdPriPaid;
