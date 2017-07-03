@@ -1436,6 +1436,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
+			int size = 0;
 			if(finODDetailsList != null) {
 				for (FinODDetails finODDetails : finODDetailsList) {
 					Date finOdDate = DateUtility.getDBDate(DateUtility.formatDate(finODDetails.getFinODSchdDate(),
@@ -1463,6 +1464,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					finODDetails.setFinCurODAmt(finODDetails.getFinCurODPri().add(finODDetails.getFinCurODPft()));
 					overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
 					overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
+					if(finODDetails.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						size++;
+					}
 				}
 			}
 			
@@ -1471,11 +1475,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			summary.setOverDueProfit(overDueProfit);
 			summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 			summary.setFinODDetail(finODDetailsList);
-			if(overDuePrincipal.compareTo(BigDecimal.ZERO) > 0) {
-				summary.setOverDueInstlments(finODDetailsList.size());
-			} else {
-				summary.setOverDueInstlments(0);
-			}
+			summary.setOverDueInstlments(size);
 			financeDetail.getFinScheduleData().setFinanceMain(null);
 			
 		}
