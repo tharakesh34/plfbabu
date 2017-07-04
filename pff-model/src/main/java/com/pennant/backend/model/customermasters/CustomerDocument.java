@@ -107,6 +107,8 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIssueDateMand = false;
 	private boolean docIdNumMand = false;
 	private boolean docIssuedAuthorityMand = false;
+	private boolean docIsMandatory = false;
+	
 	
 	private String sourceId;
 
@@ -139,6 +141,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docIssuedAuthorityMand");
 		excludeFields.add("custDocImage");
 		excludeFields.add("sourceId");
+		excludeFields.add("docIsMandatory");
 		return excludeFields;
 	}
 
@@ -414,6 +417,14 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public boolean isDocIsMandatory() {
+		return docIsMandatory;
+	}
+
+	public void setDocIsMandatory(boolean docIsMandatory) {
+		this.docIsMandatory = docIsMandatory;
 	}
 
 }
