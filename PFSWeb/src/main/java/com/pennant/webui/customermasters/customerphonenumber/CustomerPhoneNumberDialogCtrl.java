@@ -397,6 +397,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		fillComboBox(this.custPhonePriority, String.valueOf(aCustomerPhoneNumber.getPhoneTypePriority()),
 				CustomerPriorityList, "");
 		regex = aCustomerPhoneNumber.getPhoneRegex();
+		dosetFieldLength(regex);
 
 		if (isNewRecord()) {
 			this.phoneTypeCode.setDescription("");
@@ -1138,9 +1139,19 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				this.phoneTypeCode.setDescription(details.getPhoneTypeDesc());
 				regex = details.getPhoneTypeRegex();
 				this.phoneTypeCode.setAttribute("Regex", regex);
+				dosetFieldLength(regex);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void dosetFieldLength(String regex) {
+		logger.debug("Entering");
+		if(regex!=null){			
+			String length=regex.substring(6, 8);
+			int mobilelength=Integer.parseInt(length);
+			this.phoneNumber.setMaxlength(mobilelength);
+		}
 	}
 
 	/**
