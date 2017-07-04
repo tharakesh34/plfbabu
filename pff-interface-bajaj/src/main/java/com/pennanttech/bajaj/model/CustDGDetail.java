@@ -1,10 +1,12 @@
 package com.pennanttech.bajaj.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 
-@JsonPropertyOrder({"Customer_ID__c","Customer_Type__c","Name","Fathers_Husband_s_Name__c","DOB__c","PAN__c","Voterid__c"})
+@JsonPropertyOrder({"Customer_ID__c","Customer_Type__c","Name","Fathers_Husband_s_Name__c","DOB__c","PAN__c","Voterid__c","Source_System"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustDGDetail {
 	@JsonProperty("Customer_ID__c")
 	private String customerId;
@@ -20,6 +22,11 @@ public class CustDGDetail {
 	private String panNumber;
 	@JsonProperty("Voterid__c")
 	private String voiterId;
+	@JsonProperty("Source_System")
+	private String sourceSystem;
+	
+	
+	
 	public String getCustomerId() {
 		return customerId;
 	}
@@ -61,6 +68,13 @@ public class CustDGDetail {
 	}
 	public void setVoiterId(String voiterId) {
 		this.voiterId = voiterId;
+	}
+	
+	public String getSourceSystem() {
+		return sourceSystem;
+	}
+	public void setSourceSystem(String sourceSystem) {
+		this.sourceSystem = sourceSystem;
 	}
 	@Override
 	public String toString() {

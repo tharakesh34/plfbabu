@@ -1,5 +1,8 @@
 package com.pennanttech.bajaj.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustLoanDetail {
 	private String segment;
 	private String applicationNo;

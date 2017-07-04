@@ -1,10 +1,12 @@
 package com.pennanttech.bajaj.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @JsonPropertyOrder({"FILLER_STRING_1","FILLER_STRING_2","FILLER_STRING_3","FILLER_STRING_4",
 	"FILLER_STRING_5","FILLER_STRING_6","FILLER_STRING_7"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportDetail {
 	@JsonProperty("FILLER_STRING_1")
 	private String filler1;
