@@ -792,4 +792,10 @@
 			<column name="PhoneTypeRegex" type="varchar(30)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="39" author="Madhubabu">
+	<sql>
+		alter table ADTCUSTOMERDOCUMENTS modify (CUSTDOCTYPE null);
+
+	</sql>
+</changeSet>
 </databaseChangeLog>
