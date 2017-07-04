@@ -8732,7 +8732,7 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
                       BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
                       </createView>
 	</changeSet>
-	<changeSet id="475" author="Srikanth">
+	<changeSet id="475" author="Srikanth" dbms="oracle">
 	<sql>
 	delete from dedupparams where QUERYCODE = 'PAN' AND QUERYMODULE = 'Customer';
 	Insert into dedupparams (QUERYID,QUERYCODE,QUERYMODULE,QUERYSUBCODE,QUERYDESC,SQLQUERY,ACTUALBLOCK,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
@@ -8740,7 +8740,14 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 	update Seqdedupparams set seqno = (select MAX(SeqNo)+1 from Seqdedupparams);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="475" author="Srikanth" dbms="mssql">
+	<sql>
+	delete from dedupparams where QUERYCODE = 'PAN' AND QUERYMODULE = 'Customer';
+	Insert into dedupparams (QUERYID,QUERYCODE,QUERYMODULE,QUERYSUBCODE,QUERYDESC,SQLQUERY,ACTUALBLOCK,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+	values ((select MAX(SeqNo)+1 from Seqdedupparams),'PAN','Customer','RETAIL','PAN DEDUP','Where((CustCRCPR = :CustCRCPR AND CustCRCPR IS NOT NULL  ))','(,CustCRCPR, = ,),',1,1000,'01-JUL-17','Approved',null,null,null,null,null,0);
+	update Seqdedupparams set seqno = (select MAX(SeqNo)+1 from Seqdedupparams);
+	</sql>
+	</changeSet>
 	<changeSet id="476" author="Manoj.P">
 		<sql>
 			update data_engine_column set skip = 0 where tableid in (select ID from data_engine_table where configid = (select id  from DATA_ENGINE_CONFIG where name = 'MANDATES_EXPORT'))  and name = 'USERNAME';
@@ -8751,10 +8758,17 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 			update data_engine_column set skip = 1 where tableid in (select ID from data_engine_table where configid = (select id  from DATA_ENGINE_CONFIG where name = 'MANDATES_EXPORT'))  and name = 'USERNAME';
 		</sql>
 	</changeSet>
-	<changeSet id="478" author="Madhubabu">
+	<changeSet id="478" author="Madhubabu" dbms="oracle">
 	<sql>
 		alter table CUSTOMERDOCUMENTS_TEMP modify (CUSTDOCTYPE null);
 		alter table CUSTOMERDOCUMENTS modify (CUSTDOCTYPE null);
+
+	</sql>
+</changeSet>
+<changeSet id="478" author="Madhubabu" dbms="mssql">
+	<sql>
+	    ALTER TABLE CUSTOMERDOCUMENTS_TEMP ALTER COLUMN CUSTDOCTYPE VARCHAR(10) NULL;
+	    ALTER TABLE CUSTOMERDOCUMENTS ALTER COLUMN CUSTDOCTYPE VARCHAR(10) NULL;
 
 	</sql>
 </changeSet>
