@@ -8811,4 +8811,13 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
        </createView>
 	</changeSet>
 	
+	<changeSet id="481" author="Madhubabu">
+		<modifyDataType tableName="CUSTOMERPHONENUMBERS" columnName="PHONENUMBER"
+			newDataType="varchar(20)" />
+	</changeSet>	
+	<changeSet id="482" author="Madhubabu">
+		<modifyDataType tableName="CUSTOMERPHONENUMBERS_Temp" columnName="PHONENUMBER"
+			newDataType="varchar(20)" />
+	</changeSet>	
+	
 </databaseChangeLog>
