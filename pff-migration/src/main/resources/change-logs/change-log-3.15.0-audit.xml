@@ -792,9 +792,15 @@
 			<column name="PhoneTypeRegex" type="varchar(30)"/>
 		</addColumn>
 	</changeSet>
-	<changeSet id="39" author="Madhubabu">
+	<changeSet id="39" author="Madhubabu" dbms="oracle">
 	<sql>
 		alter table ADTCUSTOMERDOCUMENTS modify (CUSTDOCTYPE null);
+
+	</sql>
+</changeSet>
+	<changeSet id="39" author="Madhubabu" dbms="mssql">
+	<sql>
+		alter table ADTCUSTOMERDOCUMENTS alter column CUSTDOCTYPE varchar(10) null;
 
 	</sql>
 </changeSet>
