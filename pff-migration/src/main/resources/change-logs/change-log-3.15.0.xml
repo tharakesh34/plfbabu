@@ -8758,5 +8758,43 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 
 	</sql>
 </changeSet>
+<changeSet id="479" author="Madhubabu">
+		<createView viewName="CUSTOMERDOCUMENTS_VIEW" replaceIfExists="true">
+			 SELECT T1.CustID ,T1.CustDocType ,T2.DocTypeDesc lovDescCustDocCategory,T1.CustDocTitle ,T1.CustDocSysName ,T1.CustDocRcvdOn ,T1.CustDocExpDate ,
+			 T1.CustDocIssuedOn ,T1.CustDocIssuedCountry ,T3.CountryDesc lovDescCustDocIssuedCountry,T1.CustDocIsVerified ,T1.CustDocVerifiedBy ,T1.CustDocIsAcrive ,
+			 T1.DocPurpose,T1.DocUri,T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,T1.CustDocName ,T1.CustDocCategory ,
+			 T1.CustDocImage ,T1.TaskId ,T1.NextTaskId ,T1.RecordType ,T1.WorkflowId ,T2.DocExpDateIsMand ,T2.DocIssueDateMand ,T2.DocIdNumMand	 ,T2.DocIssuedAuthorityMand	,
+			 T2.docIsMandatory,T1.DocRefId	  
+     FROM CustomerDocuments_Temp T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+   UNION ALL 
+			   SELECT T1.CustID ,T1.CustDocType ,T2.DocTypeDesc lovDescCustDocCategory,T1.CustDocTitle ,T1.CustDocSysName ,T1.CustDocRcvdOn ,
+			   T1.CustDocExpDate ,T1.CustDocIssuedOn ,T1.CustDocIssuedCountry ,T3.CountryDesc lovDescCustDocIssuedCountry,T1.CustDocIsVerified ,
+			   T1.CustDocVerifiedBy ,T1.CustDocIsAcrive ,T1.DocPurpose,T1.DocUri,T1.Version ,T1.LastMntBy ,T1.LastMntOn ,T1.RecordStatus ,T1.RoleCode ,T1.NextRoleCode ,
+			   T1.CustDocName ,T1.CustDocCategory ,T1.CustDocImage ,T1.TaskId ,T1.NextTaskId ,T1.RecordType ,T1.WorkflowId ,T2.DocExpDateIsMand , T2.DocIssueDateMand , 
+			   T2.DocIdNumMand, T2.DocIssuedAuthorityMand, T2.docIsMandatory ,T1.DocRefId
+     FROM CustomerDocuments T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM CustomerDocuments_Temp 
+                          WHERE CustID = T1.CustID
+                                  AND CustDocCategory = T1.CustDocCategory )
+       </createView>
+	</changeSet>
+<changeSet id="480" author="Madhubabu">
+		<createView viewName="CUSTOMERDOCUMENTS_AVIEW" replaceIfExists="true">
+			  SELECT T1.CustID,T1.CustDocType,T2.DocTypeDesc lovDescCustDocCategory ,
+          T1.CustDocTitle,T1.CustDocSysName,T1.CustDocRcvdOn,T1.CustDocExpDate,T1.CustDocIssuedOn,T1.CustDocIssuedCountry,
+          T3.CountryDesc lovDescCustDocIssuedCountry,T1.CustDocIsVerified,T1.CustDocVerifiedBy,T1.CustDocIsAcrive,T1.Version,
+          T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,T1.NextRoleCode,T1.CustDocName,T1.CustDocCategory,T1.CustDocImage,
+          T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,T2.DocExpDateIsMand,T2.DocIssueDateMand,
+          T2.DocIdNumMand,T2.DocIssuedAuthorityMand,T2.docIsMandatory,T1.DocRefId,T1.DocPurpose,T1.DocUri
+  FROM CustomerDocuments T1
+            JOIN BMTDocumentTypes T2   ON T1.CustDocCategory = T2.DocTypeCode
+            JOIN BMTCountries T3   ON T1.CustDocIssuedCountry = T3.CountryCode
+       </createView>
+	</changeSet>
 	
 </databaseChangeLog>
