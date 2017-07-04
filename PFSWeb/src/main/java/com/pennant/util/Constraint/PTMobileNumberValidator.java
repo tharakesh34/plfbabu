@@ -13,6 +13,8 @@ public class PTMobileNumberValidator implements Constraint{
 	private String fieldParm;
 	private boolean mandatory=false;
 	private String regex;
+	private final String MOBILE_INDIAN_REGEX = "[0-9]{10}";
+	private int maxLength=10;
 	
 	public PTMobileNumberValidator(String fieldParm,boolean mandatory) {
 		setFieldParm(fieldParm);
@@ -52,11 +54,16 @@ public class PTMobileNumberValidator implements Constraint{
 				return null;
 			}
 		} else{
+			if(StringUtils.isBlank(regex)){
+				regex  = MOBILE_INDIAN_REGEX;
+			}
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher =  pattern.matcher(compValue);
 			validRegex=matcher.matches();
 			
-			
+			if(compValue.length()!=maxLength){
+				return Labels.getLabel("FIELD_ALLOWED_MANFILL", new String[] {fieldParm,String.valueOf(maxLength)});
+			}
 			
 			if(!validRegex){
 					return Labels.getLabel("FIELD_MOBILE", new String[] {fieldParm,String.valueOf(pattern)});
