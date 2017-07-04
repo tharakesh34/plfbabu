@@ -44,7 +44,6 @@
 package com.pennanttech.cache;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -175,9 +174,10 @@ public class GenericCacheManager {
 				}
 				activated = true;
 			} else {
+				if(enabled){
+					logger.info("Cache De-Activated Nodes :" + cacheManager.getClusterSize()+"/"+nodeCount);
+				}
 				activated = false;
-				logger.info("Cache De-Activated Active Nodes :" + cacheManager.getClusterSize());
-
 			}
 
 		} else {
@@ -215,9 +215,6 @@ public class GenericCacheManager {
 			for (String cacheName : cacheManager.getCacheNames()) {
 				if(!"DefaultCache".equals(cacheName)){
 					stats.setCacheNames(cacheName);
-					logger.debug(cacheName+"-Hi "+ applicationType);
-				}else{
-					logger.debug(cacheName+"-Skip "+ applicationType);
 				}
 			}
 			stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));
