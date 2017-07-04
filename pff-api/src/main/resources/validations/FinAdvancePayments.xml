@@ -119,7 +119,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 		<field name="payableLoc">
@@ -222,7 +222,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 		<!-- <field name="phoneCountryCode">

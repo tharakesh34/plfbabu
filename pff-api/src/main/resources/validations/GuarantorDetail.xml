@@ -77,7 +77,7 @@
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 		<field name="mobileNo">

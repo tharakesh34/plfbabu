@@ -26,7 +26,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 
@@ -49,7 +49,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 
@@ -72,7 +72,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 			
 		</field>
@@ -107,7 +107,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 
@@ -129,7 +129,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 		<field name="custFNameLclLng">
@@ -150,7 +150,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 
