@@ -27,6 +27,13 @@ public class PTMobileNumberValidator implements Constraint{
 		setRegex(regex);
 	}
 	
+	public PTMobileNumberValidator(String fieldParm,boolean mandatory,String regex,int length) {
+		setFieldParm(fieldParm);
+		setMandatory(mandatory);
+		setRegex(regex);
+		setMaxLength(length);
+	}
+	
 	@Override
 	public void validate(Component comp, Object value) throws WrongValueException {
 		String errorMessage=getErrorMessage(value);
@@ -96,6 +103,14 @@ public class PTMobileNumberValidator implements Constraint{
 
 	public void setRegex(String regex) {
 		this.regex = regex;
+	}
+
+	public int getMaxLength() {
+		return maxLength;
+	}
+
+	public void setMaxLength(int maxLength) {
+		this.maxLength = maxLength;
 	}
 	
 }
