@@ -8751,4 +8751,12 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 			update data_engine_column set skip = 1 where tableid in (select ID from data_engine_table where configid = (select id  from DATA_ENGINE_CONFIG where name = 'MANDATES_EXPORT'))  and name = 'USERNAME';
 		</sql>
 	</changeSet>
+	<changeSet id="478" author="Madhubabu">
+	<sql>
+		alter table CUSTOMERDOCUMENTS_TEMP modify (CUSTDOCTYPE null);
+		alter table CUSTOMERDOCUMENTS modify (CUSTDOCTYPE null);
+
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
