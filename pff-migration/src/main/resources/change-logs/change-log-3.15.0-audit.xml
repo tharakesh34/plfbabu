@@ -804,4 +804,8 @@
 
 	</sql>
 </changeSet>
+<changeSet id="40" author="Madhubabu">
+		<modifyDataType tableName="ADTCUSTOMERPHONENUMBERS" columnName="PHONENUMBER"
+			newDataType="varchar(20)" />
+	</changeSet>
 </databaseChangeLog>
