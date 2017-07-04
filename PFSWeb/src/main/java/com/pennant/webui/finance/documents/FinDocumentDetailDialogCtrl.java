@@ -44,7 +44,6 @@ package com.pennant.webui.finance.documents;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,6 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
@@ -91,7 +89,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -140,7 +137,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private DocumentDetailDialogCtrl	  documentDetailDialogCtrl;
 	protected JdbcSearchObject<Customer>	newSearchObject;
 	private String	                      moduleType	          = "";
-	private boolean	                      docIdNumMand;
+	private boolean	                      docIsMandatory;
 	private boolean 					  viewProcess = false;
 	private boolean 					  isCheckList = false;
 	private boolean 					  isDocAllowedForInput = false;
@@ -198,8 +195,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.moduleType = (String) arguments.get("moduleType");
 			}
 			
-			if (arguments.containsKey("docIdNumMand")) {
-				this.docIdNumMand = (boolean) arguments.get("docIdNumMand");
+			if (arguments.containsKey("docIsMandatory")) {
+				this.docIsMandatory = (boolean) arguments.get("docIsMandatory");
 			}
 
 			if (arguments.containsKey("viewProcess")) {
@@ -290,7 +287,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setDescColumn("DocTypeDesc");
 		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
 		
-		if(docIdNumMand){
+		if(docIsMandatory){
 			this.space_documentName.setSclass("mandatory");
 		}else{
 			this.space_documentName.setSclass("");
@@ -539,7 +536,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		
 		try {
-			if (!(this.docReceived.isChecked())  && this.docIdNumMand &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
+			if (!(this.docReceived.isChecked())  && this.docIsMandatory &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aDocumentDetails.setDocName(this.documnetName.getValue());
@@ -684,7 +681,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		setValidationOn(true);
 
 		boolean mandatory = false;
-		if (!this.documnetName.isReadonly() && !this.docReceived.isChecked() && this.docIdNumMand) {
+		if (!this.documnetName.isReadonly() && !this.docReceived.isChecked() && this.docIsMandatory) {
 			mandatory = true;
 		}
 		this.documnetName.setConstraint(

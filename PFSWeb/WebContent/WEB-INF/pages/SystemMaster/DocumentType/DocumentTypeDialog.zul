@@ -89,7 +89,7 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
-							<row visible="false">
+							<row visible="true">
 								<label
 									id="label_DocumentTypeDialog_DocIsMandatory"
 									value="${c:l('label_DocumentTypeDialog_DocIsMandatory.value')}" />

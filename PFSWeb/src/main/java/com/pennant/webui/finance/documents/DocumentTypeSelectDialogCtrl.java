@@ -341,7 +341,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				documentDetails.setWorkflowId(0);
 				map.put("finDocumentDetail", documentDetails);
 				map.put("isCheckList",false);
-				map.put("docIdNumMand", doctype.isDocIdNumMand());
+				map.put("docIsMandatory", doctype.isDocIsMandatory());
 				if(getFinanceDetail() != null){
 					map.put("isDocAllowedForInput", isDocAllowedForInput(doctype.getDocTypeCode()));
 				}else{
