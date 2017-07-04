@@ -8740,4 +8740,10 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 	update Seqdedupparams set seqno = (select MAX(SeqNo)+1 from Seqdedupparams);
 	</sql>
 	</changeSet>
+	
+	<changeSet id="476" author="Manoj.P">
+		<sql>
+			update data_engine_column set skip = 0 where tableid in (select ID from data_engine_table where configid = (select id  from DATA_ENGINE_CONFIG where name = 'MANDATES_EXPORT'))  and name = 'USERNAME';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
