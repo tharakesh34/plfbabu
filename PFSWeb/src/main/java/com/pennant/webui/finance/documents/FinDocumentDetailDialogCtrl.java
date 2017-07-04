@@ -62,6 +62,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -540,9 +541,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aDocumentDetails.setDocName(this.documnetName.getValue());
-			DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
-			aDocumentDetails.setDocImage(details.getDocImage());
-			aDocumentDetails.setDoctype(details.getDoctype());
+			if (this.documnetName.getAttribute("data") != null) {
+				DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
+				aDocumentDetails.setDocImage(details.getDocImage());
+				aDocumentDetails.setDoctype(details.getDoctype());
+			} else {
+				aDocumentDetails.setDocImage(null);
+				aDocumentDetails.setDoctype(null);
+			}
 			aDocumentDetails.setDocRefId(Long.MIN_VALUE);
 
 		} catch (WrongValueException we) {
@@ -1108,12 +1114,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.documnetName.setErrorMessage("");
 			this.btnDownload.setLabel("");
 			this.finDocumentPdfView.setVisible(false);
-
+			this.finDocumentPdfView.setContent(null);
+			 this.documnetName.setAttribute("data", null);
+			Clients.clearWrongValue(docReceived);
 		} else {
 			this.docReceivedDt.setReadonly(true);
 			this.space_docReceivedDt.setSclass("");
 			this.documnetName.setReadonly(false);
-			this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
 		}

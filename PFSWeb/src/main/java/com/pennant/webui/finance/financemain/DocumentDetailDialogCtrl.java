@@ -398,7 +398,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(DateUtility.formatDate(documentDetail.getDocReceivedDate(),PennantConstants.dateAndTimeFormat));
+			listcell = new Listcell(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
