@@ -259,7 +259,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneTypeCode.setDescColumn("PhoneTypeDesc");
 		this.phoneTypeCode.setValidateColumns(new String[] { "PhoneTypeCode" });
 
-		this.phoneNumber.setMaxlength(11);
+		this.phoneNumber.setMaxlength(13);
 		
 		this.mobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 
