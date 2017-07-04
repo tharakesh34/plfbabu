@@ -8632,4 +8632,12 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
                       BMTCountries T3 ON T1.PhoneCountryCode = T3.CountryCode
                       </createView>
 	</changeSet>
+	<changeSet id="475" author="Srikanth">
+	<sql>
+	delete from dedupparams where QUERYCODE = 'PAN' AND QUERYMODULE = 'Customer';
+	Insert into dedupparams (QUERYID,QUERYCODE,QUERYMODULE,QUERYSUBCODE,QUERYDESC,SQLQUERY,ACTUALBLOCK,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+	values ((select MAX(SeqNo)+1 from Seqdedupparams),'PAN','Customer','RETAIL','PAN DEDUP','Where((CustCRCPR = :CustCRCPR AND CustCRCPR IS NOT NULL  ))','(,CustCRCPR, = ,),',1,1000,to_date('01-JUL-17','DD-MON-RR'),'Approved',null,null,null,null,null,0);
+	update Seqdedupparams set seqno = (select MAX(SeqNo)+1 from Seqdedupparams);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
