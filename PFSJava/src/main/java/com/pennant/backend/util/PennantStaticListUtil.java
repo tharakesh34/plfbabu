@@ -2742,7 +2742,7 @@ public class PennantStaticListUtil {
 		if(phoneTypeRegex == null){
 			phoneTypeRegex = new ArrayList<ValueLabel>(2);
 			phoneTypeRegex.add(new ValueLabel("[0-9]{10}", Labels.getLabel("listheader_MobileNumber.label")));
-			phoneTypeRegex.add(new ValueLabel("[0-9]{11}", Labels.getLabel("listheader_DealerTelephone.label")));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{13}", Labels.getLabel("listheader_DealerTelephone.label")));
 		}
 		return phoneTypeRegex;
 	}
