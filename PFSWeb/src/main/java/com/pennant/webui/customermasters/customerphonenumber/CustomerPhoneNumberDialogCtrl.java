@@ -549,7 +549,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		}
 		if (this.row_phoneNumber.isVisible() && !this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,regex));
+					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,regex,this.phoneNumber.getMaxlength()));
 		}
 		
 		if (!this.custPhonePriority.isDisabled()) {
