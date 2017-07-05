@@ -129,42 +129,42 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SecurityUserDialog; // autoWired
-	protected Textbox usrLogin; // autoWired
-	protected Combobox authType; // autoWired
-	protected Textbox usrPwd; // autoWired
-	protected Textbox usrnewPwd; // autoWired
-	protected Textbox usrConfirmPwd; // autoWired
-	protected Textbox userStaffID; // autoWired
-	protected Textbox usrFName; // autoWired
-	protected Textbox usrMName; // autoWired
-	protected Textbox usrLName; // autoWired
-	protected Textbox usrMobile; // autoWired
-	protected Textbox usrEmail; // autoWired
-	protected Checkbox usrEnabled; // autoWired
-	protected Timebox usrCanSignonFrom; // autoWired
-	protected Timebox usrCanSignonTo; // autoWired
-	protected Checkbox usrCanOverrideLimits; // autoWired
-	protected Checkbox usrAcExp; // autoWired
-	protected Checkbox usrCredentialsExp; // autoWired
-	protected Checkbox usrAcLocked; // autoWired
-	protected ExtendedCombobox usrLanguage; // autoWired
-	protected Combobox usrDftAppId; // autoWired
-	protected ExtendedCombobox usrBranchCode; // autoWired
-	protected ExtendedCombobox usrDeptCode; // autoWired
-	protected Checkbox usrIsMultiBranch; // autoWired
-	protected Row rowSecurityUserDialogUsrPwd; // autoWired
-	protected Row rowSecurityUserDialogUsrConfirmPwd; // autoWired
-	// protected Row statusRow; // autoWired
-	protected Panel panelPasswordInstructions; // autoWired
-	protected Label label_PwdStatus; // autoWired
-	protected Div div_PwdStatusMeter; // autoWired
-	protected ExtendedCombobox usrDesg; // autoWired
+	protected Window window_SecurityUserDialog;
+	protected Textbox usrLogin;
+	protected Combobox authType;
+	protected Textbox usrPwd;
+	protected Textbox usrnewPwd;
+	protected Textbox usrConfirmPwd;
+	protected Textbox userStaffID;
+	protected Textbox usrFName;
+	protected Textbox usrMName;
+	protected Textbox usrLName;
+	protected Textbox usrMobile;
+	protected Textbox usrEmail;
+	protected Checkbox usrEnabled;
+	protected Timebox usrCanSignonFrom;
+	protected Timebox usrCanSignonTo;
+	protected Checkbox usrCanOverrideLimits;
+	protected Checkbox usrAcExp;
+	protected Checkbox usrCredentialsExp;
+	protected Checkbox usrAcLocked;
+	protected ExtendedCombobox usrLanguage;
+	protected Combobox usrDftAppId;
+	protected ExtendedCombobox usrBranchCode;
+	protected ExtendedCombobox usrDeptCode;
+	protected Checkbox usrIsMultiBranch;
+	protected Row rowSecurityUserDialogUsrPwd;
+	protected Row rowSecurityUserDialogUsrConfirmPwd;
+	// protected Row statusRow;
+	protected Panel panelPasswordInstructions;
+	protected Label label_PwdStatus;
+	protected Div div_PwdStatusMeter;
+	protected ExtendedCombobox usrDesg;
 
-	protected Grid usrDivBranchsGrid; // autoWired
-	protected Tab secUserDetailsTab; // autoWired
-	protected Tab secUserDivBranchsTab; // autoWired
-	protected Rows divBranch_Rows; // autoWired
+	protected Grid usrDivBranchsGrid;
+	protected Tab secUserDetailsTab;
+	protected Tab secUserDivBranchsTab;
+	protected Rows divBranch_Rows;
 	/* not auto wired variables */
 	private SecurityUser securityUser; // overHanded per parameters
 	private transient SecurityUserListCtrl securityUserListCtrl; // overHanded per parameters
@@ -231,12 +231,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "SecurityUserDialog");
 			}
 			/* set components visible dependent of the users rights */
+			
 			doCheckRights();
-			// READ OVERHANDED parameters !
-			// we get the securityUserListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or
-			// delete securityUser here.
+			
 			if (arguments.containsKey("securityUserListCtrl")) {
 				setSecurityUserListCtrl((SecurityUserListCtrl) arguments.get("securityUserListCtrl"));
 			} else {
@@ -485,6 +482,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	public void onChange$authType(Event event) throws Exception {
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
+		setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
 	}
 
 	/**
@@ -495,6 +493,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		boolean isDAO = AuthenticationType.DAO.name().equals(authType);
 		this.rowSecurityUserDialogUsrPwd.setVisible(isDAO && !isReadOnly("SecurityUserDialog_usrPwd"));
 		this.rowSecurityUserDialogUsrConfirmPwd.setVisible(isDAO && !isReadOnly("SecurityUserDialog_usrPwd"));
+	}
+	
+	/**
+	 * Setting the password row visibility based on the authentication type.
+	 * 
+	 */
+	private void setPasswordInstructionsVisibility(String authType) {
+		boolean isDAO = AuthenticationType.DAO.name().equals(authType);
+		this.panelPasswordInstructions.setVisible(isDAO);
 	}
 	
 
@@ -1021,7 +1028,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrAcExp.setDisabled(true);
 			this.btnCancel.setVisible(false);
 			this.usrLogin.setReadonly(false);
-			this.panelPasswordInstructions.setVisible(true);
+			setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
 			this.usrDftAppId.setDisabled(false);
 		} else {
 			this.usrDftAppId.setDisabled(false);
