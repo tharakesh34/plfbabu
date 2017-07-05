@@ -8818,6 +8818,15 @@ FROM         CustomerPhoneNumbers T1 INNER JOIN
 	<changeSet id="482" author="Madhubabu">
 		<modifyDataType tableName="CUSTOMERPHONENUMBERS_Temp" columnName="PHONENUMBER"
 			newDataType="varchar(20)" />
-	</changeSet>	
+	</changeSet>
+
+<changeSet id="483"  author="Jayanth">
+	<sql>
+	Update BMTAEEvents set AEEVENTCODEDESC = 'Loan Origination Approval' where AEEVENTCODE = 'ADDDBSP';
+Update BMTAEEvents set AEEVENTCODEDESC = 'Loan Servicing - Additional Disbursements' where AEEVENTCODE = 'ADDDBSN';
+Update BMTAEEvents set AEEVENTCODEDESC = 'Rate Change - Increasing' where AEEVENTCODE = 'RATCHG';
+Update BMTAEEvents set AEEVENTCODEDESC = 'Schedule Change - Increasing' where AEEVENTCODE = 'SCDCHG';
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
