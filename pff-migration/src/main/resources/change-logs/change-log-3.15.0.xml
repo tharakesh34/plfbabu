@@ -8985,4 +8985,38 @@ union
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
+	<changeSet id="487" author="SreeRavali">
+		<sql>
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_ApplicationMaster_CustomerCategory', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_CustomerCategoryList_NewCustomerCategory', 'CustomerCategoryList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_CustomerCategoryDialog_btnSave', 'CustomerCategoryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'CustomerCategoryDialog_custCtgDesc', 'CustomerCategoryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'CustomerCategoryDialog_custCtgType', 'CustomerCategoryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'CustomerCategoryDialog_custCtgIsActive', 'CustomerCategoryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'CUSTOMERCATEGORY_MAKER', 'CUSTOMER CATEGORY Maker', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'CUSTOMERCATEGORY_APPROVER', 'CUSTOMER CATEGORY Approver', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_ApplicationMaster'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_ApplicationMaster_CustomerCategory'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerCategoryList_NewCustomerCategory'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerCategoryDialog_custCtgDesc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerCategoryDialog_custCtgType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerCategoryDialog_custCtgIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerCategoryDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_ApplicationMaster'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_ApplicationMaster_CustomerCategory'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERCATEGORY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerCategoryDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'CUSTOMERCATEGORY_MAKER'),(Select RoleID from secRoles where RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'CUSTOMERCATEGORY_APPROVER'),(Select RoleID from secRoles where RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
