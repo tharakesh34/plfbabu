@@ -168,8 +168,15 @@ public class BeneficiaryServiceTestCases {
 		client.path(path);
 		String authorization = "user:admin:test";
 		String encodedAuth = Base64.encodeBase64String(authorization.getBytes());
+		//TO GENERATE WORKFLOW API AUTH KEY UN-COMMENT THIS METHOD
+		//generateWorkflowAuthKey(encodedAuth);
 		client.header(CONSTANTS.AuthKey.get(), encodedAuth);
 		return client;
 	}
+
+	/*private void generateWorkflowAuthKey(String encodedAuth) {
+		String workflowAuth = Base64.encodeBase64String(encodedAuth.getBytes());
+		System.out.println("Workflow Api Authentication Key " +workflowAuth);
+	}*/
 
 }
