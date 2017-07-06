@@ -1115,12 +1115,21 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 				String collateralType=financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
-				if(!StringUtils.equals(collateralType, collateralSetup.getCollateralType())){
-					String[] valueParm = new String[2];
-					valueParm[0] = "collateralref";
-					valueParm[1] = "LoanType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
-					return errorDetails;
+				if(StringUtils.isNotBlank(collateralType)) {
+					boolean isCollateralFound = false;
+					String[] types = collateralType.split(PennantConstants.DELIMITER_COMMA);
+					for (String type : types) {
+						if (StringUtils.equals(type, collateralSetup.getCollateralType())) {
+							isCollateralFound = true;
+						}
+					}
+					if(!isCollateralFound) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "collateralref";
+						valueParm[1] = "LoanType";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+						return errorDetails;
+					}
 				}
 				if (!StringUtils.equalsIgnoreCase(collateralSetup.getDepositorCif(), financeDetail.getFinScheduleData()
 						.getFinanceMain().getLovDescCustCIF())) {
@@ -2827,8 +2836,14 @@ public class FinanceDataValidation {
 			rate.setCurrency(finMain.getFinCcy());
 			rate.setSplRateCode(finMain.getGraceSpecialRate());
 			rate.setMargin(finMain.getGrcMargin());
-			rate.setValueDate(finMain.getFinStartDate());
+			rate.setValueDate(DateUtility.getAppDate());
 			rate = RateUtil.getRefRate(rate);
+			if (rate.getErrorDetails() != null) {
+				errorDetails.add(rate.getErrorDetails());
+			}
+			if (errorDetails != null && !errorDetails.isEmpty()) {
+				return errorDetails;
+			}
 			netRate = rate.getNetRefRateLoan();
 		} else {
 			netRate = finMain.getGrcPftRate();
@@ -3309,8 +3324,14 @@ public class FinanceDataValidation {
 			rate.setCurrency(finMain.getFinCcy());
 			rate.setSplRateCode(finMain.getRepaySpecialRate());
 			rate.setMargin(finMain.getRepayMargin());
-			rate.setValueDate(finMain.getGrcPeriodEndDate());
+			rate.setValueDate(DateUtility.getAppDate());
 			rate = RateUtil.getRefRate(rate);
+			if(rate.getErrorDetails()!=null){
+			errorDetails.add(rate.getErrorDetails());
+			}
+			if (errorDetails != null && !errorDetails.isEmpty()) {
+				return errorDetails;
+			}
 			netRate = rate.getNetRefRateLoan();
 		} else {
 			netRate = finMain.getRepayProfitRate();
