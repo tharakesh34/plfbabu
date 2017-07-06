@@ -9019,4 +9019,13 @@ Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'Custo
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
+	<changeSet id="488" author="Siva">
+	    <sql>
+	        update EXTENDEDFIELDHEADER set TABHEADING = 'Fin Fitness Report' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'VASFFR01';
+			update EXTENDEDFIELDHEADER set TABHEADING = 'Protection Plan' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'GCPPLI';
+			update EXTENDEDFIELDHEADER set TABHEADING = 'Personal Guard Plan' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'GPGI';
+			update EXTENDEDFIELDHEADER set TABHEADING = 'Comph. Care Plan' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'CCPGI';
+			update EXTENDEDFIELDHEADER set TABHEADING = 'Health Guard Plan' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'TMGI';
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
