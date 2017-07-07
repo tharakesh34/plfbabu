@@ -645,7 +645,8 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		}
 		
 		// Duplicate State Code
-		if (province.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && province.isNewRecord()
+		if ((province.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+				|| province.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) && province.isNewRecord()
 				&& getStateCodeExist(province.getTaxStateCode(), "_View")) {
 			String[] parameters = new String[2];
 
