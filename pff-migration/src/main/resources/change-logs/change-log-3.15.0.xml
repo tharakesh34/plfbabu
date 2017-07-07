@@ -9028,4 +9028,10 @@ Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'Custo
 			update EXTENDEDFIELDHEADER set TABHEADING = 'Health Guard Plan' WHERE ModuleName = 'Vas' AND SUBMODULENAME = 'TMGI';
 	    </sql>
 	</changeSet>
+	<changeSet id="489" author="Madhubabu">
+	    <sql>
+	    	delete from errordetails where errorcode='99006';
+	        INSERT INTO ErrorDetails VALUES('99006','EN','E','For Reference:{0} the {1} length exceeding {2}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
