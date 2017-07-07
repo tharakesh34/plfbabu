@@ -680,6 +680,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		setFilters(StringUtils.equals(null, aFeePostings.getPostAgainst()) ? aFeePostings.getPostAgainst()
 				: aFeePostings.getPostAgainst().trim());
 		appendAccountingDetailTab(true);
+		this.recordStatus.setValue(aFeePostings.getRecordStatus());
 		logger.debug("Leaving");
 	}
 
