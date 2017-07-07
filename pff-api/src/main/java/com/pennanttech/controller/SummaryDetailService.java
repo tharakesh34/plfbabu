@@ -82,7 +82,7 @@ public class SummaryDetailService {
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-			summary.setNumberOfTerms(financeMain.getCalTerms());
+			summary.setNumberOfTerms(finPftDetail.getNOInst());
 			summary.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
 			summary.setMaturityDate(finPftDetail.getMaturityDate());
 			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
@@ -134,7 +134,6 @@ public class SummaryDetailService {
 				BigDecimal totDisbAmt = BigDecimal.ZERO;
 				for (FinanceDisbursement finDisb : disbList) {
 					totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
-					//totfeeChrgAmt = totfeeChrgAmt.add(finDisb.getFeeChargeAmt());
 				}
 				BigDecimal assetValue = financeMain.getFinAssetValue() == null ? BigDecimal.ZERO : financeMain.getFinAssetValue();
 				if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
@@ -145,21 +144,21 @@ public class SummaryDetailService {
 			// calculate OD Details
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
+			int odInst = 0;
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				for (FinODDetails odDetail : finODDetailsList) {
 					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
 					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+					if(odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						odInst++;
+					}
 				}
 				summary.setOverDuePrincipal(overDuePrincipal);
 				summary.setOverDueProfit(overDueProfit);
 				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 				summary.setFinODDetail(finODDetailsList);
-				if(overDuePrincipal.compareTo(BigDecimal.ZERO) > 0) {
-					summary.setOverDueInstlments(finODDetailsList.size());
-				} else {
-					summary.setOverDueInstlments(0);
-				}
+				summary.setOverDueInstlments(odInst);
 				
 				financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 			}

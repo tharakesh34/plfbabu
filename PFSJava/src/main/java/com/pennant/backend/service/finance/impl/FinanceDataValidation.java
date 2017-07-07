@@ -1587,7 +1587,7 @@ public class FinanceDataValidation {
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 					if(mandate.getAccNumber().length()!=accNoLength){
 						String[] valueParm = new String[2];
-						valueParm[0] = "AccountNumber";
+						valueParm[0] = "AccountNumber(Mandate)";
 						valueParm[1] = String.valueOf(accNoLength)+" characters";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
 						return errorDetails;

@@ -156,7 +156,7 @@ public class FinScheduleData {
 	
 	@XmlElementWrapper(name="feeDues")
 	@XmlElement(name="feeDue")
-	List<FinFeeDetail> feeDues;
+	List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>(1);
 	@XmlElement
 	private BigDecimal excessAmount = BigDecimal.ZERO;
 	@XmlElement

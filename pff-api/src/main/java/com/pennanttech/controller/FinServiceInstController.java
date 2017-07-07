@@ -700,8 +700,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 					
 					// validate disbursement instructions
-					List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(), list,
-							finScheduleData.getFinanceMain(), true);
+					List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(),
+							list, finScheduleData.getFinanceMain(), true);
 					for (ErrorDetails erroDetails : errors) {
 						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(erroDetails.getErrorCode(),
 								erroDetails.getErrorParameters())));
@@ -767,6 +767,11 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeDetail.setFinScheduleData(finScheduleData);
 				// Get the response
 				financeDetail = getResponse(financeDetail, finServiceInst);
+				
+				// set Last disbursement date for Inquiry service
+				if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
+					financeDetail.getFinScheduleData().getFinanceSummary().setLastDisbDate(disbursementDetails.getDisbDate());
+				}
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
