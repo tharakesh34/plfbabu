@@ -507,6 +507,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		this.recordStatus.setValue(aEntity.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 	
