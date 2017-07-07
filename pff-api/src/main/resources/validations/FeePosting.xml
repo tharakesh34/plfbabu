@@ -16,7 +16,7 @@
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>FeeType Code should have maximum 8 characters</message>
+				<message>FeeType Code should have maximum 20 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
