@@ -91,7 +91,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		logger.debug("Enetring");
 		// validate recordVAS details as per the API specification
 		// bean validations
-				validationUtility.validate(vasRecording, SaveValidationGroup.class);
+		validationUtility.validate(vasRecording, SaveValidationGroup.class);
 		VASRecording response = null;
 		try {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);

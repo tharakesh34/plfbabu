@@ -158,6 +158,20 @@ public class ExtendedFieldDetailsValidation {
 			errors = dateValidation(exdConfigDetail, dateValue, errors);
 			exdFieldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateValue)));
 			break;
+		case ExtendedFieldConstants.FIELDTYPE_DATETIME:
+			Date dateTimeVal = null;
+			try {
+				dateTimeVal = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "Date";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				return errors;
+			}
+			errors = dateValidation(exdConfigDetail, dateTimeVal, errors);
+			exdFieldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateTimeVal)));
+			break;
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
 			try {
 				double rateValue = Double.parseDouble(fieldValue);
