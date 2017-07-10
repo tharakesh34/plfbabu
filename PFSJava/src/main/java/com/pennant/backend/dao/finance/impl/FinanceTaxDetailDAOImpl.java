@@ -210,7 +210,7 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		MapSqlParameterSource source = null;
 		int count = 0;
 
-		StringBuilder selectSql = new StringBuilder("Select count() From FinTaxDetail");
+		StringBuilder selectSql = new StringBuilder("Select count(TaxNumber) From FinTaxDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where TaxCustId <> :TaxCustId And TaxNumber = :TaxNumber");
 		logger.debug("selectSql: " + selectSql.toString());
