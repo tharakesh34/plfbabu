@@ -64,6 +64,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
@@ -1405,9 +1406,18 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}else if (aJVPosting.getTotCreditsByBatchCcy().compareTo(
 					aJVPosting.getTotDebitsByBatchCcy()) == 0) {
 				if (doProcess(aJVPosting, tranType)) {
-					// doWriteBeanToComponents(aJVPosting);
-					// refreshList();
-					getJVPostingListCtrl().refreshList();
+					// List Detail Refreshment
+					refreshList();
+
+					// Confirmation message
+					String msg = PennantApplicationUtil.getSavingStatus(aJVPosting.getRoleCode(),
+							aJVPosting.getNextRoleCode(), aJVPosting.getReference(), " Miscellaneous Postings ",
+							aJVPosting.getRecordStatus());
+					if(StringUtils.equals(aJVPosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
+						msg= "Miscellaneous Postings with Reference "+ aJVPosting.getReference() + " Approved Succesfully.";
+					}
+					Clients.showNotification(msg, "info", null, null, -1);
+
 					closeDialog();
 				}
 			} else {
