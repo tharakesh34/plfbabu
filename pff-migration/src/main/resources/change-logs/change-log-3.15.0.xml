@@ -9261,4 +9261,94 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 		ALTER TABLE fintaxuploadheader_Temp MODIFY FILENAME VARCHAR(100);
 	</sql>
 	</changeSet>
+	<changeSet id="501" author="murthy.y">
+		<dropTable  tableName="TRAIL_BALANCE_REPORT_LAST_RUN"/>
+		<dropTable  tableName="TRAIL_BALANCE_REPORT"/>
+	</changeSet>
+	<changeSet id="502" author="murthy.y">
+		<createTable tableName="TRAIL_BALANCE_REPORT">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="CHAR(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROVINCE" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HOSTACCOUNT" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="503" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_TBR_HID" referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID" baseTableName="TRAIL_BALANCE_REPORT" baseColumnNames="HEADERID" />
+	</changeSet>
+	<changeSet id="504" author="murthy.y">
+		<createTable tableName="TRAIL_BALANCE_REPORT_LAST_RUN">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="CHAR(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROVINCE" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HOSTACCOUNT" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+				<column name="DEBITAMOUNT" type="decimal(18,0)">
+			<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+				<column name="CLOSINGBAL" type="decimal(18,0)">
+			<constraints nullable="false" />
+			</column>
+				<column name="CLOSINGBALTYPE" type="char(2)">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="505" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_TBRLR_HID" referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID" baseTableName="TRAIL_BALANCE_REPORT_LAST_RUN" baseColumnNames="HEADERID" />
+	</changeSet>
 </databaseChangeLog>
