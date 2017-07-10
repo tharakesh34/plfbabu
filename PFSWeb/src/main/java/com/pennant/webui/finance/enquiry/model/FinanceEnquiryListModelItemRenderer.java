@@ -43,7 +43,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getFinCcy());
 		lc.setParent(item);
-		BigDecimal finAmount = enquiry.getFinAmount();
+		BigDecimal finAmount = enquiry.getFinCurrAssetValue();
 		if(enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
