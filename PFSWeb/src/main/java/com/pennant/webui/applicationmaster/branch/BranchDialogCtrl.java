@@ -464,15 +464,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		fillComboBox(this.branchType,aBranch.getBranchType(),branchTypeList,"");
 		fillComboBox(this.region,aBranch.getRegion(),regionList,"");
 		this.pinCode.setValue(aBranch.getPinCode());
-		if (aBranch.getPinCode() != null) {
-			this.branchCity.setReadonly(true);
-			this.branchProvince.setReadonly(true);
-			this.branchCountry.setReadonly(true);
-		} else {
-			this.branchCity.setReadonly(false);
-			this.branchProvince.setReadonly(false);
-			this.branchCountry.setReadonly(false);
-		}
 		if(this.miniBranch.isChecked()){
 		this.parentBranch.setAttribute("branchCode", aBranch.getBranchCode());
 		this.parentBranch.setValue(aBranch.getBranchCode(),aBranch.getBranchDesc());
@@ -1518,9 +1509,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.branchProvince.setDescription("");
 			this.branchCountry.setValue("");
 			this.branchCountry.setDescription("");
-			this.branchCity.setReadonly(false);
-			this.branchProvince.setReadonly(false);
-			this.branchCountry.setReadonly(false);
+			
 		} else {
 			PinCode details = (PinCode) dataObject;
 
@@ -1532,9 +1521,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
 				this.branchCountry.setValue(details.getpCCountry());
 				this.branchCountry.setDescription(details.getLovDescPCCountryName());
-				this.branchCity.setReadonly(true);
-				this.branchProvince.setReadonly(true);
-				this.branchCountry.setReadonly(true);
+				
 			}
 		
 		}

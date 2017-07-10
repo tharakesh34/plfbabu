@@ -83,7 +83,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode, active, ");
+		sql.append(" pinCode, address, active, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From Entity");
@@ -118,11 +118,11 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		StringBuilder sql =new StringBuilder(" insert into Entity");
 		sql.append(tableType.getSuffix());
 		sql.append("(entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode, active, ");
+		sql.append(" pinCode, address, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :entityCode, :entityDesc, :pANNumber, :country, :stateCode, :cityCode, ");
-		sql.append(" :pinCode, :active, ");
+		sql.append(" :pinCode, :address, :active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Execute the SQL, binding the arguments.
@@ -147,7 +147,7 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		StringBuilder	sql =new StringBuilder("update Entity" );
 		sql.append(tableType.getSuffix());
 		sql.append("  set entityDesc = :entityDesc, pANNumber = :pANNumber, country = :country, ");
-		sql.append(" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode, ");
+		sql.append(" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode, address = :address, ");
 		sql.append(" active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
