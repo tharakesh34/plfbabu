@@ -249,9 +249,9 @@ public class FinStatementController extends SummaryDetailService {
 			scheduleData.setFinODDetails(finOdDetaiList);
 			scheduleData.setForeClosureFees(foreClosureFees);
 			scheduleData.setFeeDues(feeDues);
-
-			// process fees and charges
-			//processFeesAndCharges(scheduleData, finFeeDetails);
+			
+			// process origination fees
+			scheduleData.getFeeDues().addAll(getUpdatedFees(financeDetail.getFinScheduleData().getFinFeeDetailList()));
 
 			finStmtDetail.setForeClosureDetails(foreClosureList);
 			finStmtDetail.setFinScheduleData(scheduleData);
