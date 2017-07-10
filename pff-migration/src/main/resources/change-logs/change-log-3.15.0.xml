@@ -9248,5 +9248,11 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-
+	<changeSet id="500" author="murthy.y">
+		<sql>
+			UPDATE data_engine_config set FILENAMEFORMAT='${START_DATE},_${END_DATE},_${HEADER_ID},_${STATE_CODE}' where name = 'GL_TRAIL_BALANCE_EXPORT';
+			update data_engine_table set Filter = 'HEADERID=:HEADERID, PROVINCE=:PROVINCE' where Name = 'TRAIL_BALANCE_REPORT_VIEW'; 
+			update RMTCOUNTRYVSPROVINCE set BUSINESSAREA = CPPROVINCE;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
