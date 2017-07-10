@@ -9191,5 +9191,62 @@ Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'Custo
 	<changeSet id="495" author="manojkumar.p">
 		<addForeignKeyConstraint constraintName="FK_TBRLR_HID" referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID" baseTableName="TRAIL_BALANCE_REPORT_LAST_RUN" baseColumnNames="HEADERID" />
 	</changeSet>
+	<changeSet id="496" author="Irfan">
+		<addColumn tableName="Entity">
+			<column name="Address" type="varchar(250)" />
+		</addColumn>
+		<addColumn tableName="Entity_Temp">
+			<column name="Address" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="497" author="Irfan">
+		<createView viewName="ENTITY_VIEW" replaceIfExists="true">
+		SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Address, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity_Temp  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+            
+
+UNION ALL
+
+SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Address, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+            
+WHERE     NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE EntityCode = T1.EntityCode)
+		
+		</createView>
+	</changeSet>
+	<changeSet id="498" author="Irfan">
+		<createView viewName="ENTITY_AVIEW" replaceIfExists="true">
+			SELECT		T1.EntityCode, T1.EntityDesc, T1.PANNumber, T1.Country,T2.CountryDesc CountryName, T1.StateCode,T3.CPProvinceName ProvinceName,  T1.CityCode,T4.PCCITYNAME CityCodeDesc, T1.PinCode,T4.PCCityName CityName, T1.Address, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Entity  T1 INNER JOIN
+BMTCountries  T2 ON T1.Country = T2.CountryCode  INNER JOIN
+RMTCountryVsProvince T3 ON T1.StateCode = T3.CPProvince INNER JOIN
+RMTProvinceVsCity T4 ON T1.CityCode = T4.PCCITY INNER JOIN
+PinCodes T5 ON T1.PinCode = T5.PinCode
+		
+		</createView>
+	</changeSet>
+	<changeSet id="499" author="Irfan">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'EntityDialog_Address','EntityDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ENTITY_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='EntityDialog_Address'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
