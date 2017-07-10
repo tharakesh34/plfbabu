@@ -8584,7 +8584,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				
 				//both step and EMI holiday not allowed
-				if (financeType.isPlanEMIHAlw()) {
+				if (getFinanceDetail().getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
 					errorList.add(new ErrorDetails("30573", null));
 				}	
 			}
