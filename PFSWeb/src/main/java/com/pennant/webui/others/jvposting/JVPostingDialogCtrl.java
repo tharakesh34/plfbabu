@@ -101,6 +101,7 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.expenses.LegalExpensesService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -1269,7 +1270,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 */
 
 	private void refreshList() {
-		getJVPostingListCtrl().search();
+		final JdbcSearchObject<JVPosting> jvPostings = getJVPostingListCtrl().getSearchObject();
+		getJVPostingListCtrl().pagingJVPostingList.setActivePage(0);
+		getJVPostingListCtrl().getPagedListWrapper().setSearchObject(jvPostings);
+		if (getJVPostingListCtrl().listBoxJVPosting != null) {
+			getJVPostingListCtrl().listBoxJVPosting.getListModel();
+		}
 	}
 
 	/**

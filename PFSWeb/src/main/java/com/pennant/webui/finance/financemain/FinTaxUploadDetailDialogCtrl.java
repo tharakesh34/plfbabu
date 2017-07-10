@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
@@ -188,13 +189,22 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		int totalCount = 0;
 		String status = null;
 		media = event.getMedia();
-		if ("xls".equals(media.getFormat())) {
+		Sheet firstSheet;
+
+		if ("xls".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
 			isSupported = true;
+			this.uploadedfileName.setValue(media.getName());
 		}
 
 		if (isSupported) {
-			HSSFWorkbook workbook = new HSSFWorkbook(media.getStreamData());
-			Sheet firstSheet = workbook.getSheetAt(0);
+			if ("xls".equals(media.getFormat())) {
+				HSSFWorkbook workbook = new HSSFWorkbook(media.getStreamData());
+				firstSheet = workbook.getSheetAt(0);
+			} else {
+				XSSFWorkbook workbook = new XSSFWorkbook(media.getStreamData());
+				firstSheet = workbook.getSheetAt(0);
+			}
+
 			Iterator<Row> iterator = firstSheet.iterator();
 
 			while (iterator.hasNext()) {
@@ -277,6 +287,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	private void doFillFinTaxUploadData(List<FinTaxUploadDetail> finTaxUploadDetailList) {
 		this.listBoxFileData.getItems().clear();
+		Clients.clearWrongValue(this.btnUpload);
 		if (finTaxUploadDetailList != null && !finTaxUploadDetailList.isEmpty()) {
 			for (FinTaxUploadDetail taxMappingDetail : finTaxUploadDetailList) {
 				Listitem item = new Listitem();
@@ -349,7 +360,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		arg.put("FinTaxUploadDetail", finTaxUploadDetail);
 		arg.put("FinTaxUploadDetailDialogCtrl", this);
 		arg.put("financeTaxDetail", financeTaxDetail);
-		arg.put("enqiryModule", true);
+		arg.put("enquirymode", true);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailDialog.zul", null,
@@ -401,8 +412,14 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.listBoxFileData.getItems().isEmpty()) {
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
-		if(afinTaxUploadHeader.isNew()){
-			copyInputStreamToFile(media.getStreamData(), new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")+media.getName()+".xls"));
+		if (afinTaxUploadHeader.isNew()) {
+			if ("xls".equals(media.getFormat())) {
+				copyInputStreamToFile(media.getStreamData(),
+						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH") + media.getName() + ".xls"));
+			} else if ("xlsx".equals(media.getFormat())) {
+				copyInputStreamToFile(media.getStreamData(),
+						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH") + media.getName() + ".xlsx"));
+			}
 		}
 			
 
