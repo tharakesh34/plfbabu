@@ -808,4 +808,9 @@
 		<modifyDataType tableName="ADTCUSTOMERPHONENUMBERS" columnName="PHONENUMBER"
 			newDataType="varchar(20)" />
 	</changeSet>
+	<changeSet id="41" author="Irfan">
+		<addColumn tableName="AdtEntity">
+			<column name="Address" type="varchar(250)" />
+		</addColumn>
+		</changeSet>
 </databaseChangeLog>
