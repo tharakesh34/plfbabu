@@ -9374,4 +9374,24 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			Select Reportid from REPORTCONFIGURATION where Reportname in ('Excel:LIST OF DOCUMENTS EXTRACT','Excel:Daily Disbursal Report'));
 		</sql>
 	</changeSet>
+	<changeSet id="508" author="Srikanth">
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+		 SELECT     	T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.CalTerms NumberOfTerms, T1.CustID, T1.FinAmount, 
+                      T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,T1.DownPayment, 
+                      T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate,T1.InsuranceAmt,T1.FinCurrAssetvalue,
+                      T5.FinTypeDesc LovDescFinTypeName, T6.CustCIF LovDescCustCIF, T6.CustShrtName LovDescCustShrtName, T7.BranchDesc LovDescFinBranchName, 
+                      T1.Blacklisted, T5.FinScheduleOn LovDescFinScheduleOn, T1.FeeChargeAmt, T1.ClosingStatus, T8.CustTypeCtg, 
+                      T1.GraceTerms, T5.FinDivision lovDescFinDivision, T5.FinCategory lovDescProductCodeName, 
+                      T1.AlwMultiDisb , T5.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments,
+                       (T1.FinCurrAssetvalue+ T1.FeeChargeAmt+T1.InsuranceAmt) FinancingAmount,
+                      (T1.FinCurrAssetvalue- T1.FinRepaymentAmount+ T1.FeeChargeAmt+T1.InsuranceAmt) CurFinAmount,
+                      T1.FinStatus ,T1.MandateID,T1.FinRepayMethod 
+		FROM          FinanceMain T1 INNER JOIN
+                       RMTFinanceTypes T5 ON T1.FinType = T5.FinType INNER JOIN
+                       Customers T6 ON T1.CustID = T6.CustID INNER JOIN
+                       RMTBranches T7 ON T1.FinBranch = T7.BranchCode INNER JOIN
+                       RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode
+
+		</createView>
+	</changeSet>
 </databaseChangeLog>
