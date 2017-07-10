@@ -9255,4 +9255,10 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			update RMTCOUNTRYVSPROVINCE set BUSINESSAREA = CPPROVINCE;
 		</sql>
 	</changeSet>
+		<changeSet id="501" author="Madhubabu">
+	<sql>
+		ALTER TABLE fintaxuploadheader MODIFY FILENAME VARCHAR(100);
+		ALTER TABLE fintaxuploadheader_Temp MODIFY FILENAME VARCHAR(100);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
