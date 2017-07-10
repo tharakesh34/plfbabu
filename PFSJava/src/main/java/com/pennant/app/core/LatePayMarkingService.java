@@ -76,6 +76,13 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		for (FinODDetails fod : finODDetails) {
 			FinanceScheduleDetail curSchd = getODSchedule(finScheduleDetails, fod);
+			
+			// In case Schedule was recalculated with new date, existing schedule may not exists(Early settlement with before pastdue schedule term)
+			// FIXME : Need to discuss with satish(Siva)
+			if(curSchd == null){
+				continue;
+			}
+			
 			latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate);
 		}
 		return finODDetails;

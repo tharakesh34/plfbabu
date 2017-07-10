@@ -1694,7 +1694,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 			}else{
-				finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+				if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+				}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+				}
 			}
 
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
@@ -4863,6 +4867,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		Date curBussDate = DateUtility.getAppDate();
+		if(this.receivedDate.getValue() != null){
+			curBussDate = this.receivedDate.getValue();
+		}
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
 				&& curBussDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
@@ -4934,6 +4941,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
+		
+		// Finance Should not allow for Partial Settlement & Early settlement when Maturity Date reaches Current application Date
+		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) ||
+				StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){ 
+
+			if((StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+					DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), curBussDate) <= 0) ||
+					(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) &&
+							DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), curBussDate) < 0)){
+				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_MaturityDate" ,
+						new String[] { PennantAppUtil.getlabelDesc(tempReceiptPurpose, PennantStaticListUtil.getReceiptPurpose())}));
+				return false;
+			}
+		}
+
 		// No excess amount validation on partial Settlement
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){ 
 			if(remBal.compareTo(BigDecimal.ZERO) <= 0){
@@ -4949,11 +4971,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				BigDecimal closingBal = null;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0) {
+					if (DateUtility.compare(curBussDate, curSchd.getSchDate()) > 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtility.compare(curBussDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
@@ -4970,25 +4992,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		// TDS Balance Amount Calculation
-		BigDecimal tdsAmount = BigDecimal.ZERO;
-		if(getReceiptData().getAllocationMap().containsKey(RepayConstants.ALLOCATION_TDS)){
-			tdsAmount = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_TDS);
-			if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
-				CurrencyBox tdsPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
-				tdsAmount = tdsAmount.subtract(PennantApplicationUtil.unFormateAmount(tdsPaid.getActualValue(), formatter));
-			}
-		}
-		
 		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			BigDecimal earlySettleBal = totReceiptAmount.subtract((totalDue.add(tdsAmount)).subtract(totalWaived)).subtract(totalAdvDue.subtract(totalAdvWaived));
+			BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived)).subtract(totalAdvDue.subtract(totalAdvWaived));
 			if(earlySettleBal.compareTo(BigDecimal.ZERO) < 0){
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
 				return false;
 			}
 		}
-
+		
 		logger.debug("Leaving");
 		return true;
 	}
