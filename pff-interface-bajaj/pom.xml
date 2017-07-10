@@ -76,6 +76,12 @@
 			<version>12.2.0.1.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-dbcp</artifactId>
+		    <version>8.5.12</version>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
