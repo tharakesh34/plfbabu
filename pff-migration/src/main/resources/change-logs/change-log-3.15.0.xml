@@ -9368,4 +9368,10 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>
 	</changeSet>
+	<changeSet id="507" author="Prasad">
+		<sql>
+			update REPORTFILTERFIELDS set multiselectsearch=1 where Reportid in (
+			Select Reportid from REPORTCONFIGURATION where Reportname in ('Excel:LIST OF DOCUMENTS EXTRACT','Excel:Daily Disbursal Report'));
+		</sql>
+	</changeSet>
 </databaseChangeLog>
