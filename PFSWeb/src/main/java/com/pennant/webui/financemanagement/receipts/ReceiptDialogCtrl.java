@@ -1108,8 +1108,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
 		
-		/*waivedAllocationMap = new HashMap<>();
-		paidAllocationMap = new HashMap<>();*/
+		waivedAllocationMap = new HashMap<>();
+		paidAllocationMap = new HashMap<>();
 		
 		// Check Auto Allocation Process existence
 		setAutoAllocationPayments();
@@ -1475,7 +1475,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocationMethod.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 		this.allocationDetailsTab.setDisabled(false);
-		waivedAllocationMap = new HashMap<>();
+		//waivedAllocationMap = new HashMap<>();
 		if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
 			setAutoAllocationPayments();
 		}else if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
@@ -3467,6 +3467,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
 					BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
+					if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
+						BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
+						if(actPftAdjust.compareTo(balPft) > 0){
+							actPftAdjust = balPft;
+						}
+					}
 					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
 					allocateTDSPaid.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
 					
