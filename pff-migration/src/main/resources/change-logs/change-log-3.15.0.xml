@@ -9457,4 +9457,13 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="515" author="Manoj.P">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+			SELECT DS.ID, DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS, DC.id as CONFIGID, DC.POSTEVENT 
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+    		ORDER BY DS.ID DESC
+		</createView>
+	</changeSet>	
+	
 </databaseChangeLog>
