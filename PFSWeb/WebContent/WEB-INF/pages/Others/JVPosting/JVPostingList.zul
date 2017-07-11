@@ -72,7 +72,7 @@
 									<listbox
 										id="sortOperator_BatchReference" width="43px" mold="select"
 										rows="1" />
-									<textbox id="batchReference"
+									<textbox id="reference"
 										width="150px" maxlength="50" />
 									<label
 										id="label_JVPostingList_Batch"
@@ -128,6 +128,10 @@
 							height="100%" multiple="false" sizedByContent="true"
 							emptyMessage="${c:l('listEmptyMessage.title')}">
 							<listhead sizable="true">
+								<listheader
+									id="listheader_Reference" visible="false"
+									label="${c:l('listheader_Reference.label')}" sort="auto"
+									hflex="min" />
 								<listheader
 									id="listheader_BatchReference"
 									label="${c:l('listheader_BatchReference.label')}" sort="auto"

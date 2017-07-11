@@ -99,7 +99,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 
 	private transient JVPostingService jVPostingService;
 
-	protected Textbox batchReference;
+	protected Textbox reference;
 	protected Listbox sortOperator_BatchReference;
 
 	protected Textbox batch;
@@ -152,7 +152,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		registerButton(button_JVPostingList_JVPostingSearch);
 		registerButton(button_JVPostingList_NewJVPosting, "button_JVPostingList_NewJVPosting", true);
 
-		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,sortOperator_BatchReference, Operators.STRING);
+		registerField("BatchReference");
+		registerField("reference", listheader_BatchReference, SortOrder.ASC, reference,sortOperator_BatchReference, Operators.STRING);
 		registerField("batch", listheader_Batch, SortOrder.NONE, batch, sortOperator_Batch, Operators.STRING);
 		registerField("debitCount", listheader_DebitCount);
 		registerField("creditsCount", listheader_CreditsCount);
