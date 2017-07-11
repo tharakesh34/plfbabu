@@ -9414,5 +9414,9 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			update DATA_ENGINE_EVENT_PROPERTIES set FOLDER_NAME = 'master_extract';
 		</sql>
 	</changeSet>
-	
+	<changeSet id="512" author="madhubabu.p">
+		<sql>
+			update errordetails set Errormessage='For Aggrement No :{0} the {1} length exceeding :{2}'  where errorcode='99006'
+		</sql>
+	</changeSet>
 </databaseChangeLog>
