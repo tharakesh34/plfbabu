@@ -9438,5 +9438,12 @@ FROM          FinanceMain_Temp T1 INNER JOIN
                        RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode
 		</createView>
 	</changeSet>
-	
+	<changeSet id="513" author="murthy.y">
+		<sql>
+			update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('GL_TRAIL_BALANCE_EXPORT', 'GL_TRANSACTION_EXPORT', 'GL_TRANSACTION_SUMMARY_EXPORT');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'GL_TRAIL_BALANCE_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'SAPGL');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'GL_TRANSACTION_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'SAPGL');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'GL_TRANSACTION_SUMMARY_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'SAPGL');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
