@@ -384,25 +384,25 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine1().length() > 100) {
+			if (taxuploadDetail.getAddrLine1()!=null && taxuploadDetail.getAddrLine1().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine1.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine2().length() > 100) {
+			if (taxuploadDetail.getAddrLine2()!=null && taxuploadDetail.getAddrLine2().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine2.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine3().length() > 100) {
+			if (taxuploadDetail.getAddrLine3()!=null && taxuploadDetail.getAddrLine3().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine3.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine4().length() > 100) {
+			if (taxuploadDetail.getAddrLine4()!=null && taxuploadDetail.getAddrLine1()!=null && taxuploadDetail.getAddrLine4().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine4.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -432,6 +432,19 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
+
+			if (!(StringUtils.equals(taxuploadDetail.getApplicableFor(), "P")
+					|| StringUtils.equals(taxuploadDetail.getApplicableFor(), "C"))) {
+				String[] errParams = new String[2];
+				errParams[0] = PennantJavaUtil.getLabel("listheader_ApplicableFor.label") + ":"
+						+ taxuploadDetail.getApplicableFor();
+				errParams[1] = taxuploadDetail.getAggrementNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+			}
+
+			
+			
 			if (taxuploadDetail.getPinCode() != null) {
 				PinCode pincode = getPinCodeDAO().getPinCode(taxuploadDetail.getPinCode(), "_View");
 				String[] errParams = new String[2];
