@@ -436,6 +436,9 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			return this.financeMainDAO.getFinanceDetailsForService(finReference, type, isWIF);
 		}
 		
+	/**
+	 * to validate the GST Number
+	 */	
 	@Override
 	public AuditDetail gstNumbeValidation(AuditDetail auditDetail, FinanceTaxDetail financeTaxDetail) {
 		logger.debug(Literal.ENTERING);
@@ -474,7 +477,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				if (StringUtils.isNotBlank(panNumber)) {	//if PAN number is not available in GST Number
 					if (!StringUtils.equalsIgnoreCase(panNumber, taxNumber.substring(2, 12))) {
 						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65023", null, null)));
+								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65024", null, null)));
 					}
 				}
 			}
