@@ -9446,4 +9446,15 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'GL_TRANSACTION_SUMMARY_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'SAPGL');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="514" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65023';
+			INSERT INTO ErrorDetails VALUES('65023','EN','E','State GST code should match with the provided State GST code.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+						
+			Delete from ErrorDetails where errorCode = '65024';
+			INSERT INTO ErrorDetails VALUES('65024','EN','E','PAN number should match with the provided PAN number.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
