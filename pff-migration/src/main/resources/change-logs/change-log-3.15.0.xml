@@ -9404,5 +9404,15 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 			INSERT INTO ErrorDetails VALUES('65024','EN','E','PAN number should not match with the provided PAN number.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="510" author="murthy.y">
+		<addColumn  tableName="DATA_ENGINE_EVENT_PROPERTIES">
+        	<column name="FOLDER_NAME" type="varchar(100)"/>
+        </addColumn>
+	</changeSet>
+	<changeSet id="511" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_EVENT_PROPERTIES set FOLDER_NAME = 'master_extract';
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
