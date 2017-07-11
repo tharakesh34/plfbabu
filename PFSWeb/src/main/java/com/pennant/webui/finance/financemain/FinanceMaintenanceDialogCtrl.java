@@ -199,6 +199,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Label							label_FinanceMainDialog_FinAssetValue;
 	protected Label							label_FinanceMainDialog_ODFinAssetValue;
 	protected Label							label_FinanceMainDialog_FinCurrentAssetValue;
+	protected Label							label_FinanceMainDialog_FinAmount;
 
 	protected Label							label_FinanceMainDialog_FinDivision;
 	protected CurrencyBox					finCurrentAssetValue;
@@ -467,7 +468,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		} else {
 			this.row_FinAssetValue.setVisible(false);
-
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
 		}
 	}
 

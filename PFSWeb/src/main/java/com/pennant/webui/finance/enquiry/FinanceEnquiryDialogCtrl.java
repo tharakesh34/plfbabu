@@ -428,6 +428,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Tabpanel					tabpanel_assests;
 	
 	protected Label 						label_FinanceMainDialog_FinAssetValue;
+	protected Label 						label_FinanceMainDialog_FinAmount;
 	protected Label 						label_FinanceMainDialog_FinCurrentAssetValue;
 	protected CurrencyBox					finCurrentAssetValue;
 	protected Row							row_FinAssetValue;
@@ -717,7 +718,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} else {
 			this.row_FinAssetValue.setVisible(false);
-
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
 		}
 	}
 

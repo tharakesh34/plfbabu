@@ -822,6 +822,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Map<String, Object>							flagTypeDataMap			= new HashMap<String, Object>();
 	protected transient List<FinInsurances>					oldVar_finInsuranceList;
 	protected Label											label_FinanceMainDialog_FinAssetValue;
+	protected Label											label_FinanceMainDialog_FinAmount;
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	private boolean											isBranchanged;
@@ -1261,7 +1262,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} else {
 			this.row_FinAssetValue.setVisible(false);
-
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
 		}
 	}
 
