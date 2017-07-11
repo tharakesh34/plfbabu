@@ -9394,4 +9394,15 @@ PinCodes T5 ON T1.PinCode = T5.PinCode
 
 		</createView>
 	</changeSet>
+	
+	<changeSet id="509" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65023';
+			INSERT INTO ErrorDetails VALUES('65023','EN','E','State GST code should not match with the provided GST code.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+						
+			Delete from ErrorDetails where errorCode = '65024';
+			INSERT INTO ErrorDetails VALUES('65024','EN','E','PAN number should not match with the provided PAN number.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
