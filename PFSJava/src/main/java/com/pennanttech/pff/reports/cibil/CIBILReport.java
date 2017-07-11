@@ -559,9 +559,10 @@ public class CIBILReport {
 		builder.append(StringUtils.trimToEmpty(customer.getCustFName()));
 		builder.append(" ");
 		builder.append(StringUtils.trimToEmpty(customer.getCustMName()));
-		builder.append(" ");
+		if (customer.getCustMName() != null) {
+			builder.append(" ");
+		}
 		builder.append(StringUtils.trimToEmpty(customer.getCustLName()));
-
 		String customerName = builder.toString();
 		try {
 
@@ -588,10 +589,9 @@ public class CIBILReport {
 					i = i + builder.length();
 					builder = new StringBuilder(" ");
 					builder.append(name);
-
-					if (i + builder.length() >= regexMatcher.regionEnd()) {
-						writeValue(writer, "0" + field++, StringUtils.substring(builder.toString(), 0, 26), "26");
-					}
+				}
+				if (i + builder.length() >= regexMatcher.regionEnd()) {
+					writeValue(writer, "0" + field++, StringUtils.substring(builder.toString(), 0, 26), "26");
 				}
 			}
 		} catch (Exception e) {
