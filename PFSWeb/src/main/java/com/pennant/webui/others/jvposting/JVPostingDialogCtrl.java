@@ -1355,6 +1355,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
 			return;
 		}
+		
+		if(this.listBoxJVPostingEntry.getItemCount()==0){
+			throw new WrongValueException(this.btnNewJVPostingEntry,"Click to add New Postings");
+		}
 
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);
@@ -1890,6 +1894,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					ComponentsCtrl.applyForward(item,
 							"onDoubleClick=onJVPostingEntryItemDoubleClicked");
 				}
+				Clients.clearWrongValue(this.btnNewJVPostingEntry);
 				this.listBoxJVPostingEntry.appendChild(item);
 			}
 		}
