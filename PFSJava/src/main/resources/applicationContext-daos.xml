@@ -4193,6 +4193,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		
+		<!-- GST -->
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -8624,6 +8627,7 @@
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
 	</bean>
 
 	<!-- CollateralStructure -->

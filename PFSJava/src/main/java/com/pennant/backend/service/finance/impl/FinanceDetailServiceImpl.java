@@ -172,6 +172,7 @@ import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -245,6 +246,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PromotionDAO					promotionDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private FinanceTaxDetailDAO				financeTaxDetailDAO;
+	private FinanceTaxDetailService			financeTaxDetailService;
 	private GCDCustomerService				gCDCustomerService;
 	
 	public FinanceDetailServiceImpl() {
@@ -5051,6 +5053,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			
 			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+			
 			if (taxDetail != null) {
 				if (!financeDetail.isActionSave()) {
 					long custId = taxDetail.getTaxCustId();
@@ -5058,14 +5061,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					boolean idExist = false;
 					
 					if (custId != 0) {
+						//GST Number Validation
 						if(StringUtils.isNotBlank(taxNumber)) {
-							int count = getFinanceTaxDetailDAO().getGSTNumberCount(custId, taxNumber, "_View");
-							if (count != 0) {
-								String[] parameters = new String[2];
-								parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
-								parameters[1] = taxNumber;
-								auditDetails.get(0).setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
-							}
+							getFinanceTaxDetailService().gstNumbeValidation(auditDetails.get(0), taxDetail);
 						}
 					
 						if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())) {
@@ -5081,7 +5079,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							String[] valueParm = new String[1];
 							valueParm[0] = taxDetail.getCustCIF();
 							errParm[0] = valueParm[0];
-							if (!idExist) {
+							
+							if (!idExist) {	//if Co-Applicant is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 										new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
 							}
@@ -5099,11 +5098,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							String[] valueParm = new String[1];
 							valueParm[0] = taxDetail.getCustCIF();
 							errParm[0] = valueParm[0];
-							if (!idExist) {
+							
+							if (!idExist) {	//if Guarantor is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 										new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
 							}
-						}
+						} 
 					}
 				}
 			}
@@ -8641,5 +8641,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
 		this.gCDCustomerService = gCDCustomerService;
+	}
+
+	public FinanceTaxDetailService getFinanceTaxDetailService() {
+		return financeTaxDetailService;
+	}
+
+	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
+		this.financeTaxDetailService = financeTaxDetailService;
 	}
 }

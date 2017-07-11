@@ -44,6 +44,7 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -64,4 +65,5 @@ public interface FinanceTaxDetailService {
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
 	Customer getCustomerByID(long id);
+	AuditDetail gstNumbeValidation(AuditDetail auditDetail, FinanceTaxDetail financeTaxDetail);
 }
