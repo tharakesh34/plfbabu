@@ -9466,4 +9466,11 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 		</createView>
 	</changeSet>	
 	
+	<changeSet id="515" author="Kesav">
+		<sql>
+			Delete from ErrorDetails where errorCode = '65024';
+			INSERT INTO ErrorDetails VALUES('65024','EN','E','GST Number should match with the provided PAN number.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
