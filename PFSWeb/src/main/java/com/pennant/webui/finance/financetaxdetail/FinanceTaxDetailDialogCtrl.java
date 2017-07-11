@@ -145,6 +145,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	private Object									financeMainDialogCtrl	= null;
 	
 	private boolean fromLoan = false;
+	private boolean enquirymode = false;
 
 	/**
 	 * default constructor.<br>
@@ -189,9 +190,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				this.financeTaxDetailListCtrl = (FinanceTaxDetailListCtrl) arguments.get("financeTaxDetailListCtrl");
 			}
 			
-			/*if (arguments.containsKey("enqiryModule")) {
-				enqiryModule=(boolean)arguments.containsKey("enqiryModule");
-			}*/
+			if (arguments.containsKey("enquirymode")) {
+				enquirymode=(boolean)arguments.containsKey("enquirymode");
+			}
 			
 			if (this.financeTaxDetail == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
@@ -878,8 +879,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.province.setValue(aFinanceTaxDetail.getProvince());
 		this.city.setValue(aFinanceTaxDetail.getCity());
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode());
-
-		setCustCIFFilter();
+		if(!enquirymode){			
+			setCustCIFFilter();
+		}
 		
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF());
 		this.custRef.setDescription(aFinanceTaxDetail.getCustShrtName());
@@ -1069,14 +1071,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}
 
 		} else {
-			/*if(enqiryModule){
+			if(enquirymode){
 				this.window_FinanceTaxDetailDialog.setHeight("80%");
 				this.window_FinanceTaxDetailDialog.setWidth("80%");
 				this.groupboxWf.setVisible(false);
+				this.btnEdit.setVisible(false);
+				this.btnDelete.setVisible(false);
+				this.btnNotes.setVisible(false);
+				doReadOnly();
 				this.window_FinanceTaxDetailDialog.doModal() ;
-			}else{	*/			
+			}else{				
 				setDialog(DialogType.EMBEDDED);
-			//}
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

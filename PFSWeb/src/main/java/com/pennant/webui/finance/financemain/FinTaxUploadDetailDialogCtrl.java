@@ -90,6 +90,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private Media								media;
 
 	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
+	
+	private boolean								isvalidData=true;
 
 	@Override
 	protected void doSetProperties() {
@@ -152,7 +154,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			doFillHeaderData(finTaxUploadHeader.getFileName(), finTaxUploadHeader.getBatchCreatedDate(),
 					finTaxUploadHeader.getNumberofRecords(), finTaxUploadHeader.getStatus());
 		}
-
+		this.recordStatus.setValue(finTaxUploadHeader.getRecordStatus());
 		doFillFinTaxUploadData(finTaxUploadHeader.getFinTaxUploadDetailList());
 		setDialog(DialogType.EMBEDDED);
 		logger.debug("Leaving");
@@ -211,14 +213,19 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				status = "Initiated";
 				try {
 					Row nextRow = iterator.next();
-					Iterator<Cell> cellIterator = nextRow.cellIterator();
-					Cell cell = cellIterator.next();
 					if (header) {
 						header = false;
 						continue;
 					}
 					totalCount++;
-					parseExcelData(finTaxUploadDetailList, cellIterator, cell);
+					parseExcelData(finTaxUploadDetailList,nextRow);
+					if(!isvalidData){
+						MessageUtil.showError(
+								"Please Check the Data Format before uploading the document.Should be :Text Format");
+						isvalidData=true;
+						this.uploadedfileName.setValue("");
+						return;
+					}
 				} catch (Exception e) {
 					logger.debug(e);
 				}
@@ -226,6 +233,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			doFillHeaderData(media.getName(), DateUtility.getAppDate(), totalCount, status);
 			doFillFinTaxUploadData(finTaxUploadDetailList);
 			getFinTaxUploadHeader().setFinTaxUploadDetailList(finTaxUploadDetailList);
+			
 
 		} else {
 			MessageUtil.showError(Labels.getLabel("GSTUpload_Supported_Document"));
@@ -234,28 +242,28 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private FinTaxUploadDetail parseExcelData(List<FinTaxUploadDetail> finTaxUploadDetail, Iterator<Cell> cellIterator,
-			Cell cell) {
+	private FinTaxUploadDetail parseExcelData(List<FinTaxUploadDetail> finTaxUploadDetail, Row nextRow) {
 		FinTaxUploadDetail fintaxDetail;
+
 		fintaxDetail = new FinTaxUploadDetail();
-		fintaxDetail.setTaxCode(getValue(cell));
-		fintaxDetail.setAggrementNo(getValue(cellIterator.next()));
-		fintaxDetail.setApplicableFor(getValue(cellIterator.next()));
-		fintaxDetail.setApplicant(getValue(cellIterator.next()));
-		fintaxDetail.setAddrLine1(getValue(cellIterator.next()));
-		fintaxDetail.setAddrLine2(getValue(cellIterator.next()));
-		fintaxDetail.setAddrLine3(getValue(cellIterator.next()));
-		fintaxDetail.setAddrLine4(getValue(cellIterator.next()));
-		fintaxDetail.setPinCode(getValue(cellIterator.next()));
-		fintaxDetail.setCity(getValue(cellIterator.next()));
-		fintaxDetail.setProvince(getValue(cellIterator.next()));
-		fintaxDetail.setCountry(getValue(cellIterator.next()));
-		fintaxDetail.setTaxExempted(getValue(cellIterator.next()).equals("Y") ? true : false);
+		fintaxDetail.setTaxCode(getValue(nextRow.getCell(0, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAggrementNo(getValue(nextRow.getCell(1, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setApplicableFor(getValue(nextRow.getCell(2, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setApplicant(getValue(nextRow.getCell(3, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine1(getValue(nextRow.getCell(4, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine2(getValue(nextRow.getCell(5, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine3(getValue(nextRow.getCell(6, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine4(getValue(nextRow.getCell(7, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setPinCode(getValue(nextRow.getCell(8, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setCity(getValue(nextRow.getCell(9, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setProvince(getValue(nextRow.getCell(10, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setCountry(getValue(nextRow.getCell(11, Row.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setTaxExempted(getValue(nextRow.getCell(12, Row.CREATE_NULL_AS_BLANK)).equals("Y") ? true : false);
 		finTaxUploadDetail.add(fintaxDetail);
 		return fintaxDetail;
 	}
 
-	private static String getValue(Cell cell) {
+	private String getValue(Cell cell) {
 		String value = "";
 
 		switch (cell.getCellType()) {
@@ -271,6 +279,9 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			break;
 		case Cell.CELL_TYPE_NUMERIC:
 			value = String.valueOf(cell.getNumericCellValue());
+			if (value.contains(".0")) {
+				isvalidData=false; 
+			}
 			break;
 		}
 
@@ -307,6 +318,14 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				lc = new Listcell(taxMappingDetail.getApplicableFor());
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getApplicant());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getAddrLine1());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getAddrLine2());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getAddrLine3());
+				lc.setParent(item);
+				lc = new Listcell(taxMappingDetail.getAddrLine4());
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getPinCode());
 				lc.setParent(item);
