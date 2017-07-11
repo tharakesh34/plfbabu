@@ -1421,20 +1421,23 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	public void onFulfill$branchCity(Event event) {
 		logger.debug("Entering");
 		Object dataObject = branchCity.getObject();
-		City details = (City) dataObject;
-
-		if (details != null) {
-			this.branchCity.setValue(details.getPCCity());
-			this.branchCity.setDescription(details.getPCCityName());
-			
-			
-			Filter[] filterPin = new Filter[1];
-			filterPin[0] = new Filter("City", details.getPCCity(), Filter.OP_EQUAL);
-			this.pinCode.setFilters(filterPin);
-
+		if (dataObject instanceof String) {
+			this.branchCity.setValue("","");
 		} else {
-			this.pinCode.setValue("", "");
-			this.pinCode.setFilters(null);
+			City details = (City) dataObject;
+
+			if (details != null) {
+				this.branchCity.setValue(details.getPCCity());
+				this.branchCity.setDescription(details.getPCCityName());
+
+				Filter[] filterPin = new Filter[1];
+				filterPin[0] = new Filter("City", details.getPCCity(), Filter.OP_EQUAL);
+				this.pinCode.setFilters(filterPin);
+
+			} else {
+				this.pinCode.setValue("", "");
+				this.pinCode.setFilters(null);
+			}
 		}
 
 		logger.debug("Leaving");
@@ -1448,7 +1451,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		if (details != null) {
 			this.branchProvince.setValue(details.getCPProvince(), details.getCPProvinceName());
-			this.branchCity.setValue("","");
 
 			Filter[] filterPin = new Filter[1];
 			filterPin[0] = new Filter("PCProvince", details.getCPProvince(), Filter.OP_EQUAL);
@@ -1470,40 +1472,44 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		Object dataObject = pinCode.getObject();
 
-		PinCode details = (PinCode) dataObject;
-
-		if (details != null) {
-
-			this.branchCity.setValue(details.getCity());
-			this.branchCity.setDescription(details.getPCCityName());
-			Filter[] filtersCity = new Filter[1];
-			filtersCity[0] = new Filter("PCCity", details.getCity(), Filter.OP_EQUAL);
-			this.branchCity.setFilters(filtersCity);
-
-			this.branchProvince.setValue(details.getPCProvince());
-			this.branchProvince.setDescription(details.getLovDescPCProvinceName());
-			Filter[] filtersProvince = new Filter[1];
-			filtersProvince[0] = new Filter("CPProvince", details.getPCProvince(), Filter.OP_EQUAL);
-			this.branchProvince.setFilters(filtersProvince);
-
-			this.branchCountry.setValue(details.getpCCountry());
-			this.branchCountry.setDescription(details.getLovDescPCCountryName());
-
+		if (dataObject instanceof String) {
+			this.pinCode.setValue("", "");
+			this.branchCity.setValue("", "");
+			this.branchProvince.setValue("", "");
 		} else {
+			PinCode details = (PinCode) dataObject;
+			if (details != null) {
 
-			this.pinCode.setValue("");
-			this.branchCity.setValue("");
-			this.branchCity.setDescription("");
-			this.branchProvince.setValue("");
-			this.branchProvince.setDescription("");
-			this.branchCountry.setValue("");
-			this.branchCountry.setDescription("");
-			this.branchCity.setFilters(null);
-			this.branchProvince.setFilters(null);
+				this.branchCity.setValue(details.getCity());
+				this.branchCity.setDescription(details.getPCCityName());
+				Filter[] filtersCity = new Filter[1];
+				filtersCity[0] = new Filter("PCCity", details.getCity(), Filter.OP_EQUAL);
+				this.branchCity.setFilters(filtersCity);
 
+				this.branchProvince.setValue(details.getPCProvince());
+				this.branchProvince.setDescription(details.getLovDescPCProvinceName());
+				Filter[] filtersProvince = new Filter[1];
+				filtersProvince[0] = new Filter("CPProvince", details.getPCProvince(), Filter.OP_EQUAL);
+				this.branchProvince.setFilters(filtersProvince);
+
+				this.branchCountry.setValue(details.getpCCountry());
+				this.branchCountry.setDescription(details.getLovDescPCCountryName());
+
+			} else {
+
+				this.pinCode.setValue("");
+				this.branchCity.setValue("");
+				this.branchCity.setDescription("");
+				this.branchProvince.setValue("");
+				this.branchProvince.setDescription("");
+				this.branchCountry.setValue("");
+				this.branchCountry.setDescription("");
+				this.branchCity.setFilters(null);
+				this.branchProvince.setFilters(null);
+
+			}
+			logger.debug("Leaving");
 		}
-
-		logger.debug("Leaving");
 
 	}
 
