@@ -53,7 +53,9 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTaxUploadDetailDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
@@ -61,6 +63,8 @@ import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
@@ -80,6 +84,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	private FinTaxUploadDetailDAO	finTaxUploadDetailDAO;
 	private FinanceTaxDetailDAO		financeTaxDetailDAO;
 	private PinCodeDAO				PinCodeDAO;
+	private FinanceMainDAO		    financeMainDAO;
+	private CustomerDAO		    	customerDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -120,6 +126,14 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
 		PinCodeDAO = pinCodeDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 	@Override
@@ -442,8 +456,27 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 			}
+			FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(taxuploadDetail.getAggrementNo(), "_View",false);
+			if (financeMain == null) {
+				String[] errParams = new String[2];
 
-			
+				errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
+				errParams[1] = taxuploadDetail.getAggrementNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "90701", errParams, valueParm), usrLanguage));
+
+			} else {
+				Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
+
+				if (!StringUtils.equals(customer.getCustCIF(), taxuploadDetail.getApplicant())) {
+					String[] errParams = new String[2];
+					errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
+							+ taxuploadDetail.getApplicant();
+					errParams[1] = taxuploadDetail.getAggrementNo();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+				}
+			}
 			
 			if (taxuploadDetail.getPinCode() != null) {
 				PinCode pincode = getPinCodeDAO().getPinCode(taxuploadDetail.getPinCode(), "_View");
