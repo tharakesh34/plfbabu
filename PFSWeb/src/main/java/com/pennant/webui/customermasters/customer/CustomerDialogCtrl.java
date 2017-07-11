@@ -1989,22 +1989,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.custFirstName.isReadonly()) {
 				this.custFirstName.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_CustFirstName.value"),
-						PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, isMandValidate));
 			}
 			if (!this.custMiddleName.isReadonly()) {
 				this.custMiddleName.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_CustMiddleName.value"),
-						PennantRegularExpressions.REGEX_CUST_NAME, false));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, false));
 			}
 			if (!this.custLastName.isReadonly()) {
 				this.custLastName.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_CustLastName.value"),
-						PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, isMandValidate));
 			}
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-						PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+						PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, isMandValidate));
 			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {
