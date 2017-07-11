@@ -4,16 +4,19 @@ import java.util.Date;
 
 public class FileDownlaod {
 	
-	private long    Id;
+	private long Id;
 	private String finReference;
 	private String partnerBankCode;
 	private String name;
 	private String fileName;
 	private String fileLocation;
 	private String partnerBankName;
-	private boolean  alwFileDownload;
+	private boolean alwFileDownload;
 	private String status;
 	private Date endTime;
+	private String postEvent;
+	private String prefix;
+	private long configId;
 
 	public String getName() {
 		return name;
@@ -94,6 +97,30 @@ public class FileDownlaod {
 
 	public void setId(long id) {
 		Id = id;
+	}
+
+	public String getPostEvent() {
+		return postEvent;
+	}
+
+	public void setPostEvent(String postEvent) {
+		this.postEvent = postEvent;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public long getConfigId() {
+		return configId;
+	}
+
+	public void setConfigId(long configId) {
+		this.configId = configId;
 	}
 
 }
