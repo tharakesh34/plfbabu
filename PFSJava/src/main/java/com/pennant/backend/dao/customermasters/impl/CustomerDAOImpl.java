@@ -1234,7 +1234,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		Customer customer = new Customer();
 		customer.setId(id);		
 		
-		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName ");
+		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR ");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
 		
