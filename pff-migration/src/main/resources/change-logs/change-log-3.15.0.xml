@@ -9485,4 +9485,10 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="517" author="Kesav">
+		<sql>
+			UPDATE ERRORDETAILS SET ERRORMESSAGE = 'Receipt Fee Details should be mandatory for Fee Type : {0}.' WHERE ERRORCODE = '65019';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
