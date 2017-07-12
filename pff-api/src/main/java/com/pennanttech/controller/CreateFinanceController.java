@@ -29,10 +29,12 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -57,6 +59,7 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -72,11 +75,14 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.engine.WorkflowEngine;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -99,7 +105,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 	private CustomerAddresService		customerAddresService;
 	private ManualAdviseDAO				manualAdviseDAO;
+	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
+	private FinanceWorkFlowService		financeWorkFlowService;
 
+	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -128,20 +137,53 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			financeMain.setFinReference(finReference);
 			finScheduleData.setFinReference(financeMain.getFinReference());
+			WorkFlowDetails workFlowDetails = null;
+			String roleCode = null;
+			String taskid = null;
+			long  workFlowId = 0;
+			if (financeMain.isQuickDisb()) {
+				String finType = financeMain.getFinType();
+				int finRefType = FinanceConstants.PROCEDT_LIMIT;
+				String quickDisbCode = FinanceConstants.QUICK_DISBURSEMENT;
+				List<String> roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
+						quickDisbCode);
+				 roleCode = null;
+				for (String role : roles) {
+					roleCode = StringUtils.replace(role, ",", "");
+				}
+				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+
+				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+						financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+				if (financeWorkFlow != null) {
+					workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+					if (workFlowDetails != null) {
+						WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+						taskid = workflow.getUserTaskId(roleCode);
+						workFlowId=workFlowDetails.getWorkFlowId();
+					}
+				}
+
+			}
 
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			financeMain.setWorkflowId(0);
+			financeMain.setWorkflowId(workFlowId);
+			financeMain.setRoleCode(roleCode);
+			financeMain.setNextRoleCode(roleCode);
+			financeMain.setTaskId(taskid);
+			financeMain.setNextTaskId(getNextTaskId(taskid));
 			financeMain.setNewRecord(true);
 			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeMain.setLastMntBy(userDetails.getLoginUsrID());
-			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(),userDetails));
+			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 
 	
 			finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
-			doSetRequiredDetails(financeDetail, loanWithWIF);
+			doSetRequiredDetails(financeDetail, loanWithWIF,roleCode,taskid,workFlowId,userDetails);
+			
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
@@ -202,7 +244,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set LastMntBy , LastMntOn and status fields to schedule details
 			for (FinanceScheduleDetail schdDetail : finScheduleData.getFinanceScheduleDetails()) {
 				schdDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				schdDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				schdDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				schdDetail.setWorkflowId(workFlowId);
+				schdDetail.setRoleCode(roleCode);
+				schdDetail.setNextRoleCode(roleCode);
+				schdDetail.setTaskId(taskid);
+				schdDetail.setNextTaskId(getNextTaskId(taskid));
 			}
 
 			// Finance detail object
@@ -220,7 +267,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			
 			// save the finance details into main table
+			if(!financeMain.isQuickDisb()){
 			auditHeader = financeDetailService.doApprove(auditHeader, false);
+			} else {
+				auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
+
+			}
 
 			FinanceDetail response = null;
 			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
@@ -272,6 +324,22 @@ public class CreateFinanceController extends SummaryDetailService {
 		return null;
 	}
 
+	private long getLastMntBy(boolean quickDisb, LoggedInUser userDetails) {
+		if (!quickDisb) {
+
+			return userDetails.getLoginUsrID();
+		} else {
+			return 0;
+		}
+	}
+	private String getRecordStatus(boolean quickDisb) {
+		if(!quickDisb) {
+			return PennantConstants.RCD_STATUS_APPROVED;
+		} else {
+			return PennantConstants.RCD_STATUS_SAVED;
+		}
+	}
+
 	/**
 	 * prepare finance detail object with required data to process finance origination.<br>
 	 * 
@@ -280,10 +348,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF) throws IllegalAccessException, InvocationTargetException {
+	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF,String roleCode,String taksId,long workflowId,LoggedInUser userDetails) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 		financeDetail.setUserDetails(userDetails);
@@ -366,10 +432,16 @@ public class CreateFinanceController extends SummaryDetailService {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
 			vasRecording.setVersion(1);
-			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			vasRecording.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
+			//workflow related
+			vasRecording.setWorkflowId(workflowId);
+			vasRecording.setRoleCode(roleCode);
+			vasRecording.setNextRoleCode(roleCode);
+			vasRecording.setTaskId(taksId);
+			vasRecording.setNextTaskId(getNextTaskId(taksId));
 			// process Extended field details
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
 			if (extendedFields != null) {
@@ -377,12 +449,19 @@ public class CreateFinanceController extends SummaryDetailService {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 				exdFieldRender.setSeqNo(++seqNo);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				exdFieldRender.setVersion(1);
+				//workflow related
+				exdFieldRender.setWorkflowId(workflowId);
+				exdFieldRender.setRoleCode(roleCode);
+				exdFieldRender.setNextRoleCode(roleCode);
+				exdFieldRender.setTaskId(taksId);
+				exdFieldRender.setNextTaskId(getNextTaskId(taksId));
+				
 				for (ExtendedField extendedField : extendedFields) {
 
 					Map<String, Object> mapValues = new HashMap<String, Object>();
@@ -398,7 +477,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 				exdFieldRender.setSeqNo(0);
 				exdFieldRender.setNewRecord(true);
@@ -420,8 +499,14 @@ public class CreateFinanceController extends SummaryDetailService {
 				flagDetail.setVersion(1);
 				flagDetail.setLastMntBy(userDetails.getLoginUsrID());
 				flagDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				flagDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				flagDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 				flagDetail.setUserDetails(financeMain.getUserDetails());
+				//workflow related
+				flagDetail.setWorkflowId(workflowId);
+				flagDetail.setRoleCode(roleCode);
+				flagDetail.setNextRoleCode(roleCode);
+				flagDetail.setTaskId(taksId);
+				flagDetail.setNextTaskId(getNextTaskId(taksId));
 			}
 		}
 
@@ -436,12 +521,19 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			financeDetail.getMandate().setNewRecord(true);
+			financeDetail.getMandate().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeDetail.getMandate().setLastMntBy(userDetails.getLoginUsrID());
 			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeDetail.getMandate().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			financeDetail.getMandate().setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
 			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 			financeDetail.getMandate().setVersion(1);
+			//workflow
+			financeDetail.getMandate().setWorkflowId(workflowId);
+			financeDetail.getMandate().setRoleCode(roleCode);
+			financeDetail.getMandate().setNextRoleCode(roleCode);
+			financeDetail.getMandate().setTaskId(taksId);
+			financeDetail.getMandate().setNextTaskId(getNextTaskId(taksId));
 			
 			// mandate details
 			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
@@ -461,9 +553,15 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setNewRecord(true);
 			jointAccDetail.setLastMntBy(userDetails.getLoginUsrID());
 			jointAccDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			jointAccDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			jointAccDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			jointAccDetail.setUserDetails(financeMain.getUserDetails());
 			jointAccDetail.setVersion(1);
+			//workflow
+			jointAccDetail.setWorkflowId(workflowId);
+			jointAccDetail.setRoleCode(roleCode);
+			jointAccDetail.setNextRoleCode(roleCode);
+			jointAccDetail.setTaskId(taksId);
+			jointAccDetail.setNextTaskId(getNextTaskId(taksId));
 		}
 
 		// guarantor details
@@ -489,9 +587,15 @@ public class CreateFinanceController extends SummaryDetailService {
 			guarantorDetail.setNewRecord(true);
 			guarantorDetail.setLastMntBy(userDetails.getLoginUsrID());
 			guarantorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			guarantorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			guarantorDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			guarantorDetail.setUserDetails(financeMain.getUserDetails());
 			guarantorDetail.setVersion(1);
+			//workflow
+			guarantorDetail.setWorkflowId(workflowId);
+			guarantorDetail.setRoleCode(roleCode);
+			guarantorDetail.setNextRoleCode(roleCode);
+			guarantorDetail.setTaskId(taksId);
+			guarantorDetail.setNextTaskId(getNextTaskId(taksId));
 		}
 
 		// document details
@@ -501,6 +605,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setVersion(1);
+			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			//workflow relates
+			detail.setWorkflowId(workflowId);
+			detail.setRoleCode(roleCode);
+			detail.setNextRoleCode(roleCode);
+			detail.setTaskId(taksId);
+			detail.setNextTaskId(getNextTaskId(taksId));
 		}
 
 		financeDetail.setFinScheduleData(finScheduleData);
@@ -521,8 +632,14 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setLastMntBy(userDetails.getLoginUsrID());
 			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
 			detail.setVersion(1);
+			//workflow relates
+			detail.setWorkflowId(workflowId);
+			detail.setRoleCode(roleCode);
+			detail.setNextRoleCode(roleCode);
+			detail.setTaskId(taksId);
+			detail.setNextTaskId(getNextTaskId(taksId));
 		}
 
 		// Set VAS reference as feeCode for VAS related fees
@@ -605,6 +722,14 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	}
 
+	private String getNextTaskId(String taksId) {
+		if(StringUtils.isBlank(taksId)){
+			return null;
+		} else {
+			return taksId+";";
+		}
+		
+	}
 	/**
 	 * Method for prepare API response object
 	 * 
@@ -1028,5 +1153,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
-
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
 }

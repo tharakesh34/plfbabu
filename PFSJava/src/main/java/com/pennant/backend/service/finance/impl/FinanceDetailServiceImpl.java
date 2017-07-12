@@ -2116,8 +2116,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
-						tableType.getSuffix(), auditTranType));
+				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)){
+					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
+							tableType.getSuffix(), auditTranType));	
+				} else {
+					auditDetails.addAll(getFinAdvancePaymentsService().processAPIQuickDisbursment(financeDetail,
+							tableType.getSuffix(), auditTranType));	
+				}
+				
 			} else {
 				if (financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
 					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(

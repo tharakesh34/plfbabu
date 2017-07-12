@@ -539,7 +539,19 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		return auditDetails;
 	}
+	@Override
+	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType,
+			String auditTranType) {
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
+		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
+			return auditDetails;
+		}
+		processDisbursments(financeDetail);
+		auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
+		return auditDetails;
+	}
 	@Override
 	public void doCancel(FinanceDetail financeDetail) {
 		FinScheduleData schdata = financeDetail.getFinScheduleData();
