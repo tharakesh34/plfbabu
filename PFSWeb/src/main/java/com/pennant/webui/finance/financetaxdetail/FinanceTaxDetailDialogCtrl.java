@@ -282,6 +282,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
+		logger.debug(Literal.ENTERING);
+		
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
@@ -293,6 +295,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		} catch (Exception e) {
 			logger.error(e);
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
@@ -361,7 +365,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	}
 
 	public void onFulfill$finReference(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		
 		Object dataObject = finReference.getObject();
 		doClear();
@@ -378,7 +382,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				this.taxCustId = financeMain.getCustID();
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	/**
@@ -404,7 +409,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		doSave();
+		
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -417,7 +424,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		doEdit();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -429,7 +438,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		MessageUtil.showHelpWindow(event, super.window);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -441,7 +452,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnDelete(Event event)  throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+		
 		doDelete();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -453,7 +466,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		doCancel();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -465,7 +480,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		doClose(this.btnSave.isVisible());
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -477,7 +494,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
+		
 		doShowNotes(this.financeTaxDetail);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -486,7 +505,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		financeTaxDetailListCtrl.search();
+		
+		this.financeTaxDetailListCtrl.search();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -522,6 +543,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		
 		if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(applicable)) {
 			Customer customer = null;
+			
 			if (fromLoan) {
 				customer = this.financeDetail.getCustomerDetails().getCustomer();
 			} else {
@@ -542,6 +564,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			readOnlyComponent(true, this.custRef);
 		} else if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicable)) {
 			List<String> custCIFList = new ArrayList<>();
+			
 			if (fromLoan) {
 				if (jntDialogCtrl != null) {
 					for (Customer customer : jntDialogCtrl.getJointAccountCustomers()) {
@@ -553,6 +576,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 					custCIFList.add(jointAccDet.getCustCIF());
 				}
 			}
+			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
 			custRefFilter[0] = new Filter("CustCif", custCIFList, Filter.OP_IN);
@@ -572,6 +596,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 					guarantorDetails.add(guarantorDetail.getGuarantorCIF());
 				}
 			}
+			
 			// set CustomerReference as Filter for finLimitRef
 			Filter custRefFilter[] = new Filter[1];
 			custRefFilter[0] = new Filter("CustCif", guarantorDetails, Filter.OP_IN);
@@ -610,6 +635,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	}
 
 	private void readOnlyComponentChecking() {
+		logger.debug("Entering");
+		
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxExempted"), this.taxExempted);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxNumber"), this.taxNumber);
@@ -621,17 +648,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Province"), this.province);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_City"), this.city);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_PinCode"), this.pinCode);
+		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	
 	public void onFulfill$custRef(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
 
 		Object dataObject = custRef.getObject();
 		if (dataObject instanceof String) {
 			this.custRef.setValue(dataObject.toString());
 			this.custRef.setDescription(dataObject.toString());
-			//this.taxNumber.setValue("");
 		} else {
 			Customer customer = (Customer) dataObject;
 			if (customer != null) {
@@ -641,25 +669,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$province(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
+
 		Object dataObject = province.getObject();
 		String pcProvince = null;
-		//String taxNumberValue = this.taxNumber.getValue();
 		if (dataObject instanceof String) {
-			/*if (taxNumberValue.length() > 10) {
-				String suffix = taxNumberValue.substring(2);
-				this.taxNumber.setValue(suffix + panNum);
-			} else if(taxNumberValue.length() == 2) {
-				this.taxNumber.setValue("");
-			} else if (taxNumberValue.length() == 10) {
-				//do nothing
-			} else {
-				this.taxNumber.setValue("");
-			}*/
 			fillPindetails(null, null);
 		} else {
 			Province province = (Province) dataObject;
@@ -668,31 +686,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			}
 			if (province != null) {
 				this.province.setErrorMessage("");
-				//this.taxNumber.setErrorMessage("");
-				
 				pcProvince = this.province.getValue();
 				fillPindetails(null, pcProvince);
-				/*String taxStateCode = province.getTaxStateCode() == null ? "" : province.getTaxStateCode();
-				if (taxNumberValue.length() == 10) {
-					this.taxNumber.setValue(taxStateCode + taxNumberValue + panNum );
-				} else if (taxNumberValue.length() > 10) {
-					String suffix = taxNumberValue;
-					//String suffix = taxNumberValue.substring(2);
-					this.taxNumber.setValue(taxStateCode + suffix + panNum );
-				} else {
-					this.taxNumber.setValue(taxStateCode + panNum);
-				}*/
-			}else{
-				/*if (taxNumberValue.length() > 10) {
-					String suffix = taxNumberValue.substring(2);
-					this.taxNumber.setValue(suffix + panNum);
-				} else if(taxNumberValue.length() == 2) {
-					this.taxNumber.setValue("");
-				} else if (taxNumberValue.length() == 10) {
-					//do nothing
-				} else {
-					this.taxNumber.setValue("");
-				}*/
 			}
 		}
 		
@@ -703,7 +698,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.pinCode.setValue("");
 		this.pinCode.setDescription("");
 		fillCitydetails(pcProvince);
-		logger.debug("Leaving" + event.toString());
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void fillCitydetails(String state) {
@@ -713,17 +709,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
 		this.city.setValidateColumns(new String[] { "PCCity" });
-		Filter[] filters1 = new Filter[2];
+		Filter[] filters = new Filter[2];
 		
 		if (state == null) {
-			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
+			filters[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
 		} else {
-			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
 		}
 		
-		filters1[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		this.city.setFilters(filters);
 		
-		this.city.setFilters(filters1);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -744,26 +741,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		} else {
 			City city = (City) dataObject;
 			if (city != null) {
-				
 				this.city.setErrorMessage("");
 				this.province.setErrorMessage("");
-				//this.taxNumber.setErrorMessage("");
 				
 				this.province.setValue(city.getPCProvince());
 				this.province.setDescription(city.getLovDescPCProvinceName());
 				cityValue = this.city.getValue();
-				//String taxNumberValue = this.taxNumber.getValue();
-				//String citytaxStateCode = city.getTaxStateCode() == null ? "" : city.getTaxStateCode();
-				/*if (taxNumberValue.length() == 10) {
-					this.taxNumber.setValue(citytaxStateCode + taxNumberValue);
-				}else if (taxNumberValue.length() > 10) {
-					String suffix = taxNumberValue.substring(2);
-					this.taxNumber.setValue(citytaxStateCode + suffix);
-				} else {
-					this.taxNumber.setValue(citytaxStateCode);
-				}*/
 			}
 		}
+		
 		fillPindetails(cityValue, this.province.getValue());
 		
 		this.pinCode.setObject("");
@@ -774,23 +760,26 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	}
 
 	private void fillPindetails(String cityValue, String provice) {
+		logger.debug("Entering");
+		
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("AreaName");
 		this.pinCode.setValidateColumns(new String[] { "PinCode" });
-		Filter[] filters1 = new Filter[2];
+		Filter[] filters = new Filter[2];
 		
 		if (cityValue != null) {
-			filters1[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
+			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
 		} else if(provice != null && !provice.isEmpty()) {
-			filters1[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
+			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
 		} else {
-			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+			filters[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
 		
-		filters1[1] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.pinCode.setFilters(filters);
 		
-		this.pinCode.setFilters(filters1);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -813,6 +802,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				this.city.setDescription(pinCode.getPCCityName());
 				this.province.setValue(pinCode.getPCProvince());
 				this.province.setDescription(pinCode.getLovDescPCProvinceName());
+				this.country.setValue(pinCode.getpCCountry());
+				this.country.setDescription(pinCode.getLovDescPCCountryName());
 				
 				this.city.setErrorMessage("");
 				this.province.setErrorMessage("");
@@ -879,6 +870,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.province.setValue(aFinanceTaxDetail.getProvince());
 		this.city.setValue(aFinanceTaxDetail.getCity());
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode());
+		
 		if(!enquirymode){			
 			setCustCIFFilter();
 		}
@@ -890,10 +882,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	}
 	
 	private String getExcludeFields() {
+		logger.debug(Literal.ENTERING);
+		
 		String excludeFields = "";
 		if (fromLoan && this.jntDialogCtrl == null) {
 			excludeFields = "," + PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT + "," + PennantConstants.TAXAPPLICABLEFOR_GUARANTOR + ",";
 		}
+		
+		logger.debug(Literal.LEAVING);
+		
 		return excludeFields;
 	}
 
@@ -1069,7 +1066,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			if (parenttab != null) {
 				this.parenttab.setVisible(true);
 			}
-
 		} else {
 			if(enquirymode){
 				this.window_FinanceTaxDetailDialog.setHeight("80%");
@@ -1094,10 +1090,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		/*if (!this.applicableFor.isDisabled()){
-			this.applicableFor.setConstraint(new StaticListValidator(listApplicableFor,Labels.getLabel("label_FinanceTaxDetailDialog_ApplicableFor.value")));
-		}*/
-		
 		if (!this.finReference.isReadonly()){
 			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTaxDetailDialog_FinReference.value"),null,true, true));
 		}
@@ -1171,19 +1163,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Finance Reference
-		//Applicable For
-		//Tax Exempted
-		//Tax Number
-		//Address Line 1
-		//Address Line 2
-		//Address Line 3
-		//Address Line 4
-		//Country
-		//Province
-		//City
-		//Pin Code
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1229,32 +1208,32 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 
 		final FinanceTaxDetail aFinanceTaxDetail = new FinanceTaxDetail();
 		BeanUtils.copyProperties(this.financeTaxDetail, aFinanceTaxDetail);
-		String tranType=PennantConstants.TRAN_WF;
+		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinanceTaxDetail.getFinReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aFinanceTaxDetail.getRecordType()).equals("")){
-				aFinanceTaxDetail.setVersion(aFinanceTaxDetail.getVersion()+1);
+			if (StringUtils.trimToEmpty(aFinanceTaxDetail.getRecordType()).equals("")) {
+				aFinanceTaxDetail.setVersion(aFinanceTaxDetail.getVersion() + 1);
 				aFinanceTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()){
+				if (isWorkFlowEnabled()) {
 					aFinanceTaxDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aFinanceTaxDetail.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinanceTaxDetail.getNextTaskId(), aFinanceTaxDetail);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinanceTaxDetail.getNextTaskId(),
+							aFinanceTaxDetail);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
 			try {
-				if(doProcess(aFinanceTaxDetail,tranType)){
+				if (doProcess(aFinanceTaxDetail, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-
-			}catch (DataAccessException e){
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
 		}
@@ -1279,21 +1258,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.finReference);
 		}
-		/*if (!fromLoan) {
-			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.applicableFor);
-			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxNumber"), this.taxNumber);
-			readOnlyComponent(true, this.custRef);
-			readOnlyComponent(true, this.taxExempted);
-			readOnlyComponent(true, this.addrLine1);
-			readOnlyComponent(true, this.addrLine2);
-			readOnlyComponent(true, this.addrLine3);
-			readOnlyComponent(true, this.addrLine4);
-			readOnlyComponent(true, this.country);
-			readOnlyComponent(true, this.province);
-			readOnlyComponent(true, this.city);
-			readOnlyComponent(true, this.pinCode);
-		} else {
-		}*/
+
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.applicableFor);
 		readOnlyComponentChecking();
 
@@ -1418,14 +1383,22 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 				refreshList();
 				closeDialog();
 			}
-
 		} catch (final DataAccessException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
+	
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * used only for Loan Origination
+	 * 
+	 * @param financeDetail
+	 * @param tab
+	 * @param recSave
+	 * @throws InterruptedException
+	 */
 	public void doSave_Tax(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
 
@@ -1434,8 +1407,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			doSetValidation();
 		}
 
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean(financeTaxDetail);
-		financeTaxDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		ArrayList<WrongValueException> wve = doWriteComponentsToBean(this.financeTaxDetail);
+		this.financeTaxDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 		
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
@@ -1443,16 +1416,16 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		
 		showErrorDetails(wve);
 
-		if (StringUtils.isBlank(financeTaxDetail.getRecordType())) {
-			financeTaxDetail.setVersion(financeTaxDetail.getVersion() + 1);
-			financeTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			financeTaxDetail.setNewRecord(true);
+		if (StringUtils.isBlank(this.financeTaxDetail.getRecordType())) {
+			this.financeTaxDetail.setVersion(this.financeTaxDetail.getVersion() + 1);
+			this.financeTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			this.financeTaxDetail.setNewRecord(true);
 		}
 		
-		financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-		financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		financeDetail.setTaxDetail(financeTaxDetail);
+		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		this.financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		this.financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+		financeDetail.setTaxDetail(this.financeTaxDetail);
 		
 		logger.debug("Leaving");
 	}
@@ -1471,6 +1444,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	private boolean doProcess(FinanceTaxDetail aFinanceTaxDetail, String tranType) {
 		logger.debug("Entering");
+		
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1499,7 +1473,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
 					}
-
 				}
 			}
 			if (!StringUtils.isBlank(nextTaskId)) {
@@ -1545,6 +1518,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		}
 
 		logger.debug("Leaving");
+		
 		return processCompleted;
 	}
 
@@ -1560,15 +1534,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
+		
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		FinanceTaxDetail aFinanceTaxDetail = (FinanceTaxDetail) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
-
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = financeTaxDetailService.delete(auditHeader);
@@ -1576,7 +1549,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 					} else {
 						auditHeader = financeTaxDetailService.saveOrUpdate(auditHeader);
 					}
-
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = financeTaxDetailService.doApprove(auditHeader);
@@ -1584,13 +1556,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 						if (aFinanceTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = financeTaxDetailService.doReject(auditHeader);
 						if (aFinanceTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
 								.getLabel("InvalidWorkFlowMethod"), null));
@@ -1623,6 +1593,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("Leaving");
+		
 		return processCompleted;
 	}
 
@@ -1632,7 +1603,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 */
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
 		logger.debug("Entering");
+	
 		doRemoveValidation();
+		
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			if (parenttab != null) {
@@ -1653,7 +1626,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	 * @param tranType
 	 * @return
 	 */
-
 	private AuditHeader getAuditHeader(FinanceTaxDetail aFinanceTaxDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceTaxDetail.getBefImage(), aFinanceTaxDetail);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aFinanceTaxDetail.getUserDetails(),
@@ -1702,5 +1674,4 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
 		this.jointAccountDetailList = jointAccountDetailList;
 	}
-
 }
