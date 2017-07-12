@@ -9490,5 +9490,11 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			UPDATE ERRORDETAILS SET ERRORMESSAGE = 'Receipt Fee Details should be mandatory for Fee Type : {0}.' WHERE ERRORCODE = '65019';
 		</sql>
 	</changeSet>
+	<changeSet id="517" author="Madhubabu">
+		<sql>
+			Delete from ErrorDetails where errorCode = '99012';
+			INSERT INTO ErrorDetails VALUES('99012','EN','E','Customer Alterady exists in the source system :PLF ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
