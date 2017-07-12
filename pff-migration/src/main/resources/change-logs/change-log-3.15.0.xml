@@ -9505,5 +9505,17 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 
 		</sql>
 	</changeSet>
+	<changeSet id="519" author="Madhubabu">
+		<sql>
+			Delete from ErrorDetails where errorCode = '99013';
+			INSERT INTO ErrorDetails VALUES('99013','EN','E','Customer Alterady exists in the source system :PLF ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="520" author="Madhubabu">
+		<sql>
+			Delete from ErrorDetails where errorCode = '99014';
+			INSERT INTO ErrorDetails VALUES('99014','EN','E','{0} Creation rejected by Finone Reason: {1} ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
