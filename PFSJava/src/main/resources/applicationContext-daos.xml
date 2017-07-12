@@ -10284,6 +10284,8 @@
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
 	</bean>
 
 
