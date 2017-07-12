@@ -1233,7 +1233,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (!this.beneficiaryName.isReadonly()) {
 				this.beneficiaryName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
-								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+								PennantRegularExpressions.REGEX_FAVOURING_NAME, true));
 			}
 			if (!this.beneficiaryAccNo.isReadonly()) {
 				this.beneficiaryAccNo.setConstraint(
