@@ -102,6 +102,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -634,9 +635,9 @@ public class FinanceDataValidation {
 					}
 				}
 				int extendedDetailsCount = 0;
-				if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-					for (ExtendedFieldDetail extended : vASConfiguration.getExtendedFieldHeader()
-							.getExtendedFieldDetails()) {
+				List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails();
+				if (exdFldConfig != null) {
+					for (ExtendedFieldDetail extended : exdFldConfig) {
 						if (extended.isFieldMandatory()) {
 							extendedDetailsCount++;
 						}
@@ -706,7 +707,17 @@ public class FinanceDataValidation {
 				if(detail.getExtendedDetails() != null){
 				for (ExtendedField details : detail.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						for (ExtendedFieldDetail detail1 : exdFldConfig) {
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail1.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail1.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_BR"));
+							}
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail1.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail1.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_SC"));
+							}
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						}
 					}
 				}
 				}
@@ -2080,10 +2091,18 @@ public class FinanceDataValidation {
 			valueParm[2] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
 		}
-		if(finMain.isTDSApplicable()){
-			if(!financeType.isTDSApplicable()){
+		if (finMain.isTDSApplicable()) {
+			if (!financeType.isTDSApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
+				valueParm[1] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+			}
+		}
+		if (finMain.isQuickDisb()) {
+			if (!financeType.isQuickDisb()) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "quickDisb";
 				valueParm[1] = financeType.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
 			}

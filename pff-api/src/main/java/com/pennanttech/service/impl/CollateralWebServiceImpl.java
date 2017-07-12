@@ -65,30 +65,35 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 	@Override
 	public CollateralSetup createCollateral(CollateralSetup collateralSetup) throws ServiceException {
 		logger.debug("Entering");
-		
+
 		// bean validations
 		validationUtility.validate(collateralSetup, SaveValidationGroup.class);
-		
-		//bussiness validations
-		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
-		
 		CollateralSetup response = null;
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				response = new CollateralSetup();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-						errorDetail.getError()));
-				return response;
+		try {
+			//bussiness validations
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
+
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+					response = new CollateralSetup();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+					return response;
+				}
 			}
+
+			// call create collateral controller service
+			response = collateralController.createCollateral(collateralSetup);
+
+			if (StringUtils.equals(response.getReturnStatus().getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
+				response = getCreateCollateralResponse(response);
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			response = new CollateralSetup();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		
-		// call create collateral controller service
-		response = collateralController.createCollateral(collateralSetup);
-		
-		if(StringUtils.equals(response.getReturnStatus().getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
-			response = getCreateCollateralResponse(response);
-		}
-		
+
 		logger.debug("Leaving");
 		return response;
 	}
@@ -104,11 +109,12 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		logger.debug("Entering");
 		// bean validations
 		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
-		
+		WSReturnStatus response = null;
+		try{
 		// bussiness validations
 		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update");
 
-		WSReturnStatus response = null;
+		
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
 				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
@@ -117,7 +123,11 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 
 		// call create collateral controller service
 		response = collateralController.updateCollateral(collateralSetup);
-
+		}catch (Exception e) {
+			logger.error(e);
+			response = new WSReturnStatus();
+			response=APIErrorHandlerService.getFailedStatus();
+		}
 		logger.debug("Leaving");
 		return response;
 	}
@@ -134,10 +144,10 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		
 		// bean validations
 		validationUtility.validate(collateralSetup, DeleteValidationGroup.class); 
-		
+		WSReturnStatus response = null;
+		try{
 		AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
 		
-		WSReturnStatus response = null;
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
 				return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
@@ -146,7 +156,11 @@ public class CollateralWebServiceImpl implements CollateralRestService,Collatera
 		
 		// call delete collateral service
 		response = collateralController.deleteCollateral(collateralSetup);
-		
+		}catch (Exception e) {
+			logger.error(e);
+			response = new WSReturnStatus();
+			response=APIErrorHandlerService.getFailedStatus();
+		}
 		logger.debug("Leaving");
 		return response;
 	}

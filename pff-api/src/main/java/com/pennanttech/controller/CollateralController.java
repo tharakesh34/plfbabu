@@ -143,7 +143,12 @@ public class CollateralController {
 			logger.error(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90275"));
-		} catch (Exception e) {
+		} 
+		catch (RuntimeException e) {
+			logger.error(e);
+			response = new CollateralSetup();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}catch (Exception e) {
 			logger.error(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());

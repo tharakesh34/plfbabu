@@ -132,6 +132,7 @@ import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -2098,8 +2099,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			}
 			int extendedDetailsCount = 0;
+			List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails();
 			if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-				for (ExtendedFieldDetail detail : vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails()) {
+				for (ExtendedFieldDetail detail : exdFldConfig) {
 					if (detail.isFieldMandatory()) {
 						extendedDetailsCount++;
 					}
@@ -2174,7 +2176,17 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if(vasRecording.getExtendedDetails() != null){
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						for (ExtendedFieldDetail detail : exdFldConfig) {
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_BR"));
+							}
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_SC"));
+							}
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						}
 					}
 				}
 			}
