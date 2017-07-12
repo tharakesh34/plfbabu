@@ -9472,5 +9472,11 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('65024','EN','E','GST Number should match with the provided PAN number.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<changeSet id="516" author="Madhubabu">
+		<sql>
+			Delete from ErrorDetails where errorCode = '99008';
+			INSERT INTO ErrorDetails VALUES('99008','EN','E','{0} does not exists with Number :{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
