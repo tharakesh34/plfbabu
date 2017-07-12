@@ -9476,6 +9476,12 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 		<sql>
 			Delete from ErrorDetails where errorCode = '99008';
 			INSERT INTO ErrorDetails VALUES('99008','EN','E','{0} does not exists with Number :{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			Delete from ErrorDetails where errorCode = '99009';
+			INSERT INTO ErrorDetails VALUES('99009','EN','E','Customer CIF: {0} is  not available in Co-Applicant Details for aggrement number:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			Delete from ErrorDetails where errorCode = '99010';
+			INSERT INTO ErrorDetails VALUES('99010','EN','E','For Applicant :{0} State Code not Matching with the First 2 charectors of the Provided GSTIN with the aggrement no:{1}'  .','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			Delete from ErrorDetails where errorCode = '99011';
+			INSERT INTO ErrorDetails VALUES('99011','EN','E','Applicant :{0} PAN No.not Matching with the GSTIN for aggrement no:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
 	
