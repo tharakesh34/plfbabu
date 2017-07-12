@@ -16,6 +16,7 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -46,6 +47,7 @@ public class SummaryDetailService {
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
 	private AccrualService			accrualService;
 	protected FinExcessAmountDAO	finExcessAmountDAO;
+	private FinFeeDetailDAO			finFeeDetailDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -62,8 +64,11 @@ public class SummaryDetailService {
 			
 			// calculate total paid fees
 			BigDecimal totFeeAmount = BigDecimal.ZERO;
-			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-				for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+			
+			// Fetch total fee details to capture total fee paid by customer
+			List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
+			if (feeDetails != null) {
+				for (FinFeeDetail feeDetail : feeDetails) {
 					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
 							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
@@ -419,5 +424,9 @@ public class SummaryDetailService {
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 }
