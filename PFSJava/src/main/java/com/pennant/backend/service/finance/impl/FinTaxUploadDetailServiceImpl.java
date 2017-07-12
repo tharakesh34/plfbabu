@@ -57,6 +57,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTaxUploadDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
@@ -65,9 +66,12 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinTaxUploadDetailService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.InterfaceException;
@@ -84,8 +88,10 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	private FinTaxUploadDetailDAO	finTaxUploadDetailDAO;
 	private FinanceTaxDetailDAO		financeTaxDetailDAO;
 	private PinCodeDAO				PinCodeDAO;
-	private FinanceMainDAO		    financeMainDAO;
-	private CustomerDAO		    	customerDAO;
+	private FinanceMainDAO			financeMainDAO;
+	private CustomerDAO				customerDAO;
+	private ProvinceDAO				provinceDAO;
+	private JointAccountDetailService jointAccountDetailService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -134,6 +140,15 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
 	}
 
 	@Override
@@ -379,7 +394,10 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		for (FinTaxUploadDetail taxuploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
 			String[] errParm = new String[3];
 			String[] valueParm = new String[1];
+			boolean idExist=false;
 			errParm[0] = String.valueOf(taxuploadDetail.getAggrementNo());
+			
+			//--------Length validations-----------------------------------
 			if (taxuploadDetail.getTaxCode().length() > 20) {
 				errParm[1] = PennantJavaUtil.getLabel("label_Gstin");
 				errParm[2] = 20 + "";
@@ -398,25 +416,26 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine1()!=null && taxuploadDetail.getAddrLine1().length() > 100) {
+			if (taxuploadDetail.getAddrLine1() != null && taxuploadDetail.getAddrLine1().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine1.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine2()!=null && taxuploadDetail.getAddrLine2().length() > 100) {
+			if (taxuploadDetail.getAddrLine2() != null && taxuploadDetail.getAddrLine2().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine2.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine3()!=null && taxuploadDetail.getAddrLine3().length() > 100) {
+			if (taxuploadDetail.getAddrLine3() != null && taxuploadDetail.getAddrLine3().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine3.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getAddrLine4()!=null && taxuploadDetail.getAddrLine1()!=null && taxuploadDetail.getAddrLine4().length() > 100) {
+			if (taxuploadDetail.getAddrLine4() != null && taxuploadDetail.getAddrLine1() != null
+					&& taxuploadDetail.getAddrLine4().length() > 100) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine4.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -447,8 +466,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 
-			if (!(StringUtils.equals(taxuploadDetail.getApplicableFor(), "P")
-					|| StringUtils.equals(taxuploadDetail.getApplicableFor(), "C"))) {
+			if (!(StringUtils.equals(taxuploadDetail.getApplicableFor(), PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)
+					|| StringUtils.equals(taxuploadDetail.getApplicableFor(), PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT))) {
 				String[] errParams = new String[2];
 				errParams[0] = PennantJavaUtil.getLabel("listheader_ApplicableFor.label") + ":"
 						+ taxuploadDetail.getApplicableFor();
@@ -456,39 +475,20 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 			}
-			FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(taxuploadDetail.getAggrementNo(), "_View",false);
-			if (financeMain == null) {
-				String[] errParams = new String[2];
-
-				errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
-				errParams[1] = taxuploadDetail.getAggrementNo();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "90701", errParams, valueParm), usrLanguage));
-
-			} else {
-				Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
-
-				if (!StringUtils.equals(customer.getCustCIF(), taxuploadDetail.getApplicant())) {
-					String[] errParams = new String[2];
-					errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
-							+ taxuploadDetail.getApplicant();
-					errParams[1] = taxuploadDetail.getAggrementNo();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
-				}
-			}
-			
+		
+			//pincode validations against the system .
 			if (taxuploadDetail.getPinCode() != null) {
 				PinCode pincode = getPinCodeDAO().getPinCode(taxuploadDetail.getPinCode(), "_View");
 				String[] errParams = new String[2];
 				if (pincode == null) {
+					//if pin code is not  available  then validate
 					errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
 							+ taxuploadDetail.getPinCode();
 					errParams[1] = taxuploadDetail.getAggrementNo();
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 				} else {
-
+					//if pin code is   available  then validate against city and province and country
 					if (!StringUtils.equals(pincode.getCity(), taxuploadDetail.getCity())) {
 						errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":"
 								+ taxuploadDetail.getCity();
@@ -516,14 +516,138 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 				}
 			} else {
+				//pin code no givne then validate
 				String[] errParams = new String[1];
 				errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label");
+				errParams[1] = taxuploadDetail.getAggrementNo();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "30561", errParams, valueParm), usrLanguage));
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+			}
+			
+			//Validate the GST number
+			if (StringUtils.isNotBlank(taxuploadDetail.getAggrementNo())) {
+
+				FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(taxuploadDetail.getAggrementNo(),
+						"_View", false);
+				//if Aggrement number alone not valid
+				if (financeMain == null) {
+					String[] errParams = new String[2];
+
+					errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
+					errParams[1] = taxuploadDetail.getAggrementNo();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
+
+				} else {
+					//if finance exist with that aggrement number. proceed with primary/co-applicant customer
+					if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
+							PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)) {
+						//get the customer attached to the finance
+						Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
+						//check wether excel provided and finance related customer both are same
+						if (!StringUtils.equals(customer.getCustCIF(), taxuploadDetail.getApplicant())) {
+							String[] errParams = new String[2];
+							errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
+									+ taxuploadDetail.getApplicant();
+							errParams[1] = taxuploadDetail.getAggrementNo();
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+									usrLanguage));
+						}else{
+							//if customer validated to true proceed with the GST number validation
+							validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, financeMain, customer);
+						}
+
+					}else if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
+							PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
+						//get the co-applicants attached to the finance
+						List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService
+								.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+						//chek for one match
+						for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+							if (StringUtils.equals(jointAccountDetail.getCustCIF(),  taxuploadDetail.getApplicant())) {
+								idExist = true;
+								break;
+							}
+						}
+						if (!idExist) { //if Co-Applicant is not available then validate
+							errParm[0] = taxuploadDetail.getApplicant();
+							errParm[1] = taxuploadDetail.getAggrementNo();
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetails(PennantConstants.KEY_FIELD, "99009", errParm, valueParm),
+									usrLanguage));
+						}else{
+							//if co applicant available then get the customer object related to the co applicant
+							Customer customer = customerDAO.getCustomerByCIF(taxuploadDetail.getApplicant(),"_View");
+							validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, financeMain,
+									customer);
+						}
+					}
+				}
 			}
 
 		}
 		return auditDetail;
+	}
+
+	private void validateGstNumber(AuditDetail auditDetail, String usrLanguage, FinTaxUploadDetail taxuploadDetail,
+			String[] valueParm, FinanceMain financeMain, Customer customer) {
+		
+		//if customer cif not equal to the provied customer CIF.
+			if (StringUtils.isNotBlank(taxuploadDetail.getTaxCode())) {
+				String gstStateCode = null;
+				String panNumber = customer.getCustCRCPR();
+				//if GST Number is already exist or not
+				int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),
+						taxuploadDetail.getTaxCode(), "_View");
+				if (count != 0) {
+					String[] parameters = new String[2];
+					parameters[0] = PennantJavaUtil
+							.getLabel("listheader_TaxNumber.label") + ": ";
+					parameters[1] = taxuploadDetail.getTaxCode();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+				}
+
+				Province province = this.provinceDAO.getProvinceById(taxuploadDetail.getCountry(),
+						taxuploadDetail.getProvince(), "");
+				if (province != null) {
+					gstStateCode = province.getTaxStateCode();
+				}
+
+				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
+					if (!StringUtils.equalsIgnoreCase(gstStateCode,
+							taxuploadDetail.getTaxCode().substring(0, 2))) {
+						String[] errParams = new String[2];
+						errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
+								+ taxuploadDetail.getApplicant();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99010", errParams, valueParm)));
+					}
+				}
+
+				if (StringUtils.isNotBlank(panNumber)) { //if PAN number is not available in GST Number
+					if (!StringUtils.equalsIgnoreCase(panNumber,
+							taxuploadDetail.getTaxCode().substring(2, 12))) {
+						String[] errParams = new String[2];
+						errParams[0] =taxuploadDetail.getApplicant();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99011", errParams, null)));
+					}
+				}
+			} else {
+				//If tax code not given in the file
+				String[] errParams = new String[2];
+				errParams[0] = PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ":"
+						+ taxuploadDetail.getTaxCode();
+				errParams[1] = taxuploadDetail.getAggrementNo();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+						usrLanguage));
+			}
+		
 	}
 
 	@Override
