@@ -1461,12 +1461,14 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	public void onFulfill$branchProvince(Event event) {
 		logger.debug("Entering");
 		Object dataObject = branchProvince.getObject();
-		Province details = (Province) dataObject;
 		if (dataObject instanceof String) {
 			this.branchCity.setValue("", "");
+			this.pinCode.setValue("", "");
 			this.branchCity.setFilters(null);
 			this.branchProvince.setFilters(null);
+			this.pinCode.setFilters(null);
 		}else{
+			Province details = (Province) dataObject;
 			if (details != null) {
 				this.branchProvince.setValue(details.getCPProvince(), details.getCPProvinceName());
 
@@ -1481,6 +1483,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 					this.branchCity.setValue("", "");
 					this.branchCity.setFilters(null);
 					this.branchProvince.setFilters(null);
+					this.pinCode.setValue("", "");
+					this.pinCode.setFilters(null);
 				}
 			}
 		}
