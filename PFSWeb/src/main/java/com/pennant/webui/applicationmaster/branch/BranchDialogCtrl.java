@@ -144,6 +144,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private transient String			sBranchCountry;
 	private transient String			sBranchProvince;
 	private transient String			sBranchCity;
+	private transient String			sPinCode;
 
 	private final List<ValueLabel>		branchTypeList		= PennantStaticListUtil.getBranchTypeList();
 	private final List<ValueLabel>		regionList			= PennantStaticListUtil.getRegionList();
@@ -487,10 +488,19 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		sBranchCountry = this.branchCountry.getValue();
 		sBranchProvince = this.branchProvince.getValue();
 		sBranchCity = this.branchCity.getValue();
-		/*
-		 * doSetProvProp(); doSetCityProp(); this.newBranchCode.setFilters(new Filter[]{new Filter("BranchCode",
-		 * this.branchCode.getValue(), Filter.OP_NOT_EQUAL)});
-		 */
+		sPinCode = this.pinCode.getValue();
+		
+		if (!aBranch.isNew()) {
+			Filter[] filterProvince = new Filter[1];
+			filterProvince[0] = new Filter("CPCountry", sBranchCountry, Filter.OP_EQUAL);
+			this.branchProvince.setFilters(filterProvince);
+			Filter[] filterCity = new Filter[1];
+			filterCity[0] = new Filter("PCProvince", sBranchProvince, Filter.OP_EQUAL);
+			this.branchCity.setFilters(filterCity);
+			Filter[] filterPin = new Filter[1];
+			filterPin[0] = new Filter("City", sBranchCity, Filter.OP_EQUAL);
+			this.pinCode.setFilters(filterPin);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -679,6 +689,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 
 		aBranch.setRecordStatus(this.recordStatus.getValue());
+		
 		logger.debug("Leaving");
 	}
 
@@ -1423,6 +1434,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		Object dataObject = branchCity.getObject();
 		if (dataObject instanceof String) {
 			this.branchCity.setValue("","");
+			this.pinCode.setFilters(null);
 		} else {
 			City details = (City) dataObject;
 
@@ -1435,8 +1447,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.pinCode.setFilters(filterPin);
 
 			} else {
+				if(getBranch().isNew()){
 				this.pinCode.setValue("", "");
 				this.pinCode.setFilters(null);
+				}
 			}
 		}
 
@@ -1448,20 +1462,29 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		logger.debug("Entering");
 		Object dataObject = branchProvince.getObject();
 		Province details = (Province) dataObject;
-
-		if (details != null) {
-			this.branchProvince.setValue(details.getCPProvince(), details.getCPProvinceName());
-
-			Filter[] filterPin = new Filter[1];
-			filterPin[0] = new Filter("PCProvince", details.getCPProvince(), Filter.OP_EQUAL);
-			if(this.branchCity.getFilters()==null){				
-				this.branchCity.setFilters(filterPin);
-			}
-
-		} else {
+		if (dataObject instanceof String) {
 			this.branchCity.setValue("", "");
 			this.branchCity.setFilters(null);
+			this.branchProvince.setFilters(null);
+		}else{
+			if (details != null) {
+				this.branchProvince.setValue(details.getCPProvince(), details.getCPProvinceName());
+
+				Filter[] filterProvince = new Filter[1];
+				filterProvince[0] = new Filter("PCProvince", details.getCPProvince(), Filter.OP_EQUAL);
+				if(this.branchCity.getFilters()==null){				
+					this.branchCity.setFilters(filterProvince);
+				}
+
+			} else {
+				if(getBranch().isNew()){					
+					this.branchCity.setValue("", "");
+					this.branchCity.setFilters(null);
+					this.branchProvince.setFilters(null);
+				}
+			}
 		}
+		
 
 		logger.debug("Leaving");
 	}
@@ -1476,6 +1499,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.pinCode.setValue("", "");
 			this.branchCity.setValue("", "");
 			this.branchProvince.setValue("", "");
+			this.branchCity.setFilters(null);
+			this.branchProvince.setFilters(null);
+			this.branchCountry.setValue("","");
+			this.pinCode.setFilters(null);
 		} else {
 			PinCode details = (PinCode) dataObject;
 			if (details != null) {
@@ -1496,17 +1523,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.branchCountry.setDescription(details.getLovDescPCCountryName());
 
 			} else {
-
-				this.pinCode.setValue("");
-				this.branchCity.setValue("");
-				this.branchCity.setDescription("");
-				this.branchProvince.setValue("");
-				this.branchProvince.setDescription("");
-				this.branchCountry.setValue("");
-				this.branchCountry.setDescription("");
+				if(getBranch().isNew()){
+				this.pinCode.setValue("", "");
+				this.branchCity.setValue("", "");
+				this.branchProvince.setValue("", "");
 				this.branchCity.setFilters(null);
 				this.branchProvince.setFilters(null);
-
+				this.branchCountry.setValue("","");
+				this.pinCode.setFilters(null);
+				}
 			}
 			logger.debug("Leaving");
 		}
