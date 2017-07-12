@@ -684,7 +684,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		if (!this.taxStateCode.isReadonly()) {
 			this.taxStateCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, !this.taxExempted.isChecked(), 2, 2));
+							PennantRegularExpressions.REGEX_ALPHA, !this.taxExempted.isChecked(), 2, 2));
 		}
 		if (!this.businessArea.isReadonly()) {
 			this.businessArea.setConstraint(
