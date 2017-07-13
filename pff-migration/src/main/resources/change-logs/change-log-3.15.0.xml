@@ -9522,4 +9522,17 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMENTS EXTRACT');
 	</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="522">
+		<addColumn tableName="RMTAccountTypes">
+			<column name="ExtractionType" type="varchar(3)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="523">
+		<addColumn tableName="RMTAccountTypes_Temp">
+			<column name="ExtractionType" type="varchar(3)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
