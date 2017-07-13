@@ -1714,13 +1714,22 @@ public class FinServiceInstController extends SummaryDetailService {
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		if(finScheduleData.getFinFeeDetailList() != null) {
+			BigDecimal totFeeAmount = BigDecimal.ZERO;
 			List<FinFeeDetail> srvFeeList = new ArrayList<FinFeeDetail>();
 			for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
 				if(!feeDetail.isOriginationFee()) {
 					srvFeeList.add(feeDetail);
+					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_DISBURSE)|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+					} else {
+						totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+					}
 				}
 			}
 			finScheduleData.setFinFeeDetailList(srvFeeList);
+			summaryDetail.setFeeChargeAmt(summaryDetail.getFeeChargeAmt().add(totFeeAmount));
 		}
 		
 		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases

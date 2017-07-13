@@ -63,8 +63,7 @@ public class SummaryDetailService {
 			summary.setTotalGrossGrcPft(financeMain.getTotalGrossGrcPft());
 			
 			// calculate total paid fees
-			BigDecimal totFeeAmount = BigDecimal.ZERO;
-			totFeeAmount = calculateTotFeeChargeAmt(financeDetail.getFinScheduleData());
+			BigDecimal totFeeAmount = calculateTotFeeChargeAmt(financeDetail.getFinScheduleData());
 			summary.setFeeChargeAmt(totFeeAmount);
 
 			// fetch summary details from FinPftDetails
@@ -169,8 +168,6 @@ public class SummaryDetailService {
 	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData finScheduleData) {
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		BigDecimal totFeeAmount = BigDecimal.ZERO;
-		List<FinFeeDetail> srvFeeDetails = finScheduleData.getFinFeeDetailList();
-
 		// Fetch total fee details to capture total fee paid by customer
 		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
 		if (feeDetails != null) {
@@ -180,20 +177,6 @@ public class SummaryDetailService {
 					totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
 				} else {
 					totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
-				}
-			}
-		}
-
-		if (srvFeeDetails != null) {
-			for (FinFeeDetail srvFee : srvFeeDetails) {
-				if (!srvFee.isOriginationFee()) {
-					if (StringUtils.equals(srvFee.getFeeScheduleMethod(),
-							CalculationConstants.REMFEE_PART_OF_DISBURSE)|| StringUtils.equals(srvFee.getFeeScheduleMethod(),
-									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-						totFeeAmount = totFeeAmount.add(srvFee.getActualAmount().subtract(srvFee.getWaivedAmount()));
-					} else {
-						totFeeAmount = totFeeAmount.add(srvFee.getPaidAmount());
-					}
 				}
 			}
 		}
