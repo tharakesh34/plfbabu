@@ -64,19 +64,7 @@ public class SummaryDetailService {
 			
 			// calculate total paid fees
 			BigDecimal totFeeAmount = BigDecimal.ZERO;
-			
-			// Fetch total fee details to capture total fee paid by customer
-			List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
-			if (feeDetails != null) {
-				for (FinFeeDetail feeDetail : feeDetails) {
-					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
-							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
-					} else {
-						totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
-					}
-				}
-			}
+			totFeeAmount = calculateTotFeeChargeAmt(financeDetail.getFinScheduleData());
 			summary.setFeeChargeAmt(totFeeAmount);
 
 			// fetch summary details from FinPftDetails
@@ -172,6 +160,46 @@ public class SummaryDetailService {
 		return summary;
 	}
 	
+	/**
+	 * Method for calculate total fees paid by customer.
+	 * 
+	 * @param finScheduleData
+	 * @return
+	 */
+	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData finScheduleData) {
+		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		BigDecimal totFeeAmount = BigDecimal.ZERO;
+		List<FinFeeDetail> srvFeeDetails = finScheduleData.getFinFeeDetailList();
+
+		// Fetch total fee details to capture total fee paid by customer
+		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
+		if (feeDetails != null) {
+			for (FinFeeDetail feeDetail : feeDetails) {
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+				} else {
+					totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+				}
+			}
+		}
+
+		if (srvFeeDetails != null) {
+			for (FinFeeDetail srvFee : srvFeeDetails) {
+				if (!srvFee.isOriginationFee()) {
+					if (StringUtils.equals(srvFee.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_DISBURSE)|| StringUtils.equals(srvFee.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						totFeeAmount = totFeeAmount.add(srvFee.getActualAmount().subtract(srvFee.getWaivedAmount()));
+					} else {
+						totFeeAmount = totFeeAmount.add(srvFee.getPaidAmount());
+					}
+				}
+			}
+		}
+		return totFeeAmount;
+	}
+
 	public void doProcessPlanEMIHDays(FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		List<Date> planEMIHDates = new ArrayList<Date>();
