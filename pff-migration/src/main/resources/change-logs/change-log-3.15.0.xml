@@ -9484,7 +9484,6 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('99011','EN','E','Applicant :{0} PAN No.not Matching with the GSTIN for aggrement no:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
-	
 	<changeSet id="517" author="Kesav">
 		<sql>
 			UPDATE ERRORDETAILS SET ERRORMESSAGE = 'Receipt Fee Details should be mandatory for Fee Type : {0}.' WHERE ERRORCODE = '65019';
@@ -9517,5 +9516,10 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('99014','EN','E','{0} Creation rejected by Finone Reason: {1} ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
-	
+		<changeSet id="521" author="prasad Raju">
+		<sql>
+	Update REPORTFILTERFIELDS set Fielddbname='T.Referenceid' ,MultiSelectsearch=0 where reportid in (
+Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMENTS EXTRACT');
+	</sql>
+	</changeSet>
 </databaseChangeLog>
