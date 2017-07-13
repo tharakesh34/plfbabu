@@ -9495,7 +9495,7 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('99012','EN','E','Customer Alterady exists in the source system :PLF ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
-	<changeSet id="518" author="Madhubabu">
+	<!-- <changeSet id="518" author="Madhubabu">
 		<sql>
 			INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 			INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@10.128.193.77:1633:BCFPRD_N2P', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
@@ -9503,7 +9503,7 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pennant123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="519" author="Madhubabu">
 		<sql>
 			Delete from ErrorDetails where errorCode = '99013';
@@ -9548,6 +9548,53 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 	
 	<changeSet author="Kesav" id="526">
 		<addNotNullConstraint tableName="RMTAccountTypes" columnName="ExtractionType" columnDataType="varchar(3)"/>
+	</changeSet>
+	
+	<changeSet id="527" author="Kesav">
+		<createView viewName="RMTACCOUNTTYPES_VIEW" replaceIfExists="true">
+				SELECT    	T1.AcType, T1.AcTypeDesc, T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,
+							T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1, T1.ACCADDLVAR3, T1.ACCADDLVAR4, T1.Version, T1.LastMntBy,
+							T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+							T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId, T1.ExtractionType,
+							T2.GroupCode, T2.GroupDescription, T2.AcctTypeLevel,
+					        T3.CostCenterCode,T3.CostCenterDesc,
+							T4.ProfitCenterCode,T4.ProfitCenterDesc
+				FROM        RMTAccountTypes_Temp T1 
+				Left Join 	AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId 
+				LEFT JOIN 	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+				INNER JOIN 	ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+				
+				UNION ALL
+				
+				SELECT    	T1.AcType, T1.AcTypeDesc, T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,
+							T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1, T1.ACCADDLVAR3, T1.ACCADDLVAR4, T1.Version, T1.LastMntBy,
+							T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+							T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId, T1.ExtractionType,
+							T2.GroupCode, T2.GroupDescription, T2.AcctTypeLevel,
+					        T3.CostCenterCode,T3.CostCenterDesc,
+							T4.ProfitCenterCode,T4.ProfitCenterDesc
+				FROM        RMTAccountTypes T1 
+				Left Join 	AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId 
+				LEFT JOIN 	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+				INNER JOIN 	ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID
+				WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM RMTAccountTypes_Temp WHERE (AcType = T1.AcType)))		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="528" author="Kesav">
+		<createView viewName="RMTACCOUNTTYPES_AVIEW" replaceIfExists="true">
+			SELECT    	T1.AcType, T1.AcTypeDesc, T1.AcPurpose, T1.AcHeadCode, T1.InternalAc, T1.CustSysAc, T1.AcLmtCategory, T1.AcTypeIsActive, T1.ProfitCenterID,
+						T1.CostCenterID, T1.TaxApplicable,  T1.ACCADDLVAR1, T1.ACCADDLVAR2, T1.ACCADDLCHAR1, T1.ACCADDLVAR3, T1.ACCADDLVAR4, T1.Version, T1.LastMntBy,
+						T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AssertOrLiability,
+						T1.OnBalanceSheet,T1.AllowOverDraw,T1.AcTypeGrpId, T1.ExtractionType,
+						T2.GroupCode, T2.GroupDescription, T2.AcctTypeLevel,
+				        T3.CostCenterCode,T3.CostCenterDesc,
+						T4.ProfitCenterCode,T4.ProfitCenterDesc
+			FROM        RMTAccountTypes T1 
+			Left Join 	AccountTypeGroup T2 ON T1.AcTypeGrpId=T2.GroupId 
+			LEFT JOIN 	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+			INNER JOIN 	ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID		
+		</createView>
 	</changeSet>
 	
 </databaseChangeLog>
