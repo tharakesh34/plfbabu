@@ -9535,4 +9535,19 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="524" author="Kesav">
+		<sql>
+			update RMTAccountTypes_Temp set ExtractionType = 'NA';
+			update RMTAccountTypes set ExtractionType = 'NA';
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="525">
+		<addNotNullConstraint tableName="RMTAccountTypes_Temp" columnName="ExtractionType" columnDataType="varchar(3)"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="526">
+		<addNotNullConstraint tableName="RMTAccountTypes" columnName="ExtractionType" columnDataType="varchar(3)"/>
+	</changeSet>
+	
 </databaseChangeLog>
