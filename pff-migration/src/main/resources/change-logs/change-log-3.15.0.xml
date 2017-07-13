@@ -9596,5 +9596,8 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 			INNER JOIN 	ProfitCenters T4 ON T1.ProfitCenterID = T4.ProfitCenterID		
 		</createView>
 	</changeSet>
-	
+	<changeSet id="529" author="Manoj.P">
+		<renameColumn columnDataType="VARCHAR(100)" newColumnName="PREFIX"
+		oldColumnName="FOLDER_NAME" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
+	</changeSet>
 </databaseChangeLog>
