@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -11,11 +12,13 @@ import org.springframework.stereotype.Service;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -46,6 +49,7 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	private MandateService			mandateService;;
 	private BankDetailService		bankDetailService;
 	private FinanceMainService		financeMainService;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 
 	/**
@@ -249,7 +253,6 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			valueParm[0] = mandateDetail.getFinReference();
 			return getErrorDetails("90201", valueParm);
 		}
-
 		// validate newMandateId
 		Mandate newMandate = mandateService.getApprovedMandateById(mandateDetail.getNewMandateId());
 		if (newMandate == null) {
@@ -258,6 +261,22 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
 			return returnStatus;
 		}
+		List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(mandateDetail.getFinReference(), "", false);
+		BigDecimal repayAmt= BigDecimal.ZERO;
+		if (financeScheduleDetails != null) {
+			for (int i = 0; i < financeScheduleDetails.size(); i++) {
+				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+				if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate())>= 0 && curSchd.isRepayOnSchDate()) {
+					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
+							.add(curSchd.getInsSchd());
+					break;
+				}
+			}
+		}
+			if (repayAmt.compareTo(newMandate.getMaxLimit()) > 0) {
+				returnStatus = APIErrorHandlerService.getFailedStatus("90320");
+				return returnStatus;
+			}
 		//validate cif
 		if(!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())){
 			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
@@ -559,5 +578,10 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
 
 }
