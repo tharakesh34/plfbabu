@@ -58,12 +58,14 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
@@ -191,6 +193,10 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				cb.setChecked(detail.isAlwPostpone());
 				lc = new Listcell();
 				cb.setParent(lc);
+				lc.setParent(item);
+				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
+				lc.setParent(item);
+				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);
