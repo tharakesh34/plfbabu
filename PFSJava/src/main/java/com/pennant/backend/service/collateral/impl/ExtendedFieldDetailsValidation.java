@@ -206,7 +206,7 @@ public class ExtendedFieldDetailsValidation {
 			}
 			try {
 				Integer.parseInt(fieldValue);
-				if (exdConfigDetail.getFieldMaxValue() > 0 && exdConfigDetail.getFieldMinValue() > 0) {
+				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 					if (!(Long.valueOf(fieldValue) >= exdConfigDetail.getFieldMinValue()
 							&& Long.valueOf(fieldValue) <= exdConfigDetail.getFieldMaxValue())) {
 						String valueParm[] = new String[3];
@@ -291,7 +291,7 @@ public class ExtendedFieldDetailsValidation {
 				return errors;
 			}
 			exdFieldData.setFieldValue(String.valueOf(Math.round((Integer.valueOf(fieldValue)/Math.pow(10, exdConfigDetail.getFieldPrec())))));
-			if (exdConfigDetail.getFieldMaxValue() > 0 && exdConfigDetail.getFieldMinValue() > 0) {
+			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 				if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
 						|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
 					String[] valueParm = new String[3];
@@ -307,7 +307,7 @@ public class ExtendedFieldDetailsValidation {
 				if (StringUtils.equals(fieldValue, "true") || StringUtils.equals(fieldValue, "false")
 						|| StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1")) {
 					if(!(StringUtils.equals(fieldValue, "0") || StringUtils.equals(fieldValue, "1"))){
-					int i = fieldValue == "true" ? 1 : 0;
+					int i = fieldValue.equals("true") ? 1 : 0;
 					exdFieldData.setFieldValue(String.valueOf(i));
 					}
 				} else {
@@ -394,7 +394,7 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength()-exdConfigDetail.getFieldPrec());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
 			}
-			if (exdConfigDetail.getFieldMaxValue() > 0 && exdConfigDetail.getFieldMinValue() > 0) {
+			if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 			if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
 					|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
 				String[] valueParm = new String[3];
@@ -420,7 +420,7 @@ public class ExtendedFieldDetailsValidation {
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
 				}
-				if (exdConfigDetail.getFieldMaxValue() > 0 && exdConfigDetail.getFieldMinValue() > 0) {
+				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 					if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
 							|| Integer.valueOf(fieldValue) < exdConfigDetail.getFieldMinValue()) {
 						String[] valueParm = new String[3];
