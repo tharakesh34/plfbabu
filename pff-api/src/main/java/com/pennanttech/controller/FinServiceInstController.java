@@ -1703,7 +1703,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceDetail getServiceInstResponse(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-
 		FinanceDetail response = new FinanceDetail();
 		response.setFinReference(finScheduleData.getFinReference());
 		response.setFinScheduleData(finScheduleData);
@@ -1754,7 +1753,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setInsuranceList(null);
-
+		finScheduleData.setFinODDetails(null);
+		finScheduleData.setFinODPenaltyRate(null);
+		finScheduleData.setApiPlanEMIHDates(null);
+		finScheduleData.setApiplanEMIHmonths(null);
+		
 		logger.debug("Entering");
 		return response;
 	}
