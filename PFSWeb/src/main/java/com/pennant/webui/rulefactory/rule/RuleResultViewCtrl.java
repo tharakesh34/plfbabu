@@ -21,7 +21,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -30,7 +29,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResult.zul file.
+ * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResultView.zul file.
  */
 public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
@@ -212,7 +211,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 		}else{
 			this.result_label.setValue(ruleResult.toString());
 			
-			try{
+			/*try{
 				if(ruleResult.toString().contains(".")){
 					BigDecimal fractionValue = new BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")+1));
 					if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
@@ -222,7 +221,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 				}
 			}catch(Exception e){
 				logger.info(e.getMessage());
-			}
+			}*/
 		}
 		// make result row visible and set value
 	}
