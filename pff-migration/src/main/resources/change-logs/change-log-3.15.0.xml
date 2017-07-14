@@ -10041,5 +10041,19 @@ union
 		</createView>
 	</changeSet>
 	
+	<changeSet id="543" author="Siva">
+		<sql>
+		Delete from BMTAmountCodes where amountcode = 'ae_pftChg' and allowedevent='EARLYPAY';
+        Insert into BMTAmountCodes 
+            values( 'EARLYPAY', 0, 'ae_pftChg', 'Interest Change', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+		</sql>
+	</changeSet>
+	<changeSet id="544" author="Siva">
+		<sql>
+		Delete from BMTAmountCodes where amountcode = 'ae_pftChg' and allowedevent='EARLYSTL';
+        Insert into BMTAmountCodes 
+            values( 'EARLYSTL', 0, 'ae_pftChg', 'Interest Change', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
