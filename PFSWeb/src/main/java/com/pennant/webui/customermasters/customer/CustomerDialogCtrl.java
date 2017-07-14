@@ -2802,14 +2802,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws InterfaceException {
+	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws Exception {
 		logger.debug("Entering");
 
 		String corebank = customerDetails.getCustomer().getCustCoreBank();
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
 
-		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
+		/*if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(), "", customerDetails,
 					this.window_CustomerDialog, curLoginUser);
@@ -2821,7 +2821,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug("Leaving");*/
 		return true;
 	}
 
