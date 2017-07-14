@@ -227,31 +227,42 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				}
 			}
 		} else {
-			if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-				
-			}
-			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
-			if(schedules != null) {
-				for(FinanceScheduleDetail schDetail: schedules) {
-					
-					// RecalFromDate
-					if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-							|| StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-						if(DateUtility.compare(finSrvInst.getRecalFromDate(), schDetail.getSchDate()) == 0) {
-							isValidRecalFromDate = true;
-							if(checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
-								return auditDetail;
+			if(!StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+				List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+				if(schedules != null) {
+					for(FinanceScheduleDetail schDetail: schedules) {
+						// RecalFromDate
+						if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+								|| StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+							if(DateUtility.compare(finSrvInst.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+								isValidRecalFromDate = true;
+								if(checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
+									return auditDetail;
+								}
+							}
+						}
+						// RecalToDate
+						if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+							if(DateUtility.compare(finSrvInst.getRecalToDate(), schDetail.getSchDate()) == 0) {
+								isValidRecalToDate = true;
+								if(checkIsValidRepayDate(auditDetail, schDetail, "RecalToDate") != null) {
+									return auditDetail;
+								}
 							}
 						}
 					}
-					// RecalToDate
-					if(StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-						if(DateUtility.compare(finSrvInst.getRecalToDate(), schDetail.getSchDate()) == 0) {
-							isValidRecalToDate = true;
-							if(checkIsValidRepayDate(auditDetail, schDetail, "RecalToDate") != null) {
-								return auditDetail;
-							}
-						}
+					
+					if(!isValidRecalFromDate && (StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+							|| StringUtils.equals(finSrvInst.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finSrvInst.getRecalFromDate());
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+					}
+					if(!isValidRecalToDate && (StringUtils.equals(finSrvInst.getRecalType(), 
+							CalculationConstants.RPYCHG_TILLDATE))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "RecalToDate:"+DateUtility.formatToShortDate(finSrvInst.getRecalToDate());
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
 					}
 				}
 			}
