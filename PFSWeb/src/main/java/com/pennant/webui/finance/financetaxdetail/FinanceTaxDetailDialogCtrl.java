@@ -871,7 +871,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		this.city.setValue(aFinanceTaxDetail.getCity());
 		this.pinCode.setValue(aFinanceTaxDetail.getPinCode());
 		
-		if(!enquirymode){			
+		if(!enquirymode && !enqiryModule){			
 			setCustCIFFilter();
 		}
 		
@@ -1032,7 +1032,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 			doEdit();
 		} else {
 			this.finReference.setReadonly(true);
-			if (isWorkFlowEnabled()) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				if (StringUtils.isNotBlank(financeTaxDetail.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
@@ -1050,14 +1050,13 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		}
 
 		if (enqiryModule) {
-			doReadOnly();
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
 
 		doWriteBeanToComponents(financeTaxDetail);
 		
-		if (fromLoan) {
+		if (fromLoan && !enqiryModule) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("setFinanceTaxDetailDialogCtrl", this.getClass())
 						.invoke(getFinanceMainDialogCtrl(), this);
@@ -1300,7 +1299,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		readOnlyComponent(true, this.pinCode);
 		readOnlyComponent(true, this.custRef);
 
-		if (isWorkFlowEnabled()) {
+		if (isWorkFlowEnabled() && !enqiryModule) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
