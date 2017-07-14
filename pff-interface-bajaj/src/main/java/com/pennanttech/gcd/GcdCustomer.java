@@ -110,7 +110,10 @@ public class GcdCustomer {
 	private long sfdcCustomerId; // Shall be populated with PLF CustomerID
 	private long branchId; // Shall be populated with FinnOne BranchID. FinnOne BranchID shall be fetched on the basis
 							// of Customer's PLF Branch Code
-
+	
+	public GcdCustomer(){
+		super();
+	}
 	public String getFinCustId() {
 		return finCustId;
 	}

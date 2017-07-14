@@ -103,6 +103,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -1692,9 +1693,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!isWIF) {
 			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader,true);
 		}
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		
+		//process to send FIN-one request and create or update the cust data.
+		if (!isWIF) {
+			processFinOneCheck(aAuditHeader);
+		}
+
+		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
+				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
 			return aAuditHeader;
 		}
 		/*
@@ -1706,7 +1717,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} catch (Exception e) {
 			logger.error("Error Occured {}", e);
 		}
-
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
@@ -2244,13 +2254,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditHeader.setAuditDetails(auditDetails);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
-
+		
 		//Reset Finance Detail Object for Service Task Verifications
 		//=======================================
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
 		return auditHeader;
+		
 	}
 
 	/**
@@ -2930,8 +2941,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+
+		
 		Date curBDay = DateUtility.getAppDate();
 		//gCDCustomerService.processGcdCustomer(financeDetail, "insert"); // inserting gcdcustomer.
 		//Execute Accounting Details Process
@@ -3914,8 +3927,53 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save GCDCustomer'/////
 		//processgcdCustomer(financeDetail, "insert");
+		
+		
 		logger.debug("Leaving");
 
+		return auditHeader;
+	}
+	
+	
+	private AuditHeader processFinOneCheck(AuditHeader auditHeader) {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+
+		String[] errorParm = new String[2];
+		errorParm[0] = "Loan";
+		if (customerDetails.getCustomer().getCustCoreBank() != null) {
+			// call the finone procedure to update a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+
+		} else {
+			// call the finone procedure to create a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+		}
+
+		logger.debug("Leaving");
 		return auditHeader;
 	}
 

@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.GCDCustomerBajjajDAO;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pff.core.Literal;
@@ -225,7 +226,7 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 		inParam.addValue("P_BRANCHID", gcdCustomer.getBranchId());
 		logger.debug("P_BRANCHID------------->"+gcdCustomer.getBranchId());
 		
-		final String procedure = "{call GCD_CUSTOMER_INSERT_UPDATE(:P_FINN_CUSTID, :P_SOURCE_SYSTEM, :P_CUSTOMERNAME, :P_CONSTID, :P_INDUSTRYID, :P_CATEGORYID, :P_SPOUSENAME, :P_INDV_CORP_FLAG, :P_FNAME, :P_MNAME, :P_LNAME,"
+		final String procedure = "{call CREATE_CUSTOMER_IN_FINNONE(:P_FINN_CUSTID, :P_SOURCE_SYSTEM, :P_CUSTOMERNAME, :P_CONSTID, :P_INDUSTRYID, :P_CATEGORYID, :P_SPOUSENAME, :P_INDV_CORP_FLAG, :P_FNAME, :P_MNAME, :P_LNAME,"
 				+ " :P_DOB, :P_SEX, :P_P_INCOME_SOURCE, :P_YEARS_CURR_JOB, :P_COR_DOI, :P_MP_AKERID, :P_MAKERDATE, :P_P_AUTHID, :P_AUTHDATE, :P_ACCOTYPE, :P_AP_CCOCATG,"
 				+ " :P_DATELASTUPDT, :P_P_NATIONALID, :P_PASSPORTNO, :P_NATIONALITY, :P_PP_AN_NO, :P_REGIONID, :P_BANK_TYPE, :P_ENTITYFLAG, :P_CONTACT_PERSON, :P_CUSTSEARCHID,"
 				+ " :P_ECONOMIC_SEC_ID, :P_FRAUD_FLAG, :P_FRAUD_SCORE, :P_EMI_CARD_ELIG, :P_ADDRESS_DTL, :P_BANK_DTL, :P_N_NAME, :P_N_ADDRESS, :P_N_RELATION, :P_N_FIELD9,"
@@ -281,10 +282,17 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 
 	private DriverManagerDataSource getDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		
+		/*dataSource.setDriverClassName(SysParamUtil.getValueAsString("GCD_CUSTOMER_DRIVER"));
+		dataSource.setUrl(SysParamUtil.getValueAsString("GCD_CUSTOMER_URL"));
+		dataSource.setUsername(SysParamUtil.getValueAsString("GCD_CUSTOMER_USERNAME"));
+		dataSource.setPassword(SysParamUtil.getValueAsString("GCD_CUSTOMER_PWD"));*/
+		
 		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 		dataSource.setUrl("jdbc:oracle:thin:@192.168.1.19:1521:orcl");
 		dataSource.setUsername("PLFDEV");
 		dataSource.setPassword("pff123");
+		
 		return dataSource;
 	}
 }

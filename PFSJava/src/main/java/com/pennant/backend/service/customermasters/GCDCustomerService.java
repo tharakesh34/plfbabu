@@ -43,10 +43,10 @@
 
 package com.pennant.backend.service.customermasters;
 
-import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 
 
 public interface GCDCustomerService {
 	
-	public void processGcdCustomer(FinanceDetail financeDetail, String method);
+	public void processGcdCustomer(CustomerDetails custDetail, String method);
 }

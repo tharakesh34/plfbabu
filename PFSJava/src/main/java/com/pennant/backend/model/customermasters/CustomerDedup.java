@@ -82,6 +82,8 @@ public class CustomerDedup {
 	private String registrationNo;
 	private String titleDeedNo;
 	private int appScore;
+	private String sourceSystem;
+	private String address;
 	
 
 
@@ -125,6 +127,7 @@ public class CustomerDedup {
 		excludeFields.add("registrationNo");
 		excludeFields.add("titleDeedNo");
 		excludeFields.add("appScore");
+		excludeFields.add("sourceSystem");
 		return excludeFields;
 	}
 	
@@ -543,6 +546,22 @@ public class CustomerDedup {
 
 	public void setAppScore(int appScore) {
 		this.appScore = appScore;
+	}
+
+	public String getSourceSystem() {
+		return sourceSystem;
+	}
+
+	public void setSourceSystem(String sourceSystem) {
+		this.sourceSystem = sourceSystem;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	

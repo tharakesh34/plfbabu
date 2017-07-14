@@ -67,9 +67,11 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -1453,8 +1455,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	
 	@Override
-	public List<CustomerDedup> getDedupCustomerDetails(FinanceDetail afinanceDetail) {
-		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(afinanceDetail);
+	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details) {
+		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
 			response = customerDedupService.invokeDedup(dedupCustomerDetail);
@@ -1462,21 +1464,44 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			logger.error(e);
 		}
 
-		List<CustomerDedup> customerDedup = getDedupData(response);
+		List<CustomerDedup> customerDedup = getDedupData(response,details);
 		return customerDedup;
 	}
 	
-	private List<CustomerDedup> getDedupData(DedupCustomerResponse response) {
+	private List<CustomerDedup> getDedupData(DedupCustomerResponse response,CustomerDetails details) {
 		List<CustomerDedup> custDedupList = new ArrayList<CustomerDedup>();
 		if(response != null && response.getDedupCustomerDetails() != null) {
 			for(DedupCustomerDetail dedupDetail:response.getDedupCustomerDetails()) {
 				CustomerDedup customerDedup = new CustomerDedup();
-				customerDedup.setCustCIF(dedupDetail.getCustomer().getCustCIF());
+				customerDedup.setCustCIF(details.getCustomer().getCustCIF());
 				customerDedup.setCustShrtName(dedupDetail.getCustomer().getCustShrtName());
 				customerDedup.setCustDOB(dedupDetail.getCustomer().getCustDOB());
 				customerDedup.setCustFName(dedupDetail.getCustomer().getCustFName());
 				customerDedup.setCustCRCPR(dedupDetail.getCustomer().getCustCRCPR());
 				customerDedup.setCustCoreBank(dedupDetail.getCustomer().getCustCoreBank());
+				customerDedup.setSourceSystem(dedupDetail.getCustomer().getSourceSystem());
+				customerDedup.setSourceSystem(dedupDetail.getCustomer().getSourceSystem());
+				customerDedup.setCustCoreBank(dedupDetail.getCustomer().getCustCoreBank());
+				
+				for (CustomerPhoneNumber phonenumber : dedupDetail.getCustomerPhoneNumList()) {
+					if(StringUtils.equals(phonenumber.getPhoneTypeCode(), "MOBILE")){
+						customerDedup.setPhoneNumber(phonenumber.getPhoneNumber());
+						break;
+					}
+				}
+				for (CustomerAddres addresstype : dedupDetail.getAddressList()) {
+					if(StringUtils.equals(addresstype.getCustAddrType(), "OFFICE")){
+						customerDedup.setAddress(StringUtils.trimToEmpty(addresstype.getCustAddrLine1() +","
+								+ addresstype.getCustAddrCity() +","+ addresstype.getCustAddrZIP()));
+						break;
+					}
+					if(StringUtils.equals(addresstype.getCustAddrType(), "HOME")){
+						customerDedup.setAddress(StringUtils.trimToEmpty(addresstype.getCustAddrLine1() +","
+								+ addresstype.getCustAddrCity() +","+ addresstype.getCustAddrZIP()));
+						break;
+					}
+				}
+				
 				custDedupList.add(customerDedup);
 				// Add appScore
 				//if(StringUtils.equals(response.getC, str2))
@@ -1485,9 +1510,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return custDedupList;
 	}
 	
-	private DedupCustomerDetail preparededupRequest(FinanceDetail financeDetail) {
-		
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails) {
+
 		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails != null && customer != null) {
@@ -1496,7 +1520,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
 
 			dedupCustomerDetail.setCustomer(customer);
-			dedupCustomerDetail.setFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+			//dedupCustomerDetail.setFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
 			// customer documents
 			if (customerDetails.getCustomerDocumentsList() != null) {
 				dedupCustomerDetail.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());

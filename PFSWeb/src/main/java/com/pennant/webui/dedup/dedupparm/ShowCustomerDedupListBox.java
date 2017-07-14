@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Borderlayout;
@@ -208,7 +209,8 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		// Button for Help
 		final Button btnHelp = new Button();
 		btnHelp.setSclass("z-toolbarbutton");
-		btnHelp.setLabel("Help");
+		btnHelp.setLabel("Close");
+		btnHelp.addEventListener("onClick", new OnCloseListener());
 		btnHelp.setParent(endToolbar);
 
 		//Label For Title
@@ -341,6 +343,24 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		logger.debug("Leaving");
 	}
 
+	
+	
+	/**
+	 * Inner Cancel class.<br>
+	 */
+	final class OnCloseListener implements EventListener<Event> {
+
+		public OnCloseListener() {
+
+		}
+
+		@Override
+		public void onEvent(Event event) throws Exception {
+			onClose();
+		}
+	}
+	
+	
 	/**
 	 * Inner Cancel class.<br>
 	 */
@@ -354,7 +374,24 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		public void onEvent(Event event) throws Exception {
 			setUserAction(0);
 			setObject(null);
-			onClose();
+			boolean iseleceted=false;
+			
+			for (int i = 0; i < listbox.getItems().size(); i++) {
+
+				Listitem listitem = listbox.getItems().get(i);
+				List<Component> componentList = ((Listcell) listitem
+						.getLastChild()).getChildren();
+				if (componentList != null && componentList.size() > 0) {
+					Component component = componentList.get(0);
+					if (((Checkbox) component).isChecked()) {
+						iseleceted=true;
+					}
+				}
+			
+			}
+			if(!iseleceted){
+				throw new WrongValueException(listbox,"Please Select Atleast one Cutomer to dedup");
+			}
 			
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME,
 					ImplementationConstants.CLIENT_BFL)) {

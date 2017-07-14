@@ -675,4 +675,10 @@ public class PennantConstants {
 	public static final String TAXAPPLICABLEFOR_PRIMAYCUSTOMER = "P";
 	public static final String TAXAPPLICABLEFOR_COAPPLICANT = "C";
 	public static final String TAXAPPLICABLEFOR_GUARANTOR= "G";
+
+	//Customer Dedup source sstem
+	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENANT";
+	public static final String CUSTOMER_DEDUP_REJECTED= "R";
+	public static final String CUSTOMER_DEDUP_UPDATE= "U";
+	public static final String CUSTOMER_DEDUP_INSERT= "I";
 }

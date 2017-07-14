@@ -24,6 +24,7 @@ public class JSONClient {
 		if (response instanceof org.apache.cxf.jaxrs.impl.ResponseImpl) {
 			objResponse = ((org.apache.cxf.jaxrs.impl.ResponseImpl) response).readEntity(responseClass);
 		} else {
+			
 			objResponse = response.readEntity(responseClass);
 		}
 		
@@ -52,7 +53,7 @@ public class JSONClient {
 
 		Response response = builder.post(Entity.entity(requestData,
 				MediaType.APPLICATION_JSON_TYPE)); // Successful
-
+		logger.debug(response.readEntity(String.class));
 		return response;
 	}
 

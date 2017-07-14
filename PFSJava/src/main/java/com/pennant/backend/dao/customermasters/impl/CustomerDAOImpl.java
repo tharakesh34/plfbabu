@@ -397,7 +397,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		StringBuilder updateSql = new StringBuilder("Update Customers");
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CustCtgCode = :CustCtgCode, CustTypeCode = :CustTypeCode, CustSalutationCode = :CustSalutationCode, CustFName = :CustFName," );
+		updateSql.append(" Set CustCtgCode = :CustCtgCode,CustCoreBank =:CustCoreBank, CustTypeCode = :CustTypeCode, CustSalutationCode = :CustSalutationCode, CustFName = :CustFName," );
 		updateSql.append(" CustMName = :CustMName, CustLName = :CustLName, CustShrtName = :CustShrtName, CustFNameLclLng = :CustFNameLclLng," );
 		updateSql.append(" CustMNameLclLng = :CustMNameLclLng, CustLNameLclLng = :CustLNameLclLng, CustShrtNameLclLng = :CustShrtNameLclLng," );
 		updateSql.append(" CustDftBranch = :CustDftBranch, CustGenderCode = :CustGenderCode, CustDOB = :CustDOB, CustPOB = :CustPOB," );

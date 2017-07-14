@@ -17,12 +17,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
-import com.pennant.backend.dao.dedup.impl.DedupParmDAOImpl;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 
 public class CustomerDedupDAOImpl implements CustomerDedupDAO {
 
-	private static Logger logger = Logger.getLogger(DedupParmDAOImpl.class);
+	private static Logger logger = Logger.getLogger(CustomerDedupDAOImpl.class);
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;

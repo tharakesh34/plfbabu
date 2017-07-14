@@ -10,9 +10,8 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -34,84 +33,75 @@ public class FetchFinCustomerDedupDetails {
 	
 	
 	@SuppressWarnings("unchecked")
-	public static FinanceDetail getFinCustomerDedup(String userRole, FinanceDetail aFinanceDetail, Window parentWindow, String curLoginUser) throws InterfaceException {
+	public static CustomerDetails getFinCustomerDedup(String userRole,String ref, CustomerDetails  custdetails, Window parentWindow, String curLoginUser) throws InterfaceException {
 		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList=null;
 		int userAction= -1;
 		Customer customer = null;
 		String mobileNumber = "";
-		if (aFinanceDetail.getCustomerDetails().getCustomer() != null) {
-			customer = aFinanceDetail.getCustomerDetails().getCustomer();
-			if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
-				for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
-					if (custPhone.getPhoneTypeCode().equals(
-							PennantConstants.PHONETYPE_MOBILE)) {
-						mobileNumber = PennantApplicationUtil.formatPhoneNumber(
-								custPhone.getPhoneCountryCode(),
-								custPhone.getPhoneAreaCode(),
-								custPhone.getPhoneNumber());
-						break;
+		if (custdetails.getCustomer() != null) {
+			customer = custdetails.getCustomer();
+			if (custdetails.getCustomerPhoneNumList() != null) {
+				for (CustomerPhoneNumber custPhone : custdetails.getCustomerPhoneNumList()) {
+					if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+						mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+								custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
 					}
 				}
 			}
 
-			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-
-			CustomerDedup customerDedup = doSetCustomerDedup(customer, aFinanceMain.getFinReference(), mobileNumber);
+			CustomerDedup customerDedup = doSetCustomerDedup(customer, ref, mobileNumber);
 			List<CustomerDedup> custDedupData = null;
 
-			
-			
-			if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				// get customer dedup details from interface
-				custDedupData = dedupParmService.getDedupCustomerDetails(aFinanceDetail);
-				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,appScore,override";
-			} else {
-				custDedupData = getDedupParmService().fetchCustomerDedupDetails(userRole,customerDedup, curLoginUser, aFinanceMain.getFinType());
-			}
+				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails);
+				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,custCoreBank,address,override";
+			} 
 
-			if(custDedupData !=null && !custDedupData.isEmpty()) {
+			if (custDedupData != null && !custDedupData.isEmpty()) {
 
-				Object dataObject = ShowCustomerDedupListBox.show(parentWindow,custDedupData,CUSTOMERDEDUP_LABELS, customerDedup, curLoginUser);
+				Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
+						customerDedup, curLoginUser);
 
 				if (dataObject != null) {
-					ShowCustomerDedupListBox details=(ShowCustomerDedupListBox) dataObject;
+					ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
 
-					System.out.println("THE ACTIONED VALUE IS ::::"+details.getUserAction());		
-					logger.debug("The User Action is "+details.getUserAction());
+					System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+					logger.debug("The User Action is " + details.getUserAction());
 					userAction = details.getUserAction();
-					customerDedupList=(List<CustomerDedup>)details.getObject();
+					customerDedupList = (List<CustomerDedup>) details.getObject();
 				}
 			} else {
 				userAction = -1;
 			}
 
-			aFinanceDetail.setCustomerDedupList(null);
+			custdetails.setCustomerDedupList(null);
 
 			/**
-			 * userAction represents NotDuplicate or DuplicateFound actions
-			 * if user click on NotDuplicate button userAction = 1
-			 * if user click on DuplicateFound button userAction = 0
-			 * if no customer found as a duplicate customer then userAction = -1
+			 * userAction represents NotDuplicate or DuplicateFound actions if user click on NotDuplicate button
+			 * userAction = 1 if user click on DuplicateFound button userAction = 0 if no customer found as a duplicate
+			 * customer then userAction = -1
 			 */
 			if (userAction == -1) {
-				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
+				custdetails.getCustomer().setSkipDedup(true);
+					throw new InterfaceException("41001",Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
 			} else if (userAction == 1) {
-				aFinanceDetail.setCustomerDedupList(customerDedupList);
-				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
-				aFinanceDetail.getCustomerDetails().getCustomer().setDedupFound(true);
-			}else if (userAction == 2) {
-				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
-				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
-				throw new InterfaceException("41002",Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
+				custdetails.setCustomerDedupList(customerDedupList);
+				custdetails.getCustomer().setSkipDedup(true);
+				custdetails.getCustomer().setDedupFound(true);
+			} else if (userAction == 2) {
+				custdetails.getCustomer().setDedupFound(true);
+				custdetails.getCustomer().setSkipDedup(false);
+				throw new InterfaceException("41002", Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
 			} else {
-				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
+				custdetails.getCustomer().setDedupFound(true);
 			}
 
 			logger.debug("Leaving");
-			
+
 		}
-		return aFinanceDetail;
+		return custdetails;
 		
 
 	}

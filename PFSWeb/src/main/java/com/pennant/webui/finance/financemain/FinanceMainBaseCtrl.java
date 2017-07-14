@@ -5936,7 +5936,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 				// Customer Dedup Process Check
-				boolean processCompleted = dedupValidation.doCheckDedup(aFinanceDetail, getRole(), getMainWindow(),
+				boolean processCompleted = dedupValidation.doCheckDedup(aFinanceDetail,
+						aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(), getRole(),
+						getMainWindow(),
 						curLoginUser);
 				if (!processCompleted) {
 					return;

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -433,11 +434,11 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 		if (afinTaxUploadHeader.isNew()) {
 			if ("xls".equals(media.getFormat())) {
-				copyInputStreamToFile(media.getStreamData(),
-						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH") + media.getName() + ".xls"));
+				copyInputStreamToFile(media.getByteData(),
+						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 			} else if ("xlsx".equals(media.getFormat())) {
-				copyInputStreamToFile(media.getStreamData(),
-						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH") + media.getName() + ".xlsx"));
+				copyInputStreamToFile(media.getByteData(),
+						new File("D:/FileUpload/Backup/"));
 			}
 		}
 			
@@ -492,16 +493,16 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	}
 
 	
-	private void copyInputStreamToFile( InputStream in, File file ) {
+	private void copyInputStreamToFile( byte[] data, File file ) {
 	    try {
-	        OutputStream out = new FileOutputStream(file);
-	        byte[] buf = new byte[1024];
-	        int len;
-	        while((len=in.read(buf))>0){
-	            out.write(buf,0,len);
-	        }
-	        out.close();
-	        in.close();
+	    	
+	    	File backup = new File(file.getPath());
+			if (backup != null && !backup.exists()) {
+				backup.mkdir();
+			}
+			
+	        FileUtils.writeByteArrayToFile(file, data);
+	        
 	    } catch (Exception e) {
 	        logger.debug(e);
 	    }

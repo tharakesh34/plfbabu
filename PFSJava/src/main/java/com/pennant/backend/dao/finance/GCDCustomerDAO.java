@@ -55,4 +55,6 @@ public interface GCDCustomerDAO {
 
 	List<GcdCustomer> fetchFailedGcdCustomers();
 	
+	GcdCustomer getgcdCustomerbyFinOneID(String ref);
+	
 }

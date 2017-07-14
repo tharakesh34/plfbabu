@@ -9600,4 +9600,13 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 		<renameColumn columnDataType="VARCHAR(100)" newColumnName="PREFIX"
 		oldColumnName="FOLDER_NAME" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
 	</changeSet>
+	<!-- <changeSet id="530" author="Madhubabu">
+	<sql>
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@192.168.1.19:1521:orcl', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  PLF', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pennant123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+	</changeSet> -->
+
 </databaseChangeLog>

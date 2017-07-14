@@ -16,8 +16,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennanttech.gcd.GcdCustomer;
@@ -29,26 +27,24 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 	private GCDCustomerDAO gCDCustomerDAO;
 	private GCDCustomerBajjajDAOImpl gCDCustomerBajjajDAO;
 	@Override
-	public void processGcdCustomer(FinanceDetail financeDetail, String method) {
+	public void processGcdCustomer(CustomerDetails custDetail, String method) {
 		logger.debug(Literal.ENTERING);
 
-		GcdCustomer customer = new GcdCustomer();
+		GcdCustomer customer =custDetail.getGcdCustomer();
 		if ("insert".equals(method)) {
 			customer.setInsertUpdateFlag("I");
-		} else {
+		} else { 
 			customer.setInsertUpdateFlag("U");
 		}
-		customer = preparegcdCustomer(financeDetail, customer);
+		customer = preparegcdCustomer(custDetail, customer);
 		gCDCustomerDAO.save(customer);
 		gCDCustomerBajjajDAO.callStoredProcedure(customer);
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	private GcdCustomer preparegcdCustomer(FinanceDetail financeDetail, GcdCustomer gcdCustomer) {
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+	private GcdCustomer preparegcdCustomer(CustomerDetails customerDetails, GcdCustomer gcdCustomer) {
 		Customer customer = customerDetails.getCustomer();
-		Mandate mandate = financeDetail.getMandate();
-		final char comma = ',';
 
 		gcdCustomer.setFinCustId(customer.getCustCoreBank());
 		gcdCustomer.setCustomerName(customer.getCustShrtName());
@@ -64,14 +60,14 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 					gcdCustomer.setYearsOfCurrJob(custEmplymentDetail.getCustEmpFrom());
 			}
 
-			if (!financeDetail.getGurantorsDetailList().isEmpty()) {
-				GuarantorDetail guarantorDetail = financeDetail.getGurantorsDetailList().get(0);
-				gcdCustomer.setNomineeName(guarantorDetail.getName());
-				gcdCustomer.setNomineeAddress(guarantorDetail.getAddrCountry() + comma + guarantorDetail.getAddrHNbr()
-						+ comma + guarantorDetail.getFlatNbr() + comma + guarantorDetail.getAddrStreet() + comma
-						+ guarantorDetail.getLovDescAddrCountryName() + comma + guarantorDetail.getLovDescAddrCityName()
-						+ comma + guarantorDetail.getAddrZIP());
-			}
+			/*
+			 * if (!financeDetail.getGurantorsDetailList().isEmpty()) { GuarantorDetail guarantorDetail =
+			 * financeDetail.getGurantorsDetailList().get(0); gcdCustomer.setNomineeName(guarantorDetail.getName());
+			 * gcdCustomer.setNomineeAddress(guarantorDetail.getAddrCountry() + comma + guarantorDetail.getAddrHNbr() +
+			 * comma + guarantorDetail.getFlatNbr() + comma + guarantorDetail.getAddrStreet() + comma +
+			 * guarantorDetail.getLovDescAddrCountryName() + comma + guarantorDetail.getLovDescAddrCityName() + comma +
+			 * guarantorDetail.getAddrZIP()); }
+			 */
 		} else if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			gcdCustomer.setIndvCorpFlag("C");
 			gcdCustomer.setDOI(customer.getCustDOB()); // setting DOI for corporate
@@ -88,7 +84,7 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		gcdCustomer.setCustSearchId(customer.getCustCRCPR());
 		gcdCustomer.setSectorId(Long.parseLong(customer.getCustSector()));
 		gcdCustomer.setAddressDetail(prepareGcdCustAddress(2, customerDetails));
-		gcdCustomer.setBankDetail(prepareGcdCustBankDetail(mandate, customer.getLovDescCustDftBranchName()));
+		//gcdCustomer.setBankDetail(prepareGcdCustBankDetail(mandate, customer.getLovDescCustDftBranchName()));
 		gcdCustomer.setFinnCustId(customer.getCustCoreBank());
 		gcdCustomer.setSfdcCustomerId(customer.getCustID());
 		gcdCustomer.setBranchId(Long.parseLong(customer.getCustDftBranch()));
