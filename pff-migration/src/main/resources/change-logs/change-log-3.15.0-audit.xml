@@ -835,4 +835,9 @@
 			<column name="ExtractionType" type="varchar(3)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="43" author="Irfan">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+		<column name="BounceDate" type="datetime"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
