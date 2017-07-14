@@ -163,7 +163,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 					setRole(arguments.get("roleCode").toString());
 					getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 				}
-
 			}
 
 			// Store the before image.
@@ -623,24 +622,42 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	public void doWriteBeanToComponents(TaxDetail aTaxDetail) {
 		logger.debug(Literal.ENTERING);
 
-		this.country.setValue(aTaxDetail.getCountry());
-		this.country.setDescription(aTaxDetail.getCountryName());
-		this.stateCode.setValue(aTaxDetail.getStateCode());
-		this.entityCode.setValue(aTaxDetail.getEntityCode());
-		this.taxCode.setValue(aTaxDetail.getTaxCode());
 		this.addressLine1.setValue(aTaxDetail.getAddressLine1());
 		this.addressLine2.setValue(aTaxDetail.getAddressLine2());
 		this.addressLine3.setValue(aTaxDetail.getAddressLine3());
 		this.addressLine4.setValue(aTaxDetail.getAddressLine4());
-		this.pinCode.setValue(aTaxDetail.getPinCode());
+		
+		if (getProvinceDialogCtrl() != null || !aTaxDetail.isNewRecord()) {
+			fillCitydetails(aTaxDetail.getStateCode());
+			fillPindetails(aTaxDetail.getCityCode(), aTaxDetail.getStateCode());
+		}
+		
+		this.country.setValue(aTaxDetail.getCountry());
+		this.country.setDescription(aTaxDetail.getCountryName());
+		
+		this.stateCode.setValue(aTaxDetail.getStateCode());
+		this.stateCode.setDescription(aTaxDetail.getProvinceName());
+		
 		this.cityCode.setValue(aTaxDetail.getCityCode());
 		this.cityCode.setDescription(aTaxDetail.getCityName());
-		this.stateCode.setDescription(aTaxDetail.getProvinceName());
-		this.entityCode.setDescription(aTaxDetail.getEntityDesc());
-		this.pinCode.setDescription(aTaxDetail.getCityName());
-
 		
+		this.entityCode.setValue(aTaxDetail.getEntityCode());
+		this.entityCode.setDescription(aTaxDetail.getEntityDesc());
+		
+		this.pinCode.setValue(aTaxDetail.getPinCode());
+		this.pinCode.setDescription(aTaxDetail.getCityName());
+		
+		this.taxCode.setValue(aTaxDetail.getTaxCode());
 		this.recordStatus.setValue(aTaxDetail.getRecordStatus());
+		
+		if (getProvinceDialogCtrl() != null) {
+			this.country.setReadonly(true);
+			this.stateCode.setReadonly(true);
+			
+			if (StringUtils.isNotBlank(this.taxDetail.getRecordType()) && !enqiryModule) {
+				this.btnDelete.setVisible(isReadOnly("TaxDetailDialog_TaxCode"));
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -773,12 +790,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 		doWriteBeanToComponents(taxDetail);
 		
-		if(isNewTaxDetail()){
+		if (isNewTaxDetail()) {
 			this.window_TaxDetailDialog.setHeight("80%");
 			this.window_TaxDetailDialog.setWidth("80%");
 			this.groupboxWf.setVisible(false);
-			this.window_TaxDetailDialog.doModal() ;
-		}else{
+			this.window_TaxDetailDialog.doModal();
+		} else {
 			this.window_TaxDetailDialog.setWidth("100%");
 			this.window_TaxDetailDialog.setHeight("100%");
 			setDialog(DialogType.EMBEDDED);
@@ -915,10 +932,15 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aTaxDetail.getId();
+		String msg = "";
+		if (getProvinceDialogCtrl() != null) {
+			msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
+		} else {
+			msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aTaxDetail.getId();
+		}
+		
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aTaxDetail.getRecordType()).equals("")) {
+			if (StringUtils.isBlank(aTaxDetail.getRecordType())) {
 				aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
 				aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
@@ -930,16 +952,30 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			}  else if (PennantConstants.RCD_UPD.equals(aTaxDetail.getRecordType())) {
+				aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
+				aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			try {
-				if (doProcess(aTaxDetail, tranType)) {
-					refreshList();
+			if (getProvinceDialogCtrl() == null) {
+				try {
+					if (doProcess(aTaxDetail, tranType)) {
+						refreshList();
+						closeDialog();
+					}
+				} catch (DataAccessException e) {
+					MessageUtil.showError(e);
+				}
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newTaxDetailProcess(aTaxDetail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_TaxDetailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getProvinceDialogCtrl().doFillGSTINMappingDetails(this.listTaxDetails);
+					// send the data back to customer
 					closeDialog();
 				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
 			}
 		}
 
@@ -957,7 +993,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			readOnlyComponent(false, this.taxCode);
 		} else {
 			this.btnCancel.setVisible(true);
-			
 		}
 		readOnlyComponent(isReadOnly("TaxDetailDialog_TaxCode"), this.taxCode);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_Country"), this.country);
@@ -984,11 +1019,6 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 		
-		if (getProvinceDialogCtrl() != null && isNewRecord()) {
-			this.country.setReadonly(true);
-			this.stateCode.setReadonly(true);
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1131,11 +1161,11 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = aTaxDetail.getStateCode();
-		valueParm[1] = aTaxDetail.getEntityCode();
+		valueParm[0] = aTaxDetail.getProvinceName();
+		valueParm[1] = aTaxDetail.getEntityDesc();
 
-		errParm[0] = PennantJavaUtil.getLabel("label.StateCode") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label.EntityCode") + ":" + valueParm[1];
+		errParm[0] = PennantJavaUtil.getLabel("label_TaxDetailDialog_StateCode.value") + ":" + valueParm[0] + " and ";
+		errParm[1] = PennantJavaUtil.getLabel("label_TaxDetailDialog_EntityCode.value") + ":" + valueParm[1];
 
 		if (getProvinceDialogCtrl().getTaxDetailList() != null
 				&& (getProvinceDialogCtrl().getTaxDetailList().size() > 0)) {
@@ -1178,6 +1208,18 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 							listTaxDetails.add(taxDetail);
 						}
 					}
+				} else if(aTaxDetail.getTaxCode().equals(taxDetail.getTaxCode())) {
+					valueParm = new String[1];
+					errParm = new String[1];
+					
+					valueParm[0] = aTaxDetail.getTaxCode();
+
+					errParm[0] = PennantJavaUtil.getLabel("label_TaxDetailDialog_TaxCode.value") + ":" + valueParm[0];
+					
+					auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
+					return auditHeader;
 				} else {
 					listTaxDetails.add(taxDetail);
 				}

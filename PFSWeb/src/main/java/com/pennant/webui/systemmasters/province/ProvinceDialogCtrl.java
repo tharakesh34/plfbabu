@@ -595,7 +595,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		arg.put("provinceDialogCtrl", this);
 		arg.put("newRecord", taxdetail.isNew());
 		arg.put("roleCode", getRole());
-		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
@@ -777,31 +776,28 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+		
 		if (getProvince().isNewRecord()) {
 			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.cPProvince.setReadonly(false);
 			this.cPProvinceName.setReadonly(false);
+			this.taxAvailable.setDisabled(true);
 		} else {
 			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
 			this.cPProvinceName.setReadonly(true);
+			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
 		}
 
-		//this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
 		this.cPIsActive.setDisabled(isReadOnly("ProvinceDialog_CPIsActive"));
 		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
 		this.unionTerritory.setDisabled(isReadOnly("ProvinceDialog_unionTerritory"));
 		this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
-			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
-		}else{
-			this.taxAvailable.setDisabled(true);
-		}
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
-		//this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -815,7 +811,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -825,6 +820,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
+		
 		this.cPCountry.setReadonly(true);
 		this.cPProvince.setReadonly(true);
 		this.cPProvinceName.setReadonly(true);
@@ -835,11 +831,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.unionTerritory.setDisabled(true);
 		this.taxStateCode.setDisabled(true);
 		this.businessArea.setDisabled(true);
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
-			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
-		}else{
-			this.taxAvailable.setDisabled(true);
-		}
+		this.taxAvailable.setDisabled(true);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -850,6 +843,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
+		
 		logger.debug("Leaving");
 	}
 
