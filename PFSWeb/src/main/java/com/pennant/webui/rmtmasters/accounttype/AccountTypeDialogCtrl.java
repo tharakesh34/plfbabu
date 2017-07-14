@@ -1356,7 +1356,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 */
 	public void onCheck$gSTApplicable(Event event) {
 		logger.debug("Entering");
-		gSTApplicableCheck();
+		
+		gstApplicableCheck();
+		
 		logger.debug("Leaving");
 	}
 
@@ -1364,8 +1366,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * Check Whether  GST Applicable  is checked or not
 	 * 
 	 */
-	public void gSTApplicableCheck() {
+	public void gstApplicableCheck() {
 		logger.debug("Entering");
+		
 		if (this.gSTApplicable.isChecked()) {
 			this.hSNNumber.setReadonly(false);
 			this.hSNNumber.setValue("");
@@ -1384,8 +1387,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		logger.debug("Leaving");
 	}
-
-	// WorkFlow Components
 
 	/**
 	 * Get Audit Header Details
