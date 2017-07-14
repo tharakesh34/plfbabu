@@ -68,6 +68,7 @@ import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -109,6 +110,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -164,6 +166,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
 	protected Textbox										remarks;
+	protected Label											label_ReceiptCancellationDialog_BounceDate;
+	protected Hbox											hbox_ReceiptCancellationDialog_BounceDate;
+	protected Datebox										bounceDate;
 	
 	protected Row											row_BounceReason;	
 	protected Row											row_CancelReason;	
@@ -338,6 +343,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		//readOnlyComponent(isReadOnly("+this.pageRightName+"_bounceCharge"), this.bounceCharge);
 		readOnlyComponent(true, this.bounceCharge);
 		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceRemarks"), this.bounceRemarks);
+		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceDate"), this.bounceDate);
 		readOnlyComponent(isReadOnly(this.pageRightName+"_cancelReason"), this.cancelReason);
 		
 		logger.debug("Leaving");
@@ -377,6 +383,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
+		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.favourNo.setMaxlength(6);
@@ -546,7 +553,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if(!recReject){
 			doSetValidation();
 		}
-		
+		try {
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
+			} else {
+				aReceiptHeader.setBounceDate(null);
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 
@@ -594,7 +610,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.receiptDetailsTab.setSelected(true);
 				throw new WrongValuesException(wvea);
 			}
-
+			
 			aReceiptHeader.setManualAdvise(bounce);
 		}else{
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
@@ -712,6 +728,11 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.bounceRemarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceRemarks.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
+		
+		if (!this.bounceDate.isDisabled() ) {
+			this.bounceDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"),
+					true, null, null, true));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -724,7 +745,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bounceCode.setConstraint("");
 		this.bounceRemarks.setConstraint("");
 		this.cancelReason.setConstraint("");
-		
+		this.bounceDate.setConstraint("");
 		this.bounceCode.setErrorMessage("");
 		this.bounceRemarks.setErrorMessage("");
 		this.cancelReason.setErrorMessage("");
@@ -758,7 +779,13 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		this.cancelReason.setValue(header.getCancelReason(), header.getCancelReasonDesc());
 		checkByReceiptMode(header.getReceiptMode(), false);
-		
+		this.bounceDate.setValue(header.getBounceDate());
+		if(header.getBounceDate() == null){
+			this.bounceDate.setValue(DateUtility.getAppDate());
+		}
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			this.bounceDate.setValue(null);
+		}
 		ManualAdvise bounceReason = header.getManualAdvise();
 		if(bounceReason != null){
 			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
@@ -780,12 +807,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.row_CancelReason.setVisible(false);
 			this.cancelReason.setMandatoryStyle(false);
 			this.cancelReason.setReadonly(true);
+			this.label_ReceiptCancellationDialog_BounceDate.setVisible(true);
+			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(true);
 		}else{
 			this.row_BounceReason.setVisible(false);
 			this.row_BounceRemarks.setVisible(false);
 			this.bounceCode.setMandatoryStyle(false);
 			this.bounceCode.setReadonly(true);
 			this.bounceRemarks.setReadonly(true);
+			this.label_ReceiptCancellationDialog_BounceDate.setVisible(false);
+			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(false);
 		}
 
 		// Separating Receipt Amounts based on user entry, if exists
