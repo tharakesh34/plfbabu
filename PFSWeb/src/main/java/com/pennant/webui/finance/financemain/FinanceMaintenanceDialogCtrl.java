@@ -672,8 +672,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendScheduleDetailTab(true, true);
 
 		// Co-applicants & joint account Holder Details
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-				&& StringUtils.equals(aFinanceMain.getLovDescFinDivision(), FinanceConstants.FIN_DIVISION_RETAIL)) {
+		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
 			appendJointGuarantorDetailTab();
 		}
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
