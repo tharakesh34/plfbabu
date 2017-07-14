@@ -76,6 +76,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
@@ -801,16 +802,20 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		//update or insert based on availability.
-		/*
-		 * for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
-		 * FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
-		 * .getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View"); if (financeTaxDetail != null) {
-		 * preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail); getFinanceTaxDetailDAO().update(financeTaxDetail,
-		 * TableType.MAIN_TAB); } else { FinanceTaxDetail detail = new FinanceTaxDetail();
-		 * preparefinTaxDetail(finTaxUploadDetail, detail); getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB); }
-		 * 
-		 * }
-		 */
+		
+		for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
+			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
+					.getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View");
+			if (financeTaxDetail != null) {
+				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
+				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
+			} else {
+				FinanceTaxDetail detail = new FinanceTaxDetail();
+				preparefinTaxDetail(finTaxUploadDetail, detail);
+				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
+			}
+		}
+		 
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
