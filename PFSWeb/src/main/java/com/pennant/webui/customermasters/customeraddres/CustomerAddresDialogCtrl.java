@@ -1124,7 +1124,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			for (int i = 0; i < getCustomerDialogCtrl().getCustomerAddressDetailList().size(); i++) {
 				CustomerAddres customerAddres = getCustomerDialogCtrl().getCustomerAddressDetailList().get(i);
 
-				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
+				if (isNewRecord() && !PennantConstants.TRAN_DEL.equals(tranType)) {
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType()) &&
 						!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerAddres.getRecordType()) && 
 						aCustomerAddres.getCustAddrPriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) &&

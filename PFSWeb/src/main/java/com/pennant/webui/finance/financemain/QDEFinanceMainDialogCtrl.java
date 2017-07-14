@@ -1597,7 +1597,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws InterfaceException {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();

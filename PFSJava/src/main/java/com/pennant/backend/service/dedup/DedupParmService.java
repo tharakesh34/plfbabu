@@ -52,7 +52,6 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pff.core.InterfaceException;
 
@@ -80,5 +79,5 @@ public interface DedupParmService {
             String queryCode);
 	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws InterfaceException;
 	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException;
-	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail); 
+	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail) throws Exception; 
 }

@@ -1700,14 +1700,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		
 		//process to send FIN-one request and create or update the cust data.
-		if (!isWIF) {
+		/*if (!isWIF) {
 			processFinOneCheck(aAuditHeader);
 		}
 
 		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
 				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
 			return aAuditHeader;
-		}
+		}*/
 		/*
 		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		 */

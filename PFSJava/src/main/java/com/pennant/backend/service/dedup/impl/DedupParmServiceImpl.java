@@ -1455,13 +1455,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	
 	@Override
-	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details) {
+	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details) throws Exception {
 		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
 			response = customerDedupService.invokeDedup(dedupCustomerDetail);
 		} catch (Exception e) {
 			logger.error(e);
+			throw e;
 		}
 
 		List<CustomerDedup> customerDedup = getDedupData(response,details);

@@ -894,7 +894,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				CustomerPhoneNumber customerPhoneNumber = getCustomerDialogCtrl().getCustomerPhoneNumberDetailList()
 						.get(i);
 
-				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
+				if (isNewRecord() && !PennantConstants.TRAN_DEL.equals(tranType)) {
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType()) &&
 							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) &&
 							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) && 

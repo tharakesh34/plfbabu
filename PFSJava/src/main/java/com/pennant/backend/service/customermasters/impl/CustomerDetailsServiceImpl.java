@@ -2161,12 +2161,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		//process to send finone request and create or update the data.
-		processFinOneCheck(aAuditHeader);
+		/*processFinOneCheck(aAuditHeader);
 
 		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
 				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
 			return aAuditHeader;
-		}
+		}*/
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);

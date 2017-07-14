@@ -33,7 +33,7 @@ public class FetchFinCustomerDedupDetails {
 	
 	
 	@SuppressWarnings("unchecked")
-	public static CustomerDetails getFinCustomerDedup(String userRole,String ref, CustomerDetails  custdetails, Window parentWindow, String curLoginUser) throws InterfaceException {
+	public static CustomerDetails getFinCustomerDedup(String userRole,String ref, CustomerDetails  custdetails, Window parentWindow, String curLoginUser) throws Exception {
 		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList=null;
 		int userAction= -1;

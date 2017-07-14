@@ -81,9 +81,9 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * 
 	 * @return boolean
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
-	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String ref,String role,Window window,String curLoginUser) throws InterruptedException {
+	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String ref,String role,Window window,String curLoginUser) throws Exception {
 		try {
 			// Customer Dedup Process Check
 			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),ref,role,window,curLoginUser);
@@ -130,14 +130,15 @@ public class DedupValidation implements Serializable {
 	 * @param window
 	 * @param curLoginUser
 	 * @return
+	 * @throws Exception 
 	 */
 	private boolean doCustomerDedupe(CustomerDetails details, String ref, String role, Window window,
-			String curLoginUser) throws InterfaceException {
+			String curLoginUser) throws Exception {
 		logger.debug("Entering");
 
 		String corebank = details.getCustomer().getCustCoreBank();
 
-		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+	/*	//If Core Bank ID is Exists then Customer is already existed in Core Banking System
 		if (StringUtils.isBlank(corebank)) {
 
 			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, ref, details, window, curLoginUser);
@@ -147,7 +148,7 @@ public class DedupValidation implements Serializable {
 			} else {
 				return true;
 			}
-		}
+		}*/
 		logger.debug("Leaving");
 		return true;
 	}
