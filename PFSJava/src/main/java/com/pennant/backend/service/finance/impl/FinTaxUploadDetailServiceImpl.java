@@ -807,10 +807,14 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
 					.getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View");
 			if (financeTaxDetail != null) {
+				Customer customer = customerDAO.getCustomerByCIF(finTaxUploadDetail.getApplicant(),"_View");
+				financeTaxDetail.setTaxCustId(customer.getCustID());
 				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
 				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
 			} else {
 				FinanceTaxDetail detail = new FinanceTaxDetail();
+				Customer customer = customerDAO.getCustomerByCIF(finTaxUploadDetail.getApplicant(),"_View");
+				detail.setTaxCustId(customer.getCustID());
 				detail.setNewRecord(true);
 				preparefinTaxDetail(finTaxUploadDetail, detail);
 				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
@@ -828,6 +832,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	}
 
 	private void preparefinTaxDetail(FinTaxUploadDetail finTaxUploadDetail, FinanceTaxDetail financeTaxDetail) {
+		
 		financeTaxDetail.setFinReference(finTaxUploadDetail.getAggrementNo());
 		financeTaxDetail.setApplicableFor(finTaxUploadDetail.getApplicableFor());
 		financeTaxDetail.setCustCIF(finTaxUploadDetail.getApplicant());
