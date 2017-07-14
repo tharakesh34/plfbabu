@@ -10056,4 +10056,23 @@ union
 		</sql>
 	</changeSet>
 	
+	 
+ <!-- FOR AWS 
+	<changeSet id="543" author="Amit">
+		<sql>
+			DELETE FROM DATA_ENGINE_DB_DETAILS WHERE CONFIGID IN (SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME ='CUSTOMER_CURD_OPERATIONS');
+
+			INSERT INTO DATA_ENGINE_DB_DETAILS VALUES ((SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME
+			='CUSTOMER_CURD_OPERATIONS'),NULL,'oracle.jdbc.driver.OracleDriver',
+			'jdbc:oracle:thin:@10.128.193.77:1633:BCFPRD_N2P','FINN_PENNANT','pennant123',0)
+
+		</sql>
+
+	</changeSet>
+ FOR AWS
+  -->
+ 	
+	
 </databaseChangeLog>
