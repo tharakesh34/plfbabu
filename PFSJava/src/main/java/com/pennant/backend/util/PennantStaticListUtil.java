@@ -269,7 +269,7 @@ public class PennantStaticListUtil {
 			regexType.add(new ValueLabel("REGEX_ALPHA", Labels.getLabel("label_REGEX_ALPHA")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC", Labels.getLabel("label_REGEX_NUMERIC")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM", Labels.getLabel("label_REGEX_ALPHANUM")));
-			regexType.add(new ValueLabel("REGEX_ALPHA_SPL", Labels.getLabel("label_REGEX_ALPHA_SPL")));
+			regexType.add(new ValueLabel("REGEX_ALPHA_SPACE_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPACE_SPL")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPL")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC_SPL", Labels.getLabel("label_REGEX_NUMERIC_SPL")));
 			regexType.add(new ValueLabel("REGEX_NAME", Labels.getLabel("label_REGEX_NAME")));
