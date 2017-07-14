@@ -9608,5 +9608,17 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pennant123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet> -->
-
+	<changeSet author="Pruthvi" id="531" dbms="oracle">
+    <sqlFile path="CREATE_CUSTOMER_IN_FINNONE.sql" endDelimiter="DonotStop" encoding="utf8" relativeToChangelogFile="true"/>
+	</changeSet>
+	<changeSet id="532" author="Jayant">
+	    <addColumn tableName="FINRECEIPTDETAIL" >
+	        <column name="BounceDate" type="datetime"/>
+	    </addColumn>
+	</changeSet>
+	<changeSet id="533" author="Jayant">
+	    <addColumn tableName="FINRECEIPTDETAIL_TEMP" >
+	        <column name="BounceDate" type="datetime"/>
+	    </addColumn>
+	</changeSet>
 </databaseChangeLog>
