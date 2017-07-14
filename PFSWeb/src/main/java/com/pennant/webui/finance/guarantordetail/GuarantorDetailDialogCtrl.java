@@ -284,6 +284,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			} else {
 				enqModule = false;
 			}
+			
+			if (arguments.containsKey("moduleType")) {
+				moduleType = (String) arguments.get("moduleType");
+			} 
+			
 			// READ OVERHANDED params !
 			if (arguments.containsKey("guarantorDetail")) {
 				this.guarantorDetail = (GuarantorDetail) arguments.get("guarantorDetail");
@@ -615,7 +620,13 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 		} else {
 			this.btnCancel.setVisible(true);
+			if(!enqModule){
 			this.guranteePercentage.setReadonly(isReadOnly("GuarantorDetailDialog_GuranteePercentage"));
+			}else{
+				this.guranteePercentage.setReadonly(true);
+				this.viewCustInfo.setVisible(false);
+			}
+			
 		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

@@ -2007,6 +2007,7 @@
 		class="com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl"
 		parent="basisCtrl">
 		<property name="guarantorDetailService" ref="guarantorDetailService"></property>
+		<property name="jointAccountDetailService" ref="jointAccountDetailService"></property>
 	</bean>
 
 	<!--============ Finance Agreement Detail ============== -->

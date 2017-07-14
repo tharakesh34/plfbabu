@@ -14,7 +14,7 @@
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" height="99%">
 								<rows>
 									<row align="Right">
-										<button id="btnAddJointDetails" height="10px" label="Add" tooltiptext="Add Joint Account Details" autodisable="btnAddJointDetails,btnAddGurantorDetails"/>
+										<button id="btnAddJointDetails" height="10px" label="Add" tooltiptext="Add Joint Account Details" autodisable="btnAddJointDetails,btnAddGurantorDetails" visible="false"/>
 									</row>
 									<row>
 										<listbox id="listBoxJountAccountDetails" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('label_Generate_Report.tooltip')}" multiple="true"   width="99.8%" sizedByContent="true">
@@ -40,7 +40,7 @@
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 								<rows>
 									<row align="Right">
-										<button id="btnAddGurantorDetails" height="10px" label="Add" tooltiptext="Add Gurantor Details" autodisable="btnAddJointDetails,btnAddGurantorDetails"/>
+										<button id="btnAddGurantorDetails" height="10px" label="Add" tooltiptext="Add Gurantor Details" autodisable="btnAddJointDetails,btnAddGurantorDetails" visible="false"/>
 									</row>
 									<row>
 										<listbox id="listBoxGurantorsDetail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('label_Generate_Report.tooltip')}" multiple="true"   width="99.8%" sizedByContent="true">

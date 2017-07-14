@@ -76,6 +76,8 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -109,6 +111,7 @@ import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -143,6 +146,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Tab						financeTypeDetailsTab;
 	protected Tab						repayGraphTab;
 	protected Tab						riaDetailsTab;
+	protected Tabpanels					tabpanelsBoxIndexCenter;
+	protected Tabs 						tabsIndexCenter;
 	protected Tab						disburseDetailsTab;
 	private Tabpanel					tabpanel_graph;
 	protected Div						graphDivTabDiv;
@@ -456,6 +461,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private	  List<FinFlagsDetail>			finFlagsDetailList		= null;
 	protected Label							label_FinanceMainDialog_DownPayAccount;
 	protected String						finDivision				= "";
+	protected String 						selectMethodName		= "onSelectTab";
+	private  boolean						enquiry    				= false;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1211,6 +1218,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			}
 		}
+		
+		appendJointGuarantorDetailTab();
+		
 		if (getFinScheduleData().getFinanceScheduleDetails() != null) {
 			this.repayGraphTab.setVisible(true);
 			graphDivTabDiv = new Div();
@@ -1301,6 +1311,76 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setMandatoryStyle(false);
 			this.row_downPayBank.setVisible(false);
 		}
+		
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Joint account and Guaranteer Details Data in finance
+	 */
+	protected void appendJointGuarantorDetailTab() {
+		logger.debug("Entering");
+		try {
+			enquiry=true;
+			createTab(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_JOINTGUARANTOR), getDefaultArguments());
+			
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_JOINTGUARANTOR));
+		map.put("enquiry", enquiry);
+		map.put("financeMain", getFinScheduleData().getFinanceMain());
+		map.put("ccyFormatter",
+				CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy()));
+		map.put("mainController", this);
+		return map;
+	}
+	
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+	
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+
+		String tabName = "";
+		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
+			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
+		}
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
 
 		logger.debug("Leaving");
 	}
