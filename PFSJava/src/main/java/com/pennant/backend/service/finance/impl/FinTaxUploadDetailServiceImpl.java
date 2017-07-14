@@ -811,6 +811,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
 			} else {
 				FinanceTaxDetail detail = new FinanceTaxDetail();
+				detail.setNewRecord(true);
 				preparefinTaxDetail(finTaxUploadDetail, detail);
 				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
 			}
@@ -840,6 +841,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		financeTaxDetail.setCity(finTaxUploadDetail.getCity());
 		financeTaxDetail.setPinCode(finTaxUploadDetail.getPinCode());
 		financeTaxDetail.setTaxExempted(finTaxUploadDetail.isTaxExempted());
+		financeTaxDetail.setLastMntBy(finTaxUploadDetail.getLastMntBy());
+		financeTaxDetail.setLastMntOn(finTaxUploadDetail.getLastMntOn());
+		financeTaxDetail.setVersion(financeTaxDetail.isNewRecord() ? 1:financeTaxDetail.getVersion()+1);
 	}
 
 	@Override

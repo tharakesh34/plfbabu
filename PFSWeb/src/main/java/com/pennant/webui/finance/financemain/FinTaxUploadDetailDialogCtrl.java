@@ -438,7 +438,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 			} else if ("xlsx".equals(media.getFormat())) {
 				copyInputStreamToFile(media.getByteData(),
-						new File("D:/FileUpload/Backup/"));
+						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 			}
 		}
 			
