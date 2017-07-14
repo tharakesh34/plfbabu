@@ -1340,6 +1340,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		detail.setJountAccountDetailList(null);
 		detail.setGurantorsDetailList(null);
 		detail.setCollateralAssignmentList(null);
+		detail.setReturnDataSetList(null);
 	}
 
 	/**

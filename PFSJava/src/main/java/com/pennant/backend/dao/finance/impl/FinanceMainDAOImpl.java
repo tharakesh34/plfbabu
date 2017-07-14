@@ -2854,5 +2854,36 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		}
 
 	}
+
+	@Override
+	public FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.MaturityDate, FT.Ratechganyday ");
+
+		if (isWIF) {
+			selectSql.append(" From WIFFinanceMain FM");
+		} else {
+			selectSql.append(" From FinanceMain FM");
+		}
+		selectSql.append(" inner join RMTfinanceTypes FT on FM.FinType = FT.FinType ");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		FinanceMain financeMain = null;
+		try {
+			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeMain = null;
+		}
+		logger.debug("Leaving");
+		return financeMain;
+	}
 	
 }
