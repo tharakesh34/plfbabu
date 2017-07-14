@@ -1050,6 +1050,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail>{
 		}
 
 		if (enqiryModule) {
+			doReadOnly();
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
