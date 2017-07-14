@@ -262,6 +262,15 @@
 										checked="false" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_AccountTypeDialog_ExtractionType"
+									value="${c:l('label_AccountTypeDialog_ExtractionType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="extractionType" readonly="true" width="120px"/>
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

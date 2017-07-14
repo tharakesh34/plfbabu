@@ -96,25 +96,26 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_AccountTypeDialog; // autoWired
+	protected Window window_AccountTypeDialog; 
 
-	protected Textbox acType; // autoWired
-	protected Textbox acTypeDesc; // autoWired
-	protected Textbox acLmtCategory; // autoWired
-	protected Combobox acPurpose; // autoWired
-	protected Textbox acHeadCode; // autoWired
-	protected Checkbox internalAc; // autoWired
-	protected Checkbox custSysAc; // autoWired
-	protected Combobox assertOrLiability; // autoWired
-	protected Checkbox onBalanceSheet; // autoWired
-	protected Checkbox allowOverDraw; // autoWired
-	protected Checkbox acTypeIsActive; // autoWired
-	protected Space space_acHeadCode; // autoWired
+	protected Textbox acType; 
+	protected Textbox acTypeDesc; 
+	protected Textbox acLmtCategory; 
+	protected Combobox acPurpose; 
+	protected Textbox acHeadCode; 
+	protected Checkbox internalAc; 
+	protected Checkbox custSysAc; 
+	protected Combobox assertOrLiability; 
+	protected Combobox extractionType; 
+	protected Checkbox onBalanceSheet; 
+	protected Checkbox allowOverDraw; 
+	protected Checkbox acTypeIsActive; 
+	protected Space space_acHeadCode; 
 	protected ExtendedCombobox	acTypeGrpId;
 	protected ExtendedCombobox	profitCenter;
 	protected ExtendedCombobox	costCenter;
-	protected Checkbox gSTApplicable; // autoWired
-	protected Checkbox revChargeApplicable; // autoWired
+	protected Checkbox gSTApplicable; 
+	protected Checkbox revChargeApplicable; 
 	protected Textbox hSNNumber;
 	protected Textbox natureService;
 	protected Row row_HSNNumber;
@@ -122,9 +123,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected Row row_headcode;
 
 	// not autoWired Var's
-	private AccountType accountType; // overHanded per parameter
-	private transient AccountTypeListCtrl accountTypeListCtrl; // overHanded per
-																// parameter
+	private AccountType accountType;
+	private transient AccountTypeListCtrl accountTypeListCtrl;
 	private transient boolean validationOn;
 	
 	protected Button btnCopyTo;
@@ -461,6 +461,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
 		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
 		fillComboBox(this.acPurpose, aAccountType.getAcPurpose(), PennantStaticListUtil.getAccountPurpose(), "");
+		fillComboBox(this.extractionType, aAccountType.getExtractionType(), PennantStaticListUtil.getExtractionTypes(), "");
+		
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
 				: StringUtils.leftPad(
 						String.valueOf(aAccountType.getAcHeadCode()), 4, '0'));
@@ -531,12 +533,17 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 
 		try {
-			aAccountType.setAcPurpose(this.acPurpose.getSelectedItem()
-					.getValue().toString());
+			aAccountType.setAcPurpose(this.acPurpose.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		try {
+			aAccountType.setExtractionType(this.extractionType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			aAccountType.setAcHeadCode(StringUtils.leftPad(
 					String.valueOf(this.acHeadCode.getText()), 4, '0'));
@@ -786,6 +793,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountPurpose(),
 							Labels.getLabel("label_AccountTypeDialog_AcPurpose.value")));
 		}
+		if (!this.extractionType.isDisabled()) {
+			this.extractionType.setConstraint(new StaticListValidator(PennantStaticListUtil.getExtractionTypes(),
+					Labels.getLabel("label_AccountTypeDialog_ExtractionType.value")));
+		}
 		if (!this.acHeadCode.isReadonly() && !"Y".equals(CBI_Available)) {
 			this.acHeadCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcHeadCode.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true,4,4));
@@ -831,6 +842,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setConstraint("");
 		this.acLmtCategory.setConstraint("");
 		this.acPurpose.setConstraint("");
+		this.extractionType.setConstraint("");
 		this.acHeadCode.setConstraint("");
 		this.assertOrLiability.setConstraint("");
 		this.acTypeGrpId.setConstraint("");
@@ -863,6 +875,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setErrorMessage("");
 		this.acLmtCategory.setErrorMessage("");
 		this.acPurpose.setErrorMessage("");
+		this.extractionType.setErrorMessage("");
 		this.acHeadCode.setErrorMessage("");
 		this.assertOrLiability.setErrorMessage("");
 		this.acTypeGrpId.setErrorMessage("");
@@ -939,6 +952,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));
 		this.acLmtCategory.setReadonly(isReadOnly("AccountTypeDialog_acLmtCategory"));
 		this.acPurpose.setDisabled(isReadOnly("AccountTypeDialog_acPurpose"));
+		this.extractionType.setDisabled(isReadOnly("AccountTypeDialog_acPurpose"));
 		this.acHeadCode.setReadonly(isReadOnly("AccountTypeDialog_acHeadCode"));
 		this.internalAc
 				.setDisabled(isReadOnly("AccountTypeDialog_isInternalAc"));
@@ -982,6 +996,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setReadonly(true);
 		this.acLmtCategory.setReadonly(true);
 		this.acPurpose.setDisabled(true);
+		this.extractionType.setDisabled(true);
 		this.acHeadCode.setReadonly(true);
 		this.internalAc.setDisabled(true);
 		this.custSysAc.setDisabled(true);
@@ -1020,6 +1035,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setValue("");
 		this.acLmtCategory.setValue("");
 		this.acPurpose.setValue("");
+		this.extractionType.setValue("");
 		this.acHeadCode.setText("");
 		this.internalAc.setChecked(false);
 		this.custSysAc.setChecked(false);

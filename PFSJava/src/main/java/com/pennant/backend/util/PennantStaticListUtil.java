@@ -200,6 +200,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> channelTypes;
 	private static ArrayList<ValueLabel> phoneTypeRegex;
 	
+	private static ArrayList<ValueLabel> extractionType;
+	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -2745,6 +2747,20 @@ public class PennantStaticListUtil {
 			phoneTypeRegex.add(new ValueLabel("[0-9]{13}", Labels.getLabel("listheader_DealerTelephone.label")));
 		}
 		return phoneTypeRegex;
+	}
+	
+	/**
+	 * get the Extraction Types for Account Types
+	 * @return
+	 */
+	public static ArrayList<ValueLabel> getExtractionTypes() {
+		if(extractionType == null){
+			extractionType = new ArrayList<ValueLabel>(3);
+			extractionType.add(new ValueLabel("TRN", Labels.getLabel("label_Transaction")));
+			extractionType.add(new ValueLabel("SUM", Labels.getLabel("label_Summarized")));
+			extractionType.add(new ValueLabel("NA", Labels.getLabel("label_NotApplicable")));
+		}
+		return extractionType;
 	}
 }
 

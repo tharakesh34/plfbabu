@@ -86,6 +86,8 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String  aCCADDLVAR1;
 	private String  aCCADDLVAR2;
 	private boolean aCCADDLCHAR1;
+	
+	private String  extractionType;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -344,6 +346,14 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	public void setaCCADDLCHAR1(boolean aCCADDLCHAR1) {
 		this.aCCADDLCHAR1 = aCCADDLCHAR1;
+	}
+
+	public String getExtractionType() {
+		return extractionType;
+	}
+
+	public void setExtractionType(String extractionType) {
+		this.extractionType = extractionType;
 	}
 
 }
