@@ -64,6 +64,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
@@ -461,7 +462,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
 		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
 		fillComboBox(this.acPurpose, aAccountType.getAcPurpose(), PennantStaticListUtil.getAccountPurpose(), "");
-		fillComboBox(this.extractionType, aAccountType.getExtractionType(), PennantStaticListUtil.getExtractionTypes(), "");
 		
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
 				: StringUtils.leftPad(
@@ -479,9 +479,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		if (aAccountType.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aAccountType.getRecordType())) {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
-			this.gSTApplicable.setChecked(true);
-			this.gSTApplicable.setDisabled(true);
-
 		}
 		this.acTypeGrpId.setObject(new AccountTypeGroup(aAccountType.getAcTypeGrpId()));
 		this.acTypeGrpId.setValue(aAccountType.getGroupCode(), aAccountType.getGroupDescription());
@@ -495,10 +492,17 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 		this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
 		this.natureService.setValue(aAccountType.getaCCADDLVAR2());
-		if (!this.gSTApplicable.isChecked()) {
+		
+		String excludeFields = "";
+		if (this.gSTApplicable.isChecked()) {
+			readOnlyComponent(true, this.extractionType);
+		} else {
 			this.hSNNumber.setReadonly(true);
 			this.natureService.setReadonly(true);
+			excludeFields = "," + AccountConstants.EXTRACTION_TYPE_TRANSACTION + ",";
 		}
+		
+		fillComboBox(this.extractionType, aAccountType.getExtractionType(), PennantStaticListUtil.getExtractionTypes(), excludeFields);
 		this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 		
 		logger.debug("Leaving");
@@ -1367,12 +1371,15 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(false);
 			this.natureService.setValue("");
-
+			fillComboBox(this.extractionType, AccountConstants.EXTRACTION_TYPE_TRANSACTION, PennantStaticListUtil.getExtractionTypes(), "");
+			readOnlyComponent(true, this.extractionType);
 		} else {
 			this.hSNNumber.setReadonly(true);
 			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(true);
 			this.natureService.setValue("");
+			readOnlyComponent(isReadOnly("AccountTypeDialog_acPurpose"), this.extractionType);
+			fillComboBox(this.extractionType, null, PennantStaticListUtil.getExtractionTypes(), "," + AccountConstants.EXTRACTION_TYPE_TRANSACTION + ",");
 		}
 
 		logger.debug("Leaving");

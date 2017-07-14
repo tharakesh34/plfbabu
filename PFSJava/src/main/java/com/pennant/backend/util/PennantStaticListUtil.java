@@ -2756,9 +2756,9 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getExtractionTypes() {
 		if(extractionType == null){
 			extractionType = new ArrayList<ValueLabel>(3);
-			extractionType.add(new ValueLabel("TRN", Labels.getLabel("label_Transaction")));
-			extractionType.add(new ValueLabel("SUM", Labels.getLabel("label_Summarized")));
-			extractionType.add(new ValueLabel("NA", Labels.getLabel("label_NotApplicable")));
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_TRANSACTION, Labels.getLabel("label_ExtractionType_Transaction")));
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_SUMMARY, Labels.getLabel("label_ExtractionType_Summarized")));
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_NOTAPPLICABLE, Labels.getLabel("label_ExtractionType_NotApplicable")));
 		}
 		return extractionType;
 	}
