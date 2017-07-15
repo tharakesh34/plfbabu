@@ -480,7 +480,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Date valueDate = DateUtility.getAppDate();
 			if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
 				for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
-					if(StringUtils.equals(receiptHeader.getReceiptDetails().get(i).getPaymentType(), receiptHeader.getReceiptMode())){
+					if(StringUtils.equals(receiptHeader.getReceiptDetails().get(i).getPaymentType(), receiptHeader.getReceiptMode()) &&
+							!StringUtils.equals(receiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)){
 						valueDate = receiptHeader.getReceiptDetails().get(i).getReceivedDate();
 					}
 				}
