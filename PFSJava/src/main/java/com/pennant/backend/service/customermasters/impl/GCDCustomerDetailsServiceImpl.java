@@ -18,6 +18,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pff.core.Literal;
 
@@ -31,10 +32,10 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		logger.debug(Literal.ENTERING);
 
 		GcdCustomer customer =custDetail.getGcdCustomer();
-		if ("insert".equals(method)) {
-			customer.setInsertUpdateFlag("I");
+		if (PennantConstants.CUSTOMER_DEDUP_INSERT.equals(method)) {
+			customer.setInsertUpdateFlag(PennantConstants.CUSTOMER_DEDUP_INSERT);
 		} else { 
-			customer.setInsertUpdateFlag("U");
+			customer.setInsertUpdateFlag(PennantConstants.CUSTOMER_DEDUP_UPDATE);
 		}
 		customer = preparegcdCustomer(custDetail, customer);
 		gCDCustomerDAO.save(customer);
