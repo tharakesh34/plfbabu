@@ -10464,5 +10464,39 @@ union
 	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_pAPenaltyWaived', 'Penalty Waived Payable', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
 		</sql>
 	</changeSet>
+	<changeSet id="548" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW" replaceIfExists="true">
+			SELECT   T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	         FROM  FinCovenantType_Temp T1 INNER JOIN
+			  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  
+	UNION ALL
+	SELECT   T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	         FROM  FinCovenantType T1 INNER JOIN
+			  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  
+	WHERE NOT EXISTS
+	                 (SELECT   1
+					  FROM        FinCovenantType_Temp
+					  WHERE       FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+		</createView>
+	
+	</changeSet>
+	<changeSet id="549" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EAVIEW" replaceIfExists="true">
+			SELECT   T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+         FROM  FinCovenantType T1 INNER JOIN
+		  FinanceMain T2 ON T2.FinReference = T1.FinReference  INNER JOIN
+		  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType
+		</createView>
+	
+	</changeSet>
 	
 </databaseChangeLog>
