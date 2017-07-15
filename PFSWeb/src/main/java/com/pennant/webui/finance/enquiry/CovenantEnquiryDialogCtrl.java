@@ -59,8 +59,10 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -83,6 +85,7 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	protected Listbox 		listBoxFinCovenantType; 					
 	protected Borderlayout  borderlayoutDocumentEnquiry;		
 	private Tabpanel 		tabPanel_dialogWindow;
+	private SecurityRoleService securityRoleService;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinCovenantType> finCovenants;
@@ -180,7 +183,8 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				Listcell lc;
 				lc = new Listcell(detail.getCovenantTypeDesc());
 				lc.setParent(item);
-				lc = new Listcell(detail.getMandRoleDesc());
+				List<SecurityRole> securityRoles = securityRoleService.getSecRoleCodeDesc(detail.getMandRole());
+				lc = new Listcell(securityRoles.size() > 0 ? securityRoles.get(0).getRoleDesc() : "");
 				lc.setParent(item);
 				Checkbox cb = new Checkbox();
 				cb.setDisabled(true);
@@ -196,7 +200,7 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				lc.setParent(item);
 				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatDate(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell("");
 				lc.setParent(item);
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);
@@ -242,6 +246,10 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	}
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
+	}
+
+	public void setSecurityRoleService(SecurityRoleService securityRoleService) {
+		this.securityRoleService = securityRoleService;
 	}
 
 	

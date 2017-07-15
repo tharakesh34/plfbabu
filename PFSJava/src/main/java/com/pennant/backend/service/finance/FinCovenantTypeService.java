@@ -49,7 +49,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
 
 public interface FinCovenantTypeService {
-	List<FinCovenantType> getFinCovenantTypeById(String id,String type);
+	List<FinCovenantType> getFinCovenantTypeById(String id,String type,boolean isEnquiry);
 	List<AuditDetail> saveOrUpdate(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> doApprove(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> delete(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);

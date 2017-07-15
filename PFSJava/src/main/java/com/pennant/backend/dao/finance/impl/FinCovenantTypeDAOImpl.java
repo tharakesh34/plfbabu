@@ -153,15 +153,19 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 	}
 	
 	@Override
-	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type) {
+	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type,boolean isEnquiry) {
 		logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,lovdescIsCustDoc,");
-		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
+		if(isEnquiry){
+			selectSql.append(" CovenantTypeDesc,");
+		}else{
+			if (StringUtils.trimToEmpty(type).contains("View")){
+				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
+			}
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinCovenantType");

@@ -475,7 +475,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Covenant Type Details
 		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
 			financeDetail
-					.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View"));
+					.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View",false));
 		}
 
 		// Asset Type Details
@@ -1076,7 +1076,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Covenant Type Details
 				financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference,
-						"_View"));
+						"_View",false));
 
 				// Asset Evaluation Details
 				financeDetail.setFinAssetEvaluation(getFinAssetEvaluationService().getFinAssetEvaluationById(

@@ -506,9 +506,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
 			List<FinCovenantType> finCovenants;
 			if(fromApproved){
-				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_AView");
+				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EAView",true);
 			}else{
-				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_View");
+				 finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EView",true);
 			}
 			map.put("finCovenants", finCovenants);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";

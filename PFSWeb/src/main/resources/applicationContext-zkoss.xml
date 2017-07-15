@@ -3284,7 +3284,8 @@
 	<bean id="covenantEnquiryDialogCtrl"
 		class="com.pennant.webui.finance.enquiry.CovenantEnquiryDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeDetailService" ref="financeDetailService" /> 
+		<property name="securityRoleService" ref="securityRoleService" />
 	</bean>
 
 
