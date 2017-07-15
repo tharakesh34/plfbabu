@@ -840,4 +840,9 @@
 		<column name="BounceDate" type="datetime"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="44" author="Madhubabu">
+	<sql>
+		ALTER TABLE ADTfintaxuploadheader MODIFY FILENAME VARCHAR(100);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
