@@ -59,7 +59,7 @@ import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pennapps.core.AppException;
 
 public class AccountNumberGeneration implements Serializable {
 	

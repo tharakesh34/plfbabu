@@ -54,9 +54,8 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.AppException;
-import com.pennanttech.pff.core.ErrorCode;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
@@ -290,7 +289,7 @@ public final class MessageUtil {
 		logger.error("Exception: ", e);
 
 		Messagebox.setTemplate(TEMPLATE);
-		Messagebox.show(ErrorCode.PPS_900.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+		Messagebox.show(AppException.DEFAULT_MESSAGE.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**

@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core;
+package com.pennanttech.pennapps.core;
 
 /**
  * The class {@code AppException} and its subclasses are a form of {@code Throwable} that indicates conditions that the
@@ -17,12 +17,13 @@ package com.pennanttech.pff.core;
  */
 public class AppException extends RuntimeException {
 	private static final long serialVersionUID = 888700447794830646L;
+	public static final String DEFAULT_MESSAGE = "900: Unable to process the request. Please try again later or contact the system administrator.";
 
 	/**
 	 * Constructs an {@code AppException} with the default detail message.
 	 */
 	public AppException() {
-		super(ErrorCode.PPS_900.getMessage());
+		super(DEFAULT_MESSAGE);
 	}
 
 	/**

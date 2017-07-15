@@ -18,8 +18,8 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.ErrorCode;
 
 /**
  * This is the controller class for the /error.zul file.
@@ -47,6 +47,6 @@ public class ErrorCtrl extends GenericForwardComposer<Component> {
 	 */
 	public void onCreate$window_ErrorDialog(Event event) throws Exception {
 		panel.setTitle(App.NAME);
-		message.setValue(ErrorCode.PPS_900.getMessage().concat("\n\n"));
+		message.setValue(AppException.DEFAULT_MESSAGE.concat("\n\n"));
 	}
 }
