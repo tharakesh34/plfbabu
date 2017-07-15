@@ -283,15 +283,15 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 	private DriverManagerDataSource getDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		
-		/*dataSource.setDriverClassName(SysParamUtil.getValueAsString("GCD_CUSTOMER_DRIVER"));
+		dataSource.setDriverClassName(SysParamUtil.getValueAsString("GCD_CUSTOMER_DRIVER"));
 		dataSource.setUrl(SysParamUtil.getValueAsString("GCD_CUSTOMER_URL"));
 		dataSource.setUsername(SysParamUtil.getValueAsString("GCD_CUSTOMER_USERNAME"));
-		dataSource.setPassword(SysParamUtil.getValueAsString("GCD_CUSTOMER_PWD"));*/
+		dataSource.setPassword(SysParamUtil.getValueAsString("GCD_CUSTOMER_PWD"));
 		
-		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		/*dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 		dataSource.setUrl("jdbc:oracle:thin:@192.168.1.19:1521:orcl");
 		dataSource.setUsername("PLFDEV");
-		dataSource.setPassword("pff123");
+		dataSource.setPassword("pff123");*/
 		
 		return dataSource;
 	}
