@@ -536,6 +536,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// AmountCodes Preparation
 		// EOD Repayments should pass the value date as schedule for which Repayments are processing
+		final BigDecimal totPftSchdOld = financeProfitDetail.getTotalPftSchd();
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail, eventCode,
 				valueDate, dateSchdDate);
 		aeEvent.setPostDate(postDate);
@@ -544,6 +545,13 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 		aeEvent.setLinkedTranId(linkedTranId);
+		
+		// Profit Change Amount Setting
+		if(rpyQueueHeader.isPftChgAccReq()){
+			amountCodes.setPftChg(amountCodes.getPft().subtract(totPftSchdOld));
+		}else{
+			amountCodes.setPftChg(BigDecimal.ZERO);
+		}
 
 		//Set Repay Amount Codes
 		amountCodes.setRpTot(rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getLateProfit()));
@@ -914,8 +922,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				aeEvent.setAccountingEvent(execEventCode);
 				aeEvent.setValueDate(valueDate);
 				aeEvent.setSchdDate(valueDate);
-
-				long linkedtranId = (long) actReturnList.get(1);
 
 				// Set O/S balances for Principal & profits in Amount Codes Data--TODO
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();

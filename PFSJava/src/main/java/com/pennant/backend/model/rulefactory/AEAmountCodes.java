@@ -81,6 +81,12 @@ public class AEAmountCodes {
 	//Summary Details
 	private BigDecimal	penaltyPaid			= BigDecimal.ZERO;
 	private BigDecimal	penaltyDue			= BigDecimal.ZERO;
+	private BigDecimal	exPenaltyPaid		= BigDecimal.ZERO;
+	private BigDecimal	exPenaltyWaived		= BigDecimal.ZERO;
+	private BigDecimal	eAPenaltyPaid		= BigDecimal.ZERO;
+	private BigDecimal	eAPenaltyWaived		= BigDecimal.ZERO;
+	private BigDecimal	pAPenaltyPaid		= BigDecimal.ZERO;
+	private BigDecimal	pAPenaltyWaived		= BigDecimal.ZERO;
 	private BigDecimal	penaltyWaived		= BigDecimal.ZERO;
 	private BigDecimal	accrueTsfd			= null;
 	private BigDecimal	prvAccrueTsfd		= BigDecimal.ZERO;
@@ -919,4 +925,53 @@ public class AEAmountCodes {
 		this.rpPayableTds = rpPayableTds;
 	}
 
+	public BigDecimal getExPenaltyPaid() {
+		return exPenaltyPaid;
+	}
+
+	public void setExPenaltyPaid(BigDecimal exPenaltyPaid) {
+		this.exPenaltyPaid = exPenaltyPaid;
+	}
+
+	public BigDecimal getExPenaltyWaived() {
+		return exPenaltyWaived;
+	}
+
+	public void setExPenaltyWaived(BigDecimal exPenaltyWaived) {
+		this.exPenaltyWaived = exPenaltyWaived;
+	}
+
+	public BigDecimal getEAPenaltyPaid() {
+		return eAPenaltyPaid;
+	}
+
+	public void setEAPenaltyPaid(BigDecimal eAPenaltyPaid) {
+		this.eAPenaltyPaid = eAPenaltyPaid;
+	}
+
+	public BigDecimal getEAPenaltyWaived() {
+		return eAPenaltyWaived;
+	}
+
+	public void setEAPenaltyWaived(BigDecimal eAPenaltyWaived) {
+		this.eAPenaltyWaived = eAPenaltyWaived;
+	}
+
+	public BigDecimal getPAPenaltyPaid() {
+		return pAPenaltyPaid;
+	}
+
+	public void setPAPenaltyPaid(BigDecimal pAPenaltyPaid) {
+		this.pAPenaltyPaid = pAPenaltyPaid;
+	}
+
+	public BigDecimal getPAPenaltyWaived() {
+		return pAPenaltyWaived;
+	}
+
+	public void setPAPenaltyWaived(BigDecimal pAPenaltyWaived) {
+		this.pAPenaltyWaived = pAPenaltyWaived;
+	}
+
+	
 }

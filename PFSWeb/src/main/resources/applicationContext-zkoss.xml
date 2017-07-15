@@ -2821,6 +2821,7 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="mailUtil" ref="mailUtil" />
+		<property name="accrualService" ref="accrualService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 

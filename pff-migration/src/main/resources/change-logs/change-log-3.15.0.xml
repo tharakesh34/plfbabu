@@ -10453,5 +10453,16 @@ union
 				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','WRITEOFF','ct_salariedCustomer','Salaried Customer','nchar',1,'0','1',' ','static,global',' ');
 			</sql>
 		</changeSet>
+		
+		<changeSet id="547" author="Siva">
+		<sql>
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_exPenaltyPaid', 'Penalty Paid from Excess', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_exPenaltyWaived', 'Penalty Waived Excess', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_eAPenaltyPaid', 'Penalty Paid EMIinAdvance', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_eAPenaltyWaived', 'Penalty Waived EMIinAdvance', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_pAPenaltyPaid', 'Penalty Paid Payable', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	        Insert into BMTAmountCodes values( 'LATEPAY', 0, 'ae_pAPenaltyWaived', 'Penalty Waived Payable', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
