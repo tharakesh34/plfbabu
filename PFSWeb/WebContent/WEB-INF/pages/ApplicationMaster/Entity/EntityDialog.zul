@@ -93,6 +93,63 @@
 										maxlength="50" width="300px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_EntityDialog_EntityAddrHNbr"
+									value="${c:l('label_EntityDialog_EntityAddrHNbr.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrHNbr"
+										width="180px" />
+								</hbox>
+								<label
+									id="label_EntityDialog_EntityFlatNbr"
+									value="${c:l('label_EntityDialog_EntityFlatNbr.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityFlatNbr"
+										width="180px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_EntityDialog_EntityAddrStreet"
+									value="${c:l('label_EntityDialog_EntityAddrStreet.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrStreet"
+										width="180px" />
+								</hbox>
+								<label
+									id="label_EntityDialog_EntityAddrLine1"
+									value="${c:l('label_EntityDialog_EntityAddrLine1.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrLine1"
+										maxlength="50" width="180px" />
+								</hbox>
+							</row>
+							<row visible="true">
+
+								<label
+									id="label_EntityDialog_EntityAddrLine2"
+									value="${c:l('label_EntityDialog_EntityAddrLine2.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityAddrLine2"
+										maxlength="50" width="180px" />
+								</hbox>
+								
+								<label
+									id="label_EntityDialog_EntityPOBox"
+									value="${c:l('label_EntityDialog_EntityPOBox.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="entityPOBox"
+										maxlength="8" width="180px" />
+								</hbox>
+								
+							</row>
 							<row id="row1">
 								<label id="label_PANNumber"
 									value="${c:l('label_EntityDialog_PANNumber.value')}"
@@ -119,13 +176,6 @@
 								<label id="label_PinCode"
 									value="${c:l('label_EntityDialog_PinCode.value')}" />
 								<extendedcombobox id="pinCode" />
-								<label id="label_Address"
-										value="${c:l('label_EntityDialog_Address.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="address"
-											width="250px" />
-									</hbox>
 							</row>
 							<row>
 								<label id="label_Active"

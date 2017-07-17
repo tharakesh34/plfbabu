@@ -79,13 +79,15 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 	@Override
 	public Entity getEntity(String entityCode,String type) {
 		logger.debug(Literal.ENTERING);
-		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode, address, active, ");
-		
+		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,");
+		if(type.contains("View")){
+			sql.append(" countryname,ProvinceName,CItyName,pincodename," );
+		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		
 		sql.append(" From Entity");
 		sql.append(type);
 		sql.append(" Where entityCode = :entityCode");
@@ -118,11 +120,11 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		StringBuilder sql =new StringBuilder(" insert into Entity");
 		sql.append(tableType.getSuffix());
 		sql.append("(entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(" pinCode, address, active, ");
+		sql.append(" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox, active, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :entityCode, :entityDesc, :pANNumber, :country, :stateCode, :cityCode, ");
-		sql.append(" :pinCode, :address, :active, ");
+		sql.append(" :pinCode,:entityAddrLine1,:entityAddrLine2,:entityAddrHNbr,:entityFlatNbr,:entityAddrStreet,:entityPOBox,:active, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Execute the SQL, binding the arguments.
@@ -147,7 +149,8 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		StringBuilder	sql =new StringBuilder("update Entity" );
 		sql.append(tableType.getSuffix());
 		sql.append("  set entityDesc = :entityDesc, pANNumber = :pANNumber, country = :country, ");
-		sql.append(" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode, address = :address, ");
+		sql.append(" stateCode = :stateCode, cityCode = :cityCode, pinCode = :pinCode,entityAddrLine1=:entityAddrLine1,entityAddrLine2=:entityAddrLine2,");
+		sql.append("entityAddrHNbr=:entityAddrHNbr,entityFlatNbr=:entityFlatNbr,entityAddrStreet=:entityAddrStreet,entityPOBox=:entityPOBox,");
 		sql.append(" active = :active, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

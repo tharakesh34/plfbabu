@@ -58,10 +58,11 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Entity table</b>.<br>
  *
  */
-@XmlType(propOrder = {"entityCode","entityDesc","pANNumber","country","stateCode","cityCode","pinCode","active"})
+@XmlType(propOrder = { "entityCode", "entityDesc", "pANNumber", "country", "stateCode", "cityCode", "pinCode",
+		"active" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Entity extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	private String entityCode;
 	private String entityDesc;
@@ -74,17 +75,67 @@ private static final long serialVersionUID = 1L;
 	private String cityCodeName;
 	private String pinCode;
 	private String pinCodeName;
-	private String address;
+	private String entityAddrLine1;
+	private String entityAddrLine2;
+	private String entityAddrHNbr;
+	private String entityFlatNbr;
+	private String entityAddrStreet;
+	private String entityPOBox;
+    private String provinceName;
+    private String cityName;
+
+
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
+
+	public String getEntityAddrLine1() {
+		return entityAddrLine1;
+	}
+
+	public void setEntityAddrLine1(String entityAddrLine1) {
+		this.entityAddrLine1 = entityAddrLine1;
+	}
+
+	public String getEntityAddrLine2() {
+		return entityAddrLine2;
+	}
+
+	public void setEntityAddrLine2(String entityAddrLine2) {
+		this.entityAddrLine2 = entityAddrLine2;
+	}
+
+	public String getEntityAddrHNbr() {
+		return entityAddrHNbr;
+	}
+
+	public void setEntityAddrHNbr(String entityAddrHNbr) {
+		this.entityAddrHNbr = entityAddrHNbr;
+	}
+
+	public String getEntityFlatNbr() {
+		return entityFlatNbr;
+	}
+
+	public void setEntityFlatNbr(String entityFlatNbr) {
+		this.entityFlatNbr = entityFlatNbr;
+	}
+
+	public String getEntityAddrStreet() {
+		return entityAddrStreet;
+	}
+
+	public void setEntityAddrStreet(String entityAddrStreet) {
+		this.entityAddrStreet = entityAddrStreet;
+	}
+
 	@XmlTransient
 	private Entity befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -97,107 +148,123 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("countryName");
-			excludeFields.add("stateCodeName");
-			excludeFields.add("cityCodeName");
-			excludeFields.add("pinCodeName");
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("countryName");
+		excludeFields.add("stateCodeName");
+		excludeFields.add("cityCodeName");
+		excludeFields.add("pinCodeName");
+		excludeFields.add("provinceName");
+		excludeFields.add("cityName");
+		
+		return excludeFields;
 	}
 
 	public String getId() {
 		return entityCode;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.entityCode = id;
 	}
+
 	public String getEntityCode() {
 		return entityCode;
 	}
+
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
 	}
-	
+
 	public String getEntityDesc() {
 		return entityDesc;
 	}
+
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
 	}
-	
+
 	public String getPANNumber() {
 		return pANNumber;
 	}
+
 	public void setPANNumber(String pANNumber) {
 		this.pANNumber = pANNumber;
 	}
-	
+
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
 	public String getCountryName() {
 		return this.countryName;
 	}
 
-	public void setCountryName (String countryName) {
+	public void setCountryName(String countryName) {
 		this.countryName = countryName;
 	}
-	
+
 	public String getStateCode() {
 		return stateCode;
 	}
+
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
 	}
+
 	public String getStateCodeName() {
 		return this.stateCodeName;
 	}
 
-	public void setStateCodeName (String stateCodeName) {
+	public void setStateCodeName(String stateCodeName) {
 		this.stateCodeName = stateCodeName;
 	}
-	
+
 	public String getCityCode() {
 		return cityCode;
 	}
+
 	public void setCityCode(String cityCode) {
 		this.cityCode = cityCode;
 	}
+
 	public String getCityCodeName() {
 		return this.cityCodeName;
 	}
 
-	public void setCityCodeName (String cityCodeName) {
+	public void setCityCodeName(String cityCodeName) {
 		this.cityCodeName = cityCodeName;
 	}
-	
+
 	public String getPinCode() {
 		return pinCode;
 	}
+
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
 	}
+
 	public String getPinCodeName() {
 		return this.pinCodeName;
 	}
 
-	public void setPinCodeName (String pinCodeName) {
+	public void setPinCodeName(String pinCodeName) {
 		this.pinCodeName = pinCodeName;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -205,7 +272,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -214,19 +281,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public Entity getBefImage(){
+	public Entity getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(Entity beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Entity beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -234,12 +301,28 @@ private static final long serialVersionUID = 1L;
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public String getAddress() {
-		return address;
+	public String getEntityPOBox() {
+		return entityPOBox;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setEntityPOBox(String entityPOBox) {
+		this.entityPOBox = entityPOBox;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 
 }
