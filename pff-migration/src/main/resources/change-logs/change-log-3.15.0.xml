@@ -9495,6 +9495,7 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('99012','EN','E','Customer Alterady exists in the source system :PLF ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<!-- for AWS -->
 	<!-- <changeSet id="518" author="Madhubabu">
 		<sql>
 			INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
@@ -9600,6 +9601,7 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 		<renameColumn columnDataType="VARCHAR(100)" newColumnName="PREFIX"
 		oldColumnName="FOLDER_NAME" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
 	</changeSet>
+	<!-- for qc -->
 	<!-- <changeSet id="530" author="Madhubabu">
 	<sql>
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
@@ -10607,6 +10609,5 @@ union
 	
 	
 	</changeSet>
-	
 	
 </databaseChangeLog>
