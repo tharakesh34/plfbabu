@@ -10609,5 +10609,11 @@ union
 	
 	
 	</changeSet>
+	<changeSet author="Madhubabu" id="555">
+		<sql>
+			delete from errordetails where errorcode='99007';
+			INSERT INTO ErrorDetails VALUES('99007','EN','E','{0} not valid for Agreement no : {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
