@@ -64,6 +64,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
@@ -74,7 +75,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * This is the controller class for the
@@ -241,7 +242,53 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	public void onFulfill$country(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = stateCode.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject; 
+			if (country == null) {
+				fillProvinceDetails(null);
+			}
+			if (country != null) {
+				this.stateCode.setErrorMessage("");
+				pcProvince = this.stateCode.getValue();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.stateCode.setObject("");
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
+				this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	private void fillProvinceDetails(String country){
+		this.stateCode.setMandatoryStyle(true);
+		this.stateCode.setModuleName("Province");
+		this.stateCode.setValueColumn("CPProvince");
+		this.stateCode.setDescColumn("CPProvinceName");
+		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
+		
+		Filter[] filters1 = new Filter[1];
 
+		if (country == null) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.stateCode.setFilters(filters1);
+	}
 	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -297,7 +344,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	 */
 	public void onFulfill$cityCode(Event event) throws InterruptedException {
 		logger.debug("Entering");
-
+		doRemoveValidation();
+		doClearMessage();
 		Object dataObject = cityCode.getObject();
 		String cityValue = null;
 		if (!(dataObject instanceof String)) {
@@ -305,6 +353,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			if (details != null) {
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
+				this.country.setValue(details.getPCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
 				cityValue = details.getPCCity();
 				fillPindetails(cityValue, this.stateCode.getValue());
 			} else {
@@ -314,6 +364,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				this.cityCode.setDescription("");
 				this.pinCode.setValue("");
 				this.pinCode.setDescription("");
+				this.stateCode.setErrorMessage("");
+				this.country.setErrorMessage("");
 				fillPindetails(null, this.stateCode.getValue());
 			}
 		} else if ("".equals(dataObject)) {
@@ -357,16 +409,27 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 			if (details != null) {
 
+				this.country.setValue(details.getpCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
 				this.cityCode.setValue(details.getCity());
 				this.cityCode.setDescription(details.getPCCityName());
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				this.cityCode.setErrorMessage("");
 				this.stateCode.setErrorMessage("");
+				this.country.setErrorMessage("");
 				;
 			}
 
 		}
+		Filter[] filters1 = new Filter[1];
+		if (this.cityCode.getValue() != null && !this.cityCode.getValue().isEmpty()) {
+			filters1[0] = new Filter("City", this.cityCode.getValue(), Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+
+		this.pinCode.setFilters(filters1);
 
 		logger.debug("Leaving");
 	}
@@ -509,8 +572,6 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.stateCode.setDescription("");
 			this.cityCode.setDescription("");
 			this.pinCode.setDescription("");
-			this.country.setValue("IN");
-			this.country.setDescription("INDIA");
 		} else {
 			this.country.setDescription(aEntity.getCountryName());
 			this.stateCode.setDescription(aEntity.getProvinceName());
@@ -693,7 +754,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		}
 		if (!this.entityDesc.isReadonly()) {
 			this.entityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityDesc.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+					PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 		if (!this.pANNumber.isReadonly()) {
 			this.pANNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_PANNumber.value"),
@@ -809,6 +870,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
 		this.entityAddrLine1.setErrorMessage("");
+		this.country.setErrorMessage("");
+		this.stateCode.setErrorMessage("");
 		this.entityAddrLine2.setErrorMessage("");
 		this.entityPOBox.setErrorMessage("");
 		this.entityAddrHNbr.setErrorMessage("");

@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -60,7 +61,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -201,12 +202,29 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Sets a new <code>JDBC Template</code> for the given data source.
+	 * 
+	 * @param dataSource
+	 *            The JDBC data source to access.
+	 */
+	public void setDataSource(DataSource dataSource) {
+		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
 	@Override
-	public boolean  count(String pANNumber,String entityCode, TableType tableType){
+	public boolean  count(String entityCode, String pANNumber, TableType tableType){
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "pANNumber = :pANNumber AND entityCode = :entityCode" ;
+		String whereClause = null;
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		if(StringUtils.isNotBlank(entityCode)) {
+			whereClause = "entityCode = :entityCode " ;
+			paramSource.addValue("entityCode", entityCode);
+		} else if(StringUtils.isNotBlank(pANNumber)) {
+			whereClause = "pANNumber = :pANNumber " ;
+			paramSource.addValue("pANNumber", pANNumber);
+		}
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -222,9 +240,6 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("pANNumber", pANNumber);
-		paramSource.addValue("entityCode", entityCode);
 
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -236,14 +251,4 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	/**
-	 * Sets a new <code>JDBC Template</code> for the given data source.
-	 * 
-	 * @param dataSource
-	 *            The JDBC data source to access.
-	 */
-	public void setDataSource(DataSource dataSource) {
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
 }	

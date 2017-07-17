@@ -45,15 +45,18 @@ package com.pennant.backend.service.applicationmaster.impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
 
@@ -345,8 +348,32 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 			logger.debug(Literal.ENTERING);
 			
 			// Write the required validation over hear.
-			
-			
+			// Get the model object.
+			Entity entity = (Entity) auditDetail.getModelData();
+
+
+			// Check the unique keys.
+			if (entity.isNew()
+					&& PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType())
+					&& entityDAO.count( entity.getEntityCode(),null,
+							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entity.getEntityCode();
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			}
+
+			// Check the unique keys.
+			if (entity.isNew()
+					&& PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType())
+					&& entityDAO.count( null,entity.getPANNumber(),
+							entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + entity.getPANNumber();
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+			}
+
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
 			logger.debug(Literal.LEAVING);
 			return auditDetail;
 		}
