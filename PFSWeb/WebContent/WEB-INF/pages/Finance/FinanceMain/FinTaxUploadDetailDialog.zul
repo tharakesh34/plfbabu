@@ -158,7 +158,17 @@
 											<space id="space_status"
 												spacing="2px" />
 											<label id="status" />
+										</hbox>										
+										<label
+											id="label_FinTaxUploadDialog_Errors"
+											value="${c:l('label_FinTaxUploadDialog_Errors.value')}" />
+										<hbox>
+											<button visible="false"
+												id="button_ErrorDetails" label="${c:l('label_ErrorDetails')}"
+												tooltiptext="${c:l('button_ErrorDetails.tooltiptext')}"
+												sclass="z-toolbarbutton" />
 										</hbox>
+										
 									</row>
 								</rows>
 							</grid>

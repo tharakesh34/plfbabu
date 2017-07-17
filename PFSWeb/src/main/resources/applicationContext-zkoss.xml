@@ -4855,5 +4855,9 @@
 		parent="basisCtrl" scope="prototype">
 	<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
 	</bean>
+	<bean id="auditErrorDetailListCtrl" 
+		class="com.pennant.webui.errordetail.errordetail.AuditErrorDetailsListCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 	
 </beans>
