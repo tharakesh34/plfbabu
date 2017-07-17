@@ -950,7 +950,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listSave(scheduleData, "", 0);
 		
 		// Overdue Details updation , if Value Date is Back dated.
-		List<FinODDetails> overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, DateUtility.getAppDate(), null);
+		Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
+		List<FinODDetails> overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, curBusDate, null);
 		if(overdueList != null && !overdueList.isEmpty()){
 			getFinODDetailsDAO().updateList(overdueList);
 		}
