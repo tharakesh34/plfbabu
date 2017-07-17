@@ -58,7 +58,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringUtils;
 
-import com.pennanttech.pff.core.FactoryException;
+import com.pennanttech.pennapps.core.FactoryException;
 import com.pennanttech.pff.core.model.workflow.SequenceFlow;
 import com.pennanttech.pff.core.model.workflow.ServiceTask;
 import com.pennanttech.pff.core.model.workflow.UserTask;
