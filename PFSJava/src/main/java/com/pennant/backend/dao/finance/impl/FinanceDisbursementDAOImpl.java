@@ -54,6 +54,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -551,24 +552,24 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	public List<FinanceDisbursement> getDisbursementToday(String finRefernce, Date disbDate) {
 		logger.debug("Entering");
 
-		FinanceDisbursement disbursement = new FinanceDisbursement();
-		disbursement.setFinReference(finRefernce);
-		disbursement.setDisbDate(disbDate);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finRefernce);
+		source.addValue("DisbDate", disbDate);
+		source.addValue("DisbStatus", FinanceConstants.DISB_STATUS_CANCEL);
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select FinReference, DisbDate, DisbSeq, FeeChargeAmt, InsuranceAmt, ");
 		selectSql.append("  DisbAmount, DisbDate ");
 		selectSql.append(" From FinDisbursementDetails");
 		selectSql.append(" Where FinReference =:FinReference AND DisbDate = :DisbDate");
-		selectSql.append(" AND (DisbStatus IS NULL OR DisbStatus != '" + FinanceConstants.DISB_STATUS_CANCEL + "')");
+		selectSql.append(" AND (DisbStatus IS NULL OR DisbStatus != :DisbStatus )");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(disbursement);
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);
 
-		List<FinanceDisbursement> todayDisbs = this.namedParameterJdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		List<FinanceDisbursement> todayDisbs = this.namedParameterJdbcTemplate.query(selectSql.toString(), source,
+				typeRowMapper);
 		logger.debug("Leaving");
 		return todayDisbs;
 	}

@@ -198,7 +198,9 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> presentmentsStatusListReport;
 	private static ArrayList<ValueLabel> taxApplicableFor;
 	private static ArrayList<ValueLabel> channelTypes;
-
+	private static ArrayList<ValueLabel> phoneTypeRegex;
+	
+	private static ArrayList<ValueLabel> extractionType;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -267,7 +269,7 @@ public class PennantStaticListUtil {
 			regexType.add(new ValueLabel("REGEX_ALPHA", Labels.getLabel("label_REGEX_ALPHA")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC", Labels.getLabel("label_REGEX_NUMERIC")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM", Labels.getLabel("label_REGEX_ALPHANUM")));
-			regexType.add(new ValueLabel("REGEX_ALPHA_SPL", Labels.getLabel("label_REGEX_ALPHA_SPL")));
+			regexType.add(new ValueLabel("REGEX_ALPHA_SPACE_SPL", Labels.getLabel("label_ALPHANUM_SPACE_SPL")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPL")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC_SPL", Labels.getLabel("label_REGEX_NUMERIC_SPL")));
 			regexType.add(new ValueLabel("REGEX_NAME", Labels.getLabel("label_REGEX_NAME")));
@@ -2724,7 +2726,7 @@ public class PennantStaticListUtil {
 			taxApplicableFor = new ArrayList<ValueLabel>(3);
 			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER, Labels.getLabel("label_TaxApplicableFor_PrimaryCustomer")));
 			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT, Labels.getLabel("label_TaxApplicableFor_CoApplicant")));
-			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
+			//taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_GUARANTOR, Labels.getLabel("label_TaxApplicableFor_Guarantor")));
 		}
 		return taxApplicableFor;
 	}
@@ -2736,6 +2738,29 @@ public class PennantStaticListUtil {
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT, Labels.getLabel("label_Disbursement_Disbursement.label")));
 		}
 		return channelTypes;
+	}
+	
+	public static ArrayList<ValueLabel> getPhoneTypeRegex(){
+		if(phoneTypeRegex == null){
+			phoneTypeRegex = new ArrayList<ValueLabel>(2);
+			phoneTypeRegex.add(new ValueLabel("[0-9]{10}", Labels.getLabel("listheader_MobileNumber.label")));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{13}", Labels.getLabel("listheader_DealerTelephone.label")));
+		}
+		return phoneTypeRegex;
+	}
+	
+	/**
+	 * get the Extraction Types for Account Types
+	 * @return
+	 */
+	public static ArrayList<ValueLabel> getExtractionTypes() {
+		if(extractionType == null){
+			extractionType = new ArrayList<ValueLabel>(3);
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_TRANSACTION, Labels.getLabel("label_ExtractionType_Transaction")));
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_SUMMARY, Labels.getLabel("label_ExtractionType_Summarized")));
+			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_NOTAPPLICABLE, Labels.getLabel("label_ExtractionType_NotApplicable")));
+		}
+		return extractionType;
 	}
 }
 

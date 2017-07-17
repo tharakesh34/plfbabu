@@ -164,7 +164,7 @@
 									id="label_ProvinceDialog_TaxStateCode"
 									value="${c:l('label_ProvinceDialog_TaxStateCode.value')}" />
 								<hbox>
-									<space spacing="2px"
+									<space id="space_taxStateCode" spacing="2px"
 										sclass="mandatory" />
 									<textbox id="taxStateCode"
 										width="50px" />
@@ -185,7 +185,7 @@
 									id="label_ProvinceDialog_BusinessArea"
 									value="${c:l('label_ProvinceDialog_BusinessArea.value')}" />
 								<hbox>
-									<space spacing="2px"  sclass="mandatory"/>
+									<space id="space_businessArea" spacing="2px"  sclass="mandatory"/>
 									<textbox id="businessArea"
 										width="180px" />
 								</hbox>

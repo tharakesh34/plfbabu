@@ -59,6 +59,7 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.gcd.GcdCustomer;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -151,6 +152,7 @@ public class CustomerDetails implements java.io.Serializable {
 	
 	private List<FinanceEnquiry> customerFinances;
 	private FinanceEnquiry customerFinance;
+	private GcdCustomer gcdCustomer= new GcdCustomer();
 
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
@@ -488,6 +490,14 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setDedupReq(boolean dedupReq) {
 		this.dedupReq = dedupReq;
+	}
+
+	public GcdCustomer getGcdCustomer() {
+		return gcdCustomer;
+	}
+
+	public void setGcdCustomer(GcdCustomer gcdCustomer) {
+		this.gcdCustomer = gcdCustomer;
 	}
 
 }

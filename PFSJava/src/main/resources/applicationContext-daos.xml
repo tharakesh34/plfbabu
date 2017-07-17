@@ -2584,6 +2584,7 @@
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="limitRebuild" ref="limitRebuild" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -4192,6 +4193,9 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		
+		<!-- GST -->
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -7813,6 +7817,7 @@
 		<property name="currencyService" ref="currencyService" />
 		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
 		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
+		<property name="limitRebuild" ref="limitRebuild" />
 	</bean>
 
 	<bean id="limitTransactionDetailDAO"
@@ -7941,6 +7946,28 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
+	
+	<bean id="limitRebuild"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="limitRebuildServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="limitRebuildServiceTarget"
+		class="com.pennant.backend.service.limitservice.impl.LimitRebuildService">
 	</bean>
 
 
@@ -8596,6 +8623,11 @@
 		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
+		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
 	</bean>
 
 	<!-- CollateralStructure -->
@@ -10250,6 +10282,10 @@
 		<property name="finTaxUploadDetailDAO" ref="finTaxUploadDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
 	</bean>
 
 

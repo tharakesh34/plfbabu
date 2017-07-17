@@ -98,7 +98,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode," );
 		selectSql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex," );
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId " );
@@ -253,7 +253,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
-			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
+			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex," );
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );

@@ -87,6 +87,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	private CustomerPhoneNumber befImage;
 	private LoggedInUser userDetails;
 	private String sourceId;
+	private String phoneRegex;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -105,6 +106,7 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 		excludeFields.add("sourceId");
+		excludeFields.add("phoneRegex");
 		return excludeFields;
 	}
 	
@@ -235,6 +237,14 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	}
 	public void setPhoneTypePriority(int phoneTypePriority) {
 		this.phoneTypePriority = phoneTypePriority;
+	}
+
+	public String getPhoneRegex() {
+		return phoneRegex;
+	}
+
+	public void setPhoneRegex(String phoneRegex) {
+		this.phoneRegex = phoneRegex;
 	}
 
 }

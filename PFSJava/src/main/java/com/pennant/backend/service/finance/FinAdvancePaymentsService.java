@@ -65,5 +65,6 @@ public interface FinAdvancePaymentsService {
 	int getCountByFinReference(String finReference);
 	List<ErrorDetails> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
 			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
+	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 	
 }

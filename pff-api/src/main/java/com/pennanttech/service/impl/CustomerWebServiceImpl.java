@@ -120,15 +120,19 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			}
 		}
 		//call dedup service for customer duplication
-		if(customerDetails.isDedupReq()){
-			List<CustomerDedup> dedupList=null;
+		if (customerDetails.isDedupReq()) {
+			List<CustomerDedup> dedupList = new ArrayList<CustomerDedup>(1);
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
-			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER, customerDedup.getCustCtgCode(), "");
+			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
+					customerDedup.getCustCtgCode(), "");
 			//TO Check duplicate customer  in Local database
 			for (DedupParm dedupParm : dedupParmList) {
-				dedupList = customerDedupDAO.fetchCustomerDedupDetails(customerDedup, dedupParm.getSQLQuery());
-			}        
-			if(dedupList!=null && !dedupList.isEmpty()){
+				List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(customerDedup, dedupParm.getSQLQuery());
+				if (list != null && !list.isEmpty()) {
+					dedupList.addAll(list);
+				}
+			}
+			if (!dedupList.isEmpty()) {
 				response = new CustomerDetails();
 				doEmptyResponseObject(response);
 				response.setDedupReq(customerDetails.isDedupReq());

@@ -64,6 +64,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
@@ -96,25 +97,26 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_AccountTypeDialog; // autoWired
+	protected Window window_AccountTypeDialog; 
 
-	protected Textbox acType; // autoWired
-	protected Textbox acTypeDesc; // autoWired
-	protected Textbox acLmtCategory; // autoWired
-	protected Combobox acPurpose; // autoWired
-	protected Textbox acHeadCode; // autoWired
-	protected Checkbox internalAc; // autoWired
-	protected Checkbox custSysAc; // autoWired
-	protected Combobox assertOrLiability; // autoWired
-	protected Checkbox onBalanceSheet; // autoWired
-	protected Checkbox allowOverDraw; // autoWired
-	protected Checkbox acTypeIsActive; // autoWired
-	protected Space space_acHeadCode; // autoWired
+	protected Textbox acType; 
+	protected Textbox acTypeDesc; 
+	protected Textbox acLmtCategory; 
+	protected Combobox acPurpose; 
+	protected Textbox acHeadCode; 
+	protected Checkbox internalAc; 
+	protected Checkbox custSysAc; 
+	protected Combobox assertOrLiability; 
+	protected Combobox extractionType; 
+	protected Checkbox onBalanceSheet; 
+	protected Checkbox allowOverDraw; 
+	protected Checkbox acTypeIsActive; 
+	protected Space space_acHeadCode; 
 	protected ExtendedCombobox	acTypeGrpId;
 	protected ExtendedCombobox	profitCenter;
 	protected ExtendedCombobox	costCenter;
-	protected Checkbox gSTApplicable; // autoWired
-	protected Checkbox revChargeApplicable; // autoWired
+	protected Checkbox gSTApplicable; 
+	protected Checkbox revChargeApplicable; 
 	protected Textbox hSNNumber;
 	protected Textbox natureService;
 	protected Row row_HSNNumber;
@@ -122,9 +124,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected Row row_headcode;
 
 	// not autoWired Var's
-	private AccountType accountType; // overHanded per parameter
-	private transient AccountTypeListCtrl accountTypeListCtrl; // overHanded per
-																// parameter
+	private AccountType accountType;
+	private transient AccountTypeListCtrl accountTypeListCtrl;
 	private transient boolean validationOn;
 	
 	protected Button btnCopyTo;
@@ -461,6 +462,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setValue(aAccountType.getAcTypeDesc());
 		this.acLmtCategory.setValue(aAccountType.getAcLmtCategory());
 		fillComboBox(this.acPurpose, aAccountType.getAcPurpose(), PennantStaticListUtil.getAccountPurpose(), "");
+		
 		this.acHeadCode.setText(aAccountType.getAcHeadCode() == null ? ""
 				: StringUtils.leftPad(
 						String.valueOf(aAccountType.getAcHeadCode()), 4, '0'));
@@ -477,9 +479,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		if (aAccountType.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aAccountType.getRecordType())) {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
-			this.gSTApplicable.setChecked(true);
-			this.gSTApplicable.setDisabled(true);
-
 		}
 		this.acTypeGrpId.setObject(new AccountTypeGroup(aAccountType.getAcTypeGrpId()));
 		this.acTypeGrpId.setValue(aAccountType.getGroupCode(), aAccountType.getGroupDescription());
@@ -493,10 +492,17 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 		this.hSNNumber.setValue(aAccountType.getaCCADDLVAR1());
 		this.natureService.setValue(aAccountType.getaCCADDLVAR2());
-		if (!this.gSTApplicable.isChecked()) {
+		
+		String excludeFields = "";
+		if (this.gSTApplicable.isChecked()) {
+			readOnlyComponent(true, this.extractionType);
+		} else {
 			this.hSNNumber.setReadonly(true);
 			this.natureService.setReadonly(true);
+			excludeFields = "," + AccountConstants.EXTRACTION_TYPE_TRANSACTION + ",";
 		}
+		
+		fillComboBox(this.extractionType, aAccountType.getExtractionType(), PennantStaticListUtil.getExtractionTypes(), excludeFields);
 		this.revChargeApplicable.setChecked(aAccountType.isaCCADDLCHAR1());
 		
 		logger.debug("Leaving");
@@ -531,12 +537,17 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		}
 
 		try {
-			aAccountType.setAcPurpose(this.acPurpose.getSelectedItem()
-					.getValue().toString());
+			aAccountType.setAcPurpose(this.acPurpose.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		try {
+			aAccountType.setExtractionType(this.extractionType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			aAccountType.setAcHeadCode(StringUtils.leftPad(
 					String.valueOf(this.acHeadCode.getText()), 4, '0'));
@@ -786,6 +797,10 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountPurpose(),
 							Labels.getLabel("label_AccountTypeDialog_AcPurpose.value")));
 		}
+		if (!this.extractionType.isDisabled()) {
+			this.extractionType.setConstraint(new StaticListValidator(PennantStaticListUtil.getExtractionTypes(),
+					Labels.getLabel("label_AccountTypeDialog_ExtractionType.value")));
+		}
 		if (!this.acHeadCode.isReadonly() && !"Y".equals(CBI_Available)) {
 			this.acHeadCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountTypeDialog_AcHeadCode.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true,4,4));
@@ -831,6 +846,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setConstraint("");
 		this.acLmtCategory.setConstraint("");
 		this.acPurpose.setConstraint("");
+		this.extractionType.setConstraint("");
 		this.acHeadCode.setConstraint("");
 		this.assertOrLiability.setConstraint("");
 		this.acTypeGrpId.setConstraint("");
@@ -863,6 +879,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setErrorMessage("");
 		this.acLmtCategory.setErrorMessage("");
 		this.acPurpose.setErrorMessage("");
+		this.extractionType.setErrorMessage("");
 		this.acHeadCode.setErrorMessage("");
 		this.assertOrLiability.setErrorMessage("");
 		this.acTypeGrpId.setErrorMessage("");
@@ -939,6 +956,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setReadonly(isReadOnly("AccountTypeDialog_acTypeDesc"));
 		this.acLmtCategory.setReadonly(isReadOnly("AccountTypeDialog_acLmtCategory"));
 		this.acPurpose.setDisabled(isReadOnly("AccountTypeDialog_acPurpose"));
+		this.extractionType.setDisabled(isReadOnly("AccountTypeDialog_acPurpose"));
 		this.acHeadCode.setReadonly(isReadOnly("AccountTypeDialog_acHeadCode"));
 		this.internalAc
 				.setDisabled(isReadOnly("AccountTypeDialog_isInternalAc"));
@@ -982,6 +1000,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setReadonly(true);
 		this.acLmtCategory.setReadonly(true);
 		this.acPurpose.setDisabled(true);
+		this.extractionType.setDisabled(true);
 		this.acHeadCode.setReadonly(true);
 		this.internalAc.setDisabled(true);
 		this.custSysAc.setDisabled(true);
@@ -1020,6 +1039,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acTypeDesc.setValue("");
 		this.acLmtCategory.setValue("");
 		this.acPurpose.setValue("");
+		this.extractionType.setValue("");
 		this.acHeadCode.setText("");
 		this.internalAc.setChecked(false);
 		this.custSysAc.setChecked(false);
@@ -1336,7 +1356,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 */
 	public void onCheck$gSTApplicable(Event event) {
 		logger.debug("Entering");
-		gSTApplicableCheck();
+		
+		gstApplicableCheck();
+		
 		logger.debug("Leaving");
 	}
 
@@ -1344,25 +1366,27 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * Check Whether  GST Applicable  is checked or not
 	 * 
 	 */
-	public void gSTApplicableCheck() {
+	public void gstApplicableCheck() {
 		logger.debug("Entering");
+		
 		if (this.gSTApplicable.isChecked()) {
 			this.hSNNumber.setReadonly(false);
 			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(false);
 			this.natureService.setValue("");
-
+			fillComboBox(this.extractionType, AccountConstants.EXTRACTION_TYPE_TRANSACTION, PennantStaticListUtil.getExtractionTypes(), "");
+			readOnlyComponent(true, this.extractionType);
 		} else {
 			this.hSNNumber.setReadonly(true);
 			this.hSNNumber.setValue("");
 			this.natureService.setReadonly(true);
 			this.natureService.setValue("");
+			readOnlyComponent(isReadOnly("AccountTypeDialog_acPurpose"), this.extractionType);
+			fillComboBox(this.extractionType, null, PennantStaticListUtil.getExtractionTypes(), "," + AccountConstants.EXTRACTION_TYPE_TRANSACTION + ",");
 		}
 
 		logger.debug("Leaving");
 	}
-
-	// WorkFlow Components
 
 	/**
 	 * Get Audit Header Details

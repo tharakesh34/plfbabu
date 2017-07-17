@@ -103,6 +103,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -172,6 +173,7 @@ import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -245,6 +247,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PromotionDAO					promotionDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private FinanceTaxDetailDAO				financeTaxDetailDAO;
+	private FinanceTaxDetailService			financeTaxDetailService;
 	private GCDCustomerService				gCDCustomerService;
 	
 	public FinanceDetailServiceImpl() {
@@ -472,7 +475,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Covenant Type Details
 		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
 			financeDetail
-					.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View"));
+					.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View",false));
 		}
 
 		// Asset Type Details
@@ -1073,7 +1076,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Covenant Type Details
 				financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference,
-						"_View"));
+						"_View",false));
 
 				// Asset Evaluation Details
 				financeDetail.setFinAssetEvaluation(getFinAssetEvaluationService().getFinAssetEvaluationById(
@@ -1690,11 +1693,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!isWIF) {
 			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader,true);
 		}
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
 		}
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		
+		//process to send FIN-one request and create or update the cust data.
+		/*if (!isWIF) {
+			processFinOneCheck(aAuditHeader);
+		}
+
+		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
+				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+			return aAuditHeader;
+		}*/
 		/*
 		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		 */
@@ -1704,7 +1717,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		} catch (Exception e) {
 			logger.error("Error Occured {}", e);
 		}
-
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
@@ -2114,8 +2126,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
-						tableType.getSuffix(), auditTranType));
+				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)){
+					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
+							tableType.getSuffix(), auditTranType));	
+				} else {
+					auditDetails.addAll(getFinAdvancePaymentsService().processAPIQuickDisbursment(financeDetail,
+							tableType.getSuffix(), auditTranType));	
+				}
+				
 			} else {
 				if (financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
 					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(
@@ -2236,13 +2254,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditHeader.setAuditDetails(auditDetails);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
-
+		
 		//Reset Finance Detail Object for Service Task Verifications
 		//=======================================
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
 		return auditHeader;
+		
 	}
 
 	/**
@@ -2922,8 +2941,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-
+		
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+
+		
 		Date curBDay = DateUtility.getAppDate();
 		//gCDCustomerService.processGcdCustomer(financeDetail, "insert"); // inserting gcdcustomer.
 		//Execute Accounting Details Process
@@ -3906,8 +3927,53 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save GCDCustomer'/////
 		//processgcdCustomer(financeDetail, "insert");
+		
+		
 		logger.debug("Leaving");
 
+		return auditHeader;
+	}
+	
+	
+	private AuditHeader processFinOneCheck(AuditHeader auditHeader) {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+
+		String[] errorParm = new String[2];
+		errorParm[0] = "Loan";
+		if (customerDetails.getCustomer().getCustCoreBank() != null) {
+			// call the finone procedure to update a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+
+		} else {
+			// call the finone procedure to create a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+		}
+
+		logger.debug("Leaving");
 		return auditHeader;
 	}
 
@@ -5051,6 +5117,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			
 			FinanceTaxDetail taxDetail = financeDetail.getTaxDetail();
+			
 			if (taxDetail != null) {
 				if (!financeDetail.isActionSave()) {
 					long custId = taxDetail.getTaxCustId();
@@ -5058,14 +5125,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					boolean idExist = false;
 					
 					if (custId != 0) {
+						//GST Number Validation
 						if(StringUtils.isNotBlank(taxNumber)) {
-							int count = getFinanceTaxDetailDAO().getGSTNumberCount(custId, taxNumber, "_View");
-							if (count != 0) {
-								String[] parameters = new String[2];
-								parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
-								parameters[1] = taxNumber;
-								auditDetails.get(0).setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
-							}
+							getFinanceTaxDetailService().gstNumbeValidation(auditDetails.get(0), taxDetail);
 						}
 					
 						if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(taxDetail.getApplicableFor())) {
@@ -5081,7 +5143,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							String[] valueParm = new String[1];
 							valueParm[0] = taxDetail.getCustCIF();
 							errParm[0] = valueParm[0];
-							if (!idExist) {
+							
+							if (!idExist) {	//if Co-Applicant is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 										new ErrorDetails(PennantConstants.KEY_FIELD, "65021", errParm, valueParm), usrLanguage));
 							}
@@ -5099,11 +5162,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							String[] valueParm = new String[1];
 							valueParm[0] = taxDetail.getCustCIF();
 							errParm[0] = valueParm[0];
-							if (!idExist) {
+							
+							if (!idExist) {	//if Guarantor is not available
 								auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 										new ErrorDetails(PennantConstants.KEY_FIELD, "65022", errParm, valueParm), usrLanguage));
 							}
-						}
+						} 
 					}
 				}
 			}
@@ -8641,5 +8705,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
 		this.gCDCustomerService = gCDCustomerService;
+	}
+
+	public FinanceTaxDetailService getFinanceTaxDetailService() {
+		return financeTaxDetailService;
+	}
+
+	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
+		this.financeTaxDetailService = financeTaxDetailService;
 	}
 }

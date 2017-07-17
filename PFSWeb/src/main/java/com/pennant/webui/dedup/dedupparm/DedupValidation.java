@@ -81,12 +81,12 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * 
 	 * @return boolean
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
-	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterruptedException {
+	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String ref,String role,Window window,String curLoginUser) throws Exception {
 		try {
 			// Customer Dedup Process Check
-			boolean processCompleted = doCustomerDedupe(aFinanceDetail,role,window,curLoginUser);
+			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),ref,role,window,curLoginUser);
 			if(!processCompleted){
 				return false;
 			}
@@ -130,24 +130,25 @@ public class DedupValidation implements Serializable {
 	 * @param window
 	 * @param curLoginUser
 	 * @return
+	 * @throws Exception 
 	 */
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
+	private boolean doCustomerDedupe(CustomerDetails details, String ref, String role, Window window,
+			String curLoginUser) throws Exception {
 		logger.debug("Entering");
 
-		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
+		String corebank = details.getCustomer().getCustCoreBank();
 
-		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
-		if(StringUtils.isBlank(corebank)){
+	/*	//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+		if (StringUtils.isBlank(corebank)) {
 
-			aFinanceDetail = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, aFinanceDetail, window, curLoginUser);
+			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, ref, details, window, curLoginUser);
 
-			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isDedupFound()&& 
-					!aFinanceDetail.getFinScheduleData().getFinanceMain().isSkipDedup()) {
+			if (details.getCustomer().isDedupFound() && !details.getCustomer().isSkipDedup()) {
 				return false;
 			} else {
 				return true;
 			}
-		}
+		}*/
 		logger.debug("Leaving");
 		return true;
 	}

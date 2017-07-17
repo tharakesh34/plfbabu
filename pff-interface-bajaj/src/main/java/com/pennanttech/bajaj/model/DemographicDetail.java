@@ -2,16 +2,22 @@ package com.pennanttech.bajaj.model;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-@JsonPropertyOrder({"REJ_MATCHED_ID__c","REJ_MATCHED_PRCNTG__c","REJ_RESASON__c","FRAUD_MATCHED_ID__c","FRAUD_MATCHED_PRCNTG__c","Dedupe_Source__c","Source_Or_Target__c",
+@JsonPropertyOrder({"MATCHED_ID","MATCHED_PERCNTG","REJ_MATCHED_ID__c","REJ_MATCHED_PRCNTG__c","REJ_RESASON__c","FRAUD_MATCHED_ID__c","FRAUD_MATCHED_PRCNTG__c","Dedupe_Source__c","Source_Or_Target__c",
 	"Loan_Application__c","Lead__c","Lead_Applicants__c","TERR_MATCHED_ID__c","Customer_Status__c","LAN__c","Product__c","Loan_Status__c","FDD__c","Current_Bucket1__c",
 	"Balance_Amount__c","EMI_Amount__c","Bank_Account_No__c","DPD_String__c","Tenure__c","Month_On_Book__c","Loan_Amount__c",
 	"custDGDetails","custAddressDetails","custEmailDetails","custContactDetails","custLoanDetails","ReportDetails"})
 @JsonSerialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DemographicDetail {
+	@JsonProperty("MATCHED_ID")
+	private String matchedId;
+	@JsonProperty("MATCHED_PERCNTG")
+	private String matchedPercntg;
 	@JsonProperty("REJ_MATCHED_ID__c")
 	private String rejectionMatchid;
 	@JsonProperty("REJ_MATCHED_PRCNTG__c")
@@ -79,6 +85,14 @@ public class DemographicDetail {
 	@JsonProperty("reportDetails")
 	ReportDetail reportDetails;
 	
+	
+	
+	public String getMatchedPercntg() {
+		return matchedPercntg;
+	}
+	public void setMatchedPercntg(String matchedPercntg) {
+		this.matchedPercntg = matchedPercntg;
+	}
 	public String getRejectionMatchid() {
 		return rejectionMatchid;
 	}

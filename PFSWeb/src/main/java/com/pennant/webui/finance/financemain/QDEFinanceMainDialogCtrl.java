@@ -1597,21 +1597,22 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws InterfaceException {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
+		CustomerDetails details = aFinanceDetail.getCustomerDetails();
 
 		// If Core Bank ID is Exists then Customer is already existed in Core
 		// Banking System
 		if (StringUtils.isBlank(corebank)) {
 
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			aFinanceDetail = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(), aFinanceDetail,
-					getMainWindow(), curLoginUser);
+			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),
+					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(),
+					aFinanceDetail.getCustomerDetails(), getMainWindow(), curLoginUser);
 
-			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isDedupFound()
-					&& !aFinanceDetail.getFinScheduleData().getFinanceMain().isSkipDedup()) {
+			if (details.getCustomer().isDedupFound() && !details.getCustomer().isSkipDedup()) {
 				return false;
 			} else {
 				return true;

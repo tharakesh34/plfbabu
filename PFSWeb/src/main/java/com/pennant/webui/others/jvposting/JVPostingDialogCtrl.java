@@ -64,6 +64,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
@@ -100,6 +101,7 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.expenses.LegalExpensesService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -1268,7 +1270,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 */
 
 	private void refreshList() {
-		getJVPostingListCtrl().search();
+		final JdbcSearchObject<JVPosting> jvPostings = getJVPostingListCtrl().getSearchObject();
+		getJVPostingListCtrl().pagingJVPostingList.setActivePage(0);
+		getJVPostingListCtrl().getPagedListWrapper().setSearchObject(jvPostings);
+		if (getJVPostingListCtrl().listBoxJVPosting != null) {
+			getJVPostingListCtrl().listBoxJVPosting.getListModel();
+		}
 	}
 
 	/**
@@ -1348,6 +1355,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
 			return;
 		}
+		
+		if(this.listBoxJVPostingEntry.getItemCount()==0){
+			throw new WrongValueException(this.btnNewJVPostingEntry,"Click to add New Postings");
+		}
 
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);
@@ -1405,9 +1416,18 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}else if (aJVPosting.getTotCreditsByBatchCcy().compareTo(
 					aJVPosting.getTotDebitsByBatchCcy()) == 0) {
 				if (doProcess(aJVPosting, tranType)) {
-					// doWriteBeanToComponents(aJVPosting);
-					// refreshList();
-					getJVPostingListCtrl().refreshList();
+					// List Detail Refreshment
+					refreshList();
+
+					// Confirmation message
+					String msg = PennantApplicationUtil.getSavingStatus(aJVPosting.getRoleCode(),
+							aJVPosting.getNextRoleCode(), aJVPosting.getReference(), " Miscellaneous Postings ",
+							aJVPosting.getRecordStatus());
+					if(StringUtils.equals(aJVPosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
+						msg= "Miscellaneous Postings with Reference "+ aJVPosting.getReference() + " Approved Succesfully.";
+					}
+					Clients.showNotification(msg, "info", null, null, -1);
+
 					closeDialog();
 				}
 			} else {
@@ -1874,6 +1894,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					ComponentsCtrl.applyForward(item,
 							"onDoubleClick=onJVPostingEntryItemDoubleClicked");
 				}
+				Clients.clearWrongValue(this.btnNewJVPostingEntry);
 				this.listBoxJVPostingEntry.appendChild(item);
 			}
 		}

@@ -10,9 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
@@ -117,7 +116,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");		
+		/*sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");		
 		sql.append(" :HEADERID,");
 		sql.append(" ATG.GROUPCODE,");
 		sql.append(" AM.HOSTACCOUNT HOSTACCOUNT,");
@@ -144,7 +143,39 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = AH.ACCOUNTID");
 		sql.append(" INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE");
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG   ON ATG.GROUPID = AT.ACTYPEGRPID");
-		sql.append(" LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR   ON LR.ACTYPEGRPID  = ATG.GROUPCODE   AND LR.HOSTACCOUNT = AM.HOSTACCOUNT");
+		sql.append(" LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR   ON LR.ACTYPEGRPID  = ATG.GROUPCODE   AND LR.HOSTACCOUNT = AM.HOSTACCOUNT");*/
+		
+		sql.append(" INSERT INTO TRAIL_BALANCE_REPORT SELECT");		
+		sql.append(" :HEADERID,");
+		sql.append(" ATG.GROUPCODE,");
+		sql.append(" AH.BRANCHCOUNTRY,");
+		sql.append(" AH.BRANCHPROVINCE,");
+		sql.append(" AM.HOSTACCOUNT HOSTACCOUNT,");
+		sql.append(" AT.ACTYPEDESC DESCRIPTION,");
+		sql.append(" ABS(COALESCE(LR.CLOSINGBAL, 0)) OPENINGBAL,");
+		sql.append(" COALESCE(LR.CLOSINGBALTYPE, 'Dr') OPENINGBALTYPE,");
+		sql.append(" ABS(COALESCE(TODAYDEBITS, 0)) DEBITAMOUNT,");
+		sql.append(" ABS(COALESCE(TODAYCREDITS, 0)) CREDITAMOUNT,");
+		sql.append(" ABS(COALESCE(CASE when LR.CLOSINGBALTYPE='Cr' then COALESCE(LR.CLOSINGBAL, 0)+AH.TODAYNET ELSE  (COALESCE(LR.CLOSINGBAL, 0)*-1) + AH.TODAYNET END, 0))  CLOSINGBAL,");
+		sql.append(" CASE");
+		sql.append(" WHEN  CASE when LR.CLOSINGBALTYPE='Cr' then COALESCE(LR.CLOSINGBAL, 0)+ AH.TODAYNET ELSE  (COALESCE(LR.CLOSINGBAL, 0)*-1) + AH.TODAYNET END <= 0");
+		sql.append(" THEN 'Dr'");
+		sql.append(" ELSE 'Cr'");
+		sql.append(" END CR_DR");
+		sql.append(" FROM");
+		sql.append(" (SELECT BRANCHCOUNTRY,BRANCHPROVINCE,ACCOUNT ACCOUNTID,TODAYDEBITS,TODAYCREDITS,TODAYCREDITS-TODAYDEBITS TODAYNET FROM (");
+		sql.append(" SELECT ACCOUNT,BRANCHCOUNTRY,BRANCHPROVINCE,DRORCR,POSTAMOUNT");
+		sql.append(" FROM POSTINGS P INNER JOIN");
+		sql.append(" FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
+		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
+		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
+		sql.append(" )PIVOT (SUM(POSTAMOUNT) FOR DRORCR IN('D' AS TODAYDEBITS ,'C' AS TODAYCREDITS))");
+		sql.append(" ) AH");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = AH.ACCOUNTID");
+		sql.append(" INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE");
+		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG   ON ATG.GROUPID = AT.ACTYPEGRPID");
+		sql.append(" LEFT JOIN TRAIL_BALANCE_REPORT_LAST_RUN LR   ON LR.ACTYPEGRPID  = ATG.GROUPCODE AND LR.HOSTACCOUNT = AM.HOSTACCOUNT");
+		sql.append(" AND LR.COUNTRY = AH.BRANCHCOUNTRY AND LR.PROVINCE = AH.BRANCHPROVINCE");
 		
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
@@ -306,7 +337,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void prepareTransactionDetails() throws Exception {
 		int totalTransactions = extractTransactionsData();
-		//totalTransactions = groupTranactions();
 
 		if (totalTransactions == 0) {
 			throw new Exception("Transaction details not avialble for the dates between  "
@@ -415,26 +445,21 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	}
 
 	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr) {
-		MapSqlParameterSource parameterSource;
+		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT BSCHL, COALESCE(SUM(WRBTR), 0) WRBTR FROM TRANSACTION_DETAIL_REPORT WHERE LINK = :LINK GROUP BY BSCHL");
+		sql.append(" SELECT BSCHL, COALESCE(SUM(WRBTR), 0) WRBTR FROM TRANSACTION_DETAIL_REPORT");
+		sql.append(" WHERE LINK = ? GROUP BY BSCHL");
 
-		parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("LINK", pageItr);
+		jdbcTemplate.query(sql.toString(), new Object[] { pageItr }, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				map.put(rs.getInt("BSCHL"), rs.getBigDecimal("WRBTR"));
+			}
 
-		return namedJdbcTemplate.query(sql.toString(), parameterSource,
-				new ResultSetExtractor<Map<Integer, BigDecimal>>() {
+		});
 
-					@Override
-					public Map<Integer, BigDecimal> extractData(ResultSet rs) throws SQLException, DataAccessException {
-						Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
-						while (rs.next()) {
-							map.put(rs.getInt("BSCHL"), rs.getBigDecimal("WRBTR"));
-						}
-						return map;
-					}
-
-				});
+		return map;
 	}
 
 	private void clearTables() {
@@ -449,7 +474,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT_TEMP");
+		/*sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT_TEMP");
 		sql.append(" SELECT");
 		sql.append(" ROWNUM,");
 		sql.append(" 0,");
@@ -468,7 +493,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" GROUP BY AH.ACCOUNTID) AH");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = AH.ACCOUNTID");
 		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
+		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");*/
+		
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT_TEMP");
+		sql.append(" SELECT");
+		sql.append(" ROWNUM,");
+		sql.append(" 0,");
+		sql.append(" CASE WHEN AH.POSTAMOUNT < 0 THEN '40' ELSE '50' END BSCHL,");
+		sql.append(" AM.HOSTACCOUNT HKONT,");
+		sql.append(" :UMSKZ,");
+		sql.append(" AH.POSTAMOUNT WRBTR,");
+		sql.append(" :GSBER,");
+		sql.append(" BUSINESSAREA,");
+		sql.append(" COALESCE(CC.COSTCENTERCODE, :KOSTL) KOSTL,");
+		sql.append(" PC.PROFITCENTERCODE PRCTR,");
+		sql.append(" :ZUONR,");
+		sql.append(" :SGTXT");
+		sql.append(" FROM (SELECT BUSINESSAREA,ACCOUNT ACCOUNTID,TODAYCREDITS-TODAYDEBITS POSTAMOUNT FROM (");
+		sql.append(" SELECT ACCOUNT,BUSINESSAREA,DRORCR,POSTAMOUNT FROM POSTINGS AH");
+		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = AH.FINREFERENCE");
+		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
+		sql.append(" INNER JOIN RMTCOUNTRYVSPROVINCE RP ON RP.CPPROVINCE=RB.BRANCHPROVINCE");
+		sql.append(" WHERE AH.POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
+		sql.append(" )PIVOT (sum(PostAmount) for DRORCR in('D' as TODAYDEBITS ,'C' as TODAYCREDITS))) AH");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = AH.ACCOUNTID");
+		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
+		
+		
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
@@ -476,7 +528,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		paramMap.addValue("POSTSTATUS", "S");
 		paramMap.addValue("UMSKZ", getSMTParameter("UMSKZ", String.class));
 		paramMap.addValue("GSBER", getSMTParameter("GSBER", String.class));
-		paramMap.addValue("BUPLA", getSMTParameter("BUPLA", String.class));
+		// paramMap.addValue("BUPLA", getSMTParameter("BUPLA", String.class));
 		paramMap.addValue("KOSTL", getSMTParameter("KOSTL", String.class));
 		paramMap.addValue("ZUONR", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
 		paramMap.addValue("SGTXT", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
@@ -556,7 +608,22 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		generateTransactionSummaryReport();
 
-		generateTrailBalanceReport();
+		generateTrailBalanceReportByState();
+
+	}
+
+	private void generateTrailBalanceReportByState() {
+		String query = "select PROVINCE, count(*) from TRAIL_BALANCE_REPORT where HEADERID = ? group by PROVINCE";
+		jdbcTemplate.query(query, new Object[]{headerId}, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				try {
+					generateTrailBalanceReport(rs.getString("PROVINCE"));
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		});
 	}
 
 	private void generateTransactionReport() throws Exception {
@@ -575,13 +642,14 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
-	private void generateTrailBalanceReport() throws Exception {
+	private void generateTrailBalanceReport(String province) throws Exception {
 		logger.info("Generating Trail Balance Report ..");
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("HEADERID", headerId);
+		filterMap.put("PROVINCE", province);
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMYYYY"));
@@ -590,7 +658,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		parameterMap.put("COMPANY_NAME", companyName);
 		parameterMap.put("REPORT_NAME", reportName);
-		parameterMap.put("FILE_NAME", fileName);
+		//parameterMap.put("FILE_NAME", fileName);
+		parameterMap.put("STATE_CODE", province);
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");

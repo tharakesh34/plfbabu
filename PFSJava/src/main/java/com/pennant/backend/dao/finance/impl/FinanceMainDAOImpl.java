@@ -2385,7 +2385,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT FinReference, GrcPeriodEndDate, AllowGrcPeriod, MaturityDate, ");
-		selectSql.append(" AllowGrcPeriod, RepayFrq, FinStartDate ");
+		selectSql.append(" AllowGrcPeriod, RepayFrq, FinStartDate, CustID ");
 		if (isWIF) {
 			selectSql.append(" From WIFFinanceMain");
 		} else {
@@ -2821,7 +2821,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		sql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
 		sql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq, GrcProfitDaysBasis,");
 		sql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate, ManualSchedule,");
-		sql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw,FinAssetValue, ");
+		sql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw,FinAssetValue,FinCurrAssetValue, ");
 		sql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
 		sql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
 		sql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
@@ -2853,6 +2853,37 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			return null;
 		}
 
+	}
+
+	@Override
+	public FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.MaturityDate, FT.Ratechganyday ");
+
+		if (isWIF) {
+			selectSql.append(" From WIFFinanceMain FM");
+		} else {
+			selectSql.append(" From FinanceMain FM");
+		}
+		selectSql.append(" inner join RMTfinanceTypes FT on FM.FinType = FT.FinType ");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		FinanceMain financeMain = null;
+		try {
+			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeMain = null;
+		}
+		logger.debug("Leaving");
+		return financeMain;
 	}
 	
 }

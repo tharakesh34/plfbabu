@@ -98,7 +98,8 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	protected Listheader				listheader_BatchReference;													// autoWired
 	protected Listheader				listheader_FileName;														// autoWired
 	protected Listheader				listheader_BatchCreatedDate;												// autoWired
-	protected Listheader				listheader_NumberOfRecords;												// autoWired
+	protected Listheader				listheader_NumberOfRecords;													// autoWired
+	protected Listheader				listheader_Status;															// autoWired
 	protected Listheader				listheader_RecordStatus;													// autoWired
 	protected Listheader				listheader_RecordType;														// autoWired
 
@@ -170,13 +171,16 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 				Operators.STRING);
 
 		registerField("BatchCreatedDate", listheader_BatchCreatedDate, SortOrder.NONE, batchCreationDate,
-				sortOperator_BatchCreationDate, Operators.STRING);
+				sortOperator_BatchCreationDate, Operators.DATE);
+
+		registerField("batchApprovedDate", listheader_BatchCreatedDate, SortOrder.NONE, batchApprovedDate,
+				sortOperator_BatchApprovedDate, Operators.DATE);
 
 		registerField("numberofRecords",listheader_NumberOfRecords);
-		registerField("status");
+		registerField("status",listheader_Status);
 		
-		registerField("RecordStatus");
-		registerField("RecordType");
+		registerField("RecordStatus",listheader_RecordStatus);
+		registerField("RecordType",listheader_RecordType);
 		doSeFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();

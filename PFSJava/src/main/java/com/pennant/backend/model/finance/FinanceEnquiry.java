@@ -73,6 +73,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private String				lovDescCustCIF;
 	private String				lovDescCustShrtName;
 	private BigDecimal			finAmount			= BigDecimal.ZERO;
+	private BigDecimal			finCurrAssetValue	= BigDecimal.ZERO;
 	private BigDecimal			feeChargeAmt		= BigDecimal.ZERO;
 	private BigDecimal			insuranceAmt		= BigDecimal.ZERO;
 	private BigDecimal			downPayment			= BigDecimal.ZERO;
@@ -488,5 +489,13 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setOwnership(String ownership) {
 		this.ownership = ownership;
+	}
+
+	public BigDecimal getFinCurrAssetValue() {
+		return finCurrAssetValue;
+	}
+
+	public void setFinCurrAssetValue(BigDecimal finCurrAssetValue) {
+		this.finCurrAssetValue = finCurrAssetValue;
 	}
 }

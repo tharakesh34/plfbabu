@@ -99,6 +99,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
     protected ExtendedCombobox 		pinCode; 
     protected Checkbox 		        active; 
 	private Entity                  entity; // overhanded per param
+	private Textbox					address;
 
 	private transient EntityListCtrl entityListCtrl; // overhanded per param
 	private transient EntityService entityService;
@@ -487,6 +488,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		   this.stateCode.setValue(aEntity.getStateCode());
 		   this.cityCode.setValue(aEntity.getCityCode());
 		   this.pinCode.setValue(aEntity.getPinCode());
+		   this.address.setValue(aEntity.getAddress());
 			this.active.setChecked(aEntity.isActive());
 		
 		if (aEntity.isNewRecord()){
@@ -507,6 +509,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		this.recordStatus.setValue(aEntity.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -541,32 +544,38 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			wve.add(we);
 		}
 		//Country
-				try {
-					aEntity.setCountry(this.country.getValidatedValue());
-					aEntity.setCountryName(this.country.getDescription());
-				}catch (WrongValueException we ) {
-					wve.add(we);
-				}
-				//State Code
-				try {
-					aEntity.setStateCode(this.stateCode.getValidatedValue());
-					aEntity.setStateCodeName(this.stateCode.getDescription());
-				}catch (WrongValueException we ) {
-					wve.add(we);
-				}
-				//City Code
-				try {
-					aEntity.setCityCode(this.cityCode.getValidatedValue());
-					aEntity.setCityCodeName(this.cityCode.getDescription());
-				}catch (WrongValueException we ) {
-					wve.add(we);
-				}
-				//Pin Code
-				try {
-					aEntity.setPinCode(this.pinCode.getValidatedValue());
-				}catch (WrongValueException we ) {
-					wve.add(we);
-				}	
+		try {
+			aEntity.setCountry(this.country.getValidatedValue());
+			aEntity.setCountryName(this.country.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//State Code
+		try {
+			aEntity.setStateCode(this.stateCode.getValidatedValue());
+			aEntity.setStateCodeName(this.stateCode.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//City Code
+		try {
+			aEntity.setCityCode(this.cityCode.getValidatedValue());
+			aEntity.setCityCodeName(this.cityCode.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Pin Code
+		try {
+			aEntity.setPinCode(this.pinCode.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// AddOfBranch
+		try {
+			aEntity.setAddress(this.address.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		//Active
 		try {
 			aEntity.setActive(this.active.isChecked());
@@ -715,9 +724,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+		this.address.setErrorMessage("");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -784,6 +793,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			readOnlyComponent(isReadOnly("EntityDialog_StateCode"), this.stateCode);
 			readOnlyComponent(isReadOnly("EntityDialog_CityCode"), this.cityCode);
 			readOnlyComponent(isReadOnly("EntityDialog_PinCode"), this.pinCode);
+			readOnlyComponent(isReadOnly("EntityDialog_Address"), this.address);
 			readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
 			
 			if (isWorkFlowEnabled()) {
@@ -818,6 +828,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			readOnlyComponent(true, this.stateCode);
 			readOnlyComponent(true, this.cityCode);
 			readOnlyComponent(true, this.pinCode);
+			readOnlyComponent(true, this.address);
 			//readOnlyComponent(true, this.active);
 
 			if (isWorkFlowEnabled()) {
@@ -849,6 +860,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			  	this.cityCode.setDescription("");
 			  	this.pinCode.setValue("");
 			  	this.pinCode.setDescription("");
+			  	this.address.setValue("");
 				this.active.setChecked(false);
 
 			logger.debug("Leaving");

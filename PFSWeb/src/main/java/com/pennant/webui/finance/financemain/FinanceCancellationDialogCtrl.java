@@ -98,6 +98,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	protected Label							label_FinanceMainDialog_FinAssetValue;
 	protected Label							label_FinanceMainDialog_FinCurrentAssetValue;
+	protected Label							label_FinanceMainDialog_FinAmount;
 	protected CurrencyBox					finCurrentAssetValue;
 	protected Row							row_FinAssetValue;
 	protected CurrencyBox					finAssetValue;
@@ -275,7 +276,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 		} else {
 			this.row_FinAssetValue.setVisible(false);
-
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
 		}
 	}
 

@@ -64,6 +64,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pff.core.InterfaceException;
 
@@ -134,8 +135,20 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 				amountCodes.setFinType(financeMain.getFinType());
 				
-				amountCodes.setPenaltyPaid(penaltyPaidNow);
-				amountCodes.setPenaltyWaived(penaltyWaived);
+				if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
+					amountCodes.setExPenaltyPaid(penaltyPaidNow);
+					amountCodes.setExPenaltyWaived(penaltyWaived);
+				}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
+					amountCodes.setEAPenaltyPaid(penaltyPaidNow);
+					amountCodes.setEAPenaltyWaived(penaltyWaived);
+				}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
+					amountCodes.setPAPenaltyPaid(penaltyPaidNow);
+					amountCodes.setPAPenaltyWaived(penaltyWaived);
+				}else {
+					amountCodes.setPenaltyPaid(penaltyPaidNow);
+					amountCodes.setPenaltyWaived(penaltyWaived);
+				}
+				
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
@@ -144,7 +157,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 
 				if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
-					aeEvent.setEOD(true);;
+					aeEvent.setEOD(true);
 				}
 
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();

@@ -102,6 +102,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -634,9 +635,9 @@ public class FinanceDataValidation {
 					}
 				}
 				int extendedDetailsCount = 0;
-				if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-					for (ExtendedFieldDetail extended : vASConfiguration.getExtendedFieldHeader()
-							.getExtendedFieldDetails()) {
+				List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails();
+				if (exdFldConfig != null) {
+					for (ExtendedFieldDetail extended : exdFldConfig) {
 						if (extended.isFieldMandatory()) {
 							extendedDetailsCount++;
 						}
@@ -706,7 +707,17 @@ public class FinanceDataValidation {
 				if(detail.getExtendedDetails() != null){
 				for (ExtendedField details : detail.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						for (ExtendedFieldDetail detail1 : exdFldConfig) {
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail1.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail1.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_BR"));
+							}
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail1.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail1.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_SC"));
+							}
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						}
 					}
 				}
 				}
@@ -1115,12 +1126,21 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 				String collateralType=financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
-				if(!StringUtils.equals(collateralType, collateralSetup.getCollateralType())){
-					String[] valueParm = new String[2];
-					valueParm[0] = "collateralref";
-					valueParm[1] = "LoanType";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
-					return errorDetails;
+				if(StringUtils.isNotBlank(collateralType)) {
+					boolean isCollateralFound = false;
+					String[] types = collateralType.split(PennantConstants.DELIMITER_COMMA);
+					for (String type : types) {
+						if (StringUtils.equals(type, collateralSetup.getCollateralType())) {
+							isCollateralFound = true;
+						}
+					}
+					if(!isCollateralFound) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "collateralref";
+						valueParm[1] = "LoanType";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+						return errorDetails;
+					}
 				}
 				if (!StringUtils.equalsIgnoreCase(collateralSetup.getDepositorCif(), financeDetail.getFinScheduleData()
 						.getFinanceMain().getLovDescCustCIF())) {
@@ -1578,7 +1598,7 @@ public class FinanceDataValidation {
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 					if(mandate.getAccNumber().length()!=accNoLength){
 						String[] valueParm = new String[2];
-						valueParm[0] = "AccountNumber";
+						valueParm[0] = "AccountNumber(Mandate)";
 						valueParm[1] = String.valueOf(accNoLength)+" characters";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
 						return errorDetails;
@@ -2071,10 +2091,18 @@ public class FinanceDataValidation {
 			valueParm[2] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
 		}
-		if(finMain.isTDSApplicable()){
-			if(!financeType.isTDSApplicable()){
+		if (finMain.isTDSApplicable()) {
+			if (!financeType.isTDSApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
+				valueParm[1] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+			}
+		}
+		if (finMain.isQuickDisb()) {
+			if (!financeType.isQuickDisb()) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "quickDisb";
 				valueParm[1] = financeType.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
 			}
@@ -2827,8 +2855,14 @@ public class FinanceDataValidation {
 			rate.setCurrency(finMain.getFinCcy());
 			rate.setSplRateCode(finMain.getGraceSpecialRate());
 			rate.setMargin(finMain.getGrcMargin());
-			rate.setValueDate(finMain.getFinStartDate());
+			rate.setValueDate(DateUtility.getAppDate());
 			rate = RateUtil.getRefRate(rate);
+			if (rate.getErrorDetails() != null) {
+				errorDetails.add(rate.getErrorDetails());
+			}
+			if (errorDetails != null && !errorDetails.isEmpty()) {
+				return errorDetails;
+			}
 			netRate = rate.getNetRefRateLoan();
 		} else {
 			netRate = finMain.getGrcPftRate();
@@ -3309,8 +3343,14 @@ public class FinanceDataValidation {
 			rate.setCurrency(finMain.getFinCcy());
 			rate.setSplRateCode(finMain.getRepaySpecialRate());
 			rate.setMargin(finMain.getRepayMargin());
-			rate.setValueDate(finMain.getGrcPeriodEndDate());
+			rate.setValueDate(DateUtility.getAppDate());
 			rate = RateUtil.getRefRate(rate);
+			if(rate.getErrorDetails()!=null){
+			errorDetails.add(rate.getErrorDetails());
+			}
+			if (errorDetails != null && !errorDetails.isEmpty()) {
+				return errorDetails;
+			}
 			netRate = rate.getNetRefRateLoan();
 		} else {
 			netRate = finMain.getRepayProfitRate();

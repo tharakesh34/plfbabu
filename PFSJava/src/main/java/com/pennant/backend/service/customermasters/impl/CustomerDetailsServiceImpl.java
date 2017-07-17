@@ -95,6 +95,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.service.customermasters.validation.CorporateCustomerValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerAddressValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerBalanceSheetValidation;
@@ -109,6 +110,7 @@ import com.pennant.backend.service.customermasters.validation.CustomerIncomeVali
 import com.pennant.backend.service.customermasters.validation.CustomerPRelationValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerRatingValidation;
+import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -180,6 +182,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private LovFieldDetailService lovFieldDetailService;
 	private BankDetailService	bankDetailService;
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
+	private LimitRebuild limitRebuild;
+	private GCDCustomerService gCDCustomerService;
+	
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -1342,6 +1347,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			details = getCustomerExtLiabilityValidation().extLiabilityListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
+		
+		//customer dedup validation
+		if (customerDetails.getCustomerDedupList() != null
+				&& !customerDetails.getCustomerDedupList().isEmpty()) {
+			for (CustomerDedup customerDedup : customerDetails.getCustomerDedupList()) {
+				AuditDetail auditDetail = new AuditDetail();
+				if (StringUtils.equals(customerDedup.getSourceSystem(), PennantConstants.CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99012", null)));
+					auditDetails.add(auditDetail);
+				}
+			}
+
+		}
 		logger.debug("Leaving");
 		return auditDetails;
 	}
@@ -2142,11 +2160,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
+		//process to send finone request and create or update the data.
+		/*processFinOneCheck(aAuditHeader);
+
+		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
+				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+			return aAuditHeader;
+		}*/
+
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		Customer customer = customerDetails.getCustomer();
+
+		// Fetched from the approved list for rebuild. Since rebuild should after the transaction but it is happening in the transaction 
+		Customer appCustomer = getCustomerDAO().getCustomerByID(customer.getCustID());
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(customer.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -2179,8 +2208,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				custEmpDetail.setCustID(customer.getCustID());
 				custEmpDetail.setRecordType(customer.getRecordType());
 				custEmpDetail.setRecordStatus(customer.getRecordStatus());
-				CustEmployeeDetail custEmployeeDetail = getCustEmployeeDetailDAO().getCustEmployeeDetailById(
-						customer.getCustID(), "");
+				CustEmployeeDetail custEmployeeDetail = getCustEmployeeDetailDAO()
+						.getCustEmployeeDetailById(customer.getCustID(), "");
 				if (custEmployeeDetail == null) {
 					getCustEmployeeDetailDAO().save(custEmpDetail, "");
 				} else {
@@ -2267,26 +2296,103 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
 		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-			auditDetailList.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp",
-					auditHeader.getAuditTranType())));
-			
+			auditDetailList.addAll(
+					getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
+
 			getCustomerDAO().delete(customer, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], customer
-				.getBefImage(), customer));
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				customer.getBefImage(), customer));
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], customer
-				.getBefImage(), customer));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				customer.getBefImage(), customer));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
+
+		processLimitRebuild(customer, appCustomer);
+
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private AuditHeader processFinOneCheck(AuditHeader auditHeader) {
+		logger.debug("Entering");
+
+		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+
+		String[] errorParm = new String[2];
+		errorParm[0] = "Customer";
+		if (customerDetails.getCustomer().getCustCoreBank() != null) {
+			// call the finone procedure to update a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, "U");
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), "R")) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+
+		} else {
+			// call the finone procedure to create a customer in Finone 
+			getgCDCustomerService().processGcdCustomer(customerDetails, "I");
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), "R")) {
+				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
+				auditDetail.setErrorDetails(
+						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				return auditHeader;
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	private void processLimitRebuild(Customer customer, Customer appCustomer) {
+		if (appCustomer != null) {
+			// removed from group
+			if (isValid(appCustomer.getCustGroupID()) && !isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), true, false);
+			}
+
+			// newly added to group
+			if (!isValid(appCustomer.getCustGroupID()) && isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(customer.getCustGroupID(), false, true);
+			}
+			// group swapped
+			if (isValid(appCustomer.getCustGroupID()) && isValid(customer.getCustGroupID())
+					&& appCustomer.getCustGroupID() != customer.getCustGroupID()) {
+				limitRebuild.processCustomerGroupSwap(customer.getCustGroupID(), appCustomer.getCustGroupID());
+				limitRebuild.processCustomerGroupRebuild(appCustomer.getCustGroupID(), true, false);
+			}
+
+		} else {
+			//new record
+			if (isValid(customer.getCustGroupID())) {
+				limitRebuild.processCustomerGroupRebuild(customer.getCustGroupID(), false, false);
+			}
+		}
+	}
+
+	private boolean isValid(Long vale){
+		if (vale!=null && vale!=Long.MIN_VALUE && vale !=0) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -2571,6 +2677,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
+		}
+		
+		
+		//customer dedup validation
+		if (customerDetails.getCustomerDedupList() != null && !customerDetails.getCustomerDedupList().isEmpty()) {
+			for (CustomerDedup customerDedup : customerDetails.getCustomerDedupList()) {
+				if (StringUtils.equals(customerDedup.getSourceSystem(), PennantConstants.CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99012", null)));
+				}
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -4849,6 +4965,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		String roleCode = customerDetails.getCustomer().getRoleCode();
 		String recordSts = customerDetails.getCustomer().getRecordStatus();
 
+		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 		if (customerDetails.getCustomerDedupList() != null && !customerDetails.getCustomerDedupList().isEmpty()) {
 
 			List<CustomerDedup> insertList = new ArrayList<CustomerDedup>();
@@ -4860,6 +4977,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (int i = 0; i < customerDetails.getCustomerDedupList().size(); i++) {
 
 				deDupCustomer = customerDetails.getCustomerDedupList().get(i);
+				deDupCustomer.setFinReference(deDupCustomer.getCustCIF());
 				deDupCustomer.setLastMntBy(lastmntby);
 				deDupCustomer.setRoleCode(roleCode);
 				deDupCustomer.setRecordStatus(recordSts);
@@ -4884,6 +5002,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			insertList = null;
 			updateList = null;
 		}
+	}
 		return auditDetails;
 	}
 
@@ -5001,6 +5120,23 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	
+
+	public LimitRebuild getLimitRebuild() {
+		return limitRebuild;
+	}
+
+	public void setLimitRebuild(LimitRebuild limitRebuild) {
+		this.limitRebuild = limitRebuild;
+	}
+
+	public GCDCustomerService getgCDCustomerService() {
+		return gCDCustomerService;
+	}
+
+	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
+		this.gCDCustomerService = gCDCustomerService;
 	}
 
 

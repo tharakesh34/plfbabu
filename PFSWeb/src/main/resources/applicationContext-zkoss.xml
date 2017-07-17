@@ -2007,6 +2007,7 @@
 		class="com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl"
 		parent="basisCtrl">
 		<property name="guarantorDetailService" ref="guarantorDetailService"></property>
+		<property name="jointAccountDetailService" ref="jointAccountDetailService"></property>
 	</bean>
 
 	<!--============ Finance Agreement Detail ============== -->
@@ -2820,6 +2821,7 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="mailUtil" ref="mailUtil" />
+		<property name="accrualService" ref="accrualService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 
@@ -3282,7 +3284,8 @@
 	<bean id="covenantEnquiryDialogCtrl"
 		class="com.pennant.webui.finance.enquiry.CovenantEnquiryDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeDetailService" ref="financeDetailService" /> 
+		<property name="securityRoleService" ref="securityRoleService" />
 	</bean>
 
 

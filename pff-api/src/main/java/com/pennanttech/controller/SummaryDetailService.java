@@ -16,6 +16,7 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -46,6 +47,7 @@ public class SummaryDetailService {
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
 	private AccrualService			accrualService;
 	protected FinExcessAmountDAO	finExcessAmountDAO;
+	private FinFeeDetailDAO			finFeeDetailDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -61,17 +63,7 @@ public class SummaryDetailService {
 			summary.setTotalGrossGrcPft(financeMain.getTotalGrossGrcPft());
 			
 			// calculate total paid fees
-			BigDecimal totFeeAmount = BigDecimal.ZERO;
-			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-				for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
-							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
-					} else {
-						totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
-					}
-				}
-			}
+			BigDecimal totFeeAmount = calculateTotFeeChargeAmt(financeDetail.getFinScheduleData());
 			summary.setFeeChargeAmt(totFeeAmount);
 
 			// fetch summary details from FinPftDetails
@@ -82,7 +74,7 @@ public class SummaryDetailService {
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-			summary.setNumberOfTerms(financeMain.getCalTerms());
+			summary.setNumberOfTerms(finPftDetail.getNOInst());
 			summary.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
 			summary.setMaturityDate(finPftDetail.getMaturityDate());
 			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
@@ -134,7 +126,6 @@ public class SummaryDetailService {
 				BigDecimal totDisbAmt = BigDecimal.ZERO;
 				for (FinanceDisbursement finDisb : disbList) {
 					totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
-					//totfeeChrgAmt = totfeeChrgAmt.add(finDisb.getFeeChargeAmt());
 				}
 				BigDecimal assetValue = financeMain.getFinAssetValue() == null ? BigDecimal.ZERO : financeMain.getFinAssetValue();
 				if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
@@ -145,21 +136,21 @@ public class SummaryDetailService {
 			// calculate OD Details
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
+			int odInst = 0;
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				for (FinODDetails odDetail : finODDetailsList) {
 					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
 					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+					if(odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						odInst++;
+					}
 				}
 				summary.setOverDuePrincipal(overDuePrincipal);
 				summary.setOverDueProfit(overDueProfit);
 				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 				summary.setFinODDetail(finODDetailsList);
-				if(overDuePrincipal.compareTo(BigDecimal.ZERO) > 0) {
-					summary.setOverDueInstlments(finODDetailsList.size());
-				} else {
-					summary.setOverDueInstlments(0);
-				}
+				summary.setOverDueInstlments(odInst);
 				
 				financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 			}
@@ -168,6 +159,30 @@ public class SummaryDetailService {
 		return summary;
 	}
 	
+	/**
+	 * Method for calculate total fees paid by customer.
+	 * 
+	 * @param finScheduleData
+	 * @return
+	 */
+	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData finScheduleData) {
+		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		BigDecimal totFeeAmount = BigDecimal.ZERO;
+		// Fetch total fee details to capture total fee paid by customer
+		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
+		if (feeDetails != null) {
+			for (FinFeeDetail feeDetail : feeDetails) {
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+				} else {
+					totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+				}
+			}
+		}
+		return totFeeAmount;
+	}
+
 	public void doProcessPlanEMIHDays(FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		List<Date> planEMIHDates = new ArrayList<Date>();
@@ -420,5 +435,9 @@ public class SummaryDetailService {
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 }

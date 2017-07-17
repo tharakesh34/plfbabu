@@ -103,9 +103,9 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	}
 
 	@Override
-	public List<FinCovenantType> getFinCovenantTypeById(String id,String type) {
+	public List<FinCovenantType> getFinCovenantTypeById(String id,String type,boolean isEnquiry) {
 		logger.debug("Entering");
-		List<FinCovenantType> finCovenantTypes = getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(id, type);
+		List<FinCovenantType> finCovenantTypes = getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(id, type,isEnquiry);
 		logger.debug("Leaving");
 		return finCovenantTypes;
 	}

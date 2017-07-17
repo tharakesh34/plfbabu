@@ -688,7 +688,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			isOverdraft = true;
 		}
 		this.schdl_finReference.setValue(financeMain.getFinReference());
-		this.schdl_noOfTerms.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
+		this.schdl_noOfTerms.setValue(String.valueOf(financeMain.getCalTerms() + financeMain.getGraceTerms()));
 		this.schdl_grcEndDate.setValue(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
 		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));

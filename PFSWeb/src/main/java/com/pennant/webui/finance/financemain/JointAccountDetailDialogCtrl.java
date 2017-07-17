@@ -69,6 +69,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.finance.GuarantorDetailService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -91,6 +92,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Window window_JointAccountDetailDialog; // autoWired not auto
 	// wired variables
 	private FinanceDetail financeDetail = null; // over handed per parameters
+	private FinanceMain financeMain = null; // over handed per parameters
 	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
 	// Joint Account and Gurantors Details
 	protected Listbox listBoxGurantorsDetail;
@@ -108,9 +110,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String ccy = "";
 
 	private GuarantorDetailService guarantorDetailService;
+	private JointAccountDetailService jointAccountDetailService;
+
 	private String roleCode = "";
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
+	private Object mainController;
+	private boolean enquiry;
 
 	/**
 	 * default constructor.<br>
@@ -152,9 +158,20 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			setFinanceMainDialogCtrl(arguments.get("financeMainDialogCtrl"));
 		}
+		if (arguments.containsKey("financeMain")) {
+			this.financeMain = (FinanceMain) arguments.get("financeMain");
+		}
 
 		if (arguments.containsKey("roleCode")) {
 			roleCode = (String) arguments.get("roleCode");
+		}
+		if (arguments.containsKey("enquiry")) {
+			enquiry = (boolean) arguments.get("enquiry");
+		}
+		
+		
+		if (arguments.containsKey("mainController")) {
+			setMainController(arguments.get("mainController"));
 		}
 
 		doCheckRights();
@@ -173,9 +190,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
+		if(!enquiry){
 		getUserWorkspace().allocateAuthorities("FinanceMainDialog", roleCode);
 		this.btnAddGurantorDetails.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnAddGurantor"));
 		this.btnAddJointDetails.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnAddJointAccount"));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -186,24 +205,40 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// append finance basic details 
 		appendFinBasicDetails();
 
-		// Rendering Joint Account Details
-		List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
-		if (jointAcctDetailList != null && !jointAcctDetailList.isEmpty()) {
-			doFillJointDetails(jointAcctDetailList);
-		}
+		if (enquiry) {
+			if (!financeMain.isNewRecord()) {
+				List<JointAccountDetail> jointAccountDetailList = this.jointAccountDetailService
+						.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+				if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
+					doFillJointDetails(jointAccountDetailList);
+				}
+				List<GuarantorDetail> gurantorsAccDetailList = this.guarantorDetailService
+						.getGuarantorDetail(financeMain.getFinReference(), "_AView");
+				if (gurantorsAccDetailList != null && !gurantorsAccDetailList.isEmpty()) {
+					doFillGurantorsDetails(gurantorsAccDetailList);
+				}
+			}
+			this.finBasicdetails.setVisible(false);
+		} else {
+			// Rendering Joint Account Details
+			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
+			if (jointAcctDetailList != null && !jointAcctDetailList.isEmpty()) {
+				doFillJointDetails(jointAcctDetailList);
+			}
 
-		// Rendering Guaranteer Details
-		List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
-		if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
-			doFillGurantorsDetails(gurantorsDetailList);
-		}
-		
-		try {
-			Class[] paramType = {this.getClass() };
-			Object[] stringParameter = { this };
-			financeMainDialogCtrl.getClass().getMethod("setJointAccountDetailDialogCtrl", paramType).invoke(financeMainDialogCtrl, stringParameter);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			// Rendering Guaranteer Details
+			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
+			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
+				doFillGurantorsDetails(gurantorsDetailList);
+			}
+			try {
+				Class[] paramType = { this.getClass() };
+				Object[] stringParameter = { this };
+				financeMainDialogCtrl.getClass().getMethod("setJointAccountDetailDialogCtrl", paramType)
+						.invoke(financeMainDialogCtrl, stringParameter);
+			} catch (Exception e) {
+				logger.error("Exception: ", e);
+			}
 		}
 		
 		getBorderLayoutHeight();
@@ -348,7 +383,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
 			final JointAccountDetail jountAccountDetail = (JointAccountDetail) item.getAttribute("data");
-			if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -360,7 +395,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
 				map.put("filter", getjointAcFilter());
-				map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
+				if(!enquiry){
+					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
+				}else{
+					map.put("financeMain", financeMain);
+					map.put("enqModule", enquiry);
+					map.put("moduleType", "ENQ");
+				}
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul", window_JointAccountDetailDialog, map);
@@ -520,6 +561,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
 				map.put("filter", getGurantorFilter());
+				if(enquiry){
+				map.put("enqModule", enquiry);
+				map.put("moduleType", "ENQ");
+				}
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", window_JointAccountDetailDialog, map);
@@ -719,5 +764,21 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+	
+	public JointAccountDetailService getJointAccountDetailService() {
+		return jointAccountDetailService;
+	}
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	public Object getMainController() {
+		return mainController;
+	}
+
+	public void setMainController(Object mainController) {
+		this.mainController = mainController;
 	}
 }

@@ -139,7 +139,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	protected Row row_phoneNumber;
 	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil
 			.getCustomerEmailPriority();
-
+	private String regex;
 
 	/**
 	 * default constructor.<br>
@@ -259,7 +259,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		this.phoneTypeCode.setDescColumn("PhoneTypeDesc");
 		this.phoneTypeCode.setValidateColumns(new String[] { "PhoneTypeCode" });
 
-		this.phoneNumber.setMaxlength(10);
+		this.phoneNumber.setMaxlength(13);
 		
 		this.mobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 
@@ -389,15 +389,15 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 		this.phoneTypeCode.setValue(aCustomerPhoneNumber.getPhoneTypeCode());
 		this.phoneNumber.setValue(aCustomerPhoneNumber.getPhoneNumber());
-		
-		this.custCIF.setValue(aCustomerPhoneNumber.getLovDescCustCIF() == null ? "" : aCustomerPhoneNumber
-				.getLovDescCustCIF().trim());
-		this.custShrtName.setValue(aCustomerPhoneNumber.getLovDescCustShrtName() == null ? "" : aCustomerPhoneNumber
-				.getLovDescCustShrtName().trim());
-		fillComboBox(this.custPhonePriority,
-				String.valueOf(aCustomerPhoneNumber.getPhoneTypePriority()),
+
+		this.custCIF.setValue(aCustomerPhoneNumber.getLovDescCustCIF() == null ? ""
+				: aCustomerPhoneNumber.getLovDescCustCIF().trim());
+		this.custShrtName.setValue(aCustomerPhoneNumber.getLovDescCustShrtName() == null ? ""
+				: aCustomerPhoneNumber.getLovDescCustShrtName().trim());
+		fillComboBox(this.custPhonePriority, String.valueOf(aCustomerPhoneNumber.getPhoneTypePriority()),
 				CustomerPriorityList, "");
-		
+		regex = aCustomerPhoneNumber.getPhoneRegex();
+		dosetFieldLength(regex);
 
 		if (isNewRecord()) {
 			this.phoneTypeCode.setDescription("");
@@ -442,7 +442,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+		aCustomerPhoneNumber.setPhoneRegex(regex);
 		try {
 			if ("#".equals(getComboboxValue(this.custPhonePriority))) {
 				throw new WrongValueException(this.custPhonePriority, Labels.getLabel("STATIC_INVALID",
@@ -542,6 +542,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
+		doClearMessage();
 
 		if (!this.phoneCustID.isReadonly()) {
 			this.custCIF.setConstraint(new PTStringValidator(Labels
@@ -549,7 +550,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		}
 		if (this.row_phoneNumber.isVisible() && !this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
-					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true));
+					.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,regex,this.phoneNumber.getMaxlength()));
 		}
 		
 		if (!this.custPhonePriority.isDisabled()) {
@@ -893,9 +894,10 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				CustomerPhoneNumber customerPhoneNumber = getCustomerDialogCtrl().getCustomerPhoneNumberDetailList()
 						.get(i);
 
-				if (!PennantConstants.TRAN_DEL.equals(tranType)) {
+				if (isNewRecord() && !PennantConstants.TRAN_DEL.equals(tranType)) {
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType()) &&
 							!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, customerPhoneNumber.getRecordType()) &&
+							!StringUtils.equals(customerPhoneNumber.getPhoneTypeCode(), aCustomerPhoneNumber.getPhoneTypeCode())&&
 							aCustomerPhoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.EMAILPRIORITY_VeryHigh) && 
 							customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
 						
@@ -1136,9 +1138,21 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 			if (details != null) {
 				this.phoneTypeCode.setValue(details.getPhoneTypeCode());
 				this.phoneTypeCode.setDescription(details.getPhoneTypeDesc());
+				regex = details.getPhoneTypeRegex();
+				this.phoneTypeCode.setAttribute("Regex", regex);
+				dosetFieldLength(regex);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void dosetFieldLength(String regex) {
+		logger.debug("Entering");
+		if(regex!=null){			
+			String length=regex.substring(6, 8);
+			int mobilelength=Integer.parseInt(length);
+			this.phoneNumber.setMaxlength(mobilelength);
+		}
 	}
 
 	/**

@@ -475,7 +475,8 @@
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
 		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=R"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
 		<menuItem id="menu_Item_FeeReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y&amp;module=F"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
-		<menuItem id="menu_Item_FinanceTaxDetailEnquiry" zulNavigation="/WEB-INF/pages/tax/FinanceTaxDetail/FinanceTaxDetailEnquiryList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinanceTaxDetailEnquiry"/>
+		<menuItem id="menu_Item_FinanceTaxDetailEnquiry" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinanceTaxDetailEnquiry"/>
+		
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry"  rightName="menuCat_CustomerEnquiry">

@@ -536,9 +536,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
 		
 		if(receiptHeader == null){
-			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable")+ presentmentDetail.getReceiptID());
+			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable"));
 			return presentmentDetail;
 		}
+		 
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
 		if (bounceReason == null) {
 			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_BounceReason_Notavailable") + returnCode);
@@ -566,10 +567,16 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_ManualAdvise_Notavailable") +  presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
-		
 		receiptHeader.setManualAdvise(manualAdvise);
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
+		receiptHeader.setBounceDate(DateUtility.getAppDate());
+		
 		String errorMsg = procReceiptCancellation(receiptHeader);
+		
+		if (StringUtils.trimToNull(errorMsg) == null) {
+			getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+		}
+		 
 		presentmentDetail.setErrorDesc(errorMsg);
 		manualAdvise = receiptHeader.getManualAdvise();
 		presentmentDetail.setBounceID(manualAdvise.getBounceID());

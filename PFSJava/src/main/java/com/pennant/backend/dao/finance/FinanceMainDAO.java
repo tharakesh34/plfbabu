@@ -266,4 +266,6 @@ public interface FinanceMainDAO {
 	void updatePaymentInEOD(FinanceMain financeMain);
 
 	List<FinanceMain> getBYCustIdForLimitRebuild(long id, boolean orgination);
+	
+	FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF);
 }

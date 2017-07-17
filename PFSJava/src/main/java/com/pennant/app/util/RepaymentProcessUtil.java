@@ -16,6 +16,7 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -416,6 +417,7 @@ public class RepaymentProcessUtil {
 		}
 
 		boolean feesExecuted = false;
+		boolean executePftChg = true;
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			
 			FinReceiptDetail receiptDetail = receiptDetailList.get(i);
@@ -429,6 +431,9 @@ public class RepaymentProcessUtil {
 
 			boolean rpyProcessed = false;
 			for (int j = 0; j < repayHeaderList.size(); j++) {
+				
+				FinanceProfitDetail pftDetailTemp = new FinanceProfitDetail();
+				BeanUtils.copyProperties(profitDetail, pftDetailTemp);
 
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
 				if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
@@ -455,6 +460,7 @@ public class RepaymentProcessUtil {
 						aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
 						aeEvent.setLinkedTranId(0);
 						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+						aeEvent.setValueDate(valueDate);
 						
 						amountCodes.setFinType(financeMain.getFinType());
 						amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
@@ -553,12 +559,19 @@ public class RepaymentProcessUtil {
 				if(feesExecuted){
 					finFeeDetailList = null;
 				}
-
+				
+				String accEvent = getEventCode(repayHeader.getFinEvent());
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, finFeeDetailList, profitDetail, repaySchdList,
-						getEventCode(repayHeader.getFinEvent()), valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch());
+				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, finFeeDetailList, pftDetailTemp, repaySchdList,
+						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg);
 				
+				if(StringUtils.equals(accEvent, AccountEventConstants.ACCEVENT_EARLYPAY)){
+					executePftChg = false;
+				}else if(StringUtils.equals(accEvent, AccountEventConstants.ACCEVENT_EARLYSTL)){
+					executePftChg = false;
+				}
+
 				feesExecuted = true;
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -1067,7 +1080,7 @@ public class RepaymentProcessUtil {
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
-			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
+			Date valuedate,Date postDate, FinReceiptDetail receiptDetail, String postBranch, boolean pftChgAccReq) throws IllegalAccessException,
 			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1138,6 +1151,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPostBranch(postBranch);
 			rpyQueueHeader.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+			rpyQueueHeader.setPftChgAccReq(pftChgAccReq);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,profitDetail,
 					rpyQueueHeader, eventCode, valuedate,postDate);

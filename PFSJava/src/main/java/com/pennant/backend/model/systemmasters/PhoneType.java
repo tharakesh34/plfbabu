@@ -58,6 +58,7 @@ public class PhoneType extends AbstractWorkflowEntity {
 
 	private String phoneTypeCode;
 	private String phoneTypeDesc;
+	private String phoneTypeRegex;
 	private int phoneTypePriority;
 	private boolean phoneTypeIsActive;
 	private boolean newRecord;
@@ -147,5 +148,13 @@ public class PhoneType extends AbstractWorkflowEntity {
 	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getPhoneTypeRegex() {
+		return phoneTypeRegex;
+	}
+
+	public void setPhoneTypeRegex(String phoneTypeRegex) {
+		this.phoneTypeRegex = phoneTypeRegex;
 	}
 }

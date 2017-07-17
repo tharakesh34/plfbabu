@@ -69,6 +69,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -136,6 +137,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	private Country						sysDefaultCountry;
 	protected Button					btnNew_gstDetails;
 	protected Row						row_taxAvailable;
+	protected Space						space_taxStateCode;
+	protected Space						space_businessArea;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -350,6 +354,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.bankRefNo.setValue(aProvince.getBankRefNo());
 		this.cPIsActive.setChecked(aProvince.iscPIsActive());
 		this.taxExempted.setChecked(aProvince.isTaxExempted());
+		doSetFieldMandatory(aProvince.isTaxExempted());
 		this.unionTerritory.setChecked(aProvince.isUnionTerritory());
 		this.taxStateCode.setValue(aProvince.getTaxStateCode());
 		this.taxAvailable.setChecked(aProvince.isTaxAvailable());
@@ -590,7 +595,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		arg.put("provinceDialogCtrl", this);
 		arg.put("newRecord", taxdetail.isNew());
 		arg.put("roleCode", getRole());
-		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul", null, arg);
@@ -661,7 +665,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		if (!this.cPProvince.isReadonly()) {
 			this.cPProvince
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_CPProvince.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.cPProvinceName.isReadonly()) {
 			this.cPProvinceName
@@ -679,11 +683,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		if (!this.taxStateCode.isReadonly()) {
 			this.taxStateCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true, 2, 2));
+							PennantRegularExpressions.REGEX_ALPHANUM, !this.taxExempted.isChecked(), 2, 2));
 		}
 		if (!this.businessArea.isReadonly()) {
 			this.businessArea.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), null, true));
+					new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), null, !this.taxExempted.isChecked()));
 		}
 		logger.debug("Leaving");
 	}
@@ -772,31 +776,28 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+		
 		if (getProvince().isNewRecord()) {
 			this.cPCountry.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.cPProvince.setReadonly(false);
 			this.cPProvinceName.setReadonly(false);
+			this.taxAvailable.setDisabled(true);
 		} else {
 			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
 			this.cPProvinceName.setReadonly(true);
+			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
 		}
 
-		//this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
 		this.cPIsActive.setDisabled(isReadOnly("ProvinceDialog_CPIsActive"));
 		this.taxExempted.setDisabled(isReadOnly("ProvinceDialog_taxExempted"));
 		this.unionTerritory.setDisabled(isReadOnly("ProvinceDialog_unionTerritory"));
 		this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
-			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
-		}else{
-			this.taxAvailable.setDisabled(true);
-		}
 		this.businessArea.setReadonly(isReadOnly("ProvinceDialog_businessArea"));
-		//this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -810,7 +811,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -820,6 +820,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
+		
 		this.cPCountry.setReadonly(true);
 		this.cPProvince.setReadonly(true);
 		this.cPProvinceName.setReadonly(true);
@@ -830,11 +831,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.unionTerritory.setDisabled(true);
 		this.taxStateCode.setDisabled(true);
 		this.businessArea.setDisabled(true);
-		if(StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, this.province.getRecordStatus())){
-			this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
-		}else{
-			this.taxAvailable.setDisabled(true);
-		}
+		this.taxAvailable.setDisabled(true);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -845,6 +843,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1186,6 +1185,25 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 							"Already Exist" + " " + Labels.getLabel("label_ProvinceDialog_BusinessArea.value"));
 				}
 			}
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	public void onCheck$taxExempted(Event event){
+		
+	    doSetFieldMandatory(this.taxExempted.isChecked());
+	}
+
+	private void doSetFieldMandatory(boolean isMandatory) {
+		logger.debug("Enteing");
+		if (isMandatory) {
+			this.space_taxStateCode.setSclass("");
+			this.space_businessArea.setSclass("");
+			doClearMessage();
+		} else {
+			this.space_taxStateCode.setSclass("mandatory");
+			this.space_businessArea.setSclass("mandatory");
 		}
 
 		logger.debug("Leaving");

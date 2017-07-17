@@ -28,6 +28,7 @@ public class FinRepayQueueHeader {
 	private String postBranch;
 	private String partnerBankAc;
 	private String partnerBankAcType;
+	private boolean pftChgAccReq;
 	
 	private List<FinRepayQueue> queueList = null;
 	
@@ -196,6 +197,14 @@ public class FinRepayQueueHeader {
 
 	public void setTds(BigDecimal tds) {
 		this.tds = tds;
+	}
+
+	public boolean isPftChgAccReq() {
+		return pftChgAccReq;
+	}
+
+	public void setPftChgAccReq(boolean pftChgAccReq) {
+		this.pftChgAccReq = pftChgAccReq;
 	}
 
 }

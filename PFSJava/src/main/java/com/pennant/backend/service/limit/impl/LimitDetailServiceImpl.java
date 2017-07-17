@@ -93,6 +93,7 @@ import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerGroupService;
 import com.pennant.backend.service.limit.LimitDetailService;
+import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -116,6 +117,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private LimitManagement limitManagement;
 	private LimitReferenceMappingDAO limitReferenceMappingDAO; 
 	private LimitGroupLinesDAO limitGroupLinesDAO;
+	private LimitRebuild limitRebuild;
 
 	protected long userID;
 	private String userLangauge;
@@ -350,6 +352,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
 		}
+		
+		boolean rebuild=false;
 
 		LimitHeader limitHeader = new LimitHeader();
 		BeanUtils.copyProperties((LimitHeader) auditHeader.getAuditDetail().getModelData(), limitHeader);
@@ -372,6 +376,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				tranType=PennantConstants.TRAN_ADD;
 				limitHeader.setRecordType("");
 				getLimitHeaderDAO().save(limitHeader,"");
+				rebuild=true;
+				
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				limitHeader.setRecordType("");
@@ -384,6 +390,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 			}
 		}
+		
+		//rebuild is required for group hear since , first group added to the customer ,
+		//then created the set up for the group 
+		if (rebuild) {
+			if (limitHeader.getCustomerGroup() != 0 && limitHeader.getCustomerGroup() != Long.MIN_VALUE) {
+				limitRebuild.processCustomerGroupRebuild(limitHeader.getCustomerGroup(), false, true);
+			}
+		}
+		
 		if(fromScreen)
 			getLimitHeaderDAO().delete(limitHeader,"_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -1589,6 +1604,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	public void setLimitGroupLinesDAO(LimitGroupLinesDAO limitGroupLinesDAO) {
 		this.limitGroupLinesDAO = limitGroupLinesDAO;
+	}
+
+	public LimitRebuild getLimitRebuild() {
+		return limitRebuild;
+	}
+
+	public void setLimitRebuild(LimitRebuild limitRebuild) {
+		this.limitRebuild = limitRebuild;
 	}
 
 

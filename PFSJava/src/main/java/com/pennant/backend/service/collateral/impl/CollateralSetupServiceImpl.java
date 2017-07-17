@@ -106,6 +106,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -2511,9 +2512,19 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			Map<String, Object>	mapValues = new HashMap<String, Object>();
 			if(collateralSetup.getExtendedDetails() != null) {
 			for (ExtendedField details : collateralSetup.getExtendedDetails()) {
-				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
-				}
+					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+						for (ExtendedFieldDetail detail : exdFldConfig) {
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, detail.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_BR"));
+							}
+							if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())
+									&& StringUtils.equals(extFieldData.getFieldName(), detail.getFieldName())) {
+								extFieldData.setFieldName(extFieldData.getFieldName().concat("_SC"));
+							}
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						}
+					}
 			}
 			}
 			// do script pre validation and post validation

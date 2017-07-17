@@ -71,7 +71,9 @@ public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPostin
 	@Override
 	public void render(Listitem item, JVPosting jVPosting, int count) throws Exception {
 		Listcell lc;
-	  	lc = new Listcell(String.valueOf(jVPosting.getBatchReference()));
+		lc = new Listcell(String.valueOf(jVPosting.getBatchReference()));
+		lc.setParent(item);
+	  	lc = new Listcell(jVPosting.getReference());
 		lc.setParent(item);
 	  	lc = new Listcell(jVPosting.getBatch());
 		lc.setParent(item);

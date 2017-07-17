@@ -9,8 +9,7 @@
 	<window>
 		<window id="window_JVPostingList" apply="${jVPostingListCtrl}"
 			border="none" width="100%">
-			<timer id="timer" delay="900000"
-								 visible="false"  />
+			<timer id="timer" delay="900000" visible="false" />
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 					width="100%" widths="30%,40%,30%">
@@ -18,33 +17,37 @@
 					<!-- COMMON BUTTONS -->
 					<label value="" />
 					<!-- SEARCH AREA -->
-					<toolbar align="center"
-						sclass="toolbar-center">
+					<toolbar align="center" sclass="toolbar-center">
 						<button id="button_JVPostingList_NewJVPosting"
-							 label="${c:l('label_New')}" visible="false"
+							label="${c:l('label_New')}" visible="false"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JVPostingList_NewJVPosting.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_JVPostingList_NewJVPosting.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 						<button
-							id="button_JVPostingList_JVPostingSearch" 
+							id="button_JVPostingList_JVPostingSearch"
 							label="${c:l('label_Filter')}"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JVPostingList_JVPostingSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_JVPostingList_JVPostingSearch.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 						<button id="button_JVPostingList_PrintList"
-							 label="${c:l('label_Print')}" visible="false"
+							label="${c:l('label_Print')}" visible="false"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JVPostingList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_JVPostingList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnRefresh" 
+						<button id="btnRefresh"
 							label="${c:l('label_Refresh')}"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
-						<button id="btnHelp" visible="false" 
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="btnHelp" visible="false"
 							label="${c:l('label_Help')}"
 							autodisable="button_JVPostingList_JVPostingSearch,button_JVPostingList_PrintList,button_JVPostingList_NewJVPosting,btnRefresh,btnHelp"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton"/>
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -74,7 +77,7 @@
 									<listbox
 										id="sortOperator_BatchReference" width="43px" mold="select"
 										rows="1" />
-									<uppercasebox id="batchReference"
+									<uppercasebox id="reference"
 										width="150px" maxlength="50" />
 									<label
 										id="label_JVPostingList_Batch"
@@ -140,11 +143,14 @@
 						</grid>
 
 						<listbox id="listBoxJVPosting"
-							fixedLayout="true"   span="true"
+							fixedLayout="true" span="true"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 							height="100%" multiple="false" sizedByContent="true"
 							emptyMessage="${c:l('listEmptyMessage.title')}">
 							<listhead sizable="true">
+								<listheader id="listheader_Reference"
+									visible="false" label="${c:l('listheader_Reference.label')}"
+									sort="auto" hflex="min" />
 								<listheader
 									id="listheader_BatchReference"
 									label="${c:l('listheader_BatchReference.label')}" sort="auto"
@@ -178,7 +184,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingJVPostingList"/>
+					<paging id="pagingJVPostingList" />
 				</south>
 
 			</borderlayout>

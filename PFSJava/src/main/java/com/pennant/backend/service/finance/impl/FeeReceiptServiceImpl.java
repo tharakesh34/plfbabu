@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -250,6 +251,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		aeEvent.setBranch(receiptHeader.getFinBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());	
+		aeEvent.setValueDate(DateUtility.getAppDate());
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if(amountCodes == null){

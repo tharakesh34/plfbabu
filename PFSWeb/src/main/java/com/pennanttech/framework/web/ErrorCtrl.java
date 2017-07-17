@@ -11,6 +11,7 @@
  */
 package com.pennanttech.framework.web;
 
+import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -18,17 +19,19 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.ErrorCode;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * This is the controller class for the /error.zul file.
  */
 public class ErrorCtrl extends GenericForwardComposer<Component> {
-	private static final long	serialVersionUID	= 4590439096983686575L;
-	protected Window			window_ErrorDialog;
-	protected Panel				panel;
-	protected Label				message;
+	private static final long serialVersionUID = 4590439096983686575L;
+	private static final Logger logger = Logger.getLogger(ErrorCtrl.class);
+	protected Window window_ErrorDialog;
+	protected Panel panel;
+	protected Label message;
 
 	/**
 	 * default constructor.<br>
@@ -47,6 +50,8 @@ public class ErrorCtrl extends GenericForwardComposer<Component> {
 	 */
 	public void onCreate$window_ErrorDialog(Event event) throws Exception {
 		panel.setTitle(App.NAME);
-		message.setValue(ErrorCode.PPS_900.getMessage().concat("\n\n"));
+		message.setValue(AppException.DEFAULT_MESSAGE.concat("\n\n"));
+
+		logger.error(Literal.EXCEPTION, (Throwable) requestScope.get("javax.servlet.error.exception"));
 	}
 }

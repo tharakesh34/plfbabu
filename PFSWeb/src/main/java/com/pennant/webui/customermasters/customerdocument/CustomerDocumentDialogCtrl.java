@@ -210,6 +210,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean   isIdNumMand = false;
 	private boolean   isRetailCustomer = false;
 	private boolean   isIssuedAuth=false;
+	private boolean   isDocuploadMand=false;
 	private FinDelegationDeviationCtrl finDelegationDeviationCtrl; 
 	/**
 	 * default constructor.<br>
@@ -587,9 +588,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}else{
 			this.custDocType.setDescription(aCustomerDocument.getLovDescCustDocCategory());
 		}
-		if(StringUtils.equals(aCustomerDocument.getCustDocCategory(), PennantConstants.PANNUMBER)){
-			this.space_documnetName.setSclass("mandatory");
-		}
 		if(StringUtils.isNotBlank(aCustomerDocument.getCustDocIssuedCountry())){
 			this.custDocIssuedCountry.setDescription(aCustomerDocument.getLovDescCustDocIssuedCountry());
 		}
@@ -632,6 +630,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			isIssuedAuth=true;
 		}else{
 			this.space_CustDocSysName.setSclass("");			
+		}
+
+		if(aCustomerDocument.isDocIsMandatory()){
+			this.space_documnetName.setSclass(PennantConstants.mandateSclass);
+			isDocuploadMand=true;
+		}else{
+			this.space_documnetName.setSclass("");			
 		}
 		
 		
@@ -719,8 +724,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			wve.add(we);
 		}
 		try {
-			if (StringUtils.equals(this.custDocType.getValidatedValue(), PennantConstants.PANNUMBER)
-					&& (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()))){
+			if (isDocuploadMand && (this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()))){
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
 			}
 			aCustomerDocument.setCustDocName(this.documnetName.getValue());
@@ -763,6 +767,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		aCustomerDocument.setDocIssueDateMand(isIssueDateMand);
 		aCustomerDocument.setDocIdNumMand(isIdNumMand);
 		aCustomerDocument.setDocIssuedAuthorityMand(isIssuedAuth);
+		aCustomerDocument.setDocIsMandatory(isDocuploadMand);
 		aCustomerDocument.setRecordStatus(this.recordStatus.getValue());
 		setCustomerDocument(aCustomerDocument);
 		logger.debug("Leaving");
@@ -984,6 +989,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocVerifiedBy.setErrorMessage("");
 		this.custDocType.setErrorMessage("");
 		this.custDocIssuedCountry.setErrorMessage("");
+		this.documnetName.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1945,11 +1951,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					isIssuedAuth=true;
 					this.space_CustDocSysName.setSclass(PennantConstants.mandateSclass);
 				}
-				if(StringUtils.equals(details.getDocTypeCode(), PennantConstants.PANNUMBER)){
-					this.space_documnetName.setSclass("mandatory");
-				}else{
-					this.space_documnetName.setSclass("");
-					this.documnetName.setErrorMessage("");
+				if (details.isDocIsMandatory()) {
+					isDocuploadMand = true;
+					this.space_documnetName.setSclass(PennantConstants.mandateSclass);
 				}
 			}
 		}
@@ -1995,14 +1999,17 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		isIssueDateMand=false;
 		isIdNumMand=false;
 		isIssuedAuth=false;
+		isDocuploadMand=false;
 		this.custDocExpDate.setErrorMessage("");
 		this.custDocIssuedOn.setErrorMessage("");
 		this.custDocTitle.setErrorMessage("");
 		this.custDocSysName.setErrorMessage("");
+		this.documnetName.setErrorMessage("");
 		this.space_CustDocExpDate.setSclass("");
 		this.space_custDocIssuedOn.setSclass("");
 		this.space_CustIDNumber.setSclass("");
 		this.space_CustDocSysName.setSclass("");
+		this.space_documnetName.setSclass("");
 	}
 	public void onFulfill$custDocIssuedCountry(Event event) {
 		logger.debug("Entering" + event.toString());

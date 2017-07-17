@@ -11,6 +11,8 @@
  */
 package com.pennanttech.pff.core;
 
+import com.pennanttech.pennapps.core.AppException;
+
 /**
  * The class {@code InterfaceException} and its subclasses are a form of {@code Throwable} that indicates conditions
  * that the interface might catch.

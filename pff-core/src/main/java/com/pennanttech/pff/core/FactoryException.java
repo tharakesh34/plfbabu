@@ -13,6 +13,8 @@ package com.pennanttech.pff.core;
 
 import java.text.MessageFormat;
 
+import com.pennanttech.pennapps.core.AppException;
+
 /**
  * Exception thrown on factory configuration exceptions.
  */

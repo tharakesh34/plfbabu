@@ -79,6 +79,12 @@
 								<column width="35%" />
 							</columns>
 							<rows>
+								<row id="row_FinRef">
+									<label id="label_FinReference"
+										value="${c:l('label_FinanceTaxDetailDialog_FinReference.value')}" />
+									<extendedcombobox id="finReference" />
+								</row>
+								
 								<row id="row0">
 									<label id="label_ApplicableFor"
 										value="${c:l('label_FinanceTaxDetailDialog_ApplicableFor.value')}" />
@@ -164,7 +170,7 @@
 					</groupbox>
 				</div>
 			</center>
-			<south sclass="south-dialog">
+			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">

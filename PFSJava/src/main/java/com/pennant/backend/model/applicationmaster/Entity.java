@@ -74,6 +74,7 @@ private static final long serialVersionUID = 1L;
 	private String cityCodeName;
 	private String pinCode;
 	private String pinCodeName;
+	private String address;
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord=false;
@@ -231,6 +232,14 @@ private static final long serialVersionUID = 1L;
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 }

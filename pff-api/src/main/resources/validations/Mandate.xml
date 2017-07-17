@@ -176,13 +176,13 @@
 				<element name="max">50</element>
 			</constraint>
 				<constraint annotation="javax.validation.constraints.Pattern">
-			<message>accHolderName  invalid. Allowed Characters are [a-z A-Z and special character ' ] must starts with Characters only.
+			<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z_\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 
@@ -196,13 +196,13 @@
 				<element name="max">50</element>
 			</constraint>
 				<constraint annotation="javax.validation.constraints.Pattern">
-			<message>jointAccHolderName  invalid. Allowed Characters are [a-z A-Z and special character ' ] must starts with Characters only.
+			<message>jointAccHolderName  invalid.invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z_\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint> 
 		</field>
 

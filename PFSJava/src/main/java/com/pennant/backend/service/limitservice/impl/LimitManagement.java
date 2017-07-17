@@ -1081,7 +1081,9 @@ public class LimitManagement {
 		limittrans.setTransactionDate(new Timestamp(DateUtility.getAppDate().getTime()));
 		limittrans.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		limittrans.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		limitTransactionDetailDAO.save(limittrans);
+		if (limittrans.getLimitAmount()!=null && limittrans.getLimitAmount().compareTo(BigDecimal.ZERO)>0) {
+			limitTransactionDetailDAO.save(limittrans);
+		}
 	}
 
 	/**

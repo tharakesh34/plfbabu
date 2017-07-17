@@ -63,7 +63,7 @@ public class EodService {
 
 	}
 
-	public void doProcess(CustEODEvent custEODEvent, Date date) throws Exception {
+	public void doProcess(CustEODEvent custEODEvent) throws Exception {
 
 		/**************** Fetch and Set EOD Event ***********/
 
@@ -86,7 +86,7 @@ public class EodService {
 
 		/**************** SOD ***********/
 		//moving customer date to sod
-		Date eodValueDate=DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+		Date eodValueDate=DateUtility.addDays(custEODEvent.getEodDate(), 1);
 		custEODEvent.setEodValueDate(eodValueDate);
 		custEODEvent.getCustomer().setCustAppDate(eodValueDate);
 		

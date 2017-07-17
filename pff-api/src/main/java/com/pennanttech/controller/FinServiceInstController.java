@@ -700,8 +700,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 					
 					// validate disbursement instructions
-					List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(), list,
-							finScheduleData.getFinanceMain(), true);
+					List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(),
+							list, finScheduleData.getFinanceMain(), true);
 					for (ErrorDetails erroDetails : errors) {
 						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(erroDetails.getErrorCode(),
 								erroDetails.getErrorParameters())));
@@ -767,6 +767,11 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeDetail.setFinScheduleData(finScheduleData);
 				// Get the response
 				financeDetail = getResponse(financeDetail, finServiceInst);
+				
+				// set Last disbursement date for Inquiry service
+				if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
+					financeDetail.getFinScheduleData().getFinanceSummary().setLastDisbDate(disbursementDetails.getDisbDate());
+				}
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
@@ -1370,6 +1375,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 			Map<Date, BigDecimal> odChargePaidMap = new HashMap<>();
 			Map<Date, BigDecimal> odPenaltyPaidMap = new HashMap<>();
+			Map<Date, BigDecimal> odPriPaidMap = new HashMap<>();
+			Map<Date, BigDecimal> odPftPaidMap = new HashMap<>();
 			for(FinanceScheduleDetail actFinSchedule: actualSchedules) {
 				for(RepayScheduleDetail chgdFinSchedule: rpySchdList) {
 					if(DateUtility.compare(actFinSchedule.getSchDate(), chgdFinSchedule.getSchDate()) == 0) {
@@ -1396,6 +1403,24 @@ public class FinServiceInstController extends SummaryDetailService {
 						}
 						odPenaltyPaid = odPenaltyPaid.add(chgdFinSchedule.getLatePftSchdPayNow());
 						odPenaltyPaidMap.put(chgdFinSchedule.getSchDate(), odPenaltyPaid);
+						
+						// Preparing OD Principle Amount Paid Now
+						BigDecimal odPriPaid = BigDecimal.ZERO;
+						if(odPriPaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odPriPaid = odPriPaidMap.get(chgdFinSchedule.getSchDate());
+							odPriPaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odPriPaid = odPriPaid.add(chgdFinSchedule.getPrincipalSchdPayNow());
+						odPriPaidMap.put(chgdFinSchedule.getSchDate(), odPriPaid);
+						
+						// Preparing OD Principle Amount Paid Now
+						BigDecimal odPftPaid = BigDecimal.ZERO;
+						if(odPftPaidMap.containsKey(chgdFinSchedule.getSchDate())){
+							odPftPaid = odPftPaidMap.get(chgdFinSchedule.getSchDate());
+							odPftPaidMap.remove(chgdFinSchedule.getSchDate());
+						}
+						odPftPaid = odPftPaid.add(chgdFinSchedule.getProfitSchdPayNow());
+						odPftPaidMap.put(chgdFinSchedule.getSchDate(), odPftPaid);
 					}
 				}
 			}
@@ -1416,6 +1441,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
+			int size = 0;
 			if(finODDetailsList != null) {
 				for (FinODDetails finODDetails : finODDetailsList) {
 					Date finOdDate = DateUtility.getDBDate(DateUtility.formatDate(finODDetails.getFinODSchdDate(),
@@ -1428,8 +1454,24 @@ public class FinServiceInstController extends SummaryDetailService {
 						BigDecimal latePenaltyPayNow = odPenaltyPaidMap.get(finOdDate);
 						finODDetails.setLPIPaid(finODDetails.getLPIPaid().add(latePenaltyPayNow));
 					}
+					
+					if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
+						if(odPriPaidMap.containsKey(finOdDate)){
+							BigDecimal priPayNow = odPriPaidMap.get(finOdDate);
+							finODDetails.setFinCurODPri(finODDetails.getFinCurODPri().subtract(priPayNow));
+						}
+						
+						if(odPftPaidMap.containsKey(finOdDate)){
+							BigDecimal pftPayNow = odPftPaidMap.get(finOdDate);
+							finODDetails.setFinCurODPft(finODDetails.getFinCurODPft().subtract(pftPayNow));
+						}
+					}
+					finODDetails.setFinCurODAmt(finODDetails.getFinCurODPri().add(finODDetails.getFinCurODPft()));
 					overDuePrincipal = overDuePrincipal.add(finODDetails.getFinCurODPri());
 					overDueProfit = overDueProfit.add(finODDetails.getFinCurODPft());
+					if(finODDetails.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						size++;
+					}
 				}
 			}
 			
@@ -1438,6 +1480,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			summary.setOverDueProfit(overDueProfit);
 			summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
 			summary.setFinODDetail(finODDetailsList);
+			summary.setOverDueInstlments(size);
 			financeDetail.getFinScheduleData().setFinanceMain(null);
 			
 		}
@@ -1660,7 +1703,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceDetail getServiceInstResponse(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-
 		FinanceDetail response = new FinanceDetail();
 		response.setFinReference(finScheduleData.getFinReference());
 		response.setFinScheduleData(finScheduleData);
@@ -1671,13 +1713,22 @@ public class FinServiceInstController extends SummaryDetailService {
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		if(finScheduleData.getFinFeeDetailList() != null) {
+			BigDecimal totFeeAmount = BigDecimal.ZERO;
 			List<FinFeeDetail> srvFeeList = new ArrayList<FinFeeDetail>();
 			for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
 				if(!feeDetail.isOriginationFee()) {
 					srvFeeList.add(feeDetail);
+					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_DISBURSE)|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+						totFeeAmount = totFeeAmount.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+					} else {
+						totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+					}
 				}
 			}
 			finScheduleData.setFinFeeDetailList(srvFeeList);
+			summaryDetail.setFeeChargeAmt(summaryDetail.getFeeChargeAmt().add(totFeeAmount));
 		}
 		
 		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
@@ -1702,7 +1753,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setInsuranceList(null);
-
+		finScheduleData.setFinODDetails(null);
+		finScheduleData.setFinODPenaltyRate(null);
+		finScheduleData.setApiPlanEMIHDates(null);
+		finScheduleData.setApiplanEMIHmonths(null);
+		
 		logger.debug("Entering");
 		return response;
 	}

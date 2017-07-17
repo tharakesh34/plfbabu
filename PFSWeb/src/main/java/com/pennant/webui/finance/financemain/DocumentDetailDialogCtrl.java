@@ -398,7 +398,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(DateUtility.formatDate(documentDetail.getDocReceivedDate(),PennantConstants.dateAndTimeFormat));
+			listcell = new Listcell(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
@@ -508,7 +508,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 		}
 		List<Object> list = getCustomerBasicDetails();
-		if (finDocumentDetail.getDocImage() == null) {
+		if (!finDocumentDetail.isDocReceived() && finDocumentDetail.getDocImage() == null) {
 			if (finDocumentDetail.isDocIsCustDoc()) {
 				finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(list != null ? Long.valueOf(list.get(0).toString()) :  0,
 						finDocumentDetail.getDocCategory());

@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.lmtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -716,5 +717,29 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+
+	@Override
+	public List<String> getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("FinRefType", finRefType);
+		source.addValue("LimitCode", quickDisbCode);
+		
+		StringBuilder selectSql = new StringBuilder("Select MandInputInStage  From LMTFinRefDetail ");
+		selectSql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND ");
+		selectSql.append(" FinRefId in(select limitId from limitcodedetail where LimitCode =:LimitCode)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.debug("Leaving");
+		try {
+			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			return Collections.emptyList();
+		}
+    }
 	
 }

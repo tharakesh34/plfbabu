@@ -11,6 +11,8 @@
  */
 package com.pennanttech.pff.core;
 
+import com.pennanttech.pennapps.core.AppException;
+
 /**
  * Exception thrown on dependencies found for the record to be deleted.
  */

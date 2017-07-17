@@ -44,7 +44,6 @@
 package com.pennanttech.cache;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -56,8 +55,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.service.cacheadministration.CacheAdministrationService;
-import com.pennanttech.pff.core.AppException;
-import com.pennanttech.pff.core.ErrorCode;
+import com.pennanttech.pennapps.core.AppException;
 
 public class GenericCacheManager {
 	private static final Logger logger = Logger.getLogger(GenericCacheManager.class);
@@ -121,7 +119,7 @@ public class GenericCacheManager {
 				logger.error(e);
 			}
 		} else {
-			throw new AppException(ErrorCode.PPS_902.getMessage());
+			throw new AppException("902: Cache manager Already Started.");
 		}
 		logger.debug("Leaving");
 	}
@@ -175,9 +173,10 @@ public class GenericCacheManager {
 				}
 				activated = true;
 			} else {
+				if(enabled){
+					logger.info("Cache De-Activated Nodes :" + cacheManager.getClusterSize()+"/"+nodeCount);
+				}
 				activated = false;
-				logger.info("Cache De-Activated Active Nodes :" + cacheManager.getClusterSize());
-
 			}
 
 		} else {
@@ -215,9 +214,6 @@ public class GenericCacheManager {
 			for (String cacheName : cacheManager.getCacheNames()) {
 				if(!"DefaultCache".equals(cacheName)){
 					stats.setCacheNames(cacheName);
-					logger.debug(cacheName+"-Hi "+ applicationType);
-				}else{
-					logger.debug(cacheName+"-Skip "+ applicationType);
 				}
 			}
 			stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));

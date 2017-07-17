@@ -195,6 +195,22 @@
 										id="listheader_Applicant"
 										label="${c:l('listheader_Applicant.label')}" sort="auto"
 										hflex="min" />
+									<listheader
+										id="listheader_AddressLine1" visible="false"
+										label="${c:l('listheader_AddressLine1.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_AddressLine2" visible="false"
+										label="${c:l('listheader_AddressLine2.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_AddressLine3" visible="false"
+										label="${c:l('listheader_AddressLine3.label')}" sort="auto"
+										hflex="min" />
+									<listheader
+										id="listheader_AddressLine4" visible="false"
+										label="${c:l('listheader_AddressLine4.label')}" sort="auto"
+										hflex="min" />
 									<listheader id="listheader_PinCode"
 										label="${c:l('listheader_PinCode.label')}" sort="auto"
 										hflex="min" />

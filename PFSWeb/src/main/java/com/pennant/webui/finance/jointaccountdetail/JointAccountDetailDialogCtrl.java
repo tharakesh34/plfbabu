@@ -220,7 +220,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			} else {
 				enqModule = false;
 			}
-			
+			if (arguments.containsKey("moduleType")) {
+				moduleType = (String) arguments.get("moduleType");
+			} 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("jountAccountDetail")) {
 				this.jountAccountDetail = (JointAccountDetail) arguments.get("jountAccountDetail");
@@ -709,6 +711,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.btnCtrl.setBtnStatus_New();
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
+					this.viewCustInfo.setVisible(false);
 				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
@@ -770,11 +773,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIF.setMaxlength(12);
 		this.custCIFName.setMaxlength(50);
 		this.custCIFName.setReadonly(true);
-		
+		if(!enqModule){
 		this.repayAccountId.setAccountDetails(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceType().getFinType(), AccountConstants.FinanceAccount_REPY, finCcy);
 		this.repayAccountId.setFormatter(CurrencyUtil.getFormat(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 		this.repayAccountId.setBranchCode(getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch());
-		
+		}
 		if (!isNewRecord()) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(true);

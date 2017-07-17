@@ -132,4 +132,7 @@ public class AccountConstants {
 	public static final int		POSTING_CATEGORY_EOD			= 1;
 	public static final int		POSTING_CATEGORY_ACUPDATE		= 2;
 
+	public static final String	EXTRACTION_TYPE_SUMMARY			= "SUM";
+	public static final String	EXTRACTION_TYPE_TRANSACTION		= "TRN";
+	public static final String	EXTRACTION_TYPE_NOTAPPLICABLE	= "NA";
 }

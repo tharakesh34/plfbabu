@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@192.168.1.19:1521:orcl" />
 		<property name="username" value="plfdev" />
@@ -18,13 +18,13 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-    <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestService" scope="prototype" parent="bajajService"/>     
+    <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestServiceImpl" scope="prototype" parent="bajajService"/>     
 	 <bean id="trailBalanceReportService" class="com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl"  scope="prototype" parent="bajajService"/>
-	 <bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/> 
-	 <bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/> 
-	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseService" scope="prototype" parent="bajajService"/> 
-	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/> 
-	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestService" scope="prototype" parent="bajajService"/> 
-	 <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestService" scope="prototype" parent="bajajService"/> 
+	 <bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestServiceImpl" scope="prototype" parent="bajajService"/> 
+	 <bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestServiceImpl" scope="prototype" parent="bajajService"/> 
+	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/> 
+	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestServiceImpl" scope="prototype" parent="bajajService"/> 
+	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/> 
+	 <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestServiceImpl" scope="prototype" parent="bajajService"/> 
 	 <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl" scope="prototype" parent="bajajService"/> 
 </beans>

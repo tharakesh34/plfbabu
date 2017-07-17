@@ -224,6 +224,16 @@
 												<textbox
 													id="bounceRemarks" width="180px" />
 											</hbox>
+											<label
+												id="label_ReceiptCancellationDialog_BounceDate"
+												value="${c:l('label_ReceiptCancellationDialog_BounceDate.value')}"  visible="false"/>
+											<hbox
+												id="hbox_ReceiptCancellationDialog_BounceDate" visible="false">
+												<space spacing="2px"
+													sclass="mandatory" />
+												<datebox
+													id="bounceDate" width="100px" />
+											</hbox>
 										</row>
 										<row id="row_CancelReason">
 											<label

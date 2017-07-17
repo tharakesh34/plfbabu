@@ -47,7 +47,6 @@ package com.pennanttech.cache;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.service.cacheadministration.CacheAdministrationService;
-import com.pennanttech.pff.core.Literal;
 
 public class GenericCacheMonitor implements Runnable {
 	private static final Logger logger = Logger.getLogger(GenericCacheMonitor.class);
@@ -98,6 +97,9 @@ public class GenericCacheMonitor implements Runnable {
 				}
 
 				Thread.sleep(sleepTime);
+				if(GenericCacheManager.getCacheManager()==null){
+					return;
+				}
 			}
 
 		} catch (Exception e) {

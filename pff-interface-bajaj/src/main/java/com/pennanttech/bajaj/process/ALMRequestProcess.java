@@ -135,7 +135,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 			amount = BigDecimal.ZERO;
 		}
 
-		amount = amount.divide(minorCcyUnits, editField, RoundingMode.HALF_DOWN);
+		amount = amount.divide(minorCcyUnits, 0, RoundingMode.HALF_DOWN);
 
 		return amount;
 	}

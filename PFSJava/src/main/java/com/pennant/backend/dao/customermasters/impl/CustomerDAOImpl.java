@@ -397,7 +397,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 		StringBuilder updateSql = new StringBuilder("Update Customers");
 		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set CustCtgCode = :CustCtgCode, CustTypeCode = :CustTypeCode, CustSalutationCode = :CustSalutationCode, CustFName = :CustFName," );
+		updateSql.append(" Set CustCtgCode = :CustCtgCode,CustCoreBank =:CustCoreBank, CustTypeCode = :CustTypeCode, CustSalutationCode = :CustSalutationCode, CustFName = :CustFName," );
 		updateSql.append(" CustMName = :CustMName, CustLName = :CustLName, CustShrtName = :CustShrtName, CustFNameLclLng = :CustFNameLclLng," );
 		updateSql.append(" CustMNameLclLng = :CustMNameLclLng, CustLNameLclLng = :CustLNameLclLng, CustShrtNameLclLng = :CustShrtNameLclLng," );
 		updateSql.append(" CustDftBranch = :CustDftBranch, CustGenderCode = :CustGenderCode, CustDOB = :CustDOB, CustPOB = :CustPOB," );
@@ -1234,7 +1234,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		Customer customer = new Customer();
 		customer.setId(id);		
 		
-		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate");
+		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR ");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
 		
@@ -1864,7 +1864,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		selectSql.append(" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,");
 		selectSql.append(" CustBlackListDate,NoOfDependents,CustCRCPR," );
 		selectSql.append(" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
-		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger, " );
+		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 		

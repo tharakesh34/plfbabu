@@ -54,6 +54,6 @@ public interface FinCovenantTypeDAO {
 	void update(FinCovenantType finCovenantTypeDAO,String type);
 	void delete(FinCovenantType finCovenantTypeDAO,String type);
 	String save(FinCovenantType finCovenantTypeDAO,String type);
-	List<FinCovenantType> getFinCovenantTypeByFinRef(String id, String type);
+	List<FinCovenantType> getFinCovenantTypeByFinRef(String id, String type,boolean isEnquiry);
 	void deleteByFinRef(String finReference, String tableType);
 }

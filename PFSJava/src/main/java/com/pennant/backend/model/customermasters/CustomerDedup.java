@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,21 +15,23 @@ import org.apache.commons.lang.StringUtils;
  * Model class for the <b>Customer table</b>.<br>
  *
  */
+@XmlType(propOrder = { "custCIF", "custCtgCode", "custDftBranch", "custFName","custLName", "custShrtName", "custDOB",
+		"custCRCPR", "custSector"})
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDedup {
-	@XmlElement
+	@XmlElement(name="cif")
 	private String custCIF ;
 	private String finReference;
-	@XmlElement
+	@XmlElement(name="lastName")
 	private String custLName;
-	@XmlElement
+	@XmlElement(name="firstName")
 	private String custFName;
-	@XmlElement
+	@XmlElement(name="shortName ")
 	private String custShrtName;
 	private String custMotherMaiden;
-	@XmlElement
+	@XmlElement(name="dateofBirth")
 	private Date custDOB;
-	@XmlElement
+	@XmlElement(name="custPAN")
 	private String custCRCPR;
 	private String custPassportNo;
 	private String mobileNumber;
@@ -50,13 +53,12 @@ public class CustomerDedup {
 	// For Internal use //Not in the table should be exculed for audit
 	private long custId =Long.MIN_VALUE;
 	private String custCoreBank;
-	@XmlElement
+	@XmlElement(name="categoryCode")
 	private String custCtgCode;
-	@XmlElement
+	@XmlElement(name="defaultBranch")
 	private String custDftBranch;
-	@XmlElement
+	@XmlElement(name="sector ")
 	private String custSector;
-	@XmlElement
 	private String custSubSector;
 	private String custDocType;
 	private String custDocTitle;	
@@ -80,6 +82,8 @@ public class CustomerDedup {
 	private String registrationNo;
 	private String titleDeedNo;
 	private int appScore;
+	private String sourceSystem;
+	private String address;
 	
 
 
@@ -123,6 +127,7 @@ public class CustomerDedup {
 		excludeFields.add("registrationNo");
 		excludeFields.add("titleDeedNo");
 		excludeFields.add("appScore");
+		excludeFields.add("sourceSystem");
 		return excludeFields;
 	}
 	
@@ -541,6 +546,22 @@ public class CustomerDedup {
 
 	public void setAppScore(int appScore) {
 		this.appScore = appScore;
+	}
+
+	public String getSourceSystem() {
+		return sourceSystem;
+	}
+
+	public void setSourceSystem(String sourceSystem) {
+		this.sourceSystem = sourceSystem;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	

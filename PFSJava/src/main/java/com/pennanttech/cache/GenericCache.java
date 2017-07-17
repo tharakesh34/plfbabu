@@ -9,7 +9,7 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
 import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent;
 import org.infinispan.notifications.cachelistener.event.CacheEntryRemovedEvent;
 
-import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.ErrorCode;
 
 public class GenericCache<K, V> {

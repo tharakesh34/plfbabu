@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.GCDCustomerBajjajDAO;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pff.core.Literal;
@@ -77,56 +78,155 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 	public void callStoredProcedure(GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource inParam = new MapSqlParameterSource();
+		
 		inParam.addValue("P_FINN_CUSTID", gcdCustomer.getFinCustId());
+		logger.debug("P_FINN_CUSTID------------->"+gcdCustomer.getFinCustId());
+		
 		inParam.addValue("P_SOURCE_SYSTEM", gcdCustomer.getSourceSystem());
+		logger.debug("P_SOURCE_SYSTEM------------->"+gcdCustomer.getSourceSystem());
+		
 		inParam.addValue("P_CUSTOMERNAME", gcdCustomer.getCustomerName());
+		logger.debug("P_CUSTOMERNAME------------->"+gcdCustomer.getCustomerName());
+		
 		inParam.addValue("P_CONSTID", gcdCustomer.getConstId());
+		logger.debug("P_CONSTID------------->"+gcdCustomer.getConstId());
+		
 		inParam.addValue("P_INDUSTRYID", gcdCustomer.getIndustryId());
+		logger.debug("P_INDUSTRYID------------->"+gcdCustomer.getIndustryId());
+		
 		inParam.addValue("P_CATEGORYID", gcdCustomer.getCategoryId());
+		logger.debug("P_CATEGORYID------------->"+gcdCustomer.getCategoryId());
+		
 		inParam.addValue("P_SPOUSENAME", gcdCustomer.getSpousename());
+		logger.debug("P_SPOUSENAME------------->"+gcdCustomer.getSpousename());
+		
 		inParam.addValue("P_INDV_CORP_FLAG", gcdCustomer.getIndvCorpFlag());
+		logger.debug("P_INDV_CORP_FLAG------------->"+gcdCustomer.getIndvCorpFlag());
+		
 		inParam.addValue("P_FNAME", gcdCustomer.getfName());
+		logger.debug("P_FNAME------------->"+gcdCustomer.getfName());
+		
 		inParam.addValue("P_MNAME", gcdCustomer.getmName());
+		logger.debug("P_MNAME------------->"+gcdCustomer.getmName());
+		
 		inParam.addValue("P_LNAME", gcdCustomer.getLname());
+		logger.debug("P_LNAME------------->"+gcdCustomer.getLname());
+		
 		inParam.addValue("P_DOB", gcdCustomer.getDOB());
+		logger.debug("P_DOB------------->"+gcdCustomer.getDOB());
+		
 		inParam.addValue("P_SEX", gcdCustomer.getSex());
+		logger.debug("P_SEX------------->"+gcdCustomer.getSex());
+		
 		inParam.addValue("P_P_INCOME_SOURCE", gcdCustomer.getIncomeSource());
+		logger.debug("P_P_INCOME_SOURCE------------->"+gcdCustomer.getIncomeSource());
+		
 		inParam.addValue("P_YEARS_CURR_JOB", gcdCustomer.getYearsOfCurrJob());
+		logger.debug("P_YEARS_CURR_JOB------------->"+gcdCustomer.getYearsOfCurrJob());
+		
 		inParam.addValue("P_COR_DOI", gcdCustomer.getDOI());
+		logger.debug("P_COR_DOI------------->"+gcdCustomer.getDOI());
+		
 		inParam.addValue("P_MP_AKERID", gcdCustomer.getMpAkerId());
+		logger.debug("P_MP_AKERID------------->"+gcdCustomer.getMpAkerId());
+		
 		inParam.addValue("P_MAKERDATE", gcdCustomer.getMakerDate());
+		logger.debug("P_MAKERDATE------------->"+gcdCustomer.getMakerDate());
+		
 		inParam.addValue("P_P_AUTHID", gcdCustomer.getAuthId());
+		logger.debug("P_P_AUTHID------------->"+gcdCustomer.getAuthId());
+		
 		inParam.addValue("P_AUTHDATE", gcdCustomer.getAuthDate());
+		logger.debug("P_AUTHDATE------------->"+gcdCustomer.getAuthDate());
+		
 		inParam.addValue("P_ACCOTYPE", gcdCustomer.getAccType());
+		logger.debug("P_ACCOTYPE------------->"+gcdCustomer.getAccType());
+		
 		inParam.addValue("P_AP_CCOCATG", gcdCustomer.getApCcocatg());
+		logger.debug("P_AP_CCOCATG------------->"+gcdCustomer.getApCcocatg());
+		
 		inParam.addValue("P_DATELASTUPDT", gcdCustomer.getDateLastUpdate());
+		logger.debug("P_DATELASTUPDT------------->"+gcdCustomer.getDateLastUpdate());
+		
 		inParam.addValue("P_P_NATIONALID", gcdCustomer.getNationalId());
+		logger.debug("P_P_NATIONALID------------->"+gcdCustomer.getNationalId());
+		
 		inParam.addValue("P_PASSPORTNO", gcdCustomer.getPassportNo());
+		logger.debug("P_PASSPORTNO------------->"+gcdCustomer.getPassportNo());
+		
 		inParam.addValue("P_NATIONALITY", gcdCustomer.getNationality());
+		logger.debug("P_NATIONALITY------------->"+gcdCustomer.getNationality());
+		
 		inParam.addValue("P_PP_AN_NO", gcdCustomer.getPanNo());
+		logger.debug("P_PP_AN_NO------------->"+gcdCustomer.getPanNo());
+		
 		inParam.addValue("P_REGIONID", gcdCustomer.getRegionId());
+		logger.debug("P_REGIONID------------->"+gcdCustomer.getRegionId());
+		
 		inParam.addValue("P_BANK_TYPE", gcdCustomer.getBankType());
+		logger.debug("P_BANK_TYPE------------->"+gcdCustomer.getBankType());
+		
 		inParam.addValue("P_ENTITYFLAG", gcdCustomer.getEntityFlag());
+		logger.debug("P_ENTITYFLAG------------->"+gcdCustomer.getEntityFlag());
+		
 		inParam.addValue("P_CONTACT_PERSON", gcdCustomer.getContactPerson());
+		logger.debug("P_CONTACT_PERSON------------->"+gcdCustomer.getContactPerson());
+		
 		inParam.addValue("P_CUSTSEARCHID", gcdCustomer.getCustSearchId());
+		logger.debug("P_CUSTSEARCHID------------->"+gcdCustomer.getCustSearchId());
+		
 		inParam.addValue("P_ECONOMIC_SEC_ID", gcdCustomer.getSectorId());
+		logger.debug("P_ECONOMIC_SEC_ID------------->"+gcdCustomer.getSectorId());
+		
 		inParam.addValue("P_FRAUD_FLAG", gcdCustomer.getFraudFlag());
+		logger.debug("P_FRAUD_FLAG------------->"+gcdCustomer.getFraudFlag());
+		
 		inParam.addValue("P_FRAUD_SCORE", gcdCustomer.getFraudScore());
+		logger.debug("P_FRAUD_SCORE------------->"+gcdCustomer.getFraudScore());
+		
 		inParam.addValue("P_EMI_CARD_ELIG", gcdCustomer.getEmiCardElig());
+		logger.debug("P_EMI_CARD_ELIG------------->"+gcdCustomer.getEmiCardElig());
+		
 		inParam.addValue("P_ADDRESS_DTL", gcdCustomer.getAddressDetail());
+		logger.debug("P_ADDRESS_DTL------------->"+gcdCustomer.getAddressDetail());
+		
 		inParam.addValue("P_BANK_DTL", gcdCustomer.getBankDetail());
+		logger.debug("P_BANK_DTL------------->"+gcdCustomer.getBankDetail());
+		
 		inParam.addValue("P_N_NAME", gcdCustomer.getNomineeName());
+		logger.debug("P_N_NAME------------->"+gcdCustomer.getNomineeName());
+		
 		inParam.addValue("P_N_ADDRESS", gcdCustomer.getNomineeAddress());
+		logger.debug("P_N_ADDRESS------------->"+gcdCustomer.getNomineeAddress());
+		
 		inParam.addValue("P_N_RELATION", gcdCustomer.getNomineeRelationship());
+		logger.debug("P_N_RELATION------------->"+gcdCustomer.getNomineeRelationship());
+		
 		inParam.addValue("P_N_FIELD9", gcdCustomer.getField9());
+		logger.debug("P_N_FIELD9------------->"+gcdCustomer.getField9());
+		
 		inParam.addValue("P_N_FIELD10", gcdCustomer.getField10());
+		logger.debug("P_N_FIELD10------------->"+gcdCustomer.getField10());
+		
 		inParam.addValue("P_INS_UPD_FLAG", gcdCustomer.getInsertUpdateFlag());
+		logger.debug("P_INS_UPD_FLAG------------->"+gcdCustomer.getInsertUpdateFlag());
+		
 		inParam.addValue("P_SUCCESS_REJECT", gcdCustomer.getStatusFromFinnOne());
+		logger.debug("P_SUCCESS_REJECT------------->"+gcdCustomer.getStatusFromFinnOne());
+		
 		inParam.addValue("P_REJECTION_REASON", gcdCustomer.getRejectionReason());
+		logger.debug("P_REJECTION_REASON------------->"+gcdCustomer.getRejectionReason());
+		
 		inParam.addValue("P_FINN_CUST_ID", gcdCustomer.getFinnCustId());
+		logger.debug("P_FINN_CUST_ID------------->"+gcdCustomer.getFinnCustId());
+		
 		inParam.addValue("P_SFDC_CUSTOMERID", gcdCustomer.getSfdcCustomerId());
+		logger.debug("P_SFDC_CUSTOMERID------------->"+gcdCustomer.getSfdcCustomerId());
+		
 		inParam.addValue("P_BRANCHID", gcdCustomer.getBranchId());
-		final String procedure = "{call GCD_CUSTOMER_INSERT_UPDATE(:P_FINN_CUSTID, :P_SOURCE_SYSTEM, :P_CUSTOMERNAME, :P_CONSTID, :P_INDUSTRYID, :P_CATEGORYID, :P_SPOUSENAME, :P_INDV_CORP_FLAG, :P_FNAME, :P_MNAME, :P_LNAME,"
+		logger.debug("P_BRANCHID------------->"+gcdCustomer.getBranchId());
+		
+		final String procedure = "{call CREATE_CUSTOMER_IN_FINNONE(:P_FINN_CUSTID, :P_SOURCE_SYSTEM, :P_CUSTOMERNAME, :P_CONSTID, :P_INDUSTRYID, :P_CATEGORYID, :P_SPOUSENAME, :P_INDV_CORP_FLAG, :P_FNAME, :P_MNAME, :P_LNAME,"
 				+ " :P_DOB, :P_SEX, :P_P_INCOME_SOURCE, :P_YEARS_CURR_JOB, :P_COR_DOI, :P_MP_AKERID, :P_MAKERDATE, :P_P_AUTHID, :P_AUTHDATE, :P_ACCOTYPE, :P_AP_CCOCATG,"
 				+ " :P_DATELASTUPDT, :P_P_NATIONALID, :P_PASSPORTNO, :P_NATIONALITY, :P_PP_AN_NO, :P_REGIONID, :P_BANK_TYPE, :P_ENTITYFLAG, :P_CONTACT_PERSON, :P_CUSTSEARCHID,"
 				+ " :P_ECONOMIC_SEC_ID, :P_FRAUD_FLAG, :P_FRAUD_SCORE, :P_EMI_CARD_ELIG, :P_ADDRESS_DTL, :P_BANK_DTL, :P_N_NAME, :P_N_ADDRESS, :P_N_RELATION, :P_N_FIELD9,"
@@ -182,10 +282,18 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 
 	private DriverManagerDataSource getDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		
+		/*dataSource.setDriverClassName(SysParamUtil.getValueAsString("GCD_CUSTOMER_DRIVER"));
+		dataSource.setUrl(SysParamUtil.getValueAsString("GCD_CUSTOMER_URL"));
+		dataSource.setUsername(SysParamUtil.getValueAsString("GCD_CUSTOMER_USERNAME"));
+		dataSource.setPassword(SysParamUtil.getValueAsString("GCD_CUSTOMER_PWD"));
+		*/
+		
 		dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 		dataSource.setUrl("jdbc:oracle:thin:@192.168.1.19:1521:orcl");
 		dataSource.setUsername("PLFDEV");
 		dataSource.setPassword("pff123");
+		
 		return dataSource;
 	}
 }

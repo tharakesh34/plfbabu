@@ -38,6 +38,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 		impsDisbursementRespJob();
 		posidexCustomerUpdateRespJob();
 		masterExtractJob();
+		CustomerCrudOpretion();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -152,6 +153,35 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 						.withDescription("Posidex customer update response job trigger.")
 						.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
 				JOB_SCHEDULER_MAP.put("POSIDEX_RES_JOB", jobDetails);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	private void CustomerCrudOpretion() {
+		logger.debug(Literal.ENTERING);
+
+		Configuration configuration = loadConfiguration("CUSTOMER_CURD_OPERATIONS");
+		if (configuration != null) {
+			String schduleTime = null;
+			try {
+				schduleTime = configuration.getCronExpression();
+			} catch (Exception e) {
+				logger.warn("Customer Create Operation scheduler not started.");
+			}
+
+			if (StringUtils.trimToNull(schduleTime) != null) {
+				JobSchedulerDetails jobDetails = new JobSchedulerDetails();
+				jobDetails.setJobDetail(JobBuilder.newJob(CustomerCrudOperationJob.class)
+						.withIdentity("CUSTOMER_CRUD_JOB", "CUSTOMER_CRUD_RESPONSE")
+						.withDescription("Customer crud opretion job trigger.").build());
+				jobDetails.setTrigger(TriggerBuilder.newTrigger()
+						.withIdentity("CUSTOMER_CRUD_JOB_TRIGGER", "CUSTOMER_CRUD_RESPONSE")
+						.withDescription("Customer crud opretion job trigger.")
+						.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
+				JOB_SCHEDULER_MAP.put("CUSTOMER_CRUD_JOB", jobDetails);
 			}
 		}
 

@@ -869,15 +869,14 @@ public class FinanceDataDefaulting {
 			finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 			finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 			finScheduleData.setFinODPenaltyRate(finODPenaltyRate);
-		} else {
+		} else if (finScheduleData.getFinODPenaltyRate() != null && !financeType.isApplyODPenalty()) {
 			FinODPenaltyRate finODPenaltyRate = finScheduleData.getFinODPenaltyRate();
-			if(StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)||
-				StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-			 || StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)){
+			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 				BigDecimal totPerc = PennantApplicationUtil.unFormateAmount(finODPenaltyRate.getODChargeAmtOrPerc(), 2);
 				finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
 			}
-			
 		}
 	}
 	

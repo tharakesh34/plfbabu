@@ -44,5 +44,12 @@
 	
 	
 	<!-- Disbursement Imps Response  -->
-	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>	
+	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>
+	
+	<!-- CustomerCrudOperation -->
+	<bean id="customerCurdOperationService" class="com.pennanttech.bajaj.services.CustomerCurdOperationService" scope="prototype" parent="bajajService"/>	
+	<bean id="customerCrudOperationJob" class="com.pennanttech.pff.bajaj.schedule.jobs.CustomerCrudOperationJob">
+	<property name="customerCurdOperationService" ref="customerCurdOperationService"/>
+	</bean>
+	
 </beans>

@@ -48,7 +48,7 @@ public class CustomerDedupService {
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceURL);
-			response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService",
+			response = (DedupeResponse) client.postProcess(serviceURL, "getCustomerDetails",
 					prepareRequest(dedupCustomerDetail), DedupeResponse.class);
 			logger.info("Response : " + response.toString());
 			customerResponse = prepareResponse(response);
@@ -287,7 +287,7 @@ public class CustomerDedupService {
 		//Customer Adderess details List
 		if (detail.getCustAddressDetails() != null && !detail.getCustAddressDetails().isEmpty()) {
 			for (CustAddressDetail addressDetail : detail.getCustAddressDetails()) {
-				addressList.add(setAddress(addressDetail));
+				    addressList.add(setAddress(addressDetail));
 			}
 
 			customerDetail.setAddressList(addressList);
@@ -324,10 +324,11 @@ public class CustomerDedupService {
 		customer.setCustTypeCode(dgDetail.getCustomerType());
 		customer.setCustShrtName(dgDetail.getCustomerName());
 		customer.setCustCRCPR(dgDetail.getPanNumber());
+		customer.setSourceSystem(dgDetail.getSourceSystem());
 		try {
 			customer.setCustDOB(DateUtil.parse(dgDetail.getDateOfBirth(), "yyyy-MM-dd HH:mm:ss.S"));
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.debug(e);
 		}
 
 		customerDetail.setCustomer(customer);
@@ -347,6 +348,7 @@ public class CustomerDedupService {
 		addres.setCustAddrType(addressDetail.getAddressType());
 		addres.setCustAddrCity(addressDetail.getCity());
 		addres.setCustAddrZIP(addressDetail.getPin());
+		addres.setCustAddrLine1(addressDetail.getAddress());
 		return addres;
 	}
 

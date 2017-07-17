@@ -261,8 +261,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.AppException;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -822,6 +822,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Map<String, Object>							flagTypeDataMap			= new HashMap<String, Object>();
 	protected transient List<FinInsurances>					oldVar_finInsuranceList;
 	protected Label											label_FinanceMainDialog_FinAssetValue;
+	protected Label											label_FinanceMainDialog_FinAmount;
 	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 
 	private boolean											isBranchanged;
@@ -1261,7 +1262,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} else {
 			this.row_FinAssetValue.setVisible(false);
-
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
 		}
 	}
 
@@ -1481,12 +1485,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Joint Account and Guaranteer  Tab Addition
-		if (!StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
-				&& !StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
+		/*if (!StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_COMMERCIAL)
+				&& !StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {*/
 			if (StringUtils.isEmpty(moduleDefiner)) {
 				appendJointGuarantorDetailTab(onLoad);
 			}
-		}
+		//}
 
 		// Finance Tax Details
 		if (StringUtils.isEmpty(moduleDefiner)) {
@@ -5932,7 +5936,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 				// Customer Dedup Process Check
-				boolean processCompleted = dedupValidation.doCheckDedup(aFinanceDetail, getRole(), getMainWindow(),
+				boolean processCompleted = dedupValidation.doCheckDedup(aFinanceDetail,
+						aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(), getRole(),
+						getMainWindow(),
 						curLoginUser);
 				if (!processCompleted) {
 					return;
@@ -8584,7 +8590,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				
 				//both step and EMI holiday not allowed
-				if (financeType.isPlanEMIHAlw()) {
+				if (getFinanceDetail().getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
 					errorList.add(new ErrorDetails("30573", null));
 				}	
 			}
@@ -10554,20 +10560,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAmount.value"));
 						validateFinAssetvalue(this.finAmount, financeType, formatter);
 					}
-					if (aFinanceSchData.getFinFeeDetailList() != null
-							&& !aFinanceSchData.getFinFeeDetailList().isEmpty()) {
-						for (FinFeeDetail feeDetail : aFinanceSchData.getFinFeeDetailList()) {
-							if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
-									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-								this.finCurrentAssetValue.getActualValue().add(feeDetail.getActualAmount());
-							}
-							aFinanceMain.setFinAssetValue(PennantAppUtil
-									.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
-						}
-					} else {
-						aFinanceMain.setFinAssetValue(
-								PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
-					}
+					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+							this.finCurrentAssetValue.getActualValue(), formatter));
 
 				}
 			}
