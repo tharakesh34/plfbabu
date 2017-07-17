@@ -10689,5 +10689,22 @@ union
 		</createView>
 	
 	</changeSet>
+	<changeSet id="558" author="murthy.y">
+		<createView viewName="" replaceIfExists="true">
+			SELECT DS.ID,
+		  DC.NAME,
+		  DC.UPLOADPATH FILELOCATION,
+		  DS.FILENAME,
+		  DS.ENDTIME,
+		  DS.STATUS,
+		  DC.id AS CONFIGID,
+		  DC.POSTEVENT,
+		  DS.VALUEDATE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS
+			ON DS.NAME = DC.NAME
+			ORDER BY DS.ID DESC
+		</createView>
+	</changeSet>
 	
 </databaseChangeLog>
