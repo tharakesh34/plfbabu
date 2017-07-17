@@ -11,20 +11,18 @@
  */
 package com.pennanttech.pennapps.core;
 
-import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pff.core.ErrorCode;
-
 /**
  * Exception thrown on dependencies found for the record to be deleted.
  */
 public class DependencyFoundException extends AppException {
 	private static final long serialVersionUID = 4471400442589963105L;
+	private static final String DEFAULT_MESSAGE = "849: The record is in use and therefore cannot be deleted.";
 
 	/**
 	 * Constructs a {@code DependencyFoundException} with the default detail message.
 	 */
 	public DependencyFoundException() {
-		super(ErrorCode.PPS_802.getMessage());
+		super(DEFAULT_MESSAGE);
 	}
 
 	/**
@@ -56,6 +54,6 @@ public class DependencyFoundException extends AppException {
 	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	public DependencyFoundException(Throwable cause) {
-		super(ErrorCode.PPS_802.getMessage(), cause);
+		super(DEFAULT_MESSAGE, cause);
 	}
 }

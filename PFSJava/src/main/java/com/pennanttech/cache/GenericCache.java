@@ -10,10 +10,10 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent;
 import org.infinispan.notifications.cachelistener.event.CacheEntryRemovedEvent;
 
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pff.core.ErrorCode;
 
 public class GenericCache<K, V> {
 	private static final Logger logger = Logger.getLogger(GenericCache.class);
+	private static final String DEFAULT_ERROR_MESSAGE = "898: Unable to process the request due to issues with cache manager. Please try again later or contact the system administrator.";
 	private Cache<K, V> cache = null;
 	private String name;
 
@@ -49,7 +49,7 @@ public class GenericCache<K, V> {
 
 			} catch (Exception e) {
 				logger.error(e);
-				throw new AppException(ErrorCode.PPS_901.getMessage(),e);
+				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 
 		}
@@ -63,7 +63,7 @@ public class GenericCache<K, V> {
 				return getCache().get(key);
 			} catch (Exception e) {
 				logger.error(e);
-				throw new AppException(ErrorCode.PPS_901.getMessage(),e);
+				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 	}
 		logger.debug("Leaving");
@@ -78,7 +78,7 @@ public class GenericCache<K, V> {
 				logger.debug("Clearing Cache Entry  for " +name + " :"  + key);
 			} catch (Exception e) {
 				logger.error(e);
-				throw new AppException(ErrorCode.PPS_901.getMessage(),e);
+				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 		}
 		logger.debug("Leaving");

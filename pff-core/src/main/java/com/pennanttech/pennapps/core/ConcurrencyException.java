@@ -11,20 +11,18 @@
  */
 package com.pennanttech.pennapps.core;
 
-import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pff.core.ErrorCode;
-
 /**
  * Exception thrown on concurrency failure.
  */
 public class ConcurrencyException extends AppException {
 	private static final long serialVersionUID = 6906237326561801602L;
+	private static final String DEFAULT_MESSAGE = "850: The record has been modified by another user. Please refresh the list to get the latest details of the record.";
 
 	/**
 	 * Constructs a {@code ConcurrencyException} with the default detail message.
 	 */
 	public ConcurrencyException() {
-		super(ErrorCode.PPS_801.getMessage());
+		super(DEFAULT_MESSAGE);
 	}
 
 	/**
@@ -44,7 +42,7 @@ public class ConcurrencyException extends AppException {
 	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	public ConcurrencyException(Throwable cause) {
-		super(ErrorCode.PPS_801.getMessage(), cause);
+		super(DEFAULT_MESSAGE, cause);
 	}
 
 	/**
