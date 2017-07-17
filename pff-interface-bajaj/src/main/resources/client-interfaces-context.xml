@@ -17,6 +17,9 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<!-- Dedup Fields -->
+	<bean id="customerDedupService" class="com.pennanttech.service.CustomerDedupService"  parent="bajajService"/>
+	
 	<bean id="bajajJobScheduler" class="com.pennanttech.pff.bajaj.schedule.jobs.BajajJobScheduler" init-method="startJob"  parent="bajajService"/>
 	<bean id="disbursementResponseJob" class="com.pennanttech.pff.bajaj.schedule.jobs.DisbursementResponseJob"  >
 		<property name="disbursementResponseFileService" ref="disbursementResponseFileService"/>

@@ -1,15 +1,11 @@
 package com.pennanttech.service;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -23,12 +19,13 @@ import com.pennanttech.bajaj.model.CustEmailDetail;
 import com.pennanttech.bajaj.model.DedupeRequest;
 import com.pennanttech.bajaj.model.DedupeResponse;
 import com.pennanttech.bajaj.model.DemographicDetail;
+import com.pennanttech.bajaj.services.BajajService;
 import com.pennanttech.clients.JSONClient;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 
-public class CustomerDedupService {
+public class CustomerDedupService extends BajajService {
 
 	private static final Logger logger = Logger.getLogger(CustomerDedupService.class);
 
@@ -36,12 +33,12 @@ public class CustomerDedupService {
 		super();
 	}
 
-	private Properties			props			= null;
 	private SimpleDateFormat	dateFormater	= new SimpleDateFormat("dd-MMM-yyyy");
 
 	public DedupCustomerResponse invokeDedup(DedupCustomerDetail dedupCustomerDetail) throws Exception {
 
-		String serviceURL = getProperties("posidex");
+		String serviceURL = (String) getSMTParameter("POSIDEX_DEDUP_REQUEST_URL", String.class);		
+		
 		DedupCustomerResponse customerResponse = null;
 		DedupeResponse response = null;
 
@@ -58,18 +55,6 @@ public class CustomerDedupService {
 			throw exception;
 		}
 		return customerResponse;
-	}
-
-	public String getProperties(String property) throws IOException {
-		if (props == null) {
-			props = new Properties();
-			PathMatchingResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
-			Resource[] resources = new Resource[0];
-			resources = loader.getResources("classpath:/plf-interface.properties");
-			props.load(resources[0].getInputStream());
-			return props.getProperty(property);
-		}
-		return props.getProperty(property);
 	}
 
 	private DedupeRequest prepareRequest(DedupCustomerDetail dedupCustomerDetail) {

@@ -3403,9 +3403,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Dedup Fields -->
-	<bean id="customerDedupService" class="com.pennanttech.service.CustomerDedupService" />
-
 	<bean id="dedupFieldsDAO" class="com.pennant.backend.dao.dedup.impl.DedupFieldsDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
