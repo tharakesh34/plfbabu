@@ -152,11 +152,11 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		return bankDetails;
 	}
 	
-	public void setgCDCustomerDAO(GCDCustomerDAO gCDCustomerDAO) {
+	public void setGCDCustomerDAO(GCDCustomerDAO gCDCustomerDAO) {
 		this.gCDCustomerDAO = gCDCustomerDAO;
 	}
 
-	public void setgCDCustomerBajjajDAO(GCDCustomerBajjajDAOImpl gCDCustomerBajjajDAO) {
+	public void setGCDCustomerBajjajDAO(GCDCustomerBajjajDAOImpl gCDCustomerBajjajDAO) {
 		this.gCDCustomerBajjajDAO = gCDCustomerBajjajDAO;
 	}
 
