@@ -65,7 +65,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.CommitmentRate;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 /**
  * DAO methods implementation for the <b>CommitmentRate model</b> class.<br>

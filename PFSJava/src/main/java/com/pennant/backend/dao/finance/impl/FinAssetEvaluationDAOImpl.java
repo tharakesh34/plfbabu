@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinAssetEvaluationDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

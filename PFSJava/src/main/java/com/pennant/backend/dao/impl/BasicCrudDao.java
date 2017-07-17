@@ -2,7 +2,7 @@ package com.pennant.backend.dao.impl;
 
 import org.springframework.dao.DataAccessException;
 
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.TableType;
 

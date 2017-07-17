@@ -63,7 +63,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

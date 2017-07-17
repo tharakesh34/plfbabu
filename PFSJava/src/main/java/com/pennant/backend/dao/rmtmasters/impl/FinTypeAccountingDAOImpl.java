@@ -61,7 +61,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

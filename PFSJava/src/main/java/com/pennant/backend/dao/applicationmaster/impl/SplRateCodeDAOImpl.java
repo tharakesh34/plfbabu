@@ -61,7 +61,7 @@ import com.pennant.backend.dao.applicationmaster.SplRateCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

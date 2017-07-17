@@ -62,7 +62,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

@@ -57,7 +57,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.bmtmasters.CheckList;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

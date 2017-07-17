@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.LovFieldCodeDAO;
 import com.pennant.backend.model.staticparms.LovFieldCode;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

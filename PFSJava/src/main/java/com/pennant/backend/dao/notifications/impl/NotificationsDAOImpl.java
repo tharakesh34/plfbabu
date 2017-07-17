@@ -64,7 +64,7 @@ import com.pennant.app.model.MailData;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.rulefactory.Notifications;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

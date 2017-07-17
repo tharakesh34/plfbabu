@@ -61,7 +61,7 @@ import com.pennant.backend.dao.rulefactory.OverdueChargeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.OverdueCharge;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

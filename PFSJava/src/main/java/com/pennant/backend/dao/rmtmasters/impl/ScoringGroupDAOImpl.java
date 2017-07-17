@@ -59,7 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ScoringGroupDAO;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

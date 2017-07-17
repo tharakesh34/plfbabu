@@ -63,7 +63,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup> implements SecurityGroupRightsDAO{

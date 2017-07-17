@@ -58,7 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.administration.SecurityGroupDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityGroup;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

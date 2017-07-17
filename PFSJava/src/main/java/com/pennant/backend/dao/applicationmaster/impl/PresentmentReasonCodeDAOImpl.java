@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.applicationmaster.PresentmentReasonCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 public class PresentmentReasonCodeDAOImpl extends BasisCodeDAO<PresentmentReasonCode> implements PresentmentReasonCodeDAO{

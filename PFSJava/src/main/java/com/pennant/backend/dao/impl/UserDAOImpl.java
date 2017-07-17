@@ -64,8 +64,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.Literal;
 
 /**

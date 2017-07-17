@@ -70,7 +70,7 @@ import com.pennant.backend.dao.cacheadministration.CacheDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennanttech.cache.CacheStats;
 import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;

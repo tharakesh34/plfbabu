@@ -68,7 +68,7 @@ import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

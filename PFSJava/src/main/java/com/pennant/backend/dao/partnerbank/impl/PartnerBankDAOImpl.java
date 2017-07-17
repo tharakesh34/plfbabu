@@ -67,7 +67,7 @@ import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;

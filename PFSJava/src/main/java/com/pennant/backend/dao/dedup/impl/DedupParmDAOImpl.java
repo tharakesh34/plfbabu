@@ -64,7 +64,7 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

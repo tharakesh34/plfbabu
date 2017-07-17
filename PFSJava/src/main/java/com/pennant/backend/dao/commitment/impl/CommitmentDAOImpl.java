@@ -52,7 +52,7 @@ import com.pennant.backend.model.commitment.CommitmentSummary;
 import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

@@ -59,7 +59,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.vasproducttype.VASProductTypeDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.vasproducttype.VASProductType;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

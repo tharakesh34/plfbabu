@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 
 public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 

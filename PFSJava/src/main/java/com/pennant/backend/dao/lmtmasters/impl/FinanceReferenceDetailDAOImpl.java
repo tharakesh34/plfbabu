@@ -70,7 +70,7 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

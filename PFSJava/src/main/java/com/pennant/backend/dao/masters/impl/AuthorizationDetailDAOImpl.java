@@ -58,7 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.masters.AuthorizationDetailDAO;
 import com.pennant.backend.model.masters.AuthorizationDetail;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 
 /**
  * DAO methods implementation for the <b>AuthorizationDetail model</b> class.<br>

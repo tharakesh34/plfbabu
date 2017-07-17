@@ -58,7 +58,7 @@ import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

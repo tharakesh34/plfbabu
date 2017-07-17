@@ -63,7 +63,7 @@ import com.pennant.backend.dao.solutionfactory.DeviationHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

@@ -62,7 +62,7 @@ import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

@@ -58,7 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.PRelationCodeDAO;
 import com.pennant.backend.model.systemmasters.PRelationCode;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

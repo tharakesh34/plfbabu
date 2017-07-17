@@ -22,7 +22,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 public class CreditApplicationReviewDAOImpl extends BasisNextidDaoImpl<FinCreditReviewDetails> implements CreditApplicationReviewDAO {

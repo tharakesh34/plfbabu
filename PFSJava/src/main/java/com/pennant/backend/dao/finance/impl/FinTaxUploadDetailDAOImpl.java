@@ -61,7 +61,7 @@ import com.pennant.backend.dao.finance.FinTaxUploadDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 

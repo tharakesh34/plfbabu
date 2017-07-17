@@ -66,7 +66,7 @@ import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

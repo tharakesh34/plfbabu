@@ -60,7 +60,7 @@ import com.pennant.backend.dao.reports.ReportListDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.reports.ReportList;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

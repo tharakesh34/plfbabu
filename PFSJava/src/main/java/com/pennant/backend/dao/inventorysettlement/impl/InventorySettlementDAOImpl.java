@@ -67,7 +67,7 @@ import com.pennant.backend.model.inventorysettlement.InventorySettlement;
 import com.pennant.backend.model.inventorysettlement.InventorySettlementDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

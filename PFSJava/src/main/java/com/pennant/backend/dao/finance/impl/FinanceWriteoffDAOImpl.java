@@ -19,7 +19,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.finance.FinWriteoffPayment;
 import com.pennant.backend.model.finance.FinanceWriteoff;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {

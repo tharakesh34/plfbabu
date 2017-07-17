@@ -44,7 +44,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.commodity.CommodityInventory;
 import com.pennant.backend.model.commodity.FinCommodityInventory;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

@@ -65,7 +65,7 @@ import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.model.rulefactory.LimitFldCriterias;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 
 /**

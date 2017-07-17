@@ -61,7 +61,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pff.core.Literal;
 
 /**
