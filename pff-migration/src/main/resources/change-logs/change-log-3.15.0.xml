@@ -10825,4 +10825,79 @@ union
 			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
 		</createView>
 	</changeSet>
+	<changeSet id="565" author="Somasekhar">
+		<dropColumn tableName="Entity" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="Entity" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="Entity" columnName="EntityPOBox"/>
+	 
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityPOBox"/>
+	</changeSet>
+	<changeSet id="566" author="Somasekhar">
+	 <addColumn tableName="Entity">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	 <addColumn tableName="Entity_Temp">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	 </changeSet>
+	 <changeSet id="568" author="Somasekhar">
+	 <sql>
+	  delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrLine1');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrLine2');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityPOBox');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrHNbr');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityFlatNbr');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrStreet');
+    
+    delete from secrights where rightname='EntityDialog_EntityAddrLine1';
+    delete from secrights where rightname='EntityDialog_EntityAddrLine2';
+    delete from secrights where rightname='EntityDialog_EntityPOBox';
+    delete from secrights where rightname='EntityDialog_EntityAddrHNbr';
+    delete from secrights where rightname='EntityDialog_EntityFlatNbr';
+    delete from secrights where rightname='EntityDialog_EntityAddrStreet';
+    
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrLine1','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrLine2','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityPOBox','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrHNbr','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityFlatNbr','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrStreet','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+		 
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrLine1'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrLine2'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityPOBox'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrHNbr'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityFlatNbr'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrStreet'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+		 
+	 </sql>
+	 </changeSet>
 </databaseChangeLog>
