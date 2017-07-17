@@ -228,10 +228,10 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		String userBranchCode = rs.getString("USERBRANCH");
 		Branch userBranch;
-		if(userBranchCode.equals(CON_EOD)){
+		if(userBranchCode == null || userBranchCode.equals(CON_EOD)){
 			userBranch = loanBranch;
 		} else{
-			 userBranch = branchMap.get(rs.getObject("userBranchCode"));
+			 userBranch = branchMap.get(userBranchCode);
 		}
 		
 		//map.addValue("LOAN_SERVICING_BRANCH", userBranch.getBranchSwiftBrnCde());
