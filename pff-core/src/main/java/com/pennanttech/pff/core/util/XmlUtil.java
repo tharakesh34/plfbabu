@@ -123,7 +123,7 @@ public final class XmlUtil {
 			for (int i = 0; i < nameParts.length; i++) {
 				if (i == 0) {
 					element = parent.getFirstChildWithName(new QName(namespaceURI, nameParts[i]));
-				} else {
+				} else if (element != null) {
 					element = element.getFirstChildWithName(new QName(namespaceURI, nameParts[i]));
 				}
 
