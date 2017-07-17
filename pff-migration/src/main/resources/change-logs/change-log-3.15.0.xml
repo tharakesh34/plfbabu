@@ -10689,8 +10689,15 @@ union
 		</createView>
 	
 	</changeSet>
-	<changeSet id="558" author="murthy.y">
-		<createView viewName="" replaceIfExists="true">
+	
+	<changeSet id="559" author="Manoj">
+		<sql>
+			update smtparameters set sysparmvalue = 'PENNANT'  where sysparmcode = 'POSIDEX_SOURCE_SYSTEM';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="560" author="Manoj">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
 			SELECT DS.ID,
 		  DC.NAME,
 		  DC.UPLOADPATH FILELOCATION,
@@ -10706,5 +10713,6 @@ union
 			ORDER BY DS.ID DESC
 		</createView>
 	</changeSet>
+	
 	
 </databaseChangeLog>
