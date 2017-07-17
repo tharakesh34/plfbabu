@@ -51,6 +51,8 @@ public class MandateConstants {
 
 	public static final String	MANDATE_AC_TYPE_CA	= "11";
 	public static final String	MANDATE_AC_TYPE_SA	= "10";
+	public static final String	MANDATE_AC_TYPE_CC	= "12";
+	public static final String	MANDATE_AC_TYPE_OD	= "13";
 
 	public static final String	MANDATE_DEFAULT_FRQ	= "M0001";
 
