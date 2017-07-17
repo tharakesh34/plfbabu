@@ -10640,7 +10640,10 @@ union
 			SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
 	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
 	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
-	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T6.LASTMNTON, T7.LASTMNTON) DocReceivedDate
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
 	         FROM  fincovenanttype_temp T1 INNER JOIN
                  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
                  Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
@@ -10648,15 +10651,19 @@ union
                  documentdetails T7 on T7.referenceID = T4.FinReference And  T1.CovenantType = T3.DocTypeCode
                 
 	UNION ALL
-	SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+		SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
 	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
 	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
-	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T6.LASTMNTON, T7.LASTMNTON) DocReceivedDate
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
 	         FROM  fincovenanttype T1 INNER JOIN
                  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
                  Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
                  customerdocuments T6 on  T6.custid=T4.custId LEFT join
                  documentdetails T7 on T7.referenceID = T4.FinReference And  T1.CovenantType = T3.DocTypeCode
+
 	WHERE NOT EXISTS
 	                 (SELECT   1
 					  FROM        FinCovenantType_Temp
@@ -10670,7 +10677,10 @@ union
 			SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
 	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
 	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
-	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T6.LASTMNTON, T7.LASTMNTON) DocReceivedDate
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
 	         FROM  fincovenanttype T1 INNER JOIN
                  BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
                  Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
