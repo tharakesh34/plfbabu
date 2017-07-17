@@ -10935,4 +10935,10 @@ union
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 	 	</sql>
 	 </changeSet>
+	 <changeSet id="572" author="Madhubabu">
+	    <sql>
+	    	delete from errordetails where errorcode='99006';
+	        INSERT INTO ErrorDetails VALUES('99006','EN','E','For Agreement No :{0} the {1} length exceeding :{2}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
