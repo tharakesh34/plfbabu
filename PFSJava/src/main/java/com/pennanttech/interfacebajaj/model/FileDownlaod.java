@@ -14,6 +14,7 @@ public class FileDownlaod {
 	private boolean alwFileDownload;
 	private String status;
 	private Date endTime;
+	private Date valueDate;
 	private String postEvent;
 	private String prefix;
 	private long configId;
@@ -121,6 +122,14 @@ public class FileDownlaod {
 
 	public void setConfigId(long configId) {
 		this.configId = configId;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
 }
