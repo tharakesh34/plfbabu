@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core;
+package com.pennanttech.pennapps.core;
 
 import com.pennanttech.pennapps.core.AppException;
 

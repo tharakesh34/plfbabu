@@ -49,7 +49,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface ProvisionService {
 	

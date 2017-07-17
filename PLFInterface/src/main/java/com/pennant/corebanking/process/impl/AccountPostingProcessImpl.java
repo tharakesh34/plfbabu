@@ -13,7 +13,7 @@ import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.AccountPostingTemp;
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
 import com.pennant.coreinterface.process.AccountPostingProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountPostingProcessImpl extends GenericProcess implements AccountPostingProcess {
 

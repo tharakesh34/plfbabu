@@ -12,7 +12,7 @@ import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FinanceCancellationProcessImpl extends GenericProcess implements FinanceCancellationProcess{
 

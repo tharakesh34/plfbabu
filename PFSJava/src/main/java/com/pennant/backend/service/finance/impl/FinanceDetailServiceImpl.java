@@ -191,7 +191,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;

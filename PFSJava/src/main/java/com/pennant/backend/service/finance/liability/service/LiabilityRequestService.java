@@ -47,7 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface LiabilityRequestService {
 	

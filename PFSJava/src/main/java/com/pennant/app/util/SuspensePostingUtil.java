@@ -67,7 +67,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class SuspensePostingUtil implements Serializable {
 	private static final long			serialVersionUID	= -7469564513544156223L;

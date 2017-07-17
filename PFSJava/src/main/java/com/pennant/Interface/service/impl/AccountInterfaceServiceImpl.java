@@ -20,7 +20,7 @@ import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceImpl.class);

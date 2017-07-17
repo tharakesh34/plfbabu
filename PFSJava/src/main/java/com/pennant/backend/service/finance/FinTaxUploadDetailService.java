@@ -5,7 +5,7 @@ import java.util.List;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface FinTaxUploadDetailService {
 	List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference,String type,String status);

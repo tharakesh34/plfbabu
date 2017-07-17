@@ -8,7 +8,7 @@ import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
 import com.pennant.mq.util.PFFXmlUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DDAProcessmpl implements DDAProcess {
 

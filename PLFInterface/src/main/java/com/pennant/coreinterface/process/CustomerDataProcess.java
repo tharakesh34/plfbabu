@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.CoreBankingCustomer;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerDataProcess {
 

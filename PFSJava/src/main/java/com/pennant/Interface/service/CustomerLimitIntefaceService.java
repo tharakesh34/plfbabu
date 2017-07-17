@@ -8,7 +8,7 @@ import com.pennant.backend.model.limits.FinanceLimitProcess;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.limits.LimitUtilization;
 import com.pennant.coreinterface.model.CustomerLimit;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerLimitIntefaceService {
 	

@@ -9,7 +9,7 @@ import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface BulkDefermentChangeProcessService {
 	

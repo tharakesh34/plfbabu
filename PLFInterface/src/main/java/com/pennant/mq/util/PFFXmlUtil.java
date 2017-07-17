@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.mq.model.AHBMQHeader;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class PFFXmlUtil {
 	private static final Logger logger = Logger.getLogger(PFFXmlUtil.class);

@@ -19,7 +19,7 @@ import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.process.DateRollOverProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 

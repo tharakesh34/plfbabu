@@ -54,7 +54,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 

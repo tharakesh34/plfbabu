@@ -59,7 +59,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>

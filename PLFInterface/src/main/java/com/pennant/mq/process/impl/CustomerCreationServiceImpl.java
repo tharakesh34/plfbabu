@@ -16,7 +16,7 @@ import com.pennant.mq.processutil.CustomerDedupProcess;
 import com.pennant.mq.processutil.ReleaseCIFProcess;
 import com.pennant.mq.processutil.ReserveCIFProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 

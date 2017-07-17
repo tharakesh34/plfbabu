@@ -55,8 +55,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
 /**

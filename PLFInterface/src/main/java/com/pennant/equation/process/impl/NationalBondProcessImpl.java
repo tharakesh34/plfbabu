@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.nbc.BondPurchaseDetail;
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	private static final Logger logger = Logger.getLogger(NationalBondProcessImpl.class);

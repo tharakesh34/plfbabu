@@ -10,7 +10,7 @@ import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerCreationProcessImpl extends GenericProcess implements CustomerCreationProcess {
 	

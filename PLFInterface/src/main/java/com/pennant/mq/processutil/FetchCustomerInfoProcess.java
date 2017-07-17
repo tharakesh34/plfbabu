@@ -28,7 +28,7 @@ import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 enum ADDRESSTYPES {
 	RETAILRESIDENCE,RETAILOFFICE, RETAILHOMECOUNTRY, SMEESTMAIN, SMEESTOTHER, PHONECODES

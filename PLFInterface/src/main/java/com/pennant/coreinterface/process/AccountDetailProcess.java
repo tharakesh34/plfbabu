@@ -3,7 +3,7 @@ package com.pennant.coreinterface.process;
 import java.util.List;
 
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountDetailProcess {
 

@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerLimitProcess {
 

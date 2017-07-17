@@ -20,7 +20,7 @@ import com.pennant.coreinterface.process.CustomerLimitProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitProcessImpl extends GenericProcess implements CustomerLimitProcess {
 

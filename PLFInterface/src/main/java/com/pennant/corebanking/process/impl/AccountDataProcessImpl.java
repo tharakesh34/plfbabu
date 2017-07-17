@@ -6,7 +6,7 @@ import com.pennant.coreinterface.model.AccountBalance;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess{
 

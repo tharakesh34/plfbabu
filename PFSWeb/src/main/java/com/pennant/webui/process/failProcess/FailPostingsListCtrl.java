@@ -68,7 +68,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Expenses/LegalExpenses/LegalExpensesList.zul file.

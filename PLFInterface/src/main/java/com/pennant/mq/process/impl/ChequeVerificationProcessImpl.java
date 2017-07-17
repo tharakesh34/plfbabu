@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
 import com.pennant.coreinterface.process.ChequeVerificationProcess;
 import com.pennant.mq.processutil.ChequeVerificationDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class ChequeVerificationProcessImpl implements ChequeVerificationProcess {
 

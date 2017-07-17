@@ -1,6 +1,6 @@
 package com.pennant.mq.dao;
 
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 
 public interface MQInterfaceDAO {

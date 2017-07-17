@@ -1,6 +1,6 @@
 package com.pennant.Interface.service;
 
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CalendarInterfaceService {
 

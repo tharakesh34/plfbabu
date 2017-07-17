@@ -12,7 +12,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CollateralService extends ServiceHelper {
 

@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
 import com.pennant.mq.processutil.HandlingInstructionProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 

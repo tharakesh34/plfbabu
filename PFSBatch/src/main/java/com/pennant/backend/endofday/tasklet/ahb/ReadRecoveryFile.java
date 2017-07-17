@@ -68,7 +68,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class ReadRecoveryFile implements Tasklet {
 	private Logger						logger	= Logger.getLogger(ReadRecoveryFile.class);

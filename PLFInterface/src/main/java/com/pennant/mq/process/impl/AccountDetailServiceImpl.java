@@ -12,7 +12,7 @@ import com.pennant.coreinterface.process.AccountDetailProcess;
 import com.pennant.mq.processutil.FetchAccountDetailProcess;
 import com.pennant.mq.processutil.FetchAllAccountsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountDetailServiceImpl implements AccountDetailProcess {
 

@@ -8,7 +8,7 @@ import com.pennant.coreinterface.process.DepositDetailProcess;
 import com.pennant.mq.processutil.FetchDepositDetailProcess;
 import com.pennant.mq.processutil.FetchDepositsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositDetailServiceImpl implements DepositDetailProcess {
 
