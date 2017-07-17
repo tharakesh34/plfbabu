@@ -371,7 +371,7 @@ public class PennantJavaUtil {
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
 	private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";
 	private static String facilityCommitWF = "FACILITY_COMMITMENT";
-	private static String scoreGrpWF = "SCORGRP";
+	//private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
 	private static String realizationWF   = "REALIZATION_PROCESS";
 	private static String receiptBounceWF   = "BOUNCE_PROCESS";
@@ -889,7 +889,7 @@ public class PennantJavaUtil {
 						"NFRuleDesc", "MaxScore" }, null, 300));
 
 		ModuleUtil.register("ScoringGroup", new ModuleMapping("ScoringGroup", ScoringGroup.class, new String[] {
-				"RMTScoringGroup", "RMTScoringGroup_AView" }, scoreGrpWF, new String[] { "ScoreGroupId",
+				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupId",
 				"ScoreGroupName" }, null, 350));
 
 		ModuleUtil.register("ScoringSlab", new ModuleMapping("ScoringSlab", ScoringSlab.class, new String[] {
