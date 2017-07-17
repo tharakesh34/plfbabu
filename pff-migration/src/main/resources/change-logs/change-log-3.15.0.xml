@@ -10771,7 +10771,7 @@ union
 	<changeSet author="Madhubabu" id="563">
 		<sql>
 			delete from errordetails where errorcode='99015';
-			INSERT INTO ErrorDetails VALUES('99015','EN','E','Aggrement no Should not Empty','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('99015','EN','E','Agreement No. Should not Empty','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
 	
