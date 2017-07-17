@@ -661,6 +661,20 @@ public class CreateFinanceController extends SummaryDetailService {
 		// execute fee charges
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+		
+		if(financeMain.isQuickDisb() && financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				feeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				feeDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				feeDetail.setRcdVisible(false);
+				feeDetail.setVersion(1);
+				feeDetail.setWorkflowId(workflowId);
+				feeDetail.setRoleCode(roleCode);
+				feeDetail.setNextRoleCode(roleCode);
+				feeDetail.setTaskId(taksId);
+				feeDetail.setNextTaskId(getNextTaskId(taksId));
+			}
+		}
 
 		// validate disbursement instructions
 		if(!loanWithWIF) {
