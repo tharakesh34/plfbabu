@@ -20,7 +20,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.gcd.GcdCustomer;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 	private static final Logger logger = Logger.getLogger(GCDCustomerDetailsServiceImpl.class);

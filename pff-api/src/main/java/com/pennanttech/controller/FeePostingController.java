@@ -17,7 +17,7 @@ import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 

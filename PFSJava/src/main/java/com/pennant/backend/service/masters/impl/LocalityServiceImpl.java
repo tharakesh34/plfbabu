@@ -53,7 +53,7 @@ import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.masters.LocalityService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**

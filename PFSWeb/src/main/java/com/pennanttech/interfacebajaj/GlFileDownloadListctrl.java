@@ -79,7 +79,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import com.pennanttech.service.AmazonS3Bucket;
 

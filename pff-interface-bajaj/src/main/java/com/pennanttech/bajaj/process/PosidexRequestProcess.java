@@ -17,9 +17,9 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class PosidexRequestProcess extends DatabaseDataEngine {

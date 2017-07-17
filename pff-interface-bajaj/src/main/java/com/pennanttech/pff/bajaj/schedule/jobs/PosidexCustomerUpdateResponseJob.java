@@ -8,7 +8,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.bajaj.services.PosidexResponseServiceImpl;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PosidexCustomerUpdateResponseJob implements Job, Serializable {
 	private static final Logger				logger				= Logger.getLogger(PosidexCustomerUpdateResponseJob.class);

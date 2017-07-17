@@ -18,8 +18,8 @@ import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.Literal;
 
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 

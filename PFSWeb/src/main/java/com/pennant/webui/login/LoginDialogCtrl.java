@@ -52,7 +52,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.webui.util.WindowBaseCtrl;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the /WEB-INF/loginDialog.zul file.

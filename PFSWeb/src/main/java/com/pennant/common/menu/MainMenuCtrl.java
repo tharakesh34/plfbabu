@@ -88,9 +88,9 @@ import com.pennant.common.menu.tree.TreeMenuFactory;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.framework.security.core.service.UserService;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 /**

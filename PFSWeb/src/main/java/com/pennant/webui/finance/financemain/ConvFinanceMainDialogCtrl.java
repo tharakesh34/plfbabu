@@ -63,7 +63,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the

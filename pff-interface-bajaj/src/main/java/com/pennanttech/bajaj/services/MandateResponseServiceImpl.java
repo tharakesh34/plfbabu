@@ -14,8 +14,8 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.model.DataEngineLog;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.MandateResponseService;
 import com.pennanttech.pff.core.util.DateUtil;
 

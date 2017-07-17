@@ -31,8 +31,8 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.file.service.FileService;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {

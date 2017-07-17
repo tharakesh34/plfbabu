@@ -72,7 +72,7 @@ import com.pennanttech.cache.CacheStats;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class CacheDAOImpl extends BasisCodeDAO<CacheStats> implements CacheDAO {

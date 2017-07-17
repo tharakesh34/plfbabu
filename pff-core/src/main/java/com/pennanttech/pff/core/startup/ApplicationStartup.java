@@ -5,7 +5,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 
 public class ApplicationStartup implements ServletContextListener {

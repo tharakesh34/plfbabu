@@ -60,7 +60,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**

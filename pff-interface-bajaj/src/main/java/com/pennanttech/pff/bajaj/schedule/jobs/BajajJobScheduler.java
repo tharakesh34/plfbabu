@@ -14,8 +14,8 @@ import org.quartz.TriggerBuilder;
 
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 import com.pennanttech.pff.core.job.scheduler.JobSchedulerDetails;
 

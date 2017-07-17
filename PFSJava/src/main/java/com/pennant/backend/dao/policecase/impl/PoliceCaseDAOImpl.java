@@ -23,7 +23,7 @@ import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 

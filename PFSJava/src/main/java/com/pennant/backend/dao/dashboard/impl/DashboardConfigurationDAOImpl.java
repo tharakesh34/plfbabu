@@ -65,7 +65,7 @@ import com.pennant.backend.model.dashboarddetail.DashboardPosition;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>DashboardConfiguration model</b> class.<br>

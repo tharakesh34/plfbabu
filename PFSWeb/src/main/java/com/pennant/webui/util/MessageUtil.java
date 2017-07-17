@@ -56,8 +56,8 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 /**
  * A suite of utilities surrounding the use of the {@link org.zkoss.zul.Messagebox Messagebox} object.

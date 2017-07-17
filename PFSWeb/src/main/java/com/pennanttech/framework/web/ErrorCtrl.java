@@ -20,8 +20,8 @@ import org.zkoss.zul.Panel;
 import org.zkoss.zul.Window;
 
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 /**
  * This is the controller class for the /error.zul file.

@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 import com.pennanttech.pff.core.process.PaymentProcess;
 import com.pennanttech.pff.core.services.DisbursementResponseService;

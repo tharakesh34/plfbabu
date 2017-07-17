@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.bajaj.process.datamart.DataMartMapper;
 import com.pennanttech.bajaj.process.datamart.DataMartTable;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 public class DataMartRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DataMartRequestProcess.class);

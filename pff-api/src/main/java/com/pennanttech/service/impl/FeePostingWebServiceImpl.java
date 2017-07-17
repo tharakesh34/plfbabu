@@ -18,7 +18,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FeePostingController;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FeePostingRestService;
 import com.pennanttech.pffws.FeePostingSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;

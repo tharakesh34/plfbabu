@@ -65,8 +65,8 @@ import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 /**
  * DAO methods implementation for the <b>SecUser model</b> class.<br>
