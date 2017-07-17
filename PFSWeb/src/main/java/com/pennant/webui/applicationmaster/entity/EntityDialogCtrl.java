@@ -510,7 +510,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			this.cityCode.setDescription("");
 			this.pinCode.setDescription("");
 			this.country.setValue("IN");
-			this.country.setDescription("INDIAone");
+			this.country.setDescription("INDIA");
 		} else {
 			this.country.setDescription(aEntity.getCountryName());
 			this.stateCode.setDescription(aEntity.getProvinceName());
