@@ -10775,4 +10775,54 @@ union
 		</sql>
 	</changeSet>
 	
+	<changeSet id="568" author="Kesav">
+		<createView viewName="ENTITY_VIEW" replaceIfExists="true">
+				SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			                T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			                T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			                T2.CountryDesc CountryName, 
+			                T3.CPProvinceName ProvinceName,
+			                T4.PCCItyName CityName, 
+			                T5.areaname PinCodeName						
+				FROM    	Entity_TEMP T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+						
+			    UNION ALL
+						
+			    SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			          		T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			          		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          		T2.CountryDesc CountryName, 
+			          		T3.CPProvinceName ProvinceName,
+			          		T4.PCCItyName CityName, 
+			          		T5.areaname PinCodeName						
+				FROM    	Entity T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+			      
+				WHERE     	NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE ENTITYCODE = T1.ENTITYCODE)		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="569" author="Kesav">
+		<createView viewName="ENTITY_AVIEW" replaceIfExists="true">
+			    SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			          		T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			          		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          		T2.CountryDesc CountryName, 
+			          		T3.CPProvinceName ProvinceName,
+			          		T4.PCCItyName CityName, 
+			          		T5.areaname PinCodeName						
+				FROM    	Entity T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+		</createView>
+	</changeSet>
 </databaseChangeLog>
