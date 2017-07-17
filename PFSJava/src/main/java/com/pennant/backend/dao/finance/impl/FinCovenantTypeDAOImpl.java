@@ -161,7 +161,7 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,lovdescIsCustDoc,");
 		if(isEnquiry){
-			selectSql.append(" CovenantTypeDesc,");
+			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
 		}else{
 			if (StringUtils.trimToEmpty(type).contains("View")){
 				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
