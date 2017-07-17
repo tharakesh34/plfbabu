@@ -1,9 +1,6 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,7 +193,11 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		if ("xls".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
 			isSupported = true;
-			this.uploadedfileName.setValue(media.getName());
+			if (media.getName().length() > 100){
+				throw new WrongValueException(this.uploadedfileName,Labels.getLabel("label_Filename_length_File"));
+			}else{				
+				this.uploadedfileName.setValue(media.getName());
+			}
 		}
 
 		if (isSupported) {
@@ -221,8 +222,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 					totalCount++;
 					parseExcelData(finTaxUploadDetailList,nextRow);
 					if(!isvalidData){
-						MessageUtil.showError(
-								"Please Check the Data Format before uploading the document.Should be :Text Format");
+						MessageUtil.showError(Labels.getLabel("label_File_Format"));
 						isvalidData=true;
 						this.uploadedfileName.setValue("");
 						return;

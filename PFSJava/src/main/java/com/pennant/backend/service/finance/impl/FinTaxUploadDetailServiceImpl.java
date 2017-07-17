@@ -399,19 +399,19 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			errParm[0] = String.valueOf(taxuploadDetail.getAggrementNo());
 			
 			//--------Length validations-----------------------------------
-			if (taxuploadDetail.getTaxCode().length() > 20) {
+			if (taxuploadDetail.getTaxCode()!=null && taxuploadDetail.getTaxCode().length() > 20) {
 				errParm[1] = PennantJavaUtil.getLabel("label_Gstin");
 				errParm[2] = 20 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getApplicableFor().length() > 1) {
+			if (taxuploadDetail.getApplicableFor()!=null && taxuploadDetail.getApplicableFor().length() > 1) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_ApplicableFor.label");
 				errParm[2] = 1 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
-			if (taxuploadDetail.getApplicant().length() > 20) {
+			if (taxuploadDetail.getApplicant()!=null && taxuploadDetail.getApplicant().length() > 20) {
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Applicant.label");
 				errParm[2] = 20 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -637,7 +637,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 								new ErrorDetails(PennantConstants.KEY_FIELD, "99011", errParams, null)));
 					}
 				}
-			} else {
+			} 
+			//commented as the validation not required by client
+			/*else {
 				//If tax code not given in the file
 				String[] errParams = new String[2];
 				errParams[0] = PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ":"
@@ -646,7 +648,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
 						usrLanguage));
-			}
+			}*/
 		
 	}
 
