@@ -77,13 +77,20 @@ public class LatePayMarkingService extends ServiceHelper {
 		for (FinODDetails fod : finODDetails) {
 			FinanceScheduleDetail curSchd = getODSchedule(finScheduleDetails, fod);
 			
-			// In case Schedule was recalculated with new date, existing schedule may not exists(Early settlement with before pastdue schedule term)
-			// FIXME : Need to discuss with satish(Siva)
-			if(curSchd == null){
-				continue;
+			if(curSchd!=null){
+				latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate);
+			}else{
+				fod.setFinODTillDate(valueDate);
+				fod.setFinCurODPri(BigDecimal.ZERO);
+				fod.setFinCurODPft(BigDecimal.ZERO);
+				fod.setFinCurODAmt(BigDecimal.ZERO);
+				fod.setFinCurODDays(0);
+				fod.setFinLMdfDate(valueDate);
+				fod.setTotPenaltyAmt(BigDecimal.ZERO);
+				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+
 			}
 			
-			latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate);
 		}
 		return finODDetails;
 
@@ -198,7 +205,11 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
-		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
+		if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO)>0) {
+			fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
+		}else{
+			fod.setFinCurODDays(0);
+		}
 		fod.setFinLMdfDate(valueDate);
 
 		latePayPenaltyService.computeLPP(fod, valueDate, finMain.getProfitDaysBasis(), finScheduleDetails, repayments,
