@@ -289,7 +289,7 @@ public final class MessageUtil {
 		logger.error("Exception: ", e);
 
 		Messagebox.setTemplate(TEMPLATE);
-		Messagebox.show(AppException.DEFAULT_MESSAGE.concat(SUFFIX), App.NAME, OK, ERROR);
+		Messagebox.show(AppException.getDefaultMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**

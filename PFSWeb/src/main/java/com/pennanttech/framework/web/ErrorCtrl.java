@@ -50,7 +50,7 @@ public class ErrorCtrl extends GenericForwardComposer<Component> {
 	 */
 	public void onCreate$window_ErrorDialog(Event event) throws Exception {
 		panel.setTitle(App.NAME);
-		message.setValue(AppException.DEFAULT_MESSAGE.concat("\n\n"));
+		message.setValue(AppException.getDefaultMessage().concat("\n\n"));
 
 		logger.error(Literal.EXCEPTION, (Throwable) requestScope.get("javax.servlet.error.exception"));
 	}
