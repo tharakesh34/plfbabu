@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.util;
+package com.pennanttech.pennapps.core.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,9 +17,7 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
- * <p>
  * A suite of utilities surrounding the use of the {@link Class} object.
- * </p>
  */
 public final class ClassUtil {
 	private ClassUtil() {
