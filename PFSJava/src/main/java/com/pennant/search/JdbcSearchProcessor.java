@@ -29,9 +29,9 @@ import com.healthmarketscience.sqlbuilder.CustomCondition;
 import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
