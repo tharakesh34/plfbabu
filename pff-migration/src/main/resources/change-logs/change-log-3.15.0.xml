@@ -9604,21 +9604,31 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 	<!-- for dev -->
 	<!-- <changeSet id="530.1" author="Madhubabu">
 	<sql>
+	    delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_DRIVER';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_URL';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_USERNAME';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_PWD';
+
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@192.168.1.19:1521:orcl', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
-		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  PLFDEV', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  'PLFDEV', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pff123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet> -->
-	<!-- for qc -->
-	<!-- <changeSet id="530" author="Madhubabu">
+	 <!-- for qc -->
+	<!--<changeSet id="530.1" author="Madhubabu">
 	<sql>
+	    delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_DRIVER';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_URL';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_USERNAME';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_PWD';
+        
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@192.168.1.19:1521:orcl', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
-		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  PLF', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  'PLF', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pff123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
-	</changeSet> -->
+	</changeSet>  -->
 	
 	<changeSet id="530" author="Manoj.P">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
