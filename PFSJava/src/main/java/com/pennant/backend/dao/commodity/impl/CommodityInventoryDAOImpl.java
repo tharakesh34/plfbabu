@@ -45,7 +45,7 @@ import com.pennant.backend.model.commodity.CommodityInventory;
 import com.pennant.backend.model.commodity.FinCommodityInventory;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CommodityInventory model</b> class.<br>

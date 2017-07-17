@@ -65,7 +65,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Notifications model</b> class.<br>

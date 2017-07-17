@@ -60,7 +60,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 /**
  * DAO methods implementation for the <b>MandateStatus model</b> class.<br>
  * 

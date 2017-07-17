@@ -62,7 +62,7 @@ import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>TakafulProvider model</b> class.<br>

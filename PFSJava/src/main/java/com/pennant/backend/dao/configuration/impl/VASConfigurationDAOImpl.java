@@ -61,7 +61,7 @@ import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
  
 /**
  * DAO methods implementation for the <b>VASConfiguration model</b> class.<br>

@@ -18,7 +18,7 @@ import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class FinAssetTypesDAOImpl extends BasisCodeDAO<FinAssetTypes> implements FinAssetTypeDAO {
 private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);

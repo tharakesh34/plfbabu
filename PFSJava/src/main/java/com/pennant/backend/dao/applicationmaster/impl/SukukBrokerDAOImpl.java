@@ -59,7 +59,7 @@ import com.pennant.backend.dao.applicationmaster.SukukBrokerDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SukukBroker model</b> class.<br>

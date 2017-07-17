@@ -22,7 +22,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetails> implements BulkRateChangeProcessDetailsDAO {
 

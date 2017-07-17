@@ -69,7 +69,7 @@ import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>LimitStructureDetail model</b> class.<br>

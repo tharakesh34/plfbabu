@@ -58,7 +58,7 @@ import com.pennant.backend.dao.applicationmaster.FinanceApplicationCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceApplicationCode model</b> class.<br>

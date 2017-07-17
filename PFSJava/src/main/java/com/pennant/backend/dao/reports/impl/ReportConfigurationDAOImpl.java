@@ -65,7 +65,7 @@ import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportsMonthEndConfiguration;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>ReportConfiguration model</b> class.<br>

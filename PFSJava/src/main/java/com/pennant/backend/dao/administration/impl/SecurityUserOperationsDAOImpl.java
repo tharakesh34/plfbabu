@@ -67,7 +67,7 @@ import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserOperations;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 
 public class SecurityUserOperationsDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements

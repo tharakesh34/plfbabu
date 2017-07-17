@@ -63,7 +63,7 @@ import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>AccountType model</b> class.<br>

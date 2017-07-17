@@ -59,7 +59,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.staticparms.InterestRateBasisCodeDAO;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>InterestRateBasisCode model</b> class.<br>

@@ -66,7 +66,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceWorkFlow model</b> class.<br>

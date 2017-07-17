@@ -41,7 +41,7 @@ import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>IndicativeTermDetail model</b> class.<br>

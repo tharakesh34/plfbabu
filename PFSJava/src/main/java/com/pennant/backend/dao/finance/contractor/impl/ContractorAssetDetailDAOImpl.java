@@ -60,7 +60,7 @@ import com.pennant.backend.dao.finance.contractor.ContractorAssetDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>ContractorAssetDetail model</b> class.<br>

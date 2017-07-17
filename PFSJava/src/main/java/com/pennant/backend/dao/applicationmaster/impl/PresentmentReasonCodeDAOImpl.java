@@ -16,7 +16,7 @@ import com.pennant.backend.dao.applicationmaster.PresentmentReasonCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class PresentmentReasonCodeDAOImpl extends BasisCodeDAO<PresentmentReasonCode> implements PresentmentReasonCodeDAO{
 	private static Logger logger = Logger.getLogger(PresentmentReasonCodeDAOImpl.class);

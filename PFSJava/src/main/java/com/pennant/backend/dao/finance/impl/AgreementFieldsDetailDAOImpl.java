@@ -60,7 +60,7 @@ import com.pennant.backend.dao.finance.AgreementFieldsDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>

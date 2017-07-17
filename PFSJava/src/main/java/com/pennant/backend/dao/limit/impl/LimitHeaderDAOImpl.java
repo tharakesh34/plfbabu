@@ -21,7 +21,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implements LimitHeaderDAO {
 	private static Logger logger = Logger.getLogger(LimitHeaderDAOImpl.class);

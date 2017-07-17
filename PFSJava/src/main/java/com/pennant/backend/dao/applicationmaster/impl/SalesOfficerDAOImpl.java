@@ -58,7 +58,7 @@ import com.pennant.backend.dao.applicationmaster.SalesOfficerDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SalesOfficer model</b> class.<br>

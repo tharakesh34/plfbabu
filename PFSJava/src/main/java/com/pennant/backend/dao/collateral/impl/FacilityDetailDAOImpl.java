@@ -44,7 +44,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FacilityDetail model</b> class.<br>

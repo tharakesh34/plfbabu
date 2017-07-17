@@ -58,7 +58,7 @@ import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>RatingCode model</b> class.<br>

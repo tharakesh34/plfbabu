@@ -64,7 +64,7 @@ import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup> implements SecurityGroupRightsDAO{
 	private static Logger logger = Logger.getLogger(SecurityGroupRightsDAOImpl .class);
