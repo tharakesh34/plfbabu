@@ -269,6 +269,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				this.pinCode.setValue("");
 				this.pinCode.setDescription("");
 			}
+			fillPindetails(null, null);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -293,7 +294,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = stateCode.getObject();
-		String pcProvince = null;
+		String pcProvince = this.stateCode.getValue();
 		if (dataObject instanceof String) {
 			fillPindetails(null, null);
 		} else if (!(dataObject instanceof String)) {
@@ -304,6 +305,12 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			if (province != null) {
 				this.stateCode.setErrorMessage("");
 				pcProvince = this.stateCode.getValue();
+				this.country.setValue(province.getCPCountry());
+				this.country.setDescription(province.getLovDescCPCountryName());
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
 				fillPindetails(null, pcProvince);
 			} else {
 				this.cityCode.setObject("");
@@ -318,6 +325,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	@SuppressWarnings("null")
 	private void fillCitydetails(String state) {
 		logger.debug("Entering");
 
@@ -327,7 +335,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.cityCode.setValidateColumns(new String[] { "PCCity" });
 		Filter[] filters1 = new Filter[1];
 
-		if (state == null) {
+		if (state == null || state.isEmpty()) {
 			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
 		} else {
 			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
@@ -350,18 +358,21 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		String cityValue = null;
 		if (!(dataObject instanceof String)) {
 			City details = (City) dataObject;
+			if (details == null) {
+				fillPindetails(null, null);
+			}
 			if (details != null) {
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				this.country.setValue(details.getPCCountry());
 				this.country.setDescription(details.getLovDescPCCountryName());
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
 				cityValue = details.getPCCity();
 				fillPindetails(cityValue, this.stateCode.getValue());
 			} else {
 				this.cityCode.setObject("");
 				this.pinCode.setObject("");
-				this.cityCode.setValue("");
-				this.cityCode.setDescription("");
 				this.pinCode.setValue("");
 				this.pinCode.setDescription("");
 				this.stateCode.setErrorMessage("");
