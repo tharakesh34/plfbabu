@@ -864,4 +864,12 @@
 	 <column name="EntityPOBox" type="varchar(8)"/>
 	 </addColumn>
 	</changeSet>
+	
+	<changeSet id="47" author="Sriram">
+		<dropColumn tableName="ADTFEETYPES" columnName="HostFeeTypeCode"/>
+		<addColumn tableName="ADTFEETYPES">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+	 </changeSet>
+	
 </databaseChangeLog>

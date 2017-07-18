@@ -10958,4 +10958,71 @@ union
 	         update reportfilterfields set Fielddbname='T.FinReference' where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT');
 	     </sql>
 	 </changeSet>
+	 
+	  <changeSet id="575" author="Sriram">
+	 	<sql>
+	 		
+			DELETE FROM SECGROUPRIGHTS WHERE GRPID = (Select GrpID from SecGRoups WHERE GRPCODE = 'FEETYPE_MAKER') AND RIGHTID = (Select Rightid From Secrights where rightname = 'FeeTypeDialog_HostFeeTypeCode');
+	 		DELETE from secrights where RightName='FeeTypeDialog_HostFeeTypeCode';
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeTypeDialog_HostFeeTypeCode','FeeTypeDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeTypeDialog_HostFeeTypeCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+	 	</sql>
+	 </changeSet>
+	  <changeSet id="576" author="Sriram">
+	 	
+		<dropColumn tableName="FEETYPES" columnName="HostFeeTypeCode"/>
+		<dropColumn tableName="FEETYPES_TEMP" columnName="HostFeeTypeCode"/>
+		
+		 <addColumn tableName="FEETYPES">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+		<addColumn tableName="FEETYPES_TEMP">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="577" author="Sriram" >
+		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
+		
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, 			
+						T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+						T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode
+			
+			FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+			
+			UNION ALL
+			
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, 			
+						T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+						T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+			
+			FROM    	FeeTypes  T1 LEFT JOIN 	
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FeeTypes_TEMP WHERE FeeTypeID = T1.FeeTypeID)
+		</createView>
+		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
+		
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId,			
+					T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+					T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+		
+		FROM    	FeeTypes  T1  LEFT JOIN 
+					RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
+		
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId,			
+					T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+					T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+		
+		FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+					RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
