@@ -145,12 +145,20 @@ public class CreateFinanceController extends SummaryDetailService {
 				String finType = financeMain.getFinType();
 				int finRefType = FinanceConstants.PROCEDT_LIMIT;
 				String quickDisbCode = FinanceConstants.QUICK_DISBURSEMENT;
-				List<String> roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
+				String roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
 						quickDisbCode);
-				 roleCode = null;
-				for (String role : roles) {
-					roleCode = StringUtils.replace(role, ",", "");
+				if(StringUtils.isBlank(roles)){
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90344"));
+					return response;
 				}
+				 roleCode = null;
+				 String[] role = roles.split(PennantConstants.DELIMITER_COMMA);
+				 for(String roleCod:role){
+					 roleCode = roleCod;
+					 break;
+				 }
 				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
 
 				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(

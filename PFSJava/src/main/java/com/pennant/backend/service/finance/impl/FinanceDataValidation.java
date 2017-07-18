@@ -889,6 +889,15 @@ public class FinanceDataValidation {
 			isCreateLoan = true;
 		}
 
+		if(!financeDetail.isStp()){
+			if(StringUtils.isBlank(financeDetail.getProcessStage())){
+				String[] valueParm = new String[1];
+				valueParm[0] = "ProcessStage";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+		}
 		// Validate customer
 		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");

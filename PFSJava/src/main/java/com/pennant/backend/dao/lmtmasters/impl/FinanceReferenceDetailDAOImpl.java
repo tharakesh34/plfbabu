@@ -719,7 +719,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 	}
 
 	@Override
-	public List<String> getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
+	public String getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -735,10 +735,10 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			return Collections.emptyList();
+			return null;
 		}
     }
 	
