@@ -243,9 +243,7 @@
 		</createTable>
 	</changeSet>
 		<changeSet author="SaiRam" id="12">
-	 <addPrimaryKey 
-            columnNames="ModuleId,FieldName"
-            tableName="App_FieldDetail"/>
+	 <addPrimaryKey columnNames="ModuleId,FieldName" tableName="App_FieldDetail"/>
 	</changeSet>
 	
 	<changeSet author="SaiRam" id="13">
@@ -256,7 +254,6 @@
 			<column name="CustCIF" type="varchar(20)" />
 			<column name="FinReference" type="varchar(20)" />
 			<column name="City" type="varchar(50)" />
-			
 			<column name="Locality" type="varchar(50)"/>
 			<column name="Coordinates" type="varchar(50)" />			
 			<column name="Address" type="varchar(500)" />
@@ -265,4 +262,235 @@
 			<column name="Active" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet author="SaiRam" id="14">
+		<createTable tableName="App_MasterVersion">
+			<column name="EntityCode" type="varchar(10)"/>
+			<column name="MasterName" type="varchar(100)"/>
+			<column name="MasterVersion" type="int" />			
+			<column name="Flag" type="char(1)" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="14.1">
+		<addPrimaryKey columnNames="EntityCode,MasterName" tableName="App_MasterVersion"/>
+	</changeSet>
+	<changeSet author="SaiRam" id="15">
+		<createTable tableName="App_MC_Details">
+			<column name="DeviationID" type="bigint"/>
+			<column name="UserRole" type="nvarchar(50)"/>
+			<column name="DeviatedValue" type="nvarchar(50)" />			
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			
+			<column name="RecordStatus" type="nvarchar(50)"/>
+			<column name="RoleCode" type="nvarchar(50)" />			
+			<column name="NextRoleCode" type="nvarchar(500)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="15.1">
+	   <addPrimaryKey columnNames="DeviationID,UserRole" tableName="App_MC_Details"/> 
+	</changeSet>
+	<changeSet author="SaiRam" id="16">
+		<createTable tableName="App_MC_FinDeviations">
+			<column name="DeviationID" type="bigint">
+			    <constraints nullable="false" />
+			    </column>
+			<column name="FinReference" type="nvarchar(20)" />
+			<column name="Module" type="nvarchar(50)" />			
+			<column name="DeviationCode" type="nvarchar(50)" />
+			<column name="DeviationType" type="nvarchar(50)" />
+			<column name="DeviationValue" type="nvarchar(50)" />
+			
+			<column name="UserRole" type="nvarchar(50)"/>
+			<column name="DelegationRole" type="nvarchar(50)" />			
+			<column name="ApprovalStatus" type="nvarchar(50)" />
+			<column name="DeviationDate" type="datetime" />
+			<column name="DeviationUserId" type="nvarchar(50)" />
+			<column name="DelegatedUserId" type="nclob" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="16">
+	      <addPrimaryKey columnNames="DeviationID" tableName="App_MC_FinDeviations"/> 
+	    </changeSet>
+	<changeSet author="SaiRam" id="17">
+		<createTable tableName="App_MC_Header">
+			<column name="DeviationID" type="bigint">
+			    <constraints nullable="false" />
+			    </column>
+			<column name="FinType" type="nvarchar(20)" />
+			<column name="Module" type="nvarchar(50)" />			
+			<column name="ModuleCode" type="nvarchar(50)" />
+			<column name="ValueType" type="nvarchar(50)" />
+			<column name="Version" type="int">
+			    <constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)"/>
+			<column name="RoleCode" type="nvarchar(50)" />			
+			<column name="NextRoleCode" type="nvarchar(500)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="17.1">
+	     <addPrimaryKey columnNames="DeviationID" tableName="App_MC_Header"/> 
+	    </changeSet>
+	<changeSet author="SaiRam" id="18">
+		<createTable tableName="App_MC_Params">
+		    <column name="Code" type="nvarchar(20)">
+			    <constraints nullable="false" />
+			    </column>
+			<column name="Description" type="nvarchar(50)" />
+			<column name="Type" type="varchar(20)" />			
+			<column name="Formula" type="varchar(500)" />
+			<column name="Version" type="int">
+			    <constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)"/>
+			<column name="RoleCode" type="nvarchar(50)" />			
+			<column name="NextRoleCode" type="nvarchar(500)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="18.1">
+	     <addPrimaryKey columnNames="Code" tableName="App_MC_Params"/> 
+	</changeSet>
+	<changeSet author="SaiRam" id="19">
+		<createTable tableName="App_OCRFields">
+			<column name="MenuId" type="bigint">
+			     <constraints nullable="false" />
+			</column>
+			<column name="MenuCode" type="varchar(20)"/>
+			<column name="MenuLabel" type="varchar(45)" />			
+			<column name="MenuDescription" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="19.1">
+	    <addPrimaryKey columnNames="MenuId" tableName="App_OCRFields"/> 
+	</changeSet>
+	<changeSet author="SaiRam" id="20">
+		<createTable tableName="App_ProductDetails">
+		    <column name="ProductId" type="bigint">
+			     <constraints nullable="false" />
+			</column>
+			<column name="ProductCategory" type="varchar(30)">
+			    <constraints nullable="false" />
+			    </column>
+			<column name="ProductCategoryName" type="varchar(50)">
+			    	<constraints nullable="false" />
+			    </column>
+			<column name="ProductType" type="varchar(10)">
+			    <constraints nullable="false" />
+			    </column>
+			<column name="ProductTypeName" type="varchar(50)">
+			    <constraints nullable="false" />
+			</column>
+			<column name="ProductLogoLink" type="varchar(200)"/>
+			<column name="SubProductFlag" type="varchar(1)">
+			    	<constraints nullable="false" />
+			    </column>
+			<column name="ParentId" type="bigint"/>
+			<column name="DirectApply" type="varchar(1)"/>
+			<column name="ProductDisplay" type="varchar(1)"/>
+			<column name="Active" type="int">
+			    	<constraints nullable="false" />
+			    </column>
+			<column name="Version" type="int">
+			    <constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)"/>
+			<column name="RoleCode" type="nvarchar(50)" />			
+			<column name="NextRoleCode" type="nvarchar(500)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="20.1">
+	    <addPrimaryKey columnNames="ProductId,ProductCategoryName,ProductType" tableName="App_ProductDetails"/> 
+	</changeSet>
+	<changeSet author="SaiRam" id="21">
+		<createTable tableName="App_Rules">
+	<column name="EntityCode" type="varchar(8)" defaultValue=" "/> 
+	<column name="RuleId" type="bigint">
+	    <constraints nullable="false" />
+	    </column>
+	<column name="RuleModule" type="varchar(8)">
+	    	<constraints nullable="false" />
+	    </column> 
+	<column name="RuleEvent" type="varchar(8)">
+	    	<constraints nullable="false" />
+	    </column> 
+	<column name="RuleCode" type="varchar(8)">
+	    	<constraints nullable="false" />
+	    </column> 
+	<column name="BankId" type="bigint"/>
+	<column name="RuleCodeDesc" type="varchar(50)"/> 
+	<column name="WaiverDecider" type="varchar(1)"/>
+	<column name="Waiver" type="char(1)">
+	    	<constraints nullable="false" />
+	    </column> 
+	<column name="WaiverPerc" type="decimal(5,2)"/>
+	<column name="SQLRule" type="clob">
+	    	<constraints nullable="false" />
+	    </column>
+	<column name="SPLRule" type="clob" />
+	<column name="ActualBlock" type="clob">
+	    	<constraints nullable="false" />
+	    	</column> 
+	<column name="AddFeeCharges" type="char(1)"/>
+	<column name="SeqOrder" type="int"/>
+	<column name="ReturnType" type="varchar(1)"/>
+	<column name="GroupId" type="bigint"/>
+			<column name="Version" type="int">
+			    <constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)"/>
+			<column name="RoleCode" type="varchar(100)" />			
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="21.1">
+	    <addPrimaryKey columnNames="RuleId" tableName="App_Rules"/> 
+	    <addForeignKeyConstraint constraintName="fk_Rules_BankId" referencedTableName="App_BankDetails" 
+	        baseColumnNames="EntityCode,BankId" baseTableName="App_Rules" referencedColumnNames="EntityCode,BankId"/>
+	</changeSet>
+	<changeSet author="SaiRam" id="22">
+		<createTable tableName="App_SessionValidation">
+			<column name="EntityCode" type="varchar(8)">
+			    	<constraints nullable="false" />
+			    </column> 
+			 <column name="AgentID" type="bigint">
+			     <constraints nullable="false" />
+			 </column>
+			  <column name="UserToken" type="varchar(10)"/>
+			  <column name="UserTokenExpiry" type="datetime"/>
+			  <column name="RegistrationId" type="varchar(300)"/>
+			  <column name="Flag" type="char(1)" defaultValue="0"></column>
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="22">
+	    <addPrimaryKey columnNames="EntityCode,AgentID" tableName="App_SessionValidation"/> 
+	    </changeSet>
 </databaseChangeLog>
