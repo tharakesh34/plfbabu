@@ -1,6 +1,7 @@
 package com.pennant.backend.service.cibil;
 
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public interface CIBILService {
@@ -17,6 +18,8 @@ public interface CIBILService {
 	void logFileInfoException(long id, String finReference, String reason);
 	
 	DataEngineStatus getLatestExecution();
+
+	Configuration getConfigDetails(String configName);
 
 
 }
