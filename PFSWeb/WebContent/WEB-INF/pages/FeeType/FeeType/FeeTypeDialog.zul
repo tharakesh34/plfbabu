@@ -107,12 +107,14 @@
 									</hbox>
 								</row>
 								<row id="row2">
-									<label id="label_ManualAdvice"
-										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
-									<hbox id="hlayout_ManualAdvice">
-										<space id="space_ManualAdvice"
-											spacing="2px" />
-										<checkbox id="manualAdvice" />
+									<label id="label_HostFeeTypeCode"
+										value="${c:l('label_FeeTypeDialog_HostFeeTypeCode.value')}" />
+									<hbox id="hlayout_HostFeeTypeCode"
+										visible="true">
+										<space
+											id="space_HostFeeTypeCode" spacing="2px" />
+										<textbox id="hostFeeTypeCode"
+											width="200px" maxlength="50" />
 									</hbox>
 									<label id="label_AdviseType"
 										value="${c:l('label_FeeTypeDialog_AdviseType.value')}"
@@ -123,7 +125,16 @@
 										<combobox id="adviseType"
 											width="120px" />
 									</hbox>
-
+									
+								</row>
+								<row id="row3">
+									<label id="label_ManualAdvice"
+										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
+									<hbox id="hlayout_ManualAdvice">
+										<space id="space_ManualAdvice"
+											spacing="2px" />
+										<checkbox id="manualAdvice" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
