@@ -11043,4 +11043,21 @@ union
 			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'MANDATES');
 	 	</sql>
 	 </changeSet>
+	 <changeSet id="580" author="Manoj">
+	  	<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+	  		SELECT DS.ID,
+		 	DC.NAME,
+		    DC.UPLOADPATH FILELOCATION,
+		  	DS.FILENAME,
+		  	DS.ENDTIME,
+		  	DS.STATUS,
+		  	DC.id AS CONFIGID,
+		  	DC.POSTEVENT,
+		  	DS.VALUEDATE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS
+			ON DS.NAME = DC.NAME
+			ORDER BY DS.ID DESC
+	  	</createView>
+	 </changeSet>
 </databaseChangeLog>
