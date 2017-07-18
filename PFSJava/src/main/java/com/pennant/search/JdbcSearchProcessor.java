@@ -30,9 +30,9 @@ import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
-import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
  * A singleton instance of this class is maintained for each SessionFactory.
