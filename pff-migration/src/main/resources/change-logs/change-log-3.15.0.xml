@@ -11110,4 +11110,65 @@ union
 			FROM CIBIL_FILE_INFO
 	 	</createView>
 	 </changeSet>
+	 <changeSet author="Madhubabu" id="585">
+		<sql>
+			delete from errordetails where errorcode='99016';
+			INSERT INTO ErrorDetails VALUES('99016','EN','E','For Agreement No :{0} Already having GST details captured from LOS','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="586" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW"
+		replaceIfExists="true">
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype_temp T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                
+	UNION ALL
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+
+	WHERE NOT EXISTS
+	                 (SELECT   1
+					  FROM        FinCovenantType_Temp
+					  WHERE       FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+		</createView>
+
+</changeSet>
+	<changeSet id="587" author="madhubabu">
+		<createView viewName="FINCOVENANTTYPE_EAVIEW"
+			replaceIfExists="true">
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+		</createView>
+
+	</changeSet>
 </databaseChangeLog>
