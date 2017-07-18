@@ -87,6 +87,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private FinTaxUploadHeader					finTaxUploadHeader;
 	private Media								media;
 	protected Button							button_ErrorDetails;				// autoWired
+	protected Label								label_FinTaxUploadDialog_Errors;
 	private AuditHeader							retAuditHeader;
 
 	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
@@ -194,6 +195,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		Sheet firstSheet;
 		retAuditHeader = null;
 		this.button_ErrorDetails.setVisible(false);
+		this.label_FinTaxUploadDialog_Errors.setVisible(false);
 
 		if ("xls".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
 			isSupported = true;
@@ -696,6 +698,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 1) {
 					this.button_ErrorDetails.setVisible(true);
+					this.label_FinTaxUploadDialog_Errors.setVisible(true);
 					retAuditHeader = auditHeader;
 					MessageUtil.showError(Labels.getLabel("label_FinTaxUploadDialog_Error"));
 					retValue = PennantConstants.porcessCANCEL;

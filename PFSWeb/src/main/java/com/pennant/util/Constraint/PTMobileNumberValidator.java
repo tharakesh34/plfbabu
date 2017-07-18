@@ -68,7 +68,7 @@ public class PTMobileNumberValidator implements Constraint{
 			Matcher matcher =  pattern.matcher(compValue);
 			validRegex=matcher.matches();
 			
-			if(compValue.length()!=maxLength){
+			if(compValue.length()>maxLength){
 				return Labels.getLabel("FIELD_ALLOWED_MANFILL", new String[] {fieldParm,String.valueOf(maxLength)});
 			}
 			

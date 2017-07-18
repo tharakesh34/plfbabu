@@ -160,7 +160,7 @@
 											<label id="status" />
 										</hbox>										
 										<label
-											id="label_FinTaxUploadDialog_Errors"
+											id="label_FinTaxUploadDialog_Errors" visible="false"
 											value="${c:l('label_FinTaxUploadDialog_Errors.value')}" />
 										<hbox>
 											<button visible="false"
