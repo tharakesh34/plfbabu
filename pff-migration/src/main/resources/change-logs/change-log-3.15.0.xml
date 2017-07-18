@@ -11036,4 +11036,11 @@ union
 		 update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_NUMERIC' where FIELDTYPE = 'TEXT' AND FIELDNAME = 'ACNO';
 	     </sql>
 	 </changeSet>
+	 <changeSet id="579" author="Manoj">
+	 	<sql>
+	 		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('MANDATES_EXPORT');
+			delete from data_engine_event_properties where config_id in (select id from data_engine_config where name = 'MANDATES_EXPORT');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'MANDATES');
+	 	</sql>
+	 </changeSet>
 </databaseChangeLog>
