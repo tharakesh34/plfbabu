@@ -11183,4 +11183,59 @@ union
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 	 	</sql>
 	 </changeSet>
+	 <changeSet id="589" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW"
+		replaceIfExists="true">
+			 Select T.FinReference,T.custid,T.CovenantType,T.Description,T.MandRole,T.AlwWaiver,
+                    T.AlwPostpone,T.PostponeDays,T.CovenantTypeDesc,T.lovdescIsCustDoc,T.ReceivableDate,
+                    T.Version,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode,
+                   T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, 
+                   Case when T.DocReceivedDate is null then Cd.lastmnton else T.DocReceivedDate end DocReceivedDate 
+          from (SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype_temp T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                UNION ALL
+                SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                       WHERE NOT EXISTS (SELECT   1  FROM        FinCovenantType_Temp  WHERE FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+                )T 
+          left join CUSTOMERDOCUMENTS CD on Cd.custid =T.custid and T.CovenantType = cd.CUSTDOCCATEGORY
+		</createView>
+
+</changeSet>
+	<changeSet id="590" author="madhubabu">
+		<createView viewName="FINCOVENANTTYPE_EAVIEW"
+			replaceIfExists="true">
+			Select T.FinReference,T.custid,T.CovenantType,T.Description,T.MandRole,T.AlwWaiver,
+                    T.AlwPostpone,T.PostponeDays,T.CovenantTypeDesc,T.lovdescIsCustDoc,T.ReceivableDate,
+                    T.Version,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode,
+                   T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, 
+                   Case when T.DocReceivedDate is null then Cd.lastmnton else T.DocReceivedDate end DocReceivedDate 
+          from (SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                )T 
+          left join CUSTOMERDOCUMENTS CD on Cd.custid =T.custid and T.CovenantType = cd.CUSTDOCCATEGORY
+		</createView>
+
+	</changeSet>
 </databaseChangeLog>
