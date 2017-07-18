@@ -11025,4 +11025,10 @@ union
 					RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
 		</createView>
 	</changeSet>
+	 <changeSet id="575" author="Srikanth">
+	     <sql>
+		INSERT INTO ErrorDetails VALUES('90344','EN','E','Unable to find quick disbursment Stage.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_ALPHA_SPACE_SPL' where FIELDTYPE = 'TEXT' AND FIELDCONSTRAINT = 'REGEX_ALPHANUM_SPL';
+	     </sql>
+	 </changeSet>
 </databaseChangeLog>
