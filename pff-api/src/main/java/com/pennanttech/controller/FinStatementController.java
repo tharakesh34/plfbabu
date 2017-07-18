@@ -422,7 +422,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 		ForeClosure foreClosure = new ForeClosure();
 		foreClosure.setValueDate(finServiceInst.getFromDate());
-		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow).add(totFeePayNow);
+		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow).add(totFeePayNow).subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
 
 		// foreclosure fees

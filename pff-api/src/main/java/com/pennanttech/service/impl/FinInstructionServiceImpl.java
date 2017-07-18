@@ -966,7 +966,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// validate service instruction data
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSTLENQ;
+			moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		}
 		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
 		if (auditDetail.getErrorDetails() != null) {

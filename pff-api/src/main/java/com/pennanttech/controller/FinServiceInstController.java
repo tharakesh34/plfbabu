@@ -1042,7 +1042,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
+			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 			if (finServiceInst.getToDate() == null) {
 				finServiceInst.setToDate(finScheduleData.getFinanceMain().getMaturityDate());
 			}
@@ -1062,6 +1062,10 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 			response = doProcessReceipt(financeDetail, finServiceInst, finServiceInst.getModuleDefiner());
+			if(response != null) {
+				FinanceSummary summary = response.getFinScheduleData().getFinanceSummary();
+				summary.setFinStatus("M");
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			response = new FinanceDetail();
@@ -1211,6 +1215,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
 			}
 		}
+		finReceiptDetail.setReceivedDate(DateUtility.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(),
+				PennantConstants.DBDateFormat)));
 		receiptHeader.setReceiptDate(finReceiptDetail.getReceivedDate());
 		finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
@@ -1226,7 +1232,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Date receiDate = DateUtility.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(),
 				PennantConstants.DBDateFormat));
-		
+		finReceiptDetail.setReceivedDate(receiDate);
 		// calculate total fee amount
 		BigDecimal totFeeAmount = getTotalFeePaid(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		receiptHeader.setTotFeeAmount(totFeeAmount);
@@ -1602,12 +1608,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			// Fetching Actual Late Payments based on Value date passing
 			BigDecimal latePayPftBal = BigDecimal.ZERO;
 			BigDecimal penaltyBal = BigDecimal.ZERO;
+			List<FinODDetails> overdueList = null;
 			if (DateUtility.compare(curBussniessDate, DateUtility.getAppDate()) == 0) {
-				latePayPftBal = finODDetailsDAO.getTotalODPftBal(finReference, null);
-				penaltyBal = finODDetailsDAO.getTotalPenaltyBal(finReference, null);
+				overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			} else {
 				// Calculate overdue Penalties
-				List<FinODDetails> overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);
+				overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);
 
 				// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 				if (overdueList != null && !overdueList.isEmpty()) {
