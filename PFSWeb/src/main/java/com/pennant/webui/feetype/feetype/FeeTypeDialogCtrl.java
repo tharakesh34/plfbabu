@@ -678,7 +678,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.manualAdvice.setDisabled(isReadOnly("FeeTypeDialog_ApplicableFor"));
 		this.accountingSetID.setReadonly(isReadOnly("FeeTypeDialog_AccountSetId"));
 		this.adviseType.setDisabled(isReadOnly("FeeTypeDialog_AdviseType"));
-		//this.hostFeeTypeCode.setReadonly(isReadOnly("FeeTypeDialog_HostFeeTypeCode"));
+		this.hostFeeTypeCode.setReadonly(isReadOnly("FeeTypeDialog_HostFeeTypeCode"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
