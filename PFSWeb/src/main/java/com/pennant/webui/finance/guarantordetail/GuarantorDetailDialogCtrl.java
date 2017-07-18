@@ -697,7 +697,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(false);
 			this.row4.setVisible(false);
 			this.row6.setVisible(true);
-			this.btnSearchGuarantorCIF.setVisible(false);
+			//this.btnSearchGuarantorCIF.setVisible(false);
 		} else {
 			this.gb_GurantorsPrimaryExposure.setVisible(false);
 			this.gb_GurantorsSecoundaryExposure.setVisible(false);
@@ -706,7 +706,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(true);
 			this.row4.setVisible(true);
 			this.row6.setVisible(false);
-			this.btnSearchGuarantorCIF.setVisible(true);
+			//this.btnSearchGuarantorCIF.setVisible(true);
 			this.emailId.setValue("");
 			this.mobileNo.setValue("");
 			this.guarantorCIF.setValue("");
@@ -748,6 +748,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSave"));
+			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 		}
 		/* create the Button Controller. Disable not used buttons during working */
 		logger.debug("Leaving");
@@ -1644,7 +1645,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if (this.bankCustomer.isChecked()) {
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorCIF.setReadonly(true);
-			this.btnSearchGuarantorCIF.setVisible(true);
+			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 			this.guarantorIDNumber.setDisabled(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorCIFName.setReadonly(true);

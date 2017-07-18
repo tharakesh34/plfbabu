@@ -61,10 +61,10 @@ public class FinJointAccountDetailValidation {
 		JointAccountDetail tempJountAccountDetail = null;
 		if (jountAccountDetail.isWorkflow()) {
 			tempJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
-			        jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "_Temp");
+			        jountAccountDetail.getFinReference(), "_Temp");
 		}
 		JointAccountDetail befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
-		        jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "");
+		        jountAccountDetail.getFinReference(), "");
 
 		JointAccountDetail oldJountAccountDetail = jountAccountDetail.getBefImage();
 

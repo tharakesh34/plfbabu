@@ -463,6 +463,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected String						finDivision				= "";
 	protected String 						selectMethodName		= "onSelectTab";
 	private  boolean						enquiry    				= false;
+	private	 boolean 						fromApproved;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -528,6 +529,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finSummary = (FinanceSummary) arguments.get("financeSummary");
 			} else {
 				setFinSummary(null);
+			}
+			
+			if (arguments.containsKey("fromApproved")) {
+				this.fromApproved = (Boolean) arguments.get("fromApproved");
 			}
 
 			// set Field Properties
@@ -1350,6 +1355,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("ccyFormatter",
 				CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy()));
 		map.put("mainController", this);
+		map.put("fromApproved", fromApproved);
 		return map;
 	}
 	

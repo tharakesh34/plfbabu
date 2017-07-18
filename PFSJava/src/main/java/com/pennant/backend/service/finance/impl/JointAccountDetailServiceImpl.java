@@ -544,10 +544,10 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 		if (jountAccountDetail.isWorkflow()) {
 			tempJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
-					jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "_Temp");
+					jountAccountDetail.getFinReference(), "_Temp");
 		} 
 		
-		befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(jountAccountDetail.getFinReference(), jountAccountDetail.getCustCIF(), "");
+		befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(jountAccountDetail.getFinReference(), "");
 		oldJountAccountDetail = jountAccountDetail.getBefImage();
 
 		String[] errParm = new String[2];
