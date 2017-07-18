@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	 <changeSet author="SaiRam" id="1">
+		<createTable tableName="App_BankDetails">
+			<column name="EntityCode" type="varchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="BankId" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="BankCode" type="varchar(10)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="BankName" type="varchar(50)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="BankLogo" type="varchar(50)" />
+			<column name="BankLogoLink" type="varchar(200)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="ContactEmailID" type="varchar(100)" />
+			<column name="AlternateEmail" type="varchar(100)" defaultValue="0" />
+			<column name="PortalEmail" type="varchar(100)" />
+			<column name="ContactNo" type="varchar(12)" />
+			<column name="ContactName" type="varchar(50)" />
+			<column name="ServiceType" type="varchar(20)" />
+			<column name="Area" type="varchar(200)" />
+			<column name="Active" type="int" />
+			<column name="TrackReq" type="char(1)" />
+		</createTable>
+	</changeSet>
+	 <changeSet author="SaiRam" id="2">
+	 <addPrimaryKey 
+            columnNames="EntityCode,BankId"
+            tableName="App_BankDetails"/>
+	</changeSet>
+	
+	 <changeSet author="SaiRam" id="3">
+		<createTable tableName="App_BankTermsMaster">
+			<column name="EntityCode" type="varchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TermId" type="bigint" >
+			<constraints nullable="false" />
+			</column>
+			<column name="BankId" type="bigint" />
+			<column name="ProductId" type="bigint" />
+			<column name="ProductType" type="varchar(5)" />
+			<column name="SubProductCode" type="varchar(30)" />
+			<column name="SingleCustomerExposure" type="varchar(500)" />
+			<column name="LoanToValue" type="varchar(500)" />
+			<column name="MinLoanTenor" type="int" />
+			<column name="MaxLoanTenor" type="int" />
+			<column name="MinFundingAmount" type="varchar(500)" />
+			<column name="MaxFundingAmount" type="varchar(500)" />
+			<column name="MinROI" type="varchar(100)" />
+			<column name="MaxROI" type="varchar(100)" />
+			<column name="MinEmiAmount" type="decimal(18, 2)" />
+			<column name="MaxEmiAmount" type="decimal(18, 2)" />
+			<column name="firstEmiMorotorium" type="varchar(500)" />
+			<column name="FixedOrFloatingROI" type="varchar(500)" />
+			<column name="ForeClosureCharges" type="varchar(500)" />
+			<column name="ChargesFCFromBank" type="varchar(500)" />
+			<column name="AdvancePartPayment" type="varchar(500)" />
+			<column name="MinPartPaymentAmount" type="varchar(500)" />
+			<column name="ProcessingCharge" type="varchar(50)" />
+			<column name="ProcessingChargePercent" type="varchar(500)" />
+			<column name="ServiceCharge" type="varchar(500)" />
+			<column name="DocCharges" type="varchar(500)" />
+			<column name="StampCharges" type="varchar(500)" />
+			<column name="ValuerCharges" type="varchar(500)" />
+			<column name="LegalCharges" type="varchar(500)" />
+			<column name="TechnicalCharges" type="varchar(500)" />
+			<column name="OtherCharges" type="varchar(500)" />
+			<column name="FCChargesInfo" type="clob" />
+			<column name="ServiceTaxInfo" type="clob" />
+			<column name="ROIInfo" type="clob" />
+			<column name="PPB" type="varchar(500)" />
+			<column name="T2Y" type="varchar(500)" />
+			<column name="T2C" type="varchar(500)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" >
+			<constraints nullable="false" />
+			</column>			
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="4">
+	 <addPrimaryKey 
+            columnNames="EntityCode,TermId"
+            tableName="App_BankTermsMaster"/>
+	</changeSet>
+	<changeSet author="SaiRam" id="5">
+		<createTable tableName="App_carMakeNew_master">
+			<column name="id" type="int">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="carMakeNewCode" type="int" />			
+			<column name="carMakeNew" type="varchar(13)" />
+			<column name="Flag" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="6">
+		<createTable tableName="App_carMakeUsed_master">
+			<column name="id" type="int">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="carMakeUsedCode" type="int" />			
+			<column name="carMakeUsed" type="varchar(16)" />
+			<column name="Flag" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="7">
+		<createTable tableName="App_carModelNew_master">
+			<column name="id" type="int">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="carModelNewCode" type="int" />			
+			<column name="carModelNew" type="varchar(60)" />
+			<column name="parentID" type="varchar(2)" />
+			<column name="Flag" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="8">
+		<createTable tableName="App_city_master">
+			<column name="id" type="int">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="citycode" type="smallint" />			
+			<column name="city" type="varchar(50)" />
+			<column name="Flag" type="smallint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="9">
+		<createTable tableName="App_EligibilityInfo">
+			<column name="EntityCode" type="varchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="EligibilityInfoId" type="varchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ProductCategory" type="varchar(10)" />			
+			<column name="EmploymentType" type="varchar(100)" />
+			<column name="Eligibility" type="clob" />
+			<column name="Documents" type="clob" />
+		</createTable>
+	</changeSet>
+	<changeSet author="SaiRam" id="10">
+	 <addPrimaryKey 
+            columnNames="EligibilityInfoId,EntityCode"
+            tableName="App_EligibilityInfo"/>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="11">
+		<createTable tableName="App_FieldDetail">
+			<column name="EntityCode" type="varchar(8)"/>
+			<column name="FieldSeq" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="ModuleId" type="varchar(10)" >
+			<constraints nullable="false" />
+			</column>			
+			<column name="BankId" type="bigint" />
+			<column name="TabId" type="bigint" />
+			<column name="TabSectionId" type="bigint" defaultValue="0" />
+			<column name="TabSectionName" type="varchar(45)" />			
+			<column name="FieldName" type="varchar(50)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="FieldType" type="varchar(20)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="FieldLength" type="int" />
+			<column name="FieldPrec" type="int" />			
+			<column name="FieldLabel" type="varchar(100)" />
+			<column name="FieldMandatory" type="char(1)" />
+			<column name="FieldConstraint" type="varchar(100)" />
+			<column name="FieldSeqOrder" type="int" >
+			<constraints nullable="false" />
+			</column>			
+			<column name="FieldList" type="clob" />
+			<column name="FieldDefaultValue" type="varchar(50)" />
+			<column name="FieldMinValue" type="bigint" />
+			<column name="FieldMaxValue" type="bigint" />			
+			<column name="FieldUnique" type="char(1)" />
+			<column name="FieldParent" type="int" />
+			<column name="FieldSubParent" type="varchar(100)" />
+			<column name="FieldChild" type="bigint" />		
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" defaultValue="0"  >
+			<constraints nullable="false" />
+			</column>				
+			<column name="FieldAlign" type="bigint" />
+		</createTable>
+	</changeSet>
+		<changeSet author="SaiRam" id="12">
+	 <addPrimaryKey 
+            columnNames="ModuleId,FieldName"
+            tableName="App_FieldDetail"/>
+	</changeSet>
+	
+	<changeSet author="SaiRam" id="13">
+		<createTable tableName="App_Location">
+			<column name="RoleCode" type="varchar(50)"/>
+			<column name="Name" type="varchar(50)"/>
+			<column name="Id" type="bigint" />			
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="City" type="varchar(50)" />
+			
+			<column name="Locality" type="varchar(50)"/>
+			<column name="Coordinates" type="varchar(50)" />			
+			<column name="Address" type="varchar(500)" />
+			<column name="StartTimeStamp" type="datetime" />
+			<column name="EndTimeStamp" type="datetime" />
+			<column name="Active" type="bigint" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>
