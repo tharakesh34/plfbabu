@@ -51,9 +51,9 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
-import com.pennanttech.pff.core.util.ModuleUtil;
 
 public class AbstractListController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 6332080471910971732L;

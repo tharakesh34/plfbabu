@@ -64,7 +64,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pff.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 
 public class ExtendedCombobox extends Hbox {
 	private static final long			serialVersionUID	= -4246285143621221275L;

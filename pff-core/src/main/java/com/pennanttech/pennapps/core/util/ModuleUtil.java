@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.util;
+package com.pennanttech.pennapps.core.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import com.pennanttech.pff.core.model.ModuleMapping;
 public final class ModuleUtil {
 	private static final Logger logger = Logger.getLogger(ModuleUtil.class);
 
-	private static Map<String, ModuleMapping> moduleMappings = new HashMap<String, ModuleMapping>();
+	private static Map<String, ModuleMapping> moduleMappings = new HashMap<>();
 
 	private ModuleUtil() {
 		super();

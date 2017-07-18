@@ -353,9 +353,9 @@ import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.util.ClassUtil;
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pff.core.model.ModuleMapping;
-import com.pennanttech.pff.core.util.ModuleUtil;
 
 
 public class PennantJavaUtil {

@@ -120,9 +120,9 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.search.Field;
 import com.pennant.search.Filter;
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.model.ModuleMapping;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.core.util.ModuleUtil;
 
 public class PennantAppUtil {
 	

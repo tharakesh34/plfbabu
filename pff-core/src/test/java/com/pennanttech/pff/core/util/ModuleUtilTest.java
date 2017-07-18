@@ -15,6 +15,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class ModuleUtilTest {
