@@ -11090,4 +11090,17 @@ union
      ORDER BY ID DESC
 	 	</createView>
 	 </changeSet>
+	 <changeSet id="583" author="Manoj">
+	 	<sql>
+	 		delete from data_engine_event_properties where config_id in (select id from data_engine_config where name IN ('CIBIL_REPORT') );
+	 	    delete from DATA_ENGINE_CONFIG where name = 'CIBIL_REPORT';
+	 	    
+		    INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CIBIL_REPORT', 
+		    'Cibil Report', 5, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL,  NULL, 'A', NULL, 'DBFILE', NULL, 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
+		     
+    		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('CIBIL_REPORT');
+    		
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'CIBIL_REPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'CIBIL');
+	 	</sql>
+	 </changeSet>
 </databaseChangeLog>
