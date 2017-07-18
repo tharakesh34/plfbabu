@@ -75,5 +75,6 @@ public interface TaxDetailDAO extends BasicCrudDao<TaxDetail> {
 	boolean isDuplicateKey(long id, String taxCode, TableType tableType);
 	
 	List<TaxDetail> getTaxDetailbystateCode(String Statecode,String type);
+	int getGSTNumberCount(String entityCode, String taxCode, String string);
 	
 }

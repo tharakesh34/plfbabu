@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -284,5 +285,33 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
 	}
+	
+	@Override
+	public int getGSTNumberCount(String entityCode, String taxCode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(TaxCode) From TAXDETAIL");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ENTITYCODE <> :ENTITYCODE And TaxCode = :TaxCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("ENTITYCODE", entityCode);
+		source.addValue("TaxCode", taxCode);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+
 	
 }	

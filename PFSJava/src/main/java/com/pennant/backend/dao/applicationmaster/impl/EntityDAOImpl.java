@@ -251,4 +251,40 @@ public class EntityDAOImpl extends BasisCodeDAO<Entity> implements EntityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public boolean panNumberExist(String pANNumber, String entityCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "pANNumber = :pANNumber AND entityCode = :entityCode";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("Entity", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("Entity_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "Entity_Temp", "Entity" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("pANNumber", pANNumber);
+		paramSource.addValue("entityCode", entityCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }	

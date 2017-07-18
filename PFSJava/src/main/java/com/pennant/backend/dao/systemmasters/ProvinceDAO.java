@@ -67,5 +67,5 @@ public interface ProvinceDAO extends BasicCrudDao<Province>  {
 	boolean isDuplicateKey(String cPCountry, String cPProvince, TableType tableType);
 	boolean count(String taxStateCode,String cPProvince, TableType tableType);
 	int getBusinessAreaCount(String stateCodeValue, String type);
-	int geStateCodeCount(String taxStateCode, String type);
+	int geStateCodeCount(String taxStateCode, String cpProvince, String type);
 }

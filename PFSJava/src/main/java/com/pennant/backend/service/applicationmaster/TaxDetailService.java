@@ -45,6 +45,7 @@ package com.pennant.backend.service.applicationmaster;
 import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.TaxDetail;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface TaxDetailService {
@@ -56,4 +57,5 @@ public interface TaxDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<TaxDetail> getTaxDetailbystateCode(String Statecode,String type);
+	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
 }

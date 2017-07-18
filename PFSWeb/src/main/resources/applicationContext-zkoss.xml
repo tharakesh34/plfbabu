@@ -528,7 +528,6 @@
 		class="com.pennant.webui.systemmasters.province.ProvinceListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="provinceService" ref="provinceService" />
-		<property name="taxDetailService" ref="taxDetailService" />
 	</bean>
 
 	<bean id="provinceDialogCtrl"

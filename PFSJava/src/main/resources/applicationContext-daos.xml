@@ -1369,6 +1369,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="taxDetailDAO" ref="taxDetailDAO" />
+		<property name="taxDetailService" ref="taxDetailService" />
 	</bean>
 
 	<!--============ Salutation Details ============== -->

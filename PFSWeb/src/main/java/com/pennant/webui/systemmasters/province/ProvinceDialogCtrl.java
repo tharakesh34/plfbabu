@@ -378,6 +378,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.cPIsActive.setChecked(true);
 			this.cPIsActive.setDisabled(true);
 		}
+		
+		checkTaxAvailable();
+		
 		this.recordStatus.setValue(aProvince.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -387,6 +390,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	//Reneder the list
 	public void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
 		logger.debug("Entering");
+		
 		this.listBoxTaxDetails.getItems().clear();
 		setTaxDetailList(taxMappingDetailList);
 		if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
@@ -416,6 +420,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				this.listBoxTaxDetails.appendChild(item);
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 	
@@ -426,20 +431,11 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		final Listitem item = this.listBoxTaxDetails.getSelectedItem();
 		if (item != null) {
 			final TaxDetail taxDetail = (TaxDetail) item.getAttribute("data");
-			if (StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
+					|| StringUtils.equalsIgnoreCase(taxDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("taxdetail", taxDetail);
-				map.put("provinceDialogCtrl", this);
-
-				// call the zul-file with the parameters packed in a map
-				try {
-					Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailDialog.zul",
-							window_ProvinceDialog, map);
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
+				doShowDialogPage(taxDetail);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -593,7 +589,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		arg.put("enqiryModule", enqiryModule);
 		arg.put("taxdetail", taxdetail);
 		arg.put("provinceDialogCtrl", this);
-		arg.put("newRecord", taxdetail.isNew());
 		arg.put("roleCode", getRole());
 
 		try {
@@ -713,12 +708,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Enterring");
+		
 		this.cPProvince.setErrorMessage("");
 		this.cPProvinceName.setErrorMessage("");
 		this.cPCountry.setErrorMessage("");
 		this.bankRefNo.setErrorMessage("");
 		this.taxStateCode.setErrorMessage("");
 		this.businessArea.setErrorMessage("");
+		
 		logger.debug("Leaving");
 	}
 
@@ -879,21 +876,40 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		boolean isNew = false;
 
 		// force validation, if on, than execute by component.getValue()
-		doSetValidation();
+		String recordStatus = userAction.getSelectedItem().getValue();
+
+		if (!StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_CANCELLED)
+				&& !StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_REJECTED)) {
+			doSetValidation();
+		}
 		// fill the Province object with the components data
 		doWriteComponentsToBean(aProvince);
 
-		if (this.userAction.getSelectedItem() != null && "save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+		if (this.userAction.getSelectedItem() != null
+				&& "save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 				|| this.userAction.getSelectedItem().getLabel().contains("Submit")) {
-			if(this.listBoxTaxDetails.getItems().size()<=0 &&this.row_taxAvailable.isVisible() && this.taxAvailable.isChecked()){
+			if (this.listBoxTaxDetails.getItems().size() <= 0 && this.row_taxAvailable.isVisible()
+					&& this.taxAvailable.isChecked()) {
 				MessageUtil.showError(Labels.getLabel("label_GstinMap"));
 				return;
+			} else if(getTaxDetailList() != null){
+				boolean recordFound = false;
+				for (TaxDetail taxDet : getTaxDetailList()) {
+					if(!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_CAN) && 
+							!StringUtils.equals(taxDet.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+						recordFound = true;
+						break;
+					}
+				}
+				if(!recordFound) {
+					MessageUtil.showError(Labels.getLabel("label_GstinMap"));
+					return;
+				}
 			}
 		}
 		
-		// Write the additional validations as per below example
-		// get the selected branch object from the listbox
-		// Do data level validations here
+		// Write the additional validations as per below example get the selected branch object from the listbox Do data
+		// level validations here
 
 		isNew = aProvince.isNew();
 		String tranType = "";
@@ -1191,16 +1207,55 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	}
 	
 	public void onCheck$taxExempted(Event event){
+		logger.debug("Enteing");
 		
 	    doSetFieldMandatory(this.taxExempted.isChecked());
+	    
+		logger.debug("Leaving");
 	}
 
+	public void onCheck$taxAvailable(Event event){
+		logger.debug("Enteing");
+		
+		checkTaxAvailable();
+		
+		logger.debug("Leaving");
+	}
+
+	private void checkTaxAvailable() {
+		logger.debug("Enteing");
+		
+		if (this.taxAvailable.isChecked()) {
+			if (!this.province.isNewRecord()) {
+				this.tab_gstdetails.setVisible(true);
+			}
+		} else {
+			this.tab_gstdetails.setVisible(false);
+			List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
+			for(TaxDetail taxDet : getTaxDetailList()) {
+				if(!taxDet.isNewRecord()) {
+					if(StringUtils.isBlank(taxDet.getRecordType())) {
+						taxDet.setNewRecord(true);
+					}
+					taxDet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					taxDetailList.add(taxDet);
+				}
+			}
+			
+			doFillGSTINMappingDetails(taxDetailList);
+		}
+		
+		logger.debug("Leaving");
+	}
+	
 	private void doSetFieldMandatory(boolean isMandatory) {
 		logger.debug("Enteing");
+		
 		if (isMandatory) {
 			this.space_taxStateCode.setSclass("");
 			this.space_businessArea.setSclass("");
 			doClearMessage();
+			
 		} else {
 			this.space_taxStateCode.setSclass("mandatory");
 			this.space_businessArea.setSclass("mandatory");
