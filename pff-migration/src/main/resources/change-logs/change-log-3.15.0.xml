@@ -11103,4 +11103,11 @@ union
 			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'CIBIL_REPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'CIBIL');
 	 	</sql>
 	 </changeSet>
+	 
+	 <changeSet id="584" author="Manoj">
+	 	<createView viewName="CIBIL_FILE_INFO_VIEW" replaceIfExists="true">
+	 		select ID, FILE_NAME, CREATEDON, STATUS, FILE_LOCATION, (select id from data_engine_config where name = 'CIBIL_REPORT') configId, 'MOVE_TO_S3_BUCKET'  POSTEVENT  
+			FROM CIBIL_FILE_INFO
+	 	</createView>
+	 </changeSet>
 </databaseChangeLog>
