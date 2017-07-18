@@ -11031,4 +11031,9 @@ union
 		update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_ALPHA_SPACE_SPL' where FIELDTYPE = 'TEXT' AND FIELDCONSTRAINT = 'REGEX_ALPHANUM_SPL';
 	     </sql>
 	 </changeSet>
+	 <changeSet id="578" author="Srikanth">
+	     <sql>
+		 update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_NUMERIC' where FIELDTYPE = 'TEXT' AND FIELDNAME = 'ACNO';
+	     </sql>
+	 </changeSet>
 </databaseChangeLog>
