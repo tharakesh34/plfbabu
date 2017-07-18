@@ -10953,4 +10953,9 @@ union
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 	 	</sql>
 	 </changeSet>
+	 <changeSet id="574" author="Pruthvi">
+	     <sql>
+	         update reportfilterfields set Fielddbname='T.FinReference' where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT');
+	     </sql>
+	 </changeSet>
 </databaseChangeLog>
