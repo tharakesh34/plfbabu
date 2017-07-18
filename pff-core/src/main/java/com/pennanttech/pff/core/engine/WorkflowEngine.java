@@ -59,10 +59,10 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pennapps.core.util.XmlUtil;
 import com.pennanttech.pff.core.model.workflow.SequenceFlow;
 import com.pennanttech.pff.core.model.workflow.ServiceTask;
 import com.pennanttech.pff.core.model.workflow.UserTask;
-import com.pennanttech.pff.core.util.XmlUtil;
 
 /**
  * Workflow engine that manages the business processes. It is a key component in workflow processing and makes use of
