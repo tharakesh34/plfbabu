@@ -11060,4 +11060,13 @@ union
 			ORDER BY DS.ID DESC
 	  	</createView>
 	 </changeSet>
+	 <changeSet id="581" author="Manoj">
+	 	<sql>
+	 		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('DISB_HDFC_EXPORT', 'DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT');
+			delete from data_engine_event_properties where config_id in (select id from data_engine_config where name IN ('DISB_HDFC_EXPORT', 'DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT') );
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_HDFC_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_OTHER_CHEQUE_DD_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_OTHER_NEFT_RTGS_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+	 	</sql>
+	 </changeSet>
 </databaseChangeLog>
