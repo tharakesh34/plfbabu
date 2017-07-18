@@ -22,8 +22,15 @@ import org.apache.commons.lang.StringUtils;
  * A suite of utilities surrounding the use of the XML nodes.
  */
 public final class XmlUtil {
-	private XmlUtil() {
-		super();
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException
+	 *             If the constructor is used to create and initialize a new instance of the declaring class by
+	 *             suppressing Java language access checking.
+	 */
+	private XmlUtil() throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 
 	/**
@@ -84,7 +91,8 @@ public final class XmlUtil {
 	 *            The element name to search for. null to search any element.
 	 * @return Returns the first child element of the parent, or null if none was found.
 	 */
-	public static OMElement getElement(OMElement parent, String attributeName, String attributeValue, String elementName) {
+	public static OMElement getElement(OMElement parent, String attributeName, String attributeValue,
+			String elementName) {
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> iterator = parent.getChildElements();
 
