@@ -69,8 +69,9 @@ public class SummaryDetailService {
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
-					.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
+			FinScheduleData curSchd = resetScheduleDetail(financeDetail.getFinScheduleData());
+			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(), 
+					finPftDetail, DateUtility.getAppDate());
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
@@ -401,6 +402,28 @@ public class SummaryDetailService {
 		return totAdvAmount;
 	}
 	
+	public FinScheduleData resetScheduleDetail(FinScheduleData finScheduleData) {
+		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+		if (finScheduleData == null || finScheduleData.getFinanceScheduleDetails() == null) {
+			return finScheduleData;
+		}
+		int size = finScheduleData.getFinanceScheduleDetails().size();
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				finScheduleData.getFinanceMain().getProductCategory())) {
+			for (int i = size - 1; i >= 0; i--) {
+				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0	
+						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+					finScheduleData.getFinanceMain().setMaturityDate(curSchd.getSchDate());
+					break;
+				} else if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+					finScheduleData.getFinanceScheduleDetails().remove(i);
+				}
+			}
+		}
+		return finScheduleData;
+	}
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
 		return financeDisbursementDAO;
 	}

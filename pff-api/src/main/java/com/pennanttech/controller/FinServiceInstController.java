@@ -1062,7 +1062,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 			response = doProcessReceipt(financeDetail, finServiceInst, finServiceInst.getModuleDefiner());
-			if(response != null) {
+			if(response != null && response.getFinScheduleData() != null) {
 				FinanceSummary summary = response.getFinScheduleData().getFinanceSummary();
 				summary.setFinStatus("M");
 			}
@@ -1738,19 +1738,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		
 		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
-		int size = finScheduleData.getFinanceScheduleDetails().size();
-		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finScheduleData.getFinanceMain().getProductCategory())){
-			for (int i = size - 1; i >= 0; i--) {
-				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
-					finScheduleData.getFinanceMain().setMaturityDate(curSchd.getSchDate());
-					break;
-				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
-						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-					finScheduleData.getFinanceScheduleDetails().remove(i);
-				}
-			}
-		}
+		resetScheduleDetail(finScheduleData);
 		
 		finScheduleData.setFinanceMain(null);
 		finScheduleData.setDisbursementDetails(null);

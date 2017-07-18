@@ -169,13 +169,14 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91114", "", valueParm), lang));
-			} 
-		} else if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-			if(finServiceInstruction.getTerms() <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Number of Terms";
-				valueParm[1] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91112", "", valueParm), lang));
+			}
+			if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+				if(finServiceInstruction.getTerms() <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Number of Terms";
+					valueParm[1] = finServiceInstruction.getRecalType();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91112", "", valueParm), lang));
+				}
 			}
 		}
 		
@@ -217,7 +218,8 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 				}
 				// RecalFromDate
 				if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-						|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+						|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
+						|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 					if(DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 						isValidRecalFromDate = true;
 						if(checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
