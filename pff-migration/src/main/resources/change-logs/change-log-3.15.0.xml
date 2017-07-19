@@ -11316,4 +11316,11 @@ union
 		<column name="ERROR_CODE" type="varchar(500)" />
 	</createTable>
 </changeSet>
+
+<changeSet id="595" author="Manoj">
+	<addColumn tableName="DM_WRITEOFF_DETAILS">
+			<column name="BATCH_ID" type="bigint"/>
+		</addColumn>
+		
+</changeSet>
 </databaseChangeLog>
