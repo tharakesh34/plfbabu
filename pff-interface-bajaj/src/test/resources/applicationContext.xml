@@ -9,8 +9,8 @@
 
 	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-		<property name="url" value="jdbc:oracle:thin:@192.168.1.19:1521:orcl" />
-		<property name="username" value="plfdev" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.1.30:1521:orcl" />
+		<property name="username" value="plfdemoqc" />
 		<property name="password" value="pff123" />
 	</bean>
 	
