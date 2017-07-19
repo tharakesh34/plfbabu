@@ -493,4 +493,21 @@
 	<changeSet author="SaiRam" id="22.1">
 	    <addPrimaryKey columnNames="EntityCode,AgentID" tableName="App_SessionValidation"/> 
 	    </changeSet>
+	<changeSet author="SaiRam" id="23">  
+	<sql>
+	INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_NewLead_ProductDetails', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0)
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_ListOfAppointments', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_FinanceQueue', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_FinanceEnquiry', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_DeviationApprovals', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_CallBacks', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_TasksToComplete', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_Collections_DashBoard', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_Alerts', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_Location', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_Leads', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DocumentViewer', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_DeviationEnquiry', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>  
+	</changeSet>    
 </databaseChangeLog>
