@@ -11488,4 +11488,21 @@ union
 		left join CustomerEMails T3 on T3.custid=T1.custid and custEmailPriority=5
 	</createView>
 </changeSet>
+
+<changeSet id="604" author="Manoj">
+	<createView viewName="DM_PREPAYMENT_DETAILS_VIEW" replaceIfExists="true">
+		select 
+		cast(t2.applicationno as numeric(8,0)) APPLID,t1.finreference AGREEMENTNO,
+		null PREPAYMENTID,
+		null PREPAYMENT_RATE,null PREPAYMENT_TYPE,
+		null PREPAYMENT_PENALTY_DUE,
+		null PREPAYMENT_PENALTY_PAID,null PREPAYMENT_AMT,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,
+		'' SEGMENTS,'' PREPAYMENT_DATE,
+		cast(null as numeric(8,0)) BUSINESS_YEAR, null BATCH_ID 
+		from Finpftdetails t1
+		  inner join financemain t2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
 </databaseChangeLog>
