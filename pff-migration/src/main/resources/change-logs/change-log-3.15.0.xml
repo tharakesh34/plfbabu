@@ -11371,4 +11371,29 @@ union
 		inner join FinanceMain T2 on t1.finreference=t2.finreference
 	</createView>
 </changeSet>
+<changeSet id="599" author="Manoj">
+	<createView viewName="FORECLOSURECHARGES_VIEW" replaceIfExists="true">
+		select 
+		substr(T1.FinReference,7,length(T1.FinReference)) AGREEMENTID,udf_convertcurrency(t3.PriAmount,T2.finccy,'INR')  BAL_PRINCIPAL,null RESEDUL_VALUE,null INSTALLMENTS,
+		null ADVICES,null PENALTY,udf_convertcurrency(t4.PftAmount,T2.finccy,'INR')  INTREST_ON_TERMINATION,null FLOATINTREST_ON_TERMINATION,
+		null OVER_DUES,null CURRENT_OVERDUES,null CURRENT_WAVEOFFAMT,null OVER_DISTANCE_CHARGES,
+		null INTREST_ON_TERMINATION_PER_DAY,null INTREST_ACCRUALS,null EXCESS_AMOUNT,null EXCESS_REFUND,
+		null ADVICE,null REBATE,null ADVINSTL,null EXCESSPRINPMNT,null SDAMT,
+		null SDINT,null EXCESS_INTREST_RATE,null VAT_ON_FORECLOSURE,null UNDER_DISTANCE_CHARGES,
+		null NET_PAYBALE,udf_convertcurrency(t5.TotalFeeAmount,T2.finccy,'INR')  WAIVEOFFAMOUNT,null ACTIVITY,null AUTHORIZEDON,null COMMITMENT_FEE,null ORIGINATION_FEE,
+		null PRE_EMI,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESS_DATE,
+		null CHEQUEID,null STATUS,null INTEREST_WAIVE_OFF,null BALANCE_PRIN_WAIVE_OFF,
+		udf_convertcurrency(t6.LPFTWaivedAmount,T2.finccy,'INR')  INSTALLMET_INT_WAIVE_OFF,udf_convertcurrency(t7.PFTWaivedAmount,T2.finccy,'INR')  WOFF_CURRMONTH_INT,udf_convertcurrency(t8.ODCWaivedAmount,T2.finccy,'INR')  WOFF_OVERDUE_CHARGE,null WOFF_CHQBOUNCE_CHARGES,
+		null WOFF_OTHERS,null INSTALLMENT_PRIN_WAIVE_OFF,null WOFF_PARKING_CHARGES,null TOT_OTHER_REPO_CHARGES,
+		null WOFF_OTHER_REPO_CHARGES,null TOT_REPOSESSION_CHARGES,null WOFF_REPOSESSION_CHARGES,null TOT_PARKING_CHARGES,null BATCH_ID
+		from Finpftdetails t1
+		inner join financemain t2 on t1.finreference=t2.finreference
+		left join (select finreference,sum(PriAmount)PriAmount from FinRepayHeader where FinEvent = 'EarlySettlement' group by finreference) t3 on  t3.finreference=t2.finreference  
+		left join (select finreference,sum(PftAmount)PftAmount from FinRepayHeader where FinEvent = 'EarlySettlement' group by finreference) t4 on  t4.finreference=t2.finreference  
+		left join (select reference,receiptid,sum(TotFeeAmount)TotalFeeAmount from FinReceiptHeader where receiptpurpose = 'EarlySettlement' group by reference,receiptid) t5 on  t5.reference=t2.finreference  
+		left join (select receiptid,sum(WaivedAmount)LPFTWaivedAmount from ReceiptAllocationDetail where allocationType = 'LPFT' group by receiptid) t6 on  t6.receiptid=t5.receiptid  
+		left join (select receiptid,sum(WaivedAmount)PFTWaivedAmount from ReceiptAllocationDetail where allocationType = 'PFT' group by receiptid) t7 on  t7.receiptid=t5.receiptid  
+		left join (select receiptid,sum(WaivedAmount)ODCWaivedAmount from ReceiptAllocationDetail where allocationType = 'ODC' group by receiptid) t8 on  t8.receiptid=t5.receiptid
+	</createView>
+</changeSet>
 </databaseChangeLog>
