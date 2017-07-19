@@ -412,8 +412,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 							.getFinanceTaxDetail(taxuploadDetail.getAggrementNo(), "_View");
 					if (fintaxDetail != null) {
 						String[] errParams = new String[1];
-						errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label") + ":"
-								+ taxuploadDetail.getAggrementNo();
+						errParams[0] = taxuploadDetail.getAggrementNo();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetails(PennantConstants.KEY_FIELD, "99016", errParams, valueParm),
 								usrLanguage));
