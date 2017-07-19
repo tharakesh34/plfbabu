@@ -1792,7 +1792,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
 				(aGuarantorDetail.isBankCustomer() ? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : " + 
 						aGuarantorDetail.getGuarantorCIF() : Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : " + 
-						aGuarantorDetail.getGuarantorIDTypeName());
+						aGuarantorDetail.getGuarantorIDType());
 		
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGuarantorDetail.getRecordType())) {
@@ -1981,10 +1981,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 						dupicateRecord = true;
 					}
 				} else if (aGuarantorDetail.isBankCustomer()) {
-					 if (guarantorDetail.getGuarantorCIF().equals(aGuarantorDetail.getGuarantorCIF())) {
+					 if (StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIF()).equals(aGuarantorDetail.getGuarantorCIF())) {
 						 dupicateRecord = true;
 					 }
-				 } else if(guarantorDetail.getGuarantorIDTypeName().equals(aGuarantorDetail.getGuarantorIDTypeName())){
+				 } else if(StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDTypeName()).equals(StringUtils.trimToEmpty(aGuarantorDetail.getGuarantorIDTypeName()))){
 					 if(guarantorDetail.getGuarantorIDNumber().equals(aGuarantorDetail.getGuarantorIDNumber())) {
 						 dupicateRecord = true;
 					 }

@@ -399,7 +399,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
 			final JointAccountDetail jountAccountDetail = (JointAccountDetail) item.getAttribute("data");
-			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())||PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -565,7 +565,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
 			final GuarantorDetail guarantorDetail = (GuarantorDetail) item.getAttribute("data");
-			if (StringUtils.equalsIgnoreCase(guarantorDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.equalsIgnoreCase(guarantorDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)||PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(guarantorDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -610,7 +610,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (this.guarantorDetailList!=null && guarantorDetailList.size()>0) {
 			String cif[]=new String[guarantorDetailList.size()];
 			for (int i = 0; i <  guarantorDetailList.size(); i++) {
-				cif[i]=guarantorDetailList.get(i).getGuarantorCIF();
+					if(guarantorDetailList.get(i).getGuarantorCIF()!=null){
+						cif[i]=guarantorDetailList.get(i).getGuarantorCIF();
+				}else{
+					cif[i]=" ";
+				}
 			}
 			//cif[cif.length]=custCIF;
 			return cif;
