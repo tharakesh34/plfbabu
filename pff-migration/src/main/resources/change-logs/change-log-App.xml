@@ -313,7 +313,7 @@
 			<column name="DelegatedUserId" type="nclob" />
 		</createTable>
 	</changeSet>
-	<changeSet author="SaiRam" id="16">
+	<changeSet author="SaiRam" id="16.1">
 	      <addPrimaryKey columnNames="DeviationID" tableName="App_MC_FinDeviations"/> 
 	    </changeSet>
 	<changeSet author="SaiRam" id="17">
@@ -490,7 +490,7 @@
 			  <column name="Flag" type="char(1)" defaultValue="0"></column>
 		</createTable>
 	</changeSet>
-	<changeSet author="SaiRam" id="22">
+	<changeSet author="SaiRam" id="22.1">
 	    <addPrimaryKey columnNames="EntityCode,AgentID" tableName="App_SessionValidation"/> 
 	    </changeSet>
 </databaseChangeLog>
