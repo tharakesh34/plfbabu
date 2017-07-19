@@ -11329,4 +11329,34 @@ union
 		<column name="BATCH_ID" type="bigint" />
 	</addColumn>
 </changeSet>
+
+<changeSet id="597" author="Manoj">
+	<addColumn tableName="DM_RESCH_DETAILS_DAILY">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_PRESENTATION_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_PREPAYMENT_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_NOC_ELIGIBLE_LOANS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_LOAN_VOUCHER_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_LEA_DOC_DTL">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_HTS_UNADJUSTED_AMT">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="FORECLOSURECHARGES">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_BOUNCE_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
