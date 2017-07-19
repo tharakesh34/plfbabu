@@ -1232,13 +1232,15 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		} else {
 			this.tab_gstdetails.setVisible(false);
 			List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
-			for(TaxDetail taxDet : getTaxDetailList()) {
-				if(!taxDet.isNewRecord()) {
-					if(StringUtils.isBlank(taxDet.getRecordType())) {
-						taxDet.setNewRecord(true);
+			if (getTaxDetailList() != null) {
+				for (TaxDetail taxDet : getTaxDetailList()) {
+					if (!taxDet.isNewRecord()) {
+						if (StringUtils.isBlank(taxDet.getRecordType())) {
+							taxDet.setNewRecord(true);
+						}
+						taxDet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						taxDetailList.add(taxDet);
 					}
-					taxDet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					taxDetailList.add(taxDet);
 				}
 			}
 			
