@@ -19,6 +19,9 @@
         <dependent-module archiveName="pff-model-3.15.17.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-model/pff-model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="data-engine-2.0.0.70.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/data-engine/data-engine">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="pff-api"/>
         <property name="java-output-path" value="/pff-api/target/classes"/>
         <property name="component.exclusion.patterns" value="WEB-INF/lib/stax-api-1.0.1.jar"/>
