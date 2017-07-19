@@ -446,7 +446,7 @@
 		<menuItem id="menu_Item_PostingEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/PostingEnquiryList.zul"  rightName="menuItem_Enquiry_PostingEnquiry"/>
 		<menuItem id="menu_Item_RepaymentsEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryList.zul"  rightName="menuItem_Enquiry_RepaymentsEnquiry"/>
 		<menuItem id="menu_Item_OverdueChargeRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/OverDueInquiry/OverDueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
-		<!-- <menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/> -->
+		<menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
 		<menuItem id="menu_Item_OverdueDetails" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueDetails"/>
         <menuItem id="menu_Item_ProvisionMovement" zulNavigation="/WEB-INF/pages/Enquiry/ProvisionInquiry/ProvisionInquiryList.zul?rightName=menuItem_Enquiry_ProvisionMovement"  rightName="menuItem_Enquiry_ProvisionMovement"/>
         <menuItem id="menu_Item_SuspDetails" zulNavigation="/WEB-INF/pages/Enquiry/SuspInquiry/SuspEnquiryList.zul"  rightName="menuItem_Enquiry_SuspDetail"/>

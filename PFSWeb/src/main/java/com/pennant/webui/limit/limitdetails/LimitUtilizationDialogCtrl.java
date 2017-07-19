@@ -309,7 +309,11 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 				utilisied = setAmountIn(limitDetails.getUtilisedLimit());
 			}
 
-			avialable = sactioned.subtract(utilisied);
+			if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetails.getLimitChkMethod())) {
+				avialable = sactioned.subtract(utilisied).subtract(reserved);
+			}else if (StringUtils.equals(LimitConstants.LIMIT_CHECK_ACTUAL, limitDetails.getLimitChkMethod())) {
+				avialable = sactioned.subtract(utilisied);
+			}
 
 			lc = new Listcell(PennantAppUtil.amountFormate(sactioned, ccyFormat));
 			lc.setParent(item);

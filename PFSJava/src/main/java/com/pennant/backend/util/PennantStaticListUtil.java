@@ -880,7 +880,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("RPYENQ", Labels.getLabel("label_RepaymentEnuiry")));
 			enquiryTypes.add(new ValueLabel("ODENQ",  Labels.getLabel("label_OverdueEnquiry")));
 			enquiryTypes.add(new ValueLabel("ODCENQ", Labels.getLabel("label_OverdueChargeRecovery")));
-			//enquiryTypes.add(new ValueLabel("LTPPENQ",Labels.getLabel("label_LatepayProfitRecovery")));
+			enquiryTypes.add(new ValueLabel("LTPPENQ",Labels.getLabel("label_LatepayProfitRecovery")));
 			enquiryTypes.add(new ValueLabel("SUSENQ", Labels.getLabel("label_SuspenseEnquiry")));
 			enquiryTypes.add(new ValueLabel("PSTENQ", Labels.getLabel("label_PostingsEnquiry")));
 			enquiryTypes.add(new ValueLabel("DOCENQ", Labels.getLabel("label_DocumentEnquiry")));
