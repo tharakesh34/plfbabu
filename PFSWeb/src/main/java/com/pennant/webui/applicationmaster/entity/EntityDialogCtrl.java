@@ -245,9 +245,15 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	
 	public void onFulfill$country(Event event) {
 		logger.debug("Entering" + event.toString());
-		Object dataObject = stateCode.getObject();
+		Object dataObject = country.getObject();
 		String pcProvince = null;
 		if (dataObject instanceof String) {
+			this.stateCode.setValue("");
+			this.stateCode.setDescription("");
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			fillPindetails(null, null);
 		} else if (!(dataObject instanceof String)) {
 			Country country = (Country) dataObject; 
