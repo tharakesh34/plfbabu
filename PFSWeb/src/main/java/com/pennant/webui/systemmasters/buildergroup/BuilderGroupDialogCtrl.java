@@ -181,6 +181,10 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
+		Filter segmentFilter[] = new Filter[1];
+		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
+		this.segmentation.setFilters(segmentFilter);
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
