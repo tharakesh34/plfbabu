@@ -11396,4 +11396,15 @@ union
 		left join (select receiptid,sum(WaivedAmount)ODCWaivedAmount from ReceiptAllocationDetail where allocationType = 'ODC' group by receiptid) t8 on  t8.receiptid=t5.receiptid
 	</createView>
 </changeSet>
+<changeSet id="600" author="Manoj">
+	<createView viewName="DM_HTS_UNADJUSTED_AMT_VIEW" replaceIfExists="true">
+		  select substr(T1.FinReference,7,length(T1.FinReference)) APPLID,
+		 udf_convertcurrency(BalanceAmt,T1.finccy,'INR')  UNADJUSTED_AMOUNT,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE
+		  ,null BATCH_ID 
+		  
+		from financemain T1 
+		inner join (Select FinReference,sum(BalanceAmt)BalanceAmt from FINEXCESSAMOUNT
+		group by FinReference)t2 on t1.FinReference =t2.FinReference
+	</createView>
+</changeSet>
 </databaseChangeLog>
