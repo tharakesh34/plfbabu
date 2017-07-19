@@ -45,14 +45,17 @@ package com.pennant.backend.service.systemmasters.impl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.BuilderProjcetDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -346,8 +349,21 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
-		// Write the required validation over hear.
+		// Get the model object.
+		BuilderProjcet builderProjcet = (BuilderProjcet) auditDetail.getModelData();
 
+		String[] parameters = new String[2];
+		parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderProjcet.getName();
+		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + builderProjcet.getBuilderId();
+
+		// Check the unique keys.
+		if (builderProjcet.isNew() && builderProjcetDAO.isDuplicateKey(builderProjcet.getId(), builderProjcet.getName(),
+				builderProjcet.getBuilderId(), builderProjcet.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;

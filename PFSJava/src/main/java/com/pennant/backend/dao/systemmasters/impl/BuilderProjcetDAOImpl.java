@@ -50,6 +50,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -210,6 +211,43 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	@Override
+	public boolean isDuplicateKey(long id, String name, long builderId, TableType tableType) {
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "name = :name AND builderId = :builderId AND id != :id";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BuilderProjcet", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BuilderProjcet_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BuilderProjcet_Temp", "BuilderProjcet" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("id", id);
+		paramSource.addValue("name", name);
+		paramSource.addValue("builderId", builderId);
+		
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 	
 }	

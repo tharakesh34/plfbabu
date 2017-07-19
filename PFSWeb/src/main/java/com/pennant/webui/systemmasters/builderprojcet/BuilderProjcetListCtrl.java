@@ -63,7 +63,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.component.Uppercasebox;
-import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.builderprojcet.model.BuilderProjcetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
