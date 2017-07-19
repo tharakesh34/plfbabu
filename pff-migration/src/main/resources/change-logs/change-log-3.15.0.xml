@@ -11359,4 +11359,16 @@ union
 		<column name="BATCH_ID" type="bigint" />
 	</addColumn>
 </changeSet>
+
+<changeSet id="598" author="Manoj">
+	<createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+		select
+		cast(T2.Applicationno as numeric(8,0)) APPLID,
+		cast(null as numeric(32,0)) CHEQUEID,t1.finreference AGREEMENTNO,'' BOUNCE_DATE,'' BOUNCE_REASON,
+		cast(null as numeric(16,2)) BOUNCE_AMT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,
+		cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1
+		inner join FinanceMain T2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
 </databaseChangeLog>
