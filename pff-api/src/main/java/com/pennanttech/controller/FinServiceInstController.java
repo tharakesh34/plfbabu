@@ -1614,17 +1614,17 @@ public class FinServiceInstController extends SummaryDetailService {
 			} else {
 				// Calculate overdue Penalties
 				overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);
+			}
 
-				// Calculating Actual Sum of Penalty Amount & Late Pay Interest
-				if (overdueList != null && !overdueList.isEmpty()) {
-					for (int i = 0; i < overdueList.size(); i++) {
-						FinODDetails finODDetail = overdueList.get(i);
-						if (finODDetail.getFinODSchdDate().compareTo(curBussniessDate) > 0) {
-							continue;
-						}
-						latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
-						penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
+			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
+			if (overdueList != null && !overdueList.isEmpty()) {
+				for (int i = 0; i < overdueList.size(); i++) {
+					FinODDetails finODDetail = overdueList.get(i);
+					if (finODDetail.getFinODSchdDate().compareTo(curBussniessDate) > 0) {
+						continue;
 					}
+					latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
+					penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
 				}
 			}
 			
