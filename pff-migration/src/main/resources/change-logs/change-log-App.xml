@@ -350,6 +350,7 @@
 			<column name="Description" type="nvarchar(50)" />
 			<column name="Type" type="varchar(20)" />			
 			<column name="Formula" type="varchar(500)" />
+			<column name="DataType" type="varchar(20)"/>
 			<column name="Version" type="int">
 			    <constraints nullable="false" />
 			</column>
@@ -492,10 +493,10 @@
 	</changeSet>
 	<changeSet author="SaiRam" id="22.1">
 	    <addPrimaryKey columnNames="EntityCode,AgentID" tableName="App_SessionValidation"/> 
-	    </changeSet>
+	</changeSet>
 	<changeSet author="SaiRam" id="23">  
 	<sql>
-	INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_NewLead_ProductDetails', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0)
+	INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_NewLead_ProductDetails', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_ListOfAppointments', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_FinanceQueue', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 INSERT INTO SecRights VALUES ((select max(rightid)+1 from secrights), 4, 'app_DailyActivity_FinanceEnquiry', 'APP', 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
