@@ -11577,4 +11577,19 @@ union
 				where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID
 	</createView>
 </changeSet>
+
+<changeSet id="608" author="Manoj">
+	<createView viewName="DM_WRITEOFF_DETAILS_VIEW" replaceIfExists="true">
+		select substr(T2.FinReference,7,length(T2.FinReference)) APPLID,
+         t2.finreference AGREEMENTNO,WriteoffDate CHARGEOFF_DT,null CHARGEOFF_FLG,
+         t1.Remarks CHARGEOFF_REASON,null SETTLEMENT_LOSS,
+         udf_convertcurrency((WriteoffPrincipal+WriteoffProfit),T2.finccy,'INR')  GROSS_WRITEOFF_AMT,
+         udf_convertcurrency((WriteoffPrincipal+WriteoffProfit),T2.finccy,'INR')  NET_WRITEOFF_AMT,
+           (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+         'N' PROCESSED_FLAG,null PROCESS_DATE,null SEGMENTS,
+          null RECEIPT_ON_CHARGEOFF,null BUSINESS_YEAR, null BATCH_ID 
+  from FinWriteoffDetail T1
+  inner join financemain t2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
 </databaseChangeLog>
