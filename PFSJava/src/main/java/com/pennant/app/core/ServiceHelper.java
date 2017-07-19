@@ -134,7 +134,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	@Autowired
 	private EODConfigDAO				eodConfigDAO;
-	private EODConfig					eodConfig;
+	private static EODConfig			eodConfig;
 
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		if (StringUtils.isNotBlank(main.getPromotionCode())) {
@@ -323,11 +323,9 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void loadEODConfig() {
 		try {
-			if (eodConfig == null) {
-				List<EODConfig> list = eodConfigDAO.getEODConfig();
-				if (!list.isEmpty()) {
-					eodConfig = list.get(0);
-				}
+			List<EODConfig> list = eodConfigDAO.getEODConfig();
+			if (!list.isEmpty()) {
+				eodConfig = list.get(0);
 			}
 
 		} catch (Exception e) {
@@ -519,8 +517,5 @@ abstract public class ServiceHelper implements Serializable {
 		return eodConfig;
 	}
 
-	public void setEodConfig(EODConfig eodConfig) {
-		this.eodConfig = eodConfig;
-	}
 
 }
