@@ -11323,4 +11323,10 @@ union
 		</addColumn>
 		
 </changeSet>
+
+<changeSet id="596" author="Manoj">
+	<addColumn tableName="DM_SEND_SOA_EMAIL">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
