@@ -11592,4 +11592,144 @@ union
   inner join financemain t2 on t1.finreference=t2.finreference
 	</createView>
 </changeSet>
+
+	<changeSet id="609" author="Kesav">
+		<createView viewName="FINANCEMAIN_DVIEW" replaceIfExists="true">
+			SELECT    T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt, T1.ScheduleMethod, 
+			          T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T1.FinBranch, T1.FINASSETVALUE,
+			          T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, T2.CustId, T2.CustCIF ,
+			          T3.FinCategory lovDescProductCodeName, T3.FinDivision LovDescFinDivision 
+			FROM      FinanceMain_Temp T1 INNER JOIN
+			          Customers T2 ON T1.CustID = T2.CustID INNER JOIN
+			          RMTFinanceTypes T3 ON T3.FinType = T1.FinType INNER JOIN
+			          InvestmentFinHeader T4 ON T4.InvestmentRef = T1.InvestmentRef		
+		</createView>
+	</changeSet>
+	<changeSet id="610" author="Kesav">
+		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt, T1.ScheduleMethod, 
+			            T1.NumberOfTerms, T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T1.FinBranch, T1.FinContractDate, T1.LinkedFinRef,
+			            T1.NextUserId, T1.Priority, T1.WorkflowId, T1.TaskId, T1.NextTaskId, T1.FinPreApprovedRef, T1.RcdMaintainSts,T1.InsuranceAmt,
+			            T1.FinCurrAssetValue, T1.CalTerms, T1.DeviationApproval, T1.FinPurpose, T1.InitiateDate, T1.FINASSETVALUE,
+			            T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, T2.CustPassportNo lovDescCustPassportNo, T2.CustDOB LovDescCustDOB, 
+			            T2.CustCRCPR LovDescCustCRCPR, T2.PhoneNumber, 
+			            T3.FinCategory lovDescProductCodeName, T3.FinDivision lovdescfindivision, T3.Product lovdescFinProduct, T3.FinTypeDesc lovDescFinTypeName,
+			            COALESCE(T4.RoleDesc, FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage 
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustID = T2.CustID INNER JOIN
+			            RMTFinanceTypes T3 ON T3.FinType = T1.FinType LEFT OUTER JOIN
+			            SecRoles T4 ON T1.NextRoleCode = T4.RoleCd		
+		</createView>
+	</changeSet>
+	<changeSet id="611" author="Kesav">
+		<createView viewName="FINANCEMAINLIMITCHECK_AVIEW" replaceIfExists="true">
+			SELECT    Fm.FinReference ,Fm.FinBranch, Fm.FinSourceID, Fm.FinType, Fm.FinCcy, Fm.NumberOfTerms, Fm.ScheduleMethod, Fm.SecurityCollateral, 
+			          Fm.AllowRepayRvw, Fm.FinPurpose, FM.FINASSETVALUE,
+			          c.CustID, C.CustDftBranch, C.CustCtgCode, C.CustTypeCode, C.CustGenderCode, C.CustIsStaff, C.CustIndustry, C.CustSector, C.CustSubSector,
+			          C.CustEmpSts, C.CustMaritalSts, C.CustSegment, C.CustSubSegment, C.CustParentCountry, C.CustRiskCountry, C.CustNationality, C.CustAddlVar2,
+			          CA.CustAddrProvince,
+			          Ft.FinCategory, Ft.FinDivision,
+			          utils.datediff('MM', Fm.FinStartDate, utils.dateadd('MM', 0, Fm.MaturityDate)) Tenor  
+			FROM      FinanceMain FM
+			          JOIN Customers C ON c.CustID = Fm.CustID
+			          JOIN RMTFinanceTypes ft ON ft.FinType = fm.FinType
+			          LEFT JOIN CustomerAddresses CA ON CA.CustID = C.CustID AND CA.CustAddrType = 'PERM'		
+		</createView>
+	</changeSet>
+	<changeSet id="612" author="Kesav">
+		<createView viewName="FINANCEMAINLIMITCHECK_TVIEW" replaceIfExists="true">
+			SELECT    Fm.FinReference ,Fm.FinBranch, Fm.FinSourceID, Fm.FinType, Fm.FinCcy, Fm.NumberOfTerms, Fm.ScheduleMethod, Fm.SecurityCollateral, 
+			          Fm.AllowRepayRvw, Fm.FinPurpose, FM.FINASSETVALUE,
+			          c.CustID, C.CustDftBranch, C.CustCtgCode, C.CustTypeCode, C.CustGenderCode, C.CustIsStaff, C.CustIndustry, C.CustSector, C.CustSubSector,
+			          C.CustEmpSts, C.CustMaritalSts, C.CustSegment, C.CustSubSegment, C.CustParentCountry, C.CustRiskCountry, C.CustNationality, C.CustAddlVar2,
+			          CA.CustAddrProvince,
+			          Ft.FinCategory, Ft.FinDivision,
+			          utils.datediff('MM', Fm.FinStartDate, utils.dateadd('MM', 0, Fm.MaturityDate)) Tenor  
+			FROM      FinanceMain_Temp FM
+			          JOIN Customers C ON c.CustID = Fm.CustID
+			          JOIN RMTFinanceTypes ft ON ft.FinType = fm.FinType
+			          LEFT JOIN CustomerAddresses CA ON CA.CustID = C.CustID AND CA.CustAddrType = 'PERM'		
+		</createView>
+	</changeSet>
+	<changeSet id="613" author="Kesav">
+		<createView viewName="FINANCEMAINTENANCE_AVIEW" replaceIfExists="true">
+			SELECT    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms, 
+			          T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive,  T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			          T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			          T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange,
+			          T1.MigratedFinance, T1.RcdMaintainSts,T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule , T1.TakeOverFinance , 
+			          T1.NextRolloverDate, T1.DownPayment, T1.planEMIHAlw, T1.FinCurrAssetValue, T1.FINASSETVALUE, 
+			          T2.CustCIF LovDescCustCIF,
+			          T3.FinCategory LovDescProductCodeName, T3.FinIsAlwDifferment lovDescFinAlwDeferment,
+			          T4.ProductCategory
+			FROM      FinanceMain T1 INNER JOIN
+			          Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			          RMTFinanceTypes T3 ON T1.FinType = T3.FinType INNER JOIN
+			          BMTProduct T4 ON T3.FinCategory = T4.ProductCode		
+		</createView>
+	</changeSet>
+	<changeSet id="615" author="Kesav">
+		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+			
+			UNION ALL
+			
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			FROM        FinanceMain T1 INNER JOIN
+				    	Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))		
+		</createView>
+	</changeSet>
+	<changeSet id="616" author="Kesav">
+		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+			Select    F.FinReference, T.FinCategory LovDescProductCodeName, F.FinType, F.FinBranch, F.FinStartDate, F.MaturityDate, F.NumberOfTerms,
+			          F.FinCcy, F.FinAmount, (F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt) FinancingAmount, F.FeeChargeAmt, F.InsuranceAmt, 
+			          (F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt-F.FinRepaymentAmount) CurFinAmount, F.DownPayment, F.FinCurrAssetValue, F.FinAssetValue,
+			          C.CustCIF LovDescCustCIF
+			FROM      RejectFinanceMain F LEFT OUTER JOIN
+			          Customers C ON F.CustID = C.CustID  LEFT OUTER JOIN
+			          RMTFinanceTypes T ON F.FinType = T.FinType		
+		</createView>
+	</changeSet>
+	<changeSet id="617" author="Kesav">
+		<createView viewName="WIFFINANCEMAIN_SVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.FinAmount, T1.FinCcy, T1.FinType,T1.CustID, T1.FinAssetValue, T1.LastMntOn,T1.FinStartDate,
+			            T4.FirstTaskOwner LovDescFirstTaskOwner,
+			            T5.ProductCategory lovDescProductCodeName 
+			FROM        WIFFinanceMain T1                        
+			INNER JOIN  RMTFinanceTypes T2   ON T1.FinType = T2.FinType AND T2.FinIsActive=1
+			LEFT JOIN   LMTFinanceWorkFlowDef T3 ON T2.FinType = T3.FinType AND T3.FinEvent = 'Origination' 
+			INNER JOIN  WorkFlowDetails T4   ON T3.WorkFlowType = T4.WorkFlowType AND T4.WorkFlowActive = 1
+			INNER JOin  BMTProduct T5 ON T2.FinCategory = T5.ProductCode		
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
