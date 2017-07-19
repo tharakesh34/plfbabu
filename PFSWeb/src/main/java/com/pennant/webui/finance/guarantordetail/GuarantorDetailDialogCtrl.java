@@ -526,11 +526,14 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("custid", customer.getCustID());
-			map.put("custCIF", customer.getCustCIF());
+			map.put("custCIF", this.guarantorCIF.getValue());
+			
+			customer = (Customer)PennantAppUtil.getCustomerObject(this.guarantorCIF.getValue(), null);
+			map.put("custid",customer.getCustID());
 			map.put("custShrtName", customer.getCustShrtName());
-			map.put("finFormatter", CurrencyUtil.getFormat(customer.getCustBaseCcy()));
+			
 			if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+				map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
 				map.put("finReference", getFinanceMain().getFinReference());
 			}
 			map.put("finance", true);
