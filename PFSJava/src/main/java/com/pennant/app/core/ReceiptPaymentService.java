@@ -139,6 +139,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
+		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME
