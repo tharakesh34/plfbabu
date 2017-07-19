@@ -86,6 +86,7 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Entering ");
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
+		finMain.setRoundingTarget(finEODEvent.getFinType().getRoundingTarget());
 		List<FinanceScheduleDetail> scheduleDetailList = finEODEvent.getFinanceScheduleDetails();
 
 		// Finance Profit Details
@@ -358,6 +359,7 @@ public class AccrualService extends ServiceHelper {
 				int daysInCurPeriod = curSchd.getNoOfDays();
 				pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
 						0, RoundingMode.HALF_DOWN);
+				pftAmz=CalculationUtil.roundAmount(pftAmz, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 			} else {
 				//Do Nothing
 			}
@@ -384,6 +386,7 @@ public class AccrualService extends ServiceHelper {
 					int daysInCurPeriod = curSchd.getNoOfDays();
 					pftAmzPD = curSchd.getProfitCalc().multiply(new BigDecimal(days))
 							.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+					pftAmzPD=CalculationUtil.roundAmount(pftAmzPD, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 				} else {
 					//Do Nothing
 				}
