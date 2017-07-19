@@ -11552,4 +11552,29 @@ union
 			left join RMTPROVINCEVSCITY T8 on T8.PCCITY = T6.CITY
 	</createView>
 </changeSet>
+
+<changeSet id="607" author="Manoj">
+	<createView viewName="DM_SEND_SOA_EMAIL_VIEW" replaceIfExists="true">
+		  select T1.Finreference AGREEMENTNO,t1.custid CUSTOMERID,t4.CustEmail EMAILID,
+		  substr(T2.FinReference,7,length(T2.FinReference)) AGREEMENTID,
+		  substr(T2.FinReference,7,length(T2.FinReference))PROCESSID,
+		  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  GENERATION_DATE,
+		  null PROCESSED,t1.fintype PRODUCTFLAG,null GROUPID,
+		  T5.ActiveCnt+T6.CloseCnt TOTAL_LAN,
+		  T6.CloseCnt TOTAL_CLOSED_LAN,
+		  T5.ActiveCnt TOTAL_ACTIVE_LAN,null SWIPE_FLAG,null EMI_CARD_NO,
+		  T1.latestDisbDate DISBURSEMENT_DATE,
+		  null SUPPLIERID,null SUPPLIERDESC,
+		  udf_convertcurrency(TotalPriSchd,T2.finccy,'INR')  AMT_FIN,udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  EMI,NextRepayDate NEXT_EMI_DUE_DATE,
+		  null CHEQUE_BOUNCE_CHARGE, null BATCH_ID 
+		from Finpftdetails t1
+		inner join financemain t2 on t1.finreference=t2.finreference
+		Inner join customers T3 on T3.custid=T1.custid
+		left join CustomerEMails T4 on T4.custid=T3.custid and custEmailPriority=5
+		Left join (Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+				where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  
+		Left join (Select CustID,COUNT(*)CloseCnt from FinPftDetails
+				where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID
+	</createView>
+</changeSet>
 </databaseChangeLog>
