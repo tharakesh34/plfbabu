@@ -11732,4 +11732,10 @@ union
 		</createView>
 	</changeSet>
 	
+	
+	<changeSet id="618" author="Durgaprasad g">
+	<sql>
+		UPDATE PDC_CONSL_EMI_DTL SET TXN_TYPE_CODE = 1,SOURCE_CODE=1
+	</sql>
+	</changeSet>
 </databaseChangeLog>
