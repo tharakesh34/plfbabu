@@ -11505,4 +11505,22 @@ union
 		  inner join financemain t2 on t1.finreference=t2.finreference
 	</createView>
 </changeSet>
+
+<changeSet id="605" author="Manoj">
+	<createView viewName="DM_PRESENTATION_DETAILS_VIEW" replaceIfExists="true">
+		  select t1.finreference AGREEMENTNO,
+		  udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  EMI,udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  REPAY_TYPE,null DEPOSITED_DATE,null CREDIT_STATUS,null RETURN_CODE,null RETURN_REASON,null REMARKS,
+		  null SEGMENTS,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+		  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		  calTerms EMI_NO,t7.bankname CUSTOMER_BANK_NAME,
+		  null BOM_BOUNCE_BUCKET,t6.micr MICR_CODE,null STATUS_UPDT_DATE,t3.ACCNUMBER CUST_BANK_AC_NO,t6.Branchdesc CUSTOMER_BANK_BRANCH,
+		  null CHEQUESNO,null CHEQUEDATE,null FEMI_FLAG,null HOLD_IGNORE_CODE,null HOLD_IGNORE_REASON,null DEST_ACC_HOLDER,
+		  t3.Mandateid PDCID,  t6.bankcode BBRANCHID, null BATCH_ID 
+		  from Finpftdetails t1
+		  inner join financemain t2 on t1.finreference=t2.finreference
+		 INNER JOIN mandates t3 on t3.ORGReference = t2.finreference
+		inner join BankBranches T6 on T6.BankBranchid=t3.BankBranchid 
+		inner join BMTBankDetail T7 on T7.Bankcode=t6.bankcode
+	</createView>
+</changeSet>
 </databaseChangeLog>
