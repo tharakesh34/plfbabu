@@ -11238,4 +11238,66 @@ union
 		</createView>
 
 	</changeSet>
+	<changeSet id="591" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_VIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+						T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+						(SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+						T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+						coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName			            
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+						SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+						Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+						
+			UNION ALL
+						
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FinGuarantorsDetails_TEMP  WHERE GuarantorId = T1.GuarantorId)
+		
+		</createView>
+	
+	</changeSet>
+	<changeSet id="592" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_TVIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+						 T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						 T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						 T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+						 (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+						 T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+						 coalesce(T3.CUSTID,0) CUSTID , T3.CustShrtName
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+						SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+						Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		</createView>
+	
+	</changeSet>
+	<changeSet id="593" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_AVIEW" replaceIfExists="true">
+		SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName			            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+				        SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+				        Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		
+		</createView>
+	
+	</changeSet>
 </databaseChangeLog>
