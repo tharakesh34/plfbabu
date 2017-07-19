@@ -11298,6 +11298,22 @@ union
 				        Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
 		
 		</createView>
-	
 	</changeSet>
+	<changeSet id="594" author="Manoj">
+	<createTable tableName="DATAMART_HEADER">
+		<column name="BATCHID" type="decimal(12,0)" autoIncrement="true"
+			incrementBy="1">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="STATUS" type="varchar(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="INSERT_TIMESTAMP" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="COMPLETION_TIMESTAMP" type="datetime" />
+		<column name="ERR_DESCRIPTION" type="varchar(500)" />
+		<column name="ERROR_CODE" type="varchar(500)" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
