@@ -302,6 +302,10 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		Object dataObject = stateCode.getObject();
 		String pcProvince = this.stateCode.getValue();
 		if (dataObject instanceof String) {
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			fillPindetails(null, null);
 		} else if (!(dataObject instanceof String)) {
 			Province province = (Province) dataObject;
@@ -386,6 +390,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				fillPindetails(null, this.stateCode.getValue());
 			}
 		} else if ("".equals(dataObject)) {
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			this.stateCode.setObject("");
 		}
 		logger.debug("Leaving");
