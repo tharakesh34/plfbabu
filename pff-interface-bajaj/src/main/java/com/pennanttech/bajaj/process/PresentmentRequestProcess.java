@@ -168,6 +168,8 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		map.addValue("PRODUCT_CODE", rs.getString("FINTYPE"));
 		map.addValue("LESSEEID", rs.getInt("CUSTID"));
 		map.addValue("PICKUP_BATCHID", -1);
+		map.addValue("TXN_TYPE_CODE", 1);
+		map.addValue("SOURCE_CODE", 1);
 		map.addValue("ENTITY_CODE", 1);
 		map.addValue("POSTING_DATETIME", DateUtil.getSysDate());
 		map.addValue("STATUS", Status.N.name());
