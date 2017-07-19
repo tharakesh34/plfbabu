@@ -2208,6 +2208,7 @@ public class ScheduleCalculator {
 			// Set Profit On date based on frequency
 			if (FrequencyUtil.isFrqDate(finMain.getGrcPftFrq(), nextSchdDate)) {
 				sd.setPftOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				sd.setPftOnSchDate(false);
 			}
@@ -2215,6 +2216,7 @@ public class ScheduleCalculator {
 			//Review Date
 			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)) {
 				sd.setRvwOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				sd.setRvwOnSchDate(false);
 			}
@@ -2222,6 +2224,7 @@ public class ScheduleCalculator {
 			// Set Capitalize On date based on frequency
 			if (FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), nextSchdDate)) {
 				sd.setCpzOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				sd.setCpzOnSchDate(false);
 			}
@@ -2238,6 +2241,7 @@ public class ScheduleCalculator {
 			if (FrequencyUtil.isFrqDate(finMain.getRepayPftFrq(), nextSchdDate)) {
 				if (finMain.isFinRepayPftOnFrq()) {
 					sd.setPftOnSchDate(true);
+					sd.setFrqDate(true);
 				} else {
 					sd.setPftOnSchDate(false);
 				}
@@ -2249,6 +2253,7 @@ public class ScheduleCalculator {
 			//Review Date
 			if (finMain.isAllowRepayRvw() && FrequencyUtil.isFrqDate(finMain.getRepayRvwFrq(), nextSchdDate)) {
 				sd.setRvwOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				sd.setRvwOnSchDate(false);
 			}
@@ -2256,6 +2261,7 @@ public class ScheduleCalculator {
 			// Set Capitalize On date based on frequency
 			if (FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), nextSchdDate)) {
 				sd.setCpzOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				sd.setCpzOnSchDate(false);
 			}
@@ -2266,6 +2272,7 @@ public class ScheduleCalculator {
 			} else {
 				if (FrequencyUtil.isFrqDate(finMain.getRepayFrq(), nextSchdDate)) {
 					sd.setRepayOnSchDate(true);
+					sd.setFrqDate(true);
 				} else {
 					sd.setRepayOnSchDate(false);
 				}
