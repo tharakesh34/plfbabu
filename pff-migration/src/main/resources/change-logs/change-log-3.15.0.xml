@@ -11864,4 +11864,10 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where Debit!=0 or credit !=0]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="620" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_CONFIG set FIELDNAMES = NULL, Header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,LEDGER,DESCRIPTION,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR}' where Name = 'GL_TRAIL_BALANCE_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
