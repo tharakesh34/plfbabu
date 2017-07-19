@@ -11478,4 +11478,14 @@ union
 			ON T3.fintype=T1.fintype
 		</createView>
 </changeSet>
+
+<changeSet id="603" author="Manoj.P">
+	<createView viewName="DM_NOC_ELIGIBLE_LOANS_VIEW" replaceIfExists="true">
+		 select t1.Finreference AGREEMENTNO,t1.Finreference LOANACCTNUM,t1.fintype PRODUCTFLAG,CustEmail EMAIL,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')BUSINESSDATE,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,'N' PROCESSED_FLAG ,null BATCH_ID
+		from Finpftdetails t1
+		left join CustomerEMails T3 on T3.custid=T1.custid and custEmailPriority=5
+	</createView>
+</changeSet>
 </databaseChangeLog>
