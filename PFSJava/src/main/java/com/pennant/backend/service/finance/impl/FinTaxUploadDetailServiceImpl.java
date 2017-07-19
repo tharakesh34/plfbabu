@@ -398,9 +398,27 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			errParm[0] = String.valueOf(taxuploadDetail.getAggrementNo());
 
 			//--------Length validations-----------------------------------
-			
+
 			if (StringUtils.isEmpty(taxuploadDetail.getAggrementNo())) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99015", null), usrLanguage));
+			} else {
+				if (taxuploadDetail.getAggrementNo().length() > 20) {
+					errParm[1] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
+					errParm[2] = 20 + "";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
+				} else {
+					FinanceTaxDetail fintaxDetail = getFinanceTaxDetailDAO()
+							.getFinanceTaxDetail(taxuploadDetail.getAggrementNo(), "_View");
+					if (fintaxDetail != null) {
+						String[] errParams = new String[1];
+						errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label") + ":"
+								+ taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99016", errParams, valueParm),
+								usrLanguage));
+					}
+				}
 			}
 
 			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() > 20) {
