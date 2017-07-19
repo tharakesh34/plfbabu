@@ -289,12 +289,13 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 	}
 
 	@Override
-	public GuarantorDetail getGuarantorDetailByRefId(String finReference, String type) {
+	public GuarantorDetail getGuarantorDetailByRefId(String finReference, long guarantorId, String type) {
 
 		logger.debug("Entering");
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
 
 		guarantorDetail.setFinReference(finReference);
+		guarantorDetail.setGuarantorId(guarantorId);
 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks");
@@ -307,7 +308,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		}
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		selectSql.append(" Where FinReference =:FinReference And GuarantorId = :GuarantorId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);

@@ -645,10 +645,10 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 
 		if (guarantorDetail.isWorkflow()) {
-			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, "_Temp");
+			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, guarantorDetail.getGuarantorId(), "_Temp");
 		}
 
-		befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, "");
+		befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(finReference, guarantorDetail.getGuarantorId(), "");
 		oldGuarantorDetail = guarantorDetail.getBefImage();
 
 		String[] errParm = new String[2];

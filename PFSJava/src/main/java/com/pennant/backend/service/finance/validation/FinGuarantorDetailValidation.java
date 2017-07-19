@@ -53,10 +53,10 @@ public class FinGuarantorDetailValidation {
 		GuarantorDetail tempGuarantorDetail = null;
 		if (guarantorDetail.isWorkflow()) {
 			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(
-			        guarantorDetail.getFinReference(), "_Temp");
+			        guarantorDetail.getFinReference(), guarantorDetail.getGuarantorId(), "_Temp");
 		}
 		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(
-		        guarantorDetail.getFinReference(), "");
+		        guarantorDetail.getFinReference(), guarantorDetail.getGuarantorId(), "");
 
 		GuarantorDetail oldGuarantorDetail = guarantorDetail.getBefImage();
 

@@ -273,11 +273,12 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 	}
 	
 	@Override
-    public JointAccountDetail getJountAccountDetailByRefId(String finReference, String type) {
+    public JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type) {
 		logger.debug("Entering");
 		JointAccountDetail jountAccountDetail = new JointAccountDetail();
 		
 		jountAccountDetail.setFinReference(finReference);
+		jountAccountDetail.setJointAccountId(jointAccountId);
 		
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -286,7 +287,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" Where FinReference = :FinReference and JointAccountId = :JointAccountId ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
