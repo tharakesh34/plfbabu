@@ -11425,4 +11425,57 @@ union
 			inner join financemain t2 on t1.finreference=t2.finreference
 	</createView>
 </changeSet>
+
+<changeSet id="602" author="Manoj">
+	<createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+				 SELECT NULL MODULEID,
+			  NULL STAGEID,
+			  NULL LEA_VOUCHERID,
+			  NULL FA_VOUCHERID,
+			  NULL VOUCHERTYPE,
+			  NULL VOUCHERDATE,
+			  NULL VALUEDATE,
+			  NULL BRANCHID,
+			  NULL BRANCH_CODE,
+			  NULL BRANCHDESC,
+			  NULL BUSINESS_AREA,
+			  NULL PROFIT_CENTRE,
+			  t1.fintype PRODUCT_FLAG,
+			  t3.ID SCHEMEID,
+			  T3.FINTYPEDESC SCHEMEDESC,
+			  NULL ASSIGNMENT,
+			  SUBSTR(T2.FinReference,7,LENGTH(T2.FinReference)) AGREEMENTID,
+			  t2.Finreference AGREEMENTNO,
+			  T1.FinstartDate AGREEMENTDATE,
+			  NULL DISBURSALDATE,
+			  t1.FinIsActive LOAN_STATUS,
+			  NULL NPA_STAGEID,
+			  NULL FINNONE_GLID,
+			  NULL GROUPGLDESC,
+			  NULL SAPGL_CODE,
+			  NULL COST_CENTRE,
+			  NULL DRAMT,
+			  NULL CRAMT,
+			  NULL DRCR_FLAG,
+			  NULL DRCR_AMT,
+			  NULL NARRATION,
+			  NULL CHEQUEID,
+			  (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue
+			  FROM smtparameters
+			  WHERE SYSPARMCODE='APP_DATE'
+			  ) BUSINESSDATE,
+			  (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue
+			  FROM smtparameters
+			  WHERE SYSPARMCODE='VALUE_DATE'
+			  ) PROCESSDATE,
+			  NULL SEGMENT,
+			  'N' PROCESSED_FLAG,
+			  null BATCH_ID
+			FROM Finpftdetails t1
+			INNER JOIN financemain t2
+			ON t1.finreference=t2.finreference
+			INNER JOIN RMTFINANCETYPES T3
+			ON T3.fintype=T1.fintype
+		</createView>
+</changeSet>
 </databaseChangeLog>
