@@ -19,8 +19,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
 
 public class ModuleUtilTest {
 	@BeforeClass

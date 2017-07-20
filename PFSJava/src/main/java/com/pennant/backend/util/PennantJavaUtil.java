@@ -352,9 +352,9 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.util.ClassUtil;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 
