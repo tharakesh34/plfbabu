@@ -58,7 +58,7 @@ import com.pennant.backend.dao.administration.SecurityRightDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecurityRightDAOImpl extends BasisNextidDaoImpl<SecurityRight> implements SecurityRightDAO {
 	private static Logger				logger	= Logger.getLogger(SecurityRightDAOImpl.class);

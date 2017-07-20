@@ -57,8 +57,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.amtmasters.VehicleManufacturerDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>VehicleManufacturer model</b> class.<br>

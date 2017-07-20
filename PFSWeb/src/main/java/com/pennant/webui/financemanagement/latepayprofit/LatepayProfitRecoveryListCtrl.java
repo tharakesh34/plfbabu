@@ -1,10 +1,12 @@
 package com.pennant.webui.financemanagement.latepayprofit;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -30,10 +32,17 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
@@ -126,6 +135,15 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	private Textbox recoveryCode;
 	private String finReference = "";
 	//private int ccyFormatter = 0;
+	
+	@Autowired
+	private FinODDetailsDAO				finODDetailsDAO;
+	@Autowired
+	private FinanceMainDAO				financeMainDAO;
+	@Autowired
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	@Autowired
+	private LatePayInterestService latePayInterestService;
 
 	/**
 	 * default constructor.<br>
@@ -147,6 +165,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onCreate$window_LatepayProfitRecoveryList(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
 
@@ -255,6 +274,20 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			
 		}
 		
+		List<OverdueChargeRecovery> lpiListTodisplay = new ArrayList<OverdueChargeRecovery>();
+
+		List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
+		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "", false);
+		List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
+		for (FinODDetails fod : list) {
+			List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod, DateUtility.addDays(DateUtility.getAppDate(), -1),
+					finMian.getProfitDaysBasis(), schlist, null, finMian.getPastduePftMargin(),
+					finMian.getReceiptMode(), finMian.getRoundingTarget());
+			lpiListTodisplay.addAll(lpiList);
+
+		}
+		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(lpiListTodisplay.toArray(),new OverdueChargeRecoveryComparator()));
+		
 		logger.debug("Leaving");
 	}
 
@@ -274,8 +307,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		// Defualt Sort on the table
 		this.detailSearchObject.addSort("FinReference", false);
 		
-		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
-				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
+//		this.listBoxLatepayProfitRecovery.setModel(new GroupsModelArray(
+//				getPagedListService().getBySearchObject(detailSearchObject).toArray(),new OverdueChargeRecoveryComparator()));
 		logger.debug("Leaving");
 	}
 
@@ -547,7 +580,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 
 			// Set the ListModel for the articles.
-			getPagedListWrapper().init(this.searchObj, this.listBoxLatepayProfitRecovery,this.pagingLatepayProfitRecoveryList);
+			//getPagedListWrapper().init(this.searchObj, this.listBoxLatepayProfitRecovery,this.pagingLatepayProfitRecoveryList);
 		}else{
 			this.searchObj.addFilter(new Filter("FinReference", this.finReference, Filter.OP_EQUAL));
 		}

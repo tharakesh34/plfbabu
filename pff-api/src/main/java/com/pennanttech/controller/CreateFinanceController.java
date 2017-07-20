@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -48,6 +50,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -107,6 +110,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ManualAdviseDAO				manualAdviseDAO;
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
 	private FinanceWorkFlowService		financeWorkFlowService;
+	private FinPlanEmiHolidayDAO		finPlanEmiHolidayDAO;
 
 	
 	/**
@@ -145,12 +149,20 @@ public class CreateFinanceController extends SummaryDetailService {
 				String finType = financeMain.getFinType();
 				int finRefType = FinanceConstants.PROCEDT_LIMIT;
 				String quickDisbCode = FinanceConstants.QUICK_DISBURSEMENT;
-				List<String> roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
+				String roles = financeReferenceDetailDAO.getAllowedRolesForQuickDisb(finType, finRefType,
 						quickDisbCode);
-				 roleCode = null;
-				for (String role : roles) {
-					roleCode = StringUtils.replace(role, ",", "");
+				if(StringUtils.isBlank(roles)){
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90344"));
+					return response;
 				}
+				 roleCode = null;
+				 String[] role = roles.split(PennantConstants.DELIMITER_COMMA);
+				 for(String roleCod:role){
+					 roleCode = roleCod;
+					 break;
+				 }
 				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
 
 				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
@@ -661,6 +673,20 @@ public class CreateFinanceController extends SummaryDetailService {
 		// execute fee charges
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+		
+		if(financeMain.isQuickDisb() && financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				feeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				feeDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				feeDetail.setRcdVisible(false);
+				feeDetail.setVersion(1);
+				feeDetail.setWorkflowId(workflowId);
+				feeDetail.setRoleCode(roleCode);
+				feeDetail.setNextRoleCode(roleCode);
+				feeDetail.setTaskId(taksId);
+				feeDetail.setNextTaskId(getNextTaskId(taksId));
+			}
+		}
 
 		// validate disbursement instructions
 		if(!loanWithWIF) {
@@ -833,6 +859,9 @@ public class CreateFinanceController extends SummaryDetailService {
 						}
 					}
 					mandate.setTotEMIAmount(totEMIAmount);
+					if (financeDetail.getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
+						processPlanEmiDays(finReference, financeDetail);
+					}
 				}
 			}
 			if (financeDetail != null) {
@@ -860,6 +889,34 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	private void processPlanEmiDays(String finReference, FinanceDetail financeDetail) {
+		List<FinPlanEmiHoliday> apiPlanEMImonths = new ArrayList<FinPlanEmiHoliday>();
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+			financeDetail.getFinScheduleData()
+					.setPlanEMIHmonths(getFinPlanEmiHolidayDAO().getPlanEMIHMonthsByRef(finReference, ""));
+			if (financeDetail.getFinScheduleData().getPlanEMIHmonths() != null) {
+				for (Integer detail : financeDetail.getFinScheduleData().getPlanEMIHmonths()) {
+					FinPlanEmiHoliday finPlanEmiHoliday = new FinPlanEmiHoliday();
+					finPlanEmiHoliday.setPlanEMIHMonth(detail);
+					apiPlanEMImonths.add(finPlanEmiHoliday);
+				}
+			}
+			financeDetail.getFinScheduleData().setApiplanEMIHmonths(apiPlanEMImonths);
+		} else if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+			financeDetail.getFinScheduleData()
+					.setPlanEMIHDates(getFinPlanEmiHolidayDAO().getPlanEMIHDatesByRef(finReference, ""));
+			if(financeDetail.getFinScheduleData().getPlanEMIHDates() != null){
+			for (Date detail : financeDetail.getFinScheduleData().getPlanEMIHDates()) {
+				FinPlanEmiHoliday finPlanEmiHoliday = new FinPlanEmiHoliday();
+				finPlanEmiHoliday.setPlanEMIHDate(detail);
+				apiPlanEMImonths.add(finPlanEmiHoliday);
+			}
+			financeDetail.getFinScheduleData().setApiPlanEMIHDates(apiPlanEMImonths);
+		}
+		}
 	}
 
 	/**
@@ -1158,5 +1215,13 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public FinPlanEmiHolidayDAO getFinPlanEmiHolidayDAO() {
+		return finPlanEmiHolidayDAO;
+	}
+
+	public void setFinPlanEmiHolidayDAO(FinPlanEmiHolidayDAO finPlanEmiHolidayDAO) {
+		this.finPlanEmiHolidayDAO = finPlanEmiHolidayDAO;
 	}
 }

@@ -526,11 +526,14 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("custid", customer.getCustID());
-			map.put("custCIF", customer.getCustCIF());
+			map.put("custCIF", this.guarantorCIF.getValue());
+			
+			customer = (Customer)PennantAppUtil.getCustomerObject(this.guarantorCIF.getValue(), null);
+			map.put("custid",customer.getCustID());
 			map.put("custShrtName", customer.getCustShrtName());
-			map.put("finFormatter", CurrencyUtil.getFormat(customer.getCustBaseCcy()));
+			
 			if(getFinanceMain() != null && StringUtils.isNotEmpty(getFinanceMain().getFinReference())){
+				map.put("finFormatter", CurrencyUtil.getFormat(getFinanceMain().getFinCcy()));
 				map.put("finReference", getFinanceMain().getFinReference());
 			}
 			map.put("finance", true);
@@ -697,7 +700,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(false);
 			this.row4.setVisible(false);
 			this.row6.setVisible(true);
-			this.btnSearchGuarantorCIF.setVisible(false);
+			//this.btnSearchGuarantorCIF.setVisible(false);
 		} else {
 			this.gb_GurantorsPrimaryExposure.setVisible(false);
 			this.gb_GurantorsSecoundaryExposure.setVisible(false);
@@ -706,7 +709,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(true);
 			this.row4.setVisible(true);
 			this.row6.setVisible(false);
-			this.btnSearchGuarantorCIF.setVisible(true);
+			//this.btnSearchGuarantorCIF.setVisible(true);
 			this.emailId.setValue("");
 			this.mobileNo.setValue("");
 			this.guarantorCIF.setValue("");
@@ -748,6 +751,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSave"));
+			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 		}
 		/* create the Button Controller. Disable not used buttons during working */
 		logger.debug("Leaving");
@@ -1644,7 +1648,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if (this.bankCustomer.isChecked()) {
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorCIF.setReadonly(true);
-			this.btnSearchGuarantorCIF.setVisible(true);
+			this.btnSearchGuarantorCIF.setVisible(getUserWorkspace().isAllowed("button_GuarantorDetailDialog_btnSearchGuarantorCIF"));
 			this.guarantorIDNumber.setDisabled(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorCIFName.setReadonly(true);
@@ -1791,7 +1795,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " +
 				(aGuarantorDetail.isBankCustomer() ? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : " + 
 						aGuarantorDetail.getGuarantorCIF() : Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : " + 
-						aGuarantorDetail.getGuarantorIDTypeName());
+						aGuarantorDetail.getGuarantorIDType());
 		
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGuarantorDetail.getRecordType())) {
@@ -1980,10 +1984,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 						dupicateRecord = true;
 					}
 				} else if (aGuarantorDetail.isBankCustomer()) {
-					 if (guarantorDetail.getGuarantorCIF().equals(aGuarantorDetail.getGuarantorCIF())) {
+					 if (StringUtils.trimToEmpty(guarantorDetail.getGuarantorCIF()).equals(aGuarantorDetail.getGuarantorCIF())) {
 						 dupicateRecord = true;
 					 }
-				 } else if(guarantorDetail.getGuarantorIDTypeName().equals(aGuarantorDetail.getGuarantorIDTypeName())){
+				 } else if(StringUtils.trimToEmpty(guarantorDetail.getGuarantorIDTypeName()).equals(StringUtils.trimToEmpty(aGuarantorDetail.getGuarantorIDTypeName()))){
 					 if(guarantorDetail.getGuarantorIDNumber().equals(aGuarantorDetail.getGuarantorIDNumber())) {
 						 dupicateRecord = true;
 					 }

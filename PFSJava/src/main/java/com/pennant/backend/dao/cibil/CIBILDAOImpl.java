@@ -19,9 +19,10 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class CIBILDAOImpl implements CIBILDAO {
@@ -313,6 +314,33 @@ public class CIBILDAOImpl implements CIBILDAO {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
+	}
+
+	@Override
+	public Configuration getConfigDetails(String configName) {
+		RowMapper<Configuration> rowMapper = null;
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder("SELECT");
+			sql.append(" DC.ID, DC.NAME AS NAME, POSTEVENT, REGION_NAME, BUCKET_NAME, ACCESS_KEY, SECRET_KEY, PREFIX ");
+			sql.append("  FROM DATA_ENGINE_CONFIG DC");
+			sql.append("  INNER JOIN DATA_ENGINE_EVENT_PROPERTIES DEP ON DEP.CONFIG_ID = DC.ID");
+			sql.append(" Where DC.NAME = :NAME");
+
+			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Configuration.class);
+			parameterSource.addValue("NAME", configName);
+			return namedJdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
+
+		} catch (Exception e) {
+			logger.warn("Configuration details not available for " + configName);
+
+		} finally {
+			rowMapper = null;
+			sql = null;
+		}
+
+		return null;
 	}
 
 }

@@ -63,8 +63,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.rmtmasters.Promotion;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Promotion model</b> class.<br>

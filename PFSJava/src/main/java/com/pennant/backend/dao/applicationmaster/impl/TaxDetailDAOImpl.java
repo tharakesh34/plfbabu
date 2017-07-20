@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -60,9 +61,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -284,5 +285,33 @@ public class TaxDetailDAOImpl extends BasisNextidDaoImpl<TaxDetail> implements T
 		return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
 	}
+	
+	@Override
+	public int getGSTNumberCount(String entityCode, String taxCode, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(TaxCode) From TAXDETAIL");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ENTITYCODE <> :ENTITYCODE And TaxCode = :TaxCode");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("ENTITYCODE", entityCode);
+		source.addValue("TaxCode", taxCode);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+
 	
 }	

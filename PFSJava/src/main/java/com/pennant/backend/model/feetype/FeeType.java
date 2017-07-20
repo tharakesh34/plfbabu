@@ -71,6 +71,7 @@ private static final long serialVersionUID = 1L;
 	private String lovValue;
 	private FeeType befImage;
 	private  LoggedInUser userDetails;
+	private String hostFeeTypeCode;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -201,5 +202,13 @@ private static final long serialVersionUID = 1L;
 	public void setAdviseType(int adviseType) {
 		this.adviseType = adviseType;
 	}
+	public String getHostFeeTypeCode() {
+		return hostFeeTypeCode;
+	}
+
+	public void setHostFeeTypeCode(String hostFeeTypeCode) {
+		this.hostFeeTypeCode = hostFeeTypeCode;
+	}
+
 
 }

@@ -31,8 +31,8 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.Literal;
 
 public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger logger = Logger.getLogger(DisbursementDataImportCtrl.class);

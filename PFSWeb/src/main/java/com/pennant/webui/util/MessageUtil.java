@@ -55,9 +55,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
-import com.pennanttech.pff.core.Literal;
 
 /**
  * A suite of utilities surrounding the use of the {@link org.zkoss.zul.Messagebox Messagebox} object.
@@ -289,7 +289,7 @@ public final class MessageUtil {
 		logger.error("Exception: ", e);
 
 		Messagebox.setTemplate(TEMPLATE);
-		Messagebox.show(AppException.DEFAULT_MESSAGE.concat(SUFFIX), App.NAME, OK, ERROR);
+		Messagebox.show(AppException.getDefaultMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**

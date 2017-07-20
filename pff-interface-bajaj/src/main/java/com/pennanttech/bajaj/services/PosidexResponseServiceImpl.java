@@ -5,7 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.bajaj.process.PosidexResponseProcess;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.services.PosidexResponseService;
 
 public class PosidexResponseServiceImpl extends BajajService implements PosidexResponseService {

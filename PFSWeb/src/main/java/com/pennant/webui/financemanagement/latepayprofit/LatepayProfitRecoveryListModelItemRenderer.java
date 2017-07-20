@@ -75,8 +75,7 @@ public class LatepayProfitRecoveryListModelItemRenderer implements ListitemRende
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell("Overdue Term : "
-					+ DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate()) + "-"
-					+ overdueChargeRecovery.getFinODFor()));
+					+ DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(10);

@@ -57,7 +57,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.GCDCustomerBajjajDAO;
 import com.pennanttech.gcd.GcdCustomer;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerIncome model</b> class.<br>

@@ -56,7 +56,7 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.util.ClassUtil;
+import com.pennanttech.pennapps.core.util.ClassUtil;
 
 public class AuditDetail implements java.io.Serializable, Entity {
 	private static final Logger	logger				= Logger.getLogger(AuditDetail.class);

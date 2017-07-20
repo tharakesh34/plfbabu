@@ -18,7 +18,7 @@ import com.pennant.coreinterface.process.AccountDetailProcess;
 import com.pennant.coreinterface.process.AccountPostingProcess;
 import com.pennant.mq.processutil.AccountPostingDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountPostingServiceImpl implements AccountPostingProcess {
 	private static Logger logger = Logger.getLogger(AccountPostingServiceImpl.class);

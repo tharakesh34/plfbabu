@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.mq.dao.MQInterfaceDAO;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	private static Logger logger = Logger.getLogger(MQInterfaceDAOImpl.class);

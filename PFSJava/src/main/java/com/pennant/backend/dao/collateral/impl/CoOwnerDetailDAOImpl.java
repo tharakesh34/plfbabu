@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 
 public class CoOwnerDetailDAOImpl extends BasisNextidDaoImpl<CoOwnerDetail> implements CoOwnerDetailDAO {
 	private static Logger	logger	= Logger.getLogger(CoOwnerDetailDAOImpl.class);

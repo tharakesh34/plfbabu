@@ -1,15 +1,15 @@
- /**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
- * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
- */
+/**
+* Copyright 2011 - Pennant Technologies
+* 
+* This file is part of Pennant Java Application Framework and related Products. 
+* All components/modules/functions/classes/logic in this software, unless 
+* otherwise stated, the property of Pennant Technologies. 
+* 
+* Copyright and other intellectual property laws protect these materials. 
+* Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+* without the prior written consent of the copyright holder, is a violation of 
+* copyright law.
+*/
 
 /**
  ********************************************************************************************
@@ -64,6 +64,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.util.PennantConstants;
@@ -74,36 +75,40 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the
  * /WEB-INF/pages/applicationmaster/Entity/entityDialog.zul file. <br>
  */
-public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
+public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(EntityDialogCtrl.class);
-	
+
 	/*
 	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window                window_EntityDialog; 
-	protected Textbox 		        entityCode; 
-	protected Textbox 		        entityDesc; 
-	protected Uppercasebox 		    pANNumber; 
-    protected ExtendedCombobox 		country; 
-    protected ExtendedCombobox 		stateCode; 
-    protected ExtendedCombobox 		cityCode; 
-    protected ExtendedCombobox 		pinCode; 
-    protected Checkbox 		        active; 
-	private Entity                  entity; // overhanded per param
-	private Textbox					address;
+	protected Window window_EntityDialog;
+	protected Textbox entityCode;
+	protected Textbox entityDesc;
+	protected Uppercasebox pANNumber;
+	protected ExtendedCombobox country;
+	protected ExtendedCombobox stateCode;
+	protected ExtendedCombobox cityCode;
+	protected ExtendedCombobox pinCode;
+	protected Checkbox active;
+	private Entity entity; // overhanded per param
+	protected Textbox entityAddrLine1;
+	protected Textbox entityAddrLine2;
+	protected Textbox entityAddrHNbr;
+	protected Textbox entityFlatNbr;
+	protected Textbox entityAddrStreet;
+	protected Textbox entityPOBox;
 
 	private transient EntityListCtrl entityListCtrl; // overhanded per param
 	private transient EntityService entityService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -116,17 +121,17 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	protected void doSetProperties() {
 		super.pageRightName = "EntityDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.entity.getEntityCode()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.entity.getEntityCode()));
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -134,11 +139,10 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 */
 	public void onCreate$window_EntityDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_EntityDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.entity = (Entity) arguments.get("entity");
@@ -152,18 +156,17 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			Entity entity = new Entity();
 			BeanUtils.copyProperties(this.entity, entity);
 			this.entity.setBefImage(entity);
-			
+
 			// Render the page and display the data.
-			doLoadWorkFlow(this.entity.isWorkflow(), this.entity.getWorkflowId(),
-					this.entity.getNextTaskId());
+			doLoadWorkFlow(this.entity.isWorkflow(), this.entity.getWorkflowId(), this.entity.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -173,10 +176,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -188,37 +190,44 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		this.country.setModuleName("Country");
 		this.country.setValueColumn("CountryCode");
 		this.country.setDescColumn("CountryDesc");
-		this.country.setValidateColumns(new String[]{"CountryCode"});
-		
+		this.country.setValidateColumns(new String[] { "CountryCode" });
+
 		this.stateCode.setMandatoryStyle(true);
 		this.stateCode.setModuleName("Province");
 		this.stateCode.setValueColumn("CPProvince");
 		this.stateCode.setDescColumn("CPProvinceName");
-		this.stateCode.setValidateColumns(new String[]{"CPProvince"});
-		
+		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
+
 		this.cityCode.setMandatoryStyle(true);
 		this.cityCode.setModuleName("City");
 		this.cityCode.setValueColumn("PCCity");
 		this.cityCode.setDescColumn("PCCityName");
-		this.cityCode.setValidateColumns(new String[] {"PCCity"});
-		
+		this.cityCode.setValidateColumns(new String[] { "PCCity" });
+
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("City");
-		this.pinCode.setValidateColumns(new String[] {"PinCode"});
-		
+		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+
 		this.entityCode.setMaxlength(8);
 		this.entityDesc.setMaxlength(50);
 		this.pANNumber.setMaxlength(10);
 		this.pinCode.setMaxlength(10);
 		this.stateCode.setMaxlength(8);
-		
-        setStatusDetails();
-		
+		this.entityAddrLine1.setMaxlength(50);
+		this.entityAddrLine2.setMaxlength(50);
+		this.entityAddrHNbr.setMaxlength(50);
+		this.entityFlatNbr.setMaxlength(50);
+		this.entityAddrStreet.setMaxlength(50);
+		this.entityPOBox.setMaxlength(8);
+
+		setStatusDetails();
+
 		logger.debug(Literal.LEAVING);
-		
+
 	}
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -234,14 +243,71 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug(Literal.LEAVING);
 	}
 	
+	public void onFulfill$country(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = country.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			this.stateCode.setValue("");
+			this.stateCode.setDescription("");
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject; 
+			if (country == null) {
+				fillProvinceDetails(null);
+			}
+			if (country != null) {
+				this.stateCode.setErrorMessage("");
+				pcProvince = this.stateCode.getValue();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.stateCode.setObject("");
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
+				this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+			}
+			fillPindetails(null, null);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	private void fillProvinceDetails(String country){
+		this.stateCode.setMandatoryStyle(true);
+		this.stateCode.setModuleName("Province");
+		this.stateCode.setValueColumn("CPProvince");
+		this.stateCode.setDescColumn("CPProvinceName");
+		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
+		
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.stateCode.setFilters(filters1);
+	}
 	public void onFulfill$stateCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = stateCode.getObject();
-		String pcProvince = null;
+		String pcProvince = this.stateCode.getValue();
 		if (dataObject instanceof String) {
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			fillPindetails(null, null);
-		}else if (!(dataObject instanceof String)) {
+		} else if (!(dataObject instanceof String)) {
 			Province province = (Province) dataObject;
 			if (province == null) {
 				fillPindetails(null, null);
@@ -249,8 +315,14 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			if (province != null) {
 				this.stateCode.setErrorMessage("");
 				pcProvince = this.stateCode.getValue();
+				this.country.setValue(province.getCPCountry());
+				this.country.setDescription(province.getLovDescCPCountryName());
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
 				fillPindetails(null, pcProvince);
-			}else{
+			} else {
 				this.cityCode.setObject("");
 				this.pinCode.setObject("");
 				this.cityCode.setValue("");
@@ -263,6 +335,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		logger.debug("Leaving" + event.toString());
 	}
 
+	@SuppressWarnings("null")
 	private void fillCitydetails(String state) {
 		logger.debug("Entering");
 
@@ -271,13 +344,13 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		this.cityCode.setDescColumn("PCCityName");
 		this.cityCode.setValidateColumns(new String[] { "PCCity" });
 		Filter[] filters1 = new Filter[1];
-		
-		if (state == null) {
+
+		if (state == null || state.isEmpty()) {
 			filters1[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
 		} else {
 			filters1[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
 		}
-		
+
 		this.cityCode.setFilters(filters1);
 	}
 
@@ -289,46 +362,56 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 */
 	public void onFulfill$cityCode(Event event) throws InterruptedException {
 		logger.debug("Entering");
-
+		doRemoveValidation();
+		doClearMessage();
 		Object dataObject = cityCode.getObject();
 		String cityValue = null;
 		if (!(dataObject instanceof String)) {
 			City details = (City) dataObject;
+			if (details == null) {
+				fillPindetails(null, null);
+			}
 			if (details != null) {
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
-				cityValue = details.getPCCity();
-				fillPindetails(cityValue,this.stateCode.getValue());
-			}else{
-				this.cityCode.setObject("");
-				this.pinCode.setObject("");
-				this.cityCode.setValue("");
-				this.cityCode.setDescription("");
+				this.country.setValue(details.getPCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
 				this.pinCode.setValue("");
 				this.pinCode.setDescription("");
-				fillPindetails(null,this.stateCode.getValue());
+				cityValue = details.getPCCity();
+				fillPindetails(cityValue, this.stateCode.getValue());
+			} else {
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				this.stateCode.setErrorMessage("");
+				this.country.setErrorMessage("");
+				fillPindetails(null, this.stateCode.getValue());
 			}
-		} else if("".equals(dataObject)) {
+		} else if ("".equals(dataObject)) {
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
 			this.stateCode.setObject("");
 		}
 		logger.debug("Leaving");
 	}
 
-	private void fillPindetails(String id,String province) {
+	private void fillPindetails(String id, String province) {
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("AreaName");
 		this.pinCode.setValidateColumns(new String[] { "PinCode" });
 		Filter[] filters1 = new Filter[1];
-		
+
 		if (id != null) {
 			filters1[0] = new Filter("City", id, Filter.OP_EQUAL);
-		} else if(province != null && !province.isEmpty()) {
+		} else if (province != null && !province.isEmpty()) {
 			filters1[0] = new Filter("PCProvince", province, Filter.OP_EQUAL);
 		} else {
 			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
 		}
-		
+
 		this.pinCode.setFilters(filters1);
 	}
 
@@ -343,38 +426,48 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 
 		Object dataObject = pinCode.getObject();
 		if (dataObject instanceof String) {
-			
+
 		} else {
 			PinCode details = (PinCode) dataObject;
 
 			if (details != null) {
-				
+
+				this.country.setValue(details.getpCCountry());
+				this.country.setDescription(details.getLovDescPCCountryName());
 				this.cityCode.setValue(details.getCity());
 				this.cityCode.setDescription(details.getPCCityName());
 				this.stateCode.setValue(details.getPCProvince());
 				this.stateCode.setDescription(details.getLovDescPCProvinceName());
 				this.cityCode.setErrorMessage("");
-				this.stateCode.setErrorMessage("");;
-			} 
-				
+				this.stateCode.setErrorMessage("");
+				this.country.setErrorMessage("");
+				;
 			}
-		
-		
+
+		}
+		Filter[] filters1 = new Filter[1];
+		if (this.cityCode.getValue() != null && !this.cityCode.getValue().isEmpty()) {
+			filters1[0] = new Filter("City", this.cityCode.getValue(), Filter.OP_EQUAL);
+		} else {
+			filters1[0] = new Filter("City", null, Filter.OP_NOT_EQUAL);
+		}
+
+		this.pinCode.setFilters(filters1);
+
 		logger.debug("Leaving");
 	}
- 
 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */	
+	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -402,19 +495,21 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -471,7 +566,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -480,39 +575,42 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 */
 	public void doWriteBeanToComponents(Entity aEntity) {
 		logger.debug(Literal.ENTERING);
-	
-			this.entityCode.setValue(aEntity.getEntityCode());
-			this.entityDesc.setValue(aEntity.getEntityDesc());
-			this.pANNumber.setValue(aEntity.getPANNumber());
-		   this.country.setValue(aEntity.getCountry());
-		   this.stateCode.setValue(aEntity.getStateCode());
-		   this.cityCode.setValue(aEntity.getCityCode());
-		   this.pinCode.setValue(aEntity.getPinCode());
-		   this.address.setValue(aEntity.getAddress());
-			this.active.setChecked(aEntity.isActive());
-		
-		if (aEntity.isNewRecord()){
-			   this.country.setDescription("");
-			   this.stateCode.setDescription("");
-			   this.cityCode.setDescription("");
-			   this.pinCode.setDescription("");
-			   this.country.setValue("IN");
-			   this.country.setDescription("INDIAone");
-		}else{
-			   this.country.setDescription(aEntity.getCountryName());
-			   this.stateCode.setDescription(aEntity.getStateCodeName());
-			   this.cityCode.setDescription(aEntity.getCityCodeName());
-			   this.pinCode.setDescription(aEntity.getPinCodeName());
+
+		this.entityCode.setValue(aEntity.getEntityCode());
+		this.entityDesc.setValue(aEntity.getEntityDesc());
+		this.pANNumber.setValue(aEntity.getPANNumber());
+		this.country.setValue(aEntity.getCountry());
+		this.stateCode.setValue(aEntity.getStateCode());
+		this.cityCode.setValue(aEntity.getCityCode());
+		this.pinCode.setValue(aEntity.getPinCode());
+		this.active.setChecked(aEntity.isActive());
+		this.entityAddrLine1.setValue(aEntity.getEntityAddrLine1());
+		this.entityAddrLine2.setValue(aEntity.getEntityAddrLine2());
+		this.entityAddrHNbr.setValue(aEntity.getEntityAddrHNbr());
+		this.entityFlatNbr.setValue(aEntity.getEntityFlatNbr());
+		this.entityAddrStreet.setValue(aEntity.getEntityAddrStreet());
+		this.entityPOBox.setValue(aEntity.getEntityPOBox());
+		if (aEntity.isNewRecord()) {
+			this.country.setDescription("");
+			this.stateCode.setDescription("");
+			this.cityCode.setDescription("");
+			this.pinCode.setDescription("");
+		} else {
+			this.country.setDescription(aEntity.getCountryName());
+			this.stateCode.setDescription(aEntity.getProvinceName());
+			this.cityCode.setDescription(aEntity.getCityName());
+			this.pinCode.setDescription(aEntity.getPinCodeName());
 		}
-		
-		if(aEntity.isNew() || (aEntity.getRecordType() != null ? aEntity.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+
+		if (aEntity.isNew() || (aEntity.getRecordType() != null ? aEntity.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
 		this.recordStatus.setValue(aEntity.getRecordStatus());
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -520,51 +618,51 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 */
 	public void doWriteComponentsToBean(Entity aEntity) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
-		//Entity Code
+
+		// Entity Code
 		try {
-		    aEntity.setEntityCode(this.entityCode.getValue());
-		}catch (WrongValueException we ) {
+			aEntity.setEntityCode(this.entityCode.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Entity Name
+		// Entity Name
 		try {
-		    aEntity.setEntityDesc(this.entityDesc.getValue());
-		}catch (WrongValueException we ) {
+			aEntity.setEntityDesc(this.entityDesc.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//PAN Number
+		// PAN Number
 		try {
-		    aEntity.setPANNumber(this.pANNumber.getValue());
-		}catch (WrongValueException we ) {
+			aEntity.setPANNumber(this.pANNumber.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Country
+		// Country
 		try {
 			aEntity.setCountry(this.country.getValidatedValue());
 			aEntity.setCountryName(this.country.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//State Code
+		// State Code
 		try {
 			aEntity.setStateCode(this.stateCode.getValidatedValue());
 			aEntity.setStateCodeName(this.stateCode.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//City Code
+		// City Code
 		try {
 			aEntity.setCityCode(this.cityCode.getValidatedValue());
 			aEntity.setCityCodeName(this.cityCode.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Pin Code
+		// Pin Code
 		try {
 			aEntity.setPinCode(this.pinCode.getValidatedValue());
 		} catch (WrongValueException we) {
@@ -572,28 +670,56 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		}
 		// AddOfBranch
 		try {
-			aEntity.setAddress(this.address.getValue());
+			aEntity.setEntityAddrLine1(this.entityAddrLine1.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// AddOfBranch
 		try {
-			aEntity.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+			aEntity.setEntityAddrLine2(this.entityAddrLine2.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+		try {
+			aEntity.setEntityAddrHNbr(this.entityAddrHNbr.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aEntity.setEntityFlatNbr(this.entityFlatNbr.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aEntity.setEntityAddrStreet(this.entityAddrStreet.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aEntity.setEntityPOBox(this.entityPOBox.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// Active
+		try {
+			aEntity.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -612,7 +738,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 			// setFocus
 			this.entityCode.focus();
 		} else {
-				this.entityCode.setReadonly(true);
+			this.entityCode.setReadonly(true);
 
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(entity.getRecordType())) {
@@ -645,37 +771,74 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.entityCode.isReadonly()){
-			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+		if (!this.entityCode.isReadonly()) {
+			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		if (!this.entityDesc.isReadonly()){
-			this.entityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
+		if (!this.entityDesc.isReadonly()) {
+			this.entityDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityDesc.value"),
+					PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
-		if (!this.pANNumber.isReadonly()){
-			this.pANNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_PANNumber.value"),PennantRegularExpressions.REGEX_PANNUMBER,true));
+		if (!this.pANNumber.isReadonly()) {
+			this.pANNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_PANNumber.value"),
+					PennantRegularExpressions.REGEX_PANNUMBER, true));
 		}
-		if (!this.country.isReadonly()){
-			this.country.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_Country.value"),null,true,true));
+		if (!this.country.isReadonly()) {
+			this.country.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EntityDialog_Country.value"), null, true, true));
 		}
-		if (!this.stateCode.isReadonly()){
-			this.stateCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_StateCode.value"),null,true,true));
+		if (!this.stateCode.isReadonly()) {
+			this.stateCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EntityDialog_StateCode.value"), null, true, true));
 		}
-		if (!this.cityCode.isReadonly()){
-			this.cityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_CityCode.value"),null,true,true));
+		if (!this.cityCode.isReadonly()) {
+			this.cityCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EntityDialog_CityCode.value"), null, true, true));
 		}
-		if (!this.pinCode.isReadonly()){
-			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_PinCode.value"),null,true,true));
+		if (!this.pinCode.isReadonly()) {
+			this.pinCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_EntityDialog_PinCode.value"), null, true, true));
 		}
-	
+		if (!this.entityAddrLine1.isReadonly()) {
+			this.entityAddrLine1
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityAddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.entityAddrLine2.isReadonly()) {
+			this.entityAddrLine2
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityAddrLine2.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.entityPOBox.isReadonly()) {
+			this.entityPOBox
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityPOBox.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, false));
+		}
+		if (!this.entityAddrHNbr.isReadonly()) {
+			this.entityAddrHNbr
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityAddrHNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.entityFlatNbr.isReadonly()) {
+			this.entityFlatNbr
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityFlatNbr.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+		if (!this.entityAddrStreet.isReadonly()) {
+			this.entityAddrStreet
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_EntityDialog_EntityAddrStreet.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, false));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.entityCode.setConstraint("");
 		this.entityDesc.setConstraint("");
 		this.pANNumber.setConstraint("");
@@ -683,10 +846,15 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 		this.stateCode.setConstraint("");
 		this.cityCode.setConstraint("");
 		this.pinCode.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
-	}
+		this.entityAddrLine1.setConstraint("");
+		this.entityAddrLine2.setConstraint("");
+		this.entityPOBox.setConstraint("");
+		this.entityAddrHNbr.setConstraint("");
+		this.entityFlatNbr.setConstraint("");
+		this.entityAddrStreet.setConstraint("");
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -694,38 +862,44 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		//Entity Code
-		//Entity Name
-		//PAN Number
-		//Country
-		//State Code
-		//City Code
-		//Pin Code
-		//Active
-		
+
+		// Entity Code
+		// Entity Name
+		// PAN Number
+		// Country
+		// State Code
+		// City Code
+		// Pin Code
+		// Active
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		this.address.setErrorMessage("");
-
+		this.entityAddrLine1.setErrorMessage("");
+		this.country.setErrorMessage("");
+		this.stateCode.setErrorMessage("");
+		this.entityAddrLine2.setErrorMessage("");
+		this.entityPOBox.setErrorMessage("");
+		this.entityAddrHNbr.setErrorMessage("");
+		this.entityFlatNbr.setErrorMessage("");
+		this.entityAddrStreet.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -736,168 +910,26 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final Entity aEntity = new Entity();
 		BeanUtils.copyProperties(this.entity, aEntity);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aEntity.getEntityCode();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aEntity.getEntityCode();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aEntity.getRecordType()).equals("")){
-				aEntity.setVersion(aEntity.getVersion()+1);
+			if (StringUtils.trimToEmpty(aEntity.getRecordType()).equals("")) {
+				aEntity.setVersion(aEntity.getVersion() + 1);
 				aEntity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aEntity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aEntity.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
+					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aEntity.getNextTaskId(), aEntity);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aEntity,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.entity.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.entityCode);
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.entityCode);
-			
-		}
-	
-			readOnlyComponent(isReadOnly("EntityDialog_EntityDesc"), this.entityDesc);
-			readOnlyComponent(isReadOnly("EntityDialog_PANNumber"), this.pANNumber);
-			readOnlyComponent(isReadOnly("EntityDialog_Country"), this.country);
-			readOnlyComponent(isReadOnly("EntityDialog_StateCode"), this.stateCode);
-			readOnlyComponent(isReadOnly("EntityDialog_CityCode"), this.cityCode);
-			readOnlyComponent(isReadOnly("EntityDialog_PinCode"), this.pinCode);
-			readOnlyComponent(isReadOnly("EntityDialog_Address"), this.address);
-			readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.entity.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-			this.active.setDisabled(true);
-			readOnlyComponent(true, this.entityCode);
-			readOnlyComponent(true, this.entityDesc);
-			readOnlyComponent(true, this.pANNumber);
-			readOnlyComponent(true, this.country);
-			readOnlyComponent(true, this.stateCode);
-			readOnlyComponent(true, this.cityCode);
-			readOnlyComponent(true, this.pinCode);
-			readOnlyComponent(true, this.address);
-			//readOnlyComponent(true, this.active);
-
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.entityCode.setValue("");
-				this.entityDesc.setValue("");
-				this.pANNumber.setValue("");
-			  	this.country.setValue("");
-			  	this.country.setDescription("");
-			  	this.stateCode.setValue("");
-			  	this.stateCode.setDescription("");
-			  	this.cityCode.setValue("");
-			  	this.cityCode.setDescription("");
-			  	this.pinCode.setValue("");
-			  	this.pinCode.setDescription("");
-			  	this.address.setValue("");
-				this.active.setChecked(false);
-
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final Entity aEntity = new Entity();
-			BeanUtils.copyProperties(this.entity, aEntity);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aEntity);
-
-			isNew = aEntity.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aEntity.getRecordType())) {
-					aEntity.setVersion(aEntity.getVersion() + 1);
-					if (isNew) {
-						aEntity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aEntity.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aEntity.setNewRecord(true);
-					}
-				}
-			} else {
-				aEntity.setVersion(aEntity.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -907,197 +939,355 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
-				logger.error(e);
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(Entity aEntity, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			aEntity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aEntity.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aEntity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.entity.isNewRecord()) {
+			this.btnCancel.setVisible(false);
+			readOnlyComponent(false, this.entityCode);
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.entityCode);
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aEntity.getNextTaskId());
+		}
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aEntity);
-					}
+		readOnlyComponent(isReadOnly("EntityDialog_EntityDesc"), this.entityDesc);
+		readOnlyComponent(isReadOnly("EntityDialog_PANNumber"), this.pANNumber);
+		readOnlyComponent(isReadOnly("EntityDialog_Country"), this.country);
+		readOnlyComponent(isReadOnly("EntityDialog_StateCode"), this.stateCode);
+		readOnlyComponent(isReadOnly("EntityDialog_CityCode"), this.cityCode);
+		readOnlyComponent(isReadOnly("EntityDialog_PinCode"), this.pinCode);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrLine1"), this.entityAddrLine1);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrLine2"), this.entityAddrLine2);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityPOBox"), this.entityFlatNbr);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrHNbr"), this.entityAddrHNbr);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityFlatNbr"), this.entityAddrStreet);
+		readOnlyComponent(isReadOnly("EntityDialog_EntityAddrStreet"), this.entityPOBox);
+		readOnlyComponent(isReadOnly("EntityDialog_Active"), this.active);
 
-					if (isNotesMandatory(taskId, aEntity)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aEntity.setTaskId(taskId);
-				aEntity.setNextTaskId(nextTaskId);
-				aEntity.setRoleCode(getRole());
-				aEntity.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aEntity, tranType);
-				String operationRefs = getServiceOperations(taskId, aEntity);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aEntity, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.entity.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aEntity, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			Entity aEntity = (Entity) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		this.active.setDisabled(true);
+		readOnlyComponent(true, this.entityCode);
+		readOnlyComponent(true, this.entityDesc);
+		readOnlyComponent(true, this.pANNumber);
+		readOnlyComponent(true, this.country);
+		readOnlyComponent(true, this.stateCode);
+		readOnlyComponent(true, this.cityCode);
+		readOnlyComponent(true, this.pinCode);
+		readOnlyComponent(true, this.entityAddrLine1);
+		readOnlyComponent(true, this.entityAddrLine2);
+		readOnlyComponent(true, this.entityAddrHNbr);
+		readOnlyComponent(true, this.entityAddrStreet);
+		readOnlyComponent(true, this.entityFlatNbr);
+		readOnlyComponent(true, this.entityPOBox);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		// readOnlyComponent(true, this.active);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = entityService.delete(auditHeader);
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
+
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.entityCode.setValue("");
+		this.entityDesc.setValue("");
+		this.pANNumber.setValue("");
+		this.country.setValue("");
+		this.country.setDescription("");
+		this.stateCode.setValue("");
+		this.stateCode.setDescription("");
+		this.cityCode.setValue("");
+		this.cityCode.setDescription("");
+		this.pinCode.setValue("");
+		this.pinCode.setDescription("");
+		this.entityAddrLine1.setValue("");
+		this.entityAddrLine2.setValue("");
+		this.entityPOBox.setValue("");
+		this.entityFlatNbr.setValue("");
+		this.entityAddrHNbr.setValue("");
+		this.entityAddrStreet.setValue("");
+
+		this.active.setChecked(false);
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final Entity aEntity = new Entity();
+		BeanUtils.copyProperties(this.entity, aEntity);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aEntity);
+
+		isNew = aEntity.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aEntity.getRecordType())) {
+				aEntity.setVersion(aEntity.getVersion() + 1);
+				if (isNew) {
+					aEntity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aEntity.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aEntity.setNewRecord(true);
+				}
+			}
+		} else {
+			aEntity.setVersion(aEntity.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aEntity, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(Entity aEntity, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aEntity.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aEntity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aEntity.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aEntity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aEntity.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aEntity);
+				}
+
+				if (isNotesMandatory(taskId, aEntity)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aEntity.setTaskId(taskId);
+			aEntity.setNextTaskId(nextTaskId);
+			aEntity.setRoleCode(getRole());
+			aEntity.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aEntity, tranType);
+			String operationRefs = getServiceOperations(taskId, aEntity);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aEntity, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aEntity, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		Entity aEntity = (Entity) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = entityService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = entityService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = entityService.doApprove(auditHeader);
+
+						if (aEntity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = entityService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = entityService.doReject(auditHeader);
+						if (aEntity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = entityService.doApprove(auditHeader);
-
-							if (aEntity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = entityService.doReject(auditHeader);
-							if (aEntity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_EntityDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_EntityDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.entity), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_EntityDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_EntityDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.entity), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(Entity aEntity, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aEntity.getBefImage(), aEntity);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aEntity.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setEntityService(EntityService entityService) {
-			this.entityService = entityService;
-		}
-			
+	private AuditHeader getAuditHeader(Entity aEntity, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aEntity.getBefImage(), aEntity);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aEntity.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+
 }

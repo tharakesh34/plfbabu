@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.util;
+package com.pennanttech.pennapps.core.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,18 +19,22 @@ import org.apache.log4j.Logger;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 /**
- * <p>
  * A suite of utilities surrounding the use of the {@link ModuleMapping} that contain information about the
  * implementation of the modules.
- * </p>
  */
 public final class ModuleUtil {
 	private static final Logger logger = Logger.getLogger(ModuleUtil.class);
+	private static Map<String, ModuleMapping> mappings = new HashMap<>();
 
-	private static Map<String, ModuleMapping> moduleMappings = new HashMap<String, ModuleMapping>();
-
-	private ModuleUtil() {
-		super();
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException
+	 *             If the constructor is used to create and initialize a new instance of the declaring class by
+	 *             suppressing Java language access checking.
+	 */
+	private ModuleUtil() throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 
 	/**
@@ -43,7 +47,7 @@ public final class ModuleUtil {
 	 *            The {@link ModuleMapping} specifying the attributes to the module.
 	 */
 	public static void register(String code, ModuleMapping mapping) {
-		moduleMappings.put(code, mapping);
+		mappings.put(code, mapping);
 	}
 
 	/**
@@ -52,7 +56,7 @@ public final class ModuleUtil {
 	 * @return A string array containing all the module codes that were registered.
 	 */
 	public static String[] getCodes() {
-		return moduleMappings.keySet().toArray(new String[0]);
+		return mappings.keySet().toArray(new String[0]);
 	}
 
 	/**
@@ -71,7 +75,7 @@ public final class ModuleUtil {
 			throw new IllegalArgumentException();
 		}
 
-		ModuleMapping mapping = moduleMappings.get(code);
+		ModuleMapping mapping = mappings.get(code);
 
 		if (mapping == null) {
 			throw new IllegalAccessError("Module registration not available.");

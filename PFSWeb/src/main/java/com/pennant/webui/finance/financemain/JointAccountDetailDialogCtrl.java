@@ -117,6 +117,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Groupbox finBasicdetails;
 	private Object mainController;
 	private boolean enquiry;
+	private	boolean fromApproved;
 
 	/**
 	 * default constructor.<br>
@@ -169,9 +170,12 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			enquiry = (boolean) arguments.get("enquiry");
 		}
 		
-		
 		if (arguments.containsKey("mainController")) {
 			setMainController(arguments.get("mainController"));
+		}
+		
+		if (arguments.containsKey("fromApproved")) {
+			this.fromApproved = (Boolean) arguments.get("fromApproved");
 		}
 
 		doCheckRights();
@@ -207,13 +211,25 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		if (enquiry) {
 			if (!financeMain.isNewRecord()) {
-				List<JointAccountDetail> jointAccountDetailList = this.jointAccountDetailService
+				List<JointAccountDetail> jointAccountDetailList= new ArrayList<JointAccountDetail>();
+				List<GuarantorDetail> gurantorsAccDetailList = new ArrayList<GuarantorDetail>();
+				if(fromApproved){
+				 jointAccountDetailList = this.jointAccountDetailService
 						.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+				}else{
+					 jointAccountDetailList = this.jointAccountDetailService
+								.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+				}
 				if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 					doFillJointDetails(jointAccountDetailList);
 				}
-				List<GuarantorDetail> gurantorsAccDetailList = this.guarantorDetailService
+				if(fromApproved){
+				 gurantorsAccDetailList = this.guarantorDetailService
 						.getGuarantorDetail(financeMain.getFinReference(), "_AView");
+				}else{
+					gurantorsAccDetailList = this.guarantorDetailService
+							.getGuarantorDetail(financeMain.getFinReference(), "_View");
+				}
 				if (gurantorsAccDetailList != null && !gurantorsAccDetailList.isEmpty()) {
 					doFillGurantorsDetails(gurantorsAccDetailList);
 				}
@@ -383,7 +399,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
 			final JointAccountDetail jountAccountDetail = (JointAccountDetail) item.getAttribute("data");
-			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())||PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -549,7 +565,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
 			final GuarantorDetail guarantorDetail = (GuarantorDetail) item.getAttribute("data");
-			if (StringUtils.equalsIgnoreCase(guarantorDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.equalsIgnoreCase(guarantorDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)||PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(guarantorDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -592,11 +608,15 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 	private String[] getjointAcFilter(){
 		if (this.guarantorDetailList!=null && guarantorDetailList.size()>0) {
-			String cif[]=new String[guarantorDetailList.size()+1];
+			String cif[]=new String[guarantorDetailList.size()];
 			for (int i = 0; i <  guarantorDetailList.size(); i++) {
-				cif[i]=guarantorDetailList.get(i).getGuarantorCIF();
+					if(guarantorDetailList.get(i).getGuarantorCIF()!=null){
+						cif[i]=guarantorDetailList.get(i).getGuarantorCIF();
+				}else{
+					cif[i]=" ";
+				}
 			}
-			cif[cif.length-1]=custCIF;
+			//cif[cif.length]=custCIF;
 			return cif;
 		}else{
 			String cif[]=new String[1];
@@ -606,11 +626,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 	private String[] getGurantorFilter(){
 		if (this.jountAccountDetailList!=null && jountAccountDetailList.size()>0) {
-			String cif[]=new String[jountAccountDetailList.size()+1];
+			String cif[]=new String[jountAccountDetailList.size()];
 			for (int i = 0; i <  jountAccountDetailList.size(); i++) {
 				cif[i]=jountAccountDetailList.get(i).getCustCIF();
 			}
-			cif[cif.length-1]=custCIF;
+			//cif[cif.length-1]=custCIF;
 			return cif;
 		}else{
 			String cif[]=new String[1];

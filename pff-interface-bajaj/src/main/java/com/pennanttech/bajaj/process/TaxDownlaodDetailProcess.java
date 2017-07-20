@@ -22,9 +22,9 @@ import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.model.Branch;
 import com.pennanttech.bajaj.model.TaxDetail;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodDetailProcess.class);
@@ -228,10 +228,10 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		String userBranchCode = rs.getString("USERBRANCH");
 		Branch userBranch;
-		if(userBranchCode.equals(CON_EOD)){
+		if(userBranchCode == null || userBranchCode.equals(CON_EOD)){
 			userBranch = loanBranch;
 		} else{
-			 userBranch = branchMap.get(rs.getObject("userBranchCode"));
+			 userBranch = branchMap.get(userBranchCode);
 		}
 		
 		//map.addValue("LOAN_SERVICING_BRANCH", userBranch.getBranchSwiftBrnCde());

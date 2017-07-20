@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * A suite of utilities surrounding the use of the Currency that contain information about the environment for the

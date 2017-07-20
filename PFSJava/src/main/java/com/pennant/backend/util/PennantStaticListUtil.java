@@ -270,7 +270,7 @@ public class PennantStaticListUtil {
 			regexType.add(new ValueLabel("REGEX_NUMERIC", Labels.getLabel("label_REGEX_NUMERIC")));
 			regexType.add(new ValueLabel("REGEX_ALPHANUM", Labels.getLabel("label_REGEX_ALPHANUM")));
 			regexType.add(new ValueLabel("REGEX_ALPHA_SPACE_SPL", Labels.getLabel("label_ALPHANUM_SPACE_SPL")));
-			regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPL")));
+			regexType.add(new ValueLabel("REGEX_ALPHANUM_SPACE_SPL", Labels.getLabel("label_REGEX_ALPHANUM_SPL")));
 			regexType.add(new ValueLabel("REGEX_NUMERIC_SPL", Labels.getLabel("label_REGEX_NUMERIC_SPL")));
 			regexType.add(new ValueLabel("REGEX_NAME", Labels.getLabel("label_REGEX_NAME")));
 			regexType.add(new ValueLabel("REGEX_DESCRIPTION", Labels.getLabel("label_REGEX_DESCRIPTION")));
@@ -880,7 +880,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("RPYENQ", Labels.getLabel("label_RepaymentEnuiry")));
 			enquiryTypes.add(new ValueLabel("ODENQ",  Labels.getLabel("label_OverdueEnquiry")));
 			enquiryTypes.add(new ValueLabel("ODCENQ", Labels.getLabel("label_OverdueChargeRecovery")));
-			//enquiryTypes.add(new ValueLabel("LTPPENQ",Labels.getLabel("label_LatepayProfitRecovery")));
+			enquiryTypes.add(new ValueLabel("LTPPENQ",Labels.getLabel("label_LatepayProfitRecovery")));
 			enquiryTypes.add(new ValueLabel("SUSENQ", Labels.getLabel("label_SuspenseEnquiry")));
 			enquiryTypes.add(new ValueLabel("PSTENQ", Labels.getLabel("label_PostingsEnquiry")));
 			enquiryTypes.add(new ValueLabel("DOCENQ", Labels.getLabel("label_DocumentEnquiry")));
@@ -2135,9 +2135,11 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getAccTypeList() {
 		if(accTypeList == null){
-			accTypeList = new ArrayList<ValueLabel>(2);
+			accTypeList = new ArrayList<ValueLabel>(4);
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CA,Labels.getLabel("label_Mandate_CA")));
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_SA,Labels.getLabel("label_Mandate_SA")));
+			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CC,Labels.getLabel("label_Mandate_CC")));
+			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_OD,Labels.getLabel("label_Mandate_OD")));
 		}
 		return accTypeList;
 	}
@@ -2744,7 +2746,7 @@ public class PennantStaticListUtil {
 		if(phoneTypeRegex == null){
 			phoneTypeRegex = new ArrayList<ValueLabel>(2);
 			phoneTypeRegex.add(new ValueLabel("[0-9]{10}", Labels.getLabel("listheader_MobileNumber.label")));
-			phoneTypeRegex.add(new ValueLabel("[0-9]{13}", Labels.getLabel("listheader_DealerTelephone.label")));
+			phoneTypeRegex.add(new ValueLabel("[0-9]{10,13}", Labels.getLabel("listheader_DealerTelephone.label")));
 		}
 		return phoneTypeRegex;
 	}

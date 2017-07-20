@@ -18,7 +18,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.services.ALMRequestService;
 import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import com.pennanttech.pff.core.services.DataMartRequestService;

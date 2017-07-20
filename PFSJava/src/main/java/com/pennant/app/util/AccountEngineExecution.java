@@ -82,8 +82,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennanttech.pff.core.FactoryException;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 public class AccountEngineExecution implements Serializable {

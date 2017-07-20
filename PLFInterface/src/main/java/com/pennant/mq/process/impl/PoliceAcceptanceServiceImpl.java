@@ -4,7 +4,7 @@ import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
 import com.pennant.coreinterface.process.PoliceAcceptanceProcess;
 import com.pennant.mq.processutil.PoliceAcceptanceUtilProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class PoliceAcceptanceServiceImpl implements PoliceAcceptanceProcess {
 

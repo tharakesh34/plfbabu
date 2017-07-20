@@ -184,7 +184,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String cif[]=null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -567,7 +567,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void onCheck$includeRepay(Event event) {
 		logger.debug("Entering" + event.toString());
-		doCheckIncludeRepay();
+		//doCheckIncludeRepay();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -627,7 +627,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doWriteBeanToComponents(aJountAccountDetail);
 			// set ReadOnly mode accordingly if the object is new or not.
 			// displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aJountAccountDetail.isNewRecord()));
-			doCheckIncludeRepay();
+			//doCheckIncludeRepay();
 			// setDialog(DialogType.EMBEDDED);
 			this.window_JountAccountDetailDialog.setWidth("90%");
 			this.window_JountAccountDetailDialog.setHeight("90%");
@@ -717,7 +717,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					btnCancel.setVisible(false);
 				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newContributor);
-					this.btnSave.setVisible(false);
+					//this.btnSave.setVisible(false);
 				}
 			} else {
 				this.btnCtrl.setBtnStatus_Edit();
@@ -760,6 +760,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSave"));
+			this.btnSearchCustCIF.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSearchCustCIF"));
 		}
 		logger.debug("Leaving");
 	}
@@ -781,7 +782,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (!isNewRecord()) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(true);
-			this.btnSearchCustCIF.setVisible(false);
+			//this.btnSearchCustCIF.setVisible(false);
 			this.custCIF.setReadonly(false);
 			this.gb_JointAccountPrimaryJoint.setVisible(true);
 			this.gb_JointAccountSecondaryJoint.setVisible(true);
@@ -801,6 +802,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		// this.finReference.setValue(aJountAccountDetail.getFinReference());
 		this.custCIF.setValue(aJountAccountDetail.getCustCIF());
+		this.custID.setValue(aJountAccountDetail.getCustID());
 		this.includeRepay.setChecked(aJountAccountDetail.isIncludeRepay());
 		this.repayAccountId.setValue(PennantApplicationUtil.formatAccountNumber(aJountAccountDetail.getRepayAccountId()));
 		this.custCIFName.setValue(aJountAccountDetail.getLovDescCIFName());
@@ -1182,6 +1184,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		aJountAccountDetail.setRecordStatus(this.recordStatus.getValue());
 		setJountAccountDetail(aJountAccountDetail);
+		
 		logger.debug("Leaving");
 	}
 
@@ -1314,50 +1317,51 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		final JointAccountDetail aJountAccountDetail = new JointAccountDetail();
-		BeanUtils.copyProperties(getJountAccountDetail(), aJountAccountDetail);
+		final JointAccountDetail aJointAccountDetail = new JointAccountDetail();
+		BeanUtils.copyProperties(getJountAccountDetail(), aJointAccountDetail);
 		boolean isNew = false;
 		
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
 		// fill the DocumentDetails object with the components data
-		doWriteComponentsToBean(aJountAccountDetail);
+		doWriteComponentsToBean(aJointAccountDetail);
+		
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		isNew = aJountAccountDetail.isNew();
+		isNew = aJointAccountDetail.isNew();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aJountAccountDetail.getRecordType())) {
-				aJountAccountDetail.setVersion(aJountAccountDetail.getVersion() + 1);
+			if (StringUtils.isBlank(aJointAccountDetail.getRecordType())) {
+				aJointAccountDetail.setVersion(aJointAccountDetail.getVersion() + 1);
 				if (isNew) {
-					aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aJointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aJountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					aJountAccountDetail.setNewRecord(true);
+					aJointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aJointAccountDetail.setNewRecord(true);
 				}
 			}
 		} else {
 			if (isNewContributor()) {
 				if (isNewRecord()) {
-					aJountAccountDetail.setVersion(1);
-					aJountAccountDetail.setRecordType(PennantConstants.RCD_ADD);
+					aJointAccountDetail.setVersion(1);
+					aJointAccountDetail.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
-				if (StringUtils.isBlank(aJountAccountDetail.getRecordType())) {
-					aJountAccountDetail.setVersion(aJountAccountDetail.getVersion() + 1);
-					aJountAccountDetail.setRecordType(PennantConstants.RCD_UPD);
-					aJountAccountDetail.setNewRecord(true);
+				if (StringUtils.isBlank(aJointAccountDetail.getRecordType())) {
+					aJointAccountDetail.setVersion(aJointAccountDetail.getVersion() + 1);
+					aJointAccountDetail.setRecordType(PennantConstants.RCD_UPD);
+					aJointAccountDetail.setNewRecord(true);
 				}
-				if (aJountAccountDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+				if (aJointAccountDetail.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 					tranType = PennantConstants.TRAN_ADD;
-				} else if (aJountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (aJointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 			} else {
-				aJountAccountDetail.setVersion(aJountAccountDetail.getVersion() + 1);
+				aJointAccountDetail.setVersion(aJointAccountDetail.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
@@ -1368,10 +1372,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// save it to database
 		try {
 			if (isNewContributor()) {
-				AuditHeader auditHeader = newJountAccountProcess(aJountAccountDetail, tranType);
+				AuditHeader auditHeader = newJountAccountProcess(aJointAccountDetail, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_JountAccountDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					
 					getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
 					closeDialog();
 				}

@@ -26,7 +26,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);

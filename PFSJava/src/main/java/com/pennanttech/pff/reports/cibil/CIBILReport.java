@@ -33,8 +33,12 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.dataengine.Event;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.service.AmazonS3Bucket;
 
 public class CIBILReport {
 	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
@@ -81,7 +85,7 @@ public class CIBILReport {
 		try {
 
 			headerId = cibilService.logFileInfo(reportName.getName(), CBIL_REPORT_MEMBER_ID,
-					CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD,CBIL_REPORT_PATH);
+					CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD, CBIL_REPORT_PATH);
 
 			cibilService.deleteDetails();
 
@@ -119,6 +123,7 @@ public class CIBILReport {
 						list.add(customer.getCustomerFinance());
 						new AccountSegmentHistory(writer, list).write();
 						new EndofSubjectSegment(writer).write();
+
 						successCount++;
 					} catch (Exception e) {
 						failedCount++;
@@ -143,6 +148,14 @@ public class CIBILReport {
 			String remarks = updateRemarks();
 			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
 					remarks);
+
+			Configuration config = cibilService.getConfigDetails("CIBIL_REPORT");
+
+			if (Event.MOVE_TO_S3_BUCKET.name().equals(config.getPostEvent())) {
+				AmazonS3Bucket bucket = new AmazonS3Bucket(config.getRegionName(), config.getBucketName(),
+						EncryptionUtil.decrypt(config.getAccessKey()), EncryptionUtil.decrypt(config.getSecretKey()));
+				bucket.putObject(reportName, config.getPrefix());
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

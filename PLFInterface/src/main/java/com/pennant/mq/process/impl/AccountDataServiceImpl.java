@@ -12,7 +12,7 @@ import com.pennant.mq.processutil.AddOrRemoveHoldProcess;
 import com.pennant.mq.processutil.CollateralMarkProcess;
 import com.pennant.mq.processutil.CreateAccountProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountDataServiceImpl implements AccountDataProcess {
 

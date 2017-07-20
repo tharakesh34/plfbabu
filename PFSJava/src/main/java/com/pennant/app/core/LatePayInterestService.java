@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -59,7 +60,7 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public void computeLPI(FinODDetails fod, Date valueDate, String idb, List<FinanceScheduleDetail> finScheduleDetails,
+	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, String idb, List<FinanceScheduleDetail> finScheduleDetails,
 			List<FinanceRepayments> repayments, BigDecimal pastduePftMargin, String roundingMode, int roundingTarget) {
 		logger.debug(" Entering ");
 
@@ -143,13 +144,22 @@ public class LatePayInterestService extends ServiceHelper {
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
 					penaltyRate);
 
-			odcr.setPenalty(penalty);
+			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
+			odcrCur.setPenaltyAmtPerc(penaltyRate);
+			odcrCur.setPenalty(penalty);
+			odcrCur.setPenaltyBal(odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
 		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
+		
+		//if the record added for calculation it should not be displayed in screen.
+		if (isAddTodayRcd) {
+			schdODCRecoveries.remove(schdODCRecoveries.size()-1);
+		}
 		logger.debug(" Leaving ");
+		return  schdODCRecoveries;
 	}
 
 	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin) {

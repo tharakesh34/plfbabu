@@ -191,8 +191,8 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pff.core.InterfaceException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -2126,7 +2126,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)){
+				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) ||!financeDetail.isStp()){
 					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
 							tableType.getSuffix(), auditTranType));	
 				} else {
@@ -3134,7 +3134,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "");
 
-			if (!isWIF && !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
 				//Additional Field Details Deletion
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "");
@@ -3709,7 +3709,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			// ScheduleDetails delete
 			//=======================================
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
 				listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), "_Temp", isWIF);
 			}
 
@@ -3724,7 +3724,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!isWIF && !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
 				//Additional Field Details Deletion in _Temp Table
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
@@ -3855,7 +3855,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
 
 				//Fin Fee Details Deletion
 				if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
@@ -5476,7 +5476,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		getFinMandateService().validateMandate(auditDetail, financeDetail);
-		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
 			getFinMandateService().promptMandate(auditDetail, financeDetail);
 		}
 
@@ -7461,7 +7461,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			getTaskOwnersDAO().saveOrUpdateList(taskOwnerList);
 
 			if (queueAssignList.size() > 0 && StringUtils.isNotBlank(financeMain.getLovDescAssignMthd())
-					&& !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+					&& (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)|| (financeMain.isQuickDisb()))) {
 				getQueueAssignmentDAO().saveOrUpdate(queueAssignList);
 			}
 		}

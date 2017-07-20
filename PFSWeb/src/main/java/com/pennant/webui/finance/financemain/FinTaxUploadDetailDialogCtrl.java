@@ -1,9 +1,6 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +54,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.InterfaceException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader> {
@@ -89,10 +86,13 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	protected Listheader						listheader_Select;
 	private FinTaxUploadHeader					finTaxUploadHeader;
 	private Media								media;
+	protected Button							button_ErrorDetails;				// autoWired
+	protected Label								label_FinTaxUploadDialog_Errors;
+	private AuditHeader							retAuditHeader;
 
 	private transient FinTaxUploadDetailService	finTaxUploadDetailService;
-	
-	private boolean								isvalidData=true;
+
+	private boolean								isvalidData					= true;
 
 	@Override
 	protected void doSetProperties() {
@@ -142,7 +142,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private void doShowDialog(FinTaxUploadHeader finTaxUploadHeader) {
 
 		logger.debug("Entering");
-		this.listBoxFileData.setHeight(this.borderLayoutHeight - 200 + "px");
+		this.listBoxFileData.setHeight(this.borderLayoutHeight - 220 + "px");
 
 		if (StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 			this.listheader_Select.setVisible(false);
@@ -193,10 +193,17 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		String status = null;
 		media = event.getMedia();
 		Sheet firstSheet;
+		retAuditHeader = null;
+		this.button_ErrorDetails.setVisible(false);
+		this.label_FinTaxUploadDialog_Errors.setVisible(false);
 
 		if ("xls".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
 			isSupported = true;
-			this.uploadedfileName.setValue(media.getName());
+			if (media.getName().length() > 100) {
+				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
+			} else {
+				this.uploadedfileName.setValue(media.getName());
+			}
 		}
 
 		if (isSupported) {
@@ -219,11 +226,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						continue;
 					}
 					totalCount++;
-					parseExcelData(finTaxUploadDetailList,nextRow);
-					if(!isvalidData){
-						MessageUtil.showError(
-								"Please Check the Data Format before uploading the document.Should be :Text Format");
-						isvalidData=true;
+					parseExcelData(finTaxUploadDetailList, nextRow);
+					if (!isvalidData) {
+						MessageUtil.showError(Labels.getLabel("label_File_Format"));
+						isvalidData = true;
 						this.uploadedfileName.setValue("");
 						return;
 					}
@@ -234,7 +240,6 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			doFillHeaderData(media.getName(), DateUtility.getAppDate(), totalCount, status);
 			doFillFinTaxUploadData(finTaxUploadDetailList);
 			getFinTaxUploadHeader().setFinTaxUploadDetailList(finTaxUploadDetailList);
-			
 
 		} else {
 			MessageUtil.showError(Labels.getLabel("GSTUpload_Supported_Document"));
@@ -281,7 +286,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		case Cell.CELL_TYPE_NUMERIC:
 			value = String.valueOf(cell.getNumericCellValue());
 			if (value.contains(".0")) {
-				isvalidData=false; 
+				isvalidData = false;
 			}
 			break;
 		}
@@ -441,7 +446,6 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
 			}
 		}
-			
 
 		doSetValidation(userAction);
 		doWriteComponentsToBean(finTaxUploadDetailList, userAction, afinTaxUploadHeader);
@@ -492,21 +496,21 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		}
 	}
 
-	
-	private void copyInputStreamToFile( byte[] data, File file ) {
-	    try {
-	    	
-	    	File backup = new File(file.getPath());
+	private void copyInputStreamToFile(byte[] data, File file) {
+		try {
+
+			File backup = new File(file.getPath());
 			if (backup != null && !backup.exists()) {
 				backup.mkdir();
 			}
-			
-	        FileUtils.writeByteArrayToFile(file, data);
-	        
-	    } catch (Exception e) {
-	        logger.debug(e);
-	    }
+
+			FileUtils.writeByteArrayToFile(file, data);
+
+		} catch (Exception e) {
+			logger.debug(e);
+		}
 	}
+
 	private void doSetValidation(String userAction) {
 		List<Listitem> Listitems = this.listBoxFileData.getItems();
 		boolean selected = false;
@@ -561,10 +565,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			}
 			afinTaxUploadHeader.setFinTaxUploadDetailList(finTaxUploadDetailList);
 		}
-		checkFoSelection(afinTaxUploadHeader);
+		checkForSelection(afinTaxUploadHeader);
 	}
 
-	private void checkFoSelection(FinTaxUploadHeader afinTaxUploadHeader) {
+	private void checkForSelection(FinTaxUploadHeader afinTaxUploadHeader) {
 		List<Listitem> Listitems = this.listBoxFileData.getItems();
 		boolean totalSelected = false;
 		for (Listitem listitem : Listitems) {
@@ -691,8 +695,17 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 						return processCompleted;
 					}
 				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_FinTaxUploadDetail, auditHeader);
-				retValue = auditHeader.getProcessStatus();
+
+				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 1) {
+					this.button_ErrorDetails.setVisible(true);
+					this.label_FinTaxUploadDialog_Errors.setVisible(true);
+					retAuditHeader = auditHeader;
+					MessageUtil.showError(Labels.getLabel("label_FinTaxUploadDialog_Error"));
+					retValue = PennantConstants.porcessCANCEL;
+				} else {
+					auditHeader = ErrorControl.showErrorDetails(this.window_FinTaxUploadDetail, auditHeader);
+					retValue = auditHeader.getProcessStatus();
+				}
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 					if (deleteNotes) {
@@ -739,7 +752,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.select.isChecked()) {
 			for (Listitem listitem : Listitems) {
 				((Checkbox) listitem.getFirstChild().getFirstChild()).setChecked(true);
-					Clients.clearWrongValue(this.listBoxFileData);
+				Clients.clearWrongValue(this.listBoxFileData);
 			}
 		} else {
 			for (Listitem listitem : Listitems) {
@@ -764,6 +777,21 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 		}
 		this.select.setChecked(totalselected);
+	}
+
+	public void onClick$button_ErrorDetails(Event event) {
+		logger.debug("Entering");
+		Map<String, Object> arg = new HashMap<String, Object>();
+		arg.put("AuditHeader", retAuditHeader);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/ErrorDetail/ErrorDetail/AuditErrorDetailsList.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**

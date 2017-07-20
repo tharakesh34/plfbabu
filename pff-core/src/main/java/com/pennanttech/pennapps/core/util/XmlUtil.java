@@ -9,7 +9,7 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.util;
+package com.pennanttech.pennapps.core.util;
 
 import java.util.Iterator;
 
@@ -19,13 +19,18 @@ import org.apache.axiom.om.OMElement;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * <p>
  * A suite of utilities surrounding the use of the XML nodes.
- * </p>
  */
 public final class XmlUtil {
-	private XmlUtil() {
-		super();
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException
+	 *             If the constructor is used to create and initialize a new instance of the declaring class by
+	 *             suppressing Java language access checking.
+	 */
+	private XmlUtil() throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 
 	/**
@@ -86,7 +91,8 @@ public final class XmlUtil {
 	 *            The element name to search for. null to search any element.
 	 * @return Returns the first child element of the parent, or null if none was found.
 	 */
-	public static OMElement getElement(OMElement parent, String attributeName, String attributeValue, String elementName) {
+	public static OMElement getElement(OMElement parent, String attributeName, String attributeValue,
+			String elementName) {
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> iterator = parent.getChildElements();
 
@@ -123,7 +129,7 @@ public final class XmlUtil {
 			for (int i = 0; i < nameParts.length; i++) {
 				if (i == 0) {
 					element = parent.getFirstChildWithName(new QName(namespaceURI, nameParts[i]));
-				} else {
+				} else if (element != null) {
 					element = element.getFirstChildWithName(new QName(namespaceURI, nameParts[i]));
 				}
 

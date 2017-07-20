@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
@@ -80,7 +79,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import com.pennanttech.service.AmazonS3Bucket;
 
@@ -147,7 +146,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("POSTEVENT");
 		registerField("FileName");
 		registerField("FileLocation");
-		registerField("EndTime");
+		registerField("ValueDate");
 		
 		doRenderPage();
 		search();
@@ -163,15 +162,13 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
-	    public int compare(Object o1, Object o2) { 
-			FileDownlaod data = (FileDownlaod) o1; 
-			FileDownlaod data2 = (FileDownlaod) o2; 
-	        return String.valueOf(data.getEndTime().getDay()).compareTo(
-	        		String.valueOf(data2.getEndTime().getDay())); 
-	        
-	    }
+		public int compare(Object o1, Object o2) {
+			FileDownlaod data = (FileDownlaod) o1;
+			FileDownlaod data2 = (FileDownlaod) o2;
+			return String.valueOf(data.getValueDate()).compareTo(String.valueOf(data2.getValueDate()));
+
+		}
 	}
 
 	protected void doAddFilters() {
@@ -279,8 +276,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 			
 			if (item instanceof Listgroup) {	
-				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getEndTime(),PennantConstants.dateTimeFormat)))); 
-
+				item.appendChild(new Listcell((DateUtility.formatDate(fileDownlaod.getValueDate(),PennantConstants.dateFormat)))); 
 			} else if (item instanceof Listgroupfoot) { 
 				Listcell cell = new Listcell("");
 				cell.setSpan(4);
@@ -294,7 +290,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 			
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
 

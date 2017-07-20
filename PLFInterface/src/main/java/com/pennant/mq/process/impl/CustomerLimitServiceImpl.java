@@ -15,7 +15,7 @@ import com.pennant.mq.processutil.CustomerLimitDetailProcess;
 import com.pennant.mq.processutil.CustomerLimitPositionProcess;
 import com.pennant.mq.processutil.CustomerLimitUtilProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	private static final Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);

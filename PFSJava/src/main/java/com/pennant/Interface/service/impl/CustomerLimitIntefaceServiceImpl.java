@@ -24,7 +24,7 @@ import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitSummary;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
 import com.pennant.coreinterface.process.CustomerLimitProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceService {
 	private static Logger logger = Logger.getLogger(CustomerLimitIntefaceServiceImpl.class);

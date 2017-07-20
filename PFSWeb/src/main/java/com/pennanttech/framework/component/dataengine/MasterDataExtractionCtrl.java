@@ -17,7 +17,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger	logger				= Logger.getLogger(MasterDataExtractionCtrl.class);

@@ -17,7 +17,7 @@ import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 
 public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 

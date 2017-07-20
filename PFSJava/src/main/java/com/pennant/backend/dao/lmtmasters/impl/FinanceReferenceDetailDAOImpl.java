@@ -70,8 +70,8 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceReferenceDetail model</b> class.<br>
@@ -719,7 +719,7 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 	}
 
 	@Override
-	public List<String> getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
+	public String getAllowedRolesForQuickDisb(String finType, int finRefType, String quickDisbCode) {
 		logger.debug("Entering");
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -735,10 +735,10 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 
 		logger.debug("Leaving");
 		try {
-			return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			return Collections.emptyList();
+			return null;
 		}
     }
 	

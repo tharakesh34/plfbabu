@@ -72,7 +72,7 @@ import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.framework.security.core.service.UserService;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 import eu.bitwalker.useragentutils.UserAgent;
 

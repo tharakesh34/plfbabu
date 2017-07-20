@@ -44,6 +44,7 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -53,14 +54,16 @@ import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 
@@ -74,7 +77,6 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 	private TaxDetailDAO taxDetailDAO;
 	private ProvinceDAO  provinceDAO;
 	private EntityDAO  entityDAO;
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -342,56 +344,119 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			return auditHeader;
 		}
 
-		/**
-		 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-		 * from getTaxDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-		 * the to auditDeail Object
-		 * 
-		 * @param auditDetail
-		 * @param usrLanguage
-		 * @return
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug(Literal.ENTERING);
-			
-			// Get the model object.
-			TaxDetail taxDetail = (TaxDetail) auditDetail.getModelData();
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getTaxDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @return
+	 */
+	@Override
+	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
 
-			// Check the unique keys.
-			if (taxDetailDAO.isDuplicateKey(taxDetail.getId(),taxDetail.getTaxCode(),
-					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				
-				parameters[0] = PennantJavaUtil.getLabel("label_TaxCode") + ": " + taxDetail.getTaxCode();
+		// Get the model object.
+		TaxDetail taxDetail = (TaxDetail) auditDetail.getModelData();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
+		// Check the unique keys.
+		if (this.taxDetailDAO.isDuplicateKey(taxDetail.getId(), taxDetail.getTaxCode(),
+				taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
 
-			if(!provinceDAO.count(taxDetail.getTaxCode().substring(0,2),taxDetail.getStateCode(),
-					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
-				String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_TaxCode") + ": " + taxDetail.getTaxCode();
 
-				parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode().substring(0,2);
-				parameters[1] = PennantJavaUtil.getLabel("label_StateCode") + ": " + taxDetail.getStateCode();
-
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
-			}
-			
-			if(taxDetail.isNew() && !entityDAO.count(taxDetail.getTaxCode().substring(2,12),taxDetail.getEntityCode(),
-					taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)){
-				String[] parameters = new String[2];
-				
-				parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": " + taxDetail.getTaxCode().substring(2,12);
-				parameters[1] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + taxDetail.getEntityCode();
-				
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
-			}
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			logger.debug(Literal.LEAVING);
-			return auditDetail;
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+
+		boolean gstFlag = provinceDAO.count(taxDetail.getTaxCode().substring(0, 2), taxDetail.getStateCode(),
+				taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB);
+
+		if (gstFlag) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_Gstin") + ": " + taxDetail.getTaxCode().substring(0, 2);
+			parameters[1] = PennantJavaUtil.getLabel("label_StateCode") + ": " + taxDetail.getStateCode();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+		}
+
+		boolean entityFlag = entityDAO.panNumberExist(taxDetail.getTaxCode().substring(2, 12),
+				taxDetail.getEntityCode(), taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB);
+
+		if (taxDetail.isNew() && !entityFlag) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": "
+					+ taxDetail.getTaxCode().substring(2, 12);
+			parameters[1] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + taxDetail.getEntityCode();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90701", parameters, null));
+		}
+
+		auditDetail = gstNumbeValidation(auditDetail, taxDetail);
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
+
+		return auditDetail;
+	}
+		
+		/**
+		 * to validate the GST Number
+		 */	
+	public AuditDetail gstNumbeValidation(AuditDetail auditDetail, TaxDetail taxDetail) {
+		logger.debug(Literal.ENTERING);
+
+		String taxCode = taxDetail.getTaxCode();
+		String entityCode = taxDetail.getEntityCode();
+
+		String panNumber = "";
+		String gstStateCode = "";
+
+		if (StringUtils.isNotBlank(taxCode)) {
+			// if GST Number is already exist or not
+			int count = taxDetailDAO.getGSTNumberCount(entityCode, taxCode, "_View");
+			if (count != 0) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value") + ": ";
+				parameters[1] = taxCode;
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null)));
+			}
+
+			Province province = this.provinceDAO.getProvinceById(taxDetail.getCountry(), taxDetail.getStateCode(), "");
+			
+			if (province != null) {
+				gstStateCode = province.getTaxStateCode();
+			}
+			
+			Entity entity = this.entityDAO.getEntity(entityCode, "");
+			if(entity != null) {
+				panNumber = entity.getPANNumber();
+			}
+
+			if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available
+				if (!StringUtils.equalsIgnoreCase(gstStateCode, taxCode.substring(0, 2))) {
+					auditDetail.setErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65023", null, null)));
+				}
+			}
+
+			if (StringUtils.isNotBlank(panNumber)) { // if PAN number is not available in GST Number
+				if (!StringUtils.equalsIgnoreCase(panNumber, taxCode.substring(2, 12))) {
+					auditDetail.setErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65024", null, null)));
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return auditDetail;
+	}
 
 		@Override
 		public List<TaxDetail> getTaxDetailbystateCode(String Statecode, String type) {

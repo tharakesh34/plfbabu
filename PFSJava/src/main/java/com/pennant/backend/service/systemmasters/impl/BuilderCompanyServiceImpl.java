@@ -57,7 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 
@@ -347,34 +347,34 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		 * @return
 		 */
 		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug(Literal.ENTERING);
-			
-			// Get the model object.
-			BuilderCompany builderCompany = (BuilderCompany) auditDetail.getModelData();
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
 
-			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
-			parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + builderCompany.getGroupId();
+		// Get the model object.
+		BuilderCompany builderCompany = (BuilderCompany) auditDetail.getModelData();
 
-			// Check the unique keys.
-			if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(),builderCompany.getName(),builderCompany.getGroupId(),
-					builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		String[] parameters = new String[2];
+		parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
+		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + builderCompany.getGroupId();
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
-			 // If Builder Group is already utilized in Builder Company 
-			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, builderCompany.getRecordType())){
-				boolean workflowExists = getBuilderCompanyDAO().isIdExists(builderCompany.getId());
-				if(workflowExists){
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
-				}
-			}
+		// Check the unique keys.
+		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
+				builderCompany.getGroupId(), builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			logger.debug(Literal.LEAVING);
-			return auditDetail;
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+		// If Builder Group is already utilized in Builder Company 
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, builderCompany.getRecordType())) {
+			boolean workflowExists = getBuilderCompanyDAO().isIdExists(builderCompany.getId());
+			if (workflowExists) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+			}
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
 
 }

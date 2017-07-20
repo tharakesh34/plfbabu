@@ -59,6 +59,7 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	 * @return Entity
 	 */
 	Entity getEntity(String entityCode,String type);
-	boolean count(String panNumber,String entityCode, TableType tableType);
+	boolean  count(String entity, String pANNumber, TableType tableType);
+	boolean panNumberExist(String pANNumber, String entityCode, TableType tableType);
 	
 }

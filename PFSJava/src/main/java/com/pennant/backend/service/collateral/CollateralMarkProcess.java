@@ -16,7 +16,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.model.collateral.DepositDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CollateralMarkProcess {
 

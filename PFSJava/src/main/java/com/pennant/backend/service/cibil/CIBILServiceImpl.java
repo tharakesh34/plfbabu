@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.cibil.CIBILDAO;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class CIBILServiceImpl implements CIBILService {
@@ -57,6 +58,12 @@ public class CIBILServiceImpl implements CIBILService {
 	@Override
 	public DataEngineStatus getLatestExecution() {
 		return cibildao.getLatestExecution();
+	}
+
+	@Override
+	public Configuration getConfigDetails(String configName) {
+		return cibildao.getConfigDetails(configName);
+
 	}
 
 }

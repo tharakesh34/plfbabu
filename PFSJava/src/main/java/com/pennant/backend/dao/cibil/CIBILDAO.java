@@ -8,6 +8,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public interface CIBILDAO {
@@ -36,5 +37,7 @@ public interface CIBILDAO {
 	void logFileInfoException(long id, String finReference, String reason);
 
 	DataEngineStatus getLatestExecution();
+
+	Configuration getConfigDetails(String configName);
 
 }

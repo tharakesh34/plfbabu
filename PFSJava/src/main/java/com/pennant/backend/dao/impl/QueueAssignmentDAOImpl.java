@@ -69,8 +69,8 @@ import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 	private static Logger				logger	= Logger.getLogger(QueueAssignmentDAOImpl.class);

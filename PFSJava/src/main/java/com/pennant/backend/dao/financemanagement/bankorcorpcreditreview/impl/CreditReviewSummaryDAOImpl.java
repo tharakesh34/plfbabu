@@ -24,8 +24,8 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class CreditReviewSummaryDAOImpl extends BasisNextidDaoImpl<FinCreditReviewSummary> implements CreditReviewSummaryDAO {
 	private static Logger logger = Logger.getLogger(CreditReviewSummaryDAOImpl.class);

@@ -528,7 +528,6 @@
 		class="com.pennant.webui.systemmasters.province.ProvinceListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="provinceService" ref="provinceService" />
-		<property name="taxDetailService" ref="taxDetailService" />
 	</bean>
 
 	<bean id="provinceDialogCtrl"
@@ -4854,6 +4853,10 @@
 		class="com.pennant.webui.finance.financemain.FinTaxUploadDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	<property name="finTaxUploadDetailService" ref="finTaxUploadDetailService" />
+	</bean>
+	<bean id="auditErrorDetailListCtrl" 
+		class="com.pennant.webui.errordetail.errordetail.AuditErrorDetailsListCtrl"
+		parent="basisCtrl" scope="prototype">
 	</bean>
 	
 </beans>

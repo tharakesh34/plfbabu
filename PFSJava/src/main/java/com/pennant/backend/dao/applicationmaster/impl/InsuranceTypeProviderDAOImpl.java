@@ -17,8 +17,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeProviderDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class InsuranceTypeProviderDAOImpl extends BasisCodeDAO<InsuranceTypeProvider> implements
 		InsuranceTypeProviderDAO {

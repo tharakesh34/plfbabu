@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.EodFinProfitDetail;
 import com.pennant.coreinterface.process.UploadProfitDetailProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class UploadProfitDetailProcessImpl extends GenericProcess implements UploadProfitDetailProcess{
 

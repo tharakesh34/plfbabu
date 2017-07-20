@@ -80,9 +80,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
-import com.pennanttech.pff.core.InterfaceException;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long				serialVersionUID	= 1L;

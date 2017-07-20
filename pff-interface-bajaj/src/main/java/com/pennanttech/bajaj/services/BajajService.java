@@ -15,7 +15,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class BajajService {
 	private static final Logger				logger	= Logger.getLogger(BajajService.class);

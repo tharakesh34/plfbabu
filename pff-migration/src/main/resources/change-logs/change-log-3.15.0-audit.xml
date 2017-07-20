@@ -845,4 +845,31 @@
 		ALTER TABLE ADTfintaxuploadheader MODIFY FILENAME VARCHAR(100);
 	</sql>
 	</changeSet>
+	<changeSet id="45" author="Somasekhar">
+		<dropColumn tableName="ADTENTITY" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityPOBox"/>
+	</changeSet>
+	
+	<changeSet id="46" author="Somasekhar">
+		<addColumn tableName="ADTENTITY">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	</changeSet>
+	
+	<changeSet id="47" author="Sriram">
+		<dropColumn tableName="ADTFEETYPES" columnName="HostFeeTypeCode"/>
+		<addColumn tableName="ADTFEETYPES">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+	 </changeSet>
+	
 </databaseChangeLog>

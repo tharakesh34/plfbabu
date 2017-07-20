@@ -8,7 +8,7 @@ import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.model.HostEnquiry;
 import com.pennant.coreinterface.process.HostStatusEnquiryProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class HostStatusEnquiryProcessImpl implements HostStatusEnquiryProcess {
 

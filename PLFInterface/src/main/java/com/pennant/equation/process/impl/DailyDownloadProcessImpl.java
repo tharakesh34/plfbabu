@@ -77,7 +77,7 @@ import com.pennant.coreinterface.process.DailyDownloadProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DailyDownloadProcessImpl extends GenericProcess implements DailyDownloadProcess{
 	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);

@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
-import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 
 public class CollateralThirdPartyDAOImpl implements CollateralThirdPartyDAO {
 	private static Logger	logger	= Logger.getLogger(CollateralThirdPartyDAOImpl.class);

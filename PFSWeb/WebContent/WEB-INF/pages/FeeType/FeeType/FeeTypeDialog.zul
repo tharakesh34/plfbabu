@@ -98,12 +98,14 @@
 										<extendedcombobox
 											id="accountingSetID" width="200px" />
 									</hbox>
-									<label id="label_Active"
-										value="${c:l('label_FeeTypeDialog_Active.value')}" />
-									<hbox id="hlayout_Active">
-										<space id="space_Active"
-											spacing="2px" />
-										<checkbox id="active" />
+									<label id="label_HostFeeTypeCode"
+										value="${c:l('label_FeeTypeDialog_HostFeeTypeCode.value')}" />
+									<hbox id="hlayout_HostFeeTypeCode"
+										visible="true">
+										<space
+											id="space_HostFeeTypeCode" spacing="2px" />
+										<textbox id="hostFeeTypeCode"
+											width="200px" maxlength="50" />
 									</hbox>
 								</row>
 								<row id="row2">
@@ -123,7 +125,15 @@
 										<combobox id="adviseType"
 											width="120px" />
 									</hbox>
-
+								</row>
+								<row id="row3">
+									<label id="label_Active"
+										value="${c:l('label_FeeTypeDialog_Active.value')}" />
+									<hbox id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

@@ -138,7 +138,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -2116,16 +2116,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 			if (vasRecording.getExtendedDetails() != null && !vasRecording.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
-					if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
-							.getExtendedFieldDataList().size()) {
-						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "vas setup";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
-						}
-					}
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {

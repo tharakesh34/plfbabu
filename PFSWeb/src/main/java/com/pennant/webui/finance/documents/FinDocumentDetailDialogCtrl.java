@@ -78,6 +78,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -503,7 +504,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
 		} else {
-			this.docReceivedDt.setReadonly(true);
+			this.docReceivedDt.setDisabled(true);
 			this.documnetName.setReadonly(false);
 		//	this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);
@@ -557,7 +558,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		aDocumentDetails.setDocReceived(this.docReceived.isChecked());
 		
 		try {
-			aDocumentDetails.setDocReceivedDate(this.docReceivedDt.getValue());
+			if(this.docReceived.isChecked()){				
+				aDocumentDetails.setDocReceivedDate(this.docReceivedDt.getValue());
+			}else{
+				aDocumentDetails.setDocReceivedDate(DateUtility.getAppDate());
+			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -1104,7 +1109,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	public void onCheck$docReceived(Event event) throws Exception {
 		if (this.docReceived.isChecked()) {
-			this.docReceivedDt.setReadonly(false);
+			this.docReceivedDt.setDisabled(false);
 			this.space_docReceivedDt.setSclass("mandatory");
 			this.documnetName.setReadonly(true);
 			this.documnetName.setValue("");

@@ -46,6 +46,8 @@ package com.pennanttech.interfacebajaj;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -69,10 +71,14 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -82,25 +88,27 @@ import com.pennanttech.pff.core.Literal;
  */
 public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 
-	private static final long	serialVersionUID	= 1L;
-	private static final Logger	logger				= Logger.getLogger(FileDownloadListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(FileDownloadListCtrl.class);
 
-	protected Window			window_FleDownloadList;
-	protected Borderlayout		borderLayout_FileDownloadList;
-	protected Paging			pagingFileDownloadList;
-	protected Listbox			listBoxFileDownload;
-	protected Button			btnRefresh;
-	protected Listheader		listheader_FirstHeader;
-	private Button				downlaod;
-	
+	protected Window window_FleDownloadList;
+	protected Borderlayout borderLayout_FileDownloadList;
+	protected Paging pagingFileDownloadList;
+	protected Listbox listBoxFileDownload;
+	protected Button btnRefresh;
+	protected Listheader listheader_FirstHeader;
+	private Button downlaod;
+
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
+
+	protected AmazonS3Bucket bucket;
 
 	private enum FileControl {
 		MANDATES, DISBURSEMENT, SAPGL;
 	}
 
-	String	module	= null;
+	String module = null;
 
 	/**
 	 * default constructor.<br>
@@ -153,8 +161,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
-		registerField("EndTime");
-
+		registerField("EndTime");	
+		registerField("ConfigId");
+		registerField("PostEvent");
+		
 		doRenderPage();
 		search();
 
@@ -168,13 +178,13 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 		switch (fileContol) {
 		case DISBURSEMENT:
-				
+
 			searchObject.removeField("PARTNERBANKNAME");
 			searchObject.removeField("ALWFILEDOWNLOAD");
-			
+
 			this.searchObject.addField("PARTNERBANKNAME");
 			this.searchObject.addField("ALWFILEDOWNLOAD");
-			
+
 			list.add("DISB_HDFC_EXPORT");
 			list.add("DISB_IMPS_EXPORT");
 			list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
@@ -212,35 +222,61 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		try {
 
 			Button downloadButt = (Button) event.getOrigin().getTarget();
-
 			FileDownlaod fileDownlaod = (FileDownlaod) downloadButt.getAttribute("object");
 
-			String filePath = fileDownlaod.getFileLocation();
-			String fileName = fileDownlaod.getFileName();
+			if (com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
+				String prefix = loadS3Bucket(fileDownlaod.getConfigId());
 
-			if (filePath != null && fileName != null) {
-				filePath = filePath.concat("/").concat(fileName);
+				downloadFromS3Bucket(prefix, fileDownlaod.getFileName());
+			} else {
+				downloadFromServer(fileDownlaod);
 			}
-
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-			InputStream inputStream = new FileInputStream(filePath);
-			int data;
-			while ((data = inputStream.read()) >= 0) {
-				stream.write(data);
-			}
-
-			inputStream.close();
-			inputStream = null;
-			Filedownload.save(stream.toByteArray(), "text/plain", fileName);
-			stream.close();
 			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
-			stream = null;
 			refresh();
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String loadS3Bucket(long configId) {
+
+		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId);
+
+		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
+				EncryptionUtil.decrypt(eventproperties.getAccessKey()),
+				EncryptionUtil.decrypt(eventproperties.getSecretKey()));
+
+		return eventproperties.getPrefix();
+	}
+
+	private void downloadFromServer(FileDownlaod fileDownlaod) throws FileNotFoundException, IOException {
+		String filePath = fileDownlaod.getFileLocation();
+		String fileName = fileDownlaod.getFileName();
+
+		if (filePath != null && fileName != null) {
+			filePath = filePath.concat("/").concat(fileName);
+		}
+
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+		InputStream inputStream = new FileInputStream(filePath);
+		int data;
+		while ((data = inputStream.read()) >= 0) {
+			stream.write(data);
+		}
+
+		inputStream.close();
+		inputStream = null;
+		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		stream.close();
+	}
+
+	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+		String key = prefix.concat("/").concat(fileName);
+
+		byte[] fileData = bucket.getObject(key);
+		Filedownload.save(fileData, "text/plain", fileName);
 	}
 
 	/**
@@ -248,7 +284,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	 * 
 	 */
 	private class FileDownloadListModelItemRenderer implements ListitemRenderer<FileDownlaod>, Serializable {
-		private static final long	serialVersionUID	= 1L;
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
@@ -265,10 +301,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
- 
+
 			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
- 
+
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
 
@@ -278,43 +314,35 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
 			downlaod.setAttribute("object", fileDownlaod);
-			
+
 			StringBuilder builder = new StringBuilder();
 			builder.append(fileDownlaod.getFileLocation());
 			builder.append(File.separator);
 			builder.append(fileDownlaod.getFileName());
-			
+
 			File file = new File(builder.toString());
-			
-			if(!file.exists()) {
-				 downlaod.setDisabled(true);
-				 downlaod.setTooltiptext("File not available.");
-			} else  if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+
+			if (!file.exists()) {
 				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("Disbursement request for file generation failed.");
+				downlaod.setTooltiptext("File not available.");
+			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("Mandate request for file generation failed.");
 			}
 
-			FileControl fileContol = FileControl.valueOf(module);
+			
+			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("File generation failed.");
+			}
 
-			switch (fileContol) {
-			case DISBURSEMENT:
-				downlaod.setTooltiptext("Disbursement request download.");
-				break;
-			case MANDATES:
-				if(!file.exists()) {
-					 downlaod.setDisabled(true);
-					 downlaod.setTooltiptext("File not available.");
-				} else  if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			if (!com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
+				if (!file.exists()) {
 					downlaod.setDisabled(true);
-					downlaod.setTooltiptext("File generation failed.");
-				} 
-				break;
-			case SAPGL:
-				downlaod.setTooltiptext("SAPGL Files download.");
-				break;
-			default:
-				break;
+					downlaod.setTooltiptext("File not available.");
+				}
 			}
+			
 			lc.setParent(item);
 
 		}

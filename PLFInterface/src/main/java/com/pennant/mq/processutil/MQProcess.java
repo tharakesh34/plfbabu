@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.InterfacePropertiesUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public abstract class MQProcess {
 	private static final Logger logger = Logger.getLogger(MQProcess.class);

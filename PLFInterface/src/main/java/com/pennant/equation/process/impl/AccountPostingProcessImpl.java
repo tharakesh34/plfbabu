@@ -18,7 +18,7 @@ import com.pennant.coreinterface.process.AccountPostingProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class AccountPostingProcessImpl extends GenericProcess implements AccountPostingProcess {
 

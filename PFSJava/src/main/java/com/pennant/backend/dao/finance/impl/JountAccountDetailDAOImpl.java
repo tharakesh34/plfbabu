@@ -64,8 +64,8 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>JountAccountDetail model</b> class.<br>
@@ -273,13 +273,12 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 	}
 	
 	@Override
-    public JointAccountDetail getJountAccountDetailByRefId(String finReference, String custCIF,
-            String type) {
+    public JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type) {
 		logger.debug("Entering");
 		JointAccountDetail jountAccountDetail = new JointAccountDetail();
 		
 		jountAccountDetail.setFinReference(finReference);
-		jountAccountDetail.setCustCIF(custCIF);
+		jountAccountDetail.setJointAccountId(jointAccountId);
 		
 		StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -288,7 +287,7 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference and CustCIF = :CustCIF ");
+		selectSql.append(" Where FinReference = :FinReference and JointAccountId = :JointAccountId ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);

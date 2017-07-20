@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 
 public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponseProcess.class);

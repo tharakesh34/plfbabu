@@ -11,7 +11,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.reports.AvailCustomerDetail;
 import com.pennant.coreinterface.model.EquationMasterMissedDetail;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerInterfaceService {
 	

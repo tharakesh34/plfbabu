@@ -224,7 +224,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 	@XmlElement
-	private String stp;
+	private boolean stp=true;
 	@XmlElement
 	private String processStage;
 	@XmlElementWrapper(name="collateralDetails")
@@ -832,6 +832,21 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setTaxDetail(FinanceTaxDetail taxDetail) {
 		this.taxDetail = taxDetail;
+	}
+
+	public boolean isStp() {
+		return stp;
+	}
+
+	public void setStp(boolean stp) {
+		this.stp = stp;
+	}
+	public String getProcessStage() {
+		return processStage;
+	}
+
+	public void setProcessStage(String processStage) {
+		this.processStage = processStage;
 	}
 
 

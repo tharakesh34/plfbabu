@@ -37,7 +37,7 @@ public interface JountAccountDetailDAO {
 	void update(JointAccountDetail jountAccountDetail, String type);
 	void delete(JointAccountDetail jountAccountDetail, String type);
 	long save(JointAccountDetail jountAccountDetail, String type);
-	JointAccountDetail getJountAccountDetailByRefId(String finReference, String custCIF, String type);
+	JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type);
 	void deleteByFinRef(String finReference, String type);
 	List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference);	
 	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);	

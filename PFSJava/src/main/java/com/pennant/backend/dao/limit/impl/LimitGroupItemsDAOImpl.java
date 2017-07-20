@@ -20,8 +20,8 @@ import com.pennant.backend.dao.limit.LimitGroupItemsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitGroupItems;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class LimitGroupItemsDAOImpl extends BasisCodeDAO<LimitGroupItems> implements LimitGroupItemsDAO {
 

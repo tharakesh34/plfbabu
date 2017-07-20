@@ -38,7 +38,7 @@ public interface GuarantorDetailDAO {
 	void update(GuarantorDetail guarantorDetail, String type);
 	void delete(GuarantorDetail guarantorDetail, String type);
 	long save(GuarantorDetail guarantorDetail, String type);
-	GuarantorDetail getGuarantorDetailByRefId(String finReference, String cIF, String type);
+	GuarantorDetail getGuarantorDetailByRefId(String finReference, long guarantorId, String type);
 	void deleteByFinRef(String finReference, String type);
 	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);	
 	List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);

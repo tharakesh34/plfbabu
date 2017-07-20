@@ -7,7 +7,7 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 

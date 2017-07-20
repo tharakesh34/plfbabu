@@ -12,7 +12,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public abstract class AbstractJobScheduler {
 	public static final Logger logger = Logger.getLogger(AbstractJobScheduler.class);

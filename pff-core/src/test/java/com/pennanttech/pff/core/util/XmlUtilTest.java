@@ -18,6 +18,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.util.XmlUtil;
+
 public class XmlUtilTest {
 	private String		namespaceURI;
 	private OMElement	definition;

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.coreinterface.model.CoreBankAccountPosting;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountPostingProcess {
 

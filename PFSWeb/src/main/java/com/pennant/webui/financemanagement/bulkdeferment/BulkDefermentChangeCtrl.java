@@ -76,7 +76,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

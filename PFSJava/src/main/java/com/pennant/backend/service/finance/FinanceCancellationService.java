@@ -6,7 +6,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 
 public interface FinanceCancellationService {

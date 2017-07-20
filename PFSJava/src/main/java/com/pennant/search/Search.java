@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
-import com.pennanttech.pff.core.util.ModuleUtil;
 
 /**
  * A convenient fully-featured implementation of ISearch and IMutableSearch for general use in Java code.

@@ -45,8 +45,8 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>GuarantorDetail model</b> class.<br>
@@ -289,15 +289,13 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 	}
 
 	@Override
-	public GuarantorDetail getGuarantorDetailByRefId(String finReference, String guarantorCIF,
-	        String type) {
+	public GuarantorDetail getGuarantorDetailByRefId(String finReference, long guarantorId, String type) {
 
 		logger.debug("Entering");
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
 
 		guarantorDetail.setFinReference(finReference);
-		guarantorDetail.setGuarantorCIF(guarantorCIF);
-		guarantorDetail.setGuarantorIDNumber(guarantorCIF);
+		guarantorDetail.setGuarantorId(guarantorId);
 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks");
@@ -310,8 +308,7 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		}
 		selectSql.append(" From FinGuarantorsDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference and ");
-		selectSql.append(" (GuarantorCIF =:GuarantorCIF or GuarantorIDNumber =:GuarantorIDNumber)");
+		selectSql.append(" Where FinReference =:FinReference And GuarantorId = :GuarantorId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);

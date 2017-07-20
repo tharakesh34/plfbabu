@@ -11,21 +11,38 @@
  */
 package com.pennanttech.pff.core.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.util.ModuleUtil;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class ModuleUtilTest {
 	@BeforeClass
 	public void setUp() {
-		ModuleUtil.register("A", new ModuleMapping("A123", ClassA.class, new String[] { "TableA", "LovA" }, "MSTGRP1",
-				new String[] { "ColumnA1", "ColumnA2" }, new String[][] { { "ColumnA1", "0", "1" },
-						{ "ColumnA2", "1", "NONE" } }, 350));
-		ModuleUtil.register("P", new ModuleMapping("P123", ClassP.class, new String[] { "TableB", "LovB" }, "MSTGRP1",
-				new String[] { "ColumnB1", "ColumnB2" }, new String[][] { { "ColumnB1", "0", "1" },
-						{ "ColumnB2", "1", "NONE" } }, 350));
+		ModuleUtil.register("A",
+				new ModuleMapping("A123", ClassA.class, new String[] { "TableA", "LovA" }, "MSTGRP1",
+						new String[] { "ColumnA1", "ColumnA2" },
+						new String[][] { { "ColumnA1", "0", "1" }, { "ColumnA2", "1", "NONE" } }, 350));
+		ModuleUtil.register("P",
+				new ModuleMapping("P123", ClassP.class, new String[] { "TableB", "LovB" }, "MSTGRP1",
+						new String[] { "ColumnB1", "ColumnB2" },
+						new String[][] { { "ColumnB1", "0", "1" }, { "ColumnB2", "1", "NONE" } }, 350));
+	}
+
+	@Test(expectedExceptions = { InvocationTargetException.class })
+	public void hideImplicitConstructor() throws NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Constructor<ModuleUtil> constructor = ModuleUtil.class.getDeclaredConstructor();
+		Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+
+		constructor.setAccessible(true);
+		constructor.newInstance();
 	}
 
 	@Test

@@ -9495,6 +9495,7 @@ FROM          FinanceMain_Temp T1 INNER JOIN
 			INSERT INTO ErrorDetails VALUES('99012','EN','E','Customer Alterady exists in the source system :PLF ','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	<!-- for AWS -->
 	<!-- <changeSet id="518" author="Madhubabu">
 		<sql>
 			INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
@@ -9600,14 +9601,34 @@ Select reportid from reportconfiguration where reportname='Excel:LIST OF DOCUMEN
 		<renameColumn columnDataType="VARCHAR(100)" newColumnName="PREFIX"
 		oldColumnName="FOLDER_NAME" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
 	</changeSet>
-	<!-- <changeSet id="530" author="Madhubabu">
+	<!-- for dev -->
+	<!-- <changeSet id="530.1" author="Madhubabu">
 	<sql>
+	    delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_DRIVER';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_URL';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_USERNAME';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_PWD';
+
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@192.168.1.19:1521:orcl', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
-		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  PLF', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
-		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pennant123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  'PLFDEV', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pff123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet> -->
+	 <!-- for qc -->
+	<!--<changeSet id="530.1" author="Madhubabu">
+	<sql>
+	    delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_DRIVER';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_URL';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_USERNAME';
+        delete  from SMTPARAMETERS where sysparmcode='GCD_CUSTOMER_PWD';
+        
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_DRIVER', 'GCD ORACLE DRIVER', 		'String', 1,  'oracle.jdbc.driver.OracleDriver', 	'200', 	0, NULL, NULL, 'GCD Driver Classname', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_URL', 'GCD ORACLE URL', 		'String', 1,  'jdbc:oracle:thin:@192.168.1.19:1521:orcl', 	'200', 	0, NULL, NULL, 'GCD Connect URL', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_USERNAME', 'GCD ORACLE USERNAME', 		'String', 1,  'PLF', 	'200', 	0, NULL, NULL, 'GCD connect UserName', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_CUSTOMER_PWD', 'GCD ORACLE PWD', 		'String', 1,  'pff123', 	'200', 	0, NULL, NULL, 'GCD Connect PWD', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+	</changeSet>  -->
 	
 	<changeSet id="530" author="Manoj.P">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
@@ -10607,6 +10628,1246 @@ union
 	
 	
 	</changeSet>
+	<changeSet author="Madhubabu" id="555">
+		<sql>
+			delete from errordetails where errorcode='99007';
+			INSERT INTO ErrorDetails VALUES('99007','EN','E','{0} not valid for Agreement No : {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 	
+	<changeSet id="556" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype_temp T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T4.FinReference And  T1.CovenantType = T3.DocTypeCode
+                
+	UNION ALL
+		SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T4.FinReference And  T1.CovenantType = T3.DocTypeCode
+
+	WHERE NOT EXISTS
+	                 (SELECT   1
+					  FROM        FinCovenantType_Temp
+					  WHERE       FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+		</createView>
 	
+	</changeSet>
+	
+	<changeSet id="557" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EAVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T4.FinReference And  T1.CovenantType = T3.DocTypeCode
+		</createView>
+	
+	</changeSet>
+	
+	<changeSet id="559" author="Manoj">
+		<sql>
+			update smtparameters set sysparmvalue = 'PENNANT'  where sysparmcode = 'POSIDEX_SOURCE_SYSTEM';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="560" author="Manoj">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+			SELECT DS.ID,
+		  DC.NAME,
+		  DC.UPLOADPATH FILELOCATION,
+		  DS.FILENAME,
+		  DS.ENDTIME,
+		  DS.STATUS,
+		  DC.id AS CONFIGID,
+		  DC.POSTEVENT,
+		  DS.VALUEDATE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS
+			ON DS.NAME = DC.NAME
+			ORDER BY DS.ID DESC
+		</createView>
+	</changeSet>
+	<changeSet id="561" author="Irfan">
+		<sql>
+
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINJOINTACCDETAIL_SER', 'Joint accout Details in Servicing', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINGUARANTORACCDETAIL_SER', 'Guarantor Details in Servicing', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnAddJointAccount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnAddGurantor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_GuarantorCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_GuarantorIDType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_GuarantorIDNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_GuranteePercentage'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_MobileNo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_EmailId'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_GuarantorCIFName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrHNbr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_flatNbr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrStreet'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_poBox'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrCountry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrProvince'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrCity'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='GuarantorDetailDialog_addrZIP'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="562" author="Irfan">
+		<sql>
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINJOINTACCDETAIL_SER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINGUARANTORACCDETAIL_SER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	<changeSet author="Madhubabu" id="563">
+		<sql>
+			delete from errordetails where errorcode='99015';
+			INSERT INTO ErrorDetails VALUES('99015','EN','E','Agreement No. Should not Empty','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="568" author="Kesav">
+		<createView viewName="ENTITY_VIEW" replaceIfExists="true">
+				SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			                T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			                T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			                T2.CountryDesc CountryName, 
+			                T3.CPProvinceName ProvinceName,
+			                T4.PCCItyName CityName, 
+			                T5.areaname PinCodeName						
+				FROM    	Entity_TEMP T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+						
+			    UNION ALL
+						
+			    SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			          		T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			          		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          		T2.CountryDesc CountryName, 
+			          		T3.CPProvinceName ProvinceName,
+			          		T4.PCCItyName CityName, 
+			          		T5.areaname PinCodeName						
+				FROM    	Entity T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+			      
+				WHERE     	NOT EXISTS (SELECT 1 FROM Entity_TEMP WHERE ENTITYCODE = T1.ENTITYCODE)		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="569" author="Kesav">
+		<createView viewName="ENTITY_AVIEW" replaceIfExists="true">
+			    SELECT		T1.ENTITYCODE, T1.ENTITYDESC, T1.PANNUMBER,T1.EntityAddrLine1,T1.EntityAddrLine2,T1.EntityAddrHNbr, T1.EntityFlatNbr, T1.EntityAddrStreet, 
+			          		T1.EntityPOBox, T1.Country, T1.STATECODE, T1.CityCode, T1.PinCode,T1.ACTIVE	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+			          		T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          		T2.CountryDesc CountryName, 
+			          		T3.CPProvinceName ProvinceName,
+			          		T4.PCCItyName CityName, 
+			          		T5.areaname PinCodeName						
+				FROM    	Entity T1 
+			    LEFT JOIN 	BMTCountries T2 ON T1.Country = T2.CountryCode 
+			    LEFT JOIN 	RmtCountryvsProvince T3 ON T1.STATECODE = t3.cpprovince and T1.Country = T3.CPCountry  
+			    LEFT JOIN 	Rmtprovincevscity T4 ON T1.CityCode = t4.pccity and T1.STATECODE = t4.pcprovince and T1.Country = T4.pcCountry 
+			    LEFT JOIN 	Pincodes T5 ON T1.PinCode = T5.pincode and T1.CityCode = T5.city
+		</createView>
+	</changeSet>
+	<changeSet id="565" author="Somasekhar">
+		<dropColumn tableName="Entity" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="Entity" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="Entity" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="Entity" columnName="EntityPOBox"/>
+	 
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="Entity_Temp" columnName="EntityPOBox"/>
+	</changeSet>
+	<changeSet id="566" author="Somasekhar">
+	 <addColumn tableName="Entity">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	 <addColumn tableName="Entity_Temp">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	 </changeSet>
+	 <changeSet id="568" author="Somasekhar">
+	 <sql>
+	  delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrLine1');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrLine2');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityPOBox');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrHNbr');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityFlatNbr');
+    delete from secgrouprights where rightid in (select rightid from secrights where rightname='EntityDialog_EntityAddrStreet');
+    
+    delete from secrights where rightname='EntityDialog_EntityAddrLine1';
+    delete from secrights where rightname='EntityDialog_EntityAddrLine2';
+    delete from secrights where rightname='EntityDialog_EntityPOBox';
+    delete from secrights where rightname='EntityDialog_EntityAddrHNbr';
+    delete from secrights where rightname='EntityDialog_EntityFlatNbr';
+    delete from secrights where rightname='EntityDialog_EntityAddrStreet';
+    
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrLine1','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrLine2','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityPOBox','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrHNbr','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityFlatNbr','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+	
+	insert into SecRights values((select max(rightid) from secrights)+1,3,'EntityDialog_EntityAddrStreet','EntityDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+		 
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrLine1'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrLine2'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityPOBox'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrHNbr'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityFlatNbr'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+	
+	insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ENTITY_MAKER'),(select rightid from secrights where rightname='EntityDialog_EntityAddrStreet'),1,0,1000,current_timestamp,'Aproved','','','','','',0);
+		 
+	 </sql>
+	 </changeSet>
+	 <changeSet id="569" author="Irfan">
+	 <sql>
+	 	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustSuspenseDialog_btnSearchCustCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	 </sql>
+	 
+	 </changeSet>
+	 <changeSet id="570" author="Irfan">
+	 	<sql>
+	 		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			DELETE FROM SECGROUPRIGHTS WHERE GRPID = (Select GrpID from SecGRoups WHERE GRPCODE = 'FINJOINTACCDETAIL_SER') AND RIGHTID = (Select Rightid From Secrights where rightname = 'CustSuspenseDialog_btnSearchCustCIF');
+			
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_JountAccountDetailDialog_btnSearchCustCIF','JountAccountDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnSearchCustCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="571" author="Irfan">
+	 	<sql>
+	 		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GuarantorDetailDialog_btnSearchGuarantorCIF','GuarantorDetailDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINGUARANTORACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnSearchGuarantorCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="572" author="Madhubabu">
+	    <sql>
+	    	delete from errordetails where errorcode='99006';
+	        INSERT INTO ErrorDetails VALUES('99006','EN','E','For Agreement No :{0} the {1} length exceeding :{2}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	    </sql>
+	</changeSet>
+	 <changeSet id="573" author="Irfan">
+	 	<sql>
+	 		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+						
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnSearchCustCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_JountAccountDetailDialog_btnSearchCustCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="574" author="Pruthvi">
+	     <sql>
+	         update reportfilterfields set Fielddbname='T.FinReference' where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_LISTOFDOCUMENTEXTRACT');
+	     </sql>
+	 </changeSet>
+	 
+	  <changeSet id="575" author="Sriram">
+	 	<sql>
+	 		
+			DELETE FROM SECGROUPRIGHTS WHERE GRPID = (Select GrpID from SecGRoups WHERE GRPCODE = 'FEETYPE_MAKER') AND RIGHTID = (Select Rightid From Secrights where rightname = 'FeeTypeDialog_HostFeeTypeCode');
+	 		DELETE from secrights where RightName='FeeTypeDialog_HostFeeTypeCode';
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeTypeDialog_HostFeeTypeCode','FeeTypeDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeTypeDialog_HostFeeTypeCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+	 	</sql>
+	 </changeSet>
+	  <changeSet id="576" author="Sriram">
+	 	
+		<dropColumn tableName="FEETYPES" columnName="HostFeeTypeCode"/>
+		<dropColumn tableName="FEETYPES_TEMP" columnName="HostFeeTypeCode"/>
+		
+		 <addColumn tableName="FEETYPES">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+		<addColumn tableName="FEETYPES_TEMP">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="577" author="Sriram" >
+		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
+		
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, 			
+						T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+						T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode
+			
+			FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+			
+			UNION ALL
+			
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, 			
+						T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+						T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+			
+			FROM    	FeeTypes  T1 LEFT JOIN 	
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FeeTypes_TEMP WHERE FeeTypeID = T1.FeeTypeID)
+		</createView>
+		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
+		
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId,			
+					T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+					T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+		
+		FROM    	FeeTypes  T1  LEFT JOIN 
+					RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
+		
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId,			
+					T1.Active,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+					T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME,T1.HostFeeTypeCode	
+		
+		FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+					RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+	</changeSet>
+	 <changeSet id="575" author="Srikanth">
+	     <sql>
+		INSERT INTO ErrorDetails VALUES('90344','EN','E','Unable to find quick disbursment Stage.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_ALPHA_SPACE_SPL' where FIELDTYPE = 'TEXT' AND FIELDCONSTRAINT = 'REGEX_ALPHANUM_SPL';
+	     </sql>
+	 </changeSet>
+	 <changeSet id="578" author="Srikanth">
+	     <sql>
+		 update EXTENDEDFIELDDETAIL set FIELDCONSTRAINT = 'REGEX_NUMERIC' where FIELDTYPE = 'TEXT' AND FIELDNAME = 'ACNO';
+	     </sql>
+	 </changeSet>
+	 <changeSet id="579" author="Manoj">
+	 	<sql>
+	 		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('MANDATES_EXPORT');
+			delete from data_engine_event_properties where config_id in (select id from data_engine_config where name = 'MANDATES_EXPORT');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'MANDATES');
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="580" author="Manoj">
+	  	<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+	  		SELECT DS.ID,
+		 	DC.NAME,
+		    DC.UPLOADPATH FILELOCATION,
+		  	DS.FILENAME,
+		  	DS.ENDTIME,
+		  	DS.STATUS,
+		  	DC.id AS CONFIGID,
+		  	DC.POSTEVENT,
+		  	DS.VALUEDATE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS
+			ON DS.NAME = DC.NAME
+			ORDER BY DS.ID DESC
+	  	</createView>
+	 </changeSet>
+	 <changeSet id="581" author="Manoj">
+	 	<sql>
+	 		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('DISB_HDFC_EXPORT', 'DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT');
+			delete from data_engine_event_properties where config_id in (select id from data_engine_config where name IN ('DISB_HDFC_EXPORT', 'DISB_OTHER_CHEQUE_DD_EXPORT', 'DISB_OTHER_NEFT_RTGS_EXPORT') );
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_HDFC_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_OTHER_CHEQUE_DD_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_OTHER_NEFT_RTGS_EXPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'DISBURSEMENTS');
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="582" author="Manoj">
+	 	<createView viewName="DE_DISBURSE_FILE_CONTROL_VIEW" replaceIfExists="true">
+	 		SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS,  DC.id AS CONFIGID,  DC.POSTEVENT,
+			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, FA.PAYMENTTYPE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DISBURSEMENT_REQUESTS DR ON DR.BATCH_ID =DS.ID
+      		INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID
+			INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+      
+	  UNION ALL
+	  SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS,  DC.id AS CONFIGID,  DC.POSTEVENT,
+			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, PI.PAYMENTTYPE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN DISBURSEMENT_REQUESTS DR ON DR.BATCH_ID =DS.ID
+      		INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID
+			INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+     ORDER BY ID DESC
+	 	</createView>
+	 </changeSet>
+	 <changeSet id="583" author="Manoj">
+	 	<sql>
+	 		delete from data_engine_event_properties where config_id in (select id from data_engine_config where name IN ('CIBIL_REPORT') );
+	 	    delete from DATA_ENGINE_CONFIG where name = 'CIBIL_REPORT';
+	 	    
+		    INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CIBIL_REPORT', 
+		    'Cibil Report', 5, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL,  NULL, 'A', NULL, 'DBFILE', NULL, 0, NULL, NULL, NULL, 0, NULL, 1, 1); 
+		     
+    		update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET', backupfile = 1  where Name IN ('CIBIL_REPORT');
+    		
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'CIBIL_REPORT'), 'S3', 'us-east-2', 'sai-workshop-bucket-1', 'AKIAIYG2R7I7C5R64G3Q', 'pP0U8zA2qSxBaTQgZHnHx8tOGV409SxFf8Y58X1O', 'CIBIL');
+	 	</sql>
+	 </changeSet>
+	 
+	 <changeSet id="584" author="Manoj">
+	 	<createView viewName="CIBIL_FILE_INFO_VIEW" replaceIfExists="true">
+	 		select ID, FILE_NAME, CREATEDON, STATUS, FILE_LOCATION, (select id from data_engine_config where name = 'CIBIL_REPORT') configId, 'MOVE_TO_S3_BUCKET'  POSTEVENT  
+			FROM CIBIL_FILE_INFO
+	 	</createView>
+	 </changeSet>
+	 <changeSet author="Madhubabu" id="585">
+		<sql>
+			delete from errordetails where errorcode='99016';
+			INSERT INTO ErrorDetails VALUES('99016','EN','E','For Agreement No :{0} Already having GST details captured from LOS','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="586" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW"
+		replaceIfExists="true">
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype_temp T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                
+	UNION ALL
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+
+	WHERE NOT EXISTS
+	                 (SELECT   1
+					  FROM        FinCovenantType_Temp
+					  WHERE       FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+		</createView>
+
+</changeSet>
+	<changeSet id="587" author="madhubabu">
+		<createView viewName="FINCOVENANTTYPE_EAVIEW"
+			replaceIfExists="true">
+			SELECT       T1.FinReference, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+	         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+	         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+	         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+           CASE WHEN T1.CovenantType=T7.docCategory THEN T7.lastmnton 
+                WHEN T1.CovenantType=T6.custdocCategory THEN T6.lastmnton
+           else null end AS DocReceivedDate
+	         FROM  fincovenanttype T1 INNER JOIN
+                 BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                 Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                 customerdocuments T6 on  T6.custid=T4.custId LEFT join
+                 documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+		</createView>
+
+	</changeSet>
+	 <changeSet id="588" author="Irfan">
+	 	<sql>
+	 		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+						
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnSearchGuarantorCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_GuarantorDetailDialog_btnSearchGuarantorCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	 	</sql>
+	 </changeSet>
+	 <changeSet id="589" author="madhubabu">
+	<createView viewName="FINCOVENANTTYPE_EVIEW"
+		replaceIfExists="true">
+			 Select T.FinReference,T.custid,T.CovenantType,T.Description,T.MandRole,T.AlwWaiver,
+                    T.AlwPostpone,T.PostponeDays,T.CovenantTypeDesc,T.lovdescIsCustDoc,T.ReceivableDate,
+                    T.Version,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode,
+                   T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, 
+                   Case when T.DocReceivedDate is null then Cd.lastmnton else T.DocReceivedDate end DocReceivedDate 
+          from (SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype_temp T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                UNION ALL
+                SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                       WHERE NOT EXISTS (SELECT   1  FROM        FinCovenantType_Temp  WHERE FinReference = T1.FinReference and CovenantType = T1.CovenantType)
+                )T 
+          left join CUSTOMERDOCUMENTS CD on Cd.custid =T.custid and T.CovenantType = cd.CUSTDOCCATEGORY
+		</createView>
+
+</changeSet>
+	<changeSet id="590" author="madhubabu">
+		<createView viewName="FINCOVENANTTYPE_EAVIEW"
+			replaceIfExists="true">
+			Select T.FinReference,T.custid,T.CovenantType,T.Description,T.MandRole,T.AlwWaiver,
+                    T.AlwPostpone,T.PostponeDays,T.CovenantTypeDesc,T.lovdescIsCustDoc,T.ReceivableDate,
+                    T.Version,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode,
+                   T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, 
+                   Case when T.DocReceivedDate is null then Cd.lastmnton else T.DocReceivedDate end DocReceivedDate 
+          from (SELECT  T1.FinReference,T4.custid, T1.CovenantType, T1.Description, T1.MandRole, T1.AlwWaiver,
+                         T1.AlwPostpone, T1.PostponeDays,T3.DocTypeDesc CovenantTypeDesc,T3.DocIsCustDoc lovdescIsCustDoc,
+                         T1.ReceivableDate,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+                         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                         T7.DocReceivedDate
+                 FROM  fincovenanttype T1 INNER JOIN
+                       BMTDocumentTypes T3 ON T3.DocTypeCode = T1.CovenantType  INNER JOIN 
+                       Financemain T4 ON T4.FinReference= T1.FinReference  LEFT JOIN
+                       documentdetails T7 on T7.referenceID = T1.FinReference And  T1.CovenantType = T7.DocCategory 
+                )T 
+          left join CUSTOMERDOCUMENTS CD on Cd.custid =T.custid and T.CovenantType = cd.CUSTDOCCATEGORY
+		</createView>
+
+	</changeSet>
+	<changeSet id="591" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_VIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+						T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+						(SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+						T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+						coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName			            
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+						SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+						Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+						
+			UNION ALL
+						
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+			            T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+			            T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+			            SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+			            Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+			
+			WHERE     	NOT EXISTS (SELECT 1 FROM FinGuarantorsDetails_TEMP  WHERE GuarantorId = T1.GuarantorId)
+		
+		</createView>
+	
+	</changeSet>
+	<changeSet id="592" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_TVIEW" replaceIfExists="true">
+			SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+						 T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						 T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						 T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+						 (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+						 T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+						 coalesce(T3.CUSTID,0) CUSTID , T3.CustShrtName
+			FROM        FinGuarantorsDetails_Temp T1 INNER JOIN
+						SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+						Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		</createView>
+	
+	</changeSet>
+	<changeSet id="593" author="Irfan">
+		<createView viewName="FINGUARANTORSDETAILS_AVIEW" replaceIfExists="true">
+		SELECT      T1.GuarantorId, T1.FinReference, T1.BankCustomer, T1.GuarantorCIF, T1.GuarantorIDType, T1.GuarantorIDNumber, T1.GuranteePercentage, 
+			            T1.MobileNo, T1.EmailId, T1.GuarantorProof, T1.GuarantorProofName, T1.Version, T1.LastMntBy, T1.LastMntOn,  T1.RecordStatus, 
+						T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.GuarantorCIFName, T1.Remarks, T1.AddrHNbr,
+						T1.FlatNbr, T1.AddrStreet, T1.AddrLine1, T1.AddrLine2, T1.POBox, T1.AddrCity, T1.AddrProvince, T1.AddrCountry, T1.AddrZIP,
+			            (SELECT IdentityDesc  FROM BMTIdentityType WHERE (IdentityType = T1.GuarantorIDType)) GuarantorIDTypeName,
+			            T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName,
+			            coalesce(T3.CUSTID,0) CUSTID, T3.CustShrtName			            
+			FROM        FinGuarantorsDetails T1 INNER JOIN
+				        SecUsers T2 ON T1.LastMntBy = T2.UsrID Left Outer Join
+				        Customers T3 ON T1.GuarantorCIF =  T3.CustCIF
+		
+		</createView>
+	</changeSet>
+	<changeSet id="594" author="Manoj">
+	<createTable tableName="DATAMART_HEADER">
+		<column name="BATCHID" type="decimal(12,0)" autoIncrement="true"
+			incrementBy="1">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="STATUS" type="varchar(1)">
+			<constraints nullable="false" />
+		</column>
+		<column name="INSERT_TIMESTAMP" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="COMPLETION_TIMESTAMP" type="datetime" />
+		<column name="ERR_DESCRIPTION" type="varchar(500)" />
+		<column name="ERROR_CODE" type="varchar(500)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="595" author="Manoj">
+	<addColumn tableName="DM_WRITEOFF_DETAILS">
+			<column name="BATCH_ID" type="bigint"/>
+		</addColumn>
+		
+</changeSet>
+
+<changeSet id="596" author="Manoj">
+	<addColumn tableName="DM_SEND_SOA_EMAIL">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="597" author="Manoj">
+	<addColumn tableName="DM_RESCH_DETAILS_DAILY">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_PRESENTATION_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_PREPAYMENT_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_NOC_ELIGIBLE_LOANS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_LOAN_VOUCHER_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_LEA_DOC_DTL">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_HTS_UNADJUSTED_AMT">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="FORECLOSURECHARGES">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+	<addColumn tableName="DM_BOUNCE_DETAILS">
+		<column name="BATCH_ID" type="bigint" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="598" author="Manoj">
+	<createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+		select
+		cast(T2.Applicationno as numeric(8,0)) APPLID,
+		cast(null as numeric(32,0)) CHEQUEID,t1.finreference AGREEMENTNO,'' BOUNCE_DATE,'' BOUNCE_REASON,
+		cast(null as numeric(16,2)) BOUNCE_AMT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,
+		cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1
+		inner join FinanceMain T2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
+<changeSet id="599" author="Manoj">
+	<createView viewName="FORECLOSURECHARGES_VIEW" replaceIfExists="true">
+		select 
+		substr(T1.FinReference,7,length(T1.FinReference)) AGREEMENTID,udf_convertcurrency(t3.PriAmount,T2.finccy,'INR')  BAL_PRINCIPAL,null RESEDUL_VALUE,null INSTALLMENTS,
+		null ADVICES,null PENALTY,udf_convertcurrency(t4.PftAmount,T2.finccy,'INR')  INTREST_ON_TERMINATION,null FLOATINTREST_ON_TERMINATION,
+		null OVER_DUES,null CURRENT_OVERDUES,null CURRENT_WAVEOFFAMT,null OVER_DISTANCE_CHARGES,
+		null INTREST_ON_TERMINATION_PER_DAY,null INTREST_ACCRUALS,null EXCESS_AMOUNT,null EXCESS_REFUND,
+		null ADVICE,null REBATE,null ADVINSTL,null EXCESSPRINPMNT,null SDAMT,
+		null SDINT,null EXCESS_INTREST_RATE,null VAT_ON_FORECLOSURE,null UNDER_DISTANCE_CHARGES,
+		null NET_PAYBALE,udf_convertcurrency(t5.TotalFeeAmount,T2.finccy,'INR')  WAIVEOFFAMOUNT,null ACTIVITY,null AUTHORIZEDON,null COMMITMENT_FEE,null ORIGINATION_FEE,
+		null PRE_EMI,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESS_DATE,
+		null CHEQUEID,null STATUS,null INTEREST_WAIVE_OFF,null BALANCE_PRIN_WAIVE_OFF,
+		udf_convertcurrency(t6.LPFTWaivedAmount,T2.finccy,'INR')  INSTALLMET_INT_WAIVE_OFF,udf_convertcurrency(t7.PFTWaivedAmount,T2.finccy,'INR')  WOFF_CURRMONTH_INT,udf_convertcurrency(t8.ODCWaivedAmount,T2.finccy,'INR')  WOFF_OVERDUE_CHARGE,null WOFF_CHQBOUNCE_CHARGES,
+		null WOFF_OTHERS,null INSTALLMENT_PRIN_WAIVE_OFF,null WOFF_PARKING_CHARGES,null TOT_OTHER_REPO_CHARGES,
+		null WOFF_OTHER_REPO_CHARGES,null TOT_REPOSESSION_CHARGES,null WOFF_REPOSESSION_CHARGES,null TOT_PARKING_CHARGES,null BATCH_ID
+		from Finpftdetails t1
+		inner join financemain t2 on t1.finreference=t2.finreference
+		left join (select finreference,sum(PriAmount)PriAmount from FinRepayHeader where FinEvent = 'EarlySettlement' group by finreference) t3 on  t3.finreference=t2.finreference  
+		left join (select finreference,sum(PftAmount)PftAmount from FinRepayHeader where FinEvent = 'EarlySettlement' group by finreference) t4 on  t4.finreference=t2.finreference  
+		left join (select reference,receiptid,sum(TotFeeAmount)TotalFeeAmount from FinReceiptHeader where receiptpurpose = 'EarlySettlement' group by reference,receiptid) t5 on  t5.reference=t2.finreference  
+		left join (select receiptid,sum(WaivedAmount)LPFTWaivedAmount from ReceiptAllocationDetail where allocationType = 'LPFT' group by receiptid) t6 on  t6.receiptid=t5.receiptid  
+		left join (select receiptid,sum(WaivedAmount)PFTWaivedAmount from ReceiptAllocationDetail where allocationType = 'PFT' group by receiptid) t7 on  t7.receiptid=t5.receiptid  
+		left join (select receiptid,sum(WaivedAmount)ODCWaivedAmount from ReceiptAllocationDetail where allocationType = 'ODC' group by receiptid) t8 on  t8.receiptid=t5.receiptid
+	</createView>
+</changeSet>
+<changeSet id="600" author="Manoj">
+	<createView viewName="DM_HTS_UNADJUSTED_AMT_VIEW" replaceIfExists="true">
+		  select substr(T1.FinReference,7,length(T1.FinReference)) APPLID,
+		 udf_convertcurrency(BalanceAmt,T1.finccy,'INR')  UNADJUSTED_AMOUNT,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE
+		  ,null BATCH_ID 
+		  
+		from financemain T1 
+		inner join (Select FinReference,sum(BalanceAmt)BalanceAmt from FINEXCESSAMOUNT
+		group by FinReference)t2 on t1.FinReference =t2.FinReference
+	</createView>
+</changeSet>
+
+<changeSet id="601" author="Manoj">
+	<createView viewName="DM_LEA_DOC_DTLE_VIEW" replaceIfExists="true">
+			select substr(T1.FinReference,7,length(T1.FinReference))  AGREEMENTID,null APPLICABLE,
+			substr(T2.FinReference,7,length(T2.FinReference))  APPLID,null APPROVED_BY,null AUTHDATE,null AUTHID,null AWB_NO,null BRANCHSTATUS,
+			cast(null as numeric(8,0)) CONSTITUTION,null COURIER_NAME,'N' CRITICAL,null CUSTOMER_TYPE,
+			t1.custid  CUSTOMERID,null DATE_BRANCH_STATUS,null DATELASTUPDT,null DOC_CLASSFN,null DOC_RETRIEVAL_STATUS,
+			cast(null as numeric(8,0)) DOCID,null DOCTYPE,null FILE_BARCODE,null MAKERDATE,null MAKERID,null MC_STATUS,null NEW_FLAG,null ORIGINALS,
+			null PACKET_TRACKER_NO,null PROPERTY_ADDRESS,null PROPERTY_CODE,null REASON,null RECEIVED,null RECEIVEDDATE,null REJECTION_REASONS,
+			null RELEASED_DATE,null RELEASED_REMARKS,null REMARKS,null STAGE,null TARGETDATE,null TITLE_DOCUMENT,
+			cast(null as numeric(8,0)) TXNDOCID,null VALIDTILLDATE,null VAP_LOAN_FLAG,
+			(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+			'N' PROCESSFLAG,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESSDATE,null SEGMENT,
+			null REVISED_TARGET_DATE,null BATCH_ID
+			from Finpftdetails t1
+			inner join financemain t2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
+
+<changeSet id="602" author="Manoj">
+	<createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+				 SELECT NULL MODULEID,
+			  NULL STAGEID,
+			  NULL LEA_VOUCHERID,
+			  NULL FA_VOUCHERID,
+			  NULL VOUCHERTYPE,
+			  NULL VOUCHERDATE,
+			  NULL VALUEDATE,
+			  NULL BRANCHID,
+			  NULL BRANCH_CODE,
+			  NULL BRANCHDESC,
+			  NULL BUSINESS_AREA,
+			  NULL PROFIT_CENTRE,
+			  t1.fintype PRODUCT_FLAG,
+			  t3.ID SCHEMEID,
+			  T3.FINTYPEDESC SCHEMEDESC,
+			  NULL ASSIGNMENT,
+			  SUBSTR(T2.FinReference,7,LENGTH(T2.FinReference)) AGREEMENTID,
+			  t2.Finreference AGREEMENTNO,
+			  T1.FinstartDate AGREEMENTDATE,
+			  NULL DISBURSALDATE,
+			  t1.FinIsActive LOAN_STATUS,
+			  NULL NPA_STAGEID,
+			  NULL FINNONE_GLID,
+			  NULL GROUPGLDESC,
+			  NULL SAPGL_CODE,
+			  NULL COST_CENTRE,
+			  NULL DRAMT,
+			  NULL CRAMT,
+			  NULL DRCR_FLAG,
+			  NULL DRCR_AMT,
+			  NULL NARRATION,
+			  NULL CHEQUEID,
+			  (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue
+			  FROM smtparameters
+			  WHERE SYSPARMCODE='APP_DATE'
+			  ) BUSINESSDATE,
+			  (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue
+			  FROM smtparameters
+			  WHERE SYSPARMCODE='VALUE_DATE'
+			  ) PROCESSDATE,
+			  NULL SEGMENT,
+			  'N' PROCESSED_FLAG,
+			  null BATCH_ID
+			FROM Finpftdetails t1
+			INNER JOIN financemain t2
+			ON t1.finreference=t2.finreference
+			INNER JOIN RMTFINANCETYPES T3
+			ON T3.fintype=T1.fintype
+		</createView>
+</changeSet>
+
+<changeSet id="603" author="Manoj.P">
+	<createView viewName="DM_NOC_ELIGIBLE_LOANS_VIEW" replaceIfExists="true">
+		 select t1.Finreference AGREEMENTNO,t1.Finreference LOANACCTNUM,t1.fintype PRODUCTFLAG,CustEmail EMAIL,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')BUSINESSDATE,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,'N' PROCESSED_FLAG ,null BATCH_ID
+		from Finpftdetails t1
+		left join CustomerEMails T3 on T3.custid=T1.custid and custEmailPriority=5
+	</createView>
+</changeSet>
+
+<changeSet id="604" author="Manoj">
+	<createView viewName="DM_PREPAYMENT_DETAILS_VIEW" replaceIfExists="true">
+		select 
+		cast(t2.applicationno as numeric(8,0)) APPLID,t1.finreference AGREEMENTNO,
+		null PREPAYMENTID,
+		null PREPAYMENT_RATE,null PREPAYMENT_TYPE,
+		null PREPAYMENT_PENALTY_DUE,
+		null PREPAYMENT_PENALTY_PAID,null PREPAYMENT_AMT,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,
+		'' SEGMENTS,'' PREPAYMENT_DATE,
+		cast(null as numeric(8,0)) BUSINESS_YEAR, null BATCH_ID 
+		from Finpftdetails t1
+		  inner join financemain t2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
+
+<changeSet id="605" author="Manoj">
+	<createView viewName="DM_PRESENTATION_DETAILS_VIEW" replaceIfExists="true">
+		  select t1.finreference AGREEMENTNO,
+		  udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  EMI,udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  REPAY_TYPE,null DEPOSITED_DATE,null CREDIT_STATUS,null RETURN_CODE,null RETURN_REASON,null REMARKS,
+		  null SEGMENTS,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+		  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		  calTerms EMI_NO,t7.bankname CUSTOMER_BANK_NAME,
+		  null BOM_BOUNCE_BUCKET,t6.micr MICR_CODE,null STATUS_UPDT_DATE,t3.ACCNUMBER CUST_BANK_AC_NO,t6.Branchdesc CUSTOMER_BANK_BRANCH,
+		  null CHEQUESNO,null CHEQUEDATE,null FEMI_FLAG,null HOLD_IGNORE_CODE,null HOLD_IGNORE_REASON,null DEST_ACC_HOLDER,
+		  t3.Mandateid PDCID,  t6.bankcode BBRANCHID, null BATCH_ID 
+		  from Finpftdetails t1
+		  inner join financemain t2 on t1.finreference=t2.finreference
+		 INNER JOIN mandates t3 on t3.ORGReference = t2.finreference
+		inner join BankBranches T6 on T6.BankBranchid=t3.BankBranchid 
+		inner join BMTBankDetail T7 on T7.Bankcode=t6.bankcode
+	</createView>
+</changeSet>
+
+<changeSet id="606" author="Manoj">
+	<createView viewName="DM_RESCH_DETAILS_DAILY_VIEW" replaceIfExists="true">
+		select substr(T2.FinReference,7,length(T2.FinReference)) APPLID,t2.finreference AGREEMENTNO,
+         cASE WHEN FinAssetvalue - FinCurrAssetValue > 0 THEN 'Partially Disbursed' ELSE 'Fully Disbursed' END DISB_STATUS,
+         NULL GROSS_TENURE,null NET_TENURE,t2.MaturityDate MATURITYDATE,t2.LastRepayDate EXPIRYDATE,
+         udf_convertcurrency(T1.FirstRepayAmt,T2.finccy,'INR')  EMI,t2.FinRepayMethod REPAYMENT_MODE,T1.fintype PRODUCTFLAG,
+         (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,
+         (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,
+         NULL SEGMENTS,substr(t2.REPAYFRQ,1,1) FREQ,
+         Case when t1.finisactive =1 then 'Active' when t1.CLOSINGSTATUS='C' 
+         then 'Cancelled' else 'Closed' end LOAN_STATUS,t1.MaturityDate CLOSUREDATE,
+         t1.CUSTCIF CUST_ACCT_NO,
+         T7.bankname BANKNAME,T6.micr MICRCODE,t6.Branchdesc CUST_BANK_BRANCH,
+        T8.PCCITYNAME  CUST_BANK_CITY,null BUSINESS_YEAR,
+        t3.Mandateid PDCID,null PCFLAG,null TIE_UP,
+        CASE WHEN RepayMargin>999 then 999 else RepayMargin end MARGIN,null SPECIALMARGIN,
+        t2.NumberofTerms FIXEDTENOR,null CEEFFECTIVEDATE,
+        null EFF_RATE,null PLRRATE,
+        null TIE_UP_WITH,null DATE_OF_CLOSURE,null PDCMS_SEQ_GENERATED_DATE,
+        null INSTRUMENT_DATA_ENTRY_DATE,null PAYMENT_AUTHORIZATION_DATE, null BATCH_ID
+			from finpftdetails T1
+			inner join Financemain T2 on t1.finreference=t2.finreference
+			INNER JOIN mandates t3 on t3.ORGReference = t2.finreference
+			inner join BankBranches T6 on T6.BankBranchid=t3.BankBranchid 
+			inner join BMTBankDetail T7 on T7.Bankcode=t6.bankcode
+			left join RMTPROVINCEVSCITY T8 on T8.PCCITY = T6.CITY
+	</createView>
+</changeSet>
+
+<changeSet id="607" author="Manoj">
+	<createView viewName="DM_SEND_SOA_EMAIL_VIEW" replaceIfExists="true">
+		  select T1.Finreference AGREEMENTNO,t1.custid CUSTOMERID,t4.CustEmail EMAILID,
+		  substr(T2.FinReference,7,length(T2.FinReference)) AGREEMENTID,
+		  substr(T2.FinReference,7,length(T2.FinReference))PROCESSID,
+		  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  GENERATION_DATE,
+		  null PROCESSED,t1.fintype PRODUCTFLAG,null GROUPID,
+		  T5.ActiveCnt+T6.CloseCnt TOTAL_LAN,
+		  T6.CloseCnt TOTAL_CLOSED_LAN,
+		  T5.ActiveCnt TOTAL_ACTIVE_LAN,null SWIPE_FLAG,null EMI_CARD_NO,
+		  T1.latestDisbDate DISBURSEMENT_DATE,
+		  null SUPPLIERID,null SUPPLIERDESC,
+		  udf_convertcurrency(TotalPriSchd,T2.finccy,'INR')  AMT_FIN,udf_convertcurrency(FirstRepayAmt,T2.finccy,'INR')  EMI,NextRepayDate NEXT_EMI_DUE_DATE,
+		  null CHEQUE_BOUNCE_CHARGE, null BATCH_ID 
+		from Finpftdetails t1
+		inner join financemain t2 on t1.finreference=t2.finreference
+		Inner join customers T3 on T3.custid=T1.custid
+		left join CustomerEMails T4 on T4.custid=T3.custid and custEmailPriority=5
+		Left join (Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+				where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  
+		Left join (Select CustID,COUNT(*)CloseCnt from FinPftDetails
+				where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID
+	</createView>
+</changeSet>
+
+<changeSet id="608" author="Manoj">
+	<createView viewName="DM_WRITEOFF_DETAILS_VIEW" replaceIfExists="true">
+		select substr(T2.FinReference,7,length(T2.FinReference)) APPLID,
+         t2.finreference AGREEMENTNO,WriteoffDate CHARGEOFF_DT,null CHARGEOFF_FLG,
+         t1.Remarks CHARGEOFF_REASON,null SETTLEMENT_LOSS,
+         udf_convertcurrency((WriteoffPrincipal+WriteoffProfit),T2.finccy,'INR')  GROSS_WRITEOFF_AMT,
+         udf_convertcurrency((WriteoffPrincipal+WriteoffProfit),T2.finccy,'INR')  NET_WRITEOFF_AMT,
+           (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+         'N' PROCESSED_FLAG,null PROCESS_DATE,null SEGMENTS,
+          null RECEIPT_ON_CHARGEOFF,null BUSINESS_YEAR, null BATCH_ID 
+  from FinWriteoffDetail T1
+  inner join financemain t2 on t1.finreference=t2.finreference
+	</createView>
+</changeSet>
+
+	<changeSet id="609" author="Kesav">
+		<createView viewName="FINANCEMAIN_DVIEW" replaceIfExists="true">
+			SELECT    T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt, T1.ScheduleMethod, 
+			          T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T1.FinBranch, T1.FINASSETVALUE,
+			          T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, T2.CustId, T2.CustCIF ,
+			          T3.FinCategory lovDescProductCodeName, T3.FinDivision LovDescFinDivision 
+			FROM      FinanceMain_Temp T1 INNER JOIN
+			          Customers T2 ON T1.CustID = T2.CustID INNER JOIN
+			          RMTFinanceTypes T3 ON T3.FinType = T1.FinType INNER JOIN
+			          InvestmentFinHeader T4 ON T4.InvestmentRef = T1.InvestmentRef		
+		</createView>
+	</changeSet>
+	<changeSet id="610" author="Kesav">
+		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.InvestmentRef, T1.FinType, T1.FinCcy, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt, T1.ScheduleMethod, 
+			            T1.NumberOfTerms, T1.RecordStatus, T1.RecordType, T1.RoleCode, T1.NextRoleCode, T1.FinBranch, T1.FinContractDate, T1.LinkedFinRef,
+			            T1.NextUserId, T1.Priority, T1.WorkflowId, T1.TaskId, T1.NextTaskId, T1.FinPreApprovedRef, T1.RcdMaintainSts,T1.InsuranceAmt,
+			            T1.FinCurrAssetValue, T1.CalTerms, T1.DeviationApproval, T1.FinPurpose, T1.InitiateDate, T1.FINASSETVALUE,
+			            T2.CustCIF lovDescCustCif, T2.CustShrtName lovDescCustShrtName, T2.CustPassportNo lovDescCustPassportNo, T2.CustDOB LovDescCustDOB, 
+			            T2.CustCRCPR LovDescCustCRCPR, T2.PhoneNumber, 
+			            T3.FinCategory lovDescProductCodeName, T3.FinDivision lovdescfindivision, T3.Product lovdescFinProduct, T3.FinTypeDesc lovDescFinTypeName,
+			            COALESCE(T4.RoleDesc, FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage 
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustID = T2.CustID INNER JOIN
+			            RMTFinanceTypes T3 ON T3.FinType = T1.FinType LEFT OUTER JOIN
+			            SecRoles T4 ON T1.NextRoleCode = T4.RoleCd		
+		</createView>
+	</changeSet>
+	<changeSet id="611" author="Kesav">
+		<createView viewName="FINANCEMAINLIMITCHECK_AVIEW" replaceIfExists="true">
+			SELECT    Fm.FinReference ,Fm.FinBranch, Fm.FinSourceID, Fm.FinType, Fm.FinCcy, Fm.NumberOfTerms, Fm.ScheduleMethod, Fm.SecurityCollateral, 
+			          Fm.AllowRepayRvw, Fm.FinPurpose, FM.FINASSETVALUE,
+			          c.CustID, C.CustDftBranch, C.CustCtgCode, C.CustTypeCode, C.CustGenderCode, C.CustIsStaff, C.CustIndustry, C.CustSector, C.CustSubSector,
+			          C.CustEmpSts, C.CustMaritalSts, C.CustSegment, C.CustSubSegment, C.CustParentCountry, C.CustRiskCountry, C.CustNationality, C.CustAddlVar2,
+			          CA.CustAddrProvince,
+			          Ft.FinCategory, Ft.FinDivision,
+			          utils.datediff('MM', Fm.FinStartDate, utils.dateadd('MM', 0, Fm.MaturityDate)) Tenor  
+			FROM      FinanceMain FM
+			          JOIN Customers C ON c.CustID = Fm.CustID
+			          JOIN RMTFinanceTypes ft ON ft.FinType = fm.FinType
+			          LEFT JOIN CustomerAddresses CA ON CA.CustID = C.CustID AND CA.CustAddrType = 'PERM'		
+		</createView>
+	</changeSet>
+	<changeSet id="612" author="Kesav">
+		<createView viewName="FINANCEMAINLIMITCHECK_TVIEW" replaceIfExists="true">
+			SELECT    Fm.FinReference ,Fm.FinBranch, Fm.FinSourceID, Fm.FinType, Fm.FinCcy, Fm.NumberOfTerms, Fm.ScheduleMethod, Fm.SecurityCollateral, 
+			          Fm.AllowRepayRvw, Fm.FinPurpose, FM.FINASSETVALUE,
+			          c.CustID, C.CustDftBranch, C.CustCtgCode, C.CustTypeCode, C.CustGenderCode, C.CustIsStaff, C.CustIndustry, C.CustSector, C.CustSubSector,
+			          C.CustEmpSts, C.CustMaritalSts, C.CustSegment, C.CustSubSegment, C.CustParentCountry, C.CustRiskCountry, C.CustNationality, C.CustAddlVar2,
+			          CA.CustAddrProvince,
+			          Ft.FinCategory, Ft.FinDivision,
+			          utils.datediff('MM', Fm.FinStartDate, utils.dateadd('MM', 0, Fm.MaturityDate)) Tenor  
+			FROM      FinanceMain_Temp FM
+			          JOIN Customers C ON c.CustID = Fm.CustID
+			          JOIN RMTFinanceTypes ft ON ft.FinType = fm.FinType
+			          LEFT JOIN CustomerAddresses CA ON CA.CustID = C.CustID AND CA.CustAddrType = 'PERM'		
+		</createView>
+	</changeSet>
+	<changeSet id="613" author="Kesav">
+		<createView viewName="FINANCEMAINTENANCE_AVIEW" replaceIfExists="true">
+			SELECT    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms, 
+			          T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive,  T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			          T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			          T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange,
+			          T1.MigratedFinance, T1.RcdMaintainSts,T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule , T1.TakeOverFinance , 
+			          T1.NextRolloverDate, T1.DownPayment, T1.planEMIHAlw, T1.FinCurrAssetValue, T1.FINASSETVALUE, 
+			          T2.CustCIF LovDescCustCIF,
+			          T3.FinCategory LovDescProductCodeName, T3.FinIsAlwDifferment lovDescFinAlwDeferment,
+			          T4.ProductCategory
+			FROM      FinanceMain T1 INNER JOIN
+			          Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			          RMTFinanceTypes T3 ON T1.FinType = T3.FinType INNER JOIN
+			          BMTProduct T4 ON T3.FinCategory = T4.ProductCode		
+		</createView>
+	</changeSet>
+	<changeSet id="615" author="Kesav">
+		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+			
+			UNION ALL
+			
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			FROM        FinanceMain T1 INNER JOIN
+				    	Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))		
+		</createView>
+	</changeSet>
+	<changeSet id="616" author="Kesav">
+		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+			Select    F.FinReference, T.FinCategory LovDescProductCodeName, F.FinType, F.FinBranch, F.FinStartDate, F.MaturityDate, F.NumberOfTerms,
+			          F.FinCcy, F.FinAmount, (F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt) FinancingAmount, F.FeeChargeAmt, F.InsuranceAmt, 
+			          (F.FinAmount-F.DownPayment+F.FeeChargeAmt+F.InsuranceAmt-F.FinRepaymentAmount) CurFinAmount, F.DownPayment, F.FinCurrAssetValue, F.FinAssetValue,
+			          C.CustCIF LovDescCustCIF
+			FROM      RejectFinanceMain F LEFT OUTER JOIN
+			          Customers C ON F.CustID = C.CustID  LEFT OUTER JOIN
+			          RMTFinanceTypes T ON F.FinType = T.FinType		
+		</createView>
+	</changeSet>
+	<changeSet id="617" author="Kesav">
+		<createView viewName="WIFFINANCEMAIN_SVIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.FinAmount, T1.FinCcy, T1.FinType,T1.CustID, T1.FinAssetValue, T1.LastMntOn,T1.FinStartDate,
+			            T4.FirstTaskOwner LovDescFirstTaskOwner,
+			            T5.ProductCategory lovDescProductCodeName 
+			FROM        WIFFinanceMain T1                        
+			INNER JOIN  RMTFinanceTypes T2   ON T1.FinType = T2.FinType AND T2.FinIsActive=1
+			LEFT JOIN   LMTFinanceWorkFlowDef T3 ON T2.FinType = T3.FinType AND T3.FinEvent = 'Origination' 
+			INNER JOIN  WorkFlowDetails T4   ON T3.WorkFlowType = T4.WorkFlowType AND T4.WorkFlowActive = 1
+			INNER JOin  BMTProduct T5 ON T2.FinCategory = T5.ProductCode		
+		</createView>
+	</changeSet>	
+	<changeSet id="618" author="Durgaprasad g">
+	<sql>
+		UPDATE PDC_CONSL_EMI_DTL SET TXN_TYPE_CODE = 1,SOURCE_CODE=1
+	</sql>
+	</changeSet>
+	<changeSet  id="619" author="Prasad" dbms="oracle">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+		Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount-T1.PartialPaidamt end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End )else 0 end Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and (t2.closingstatus!='C' or t2.closingstatus is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select t2.finreference,Schdate,FeeTypeDesc ||'- Due ('||T2.Finreference||')', SchAmount Debit, 0 credit,2 Ordby from finfeescheduledetail T1 
+  Inner Join FinFeeDetail T2 on T1.FeeID = T2.FeeID
+  Inner Join FeeTypes T3 On T2.FeeTypeid = T3.FeeTypeId 
+  inner join financemain t4 on t4.FINREFERENCE =t2.FINREFERENCE
+  where SchAmount!=0 and (t4.closingstatus!='C' or t4.closingstatus is null) 
+  and  schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+union
+     Select T1.Finreference,Schdate,  'Part Prepayment Amount ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,3 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,4 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and (t2.closingstatus!='C' or t2.closingstatus is null)
+     union
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,5 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where T1.ReceiptModeStatus Not IN ('C')
+	union 	
+       
+        Select REFERENCE,Bouncedate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||' ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,6 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID 
+       Where T1.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
+  union
+		SELECT M.FINREFERENCE,M.POSTDATE,FEETYPEDESC ||'- Due ('||M.Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,7 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType <> 2 and	m.ADVISEAMOUNT >0 
+    union    
+    SELECT M.FINREFERENCE,M.POSTDATE,'Bounce - Due for Installment:'||T5.InstNumber||' ('||M.Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,7 Ordby
+		FROM MANUALADVISE M
+    INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0
+    INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate
+		where M.AdviseType <> 2 and	m.ADVISEAMOUNT >0 and FEETYPEID not in (Select FEETYPEID from FEETYPES)
+  union
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,8 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,9 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,10 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
+union
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,11 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  feeSchedulemethod not in ('DISB','POSP')  and (PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
+
+	union 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,12 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   (t2.closingstatus!='C' or t2.closingstatus is null)
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,13 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,14 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where T1.Status!='CANCELED' and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union
+  Select T2.Reference,T2.Receiptdate,'TDS Adjustment('||T2.Reference||')' Particulars,0 Debit,T1.PaidAmount credit,15 ordby
+  from RECEIPTALLOCATIONDETAIL T1
+  inner join FINRECEIPTHEADER T2 on T2.RECEIPTID  = T1.RECEIPTID where T1.ALLOCATIONTYPE='TDS'
+  and T2.ReceiptModeStatus Not IN ('C')
+  union  
+  Select distinct T2.Reference,Bouncedate,'TDS Adjustment Reversal('||T2.Reference||')' Particulars,T5.TDSSCHDPAYNOW Debit,0 credit, 16 ordby
+  from FINRECEIPTHEADER T2
+  inner join FINRECEIPTDETAIL T3 on T3.RECEIPTID = T2.RECEIPTID
+  inner join finrepayheader T4 on T3.Receiptseqid = T4.Receiptseqid
+  inner join (Select repayid,sum(TDSSCHDPAYNOW) TDSSCHDPAYNOW from FinRepayscheduledetail
+  where TDSSCHDPAYNOW!=0
+  group by repayid) T5 on T5.repayid =T4.repayid
+  where T3.Status ='B' 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where Debit!=0 or credit !=0]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="620" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_CONFIG set FIELDNAMES = NULL, Header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,LEDGER,DESCRIPTION,OPENING BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR}' where Name = 'GL_TRAIL_BALANCE_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

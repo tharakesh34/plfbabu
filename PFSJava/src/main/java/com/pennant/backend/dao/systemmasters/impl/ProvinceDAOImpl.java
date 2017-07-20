@@ -60,9 +60,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.systemmasters.Province;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
-import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -328,7 +328,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "taxStateCode = :taxStateCode and cPProvince = :cPProvince" ;
+		String whereClause = "taxStateCode = :taxStateCode and cPProvince <> :cPProvince" ;
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -387,7 +387,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 	}
 
 	@Override
-	public int geStateCodeCount(String taxStateCode, String type) {
+	public int geStateCodeCount(String taxStateCode, String cpProvince, String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
@@ -395,11 +395,12 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 
 		StringBuilder selectSql = new StringBuilder("Select Count(TaxStateCode) From RMTCountryVsProvince");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where TaxStateCode = :TaxStateCode");
+		selectSql.append(" Where TaxStateCode = :TaxStateCode And CPPROVINCE <> :CPPROVINCE");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("TaxStateCode", taxStateCode);
+		source.addValue("CPPROVINCE", cpProvince);
 
 		try {
 			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);

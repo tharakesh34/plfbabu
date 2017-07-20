@@ -1322,7 +1322,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 			
-			final FinanceDetail financeDetail = getFinanceMaintenanceService().getFinanceDetailById(aFinanceMain.getId(),"_View", userRole, moduleDefiner, eventCodeRef);
+			final FinanceDetail financeDetail = getFinanceMaintenanceService().getFinanceDetailById(aFinanceMain.getId(),"_View", userRole,eventCodeRef, moduleDefiner);
 			financeDetail.setModuleDefiner(moduleDefiner);
 			
 			//Role Code State Checking
@@ -2282,7 +2282,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if( tab != null) {
 				if("tab_BasicDetail".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_BASICMAINTAIN;
-					eventCodeRef  = AccountEventConstants.ACCEVENT_AMENDMENT;
 					workflowCode =  FinanceConstants.FINSER_EVENT_BASICMAINTAIN;
 				}else if("tab_RpyBasicDetail".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN;

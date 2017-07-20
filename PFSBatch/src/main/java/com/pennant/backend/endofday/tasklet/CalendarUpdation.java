@@ -53,7 +53,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.Interface.service.CalendarInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CalendarUpdation implements Tasklet {
 

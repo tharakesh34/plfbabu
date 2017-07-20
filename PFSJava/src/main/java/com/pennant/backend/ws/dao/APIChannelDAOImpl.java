@@ -19,8 +19,8 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.channeldetails.APIChannel;
 import com.pennant.backend.model.channeldetails.APIChannelIP;
 import com.pennant.ws.exception.APIException;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements APIChannelDAO {
 	private static Logger logger = Logger.getLogger(APIChannelDAOImpl.class);

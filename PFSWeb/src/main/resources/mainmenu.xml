@@ -446,7 +446,7 @@
 		<menuItem id="menu_Item_PostingEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/PostingEnquiryList.zul"  rightName="menuItem_Enquiry_PostingEnquiry"/>
 		<menuItem id="menu_Item_RepaymentsEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryList.zul"  rightName="menuItem_Enquiry_RepaymentsEnquiry"/>
 		<menuItem id="menu_Item_OverdueChargeRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/OverDueInquiry/OverDueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
-		<!-- <menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/> -->
+		<menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
 		<menuItem id="menu_Item_OverdueDetails" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueDetails"/>
         <menuItem id="menu_Item_ProvisionMovement" zulNavigation="/WEB-INF/pages/Enquiry/ProvisionInquiry/ProvisionInquiryList.zul?rightName=menuItem_Enquiry_ProvisionMovement"  rightName="menuItem_Enquiry_ProvisionMovement"/>
         <menuItem id="menu_Item_SuspDetails" zulNavigation="/WEB-INF/pages/Enquiry/SuspInquiry/SuspEnquiryList.zul"  rightName="menuItem_Enquiry_SuspDetail"/>
@@ -549,6 +549,7 @@
 			 --><menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_SOA" />
 			<menuItem id="menu_Item_NPAReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
 			<menuItem id="menu_Item_PaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
+			<menuItem id="menu_Item_NoObjectionCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="" />
 				
 			<!-- <menuItem id="menu_Item_AvailmentTicket" zulNavigation="/WEB-INF/pages/Reports/AvailmentTicketDialog.zul"  rightName="menuItem_CustomerTemplates_AvailmentTicket"/> -->	
 		</menu>
@@ -556,7 +557,7 @@
 			<!-- <menuItem id="menu_Item_Collateral" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CreditReports_Collateral" />
 			<menuItem id="menu_Item_CollateralInsurence" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_CollateralInsurence" />	
 			<menuItem id="menu_Item_LimitExpiry" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_LimitExpiry" /> -->	
-			<menuItem id="menu_Item_MonthlyCovenant" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_MonthlyCovenant" />	
+			<!-- <menuItem id="menu_Item_MonthlyCovenant" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_MonthlyCovenant" /> -->	
 			<menuItem id="menu_Item_DailyPastdue"  zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_DailyPastdue" />	
 			<menuItem id="menu_Item_DailyPastduebyCustomer"  zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_DailyPastduebyCustomer" />	
 			<!-- <menuItem id="menu_Item_CreditControlAdmPortfolio" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CreditReports_CreditControlAdmPortfolio" /> -->	

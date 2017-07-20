@@ -69,8 +69,8 @@ import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.util.RuleConstants;
-import com.pennanttech.pff.core.ConcurrencyException;
-import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>

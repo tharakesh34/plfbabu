@@ -14,7 +14,7 @@ import com.pennant.coreinterface.process.UploadProfitDetailProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennanttech.pff.core.InterfaceException;
+import com.pennanttech.pennapps.core.InterfaceException;
 
 public class UploadProfitDetailProcessImpl extends GenericProcess implements UploadProfitDetailProcess{
 

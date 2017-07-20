@@ -44,6 +44,7 @@ package com.pennant.backend.dao.systemmasters;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
+import com.pennanttech.pff.core.TableType;
 
 public interface BuilderProjcetDAO extends BasicCrudDao<BuilderProjcet> {
 	
@@ -58,5 +59,7 @@ public interface BuilderProjcetDAO extends BasicCrudDao<BuilderProjcet> {
 	 * @return BuilderProjcet
 	 */
 	BuilderProjcet getBuilderProjcet(long id,String type);
+
+	boolean isDuplicateKey(long id, String name, long builderId, TableType tableType);
 	
 }

@@ -17,9 +17,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
