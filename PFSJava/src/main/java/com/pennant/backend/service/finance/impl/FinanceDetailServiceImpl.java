@@ -6430,10 +6430,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setNextSchDate(financeMain.getNextRepayPftDate());
 			}
 
-			summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
-			summary = getFinFeeDetailDAO().getTotalFeeCharges(summary);
-			finSchData.setFinanceSummary(summary);
+			//commented because we are fetching total fees from FinfeeDeatail table
+/*			summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
+			summary = getFinFeeDetailDAO().getTotalFeeCharges(summary);*/
 			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
+			finSchData.setFinanceSummary(summary);
 
 			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);
 			if (finODDetails != null) {

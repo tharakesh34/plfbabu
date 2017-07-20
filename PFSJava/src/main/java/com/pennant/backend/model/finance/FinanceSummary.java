@@ -90,7 +90,8 @@ public class FinanceSummary implements Serializable {
 	
 	//Posting Details
 	private BigDecimal totalFees = BigDecimal.ZERO;
-	private BigDecimal totalCharges = BigDecimal.ZERO;
+	private BigDecimal totalWaiverFee = BigDecimal.ZERO;
+	private BigDecimal totalPaidFee = BigDecimal.ZERO;
 	
 	// Finance Profit Enquiry
 	private String finType;
@@ -297,13 +298,7 @@ public class FinanceSummary implements Serializable {
 	public void setTotalFees(BigDecimal totalFees) {
     	this.totalFees = totalFees;
     }
-	
-	public BigDecimal getTotalCharges() {
-    	return totalCharges;
-    }
-	public void setTotalCharges(BigDecimal totalCharges) {
-    	this.totalCharges = totalCharges;
-    }
+
 	public void setFinCurODDays(int finCurODDays) {
 	    this.finCurODDays = finCurODDays;
     }
@@ -746,5 +741,21 @@ public class FinanceSummary implements Serializable {
 
 	public void setFullyDisb(boolean fullyDisb) {
 		this.fullyDisb = fullyDisb;
+	}
+
+	public BigDecimal getTotalWaiverFee() {
+		return totalWaiverFee;
+	}
+
+	public void setTotalWaiverFee(BigDecimal totalWaiverFee) {
+		this.totalWaiverFee = totalWaiverFee;
+	}
+
+	public BigDecimal getTotalPaidFee() {
+		return totalPaidFee;
+	}
+
+	public void setTotalPaidFee(BigDecimal totalPaidFee) {
+		this.totalPaidFee = totalPaidFee;
 	}
 }

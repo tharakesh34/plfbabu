@@ -3223,6 +3223,7 @@
 		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
 		<property name="deviationDetailsService" ref="deviationDetailsService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl"

@@ -134,7 +134,7 @@ public class FinMainReportData implements Serializable{
 	private String totalWaivers = "";
 	private String finODTotPenaltyAmt = "";
 	private String finODTotPenaltyPaid = "";
-	private String totalCharges = "";
+	private String totalPaidFees = "";
 	private String finODTotWaived = "";
 	private String finODTotPenaltyBal = "";
 
@@ -803,12 +803,6 @@ public class FinMainReportData implements Serializable{
 	public void setFinODTotPenaltyPaid(String finODTotPenaltyPaid) {
     	this.finODTotPenaltyPaid = finODTotPenaltyPaid;
     }
-	public String getTotalCharges() {
-    	return totalCharges;
-    }
-	public void setTotalCharges(String totalCharges) {
-    	this.totalCharges = totalCharges;
-    }
 	public String getFinODTotWaived() {
     	return finODTotWaived;
     }
@@ -993,10 +987,10 @@ public class FinMainReportData implements Serializable{
 		
 		//Totals
 		reportData.setTotalFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalFees(), ccyFormatter));
-		reportData.setTotalWaivers(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));//TODO
+		reportData.setTotalWaivers(PennantApplicationUtil.amountFormate(financeSummary.getTotalWaiverFee(), ccyFormatter));
 		reportData.setFinODTotPenaltyAmt(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
 		reportData.setFinODTotPenaltyPaid(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
-		reportData.setTotalCharges(PennantApplicationUtil.amountFormate(financeSummary.getTotalCharges(), ccyFormatter));
+		reportData.setTotalPaidFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalPaidFee(), ccyFormatter));
 		reportData.setFinODTotWaived(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotWaived(), ccyFormatter));
 		reportData.setFinODTotPenaltyBal(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyBal(), ccyFormatter));
 		
@@ -1081,6 +1075,14 @@ public class FinMainReportData implements Serializable{
 
 	public void setGraceTerms(String graceTerms) {
 		this.graceTerms = graceTerms;
+	}
+
+	public String getTotalPaidFees() {
+		return totalPaidFees;
+	}
+
+	public void setTotalPaidFees(String totalPaidFees) {
+		this.totalPaidFees = totalPaidFees;
 	}
 	
 }

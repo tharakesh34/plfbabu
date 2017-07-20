@@ -1366,18 +1366,6 @@
 														style="text-align:right" />
 												</hbox>
 												<label
-													id="label_FinanceMainDialog_TotalCharges"
-													value="${c:l('label_FinanceMainDialog_TotalCharges.value')}" />
-												<hbox>
-													<space
-														spacing="2px" />
-													<decimalbox
-														id="totalCharges" maxlength="25" width="198px"
-														style="text-align:right" />
-												</hbox>
-											</row>
-											<row visible="true">
-												<label
 													id="label_FinanceMainDialog_TotalWaivers"
 													value="${c:l('label_FinanceMainDialog_TotalWaivers.value')}" />
 												<hbox>
@@ -1385,6 +1373,18 @@
 														spacing="2px" />
 													<decimalbox
 														id="totalWaivers" width="198px" maxlength="25"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label
+													id="label_FinanceMainDialog_TotalCharges"
+													value="${c:l('label_FinanceMainDialog_TotalCharges.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="totalCharges" maxlength="25" width="198px"
 														style="text-align:right" />
 												</hbox>
 											</row>
