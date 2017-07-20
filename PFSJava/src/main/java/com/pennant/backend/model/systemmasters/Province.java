@@ -43,6 +43,7 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class Province extends AbstractWorkflowEntity {
 	private boolean taxAvailable;
 	private String businessArea;
 	
-	private List<TaxDetail> taxDetailList;
+	private List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
 	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
 	
 	
