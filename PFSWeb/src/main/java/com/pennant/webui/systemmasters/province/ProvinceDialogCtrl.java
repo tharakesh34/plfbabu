@@ -393,6 +393,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		
 		this.listBoxTaxDetails.getItems().clear();
 		setTaxDetailList(taxMappingDetailList);
+		
 		if (taxMappingDetailList != null && !taxMappingDetailList.isEmpty()) {
 			for (TaxDetail taxMappingDetail : taxMappingDetailList) {
 				Listitem item = new Listitem();
