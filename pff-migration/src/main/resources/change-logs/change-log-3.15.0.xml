@@ -12813,4 +12813,36 @@ union
                         FinPftDetails T9 ON T1.FinReference = T9.FinReference		
 		</createView>
 </changeSet>	
+
+	<changeSet id="628" author="Kesav">
+		<createView viewName="FINLIABILITYREQ_VIEW" replaceIfExists="true">
+			SELECT	  T1.FinReference, T1.InitiatedBy, T1.FinEvent,T1.InsPaidStatus,T1.InsClaimAmount,T1.InsClaimReason, 
+			          T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.FinType, T2.FinBranch, T2.FinStartDate, T2.NumberOfTerms, T2.MaturityDate, T2.FinCcy, T2.FinAmount, T2.FinAssetValue,
+			          T4.CustCIF, T4.CustShrtName , 
+			          T5.BranchDesc , 
+			          T6.FinDivision lovDescFinDivision
+			FROM      FinLiabilityReq_Temp T1 INNER JOIN
+			          FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			          Customers T4 ON T2.CustID = T4.CustID    INNER JOIN
+			          RMTBranches T5 ON T2.FinBranch = T5.BranchCode  INNER JOIN
+			          RMTFinanceTypes T6 ON T2.FinType = T6.FinType 
+			
+			UNION ALL
+			
+			SELECT	  T1.FinReference, T1.InitiatedBy, T1.FinEvent,T1.InsPaidStatus,T1.InsClaimAmount,T1.InsClaimReason, 
+			          T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			          T2.FinType, T2.FinBranch, T2.FinStartDate, T2.NumberOfTerms, T2.MaturityDate, T2.FinCcy, T2.FinAmount, T2.FinAssetValue,
+			          T4.CustCIF, T4.CustShrtName , 
+			          T5.BranchDesc , 
+			          T6.FinDivision lovDescFinDivision
+			FROM      FinLiabilityReq T1 INNER JOIN
+			          FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+			          Customers T4 ON T2.CustID = T4.CustID    INNER JOIN
+			          RMTBranches T5 ON T2.FinBranch = T5.BranchCode   INNER JOIN
+			          RMTFinanceTypes T6 ON T2.FinType = T6.FinType     
+			
+			WHERE     NOT EXISTS (SELECT 1 FROM FinLiabilityReq_TEMP WHERE FinReference = T1.FinReference AND FinEvent = T1.FinEvent)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
