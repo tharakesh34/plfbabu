@@ -13017,4 +13017,287 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			 update data_engine_config set FILENAMEFORMAT= NULL where Name = 'GL_TRAIL_BALANCE_EXPORT';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="641" author="Manoj">
+		<dropTable tableName="CF_CONTROL_DUMP_LOG"/>
+		<dropTable tableName="CF_CONTROL_DUMP"/>
+	</changeSet>
+	
+	<changeSet  id="645" author="Manoj" >
+<createTable tableName="CF_CONTROL_DUMP">
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SCHEMEID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BRANCHID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPA_STAGEID" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOAN_STATUS" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DISB_STATUS" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIRST_DUE_DATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MATURITY_DATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AMTFIN" type="int" />
+			<column name="DISBURSED_AMOUNT" type="decimal(18,2)" />
+			<column name="EMI_DUE" type="decimal(18,2)" />
+			<column name="PRINCIPAL_DUE" type="decimal(18,2)"  />
+			<column name="INTEREST_DUE" type="decimal(18,2)"  />
+			<column name="EMI_RECEIVED" type="decimal(18,2)" />
+			<column name="PRINCIPAL_RECEIVED" type="decimal(18,2)" />
+			<column name="INTEREST_RECEIVED" type="decimal(18,2)" />
+			<column name="EMI_OS" type="decimal(18,2)" />
+			<column name="PRINCIPAL_OS" type="decimal(18,2)" />
+			<column name="INTEREST_OS" type="decimal(18,2)" />
+			<column name="BULK_REFUND" type="decimal(18,2)" />
+			<column name="PRINCIPAL_WAIVED" type="decimal(18,2)" />
+			<column name="EMI_PRINCIPAL_WAIVED" type="decimal(18,2)" />
+			<column name="EMI_INTEREST_WAIVED" type="decimal(18,2)" />
+			<column name="PRINCIPAL_AT_TERM" type="decimal(18,2)" />
+			<column name="ADVANCE_EMI" type="decimal(18,2)" />
+			<column name="ADVANCE_EMI_BILLED" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI_BILLED" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI_UNBILLED" type="decimal(18,2)" />
+			<column name="CLOSED_CAN_ADV_EMI" type="decimal(18,2)" />
+			<column name="PRINCIPAL_BALANCE" type="decimal(18,2)" />
+			<column name="INTEREST_BALANCE" type="decimal(18,2)" />
+			<column name="SOH_BALANCE" type="decimal(18,2)" />
+			<column name="NO_OF_UNBILLED_EMI" type="decimal(18,2)" />
+			<column name="TOTAL_INTEREST" type="decimal(18,2)" />
+			<column name="ACCRUED_AMOUNT" type="decimal(18,2)" />
+			<column name="BALANCE_UMFC" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_RECEIVED_MAKER" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_BILLED" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_UNBILLED" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_BILLED_PRIN_COMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_BILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_UNBILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_UNBILLED_INTCOMP"   type ="decimal(18,2)" />
+			<column name="EMI_IN_ADV_BILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_BILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_UNBILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_UNBILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="CLOS_CAN_ADV_EMI_PRINCOMP" type="decimal(18,2)" />
+			<column name="CLOS_CAN_ADV_EMI_INTCOMP" type="decimal(18,2)" />
+			<column name="SECURITY_DEPOSIT" type="decimal(18,2)" />
+			<column name="SECURITY_DEPOSIT_ADJUSTED" type="decimal(18,2)" />
+			<column name="ROUNDING_DIFF_RECEIVABLE" type="decimal(18,2)" />
+			<column name="ROUNDING_DIFF_RECEIVED" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_RECEIVABLE" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_RECEIVED" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_PAYABLE" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_PAID" type="decimal(18,2)" />
+			<column name="WRITEOFF_DUE" type="decimal(18,2)" />
+			<column name="WRITEOFF_RECEIVED" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_RECEIVABLE" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_RECEIVED" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_PAYABLE" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_PAID" type="decimal(18,2)" />
+			<column name="NET_EXCESS_RECEIVED" type="decimal(18,2)" />
+			<column name="NET_EXCESS_ADJUSTED" type="decimal(18,2)" />
+			<column name="LPP_CHARGES_RECEIVABLE" type="decimal(18,2)" />
+			<column name="LPP_CHARGES_RECEIVED" type="decimal(18,2)" />			
+			<column name="PDC_SWAP_CHARGESRECEIVABLE" type="decimal(18,2)" />			
+			<column name="PDC_SWAP_CHARGESRECEIVED" type="decimal(18,2)" />			
+			<column name="REPO_CHARGES_RECEIVABLE" type="decimal(18,2)" />
+			<column name="REPO_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="FORECLOSURE_CHARGES_DUE" type="decimal(18,2)" />
+			<column name="FORECLOSURE_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="BOUNCE_CHARGES_DUE" type="decimal(18,2)" />
+			<column name="BOUNCE_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="INSUR_RENEW_CHARGE" type="decimal(18,2)" />
+			<column name="INSUR_RENEW_CHARGE_RECD" type="decimal(18,2)" />
+			<column name="INSUR_RECEIVABLE" type="decimal(18,2)" />
+			<column name="INSUR_RECEIVED" type="decimal(18,2)" />
+			<column name="INSUR_PAYABLE" type="decimal(18,2)" />
+			<column name="INSUR_PAID" type="decimal(18,2)" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="CUSTOMERNAME" type="varchar(300)" />
+			<column name="SANCTIONED_TENURE" type="int" />
+			<column name="LOAN_EMI" type="decimal(18,2)" />
+			<column name="FLAT_RATE" type="Number(10,7)" />
+			<column name="EFFECTIVE_RATE" type="Number(10,7)" />
+			<column name="AGREEMENTDATE" type="datetime" />
+			<column name="DISBURSALDATE" type="datetime" />
+			<column name="CLOSUREDATE" type="datetime" />
+			<column name="NO_OF_ADVANCE_EMIS" type="Number(3)" />
+			<column name="ASSETCOST" type="Number(16,2)" />
+			<column name="NO_OF_EMI_OS" type="int" />
+			<column name="DPD" type="int" />
+			<column name="CURRENT_BUCKET" type="int" />
+			<column name="BRANCH_NAME" type="varchar(600)" />
+			<column name="SCHEME_NAME" type="varchar(200)" />
+			<column name="DERIVED_BUCKET" type="Number" />
+			<column name="ASSETDESC" type="varchar(150)" />
+			<column name="MAKE" type="varchar(35)" />
+			<column name="CHASISNUM" type="varchar(50)" />
+			<column name="REGDNUM" type="varchar(30)" />
+			<column name="ENGINENUM" type="varchar(30)" />
+			<column name="INVOICEAMT" type="Number(16,2)" />
+			<column name="SUPPLIERDESC" type="varchar(300)" />
+			<column name="INSTRUMENT" type="char(1)" />
+			<column name="REPO_DATE" type="datetime" />
+			<column name="LOCAL_OUTSTATION_FLAG" type="char(1)" />
+			<column name="FIRST_REPAYDUE_DATE" type="datetime" />
+			<column name="CREATED_ON" type="datetime" />
+</createTable>
+</changeSet>
+
+<changeSet  id="646" author="Manoj" >
+<createTable tableName="CF_CONTROL_DUMP_LOG">
+			<column name="AGREEMENTNO" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AGREEMENTID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRODUCTFLAG" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SCHEMEID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BRANCHID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="NPA_STAGEID" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOAN_STATUS" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DISB_STATUS" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIRST_DUE_DATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MATURITY_DATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AMTFIN" type="int" />
+			<column name="DISBURSED_AMOUNT" type="decimal(18,2)" />
+			<column name="EMI_DUE" type="decimal(18,2)" />
+			<column name="PRINCIPAL_DUE" type="decimal(18,2)"  />
+			<column name="INTEREST_DUE" type="decimal(18,2)"  />
+			<column name="EMI_RECEIVED" type="decimal(18,2)" />
+			<column name="PRINCIPAL_RECEIVED" type="decimal(18,2)" />
+			<column name="INTEREST_RECEIVED" type="decimal(18,2)" />
+			<column name="EMI_OS" type="decimal(18,2)" />
+			<column name="PRINCIPAL_OS" type="decimal(18,2)" />
+			<column name="INTEREST_OS" type="decimal(18,2)" />
+			<column name="BULK_REFUND" type="decimal(18,2)" />
+			<column name="PRINCIPAL_WAIVED" type="decimal(18,2)" />
+			<column name="EMI_PRINCIPAL_WAIVED" type="decimal(18,2)" />
+			<column name="EMI_INTEREST_WAIVED" type="decimal(18,2)" />
+			<column name="PRINCIPAL_AT_TERM" type="decimal(18,2)" />
+			<column name="ADVANCE_EMI" type="decimal(18,2)" />
+			<column name="ADVANCE_EMI_BILLED" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI_BILLED" type="decimal(18,2)" />
+			<column name="MIGRATED_ADVANCE_EMI_UNBILLED" type="decimal(18,2)" />
+			<column name="CLOSED_CAN_ADV_EMI" type="decimal(18,2)" />
+			<column name="PRINCIPAL_BALANCE" type="decimal(18,2)" />
+			<column name="INTEREST_BALANCE" type="decimal(18,2)" />
+			<column name="SOH_BALANCE" type="decimal(18,2)" />
+			<column name="NO_OF_UNBILLED_EMI" type="decimal(18,2)" />
+			<column name="TOTAL_INTEREST" type="decimal(18,2)" />
+			<column name="ACCRUED_AMOUNT" type="decimal(18,2)" />
+			<column name="BALANCE_UMFC" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_RECEIVED_MAKER" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_BILLED" type="decimal(18,2)" />
+			<column name="EMI_IN_ADVANCE_UNBILLED" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_BILLED_PRIN_COMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_BILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_UNBILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="MIG_ADV_EMI_UNBILLED_INTCOMP"   type ="decimal(18,2)" />
+			<column name="EMI_IN_ADV_BILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_BILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_UNBILLED_PRINCOMP" type="decimal(18,2)" />
+			<column name="EMI_IN_ADV_UNBILLED_INTCOMP" type="decimal(18,2)" />
+			<column name="CLOS_CAN_ADV_EMI_PRINCOMP" type="decimal(18,2)" />
+			<column name="CLOS_CAN_ADV_EMI_INTCOMP" type="decimal(18,2)" />
+			<column name="SECURITY_DEPOSIT" type="decimal(18,2)" />
+			<column name="SECURITY_DEPOSIT_ADJUSTED" type="decimal(18,2)" />
+			<column name="ROUNDING_DIFF_RECEIVABLE" type="decimal(18,2)" />
+			<column name="ROUNDING_DIFF_RECEIVED" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_RECEIVABLE" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_RECEIVED" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_PAYABLE" type="decimal(18,2)" />
+			<column name="MIG_DIFFERENCE_PAID" type="decimal(18,2)" />
+			<column name="WRITEOFF_DUE" type="decimal(18,2)" />
+			<column name="WRITEOFF_RECEIVED" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_RECEIVABLE" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_RECEIVED" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_PAYABLE" type="decimal(18,2)" />
+			<column name="SOLD_SEIZE_PAID" type="decimal(18,2)" />
+			<column name="NET_EXCESS_RECEIVED" type="decimal(18,2)" />
+			<column name="NET_EXCESS_ADJUSTED" type="decimal(18,2)" />
+			<column name="LPP_CHARGES_RECEIVABLE" type="decimal(18,2)" />
+			<column name="LPP_CHARGES_RECEIVED" type="decimal(18,2)" />			
+			<column name="PDC_SWAP_CHARGESRECEIVABLE" type="decimal(18,2)" />			
+			<column name="PDC_SWAP_CHARGESRECEIVED" type="decimal(18,2)" />			
+			<column name="REPO_CHARGES_RECEIVABLE" type="decimal(18,2)" />
+			<column name="REPO_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="FORECLOSURE_CHARGES_DUE" type="decimal(18,2)" />
+			<column name="FORECLOSURE_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="BOUNCE_CHARGES_DUE" type="decimal(18,2)" />
+			<column name="BOUNCE_CHARGES_RECEIVED" type="decimal(18,2)" />
+			<column name="INSUR_RENEW_CHARGE" type="decimal(18,2)" />
+			<column name="INSUR_RENEW_CHARGE_RECD" type="decimal(18,2)" />
+			<column name="INSUR_RECEIVABLE" type="decimal(18,2)" />
+			<column name="INSUR_RECEIVED" type="decimal(18,2)" />
+			<column name="INSUR_PAYABLE" type="decimal(18,2)" />
+			<column name="INSUR_PAID" type="decimal(18,2)" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="CUSTOMERNAME" type="varchar(300)" />
+			<column name="SANCTIONED_TENURE" type="int" />
+			<column name="LOAN_EMI" type="decimal(18,2)" />
+			<column name="FLAT_RATE" type="Number(10,7)" />
+			<column name="EFFECTIVE_RATE" type="Number(10,7)" />
+			<column name="AGREEMENTDATE" type="datetime" />
+			<column name="DISBURSALDATE" type="datetime" />
+			<column name="CLOSUREDATE" type="datetime" />
+			<column name="NO_OF_ADVANCE_EMIS" type="Number(3)" />
+			<column name="ASSETCOST" type="Number(16,2)" />
+			<column name="NO_OF_EMI_OS" type="int" />
+			<column name="DPD" type="int" />
+			<column name="CURRENT_BUCKET" type="int" />
+			<column name="BRANCH_NAME" type="varchar(600)" />
+			<column name="SCHEME_NAME" type="varchar(200)" />
+			<column name="DERIVED_BUCKET" type="Number" />
+			<column name="ASSETDESC" type="varchar(150)" />
+			<column name="MAKE" type="varchar(35)" />
+			<column name="CHASISNUM" type="varchar(50)" />
+			<column name="REGDNUM" type="varchar(30)" />
+			<column name="ENGINENUM" type="varchar(30)" />
+			<column name="INVOICEAMT" type="Number(16,2)" />
+			<column name="SUPPLIERDESC" type="varchar(300)" />
+			<column name="INSTRUMENT" type="char(1)" />
+			<column name="REPO_DATE" type="datetime" />
+			<column name="LOCAL_OUTSTATION_FLAG" type="char(1)" />
+			<column name="FIRST_REPAYDUE_DATE" type="datetime" />
+			<column name="CREATED_ON" type="datetime" />
+			<column name="LOGGED_ON" type="datetime" />
+</createTable>
+</changeSet>
+
 </databaseChangeLog>
