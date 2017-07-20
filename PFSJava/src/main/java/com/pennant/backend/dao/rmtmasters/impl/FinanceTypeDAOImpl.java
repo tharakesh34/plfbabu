@@ -183,7 +183,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ");
 		selectSql.append(" ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ");
 		selectSql.append(" ODMaxWaiverPerc, FinDivision, FinSuspAcType, Product, StartDate, EndDate, AllowDownpayPgm, ");
-		selectSql.append(" PastduePftCalMthd,  AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, ");
+		selectSql.append(" PastduePftCalMthd,PastduePftMargin,  AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, ");
 		selectSql.append(" RpyAdvMargin, RpyAdvPftRate, RollOverFinance, RollOverFrq, DownPayRule, AlwMultiPartyDisb, ");
 		selectSql.append(" CollateralType, TDSApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
 		selectSql.append(" RateChgAnyDay, ManualSchedule, AlwBPI , BpiTreatment , PftDueSchOn , ");
