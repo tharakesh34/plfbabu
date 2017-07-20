@@ -88,12 +88,46 @@ public class LatePayMarkingService extends ServiceHelper {
 				fod.setFinLMdfDate(valueDate);
 				fod.setTotPenaltyAmt(BigDecimal.ZERO);
 				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-
 			}
-			
 		}
 		return finODDetails;
 
+	}
+	
+	public List<FinODDetails> calPDOnPayment(FinanceMain finmain, List<FinODDetails> finODDetails,
+			Date valueDate, List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
+		
+		//get penalty rates one time
+		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finmain.getFinReference(), "");
+		
+		for (FinODDetails fod : finODDetails) {
+			FinanceScheduleDetail curSchd = getODSchedule(finScheduleDetails, fod);
+			
+			if(curSchd!=null){
+				
+				boolean isAmountDue = false;
+				//Paid Principal OR Paid Interest Less than scheduled amounts 
+				if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
+						|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
+					isAmountDue = true;
+				} else {
+					//Islamic Implementation
+					if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+						//Paid Supplementary rent OR Paid Increase Cost less than scheduled amounts 
+						if (curSchd.getSuplRentPaid().compareTo(curSchd.getSuplRent()) < 0
+								|| curSchd.getIncrCostPaid().compareTo(curSchd.getIncrCost()) < 0) {
+							isAmountDue = true;
+						}
+					}
+				}
+
+				if (isAmountDue) {
+					latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate);
+				}
+			}
+		}
+		return finODDetails;
+		
 	}
 
 	private FinanceScheduleDetail getODSchedule(List<FinanceScheduleDetail> finScheduleDetails, FinODDetails fod) {
