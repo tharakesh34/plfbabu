@@ -651,15 +651,6 @@ public class FinanceDataValidation {
 				}
 				if (detail.getExtendedDetails() != null && !detail.getExtendedDetails().isEmpty()) {
 					for (ExtendedField details : detail.getExtendedDetails()) {
-						if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
-								.getExtendedFieldDataList().size()) {
-							if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
-								String[] valueParm = new String[1];
-								valueParm[0] = "vas setup";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", valueParm)));
-								return errorDetails;
-							}
-						}
 						int exdMandConfigCount = 0;
 						for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 							if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
