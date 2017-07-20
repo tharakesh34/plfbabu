@@ -62,21 +62,21 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 
-	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,
+	public void computeLPP(FinODDetails fod, Date valueDate, String idb,
 			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments, String roundingMode,
 			int roundingTarget) {
 		logger.debug("Entering");
 		BigDecimal penalty = BigDecimal.ZERO;
 		//Late Payment Penalty. Do not apply LPP
 		if (!fod.isApplyODPenalty()) {
-			return fod;
+			return;
 		}
 		//Still before the grace days no need to calculate OD penalty
 		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
 			//Since there are back dated payment we need to rest to zero.
 			fod.setTotPenaltyAmt(penalty);
 			fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-			return fod;
+			return;
 		}
 
 		//Fixed Fee. One Time 
@@ -121,7 +121,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
 		logger.debug("Leaving");
-		return fod;
 	}
 
 	private BigDecimal getBalanceForCal(FinODDetails fod) {
