@@ -12264,7 +12264,7 @@ union
 			          BMTProduct T4 ON T3.FinCategory = T4.ProductCode		
 		</createView>
 	</changeSet>
-	<changeSet id="615" author="Kesav" dbms="mssql">
+	<changeSet id="615" author="Kesav" dbms="oracle">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
 			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
@@ -12316,7 +12316,7 @@ union
 			            T2.CustCIF LovDescCustCIF, 
 			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
 			            T4.ProductCategory,
-			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			            COALESCE(T5.RoleDesc, dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
 			FROM        FinanceMain_Temp T1 INNER JOIN
 			            Customers T2 ON T1.CustId = T2.CustId INNER JOIN
 			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
@@ -12335,7 +12335,7 @@ union
 			            T2.CustCIF LovDescCustCIF, 
 			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
 			            T4.ProductCategory,
-			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
+			            COALESCE(T5.RoleDesc, dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage
 			FROM        FinanceMain T1 INNER JOIN
 				    	Customers T2 ON T1.CustId = T2.CustId INNER JOIN
 			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
