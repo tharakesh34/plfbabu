@@ -12731,4 +12731,28 @@ union
 		</createView>
 	</changeSet>
 	
+	<changeSet id="625" author="Manoj">
+		<createTable tableName="TRAIL_BALANCE_REPORT_FILE">
+			<column name="HEADERID" type="bigint">
+				<constraints  nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(100)" />
+			<column name="COUNTRY" type="varchar(100)" />
+			<column name="PROVINCE" type="varchar(100)" />
+			<column name="HOSTACCOUNT" type="varchar(100)" />
+			<column name="DESCRIPTION" type="varchar(100)" />
+			<column name="OPENINGBAL" type="varchar(100)" />
+			<column name="OPENINGBALTYPE" type="varchar(100)" />
+			<column name="DEBITAMOUNT" type="varchar(100)" />
+			<column name="CREDITAMOUNT" type="varchar(100)" />
+			<column name="CLOSINGBAL" type="varchar(100)" />
+			<column name="CLOSINGBALTYPE" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="626" author="Manoj">
+		<addForeignKeyConstraint constraintName="FK_TBRF_HID"
+			referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID"
+			baseTableName="TRAIL_BALANCE_REPORT_FILE" baseColumnNames="HEADERID" />
+	</changeSet>
 </databaseChangeLog>
