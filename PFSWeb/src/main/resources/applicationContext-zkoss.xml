@@ -3232,6 +3232,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl"

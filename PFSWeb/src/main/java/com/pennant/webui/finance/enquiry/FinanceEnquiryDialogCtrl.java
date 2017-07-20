@@ -96,6 +96,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -105,6 +106,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -465,6 +467,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected String 						selectMethodName		= "onSelectTab";
 	private  boolean						enquiry    				= false;
 	private	 boolean 						fromApproved;
+	private FinanceProfitDetailDAO          financeProfitDetailDAO;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -913,7 +916,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				this.gb_gracePeriodDetails.setVisible(false);
 			}
-			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
+					.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+			int NOInst = 0;
+			if (financeProfitDetail != null) {
+				NOInst = financeProfitDetail.getNOInst();
+			}
+			if (NOInst > 0) {
+				this.numberOfTerms_two.setValue(NOInst);
+			} else {
+				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			}
 			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 					PennantStaticListUtil.getInterestRateType(false), "");
@@ -2166,6 +2179,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinFlagsDetailList(List<FinFlagsDetail> finFlagsDetailList) {
 		this.finFlagsDetailList = finFlagsDetailList;
+	}
+
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 

@@ -101,6 +101,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private BigDecimal			paymentAmount	= BigDecimal.ZERO;
 	private String				repayFrq;
 	private String				ownership;
+	private int					NOInst				= 0;
 
 	public FinanceEnquiry() {
 
@@ -123,7 +124,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("paymentAmount");
 		excludeFields.add("repayFrq");
 		excludeFields.add("ownership");
-
+		excludeFields.add("NOInst");
 		return excludeFields;
 	}
 
@@ -497,5 +498,13 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setFinCurrAssetValue(BigDecimal finCurrAssetValue) {
 		this.finCurrAssetValue = finCurrAssetValue;
+	}
+
+	public int getNOInst() {
+		return NOInst;
+	}
+
+	public void setNOInst(int nOInst) {
+		NOInst = nOInst;
 	}
 }
