@@ -257,6 +257,7 @@ public class FinanceConstants {
 	public static final String	CLOSE_STATUS_MATURED			= "M";
 	public static final String	CLOSE_STATUS_CANCELLED			= "C";
 	public static final String	CLOSE_STATUS_WRITEOFF			= "W";
+	public static final String	CLOSE_STATUS_EARLYSETTLE		= "E";
 
 	// Limit Rule
 	public static final String	LIMITRULE_CUSTOMER				= "Customer";

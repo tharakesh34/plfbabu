@@ -136,6 +136,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Tabpanel	                 tabPanel_dialogWindow;	                                                      // autoWired
 
 	protected Textbox	                 finReference_header;	                                                          // autoWired
+	protected Textbox	                 finStatus_Reason;	  
 	protected Textbox	                 finStatus_header;	                                                              // autoWired
 	protected Textbox	                 finType_header;	                                                              // autoWired
 	protected Textbox	                 finCcy_header;	                                                              // autoWired
@@ -263,14 +264,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (enquiry.isFinIsActive()) {
 			this.finStatus_header.setValue("Active");
 		} else {
-			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Matured");
-			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Cancelled");
-			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Written-Off");
-			}
+			this.finStatus_header.setValue("Matured");
 		}
+		
+		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
+		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Normal");
+		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Cancelled");
+		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Written-Off");
+		}else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Settled");
+		}
+		
+		
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
 		this.custShrtName.setValue(enquiry.getLovDescCustShrtName());
 		this.finType_header.setValue(enquiry.getFinType() + "-" + enquiry.getLovDescFinTypeName());

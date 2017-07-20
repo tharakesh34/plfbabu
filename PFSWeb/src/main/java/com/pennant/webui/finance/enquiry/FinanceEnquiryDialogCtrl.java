@@ -159,6 +159,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Basic Details
 	protected Textbox					finReference;
 	protected Textbox					finStatus;
+	protected Textbox					finStatus_Reason;
 	protected Textbox					finType;
 	protected Textbox					finCcy;
 	protected Textbox					profitDaysBasis;
@@ -976,13 +977,18 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.isFinIsActive()) {
 				this.finStatus.setValue("Active");
 			} else {
-				if (FinanceConstants.CLOSE_STATUS_MATURED.equals(aFinanceMain.getClosingStatus())) {
 					this.finStatus.setValue("Matured");
-				} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
-					this.finStatus.setValue("Cancelled");
-				} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(aFinanceMain.getClosingStatus())) {
-					this.finStatus.setValue("Written-Off");
-				}
+			}
+			
+			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
+			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Normal");
+			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Cancelled");
+			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Written-Off");
+			}else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Settled");
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
