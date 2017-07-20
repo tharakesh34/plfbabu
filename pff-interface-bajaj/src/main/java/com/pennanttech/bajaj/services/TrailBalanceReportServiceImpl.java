@@ -1013,7 +1013,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		parameterMap.put("COMPANY_NAME", companyName);
 		parameterMap.put("REPORT_NAME", reportName);
-		//parameterMap.put("FILE_NAME", fileName);
+		parameterMap.put("FILE_NAME", fileName);
 		parameterMap.put("STATE_CODE", province);
 
 		StringBuilder builder = new StringBuilder();
