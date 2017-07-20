@@ -587,7 +587,8 @@ public class ReceiptCalculator implements Serializable {
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
 					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
 					if(advise.getBounceID() > 0){
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), "BC : "+advise.getBounceCode());
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(),
+								"Bounce Charge : "+advise.getBounceCode()+"-"+advise.getBounceCodeDesc());
 					}else{
 						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
 					}
