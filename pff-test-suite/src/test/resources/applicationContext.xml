@@ -7,40 +7,34 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 	<!-- CONFIG-FILE FOR CONNECTING TO A TEST SUITE DATABASE = -->
-	<bean id="secDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="secDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${secjdbc.driverClassName}" />
 		<property name="url" value="${secjdbc.url}" />
 		<property name="username" value="${secjdbc.username}" />
 		<property name="password" value="${secjdbc.password}" />
-		<property name="maxActive" value="200" />
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
 	</bean>
-	<bean id="pfsDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="pfsDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
 		<property name="url" value="${pfsjdbc.url}" />
 		<property name="username" value="${pfsjdbc.username}" />
 		<property name="password" value="${pfsjdbc.password}" />
-		<property name="maxActive" value="200" />
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
 	</bean>
-	<bean id="auditDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="auditDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${pfsjdbc.driverClassName}" />
 		<property name="url" value="${auditjdbc.url}" />
 		<property name="username" value="${auditjdbc.username}" />
 		<property name="password" value="${auditjdbc.password}" />
-		<property name="maxActive" value="200" />
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="16000" />
 	</bean>
-	<bean id="pfsExtDatasource" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="pfsExtDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
 		<property name="url" value="${pffextjdbc.url}" />
@@ -64,7 +58,7 @@
 	</bean>
 	
 	<!-- Duplicating from applicationContext-core-interface.xml -->
-	<bean id="coreDBDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="coreDBDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="${secjdbc.driverClassName}" />
 		<property name="url" value="${secjdbc.url}" />
 		<property name="username" value="${secjdbc.username}" />
