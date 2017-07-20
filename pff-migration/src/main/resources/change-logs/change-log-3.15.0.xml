@@ -12945,4 +12945,71 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
        RMTCURRENCIES C on C.ccycode= FP.finccy]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="635" author="Manoj">
+		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+				  SELECT 		HEADERID,
+				  COUNTRY,
+				  PROVINCE,
+				  ACTYPEGRPID,
+				  HOSTACCOUNT,
+				  DESCRIPTION,
+				  UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+				  OPENINGBALTYPE,
+				  UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+				  UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+				  UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+				  CLOSINGBALTYPE
+				  FROM TRAIL_BALANCE_REPORT_LAST_RUN TBR
+				  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="636" author="Manoj">
+		<dropTable tableName="TRAIL_BALANCE_REPORT_FILE"/>
+	</changeSet>
+	
+	<changeSet id="637" author="Manoj">
+		<createTable tableName="TRAIL_BALANCE_REPORT_FILE">
+			<column name="ID" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(100)" />
+			<column name="COUNTRY" type="varchar(100)" />
+			<column name="PROVINCE" type="varchar(100)" />
+			<column name="HOSTACCOUNT" type="varchar(100)" />
+			<column name="DESCRIPTION" type="varchar(100)" />
+			<column name="OPENINGBAL" type="varchar(100)" />
+			<column name="OPENINGBALTYPE" type="varchar(100)" />
+			<column name="DEBITAMOUNT" type="varchar(100)" />
+			<column name="CREDITAMOUNT" type="varchar(100)" />
+			<column name="CLOSINGBAL" type="varchar(100)" />
+			<column name="CLOSINGBALTYPE" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="638" author="Manoj">
+		<createView viewName="TRAIL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
+			SELECT ID,COUNTRY,
+			  PROVINCE,
+			  ACTYPEGRPID,
+			  HOSTACCOUNT,
+			  DESCRIPTION,
+			  OPENINGBAL,
+			  OPENINGBALTYPE,
+			  DEBITAMOUNT,
+			  CREDITAMOUNT,
+			  CLOSINGBAL,
+			  CLOSINGBALTYPE
+			  FROM TRAIL_BALANCE_REPORT_FILE order by ID, PROVINCE
+		</createView>
+	</changeSet>
+	
+	<changeSet id="639" author="Manoj">
+		<sql>
+			update data_engine_table set Filter = NULL where name = 'TRAIL_BALANCE_REPORT_VIEW';
+			update data_engine_table set Name = 'TRAIL_BALANCE_REPORT_FILE_VIEW' where name = 'TRAIL_BALANCE_REPORT_VIEW';
+			update DATA_ENGINE_CONFIG set FIELDNAMES = NULL, Header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}' where Name = 'GL_TRAIL_BALANCE_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
