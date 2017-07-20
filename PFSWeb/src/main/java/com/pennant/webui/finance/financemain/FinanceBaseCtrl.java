@@ -1800,6 +1800,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void onSelectDocumentDetailTab(ForwardEvent event) {
 		getDocumentDetailDialogCtrl().doSetLabels(getFinBasicDetails());
+		String finReference = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference();
+		List<DocumentDetails> documentDetails = getFinanceDetailService().getDocumentDetails(finReference,
+				FinanceConstants.FINSER_EVENT_ORG);
+		if (documentDetails != null && !documentDetails.isEmpty()) {
+			if (getDocumentDetailDialogCtrl() != null) {				
+				documentDetailDialogCtrl.doFillDocumentDetails(documentDetails);
+			}
+		}
 	}
 
 	public void onSelectEligibilityDetailsTab(ForwardEvent event) {
