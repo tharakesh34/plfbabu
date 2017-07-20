@@ -12924,4 +12924,25 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
                   FinPftDetails T9 ON T1.FinReference = T9.FinReference		
 		</createView>
 </changeSet>
+<changeSet  id="634" author="Prasad">
+	<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+		  <![CDATA[Select FM.FinReference,Case when RF.ProductCategory='ODFCLITY' then FM.FInAssetValue else  FP.TotalPriSchd end LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FP.CURREDUCINGRATE ROI,
+		   FP.NOINST Tenure,TotalPriPaid EMIReceivedPri ,TotalPftPaid EMIReceivedPft,
+		   0.00 PreferredCardLimit,PRVRPYSCHPRI PrevInstAmtPri,PRVRPYSCHPFT PrevInstAmtPft,
+		   Case when FM.RvwRateApplFor is null or FM.RvwRateApplFor='#' then 'Fixed' else 'Floating' end intRateType,FP.latestDisbDate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FM.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,FM.FinIsActive,FM.closingstatus,
+		   FP.Futureinst FutureInstNo,FP.totalpriSchd FuturePri1,FP.tdSchdPri FuturePri2,
+       FP.totalPftSchd FutureRpyPft1,FP.tdSchdPft FutureRpyPft2,
+		   FP.totchargespaid Charge_coll_cust,
+		   FP.UpFrontFee Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,FP.LATESTRPYDATE,
+       C.ccyMinorccyunits,ccyEditField
+	From FinanceMain FM inner join
+       FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+       rmtfinancetypes RF on RF.fintype = FM.fintype  inner join
+       RMTCURRENCIES C on C.ccycode= FP.finccy]]>
+		</createView>
+	</changeSet>
 </databaseChangeLog>
