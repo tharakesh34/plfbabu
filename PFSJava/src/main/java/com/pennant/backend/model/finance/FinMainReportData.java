@@ -1,7 +1,6 @@
 package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
