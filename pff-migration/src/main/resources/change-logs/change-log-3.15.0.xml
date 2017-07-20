@@ -12903,7 +12903,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				WHERE     NOT EXISTS (SELECT 1 FROM ManualAdvise_TEMP WHERE AdviseID = T1.AdviseID)
 		</createView>
 	</changeSet>
-	<!-- <changeSet id="633" author="Srikanth">
+	<changeSet id="633" author="Srikanth">
 	<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
 			 SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.CalTerms NumberOfTerms,
 			            T1.CustID, T1.FinAmount, T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,
@@ -12923,7 +12923,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			            RMTCustTypes T5 ON T3.CustTypeCode = T5.CustTypeCode LEFT JOIN
                   FinPftDetails T9 ON T1.FinReference = T9.FinReference		
 		</createView>
-</changeSet> -->
+</changeSet>
 <changeSet  id="634" author="Prasad">
 	<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
 		  <![CDATA[Select FM.FinReference,Case when RF.ProductCategory='ODFCLITY' then FM.FInAssetValue else  FP.TotalPriSchd end LoanAmount,
