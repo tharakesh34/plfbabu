@@ -52,7 +52,7 @@ public interface FinanceWorkFlowDAO {
 	void update(FinanceWorkFlow financeWorkFlow,String type);
 	void delete(FinanceWorkFlow financeWorkFlow,String type);
 	String save(FinanceWorkFlow financeWorkFlow,String type);
-	List<FinanceWorkFlow> getFinanceWorkFlowListById(String finType, String type);
+	List<FinanceWorkFlow> getFinanceWorkFlowListById(String finType,String moduleName, String type);
 	void saveList(List<FinanceWorkFlow> financeWorkFlowList, String type);
 	String getFinanceWorkFlowType(String finType, String finEvent,	String moduleName, String type);
 	List<String> getFinanceWorkFlowRoles(String module,String finEvent);
