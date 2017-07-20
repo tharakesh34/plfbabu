@@ -116,7 +116,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.rits.cloning.Cloner;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {

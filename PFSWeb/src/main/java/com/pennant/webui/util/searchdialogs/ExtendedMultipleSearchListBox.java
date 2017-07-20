@@ -82,7 +82,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>

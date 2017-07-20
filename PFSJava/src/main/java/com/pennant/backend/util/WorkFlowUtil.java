@@ -49,7 +49,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.service.WorkFlowDetailsService;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class WorkFlowUtil {
 

@@ -98,7 +98,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class JavaScriptBuilder extends Groupbox {
 	private static final Logger logger = Logger.getLogger(JavaScriptBuilder.class);

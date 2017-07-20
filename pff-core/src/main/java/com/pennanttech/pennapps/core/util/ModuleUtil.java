@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * A suite of utilities surrounding the use of the {@link ModuleMapping} that contain information about the

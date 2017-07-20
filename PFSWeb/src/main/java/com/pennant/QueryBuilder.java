@@ -95,8 +95,8 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.util.ModuleUtil;
-import com.pennanttech.pff.core.model.ModuleMapping;
 
 @SuppressWarnings("rawtypes")
 public class QueryBuilder extends Groupbox {

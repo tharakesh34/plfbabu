@@ -50,7 +50,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 @SuppressWarnings("rawtypes")
 public class ShowDedupListBox extends Window implements Serializable {
