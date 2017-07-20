@@ -12755,4 +12755,42 @@ union
 			referencedTableName="TRAIL_BALANCE_HEADER" referencedColumnNames="ID"
 			baseTableName="TRAIL_BALANCE_REPORT_FILE" baseColumnNames="HEADERID" />
 	</changeSet>
+		
+	<changeSet id="626" author="Kesav">
+		<createView viewName="CUSTOMERFINANCEDETAILS_AVIEW" replaceIfExists="true">
+			SELECT      FM.FinReference, FM.FinBranch, FM.RoleCode, FM.NextRoleCode, FM.RecordType, FM.FinCcy, FM.FinType,FM.FinAmount,
+			            FM.DownPayment, FM.FeeChargeAmt,FM.FinStartDate,FM.LastMntBy, FM.FinAssetValue,
+			            C.CustCIF, C.CustShrtName, '' PrvRoleDesc, '' NextRoleDesc, C.CustID, 
+			            D.DeptDesc,
+			            U.UsrFName UsrFName, U.UsrLName lastMntByUser,
+			            FT.FinTypeDesc,FT.FinDivision lovDescFinDivision
+			FROM        FinanceMain FM
+			INNER JOIN  RMTFinanceTypes FT on FT.FinType = FM.FinType
+			INNER JOIN  Customers C ON C.CustID = FM.CustID 
+			INNER JOIN  SecUsers U ON U.UsrID = FM.LastMntBy 
+			INNER JOIN  BMTDepartments D ON D.DeptCode = U.UsrDeptCode		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="627" author="Kesav">
+		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.FinBranch, T1.RoleCode, T1.NextRoleCode, T1.FinType, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt,
+			            T1.FinStartDate,T1.LastMntBy, T1.FinCcy, T1.RecordType, T1.FinAssetValue,
+			            T2.CustID, T2.CustCIF, T2.CustShrtName, 
+			            T3.RoleDesc PrvRoleDesc, 
+			            COALESCE(T4.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,
+			            T6.DeptDesc,
+			            T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,
+			            T9.FinTypeDesc, T9.FinDivision lovDescFinDivision
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustID = T2.CustID   LEFT OUTER JOIN
+			            SecRoles T3 ON T3.RoleCd = T1.RoleCode LEFT OUTER JOIN
+			            SecRoles T4 ON T4.RoleCd = T1.NextRoleCode LEFT OUTER JOIN
+			            SecUsers T5 ON T5.UsrID = T1.LastMntBy LEFT OUTER JOIN
+			            BMTDepartments T6 ON T6.DeptCode = T5.UsrDeptCode LEFT OUTER JOIN
+			            SecUsers  T7 on T1.LastMntBy =T7.UsrID LEFT OUTER JOIN
+			            RMTFinanceTypes T9 on T1.FinType=T9.FinType	
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
