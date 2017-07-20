@@ -62,6 +62,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			try {
 				clearPreviousMonthTrailBalace();
 				saveCurrentMonthTrailBalace();
+				prepareDtatForFile();
 				updateGLDates();
 				transManager.commit(txnStatus);
 			} catch (Exception e) {
@@ -444,6 +445,31 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return null;
 	}
 	
+	private Map<String, String> getStateDescriptions() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select CPPROVINCE, CPPROVINCENAME from RMTCOUNTRYVSPROVINCE");
+
+		try {
+			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+					new ResultSetExtractor<Map<String, String>>() {
+						@Override
+						public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+							Map<String, String> map = new HashMap<>();
+
+							while (rs.next()) {
+								map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
+							}
+
+							return map;
+						}
+					});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+	
 	private void saveTrailBalance(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -747,6 +773,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_SUMMARY_REPORT");
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_TEMP");
+		jdbcTemplate.execute("TRUNCATE TABLE TRAIL_BALANCE_REPORT_FILE");
 	}
 
 	private int extractTransactionsData() throws Exception {
@@ -870,13 +897,78 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		generateTransactionReport();
 
 		generateTransactionSummaryReport();
+		
+		generateTrailBalanceReport("");
+		//generateTrailBalanceReportByState();
 
-		generateTrailBalanceReportByState();
+	}
+	
+	
+	private void prepareDtatForFile() {
+		Map<String, String> states = getStateDescriptions();
 
+		StringBuilder data = new StringBuilder();
+		data.append("INSERT INTO TRAIL_BALANCE_REPORT_FILE(ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION,");
+		data.append(" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE)");
+		data.append(" select ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION, OPENINGBAL, OPENINGBALTYPE,");
+		data.append(" DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE");
+		data.append(" from TRAIL_BALANCE_REPORT_VIEW where PROVINCE=:PROVINCE");
+		MapSqlParameterSource dataMap = new MapSqlParameterSource();
+
+		String emptyLine = "INSERT INTO TRAIL_BALANCE_REPORT_FILE(CLOSINGBALTYPE) VALUES(:CLOSINGBALTYPE)";
+		MapSqlParameterSource emptyLineMap = new MapSqlParameterSource();
+		emptyLineMap.addValue("CLOSINGBALTYPE", null);
+
+		StringBuilder group = new StringBuilder();
+		group.append("INSERT INTO TRAIL_BALANCE_REPORT_FILE(ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION,");
+		group.append(" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE)");
+		group.append(" VALUES(:ACTYPEGRPID, :COUNTRY, :PROVINCE, :HOSTACCOUNT, :DESCRIPTION,");
+		group.append(" :OPENINGBAL, :OPENINGBALTYPE, :DEBITAMOUNT, :CREDITAMOUNT, :CLOSINGBAL, :CLOSINGBALTYPE)");
+
+		MapSqlParameterSource groupMap = new MapSqlParameterSource();
+		groupMap.addValue("ACTYPEGRPID", "PARENT GROUP");
+		groupMap.addValue("COUNTRY", "");
+		groupMap.addValue("PROVINCE", "");
+		groupMap.addValue("HOSTACCOUNT", "LEDGER");
+		groupMap.addValue("DESCRIPTION", "DESCRIPTION");
+		groupMap.addValue("OPENINGBAL", "OPENING BALANCE");
+		groupMap.addValue("OPENINGBALTYPE", "CR/DR");
+		groupMap.addValue("DEBITAMOUNT", "DEBIT AMOUNT");
+		groupMap.addValue("CREDITAMOUNT", "CREDIT AMOUNT");
+		groupMap.addValue("CLOSINGBAL", "CLOSING BALANCE");
+		groupMap.addValue("CLOSINGBALTYPE", "CR/DR");
+
+		String select = "select PROVINCE, count(*) from TRAIL_BALANCE_REPORT_LAST_RUN where HEADERID = ? group by PROVINCE";
+		jdbcTemplate.query(select, new Object[] { headerId }, new RowCallbackHandler() {
+			int groupId = 0;
+
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+
+				try {
+					
+					dataMap.addValue("PROVINCE", rs.getString("PROVINCE"));
+					dataMap.addValue("DESCRIPTION", states.get(rs.getString("PROVINCE")));
+
+					if (groupId > 0) {
+						namedJdbcTemplate.update(emptyLine, emptyLineMap);
+						namedJdbcTemplate.update(emptyLine, emptyLineMap);
+					}
+					namedJdbcTemplate.update("INSERT INTO TRAIL_BALANCE_REPORT_FILE(DESCRIPTION) VALUES(:DESCRIPTION)",
+							dataMap);
+					namedJdbcTemplate.update(group.toString(), groupMap);
+					namedJdbcTemplate.update(data.toString(), dataMap);
+					groupId++;
+
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		});
 	}
 
 	private void generateTrailBalanceReportByState() {
-		String query = "select PROVINCE, count(*) from TRAIL_BALANCE_REPORT where HEADERID = ? group by PROVINCE";
+		String query = "select PROVINCE, count(*) from TRAIL_BALANCE_REPORT_LAST_RUN where HEADERID = ? group by PROVINCE";
 		jdbcTemplate.query(query, new Object[] { headerId }, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -911,8 +1003,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("HEADERID", headerId);
-		filterMap.put("PROVINCE", province);
+		//filterMap.put("HEADERID", headerId);
+		//filterMap.put("PROVINCE", province);
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMYYYY"));
