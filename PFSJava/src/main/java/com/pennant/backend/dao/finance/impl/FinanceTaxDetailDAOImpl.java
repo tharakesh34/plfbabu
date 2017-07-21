@@ -230,6 +230,33 @@ public class FinanceTaxDetailDAOImpl extends BasisCodeDAO<FinanceTaxDetail> impl
 		return count;
 	}
 
+	public boolean isReferenceExists(String finReference, String custCif) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select COUNT(*) from FinTaxDetail_View ");
+		sql.append(" Where FinReference = :FinReference AND  CustCif = :CustCif ");
+		logger.debug("Sql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("CustCif", custCif);
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug("Leaving");
+		}
+		return false;
+	}
+	
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 

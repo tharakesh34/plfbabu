@@ -20,6 +20,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
@@ -49,6 +50,8 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.validation.FinGuarantorDetailValidation;
+import com.pennant.backend.service.finance.validation.FinJointAccountDetailValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -66,8 +69,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private GuarantorDetailDAO			guarantorDetailDAO;
 	private JountAccountDetailDAO		jountAccountDetailDAO;
 	private FlagDetailValidation		flagDetailValidation;
+	private FinJointAccountDetailValidation		finJointAccountDetailValidation;
+	private FinGuarantorDetailValidation		finGuarantorDetailValidation;
 	private FinFlagDetailsDAO			finFlagDetailsDAO;
 	private MandateDAO					mandateDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -1050,6 +1056,20 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
+		//Joint Account  Details Validation
+		List<JointAccountDetail> finJoinAccDetailList = financeDetail.getJountAccountDetailList();
+		if (finJoinAccDetailList != null && !finJoinAccDetailList.isEmpty()) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
+			details = getFinJointAccountDetailValidation().jointAccountDetailsListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+		//Guarantor Account  Details Validation
+		List<GuarantorDetail> guarantorAccDetailList = financeDetail.getGurantorsDetailList();
+		if (guarantorAccDetailList != null && !guarantorAccDetailList.isEmpty()) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
+			details = getFinGuarantorDetailValidation().gurantorDetailsListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -1774,6 +1794,33 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
+	}
+
+	public FinJointAccountDetailValidation getFinJointAccountDetailValidation() {
+		if (finJointAccountDetailValidation == null) {
+			this.finJointAccountDetailValidation = new FinJointAccountDetailValidation(jountAccountDetailDAO,financeTaxDetailDAO);
+		}
+		return this.finJointAccountDetailValidation;
+	}
+
+	public void setFinJointAccountDetailValidation(FinJointAccountDetailValidation finJointAccountDetailValidation) {
+		this.finJointAccountDetailValidation = finJointAccountDetailValidation;
+	}
+
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public FinGuarantorDetailValidation getFinGuarantorDetailValidation() {
+		if (finGuarantorDetailValidation == null) {
+			this.finGuarantorDetailValidation = new FinGuarantorDetailValidation(guarantorDetailDAO,financeTaxDetailDAO);
+		}
+		return this.finGuarantorDetailValidation;
+	}
+
+	public void setFinGuarantorDetailValidation(FinGuarantorDetailValidation finGuarantorDetailValidation) {
+		this.finGuarantorDetailValidation = finGuarantorDetailValidation;
 	}
  
 }
