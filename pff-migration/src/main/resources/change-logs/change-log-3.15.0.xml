@@ -13826,4 +13826,9 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED"
 			tableName="CF_CONTROL_DUMP_LOG" />
 	</changeSet>
+	
+	<changeSet id="664" author="murthy.y">
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP"/>
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP_LOG"/>
+	</changeSet>
 </databaseChangeLog>
