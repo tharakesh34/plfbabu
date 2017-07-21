@@ -12772,33 +12772,13 @@ union
 		</createView>
 	</changeSet>
 	
-	<changeSet id="627" author="Kesav" dbms="oracle">
+	<changeSet id="627" author="Kesav">
 		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
 			SELECT      T1.FinReference, T1.FinBranch, T1.RoleCode, T1.NextRoleCode, T1.FinType, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt,
 			            T1.FinStartDate,T1.LastMntBy, T1.FinCcy, T1.RecordType, T1.FinAssetValue,
 			            T2.CustID, T2.CustCIF, T2.CustShrtName, 
 			            T3.RoleDesc PrvRoleDesc, 
 			            COALESCE(T4.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,
-			            T6.DeptDesc,
-			            T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,
-			            T9.FinTypeDesc, T9.FinDivision lovDescFinDivision
-			FROM        FinanceMain_Temp T1 INNER JOIN
-			            Customers T2 ON T1.CustID = T2.CustID   LEFT OUTER JOIN
-			            SecRoles T3 ON T3.RoleCd = T1.RoleCode LEFT OUTER JOIN
-			            SecRoles T4 ON T4.RoleCd = T1.NextRoleCode LEFT OUTER JOIN
-			            SecUsers T5 ON T5.UsrID = T1.LastMntBy LEFT OUTER JOIN
-			            BMTDepartments T6 ON T6.DeptCode = T5.UsrDeptCode LEFT OUTER JOIN
-			            SecUsers  T7 on T1.LastMntBy =T7.UsrID LEFT OUTER JOIN
-			            RMTFinanceTypes T9 on T1.FinType=T9.FinType	
-		</createView>
-	</changeSet>
-	<changeSet id="627" author="Kesav" dbms="mssql">
-		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
-			SELECT      T1.FinReference, T1.FinBranch, T1.RoleCode, T1.NextRoleCode, T1.FinType, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt,
-			            T1.FinStartDate,T1.LastMntBy, T1.FinCcy, T1.RecordType, T1.FinAssetValue,
-			            T2.CustID, T2.CustCIF, T2.CustShrtName, 
-			            T3.RoleDesc PrvRoleDesc, 
-			            COALESCE(T4.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,
 			            T6.DeptDesc,
 			            T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,
 			            T9.FinTypeDesc, T9.FinDivision lovDescFinDivision
@@ -12966,7 +12946,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		</createView>
 	</changeSet>
 	
-	<changeSet id="635" author="Manoj" dbms="oracle">
+	<changeSet id="635" author="Manoj">
 		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
 				  SELECT 		HEADERID,
 				  COUNTRY,
@@ -12984,24 +12964,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>
 	</changeSet>
-		<changeSet id="635" author="Manoj" dbms="mssql">
-		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
-				  SELECT 		HEADERID,
-				  COUNTRY,
-				  PROVINCE,
-				  ACTYPEGRPID,
-				  HOSTACCOUNT,
-				  DESCRIPTION,
-				  dbo.UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
-				  OPENINGBALTYPE,
-				  dbo.UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
-				  dbo.UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
-				  dbo.UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
-				  CLOSINGBALTYPE
-				  FROM TRAIL_BALANCE_REPORT_LAST_RUN TBR
-				  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
-		</createView>
-	</changeSet>
+	
 	<changeSet id="636" author="Manoj">
 		<dropTable tableName="TRAIL_BALANCE_REPORT_FILE"/>
 	</changeSet>
@@ -13025,7 +12988,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="638" author="Manoj" dbms="oracle">
+	<changeSet id="638" author="Manoj">
 		<createView viewName="TRAIL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
 			SELECT ID,COUNTRY,
 			  PROVINCE,
@@ -13041,22 +13004,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			  FROM TRAIL_BALANCE_REPORT_FILE order by ID, PROVINCE
 		</createView>
 	</changeSet>
-	<changeSet id="638" author="Manoj" dbms="mssql">
-		<createView viewName="TRAIL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
-			SELECT ID,COUNTRY,
-			  PROVINCE,
-			  ACTYPEGRPID,
-			  HOSTACCOUNT,
-			  DESCRIPTION,
-			  OPENINGBAL,
-			  OPENINGBALTYPE,
-			  DEBITAMOUNT,
-			  CREDITAMOUNT,
-			  CLOSINGBAL,
-			  CLOSINGBALTYPE
-			  FROM TRAIL_BALANCE_REPORT_FILE 
-		</createView>
-	</changeSet>
+	
 	<changeSet id="639" author="Manoj">
 		<sql>
 			update data_engine_table set Filter = NULL where name = 'TRAIL_BALANCE_REPORT_VIEW';
@@ -13645,4 +13593,147 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 	INSERT INTO SMTPARAMETERS VALUES ('POSIDEX_DEDUP_REQUEST_URL','Posidex Request URL','String', 1,'http://192.168.1.158:8080/pff-api/services/','200',0, NULL, NULL,'Posidex Request URL',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 </changeSet> -->
+
+
+<changeSet id="651" author="Vinay">
+		<addColumn tableName="FINRECEIPTHEADER">
+			<column name="REMARKS" type="VARCHAR2(200)" />
+		</addColumn>
+</changeSet>
+
+
+<changeSet id="652" author="Vinay">
+		<addColumn tableName="FINRECEIPTHEADER_TEMP">
+			<column name="REMARKS" type="VARCHAR2(200)" />
+		</addColumn>
+</changeSet>
+	
+<changeSet id="653" author="Vinay">
+		<createView replaceIfExists="true" viewName="FINRECEIPTHEADER_FCVIEW">
+ 				SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+			UNION ALL
+			SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks
+							FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+               	WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+</changeSet>
+
+
+
+<changeSet id="654" author="Vinay">
+		<createView replaceIfExists="true" viewName="FINRECEIPTHEADER_FVIEW">
+				SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+		</createView>
+</changeSet>
+
+
+<changeSet id="655" author="Vinay">
+		<createView replaceIfExists="true" viewName="FINRECEIPTHEADER_VIEW">
+				SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, T1.WaviedAmt, T1.TotFeeAmount, T1.BounceDate , T1.Remarks
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+				UNION ALL
+				 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, T1.WaviedAmt, T1.TotFeeAmount, T1.BounceDate , T1.Remarks
+							FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+</changeSet>
+
+<changeSet id="656" author="Vinay">
+		<createView viewName="FINRECEIPTDETAIL_AVIEW" replaceIfExists="true">
+		Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T2.BankName BankCodeDesc,
+			 T3.PartnerBankCode FundingAcDesc, T1.PayOrder , T1.LogKey, T3.AccountNo PartnerBankAc, T3.AcType PartnerBankAcType, T5.FeeTypeDesc
+			 From FinReceiptDetail T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID LEFT JOIN 
+			   manualadvise T4 ON T1.PayAgainstID  = T4.AdviseID AND T1.PaymentType = 'PAYABLE' LEFT JOIN
+         FeeTypes T5 ON T4.FeeTypeID = T5.FeeTypeID
+
+		</createView>
+</changeSet>
+
+<changeSet id="657" author="Vinay">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T2.BankName BankCodeDesc,
+			 T3.PartnerBankCode FundingAcDesc , T1.PayOrder, T1.LogKey, T3.AccountNo PartnerBankAc, T3.AcType PartnerBankAcType
+			 From FinReceiptDetail_Temp T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+
+		</createView>
+</changeSet>
+	
+<changeSet id="658" author="Vinay">
+		<dropColumn columnName="REMARKS" tableName="FINRECEIPTDETAIL" />
+</changeSet>
+
+<changeSet id="659" author="Vinay">
+		<dropColumn columnName="REMARKS" tableName="FINRECEIPTDETAIL_TEMP" />
+</changeSet>
+
+
 </databaseChangeLog>
