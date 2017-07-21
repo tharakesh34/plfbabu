@@ -1223,7 +1223,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		finReceiptDetail.setPaymentType(finServiceInst.getPaymentMode());
 		finReceiptDetail.setAmount(finServiceInst.getAmount());
 		receiptHeader.getReceiptDetails().add(finReceiptDetail);
-
+		
+		receiptHeader.setRemarks(finReceiptDetail.getRemarks());
 		finReceiptData.setReceiptHeader(receiptHeader);
 		finReceiptData.setFinanceDetail(financeDetail);
 		finReceiptData.setFinReference(finServiceInst.getFinReference());
