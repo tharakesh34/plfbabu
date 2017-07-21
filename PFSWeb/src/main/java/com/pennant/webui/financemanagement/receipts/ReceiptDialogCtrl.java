@@ -2093,7 +2093,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 			receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
-			receiptDetail.setRemarks(this.remarks.getValue());
 			receiptDetail.setDelRecord(false);// Internal Purpose
 			receiptDetail.setPayOrder(payOrder);
 			payOrder = payOrder + 1;
@@ -2110,6 +2109,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		receiptHeader.setReceiptDetails(receiptDetailList);
+		receiptHeader.setRemarks(this.remarks.getValue());
 		
 		// Prepare Allocation Details
 		List<String> allocateTypes = new ArrayList<>(getReceiptData().getAllocationMap().keySet());
@@ -2465,7 +2465,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 						receiptDetail.setReceivedDate(this.receivedDate.getValue());
-						receiptDetail.setRemarks(this.remarks.getValue());
 					}
 				}
 			}
@@ -2737,7 +2736,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
-		
+		this.remarks.setValue(header.getRemarks());
+
 		String allocateMthd = header.getAllocationType();
 		if(StringUtils.isEmpty(allocateMthd)){
 			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
@@ -2801,11 +2801,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
-					this.remarks.setValue(receiptDetail.getRemarks());
 				}
 			}
 		}
-
 		// Render Excess Amount Details
 		doFillExcessAmounts(receiptAmountsMap);
 		doFillPayableAmounts(receiptAmountsMap);
@@ -3857,7 +3855,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		try {
-			this.remarks.getValue();
+			header.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -49,6 +49,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal totFeeAmount = BigDecimal.ZERO;
 	private Date		bounceDate;
 	
+	private String	remarks;
 	private boolean newRecord;
 	private String lovValue;
 	private FinReceiptHeader befImage;
@@ -444,6 +445,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setBounceDate(Date bounceDate) {
 		this.bounceDate = bounceDate;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

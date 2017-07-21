@@ -44,7 +44,6 @@ public class FinReceiptDetail implements Entity {
 	private Date						receivedDate;
 	private String						status;
 	@XmlElement
-	private String						remarks;
 	private long						logKey			= 0;
 	private boolean						delRecord		= false;
 	private String						partnerBankAc;
@@ -255,14 +254,6 @@ public class FinReceiptDetail implements Entity {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
 	}
 
 	public List<FinRepayHeader> getRepayHeaders() {

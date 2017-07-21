@@ -91,7 +91,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 
 		StringBuilder selectSql = new StringBuilder("Select ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , ");
 		selectSql.append(" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
-		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , Remarks, PayOrder, LogKey ");
+		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append( " ,BankCodeDesc, FundingAcDesc, PartnerBankAc, PartnerBankAcType ");
 			if (StringUtils.trimToEmpty(type).contains("AView")) {
@@ -122,10 +122,10 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , Amount  , ");
 		insertSql.append(" FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
-		insertSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , Remarks, PayOrder, LogKey)");
+		insertSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey)");
 		insertSql.append(" Values(:ReceiptID , :ReceiptSeqID , :ReceiptType , :PaymentTo , :PaymentType , :PayAgainstID  , :Amount  , ");
 		insertSql.append(" :FavourNumber , :ValueDate , :BankCode , :FavourName , :DepositDate , :DepositNo , :PaymentRef , ");
-		insertSql.append(" :TransactionRef , :ChequeAcNo , :FundingAc , :ReceivedDate , :Status , :Remarks, :PayOrder, :LogKey)");
+		insertSql.append(" :TransactionRef , :ChequeAcNo , :FundingAc , :ReceivedDate , :Status , :PayOrder, :LogKey)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

@@ -769,6 +769,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
 		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
+		this.remarks.setValue(header.getRemarks());
 		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
@@ -845,7 +846,6 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
-					this.remarks.setValue(receiptDetail.getRemarks());
 					
 					isReceiptModeDetail = true;
 				}
