@@ -17,7 +17,7 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.dashboard.DetailStatistics;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 
 public class DetailStatisticsDAOImpl extends BasisCodeDAO<DetailStatistics> implements DetailStatisticsDAO{

@@ -59,7 +59,6 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getFinFeeDetailByFinRef(String id,boolean isWIF, String type);
 	void deleteByFinRef(String finReference,boolean isWIF, String tableType);
 	int getFeeSeq(FinFeeDetail finFeeDetail,boolean isWIF,String type);
-    FinanceSummary getTotalFeeCharges(FinanceSummary finSummary);
 	List<FinFeeDetail> getFinScheduleFees(String reference, boolean isWIF, String type);
 	List<FinFeeDetail> getFinFeeDetailByFinRef(String reference, boolean isWIF, String type, String finEvent);
 	List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type);

@@ -153,7 +153,6 @@ import com.pennant.webui.customermasters.customeremploymentdetail.model.Customer
 import com.pennant.webui.customermasters.directordetail.model.DirectorDetailListModelItemRenderer;
 import com.pennant.webui.dedup.dedupparm.FetchCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
-import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -4474,6 +4473,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillDocumentDetails(List<CustomerDocument> custDocumentDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerDocuments.getItems().clear();
 		if (custDocumentDetails != null) {
 			if (!custDocumentDetails.isEmpty()) {
@@ -4518,6 +4518,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerDocumentDetailList(custDocumentDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -4587,6 +4588,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerAddressDetails(List<CustomerAddres> customerAddresDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerAddress.getItems().clear();
 		if (customerAddresDetails != null) {
 			for (CustomerAddres customerAddress : customerAddresDetails) {
@@ -4612,6 +4614,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerAddressDetailList(customerAddresDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -4672,6 +4675,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerPhoneNumberDetails(List<CustomerPhoneNumber> customerPhoneNumDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerPhoneNumbers.getItems().clear();
 		if (customerPhoneNumDetails != null) {
 			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumDetails) {
@@ -4691,6 +4695,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerPhoneNumberDetailList(customerPhoneNumDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -4751,6 +4756,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerEmailDetails(List<CustomerEMail> customerEmailDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerEmails.getItems().clear();
 		if (customerEmailDetails != null) {
 			for (CustomerEMail customerEMail : customerEmailDetails) {
@@ -4774,6 +4780,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerEmailDetailList(customerEmailDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -4839,6 +4846,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerBankInfoDetails(List<CustomerBankInfo> customerBankInfoDetails) {
+		logger.debug("Entering");
 		CustomerBankInfoList = customerBankInfoDetails;
 		this.listBoxCustomerBankInformation.getItems().clear();
 		if (customerBankInfoDetails != null) {
@@ -4861,6 +4869,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerBankInfoDetailList(customerBankInfoDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -4923,6 +4932,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerChequeInfoDetails(List<CustomerChequeInfo> customerChequeInfoDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerChequeInformation.getItems().clear();
 		if (customerChequeInfoDetails != null) {
 			for (CustomerChequeInfo custChequeInfo : customerChequeInfoDetails) {
@@ -4953,6 +4963,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerChequeInfoDetailList(customerChequeInfoDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	// ********************************************************************//
@@ -5015,6 +5026,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doFillCustomerExtLiabilityDetails(List<CustomerExtLiability> customerExtLiabilityDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerExternalLiability.getItems().clear();
 
 		BigDecimal originalAmount = BigDecimal.ZERO;
@@ -5092,12 +5104,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setCustomerExtLiabilityDetailList(customerExtLiabilityDetails);
 		}
+		logger.debug("Leaving");
 	}
 
 	public void doFillCustFinanceExposureDetails(List<FinanceEnquiry> custFinanceExposureDetails) {
+		logger.debug("Entering");
 		this.listBoxCustomerFinExposure.getItems().clear();
 		if (custFinanceExposureDetails != null) {
 			for (FinanceEnquiry finEnquiry : custFinanceExposureDetails) {
+				
+				int format = CurrencyUtil.getFormat(finEnquiry.getFinCcy());
 				Listitem item = new Listitem();
 				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
@@ -5108,7 +5124,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
 						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -5117,11 +5133,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					instAmt = totAmt.divide(new BigDecimal(finEnquiry.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
 				}
 				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(instAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+						PennantApplicationUtil.amountFormate(instAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
-						CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
+						format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinStatus());
@@ -5130,6 +5146,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 		}
+		logger.debug("Leaving");
 	}
 
 	public int getChequeSeq() {

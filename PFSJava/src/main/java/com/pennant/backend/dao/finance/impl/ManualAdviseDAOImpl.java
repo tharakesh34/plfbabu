@@ -127,7 +127,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
 		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt, BalanceAmt, ");
 		if(type.contains("View")){
-			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, " );
+			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, " );
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From ManualAdvise");
@@ -266,7 +266,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId " );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode ");
+			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);

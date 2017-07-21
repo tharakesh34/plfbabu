@@ -31,7 +31,7 @@ import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	private static final Logger logger = Logger.getLogger(FinanceDeviationsServiceImpl.class);

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -19,9 +20,11 @@ public class FinGuarantorDetailValidation {
 
 	private static final Logger logger = Logger.getLogger(FinGuarantorDetailValidation.class);
 	private GuarantorDetailDAO guarantorDetailDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
 
-	public FinGuarantorDetailValidation(GuarantorDetailDAO guarantorDetailDAO) {
+	public FinGuarantorDetailValidation(GuarantorDetailDAO guarantorDetailDAO,FinanceTaxDetailDAO financeTaxDetailDAO) {
 		this.guarantorDetailDAO = guarantorDetailDAO;
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 	public AuditHeader gurantorDetailsValidation(AuditHeader auditHeader, String method) {
@@ -69,7 +72,7 @@ public class FinGuarantorDetailValidation {
 
 		if (guarantorDetail.isNew()) { // for New record or new record into work flow
 
-			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
+			if (!guarantorDetail.isWorkflow()&&StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
 					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -94,8 +97,8 @@ public class FinGuarantorDetailValidation {
 			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befGuarantorDetail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					/*auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
+					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));*/
 				} else {
 					if (oldGuarantorDetail != null
 					        && !oldGuarantorDetail.getLastMntOn().equals(
@@ -128,6 +131,14 @@ public class FinGuarantorDetailValidation {
 				}
 			}
 		}
+		// If Guarantor Account is already utilized in GstDetails
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {
+			boolean guarantorExists = getFinanceTaxDetailDAO()
+					.isReferenceExists(guarantorDetail.getFinReference(),guarantorDetail.getGuarantorCIF());
+			if (guarantorExists) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
 		        usrLanguage));
@@ -144,6 +155,14 @@ public class FinGuarantorDetailValidation {
 
 	public void setGuarantorDetailDAO(GuarantorDetailDAO guarantorDetailDAO) {
 		this.guarantorDetailDAO = guarantorDetailDAO;
+	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 }

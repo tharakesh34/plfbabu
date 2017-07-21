@@ -475,7 +475,7 @@ public class ReceiptCalculator implements Serializable {
 		}else{
 			
 			// Calculate overdue Penalties
-			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate, null);
+			List<FinODDetails> overdueList = getReceiptService().getValueDatePenalties(finScheduleData, receiptData.getTotReceiptAmount(), valueDate, null, true);
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
 			if(overdueList != null && !overdueList.isEmpty()){
@@ -587,7 +587,8 @@ public class ReceiptCalculator implements Serializable {
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
 					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
 					if(advise.getBounceID() > 0){
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), "BC : "+advise.getBounceCode());
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(),
+								"Bounce Charge : "+advise.getBounceCode()+"-"+advise.getBounceCodeDesc());
 					}else{
 						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
 					}
@@ -639,7 +640,7 @@ public class ReceiptCalculator implements Serializable {
 		}else {
 			// Calculate overdue Penalties
 			overdueList = getReceiptService().getValueDatePenalties(scheduleData, receiptData.getReceiptHeader().getReceiptAmount().subtract(
-					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate, null);
+					receiptData.getReceiptHeader().getTotFeeAmount()), valueDate, null, true);
 		}
 		
 		// Overdue Penalties Mapping Preparations
@@ -1517,7 +1518,7 @@ public class ReceiptCalculator implements Serializable {
 			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
 		}else {
 			// Calculate overdue Penalties
-			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate, null);
+			overdueList = getReceiptService().getValueDatePenalties(scheduleData, totalReceiptAmt, valueDate, null, true);
 		}
 
 		if (overdueList != null && !overdueList.isEmpty()) {

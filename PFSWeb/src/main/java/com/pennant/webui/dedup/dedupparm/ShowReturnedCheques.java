@@ -44,7 +44,7 @@ import com.pennant.backend.model.returnedcheques.ReturnedCheques;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 /**
  * @author sreeravali.s
  *

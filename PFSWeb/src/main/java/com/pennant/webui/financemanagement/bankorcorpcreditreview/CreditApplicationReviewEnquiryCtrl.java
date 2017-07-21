@@ -92,7 +92,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;

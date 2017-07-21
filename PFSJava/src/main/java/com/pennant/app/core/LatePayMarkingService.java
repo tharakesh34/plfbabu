@@ -55,11 +55,11 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayMarkingService extends ServiceHelper {
 
-	private static final long		serialVersionUID	= 6161809223570900644L;
-	private static Logger			logger				= Logger.getLogger(LatePayMarkingService.class);
-	private FinODPenaltyRateDAO		finODPenaltyRateDAO;
-	private LatePayPenaltyService	latePayPenaltyService;
-	private LatePayInterestService	latePayInterestService;
+	private static final long serialVersionUID = 6161809223570900644L;
+	private static Logger logger = Logger.getLogger(LatePayMarkingService.class);
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private LatePayPenaltyService latePayPenaltyService;
+	private LatePayInterestService latePayInterestService;
 
 	/**
 	 * Default constructor
@@ -69,17 +69,20 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	public List<FinODDetails> calPDOnBackDatePayment(FinanceMain finmain, List<FinODDetails> finODDetails,
-			Date valueDate, List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
+			Date valueDate, List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,boolean reset) {
+		logger.debug(" Entering ");
 
 		//get penalty rates one time
 		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finmain.getFinReference(), "");
 
 		for (FinODDetails fod : finODDetails) {
 			FinanceScheduleDetail curSchd = getODSchedule(finScheduleDetails, fod);
-			
-			if(curSchd!=null){
+
+			if (curSchd != null) {
 				latePayMarking(finmain, fod, penaltyRate, finScheduleDetails, repayments, curSchd, valueDate);
-			}else{
+				resetLPPToZero(fod, curSchd, repayments,reset);
+			} else {
+				//if there is no schedule for od now then there is no penla
 				fod.setFinODTillDate(valueDate);
 				fod.setFinCurODPri(BigDecimal.ZERO);
 				fod.setFinCurODPft(BigDecimal.ZERO);
@@ -87,12 +90,40 @@ public class LatePayMarkingService extends ServiceHelper {
 				fod.setFinCurODDays(0);
 				fod.setFinLMdfDate(valueDate);
 				fod.setTotPenaltyAmt(BigDecimal.ZERO);
-				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-
+				fod.setTotPenaltyBal(
+						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 			}
-			
 		}
+
+		logger.debug(" Leaving ");
 		return finODDetails;
+	}
+
+	private void resetLPPToZero(FinODDetails fod, FinanceScheduleDetail curSchd, List<FinanceRepayments> repayments,boolean reset) {
+		logger.debug(" Entering ");
+
+		BigDecimal totalDue = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).subtract(curSchd.getSchdPftPaid())
+				.subtract(curSchd.getSchdPriPaid());
+
+		BigDecimal totPaidBefSchDate = BigDecimal.ZERO;
+		for (FinanceRepayments repayment : repayments) {
+			if (repayment.getFinSchdDate().compareTo(fod.getFinODSchdDate()) == 0 
+					&& repayment.getFinValueDate().compareTo(fod.getFinODSchdDate()) <= 0) {
+				totPaidBefSchDate = totPaidBefSchDate.add(repayment.getFinSchdPriPaid()).add(repayment.getFinSchdPftPaid());
+			}
+		}
+
+		if (totPaidBefSchDate.compareTo(totalDue) >= 0) {
+			fod.setFinCurODDays(0);
+			if (reset) {
+				fod.setTotPenaltyAmt(BigDecimal.ZERO);
+				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+				fod.setLPIAmt(BigDecimal.ZERO);
+				fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
+			}
+		}
+
+		logger.debug(" Leaving ");
 
 	}
 
@@ -143,8 +174,14 @@ public class LatePayMarkingService extends ServiceHelper {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 
 			//Include Today in Late payment Calculation or NOT?
-			if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-				break;
+			if (ImplementationConstants.LP_MARK_FIRSTDAY) {
+				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+					break;
+				}
+			} else {
+				if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
+					break;
+				}
 			}
 
 			boolean isAmountDue = false;
@@ -205,11 +242,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
-		if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO)>0) {
-			fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
-		}else{
-			fod.setFinCurODDays(0);
-		}
+		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 		fod.setFinLMdfDate(valueDate);
 
 		latePayPenaltyService.computeLPP(fod, valueDate, finMain.getProfitDaysBasis(), finScheduleDetails, repayments,

@@ -92,6 +92,7 @@ private static final long serialVersionUID = 1L;
 	private  LoggedInUser userDetails;
 	private long bounceID = 0;
 	private String bounceCode;
+	private String bounceCodeDesc;
 	private long receiptID = 0;
 	
 	
@@ -115,6 +116,7 @@ private static final long serialVersionUID = 1L;
 		excludeFields.add("feeTypeDesc");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("bounceCode");
+		excludeFields.add("bounceCodeDesc");
 		return excludeFields;
 	}
 
@@ -301,6 +303,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setBalanceAmt(BigDecimal balanceAmt) {
 		this.balanceAmt = balanceAmt;
+	}
+
+	public String getBounceCodeDesc() {
+		return bounceCodeDesc;
+	}
+
+	public void setBounceCodeDesc(String bounceCodeDesc) {
+		this.bounceCodeDesc = bounceCodeDesc;
 	}
 
 }

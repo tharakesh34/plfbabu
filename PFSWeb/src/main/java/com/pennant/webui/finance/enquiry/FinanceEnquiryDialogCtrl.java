@@ -96,6 +96,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -105,6 +106,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -159,6 +161,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Basic Details
 	protected Textbox					finReference;
 	protected Textbox					finStatus;
+	protected Textbox					finStatus_Reason;
 	protected Textbox					finType;
 	protected Textbox					finCcy;
 	protected Textbox					profitDaysBasis;
@@ -464,6 +467,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected String 						selectMethodName		= "onSelectTab";
 	private  boolean						enquiry    				= false;
 	private	 boolean 						fromApproved;
+	private FinanceProfitDetailDAO          financeProfitDetailDAO;
 	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -912,7 +916,18 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				this.gb_gracePeriodDetails.setVisible(false);
 			}
-			this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
+					.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+			int NOInst = 0;
+			if (financeProfitDetail != null) {
+				NOInst = financeProfitDetail.getNOInst();
+				aFinanceMain.setNOInst(NOInst);
+			}
+			if (NOInst > 0) {
+				this.numberOfTerms_two.setValue(NOInst);
+			} else {
+				this.numberOfTerms_two.setValue(aFinanceMain.getCalTerms());
+			}
 			this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
 			fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 					PennantStaticListUtil.getInterestRateType(false), "");
@@ -976,13 +991,18 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.isFinIsActive()) {
 				this.finStatus.setValue("Active");
 			} else {
-				if (FinanceConstants.CLOSE_STATUS_MATURED.equals(aFinanceMain.getClosingStatus())) {
 					this.finStatus.setValue("Matured");
-				} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
-					this.finStatus.setValue("Cancelled");
-				} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(aFinanceMain.getClosingStatus())) {
-					this.finStatus.setValue("Written-Off");
-				}
+			}
+			
+			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
+			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Normal");
+			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Cancelled");
+			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Written-Off");
+			}else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				this.finStatus_Reason.setValue("Settled");
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
@@ -1092,8 +1112,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(),formatter));
 			this.totalSchdProfit.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPftSchd(),formatter));
 			this.totalFees.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalFees(),formatter));
-			this.totalCharges.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCharges(),formatter));
-			this.totalWaivers.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,formatter));
+			this.totalCharges.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPaidFee(),formatter));
+			this.totalWaivers.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalWaiverFee(),formatter));
 			this.schdPriTillNextDue.setValue(PennantAppUtil.formateAmount(financeSummary.getPrincipalSchd(),formatter));
 			this.schdPftTillNextDue.setValue(PennantAppUtil.formateAmount(financeSummary.getProfitSchd(),formatter));
 			this.principalPaid.setValue(PennantAppUtil.formateAmount(financeSummary.getSchdPriPaid(),formatter));
@@ -1212,8 +1232,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getCalTerms()
-					- finSummary.getPaidInstlments()));
+			if(aFinanceMain.getNOInst() > 0) {
+				this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getNOInst()
+						- finSummary.getPaidInstlments()));
+			} else {
+				this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getCalTerms()
+						- finSummary.getPaidInstlments()));
+			}
 			if (financeSummary != null && financeSummary.getFinODTotPenaltyBal() != null) {
 				this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(
 						finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()),
@@ -2160,6 +2185,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinFlagsDetailList(List<FinFlagsDetail> finFlagsDetailList) {
 		this.finFlagsDetailList = finFlagsDetailList;
+	}
+
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 

@@ -91,7 +91,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityUsersOperations

@@ -20,7 +20,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.search.Filter;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 public class PennantApplicationUtil {
 	

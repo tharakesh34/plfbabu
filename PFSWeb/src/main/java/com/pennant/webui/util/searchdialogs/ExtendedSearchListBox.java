@@ -84,7 +84,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
 import com.pennant.search.SearchResult;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 
 /**

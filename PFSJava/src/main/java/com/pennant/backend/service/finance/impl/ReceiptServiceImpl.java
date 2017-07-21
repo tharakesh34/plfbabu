@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -950,10 +951,36 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listSave(scheduleData, "", 0);
 		
 		// Overdue Details updation , if Value Date is Back dated.
-		Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
-		List<FinODDetails> overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, curBusDate, null);
-		if(overdueList != null && !overdueList.isEmpty()){
-			getFinODDetailsDAO().updateList(overdueList);
+		List<FinODDetails> overdueList = null;
+		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
+			Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
+			overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, curBusDate, null, false);
+			if (overdueList != null && !overdueList.isEmpty()) {
+				getFinODDetailsDAO().updateList(overdueList);
+			}
+		} else {
+			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+			List<FinODDetails> curODList = new ArrayList<FinODDetails>();
+			List<FinanceScheduleDetail> repyDetails =scheduleData.getFinanceScheduleDetails();
+			for(FinanceScheduleDetail curSchd: repyDetails) {
+				for(FinODDetails fod: overdueList) {
+					if(DateUtility.compare(curSchd.getSchDate(), fod.getFinODSchdDate()) == 0) {
+						fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+						fod.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+						fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
+						if(fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) <= 0) {
+							fod.setFinCurODDays(0);
+							fod.setFinODTillDate(valueDate);
+						}
+						fod.setFinLMdfDate(valueDate);
+						curODList.add(fod);
+					}
+				}
+			}
+			
+			// update current overdue list
+			getFinODDetailsDAO().updateODDetails(curODList);
+			
 		}
 		
 		// Save Receipt Header
@@ -1121,6 +1148,79 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return auditHeader;
 	}
 
+	private List<RepayScheduleDetail> getRepayDetailData(FinReceiptData receiptData) {
+		logger.debug("Entering");
+
+		// Repay Schedule Data rebuild
+		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
+		List<FinReceiptDetail> receiptDetailList = receiptData.getReceiptHeader().getReceiptDetails();
+		for (int i = 0; i < receiptDetailList.size(); i++) {
+			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
+			for (int j = 0; j < repayHeaderList.size(); j++) {
+				if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
+					rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
+				}
+			}
+		}
+		
+		// Making Single Set of Repay Schedule Details and sent to Rendering
+		Cloner cloner = new Cloner();
+		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
+			
+			RepayScheduleDetail curRpySchd = null;
+			if(rpySchdMap.containsKey(rpySchd.getSchDate())){
+				curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+				
+				if(curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0){
+					curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
+				}
+				
+				if(curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0){
+					curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
+				}
+				
+				curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+				curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+				curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
+				curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+				curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+				curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+				curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+				rpySchdMap.remove(rpySchd.getSchDate());
+			} else {
+				curRpySchd = rpySchd;
+			}
+			
+			// Adding New Repay Schedule Object to Map after Summing data
+			rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+		}
+		
+		logger.debug("Leaving");
+		return sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
+	}
+	
+	/**
+	 * Sorting Repay Schedule Details
+	 * 
+	 * @param repayScheduleDetails
+	 * @return
+	 */
+	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+
+		if (repayScheduleDetails != null && repayScheduleDetails.size() > 0) {
+			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+				@Override
+				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return repayScheduleDetails;
+	}
+	
 	/**
 	 * Method for Saving List of Finance Details
 	 * @param scheduleData
@@ -1725,7 +1825,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @return
 	 */
 	public List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount, 
-			Date valueDate, List<FinanceRepayments> finRepayments){
+			Date valueDate, List<FinanceRepayments> finRepayments, boolean resetReq){
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -1816,7 +1916,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Overdue Details recalculation based on Value date requested
 		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
-				schdList, repayments);
+				schdList, repayments, resetReq);
 		
 		logger.debug("Leaving");
 		return overdueList;

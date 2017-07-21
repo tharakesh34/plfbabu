@@ -51,7 +51,7 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 

@@ -43,6 +43,7 @@ public class FinReceiptDetail implements Entity {
 	@XmlElement
 	private Date						receivedDate;
 	private String						status;
+	//API Specific
 	@XmlElement
 	private String						remarks;
 	private long						logKey			= 0;

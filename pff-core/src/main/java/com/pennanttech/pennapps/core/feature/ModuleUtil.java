@@ -9,14 +9,14 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pennapps.core.util;
+package com.pennanttech.pennapps.core.feature;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * A suite of utilities surrounding the use of the {@link ModuleMapping} that contain information about the

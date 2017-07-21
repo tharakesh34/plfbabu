@@ -1808,6 +1808,7 @@
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="financeMainExtService" ref="financeMainExtService" />
 		<property name="eventManager" ref="eventManager" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<bean id="financeMainBaseCtrl" abstract="true" scope="prototype"
@@ -3223,6 +3224,7 @@
 		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
 		<property name="deviationDetailsService" ref="deviationDetailsService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl"
@@ -3231,6 +3233,7 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl"

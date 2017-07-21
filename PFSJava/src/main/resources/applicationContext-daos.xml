@@ -6075,6 +6075,7 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

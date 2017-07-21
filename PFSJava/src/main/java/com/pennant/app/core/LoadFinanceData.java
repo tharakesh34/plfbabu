@@ -133,10 +133,16 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			// Do not Include Today Late payment Calculation
-			if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
-				continue;
+			if (ImplementationConstants.LP_MARK_FIRSTDAY) {
+				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+					continue;
+				}
+			} else {
+				if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
+					continue;
+				}
 			}
-
+			
 			// Paid Principal OR Paid Interest Less than scheduled amounts
 			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {

@@ -72,7 +72,7 @@ import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 /**
  * Service implementation for methods that depends on <b>FinMandate</b>.<br>

@@ -88,9 +88,14 @@
 											<label
 												id="label_FinanceEnquiryDialog_FinStatus"
 												value="${c:l('label_FinanceEnquiryDialog_FinStatus.value')}" />
-											<textbox
-												id="finStatus_header" readonly="true" width="170px"
-												visible="true" />
+												<hbox>
+												<textbox
+													id="finStatus_header" readonly="true" width="170px"
+													visible="true" />
+												<textbox
+													id="finStatus_Reason" readonly="true" width="170px"
+													visible="true"  style="border:none; background-color:white;"/>
+											</hbox>
 										</row>
 										<row visible="true">
 											<label

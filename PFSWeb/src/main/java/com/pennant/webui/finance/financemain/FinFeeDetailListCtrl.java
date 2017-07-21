@@ -97,6 +97,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -189,8 +190,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String	 numberOfTermsLabel = "";
 	private String	 moduleDefiner = "";
 	private String	eventCode	   = "";
-	private Map<String, FeeRule>			feeRuleDetailsMap		= null;
-	private LinkedHashMap<Long, List<FinFeeReceipt>>	finFeeReceiptMap		= new LinkedHashMap<Long, List<FinFeeReceipt>>();
+	private Map<String, FeeRule> feeRuleDetailsMap = null;
+	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
 
 	/**
 	 * default constructor.<br>
@@ -2171,22 +2172,28 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 		}
 		
-		if(feeRuleCodes.size() > 0){
+		if (feeRuleCodes.size() > 0) {
 			List<Rule> feeRules =  this.ruleService.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES, finScheduleData.getFeeEvent());
+			
 			if(feeRules != null && !feeRules.isEmpty()){
 				HashMap<String, Object> executionMap = new HashMap<String, Object>();
 				Map<String,String> ruleSqlMap = new HashMap<String,String>();
 				List<Object> objectList = new ArrayList<Object>();
+				
 				if (getFinanceDetail().getCustomerDetails() != null) {
 					objectList.add(getFinanceDetail().getCustomerDetails().getCustomer());
 					if (getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null) {
 						objectList.add(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail());
 					}
 				}
+				
+				FinanceMain finMain = null;
 				if (getFinanceDetail().getFinScheduleData() != null) {
-					objectList.add(getFinanceDetail().getFinScheduleData().getFinanceMain());
+					finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+					objectList.add(finMain);
 					objectList.add(getFinanceDetail().getFinScheduleData().getFinanceType());
 				}
+				
 				for (Rule feeRule : feeRules) {
 					if (feeRule.getFields() != null) {
 						String[] fields = feeRule.getFields().split(",");
@@ -2198,19 +2205,44 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					}
 					ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 				}
+				
+				if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference()) && StringUtils.isNotBlank(moduleDefiner)) {
+					FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finMain.getFinReference());
+					if (finProfitDetail != null) {
+						BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finMain.getFinReference());
+						executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
+						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+						executionMap.put("totOSExcludeFees", finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
+						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
+						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
+					}
+				}
+				
+				if (getFinanceMainDialogCtrl() instanceof ReceiptDialogCtrl) {
+					ReceiptDialogCtrl receiptDialogCtrl = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
+					BigDecimal totalPayment = receiptDialogCtrl.getTotalReceiptAmount(false);
+					executionMap.put("totalPayment", totalPayment);
+					executionMap.put("partialPaymentAmount", receiptDialogCtrl.getRemBalAfterAllocationAmt());
+					executionMap.put("totalDueAmount", receiptDialogCtrl.getCustPaidAmt());
+				}
+				
+				String finCcy = finMain.getFinCcy();
 				for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-					if(StringUtils.isEmpty(finFeeDetail.getRuleCode())){
+					if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
 						continue;
 					}
-					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap,
-							finScheduleData.getFinanceMain().getFinCcy());
+					
+					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap, finCcy);
 					//unFormating feeResult
-					int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+					int formatter = CurrencyUtil.getFormat(finCcy);
 					feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 					
 					finFeeDetail.setCalculatedAmount(feeResult);
 					if(finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0){
 						finFeeDetail.setActualAmount(feeResult);
+					}
+					if (finFeeDetail.isNewRecord() && !finFeeDetail.isOriginationFee()) {
+						finFeeDetail.setPaidAmount(feeResult);
 					}
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 							subtract(finFeeDetail.getWaivedAmount()));
@@ -2254,11 +2286,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return finFeeDetailsList;
 	}
 	
-	private String getUniqueID(FinFeeDetail finFeeDetail){
-		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent())+"_"+
-				String.valueOf(finFeeDetail.getFeeTypeID());
+	private String getUniqueID(FinFeeDetail finFeeDetail) {
+		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
-	
 
 	/**
 	 * Method for Processing of SQL Rule and get Executed Result

@@ -63,7 +63,6 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -564,39 +563,6 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 
 		return finSeq;
 	}
-	
-	
-	@Override
-    public FinanceSummary getTotalFeeCharges(FinanceSummary finSummary) {
-		logger.debug("Entering");
-		
-		FinanceSummary summary = new FinanceSummary();
-		summary.setFinReference(finSummary.getFinReference());
-		
-		StringBuilder selectSql = new StringBuilder(" select TotalFees,TotalCharges from " );
-		selectSql.append(" (select SUM(PostAmount) TotalFees, Finreference from Postings  " );
-		selectSql.append(" where FinReference=:FinReference  AND AmountType='F' and DrOrCr='C' Group by Finreference) A  " );
-		selectSql.append(" inner join (select SUM(PostAmount) TotalCharges, Finreference from Postings " );
-		selectSql.append(" where Finreference=:FinReference  AND AmountType='C' and DrOrCr='C' Group by Finreference) B " );
-		selectSql.append(" on A.Finreference = B.Finreference " );
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSummary);
-		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
-
-		try {
-			summary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			finSummary.setTotalCharges(summary.getTotalCharges());
-			finSummary.setTotalFees(summary.getTotalFees());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			summary = null;
-		}
-		
-		logger.debug("Leaving");
-		
-		return finSummary;
-    }
 	
 	/**
 	 * Fetch the Record  Goods Details details by key field

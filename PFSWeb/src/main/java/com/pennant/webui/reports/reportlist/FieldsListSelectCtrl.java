@@ -78,7 +78,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * This is the controller class for the

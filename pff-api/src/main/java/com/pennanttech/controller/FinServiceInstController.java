@@ -1223,7 +1223,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		finReceiptDetail.setPaymentType(finServiceInst.getPaymentMode());
 		finReceiptDetail.setAmount(finServiceInst.getAmount());
 		receiptHeader.getReceiptDetails().add(finReceiptDetail);
-
+		
+		receiptHeader.setRemarks(finReceiptDetail.getRemarks());
 		finReceiptData.setReceiptHeader(receiptHeader);
 		finReceiptData.setFinanceDetail(financeDetail);
 		finReceiptData.setFinReference(finServiceInst.getFinReference());
@@ -1438,11 +1439,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			Date valueDate = finServiceInst.getReceiptDetail().getReceivedDate();
 			
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(actualSchedules);
 			List<FinODDetails> finODDetailsList  = financeDetail.getFinScheduleData().getFinODDetails();
 			if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
 				List<FinanceRepayments> repayments = getRepaymentDetails(aFinanceDetail.getFinScheduleData(), totReceiptAmt, valueDate);
 				finODDetailsList = receiptService.getValueDatePenalties(financeDetail.getFinScheduleData(),totReceiptAmt, 
-						valueDate, repayments);
+						valueDate, repayments, false);
 			}
 			
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
@@ -1613,7 +1615,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			} else {
 				// Calculate overdue Penalties
-				overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null);
+				overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate, null, true);
 			}
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
@@ -1747,7 +1749,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setInsuranceList(null);
-		finScheduleData.setFinODDetails(null);
 		finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setApiPlanEMIHDates(null);
 		finScheduleData.setApiplanEMIHmonths(null);

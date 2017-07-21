@@ -82,7 +82,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
-import com.pennanttech.pff.core.model.ModuleMapping;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * This is the controller class for the

@@ -415,6 +415,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
 				financeMain.setFinIsActive(false);
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+				if (receiptPurpose !=null && StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)) {
+					financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);	
+				}
 			} else {
 				financeMain.setFinIsActive(true);
 				financeMain.setClosingStatus(null);

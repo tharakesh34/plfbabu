@@ -417,7 +417,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				// Copy of Finance Workflow & Process Editor Details to Promotion by Finance Type(Product Code)
 				if(StringUtils.isNotBlank(financeType.getProduct())){
 					//Finance Workflow Details 
-					List<FinanceWorkFlow> financeWorkFlowList = getFinanceWorkFlowDAO().getFinanceWorkFlowListById(financeType.getProduct(), "");
+					List<FinanceWorkFlow> financeWorkFlowList = getFinanceWorkFlowDAO().getFinanceWorkFlowListById(
+							financeType.getProduct(), PennantConstants.WORFLOW_MODULE_FINANCE, "");
 					
 					if(financeWorkFlowList != null && !financeWorkFlowList.isEmpty()){
 						for (FinanceWorkFlow financeWorkFlow : financeWorkFlowList) {

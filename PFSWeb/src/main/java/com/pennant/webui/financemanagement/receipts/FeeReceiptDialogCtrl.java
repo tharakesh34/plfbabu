@@ -700,7 +700,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 					header.getReceiptDetails().add(receiptDetail);
 				}
-				
+				header.setRemarks(this.remarks.getValue());
 				for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
 					receiptDetail.setAmount(header.getReceiptAmount());
 					receiptDetail.setPaymentType(header.getReceiptMode());
@@ -715,7 +715,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 					receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 					receiptDetail.setReceivedDate(this.receivedDate.getValue());
-					receiptDetail.setRemarks(this.remarks.getValue());
+					
 					
 					if(receiptDetail.getRepayHeaders().isEmpty()){
 						FinRepayHeader repayHeader = new FinRepayHeader();
@@ -857,6 +857,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}else{
 			this.row_RealizationDate.setVisible(false);
 		}
+		this.remarks.setValue(header.getRemarks());
 		
 		if(!header.isNewRecord()){
 			this.finReference.setValue(header.getReference(),"");
@@ -897,7 +898,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
-					this.remarks.setValue(receiptDetail.getRemarks());
 				}
 			}
 		}

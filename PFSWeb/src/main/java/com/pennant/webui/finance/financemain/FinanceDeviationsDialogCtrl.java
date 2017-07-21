@@ -78,7 +78,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.ModuleUtil;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 
 public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private static final long			serialVersionUID	= 2290501784830847866L;

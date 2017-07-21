@@ -840,9 +840,14 @@
 		<column name="BounceDate" type="datetime"/>
 		</addColumn>
 	</changeSet>
-	<changeSet id="44" author="Madhubabu">
+	<changeSet id="44" author="Madhubabu" dbms="oracle">
 	<sql>
 		ALTER TABLE ADTfintaxuploadheader MODIFY FILENAME VARCHAR(100);
+	</sql>
+	</changeSet>
+	<changeSet id="44" author="Madhubabu" dbms="mssql">
+	<sql>
+		ALTER TABLE ADTfintaxuploadheader alter column FILENAME VARCHAR(100);
 	</sql>
 	</changeSet>
 	<changeSet id="45" author="Somasekhar">
@@ -871,5 +876,11 @@
 			<column name="HostFeeTypeCode" type="varchar(50)"/>
 		</addColumn>
 	 </changeSet>
+	
+	<changeSet id="48" author="Vinay">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="REMARKS" type="VARCHAR2(200)" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>

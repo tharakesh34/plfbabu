@@ -180,5 +180,6 @@ public interface FinanceDetailService {
 	int getProgressCountByCust(long custID);
 	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
 	FinanceMain getFinanceMainForBatch(String finReference);
+	BigDecimal getOutStandingBalFromFees(String finReference);
 	
  }

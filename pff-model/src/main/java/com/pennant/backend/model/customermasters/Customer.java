@@ -272,7 +272,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String phoneNumber;
 	private String phoneAreaCode;
 	private String phoneCountryCode;
-	private double custAddlDec1;
+	private BigDecimal custAddlDec1 = BigDecimal.ZERO;
 	private double custAddlDec2;
 	private double custAddlDec3;
 	private double custAddlDec4;
@@ -1297,11 +1297,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.custAddlVar11 = custAddlVar11;
 	}
 
-	public double getCustAddlDec1() {
+	public BigDecimal getCustAddlDec1() {
 		return custAddlDec1;
 	}
 
-	public void setCustAddlDec1(double custAddlDec1) {
+	public void setCustAddlDec1(BigDecimal custAddlDec1) {
 		this.custAddlDec1 = custAddlDec1;
 	}
 

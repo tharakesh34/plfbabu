@@ -1,7 +1,6 @@
 package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -134,7 +133,7 @@ public class FinMainReportData implements Serializable{
 	private String totalWaivers = "";
 	private String finODTotPenaltyAmt = "";
 	private String finODTotPenaltyPaid = "";
-	private String totalCharges = "";
+	private String totalPaidFees = "";
 	private String finODTotWaived = "";
 	private String finODTotPenaltyBal = "";
 
@@ -803,12 +802,6 @@ public class FinMainReportData implements Serializable{
 	public void setFinODTotPenaltyPaid(String finODTotPenaltyPaid) {
     	this.finODTotPenaltyPaid = finODTotPenaltyPaid;
     }
-	public String getTotalCharges() {
-    	return totalCharges;
-    }
-	public void setTotalCharges(String totalCharges) {
-    	this.totalCharges = totalCharges;
-    }
 	public String getFinODTotWaived() {
     	return finODTotWaived;
     }
@@ -952,7 +945,11 @@ public class FinMainReportData implements Serializable{
 		}
 
 		//  Repay Details 
-		reportData.setNumberOfTerms(String.valueOf(financeMain.getCalTerms()));
+		if(financeMain.getNOInst() > 0) {
+			reportData.setNumberOfTerms(String.valueOf(financeMain.getNOInst()));
+		} else {
+			reportData.setNumberOfTerms(String.valueOf(financeMain.getCalTerms()));
+		}
 		reportData.setReqRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getFinRepaymentAmount(), ccyFormatter));
 		reportData.setRepayRateBasis("#".equals(financeMain.getRepayRateBasis()) ? "" : getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
 		reportData.setRepayProfitRate(financeMain.getRepayProfitRate()!=null ?PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2)+" %":"");
@@ -993,10 +990,10 @@ public class FinMainReportData implements Serializable{
 		
 		//Totals
 		reportData.setTotalFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalFees(), ccyFormatter));
-		reportData.setTotalWaivers(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));//TODO
+		reportData.setTotalWaivers(PennantApplicationUtil.amountFormate(financeSummary.getTotalWaiverFee(), ccyFormatter));
 		reportData.setFinODTotPenaltyAmt(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
 		reportData.setFinODTotPenaltyPaid(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
-		reportData.setTotalCharges(PennantApplicationUtil.amountFormate(financeSummary.getTotalCharges(), ccyFormatter));
+		reportData.setTotalPaidFees(PennantApplicationUtil.amountFormate(financeSummary.getTotalPaidFee(), ccyFormatter));
 		reportData.setFinODTotWaived(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotWaived(), ccyFormatter));
 		reportData.setFinODTotPenaltyBal(PennantApplicationUtil.amountFormate(financeSummary.getFinODTotPenaltyBal(), ccyFormatter));
 		
@@ -1039,7 +1036,12 @@ public class FinMainReportData implements Serializable{
 		reportData.setFinProfitrate(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2) +" %");
 		reportData.setPaidInstlments(String.valueOf(finSummary.getPaidInstlments()));
 		reportData.setPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalPaid(), ccyFormatter));
-		reportData.setUnPaidInstlments(String.valueOf(finSummary.getNumberOfTerms() - finSummary.getPaidInstlments()));
+		
+		if(financeMain.getNOInst() > 0) {
+			reportData.setUnPaidInstlments(String.valueOf(financeMain.getNOInst() - finSummary.getPaidInstlments()));
+		} else {
+			reportData.setUnPaidInstlments(String.valueOf(financeMain.getCalTerms() - finSummary.getPaidInstlments()));
+		}
 		reportData.setUnPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()), 
 				ccyFormatter));
 
@@ -1081,6 +1083,14 @@ public class FinMainReportData implements Serializable{
 
 	public void setGraceTerms(String graceTerms) {
 		this.graceTerms = graceTerms;
+	}
+
+	public String getTotalPaidFees() {
+		return totalPaidFees;
+	}
+
+	public void setTotalPaidFees(String totalPaidFees) {
+		this.totalPaidFees = totalPaidFees;
 	}
 	
 }

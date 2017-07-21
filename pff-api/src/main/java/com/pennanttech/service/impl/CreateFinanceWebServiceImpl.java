@@ -430,9 +430,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		// check records in origination 
-		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-		if (count > 0) {
-		} else {
+		FinanceMain finMain = financeMainDAO.getFinanceMainParms(finReference);
+		if (finMain == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);

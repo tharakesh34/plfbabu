@@ -606,7 +606,7 @@ public class FinStatementController extends SummaryDetailService {
 			overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 		} else {
 			overdueList = getReceiptService().getValueDatePenalties(finScheduleData, priBalance.add(pftAmt).add(totFeeAmount),
-					valueDate, null);
+					valueDate, null, true);
 		}
 
 		// Calculating Actual Sum of Penalty Amount & Late Pay Interest

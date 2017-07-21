@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.finance.enquiry;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -80,6 +82,7 @@ import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -101,6 +104,7 @@ import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -136,6 +140,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Tabpanel	                 tabPanel_dialogWindow;	                                                      // autoWired
 
 	protected Textbox	                 finReference_header;	                                                          // autoWired
+	protected Textbox	                 finStatus_Reason;	  
 	protected Textbox	                 finStatus_header;	                                                              // autoWired
 	protected Textbox	                 finType_header;	                                                              // autoWired
 	protected Textbox	                 finCcy_header;	                                                              // autoWired
@@ -158,18 +163,19 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected String	                 finReference	        = "";
 
 	// not auto wired variables
-	private FinanceDetailService	     financeDetailService;
-	private EligibilityDetailService 	 eligibilityDetailService;
-	private AgreementDetailService       agreementDetailService;
-	private ScoringDetailService	     scoringDetailService;
-	private CheckListDetailService	     checkListDetailService;
-	private FinCovenantTypeService	     finCovenantTypeService;
-	
-	private ManualPaymentService	     manualPaymentService;
+	private FinanceDetailService			financeDetailService;
+	private EligibilityDetailService		eligibilityDetailService;
+	private AgreementDetailService			agreementDetailService;
+	private ScoringDetailService			scoringDetailService;
+	private CheckListDetailService			checkListDetailService;
+	private FinCovenantTypeService			finCovenantTypeService;
+
+	private ManualPaymentService			manualPaymentService;
 	private OverdueChargeRecoveryService	overdueChargeRecoveryService;
-	private SuspenseService	             suspenseService;
-	private FinanceDeviationsService  	deviationDetailsService;
-	
+	private SuspenseService					suspenseService;
+	private FinanceDeviationsService		deviationDetailsService;
+	private FinFeeDetailService				finFeeDetailService;
+
 	private List<ValueLabel>	         enquiryList	        = PennantStaticListUtil.getEnquiryTypes();
 	private List<ValueLabel>	         mandateList	        = PennantStaticListUtil.getMandateTypeList();
 	private FinanceEnquiryListCtrl	     financeEnquiryListCtrl	= null;
@@ -263,14 +269,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (enquiry.isFinIsActive()) {
 			this.finStatus_header.setValue("Active");
 		} else {
-			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Matured");
-			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Cancelled");
-			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(enquiry.getClosingStatus())) {
-				this.finStatus_header.setValue("Written-Off");
-			}
+			this.finStatus_header.setValue("Matured");
 		}
+		
+		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
+		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Normal");
+		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Cancelled");
+		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Written-Off");
+		}else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+			this.finStatus_Reason.setValue("Settled");
+		}
+		
+		
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
 		this.custShrtName.setValue(enquiry.getLovDescCustShrtName());
 		this.finType_header.setValue(enquiry.getFinType() + "-" + enquiry.getLovDescFinTypeName());
@@ -300,8 +313,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					Clients.showNotification("Finance Reference Is Not Valid Create New Finance Reference");
 					this.window_FinEnqHeaderDialog.onClose();
 				}
+				FinanceSummary summary = finScheduleData.getFinanceSummary();
+				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "");
+				calculateFeeChargeDetails(feeDetails, summary);
 			}else{
 				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View",true);
+				if(finScheduleData != null) {
+					FinanceSummary summary = finScheduleData.getFinanceSummary();
+					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_View");
+					calculateFeeChargeDetails(feeDetails, summary);
+				}
 			}
 			if(finScheduleData.getFinanceMain()!=null){
 				FinContributorHeader contributorHeader = getFinanceDetailService().getFinContributorHeaderById(this.finReference);
@@ -533,8 +554,28 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		}
 
-	
-	
+	/**
+	 * 
+	 * @param feeDetails
+	 * @param summary
+	 */
+	private void calculateFeeChargeDetails(List<FinFeeDetail> feeDetails, FinanceSummary summary) {
+		if (feeDetails != null) {
+			BigDecimal totPaidFee = BigDecimal.ZERO;
+			for (FinFeeDetail feeDetail : feeDetails) {
+				summary.setTotalFees(summary.getTotalFees().add(feeDetail.getActualAmount()));
+				summary.setTotalWaiverFee(summary.getTotalWaiverFee().add(feeDetail.getWaivedAmount()));
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					totPaidFee = totPaidFee.add(feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount()));
+				} else {
+					totPaidFee = totPaidFee.add(feeDetail.getPaidAmount());
+				}
+				summary.setTotalPaidFee(totPaidFee);
+			}
+		}
+	}
+
 	private Notes getNotes() {
 		Notes notes = new Notes();
 		notes.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
@@ -829,6 +870,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
+	}
+	
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
 	}
 
 }

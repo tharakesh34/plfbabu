@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennant.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.15.17</version>
+		<version>3.15.18</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-core</artifactId>
-			<version>0.1.9</version>
+			<version>0.1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pennant.pff</groupId>

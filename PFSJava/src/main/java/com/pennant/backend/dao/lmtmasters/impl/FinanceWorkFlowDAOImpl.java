@@ -176,10 +176,12 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 	 * @return FinanceWorkFlow
 	 */
 	@Override
-	public List<FinanceWorkFlow> getFinanceWorkFlowListById(final String id, String type) {
+	public List<FinanceWorkFlow> getFinanceWorkFlowListById(final String id,String moduleName, String type) {
 		logger.debug("Entering");
 		FinanceWorkFlow financeWorkFlow = new FinanceWorkFlow();
 		financeWorkFlow.setId(id);
+		financeWorkFlow.setModuleName(moduleName);
+		
 		
 		StringBuilder selectSql = new StringBuilder("Select FinType, FinEvent, ScreenCode, WorkFlowType,ModuleName");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -189,7 +191,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		}
 		selectSql.append(" From LMTFinanceWorkFlowDef");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType =:FinType ");
+		selectSql.append(" Where FinType =:FinType AND ModuleName=:ModuleName");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
@@ -234,7 +236,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTFinanceWorkFlowDef");
 		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent");
+		deleteSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent AND ModuleName=:ModuleName");
 		
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
@@ -327,7 +329,7 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent ");
+		updateSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent  AND ModuleName=:ModuleName");
 		if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");
 		}
