@@ -79,15 +79,10 @@ public class CompleteEOD implements JobExecutionDecider {
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
 		// Log the Customer queuing data and threads status
 		customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
-
-		boolean processed = dateService.doUpdateAftereod(true);
-		if (processed) {
-			//clear the data which is loaded in before  end of day
-			logger.debug("COMPLETE: Complete EOD On :" + valueDate);
-			return FlowExecutionStatus.COMPLETED;
-		} else {
-			return FlowExecutionStatus.UNKNOWN;
-		}
+		//check extended month end and update the dates.
+		dateService.doUpdateAftereod(true);
+		logger.debug("COMPLETE: Complete EOD On :" + valueDate);
+		return FlowExecutionStatus.COMPLETED;
 	}
 
 
