@@ -35,6 +35,9 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private Map<String, String> taxStateCodesMap = null;
 	private Map<String, Branch> branchMap = null;
 	private Map<String, TaxDetail> entityDetailMap = null;
+	private Map<String, String> provinceMap = null;
+	private Map<String, String> cityMap = null;
+	private Map<String, String> countryMap = null;
  	private int recordCount = 0;
 
 	//Constant values used in the interface
@@ -163,12 +166,12 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4")));
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY")));
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXCITY")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXPINCODE")));
-
+			
+			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("TAXCITY"))));
 			province = rs.getString("TAXPROVINCE");
-			customerAddress.append(province);
+			customerAddress.append(provinceMap.get(province));
+			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"))));
 
 			lastMntOn = (Date) rs.getObject("TAXLASTMNTON");
 		} else {
@@ -180,17 +183,18 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 			//Address Details 
 			customerAddress = new StringBuilder();
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1")));
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR")));
+			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET")));
+			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1")));
+			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTPOBOX")));
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY")));
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY")));
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP")));
-
+			 
+			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"))));
 			province = rs.getString("CUSTADDRPROVINCE");
-			customerAddress.append(province);
+			customerAddress.append(provinceMap.get(province));
+			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"))));
 
 			lastMntOn = (Date) rs.getObject("CUSTADDRLASTMNTON");
 		}
@@ -243,14 +247,15 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		if(entityDetail != null){
 			map.addValue("BFL_GSTIN_NO", entityDetail.getTaxCode());
 			StringBuilder gstAddress = new StringBuilder();
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine1()));
+			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine1()));//2
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine2()));
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine3()));
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine4()));
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getCityCode()));
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getStateCode()));
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getCountry()));
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getPinCode()));
+			 
+			gstAddress.append(cityMap.get(StringUtils.trimToEmpty(entityDetail.getCityCode())));
+			gstAddress.append(provinceMap.get(StringUtils.trimToEmpty(entityDetail.getStateCode())));
+			gstAddress.append(countryMap.get(StringUtils.trimToEmpty(entityDetail.getCountry())));
 
 			txnBranchAddress = gstAddress.toString();
 			txnBranchStateCode = entityDetail.getStateCode();
@@ -291,16 +296,17 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	 * @return
 	 */
 	private String getBranchAddress(Branch branch){
-		StringBuilder branchAddress = new StringBuilder();
-		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
-		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+		StringBuilder branchAddress = new StringBuilder();//1
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchPOBox()));
-		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchCity()));
-		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchProvince()));
-		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchCountry()));
+		 
+		branchAddress.append(cityMap.get(StringUtils.trimToEmpty(branch.getBranchCity())));
+		branchAddress.append(provinceMap.get(StringUtils.trimToEmpty(branch.getBranchProvince())));
+		branchAddress.append(countryMap.get(StringUtils.trimToEmpty(branch.getBranchCountry())));
 		return branchAddress.toString();
 	}
 	
@@ -368,6 +374,9 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		taxStateCodesMap = setTaxStateCodeDetails();
 		branchMap = setBranchDetails();
 		entityDetailMap = setEntityDetails();
+		provinceMap = setProvinceMap();
+		cityMap = setCityMap();
+		countryMap = setCountryMap();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -458,6 +467,74 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		return map;
 	}
  
+	/**
+	 * Get the Countrycode and CountryDescription
+	 * 
+	 * @return
+	 */
+	private Map<String, String> setCountryMap() {
+		logger.debug(Literal.ENTERING);
+
+		final Map<String, String> map = new HashMap<String, String>();
+		String sql = "SELECT COUNTRYCODE, COUNTRYDESC FROM BMTCOUNTRIES";
+
+		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
+			public Map<String, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getString("COUNTRYCODE"), rs.getString("COUNTRYDESC"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get the Citycode and CityDescription
+	 * 
+	 * @return
+	 */
+	private Map<String, String> setCityMap() {
+		logger.debug(Literal.ENTERING);
+
+		final Map<String, String> map = new HashMap<String, String>();
+		String sql = "SELECT PCCITY, PCCITYNAME FROM RMTPROVINCEVSCITY";
+
+		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
+			public Map<String, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getString("PCCITY"), rs.getString("PCCITYNAME"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get the Provincecode and ProvinceDescription
+	 * 
+	 * @return
+	 */
+	private Map<String, String> setProvinceMap() {
+		logger.debug(Literal.ENTERING);
+
+		final Map<String, String> map = new HashMap<String, String>();
+		String sql = "SELECT CPPROVINCE,CPPROVINCENAME FROM RMTCOUNTRYVSPROVINCE";
+
+		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
+			public Map<String, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
 
 	/**
 	 * Save Tax Download Details to PFF Table and then Bajaj Table
