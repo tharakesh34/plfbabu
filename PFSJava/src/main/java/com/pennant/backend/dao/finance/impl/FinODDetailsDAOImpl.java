@@ -167,6 +167,27 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Updating Overdue Details after Recalculation in Receipts/Payments
+	 * @param overdues
+	 */
+	@Override
+	public void updateODDetails(List<FinODDetails> overdues) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
+		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
+		updateSql.append(" FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		
+		logger.debug("Leaving");
+	}
+	
 	@Override
 	public void updateBatch(FinODDetails finOdDetails) {
 		logger.debug("Entering");

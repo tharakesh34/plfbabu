@@ -73,9 +73,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 		//Still before the grace days no need to calculate OD penalty
 		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
-			//Since there are back dated payment we need to rest to zero.
-			fod.setTotPenaltyAmt(penalty);
-			fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 			return;
 		}
 
