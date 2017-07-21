@@ -118,12 +118,12 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 	}		
 	
 	@Override
-	public boolean isDuplicateKey(long id,String name,long groupId, TableType tableType) {
+	public boolean isDuplicateKey(long id,String name, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "name = :name AND groupId = :groupId AND id != :id";
+		String whereClause = "name = :name AND id != :id";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -142,7 +142,7 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("name", name);
-		paramSource.addValue("groupId", groupId);
+		//paramSource.addValue("groupId", groupId);
 		
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 

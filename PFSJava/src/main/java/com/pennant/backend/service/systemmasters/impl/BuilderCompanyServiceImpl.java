@@ -358,8 +358,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + builderCompany.getGroupId();
 
 		// Check the unique keys.
-		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
-				builderCompany.getGroupId(), builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(), builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
