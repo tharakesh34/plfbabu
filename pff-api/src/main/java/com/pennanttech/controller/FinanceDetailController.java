@@ -243,13 +243,15 @@ public class FinanceDetailController extends SummaryDetailService {
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				exdFieldRender.setVersion(1);
 				for (ExtendedField extendedField : extendedFields) {
-
 					Map<String, Object> mapValues = new HashMap<String, Object>();
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 						exdFieldRender.setMapValues(mapValues);
 					}
-
+				}
+				if(extendedFields.size()<=0){
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
 				}
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);

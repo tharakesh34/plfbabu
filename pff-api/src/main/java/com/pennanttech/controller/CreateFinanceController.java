@@ -473,9 +473,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				exdFieldRender.setNextRoleCode(roleCode);
 				exdFieldRender.setTaskId(taksId);
 				exdFieldRender.setNextTaskId(getNextTaskId(taksId));
-				
 				for (ExtendedField extendedField : extendedFields) {
-
 					Map<String, Object> mapValues = new HashMap<String, Object>();
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
@@ -483,7 +481,11 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 
 				}
-
+				if(extendedFields.size()<=0){
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
+				
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}else {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();

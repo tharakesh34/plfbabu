@@ -93,6 +93,10 @@ public class VASController {
 					}
 
 				}
+				if(extendedFields.size()<=0){
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			} else {
