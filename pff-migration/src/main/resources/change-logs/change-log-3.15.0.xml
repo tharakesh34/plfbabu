@@ -13831,4 +13831,42 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
    		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP"/>
    		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP_LOG"/>
 	</changeSet>
+	
+	<changeSet id="665" author="Kesav">
+		<sql>
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'REPAY' and RBFLDNAME = 'totalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'REPAY' and RBFLDNAME = 'principalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'REPAY' and RBFLDNAME = 'totOSExcludeFees';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'REPAY' and RBFLDNAME = 'totOSIncludeFees';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','REPAY','totalOutStanding','Profit Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','REPAY','principalOutStanding','Principal Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','REPAY','totOSExcludeFees','Total Outstanding Instalment Excluding Fees','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','REPAY','totOSIncludeFees','Total Outstanding Instalment Including Fees','Decimal',18,'1','1',' ','static,global',' ');
+			
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'totalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'principalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'totOSExcludeFees';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'totOSIncludeFees';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'totalPayment';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYPAY' and RBFLDNAME = 'partialPaymentAmount';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','totalOutStanding','Profit Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','principalOutStanding','Principal Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','totOSExcludeFees','Total Outstanding Instalment Excluding Fees','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','totOSIncludeFees','Total Outstanding Instalment Including Fees','Decimal',18,'1','1',' ','static,global',' ');
+			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','totalPayment','Total Payment (Including Past Instalments and Partial Payment)','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYPAY','partialPaymentAmount','Partial Payment Amount','Decimal',18,'1','1',' ','static,global',' ');
+			
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'totalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'principalOutStanding';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'totOSExcludeFees';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'totOSIncludeFees';
+			DELETE from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'totalDueAmount';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYSTL','totalOutStanding','Profit Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYSTL','principalOutStanding','Principal Outstanding','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYSTL','totOSExcludeFees','Total Outstanding Instalment Excluding Fees','Decimal',18,'1','1',' ','static,global',' ');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYSTL','totOSIncludeFees','Total Outstanding Instalment Including Fees','Decimal',18,'1','1',' ','static,global',' ');			
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES','EARLYSTL','totalDueAmount','Total Due Amount (Payment Amount including Manual Advise)','Decimal',18,'1','1',' ','static,global',' ');		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
