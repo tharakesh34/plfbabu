@@ -13736,4 +13736,36 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 </changeSet>
 
 
+<changeSet id="660" author="Vinay">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			 SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId,
+	                       T1.PartialPaidAmt
+	
+					FROM         FinScheduleDetails_Temp  T1
+
+		</createView>
+</changeSet>
+
+<changeSet id="661" author="Vinay">
+		<createView viewName="FINRECEIPTDETAIL_TVIEW" replaceIfExists="true">
+			Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T2.BankName BankCodeDesc,
+			 T3.PartnerBankCode FundingAcDesc , T1.PayOrder, T1.LogKey, T3.AccountNo PartnerBankAc, T3.AcType PartnerBankAcType
+			 From FinReceiptDetail_Temp T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+
+		</createView>
+</changeSet>
+
 </databaseChangeLog>
