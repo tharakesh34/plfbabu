@@ -877,4 +877,10 @@
 		</addColumn>
 	 </changeSet>
 	
+	<changeSet id="48" author="Vinay">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="REMARKS" type="VARCHAR2(200)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
