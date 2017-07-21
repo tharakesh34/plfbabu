@@ -13767,5 +13767,48 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 
 		</createView>
 </changeSet>
-
+<changeSet id="662" author="Srikanth">
+		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,
+						coalesce(T9.NOINST,0) NOINST
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN
+                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
+			
+			UNION ALL
+			
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,
+						coalesce(T9.NOINST,0) NOINST
+			FROM        FinanceMain T1 INNER JOIN
+				    	Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN
+                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
+			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))
+	</createView>
+</changeSet>
 </databaseChangeLog>
