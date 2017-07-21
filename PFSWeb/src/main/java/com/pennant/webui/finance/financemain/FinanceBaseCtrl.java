@@ -118,6 +118,7 @@ import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -132,6 +133,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExt;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -641,6 +643,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected String										finDivision							= "";
 	Date													appStartDate						= SysParamUtil
 																										.getValueAsDate("APP_DFT_START_DATE");
+	private FinanceProfitDetailDAO          				financeProfitDetailDAO;
 
 	public FinanceBaseCtrl() {
 		super();
@@ -2377,7 +2380,17 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if ("PFT".equals(aFinanceMain.getScheduleMethod())) {
 			this.finRepaymentAmount.setReadonly(true);
 		}
-		this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+		FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
+				.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+		int NOInst = 0;
+		if (financeProfitDetail != null) {
+			NOInst = financeProfitDetail.getNOInst();
+		}
+		if (NOInst > 0) {
+			this.numberOfTerms_two.setValue(NOInst);
+		} else {
+			this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
+		}
 		this.numberOfTerms.setText("");
 
 		if (this.numberOfTerms_two.intValue() == 1) {
@@ -8019,5 +8032,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public void setFinFeeDetailListCtrl(FinFeeDetailListCtrl finFeeDetailListCtrl) {
 		this.finFeeDetailListCtrl = finFeeDetailListCtrl;
 	}
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
+	}
 
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
 }

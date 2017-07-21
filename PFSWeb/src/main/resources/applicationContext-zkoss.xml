@@ -1808,6 +1808,7 @@
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="financeMainExtService" ref="financeMainExtService" />
 		<property name="eventManager" ref="eventManager" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<bean id="financeMainBaseCtrl" abstract="true" scope="prototype"
