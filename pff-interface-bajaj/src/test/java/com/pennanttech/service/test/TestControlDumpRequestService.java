@@ -1,18 +1,17 @@
 package com.pennanttech.service.test;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class TestControlDumpRequestService {
 
 	ControlDumpRequestService controlDumpRequestService;
 
-	@Before
+	@BeforeTest
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
@@ -25,7 +24,7 @@ public class TestControlDumpRequestService {
 	@Test
 	public void process() {
 		try {
-			controlDumpRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), DateUtil.getSysDate(), DateUtil.getSysDate());
+			controlDumpRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), DateUtil.getMonthStart(DateUtil.getSysDate()), DateUtil.getMonthEnd(DateUtil.getSysDate()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
