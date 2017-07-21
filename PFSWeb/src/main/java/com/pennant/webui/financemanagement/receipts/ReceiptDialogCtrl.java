@@ -3416,15 +3416,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
-			boolean percentageExist = false;
+			boolean recalculation = false;
 
 			for (FinFeeDetail finFeeDeatil : finFeeDetails) {
-				if (StringUtils.equals(finFeeDeatil.getCalculateOn(), PennantConstants.FEE_CALCULATEDON_PAYAMOUNT)) {
-					percentageExist = true;
+				if (StringUtils.equals(finFeeDeatil.getCalculateOn(), PennantConstants.FEE_CALCULATEDON_PAYAMOUNT) ||
+						StringUtils.equals(finFeeDeatil.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_RULE)) {
+					recalculation = true;
 					break;
 				}
 			}
-			if (percentageExist) {
+			
+			if (recalculation) {
 				feesRecalculation(true);
 			}
 		}
@@ -5708,5 +5710,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
 	}
+	
+	/**
+	 * to get the Remaining Balance After Allocation Amount
+	 * @return
+	 */
+	public BigDecimal getRemBalAfterAllocationAmt() {	//Used in Fees Execution
+		return remBalAfterAllocation.getValue();
+	}
 
+	/**
+	 * to get the Customer Paid Amount
+	 * @return
+	 */
+	public BigDecimal getCustPaidAmt() {	//Used in Fees Execution
+		return this.custPaid.getValue();
+	}
 }

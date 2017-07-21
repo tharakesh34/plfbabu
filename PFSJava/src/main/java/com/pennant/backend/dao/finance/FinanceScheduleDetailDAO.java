@@ -120,4 +120,6 @@ public interface FinanceScheduleDetailDAO {
 	void updateListForRpy(List<FinanceScheduleDetail> schdList);
 
 	BigDecimal getPriPaidAmount(String finReference);
+
+	BigDecimal getOutStandingBalFromFees(String finReference);
 }

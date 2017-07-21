@@ -8593,6 +8593,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<FinTypeFees> getFinTypeFees(String finType, String eventCode, boolean origination, int moduleId) {
 		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, moduleId);
 	}
+	
+	@Override
+	public BigDecimal getOutStandingBalFromFees(String finReference) {
+		return getFinanceScheduleDetailDAO().getOutStandingBalFromFees(finReference);
+	}
 
 	public FinTypeFeesDAO getFinTypeFeesDAO() {
 		return finTypeFeesDAO;

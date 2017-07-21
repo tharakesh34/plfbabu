@@ -1371,4 +1371,31 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Leaving");
 		return schdPriPaid;
 	}
+	
+	/**
+	 * Method for fetch Finance Schedule details when Principal Payment greater
+	 * than zero
+	 * 
+	 */
+	@Override
+	public BigDecimal getOutStandingBalFromFees(String finReference) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
+		
+		StringBuilder selectSql = new StringBuilder(" Select SUM(FeeSchd) -  Sum(SchdFeePaid) ");
+		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" Where FinReference = :FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		BigDecimal outStandingFeeBal = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
+		if (outStandingFeeBal == null) {
+			outStandingFeeBal = BigDecimal.ZERO;
+		}
+		
+		logger.debug("Leaving");
+		return outStandingFeeBal;
+	}
 }
