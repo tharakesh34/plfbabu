@@ -13811,4 +13811,19 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))
 	</createView>
 </changeSet>
+
+	<changeSet id="663" author="murthy.y">
+		<renameColumn columnDataType="decimal(18,2)"
+			newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE"
+			tableName="CF_CONTROL_DUMP" />
+		<renameColumn columnDataType="decimal(18,2)"
+			newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED"
+			tableName="CF_CONTROL_DUMP" />
+		<renameColumn columnDataType="decimal(18,2)"
+			newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE"
+			tableName="CF_CONTROL_DUMP_LOG" />
+		<renameColumn columnDataType="decimal(18,2)"
+			newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED"
+			tableName="CF_CONTROL_DUMP_LOG" />
+	</changeSet>
 </databaseChangeLog>
