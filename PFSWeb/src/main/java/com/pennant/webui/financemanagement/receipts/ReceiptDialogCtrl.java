@@ -1379,7 +1379,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.fundingAccount.setDescription("");
 			this.fundingAccount.setObject(null);
 			this.receivedDate.setValue(DateUtility.getAppDate());
-			this.remarks.setValue("");
 		}
 		
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
@@ -3547,13 +3546,63 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			waivedAllocationMap.put(allocateWaived.getId(), waivedAllocateAmt);
 		}
 		
+		BigDecimal tdsCalculated = BigDecimal.ZERO;
+		if(StringUtils.equals(allocateWaived.getId(), "AllocateWaived_"+RepayConstants.ALLOCATION_NPFT)){
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
+
+				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS) != null){
+					BigDecimal tdsMultiplier = BigDecimal.ONE;
+					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+					/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
+
+					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+					}
+
+					CurrencyBox allocateTDSWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS);
+					BigDecimal actPftAdjust = waivedAllocateAmt.multiply(tdsMultiplier);
+					if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
+						BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
+						if(paidAllocationMap.containsKey("AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
+							balPft = balPft.subtract(paidAllocationMap.get("AllocatePaid_"+RepayConstants.ALLOCATION_PFT));
+						}
+						if(actPftAdjust.compareTo(balPft) > 0){
+							actPftAdjust = balPft;
+						}
+					}
+					tdsCalculated = actPftAdjust.subtract(waivedAllocateAmt);
+					allocateTDSWaived.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
+					
+					CurrencyBox allocatePFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_PFT);
+					allocatePFTWaived.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
+
+					if(waivedAllocationMap != null){ 
+						if(waivedAllocationMap.containsKey(allocateTDSWaived.getId())){
+							waivedAllocationMap.remove(allocateTDSWaived.getId());
+						}
+						if(waivedAllocationMap.containsKey(allocatePFTWaived.getId())){
+							waivedAllocationMap.remove(allocatePFTWaived.getId());
+						}
+						waivedAllocationMap.put(allocateTDSWaived.getId(), tdsCalculated);
+						waivedAllocationMap.put(allocatePFTWaived.getId(), actPftAdjust);
+					}
+				}
+			}
+		}
+		
 		List<String> waivedBoxKeys = new ArrayList<>(waivedAllocationMap.keySet());
 		BigDecimal totalPDWaived = BigDecimal.ZERO;
 		BigDecimal totalMAWaived = BigDecimal.ZERO;
 		for (int i = 0; i < waivedBoxKeys.size(); i++) {
 			String waivedBoxId = waivedBoxKeys.get(i);
 			if(waivedBoxId.startsWith("AllocateWaived_")){
-				totalPDWaived = totalPDWaived.add(waivedAllocationMap.get(waivedBoxId));
+				if(StringUtils.equals(waivedBoxId, "AllocateWaived_"+RepayConstants.ALLOCATION_TDS) || 
+						StringUtils.equals(waivedBoxId, "AllocateWaived_"+RepayConstants.ALLOCATION_PFT)){
+					// Nothing To do
+				}else{
+					totalPDWaived = totalPDWaived.add(waivedAllocationMap.get(waivedBoxId));
+				}
 			}else {
 				totalMAWaived = totalMAWaived.add(waivedAllocationMap.get(waivedBoxId));
 			}

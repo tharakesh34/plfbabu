@@ -122,8 +122,12 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (finServiceInstruction.getNextGrcRepayDate() != null) {
 				financeMain.setEventFromDate(finServiceInstruction.getNextGrcRepayDate());
 			} else {
-				financeMain.setEventFromDate(FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
-						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate());
+				
+				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
+						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
+				eventFromDate = DateUtility.getDBDate(DateUtility.formatUtilDate(eventFromDate,
+						PennantConstants.DBDateFormat));
+				financeMain.setEventFromDate(eventFromDate);
 			}
 
 			if (finServiceInstruction.getNextRepayDate() != null) {
@@ -138,6 +142,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 							.getNextFrequencyDate();
 				}
 				
+				startRepayCalDate = DateUtility.getDBDate(DateUtility.formatUtilDate(startRepayCalDate,
+						PennantConstants.DBDateFormat));
+				
 			}
 
 			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frequency, terms, startRepayCalDate, "A", true,
@@ -145,6 +152,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				recalToDate = calendar.getTime();
+				recalToDate = DateUtility.getDBDate(DateUtility.formatUtilDate(recalToDate,
+						PennantConstants.DBDateFormat));
 			}
 			scheduleDateList = null;
 
@@ -422,6 +431,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		}
 		
 		//TODO: PV 19JAN17 schdMethod to be added
+		financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 		
 		// Plan EMI Holidays Resetting after Rescheduling

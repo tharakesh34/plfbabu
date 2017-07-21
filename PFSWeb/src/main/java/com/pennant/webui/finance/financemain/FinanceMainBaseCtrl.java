@@ -1438,7 +1438,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
 
 		//Customer Details   
-		appendCustomerDetailTab(onLoad);
+		if(onLoad || StringUtils.isEmpty(moduleDefiner)){
+			appendCustomerDetailTab(onLoad);
+		}
 
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -2091,8 +2093,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				HashMap<String, Object> map = getDefaultArguments();
 				//In Servicing the Customer Details are not been Editable
-				if (StringUtils.isNotBlank(moduleDefiner) && !StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
-						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN,moduleDefiner)) {
+				if (StringUtils.isNotBlank(moduleDefiner)) {
 					map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 					map.put("isEnqProcess", isEnquiry);
 				}
@@ -2486,7 +2487,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			scoringDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_CUSTOMERS:
-			customerDialogCtrl.doSetLabels(getFinBasicDetails());
+			if(customerDialogCtrl == null && StringUtils.isNotEmpty(moduleDefiner)){
+				appendCustomerDetailTab(false);
+			}
+			if(customerDialogCtrl != null){
+				customerDialogCtrl.doSetLabels(getFinBasicDetails());
+			}
 			break;
 		case AssetConstants.UNIQUE_ID_STEPDETAILS:
 			stepDetailDialogCtrl.doSetLabels(getFinBasicDetails());
