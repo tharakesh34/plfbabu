@@ -1,12 +1,5 @@
 package com.pennanttech.bajaj.services;
 
-import com.pennant.backend.model.finance.TrailBalance;
-import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
-import com.pennanttech.pff.core.util.DateUtil;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -27,6 +21,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.TransactionStatus;
+
+import com.pennant.backend.model.finance.TrailBalance;
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.TrailBalanceReportService;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class TrailBalanceReportServiceImpl extends BajajService implements TrailBalanceReportService {
 	private final Logger logger = Logger.getLogger(getClass());
@@ -271,7 +273,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		if (!list.isEmpty()) {
 			saveTrailBalance(list);
 		}
-		
+
 		list = null;
 	}
 
@@ -308,7 +310,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		return null;
 	}
-	
+
 	private Map<String, TrailBalance> getLedgerDetails() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select HOSTACCOUNT, PROFITCENTERCODE, COSTCENTERCODE");
@@ -419,7 +421,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		return null;
 	}
-	
+
 	private Map<String, String> getStates() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select CPPROVINCE, BUSINESSAREA from RMTCOUNTRYVSPROVINCE");
@@ -444,7 +446,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		return null;
 	}
-	
+
 	private Map<String, String> getStateDescriptions() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select CPPROVINCE, CPPROVINCENAME from RMTCOUNTRYVSPROVINCE");
@@ -469,7 +471,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		return null;
 	}
-	
+
 	private void saveTrailBalance(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -485,10 +487,10 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		}
 
 		jdbcTemplate.batchUpdate(sql.toString(), inputList);
-		
-		inputList =null;
+
+		inputList = null;
 	}
-	
+
 	private void saveTransactionDetails(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -778,7 +780,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private int extractTransactionsData() throws Exception {
 		logger.info("Extracting the GL Transaction Details..");
-		
+
 		int rowNum = 0;
 		List<TrailBalance> list = new ArrayList<>();
 
@@ -793,13 +795,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 					entry.getValue().getCreditAmount().subtract(entry.getValue().getDebitAmount()));
 
 			if (entry.getValue().getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
-				entry.getValue().setTransactionAmount(BigDecimal.ZERO.subtract(entry.getValue().getTransactionAmount()));
+				entry.getValue()
+						.setTransactionAmount(BigDecimal.ZERO.subtract(entry.getValue().getTransactionAmount()));
 				entry.getValue().setTransactionAmountType("40");
 			} else {
 				entry.getValue().setTransactionAmountType("50");
 			}
 
-			
 			// set cost and profit center details
 			TrailBalance trailBalance = ledgers.get(entry.getKey().split("-")[0]);
 			if (StringUtils.trimToNull(trailBalance.getProfitCenter()) != null) {
@@ -809,14 +811,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			if (StringUtils.trimToNull(trailBalance.getCostCenter()) != null) {
 				entry.getValue().setCostCenter(trailBalance.getCostCenter());
 			}
-			
-			
+
 			// set business area
 			String businessArea = states.get(entry.getKey().split("-")[1]);
-			if(businessArea != null) {
+			if (businessArea != null) {
 				entry.getValue().setBusinessArea(businessArea);
 			}
-			
+
 			// Saving transaction details
 			list.add(entry.getValue());
 
@@ -831,7 +832,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			saveTransactionDetails(list);
 		}
 
-		
 		return rowNum;
 	}
 
@@ -894,16 +894,29 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private void generateGLReport() throws Exception {
 		logger.info("Generating GL Report..");
 
-		generateTransactionReport();
+		try {
+			GenerateTransactionReport gtr = new GenerateTransactionReport();
+			gtr.run();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
-		generateTransactionSummaryReport();
-		
-		generateTrailBalanceReport("");
-		//generateTrailBalanceReportByState();
+		try {
+			GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport();
+			gtsr.run();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		try {
+			GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport();
+			gtbr.run();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 	}
-	
-	
+
 	private void prepareDtatForFile() {
 		Map<String, String> states = getStateDescriptions();
 
@@ -946,7 +959,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			public void processRow(ResultSet rs) throws SQLException {
 
 				try {
-					
+
 					dataMap.addValue("PROVINCE", rs.getString("PROVINCE"));
 					dataMap.addValue("DESCRIPTION", states.get(rs.getString("PROVINCE")));
 
@@ -967,24 +980,11 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		});
 	}
 
-	private void generateTrailBalanceReportByState() {
-		String query = "select PROVINCE, count(*) from TRAIL_BALANCE_REPORT_LAST_RUN where HEADERID = ? group by PROVINCE";
-		jdbcTemplate.query(query, new Object[] { headerId }, new RowCallbackHandler() {
-			@Override
-			public void processRow(ResultSet rs) throws SQLException {
-				try {
-					generateTrailBalanceReport(rs.getString("PROVINCE"));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-		});
-	}
-
 	private void generateTransactionReport() throws Exception {
 		DataEngineExport dataEngine = null;
 		logger.info("Generating Transaction Detail Report ..");
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
@@ -992,19 +992,17 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private void generateTransactionSummaryReport() throws Exception {
 		logger.info("Generating Transaction Summary Report ..");
 		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
-	private void generateTrailBalanceReport(String province) throws Exception {
+	private void generateTrailBalanceReport() throws Exception {
 		logger.info("Generating Trail Balance Report ..");
 		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
-
-		Map<String, Object> filterMap = new HashMap<>();
-		//filterMap.put("HEADERID", headerId);
-		//filterMap.put("PROVINCE", province);
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMYYYY"));
@@ -1014,7 +1012,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		parameterMap.put("COMPANY_NAME", companyName);
 		parameterMap.put("REPORT_NAME", reportName);
 		parameterMap.put("FILE_NAME", fileName);
-		parameterMap.put("STATE_CODE", province);
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");
@@ -1025,7 +1022,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
 		parameterMap.put("CURRENCY", currency + " - " + currency);
 
-		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
@@ -1036,4 +1032,41 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		updateParameter("SAPGL_LAST_RUN_YEAR", DateUtil.getYear(monthEndDate));
 		updateParameter("SAPGL_LAST_RUN_MONTH", DateUtil.getMonth(monthEndDate));
 	}
+
+	public class GenerateTransactionReport implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				generateTransactionReport();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
+	public class GenerateTransactionSummaryReport implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				generateTransactionSummaryReport();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
+	public class GenerateTrailBalanceReport implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				generateTrailBalanceReport();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
 }
