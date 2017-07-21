@@ -1036,7 +1036,12 @@ public class FinMainReportData implements Serializable{
 		reportData.setFinProfitrate(PennantApplicationUtil.formatRate(finSummary.getFinRate().doubleValue(), 2) +" %");
 		reportData.setPaidInstlments(String.valueOf(finSummary.getPaidInstlments()));
 		reportData.setPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalPaid(), ccyFormatter));
-		reportData.setUnPaidInstlments(String.valueOf(finSummary.getNumberOfTerms() - finSummary.getPaidInstlments()));
+		
+		if(financeMain.getNOInst() > 0) {
+			reportData.setUnPaidInstlments(String.valueOf(financeMain.getNOInst() - finSummary.getPaidInstlments()));
+		} else {
+			reportData.setUnPaidInstlments(String.valueOf(financeMain.getCalTerms() - finSummary.getPaidInstlments()));
+		}
 		reportData.setUnPaidInstlementPft(PennantApplicationUtil.amountFormate(finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()), 
 				ccyFormatter));
 
