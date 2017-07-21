@@ -945,7 +945,11 @@ public class FinMainReportData implements Serializable{
 		}
 
 		//  Repay Details 
-		reportData.setNumberOfTerms(String.valueOf(financeMain.getCalTerms()));
+		if(financeMain.getNOInst() > 0) {
+			reportData.setNumberOfTerms(String.valueOf(financeMain.getNOInst()));
+		} else {
+			reportData.setNumberOfTerms(String.valueOf(financeMain.getCalTerms()));
+		}
 		reportData.setReqRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getFinRepaymentAmount(), ccyFormatter));
 		reportData.setRepayRateBasis("#".equals(financeMain.getRepayRateBasis()) ? "" : getlabelDesc(financeMain.getRepayRateBasis(), PennantStaticListUtil.getInterestRateType(false)));
 		reportData.setRepayProfitRate(financeMain.getRepayProfitRate()!=null ?PennantApplicationUtil.formatRate(financeMain.getRepayProfitRate().doubleValue(), 2)+" %":"");

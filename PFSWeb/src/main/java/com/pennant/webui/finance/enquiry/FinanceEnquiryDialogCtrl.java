@@ -921,6 +921,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			int NOInst = 0;
 			if (financeProfitDetail != null) {
 				NOInst = financeProfitDetail.getNOInst();
+				aFinanceMain.setNOInst(NOInst);
 			}
 			if (NOInst > 0) {
 				this.numberOfTerms_two.setValue(NOInst);

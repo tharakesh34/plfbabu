@@ -269,6 +269,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private int numberOfTerms = 0;
+	private int NOInst = 0;
 	@XmlElement
 	private BigDecimal reqRepayAmount = BigDecimal.ZERO;
 	@XmlElement
@@ -726,6 +727,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("waivedAmt");
 		excludeFields.add("recalFee");
 		excludeFields.add("recalTerms");
+		excludeFields.add("NOInst");
 
 		return excludeFields;
 	}
@@ -3517,4 +3519,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.waivedAmt = waivedAmt;
 	}
 	
+	public int getNOInst() {
+		return NOInst;
+	}
+
+	public void setNOInst(int nOInst) {
+		NOInst = nOInst;
+	}
 }
