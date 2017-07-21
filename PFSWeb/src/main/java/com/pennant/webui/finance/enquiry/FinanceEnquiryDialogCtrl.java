@@ -1232,8 +1232,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
 			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-			this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getCalTerms()
-					- finSummary.getPaidInstlments()));
+			if(aFinanceMain.getNOInst() > 0) {
+				this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getNOInst()
+						- finSummary.getPaidInstlments()));
+			} else {
+				this.unPaidInstlments.setValue(String.valueOf(aFinanceMain.getCalTerms()
+						- finSummary.getPaidInstlments()));
+			}
 			if (financeSummary != null && financeSummary.getFinODTotPenaltyBal() != null) {
 				this.unPaidInstlementPft.setValue(PennantAppUtil.amountFormate(
 						finSummary.getTotalUnPaid().add(financeSummary.getFinODTotPenaltyBal()),

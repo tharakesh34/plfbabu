@@ -148,6 +148,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal unPaidInstlementPft = BigDecimal.ZERO;
 	@XmlElement
 	private long numberOfTerms;
+	private int NOInst;
 	
 	private String custCIF;
 	
@@ -757,5 +758,13 @@ public class FinanceSummary implements Serializable {
 
 	public void setTotalPaidFee(BigDecimal totalPaidFee) {
 		this.totalPaidFee = totalPaidFee;
+	}
+
+	public int getNOInst() {
+		return NOInst;
+	}
+
+	public void setNOInst(int nOInst) {
+		NOInst = nOInst;
 	}
 }
