@@ -374,7 +374,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 		
 		if (financeScheduleDetails != null) {
-			Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
@@ -385,25 +384,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					prvSchd = curSchd;
 				}
 
-				/*// Not Allowing Grace Period Dates
-				if(curSchd.getSchDate().compareTo(grcEndDate) <= 0){
-					if(curSchd.getSchDate().compareTo(grcEndDate) == 0){
-						prvSchd = curSchd;
-					}
-					continue;
-				}*/
-				
 				// Not allow Before Current Business Date
 				if(appDateValidationReq && curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 					prvSchd = curSchd;
 					continue;
 				}
-				
-				/*//Not Review Date
-				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
-					prvSchd = curSchd;
-					continue;
-				}*/
 				
 				// Only allowed if payment amount is greater than Zero
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
