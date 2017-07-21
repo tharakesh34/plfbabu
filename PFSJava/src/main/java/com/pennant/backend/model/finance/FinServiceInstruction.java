@@ -102,7 +102,6 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private boolean wif;
 	@XmlElement
 	private String 	serviceReqNo;
-	@XmlElement
 	private String	remarks;
 
 	// Bean validation purpose
