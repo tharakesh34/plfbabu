@@ -777,9 +777,25 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				lastPaidDate = curSchd.getSchDate();
 			}
 			
-			if(curSchd.getSchDate().compareTo(currBussDate) <= 0){
+			if(curSchd.getSchDate().compareTo(currBussDate) == 0){
 				lastPaidDate = currBussDate;
+			}else if(curSchd.getSchDate().compareTo(currBussDate) < 0){
+				if(curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+					lastPaidDate = curSchd.getSchDate();
+				}
 			}
+		}
+		
+		// Month End Date or Last installment which is Greater should be considered
+		Date mnthEndDate = DateUtility.getMonthEndDate(DateUtility.addMonths(currBussDate, -1));
+		if(mnthEndDate.compareTo(lastPaidDate) > 0){
+			lastPaidDate = mnthEndDate;
+		}
+		
+		// Back Date Allowed Condition Check
+		Date alwdBackDate	= DateUtility.addDays(currBussDate,-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+		if(lastPaidDate.compareTo(alwdBackDate) < 0){
+			lastPaidDate = alwdBackDate;
 		}
 		
 		try {
