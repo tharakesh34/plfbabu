@@ -13581,5 +13581,16 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			<column name="LOGGED_ON" type="datetime" />
 </createTable>
 </changeSet>
-
+<!-- FOR AWS	 -->
+<changeSet  id="650" author="Madhubabu">
+	<sql>
+	INSERT INTO SMTPARAMETERS VALUES ('POSIDEX_DEDUP_REQUEST_URL','Posidex Request URL','String', 1,'http://172.30.1.31:11000/DedupeRestWS/Services/','200',0, NULL, NULL,'Posidex Request URL',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+</changeSet>
+<!-- For QC & DEV -->
+<changeSet  id="650.1" author="Madhubabu">
+	<sql>
+	INSERT INTO SMTPARAMETERS VALUES ('POSIDEX_DEDUP_REQUEST_URL','Posidex Request URL','String', 1,'http://192.168.1.158:8080/pff-api/services/','200',0, NULL, NULL,'Posidex Request URL',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
