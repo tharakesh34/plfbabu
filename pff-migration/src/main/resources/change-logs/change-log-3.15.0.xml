@@ -13908,4 +13908,47 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		<changeSet id="668" author="durgaprasad g">
 		<dropColumn tableName="TAXDOWNLOADDETAIL" columnName="BFLGSTINNO"/>
 		</changeSet>
+
+	<changeSet id="669" author="Siva">
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="GrcPftFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="GrcRvwFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="GrcCpzFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="RepayPftFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="RepayRvwFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction_Temp">
+			<column name="RepayCpzFrq" type="varchar(5)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="670" author="Siva">
+		<addColumn tableName="FinServiceInstruction">
+			<column name="GrcPftFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction">
+			<column name="GrcRvwFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction">
+			<column name="GrcCpzFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction">
+			<column name="RepayPftFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction">
+			<column name="RepayRvwFrq" type="varchar(5)" />
+		</addColumn>
+		<addColumn tableName="FinServiceInstruction">
+			<column name="RepayCpzFrq" type="varchar(5)" />
+		</addColumn>
+	</changeSet>
+		
 </databaseChangeLog>
