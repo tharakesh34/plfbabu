@@ -71,7 +71,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.rits.cloning.Cloner;
@@ -107,7 +107,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private FinBasicDetailsCtrl			finBasicDetailsCtrl;
 	private String						ModuleType_Loan					= "LOAN";
 	private List<FinAdvancePayments>	finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
-	private FinAdvancePaymentsCtrl		finAdvancePaymentsCtrl;
+	private DisbursementInstCtrl		disbursementInstCtrl;
 	private List<FinanceDisbursement>	financeDisbursement;
 	private List<FinanceDisbursement>	approvedDisbursments;
 	String moduleDefiner = "";
@@ -268,11 +268,11 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			doCheckEnquiry();
 			FinanceMain finMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinancedetail().getFinScheduleData().getFinanceType();
-			finAdvancePaymentsCtrl.init(this.listBoxAdvancePayments,
+			disbursementInstCtrl.init(this.listBoxAdvancePayments,
 					finMain.getFinCcy(), financeType.isAlwMultiPartyDisb(), roleCode);
-			finAdvancePaymentsCtrl.setFinanceDisbursement(getFinancedetail().getFinScheduleData().getDisbursementDetails());
-			finAdvancePaymentsCtrl.setFinanceMain(finMain);
-			finAdvancePaymentsCtrl.setApprovedDisbursments(approvedDisbursments);
+			disbursementInstCtrl.setFinanceDisbursement(getFinancedetail().getFinScheduleData().getDisbursementDetails());
+			disbursementInstCtrl.setFinanceMain(finMain);
+			disbursementInstCtrl.setApprovedDisbursments(approvedDisbursments);
 			
 			doWriteBeanToComponents();
 
@@ -349,16 +349,16 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 				}
 
 				if (main != null && main.getFinAmount() != null) {
-					finAdvancePaymentsCtrl.setFinanceDisbursement(schdData.getDisbursementDetails());
-					finAdvancePaymentsCtrl.setFinanceMain(main);
-					finAdvancePaymentsCtrl.markCancelIfNoDisbursmnetFound(getFinAdvancePaymentsList());
+					disbursementInstCtrl.setFinanceDisbursement(schdData.getDisbursementDetails());
+					disbursementInstCtrl.setFinanceMain(main);
+					disbursementInstCtrl.markCancelIfNoDisbursmnetFound(getFinAdvancePaymentsList());
 					boolean validate = getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
 					
 					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
 						validate=false;
 					}
 					
-					List<ErrorDetails> valid = finAdvancePaymentsCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
+					List<ErrorDetails> valid = disbursementInstCtrl.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 
 					valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 
@@ -411,9 +411,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		Clients.clearWrongValue(this.label_AdvancePayments_Title);
 		FinanceDetail findetails = getFinancedetailsFromBase();
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
-		finAdvancePaymentsCtrl.setFinanceDisbursement(financeDisbursement);
-		finAdvancePaymentsCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		finAdvancePaymentsCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan,
+		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
+		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
+		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan,
 				getFinAdvancePaymentsList());
 
 		logger.debug("Leaving" + event.toString());
@@ -424,9 +424,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		Clients.clearWrongValue(this.btnNew_NewFinAdvancePayments);
 		FinanceDetail findetails = getFinancedetailsFromBase();
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
-		finAdvancePaymentsCtrl.setFinanceDisbursement(financeDisbursement);
-		finAdvancePaymentsCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		finAdvancePaymentsCtrl.onDoubleClick(this, this.financeMainDialogCtrl, ModuleType_Loan, isEnquiry);
+		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
+		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
+		disbursementInstCtrl.onDoubleClick(this, this.financeMainDialogCtrl, ModuleType_Loan, isEnquiry);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -434,7 +434,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
-		finAdvancePaymentsCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList());
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList());
 		logger.debug("Leaving");
 	}
 
@@ -510,8 +510,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
 	
-	public void setFinAdvancePaymentsCtrl(FinAdvancePaymentsCtrl finAdvancePaymentsCtrl) {
-		this.finAdvancePaymentsCtrl = finAdvancePaymentsCtrl;
+	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
+		this.disbursementInstCtrl = disbursementInstCtrl;
 	}
 
 }
