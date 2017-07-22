@@ -2,6 +2,7 @@ package com.pennanttech.service.test;
 
 import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
+import java.util.Date;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
@@ -24,7 +25,19 @@ public class TestControlDumpRequestService {
 	@Test
 	public void process() {
 		try {
-			controlDumpRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), DateUtil.getMonthStart(DateUtil.getSysDate()), DateUtil.getMonthEnd(DateUtil.getSysDate()));
+			
+			Date date = DateUtil.getDate(2017, 01, 01);
+			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
+			
+			date = DateUtil.addMonths(date, 1);
+			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
+			
+			date = DateUtil.addMonths(date, 1);
+			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
+			
+			date = DateUtil.addMonths(date, 1);
+			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
