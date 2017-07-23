@@ -285,30 +285,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, TrailBalance>>() {
-						@Override
-						public Map<String, TrailBalance> extractData(ResultSet rs)
-								throws SQLException, DataAccessException {
-							Map<String, TrailBalance> map = new HashMap<>();
-
-							while (rs.next()) {
-								TrailBalance trailBalance = new TrailBalance();
-								trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-								trailBalance.setAccountType(rs.getString("GROUPCODE"));
-								trailBalance.setAccountTypeDes(rs.getString("ACTYPEDESC"));
-
-								map.put(trailBalance.getLedgerAccount(), trailBalance);
-							}
-
-							return map;
-						}
-					});
+			return extractAccountDetails(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, TrailBalance> extractAccountDetails(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, TrailBalance>>() {
+					@Override
+					public Map<String, TrailBalance> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
+						Map<String, TrailBalance> map = new HashMap<>();
+
+						while (rs.next()) {
+							TrailBalance trailBalance = new TrailBalance();
+							trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
+							trailBalance.setAccountType(rs.getString("GROUPCODE"));
+							trailBalance.setAccountTypeDes(rs.getString("ACTYPEDESC"));
+
+							map.put(trailBalance.getLedgerAccount(), trailBalance);
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private Map<String, TrailBalance> getLedgerDetails() {
@@ -319,30 +323,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, TrailBalance>>() {
-						@Override
-						public Map<String, TrailBalance> extractData(ResultSet rs)
-								throws SQLException, DataAccessException {
-							Map<String, TrailBalance> map = new HashMap<>();
-
-							while (rs.next()) {
-								TrailBalance trailBalance = new TrailBalance();
-								trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-								trailBalance.setProfitCenter(rs.getString("PROFITCENTERCODE"));
-								trailBalance.setCostCenter(rs.getString("COSTCENTERCODE"));
-
-								map.put(trailBalance.getLedgerAccount(), trailBalance);
-							}
-
-							return map;
-						}
-					});
+			return extractLedgerDetails(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, TrailBalance> extractLedgerDetails(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, TrailBalance>>() {
+					@Override
+					public Map<String, TrailBalance> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
+						Map<String, TrailBalance> map = new HashMap<>();
+
+						while (rs.next()) {
+							TrailBalance trailBalance = new TrailBalance();
+							trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
+							trailBalance.setProfitCenter(rs.getString("PROFITCENTERCODE"));
+							trailBalance.setCostCenter(rs.getString("COSTCENTERCODE"));
+
+							map.put(trailBalance.getLedgerAccount(), trailBalance);
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private List<TrailBalance> getOpeningBalance() {
@@ -427,19 +435,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" select CPPROVINCE, BUSINESSAREA from RMTCOUNTRYVSPROVINCE");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, String>>() {
-						@Override
-						public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-							Map<String, String> map = new HashMap<>();
-
-							while (rs.next()) {
-								map.put(rs.getString("CPPROVINCE"), rs.getString("BUSINESSAREA"));
-							}
-
-							return map;
-						}
-					});
+			return extractStates(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -447,29 +443,49 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return null;
 	}
 
+	private Map<String, String> extractStates(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, String>>() {
+					@Override
+					public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						Map<String, String> map = new HashMap<>();
+
+						while (rs.next()) {
+							map.put(rs.getString("CPPROVINCE"), rs.getString("BUSINESSAREA"));
+						}
+
+						return map;
+					}
+				});
+	}
+
 	private Map<String, String> getStateDescriptions() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select CPPROVINCE, CPPROVINCENAME from RMTCOUNTRYVSPROVINCE");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, String>>() {
-						@Override
-						public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-							Map<String, String> map = new HashMap<>();
-
-							while (rs.next()) {
-								map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
-							}
-
-							return map;
-						}
-					});
+			return extractStateDescriptions(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, String> extractStateDescriptions(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, String>>() {
+					@Override
+					public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						Map<String, String> map = new HashMap<>();
+
+						while (rs.next()) {
+							map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private void saveTrailBalance(List<TrailBalance> list) throws SQLException {
