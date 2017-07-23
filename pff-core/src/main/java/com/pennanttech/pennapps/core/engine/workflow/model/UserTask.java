@@ -9,23 +9,23 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.model.workflow;
+package com.pennanttech.pennapps.core.engine.workflow.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserTask implements Serializable {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				id;
-	private String				actor;
-	private String				assignmentLevel;
-	private String				baseActor;
-	private List<String>		additionalForms		= new ArrayList<>();
-	private boolean				allowSave;
-	private boolean				reinstateLevel;
-	private boolean				delegator;
+	private String id;
+	private String actor;
+	private String assignmentLevel;
+	private String baseActor;
+	private List<String> additionalForms = new ArrayList<>();
+	private boolean allowSave;
+	private boolean reinstateLevel;
+	private boolean delegator;
 
 	public UserTask() {
 		super();

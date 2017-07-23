@@ -10,37 +10,7 @@
  * without the prior written consent of the copyright holder, is a violation of 
  * copyright law.
  */
-
-/**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *
- * FileName    		:  WorkFlow.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
- */
-package com.pennanttech.pff.core.engine;
+package com.pennanttech.pennapps.core.engine.workflow;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -59,22 +29,22 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pennapps.core.engine.workflow.model.SequenceFlow;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
+import com.pennanttech.pennapps.core.engine.workflow.model.UserTask;
 import com.pennanttech.pennapps.core.util.XmlUtil;
-import com.pennanttech.pff.core.model.workflow.SequenceFlow;
-import com.pennanttech.pff.core.model.workflow.ServiceTask;
-import com.pennanttech.pff.core.model.workflow.UserTask;
 
 /**
  * Workflow engine that manages the business processes. It is a key component in workflow processing and makes use of
  * BPMN.
  */
 public class WorkflowEngine {
-	private OMElement		definition;
-	private String			namespaceURI;
-	private OMElement		process;
-	private String			actualFirstTaskId		= "";
-	private String			actualFirstTaskActor	= "";
-	private List<String>	firstTaskActors			= new ArrayList<>();
+	private OMElement definition;
+	private String namespaceURI;
+	private OMElement process;
+	private String actualFirstTaskId = "";
+	private String actualFirstTaskActor = "";
+	private List<String> firstTaskActors = new ArrayList<>();
 
 	/**
 	 * Enumerates the namespaces that were used in the BPMN.

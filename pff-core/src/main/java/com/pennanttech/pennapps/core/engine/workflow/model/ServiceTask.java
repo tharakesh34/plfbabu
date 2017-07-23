@@ -9,15 +9,15 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.model.workflow;
+package com.pennanttech.pennapps.core.engine.workflow.model;
 
 import java.io.Serializable;
 
 public class ServiceTask implements Serializable {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				id;
-	private String				operation;
+	private String id;
+	private String operation;
 
 	public ServiceTask() {
 		super();

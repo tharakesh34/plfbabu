@@ -85,7 +85,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pff.core.engine.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;

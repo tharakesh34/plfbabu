@@ -95,7 +95,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.engine.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

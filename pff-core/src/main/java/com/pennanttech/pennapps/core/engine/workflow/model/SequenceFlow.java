@@ -9,20 +9,20 @@
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
  */
-package com.pennanttech.pff.core.model.workflow;
+package com.pennanttech.pennapps.core.engine.workflow.model;
 
 import java.io.Serializable;
 
 public class SequenceFlow implements Serializable {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private String				id;
-	private boolean				userAction;
-	private String				conditionExpression;
-	private String				action;
-	private String				state;
-	private boolean				notesMandatory;
-	private String				targetRef;
+	private String id;
+	private boolean userAction;
+	private String conditionExpression;
+	private String action;
+	private String state;
+	private boolean notesMandatory;
+	private String targetRef;
 
 	public SequenceFlow() {
 		super();

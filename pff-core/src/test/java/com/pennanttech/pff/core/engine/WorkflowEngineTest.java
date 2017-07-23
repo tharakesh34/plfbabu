@@ -14,17 +14,18 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.pennanttech.pff.core.engine.WorkflowEngine.Element;
-import com.pennanttech.pff.core.model.workflow.SequenceFlow;
-import com.pennanttech.pff.core.model.workflow.UserTask;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Element;
+import com.pennanttech.pennapps.core.engine.workflow.model.SequenceFlow;
+import com.pennanttech.pennapps.core.engine.workflow.model.UserTask;
 
 public class WorkflowEngineTest {
-	WorkflowEngine	engine;
-	WorkflowEngine	engine2;
+	WorkflowEngine engine;
+	WorkflowEngine engine2;
 
 	public class TestEntity {
-		private String	recordStatus;
-		private String	approved;
+		private String recordStatus;
+		private String approved;
 
 		public TestEntity(String recordStatus, String approved, boolean shariaApprovalReq) {
 			this.recordStatus = recordStatus;
@@ -89,9 +90,8 @@ public class WorkflowEngineTest {
 	@Test
 	public void getActors2() {
 		Assert.assertEquals(StringUtils.join(engine2.getActors(false), ';'),
-				"RECEIPT_MAKER;RECEIPT_APPROVER;DEPOSIT_MAKER;"
-				+ "DEPOSIT_APPROVER;RECEIPTWAIVER_APPROVER;"
-				+ "REALIZATION_MAKER;REALIZATION_APPROVER");
+				"RECEIPT_MAKER;RECEIPT_APPROVER;DEPOSIT_MAKER;" + "DEPOSIT_APPROVER;RECEIPTWAIVER_APPROVER;"
+						+ "REALIZATION_MAKER;REALIZATION_APPROVER");
 	}
 
 	@Test
@@ -116,7 +116,8 @@ public class WorkflowEngineTest {
 		Assert.assertEquals(engine2.getUserTaskId("RECEIPT_APPROVER"), "sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421");
 		Assert.assertEquals(engine2.getUserTaskId("DEPOSIT_MAKER"), "sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA");
 		Assert.assertEquals(engine2.getUserTaskId("DEPOSIT_APPROVER"), "sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD");
-		Assert.assertEquals(engine2.getUserTaskId("RECEIPTWAIVER_APPROVER"), "sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402");
+		Assert.assertEquals(engine2.getUserTaskId("RECEIPTWAIVER_APPROVER"),
+				"sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402");
 		Assert.assertEquals(engine2.getUserTaskId("REALIZATION_MAKER"), "sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B");
 		Assert.assertEquals(engine2.getUserTaskId("REALIZATION_APPROVER"), "sid-372D9265-9B9D-4DE6-8169-A9CA3778968C");
 	}
@@ -131,17 +132,16 @@ public class WorkflowEngineTest {
 
 	@Test
 	public void getUserActions2() {
-		Assert.assertEquals(engine2.getUserActions("sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"),
-				"Submit=Submitted");
+		Assert.assertEquals(engine2.getUserActions("sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"), "Submit=Submitted");
 		Assert.assertEquals(engine2.getUserActions("sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"),
 				"Resubmit=Resubmitted/Approve=Approved/Reject=Rejected");
-		Assert.assertEquals(engine2.getUserActions("sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"), 
+		Assert.assertEquals(engine2.getUserActions("sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"),
 				"Reject=Rejected/Submit=Submitted/Resubmit=Resubmitted");
 		Assert.assertEquals(engine2.getUserActions("sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD"),
 				"Approve=Approved/Resubmit=Resubmitted");
 		Assert.assertEquals(engine2.getUserActions("sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402"),
 				"Submit=Submitted/Resubmit=Resubmitted");
-		Assert.assertEquals(engine2.getUserActions("sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"), 
+		Assert.assertEquals(engine2.getUserActions("sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"),
 				"Reject=Rejected/Submit=Submitted");
 		Assert.assertEquals(engine2.getUserActions("sid-372D9265-9B9D-4DE6-8169-A9CA3778968C"),
 				"Resubmit=Resubmitted/Approve=Approved/Reject=Rejected");
@@ -167,9 +167,8 @@ public class WorkflowEngineTest {
 				new TestEntity("Resubmitted", null, false)), "");
 		Assert.assertEquals(engine2.getServiceOperations("sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421",
 				new TestEntity("Approved", null, true)), "doApprove");
-		Assert.assertEquals(
-				engine2.getServiceOperations("sid-372D9265-9B9D-4DE6-8169-A9CA3778968C",
-						new TestEntity("Approved", null, false)), "doApprove");
+		Assert.assertEquals(engine2.getServiceOperations("sid-372D9265-9B9D-4DE6-8169-A9CA3778968C",
+				new TestEntity("Approved", null, false)), "doApprove");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -181,13 +180,14 @@ public class WorkflowEngineTest {
 		getNextTaskIds.setAccessible(true);
 
 		// Start Event
-		String result = StringUtils.join((List<String>) getNextTaskIds.invoke(engine2, Element.startEvent,
-				"startEvent1", null), ";");
+		String result = StringUtils
+				.join((List<String>) getNextTaskIds.invoke(engine2, Element.startEvent, "startEvent1", null), ";");
 		Assert.assertEquals(result, "sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE");
 		// User Task 
 		result = StringUtils.join((List<String>) getNextTaskIds.invoke(engine2, Element.userTask,
 				"sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD", null), ";");
-		Assert.assertEquals(result, "sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B;sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA");
+		Assert.assertEquals(result,
+				"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B;sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA");
 
 		result = StringUtils.join((List<String>) getNextTaskIds.invoke(engine2, Element.userTask,
 				"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE", new TestEntity("Cancelled", null, false)), ";");
@@ -195,7 +195,8 @@ public class WorkflowEngineTest {
 
 		result = StringUtils.join((List<String>) getNextTaskIds.invoke(engine2, Element.userTask,
 				"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE", new TestEntity("Submitted", null, false)), ";");
-		Assert.assertEquals(result, "sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421;sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402");
+		Assert.assertEquals(result,
+				"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421;sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402");
 	}
 
 	@Test
@@ -204,23 +205,20 @@ public class WorkflowEngineTest {
 				new TestEntity("Submitted", null, false)), "sid-0E4577E1-11E1-450D-A2B6-DBE242378F08");
 		Assert.assertEquals(engine.getNextTaskIds("sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897",
 				new TestEntity("Cancelled", null, false)), "");
-		Assert.assertEquals(
-				engine.getNextTaskIds("sid-0E4577E1-11E1-450D-A2B6-DBE242378F08", new TestEntity("Approved", null, false)),
-				"");
+		Assert.assertEquals(engine.getNextTaskIds("sid-0E4577E1-11E1-450D-A2B6-DBE242378F08",
+				new TestEntity("Approved", null, false)), "");
 		Assert.assertEquals(engine.getNextTaskIds("sid-0E4577E1-11E1-450D-A2B6-DBE242378F08",
 				new TestEntity("Resubmitted", null, false)), "sid-38272C15-118D-4D4F-80E0-DD3A3FEC8897");
-		Assert.assertEquals(
-				engine.getNextTaskIds("sid-0E4577E1-11E1-450D-A2B6-DBE242378F08", new TestEntity("Rejected", null, false)),
-				"");
+		Assert.assertEquals(engine.getNextTaskIds("sid-0E4577E1-11E1-450D-A2B6-DBE242378F08",
+				new TestEntity("Rejected", null, false)), "");
 	}
 
 	@Test
 	public void getNextTaskIds2() {
 		Assert.assertEquals(engine2.getNextTaskIds("sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA",
 				new TestEntity("Resubmitted", null, false)), "sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE");
-		Assert.assertEquals(
-				engine2.getNextTaskIds("sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421", new TestEntity("Approved", null, true)),
-				"");
+		Assert.assertEquals(engine2.getNextTaskIds("sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421",
+				new TestEntity("Approved", null, true)), "");
 		Assert.assertEquals(engine2.getNextTaskIds("sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD",
 				new TestEntity("Approved", null, false)), "sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B");
 	}
@@ -265,16 +263,19 @@ public class WorkflowEngineTest {
 
 	@Test
 	public void getUserTaskAssignmentLevel() {
-		Assert.assertEquals(engine2.getUserTask("sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402").getAssignmentLevel(), "Role Queue");
-		Assert.assertEquals(engine2.getUserTask("sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE").getAssignmentLevel(), "Role Queue");
+		Assert.assertEquals(engine2.getUserTask("sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402").getAssignmentLevel(),
+				"Role Queue");
+		Assert.assertEquals(engine2.getUserTask("sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE").getAssignmentLevel(),
+				"Role Queue");
 	}
 
 	@Test
 	public void getUserTaskAdditionalForms() {
-		Assert.assertEquals(StringUtils.join(
-				engine2.getUserTask("sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD").getAdditionalForms(), ','), "");
 		Assert.assertEquals(StringUtils
-				.join(engine2.getUserTask("sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402").getAdditionalForms(), ','), "Accounting");
+				.join(engine2.getUserTask("sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD").getAdditionalForms(), ','), "");
+		Assert.assertEquals(StringUtils
+				.join(engine2.getUserTask("sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402").getAdditionalForms(), ','),
+				"Accounting");
 	}
 
 	@Test
