@@ -13950,5 +13950,13 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			<column name="RepayCpzFrq" type="varchar(5)" />
 		</addColumn>
 	</changeSet>
-		
+	<changeSet id="671" author="Prasad">
+		<sql>
+			Update REPORTFILTERFIELDS set FIELDID=2,MANDATORY=0,seqorder=2 where reportid in (Select reportid from reportconfiguration where reportjaspername='Daily_Disbursal_Report') and Fielddbname='LAN';
+			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON) 
+			values ((Select reportid from reportconfiguration where reportjaspername='Daily_Disbursal_Report'),1,'FinType','LOVSEARCH','Loan Type','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON) 
+			values ((Select reportid from reportconfiguration where reportjaspername='Daily_Disbursal_Report'),3,'DisbDate','DATERANGE','Disbursement Date','DisbDate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);	
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
