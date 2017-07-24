@@ -5591,8 +5591,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!processCustomerDetails(aFinanceDetail, validatePhone)) {
 				return;
 			}
-		} else {
-			aFinanceDetail.setCustomerDetails(null);
 		}
 
 		// Planned EMI Holiday Details Validation
