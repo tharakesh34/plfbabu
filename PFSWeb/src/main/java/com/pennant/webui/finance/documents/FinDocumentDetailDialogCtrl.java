@@ -91,7 +91,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -289,11 +288,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docCategory.setDescColumn("DocTypeDesc");
 		this.docCategory.setValidateColumns(new String[]{"DocTypeCode"});
 		
-		if(docIsMandatory){
+		/*if(docIsMandatory){
 			this.space_documentName.setSclass("mandatory");
 		}else{
 			this.space_documentName.setSclass("");
-		}
+		}*/
 
 		this.documnetName.setMaxlength(200);
 
@@ -501,7 +500,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.docReceivedDt.setReadonly(false);
 			this.documnetName.setReadonly(true);
 			//this.documnetName.setValue("");
-			this.space_documentName.setSclass("");
+			//this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
 		} else {
 			this.docReceivedDt.setDisabled(true);
@@ -538,9 +537,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		
 		try {
-			if (!(this.docReceived.isChecked())  && this.docIsMandatory &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
+			/*if (!(this.docReceived.isChecked())  && this.docIsMandatory &&(this.documnetName.getValue() == null || StringUtils.isEmpty(this.documnetName.getValue()) || this.documnetName.getAttribute("data") == null)) {
 				throw new WrongValueException(this.documnetName, Labels.getLabel("MUST_BE_UPLOADED", new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value") }));
-			}
+			}*/
 			aDocumentDetails.setDocName(this.documnetName.getValue());
 			if (this.documnetName.getAttribute("data") != null) {
 				DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
@@ -691,12 +690,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		boolean mandatory = false;
+	/*	boolean mandatory = false;
 		if (!this.documnetName.isReadonly() && !this.docReceived.isChecked() && this.docIsMandatory) {
 			mandatory = true;
 		}
 		this.documnetName.setConstraint(
-				new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"), null, mandatory));
+				new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"), null, mandatory));*/
 
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setConstraint(new PTDateValidator(
@@ -1113,7 +1112,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.space_docReceivedDt.setSclass("mandatory");
 			this.documnetName.setReadonly(true);
 			this.documnetName.setValue("");
-			this.space_documentName.setSclass("");
+			//this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
 			this.documnetName.setConstraint("");
 			this.documnetName.setErrorMessage("");
