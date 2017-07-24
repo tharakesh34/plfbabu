@@ -13995,4 +13995,12 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('24-JUL-2017 15:39:17','DD-MON-RRRR HH24:MI:SS'));
 		</sql>
 	</changeSet>
+				<changeSet author="pruthvi" id="676">
+		<sql>
+	delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid in (2,3);
+
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),2,'Product','LOVSEARCH','Product','RuleCode',null,'Rule','getRuleCode','getRuleCodeDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
