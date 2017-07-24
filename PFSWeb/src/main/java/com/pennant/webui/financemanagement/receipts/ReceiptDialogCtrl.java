@@ -1207,6 +1207,51 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose, true);
 		
+		// If Early Settlement then Excess Paid's should be set automatically
+		if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			
+			int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			
+			List<FinExcessAmount> excessAmountList = getExcessList();
+			for (FinExcessAmount excess : excessAmountList) {
+				
+				// Fetch Excess Amounts
+				if(listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType()) != null){
+					CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType());
+					BigDecimal balAmount = excess.getBalanceAmt();
+					if(getExcessReserveList() != null && !getExcessReserveList().isEmpty()){
+						for (FinExcessAmountReserve reserve : getExcessReserveList()) {
+							if(reserve.getExcessID() == excess.getExcessID()){
+								balAmount = balAmount.add(reserve.getReservedAmt());
+								break;
+							}
+						}
+					}
+					excessBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
+				}
+			}
+			
+			// Payable Amounts
+			List<ManualAdvise> payableList = getPayableList();
+			for (ManualAdvise payable : payableList) {
+				
+				// Fetch Excess Amounts
+				if(listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID()) != null){
+					CurrencyBox payableBox = (CurrencyBox) listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID());
+					BigDecimal balAmount = payable.getBalanceAmt();
+					if(getPayableReserveList() != null && !getPayableReserveList().isEmpty()){
+						for (ManualAdviseReserve reserve : getPayableReserveList()) {
+							if(reserve.getAdviseID() == payable.getAdviseID()){
+								balAmount = balAmount.add(reserve.getReservedAmt());
+								break;
+							}
+						}
+					}
+					payableBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
+				}
+			}
+		}
+		
 		boolean makeFeeRender = false;
 		eventCode = "";
 		
@@ -1315,10 +1360,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.effScheduleMethod);
 			this.effScheduleMethod.setSelectedIndex(0);
 			
-			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			/*if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 				fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
 				readOnlyComponent(true, this.allocationMethod);
-			}
+			}*/
 		} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			readOnlyComponent(true, this.excessAdjustTo);
 			this.excessAdjustTo.setSelectedIndex(0);

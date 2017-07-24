@@ -211,6 +211,17 @@
 													id="realizationDate" width="100px" />
 											</hbox>
 										</row>
+										<row>
+											<label
+												id="label_ReceiptDialog_Remarks"
+												value="${c:l('label_ReceiptDialog_Remarks.value')}" />
+											<hbox
+												id="hbox_ReceiptDialog_Remarks">
+												<space spacing="2px" />
+												<textbox id="remarks"
+													width="180px" />
+											</hbox>
+										</row>
 									</rows>
 								</grid>
 							</groupbox>
@@ -360,15 +371,6 @@
 												<space spacing="2px" />
 												<uppercasebox
 													id="paymentRef" width="180px" />
-											</hbox>
-											<label
-												id="label_ReceiptDialog_Remarks"
-												value="${c:l('label_ReceiptDialog_Remarks.value')}" />
-											<hbox
-												id="hbox_ReceiptDialog_Remarks">
-												<space spacing="2px" />
-												<textbox id="remarks"
-													width="180px" />
 											</hbox>
 										</row>
 									</rows>

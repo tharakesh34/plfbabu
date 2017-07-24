@@ -8,25 +8,24 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ReScheduleDialog" border="normal"
-		apply="${reScheduleDialogCtrl}" width="650px" height="400px"
-		sizable="false" title="${c:l('window_ReScheduleDialog.title')}"  closable="true">
+		apply="${reScheduleDialogCtrl}" width="1150px" height="400px"
+		sizable="false" title="${c:l('window_ReScheduleDialog.title')}"
+		closable="true">
 
 		<borderlayout id="borderlayoutFrequency">
 			<center border="none" autoscroll="true">
 
-				<groupbox id="gb_FrequencyDetails" height="320px" style="border:1px solid #F38C60;">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+				<groupbox id="gb_FrequencyDetails" height="320px"
+					style="border:1px solid #F38C60;">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
 						<columns>
-							<column width="220px" />
-                            <column />
+							<column width="18%" />
+							<column width="32%" />
+							<column width="18%" />
+							<column width="32%" />
 						</columns>
 						<rows>
-							<row>
-								<label
-									id="label_ReScheduleDialog_RepayFrq"
-									value="${c:l('label_ReScheduleDialog_RepayFrq.value')}" />
-								<frequencybox id="repayFrq" />
-							</row>
 							<row>
 								<label
 									id="label_ReScheduleDialog_FromDate"
@@ -38,19 +37,47 @@
 										readonly="true" width="144px">
 									</combobox>
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_ReScheduleDialog_SchdMthd"
 									value="${c:l('label_ReScheduleDialog_SchdMthd.value')}" />
 								<hbox>
-									<space spacing="2px" 
-										id="space_SchdMthd" sclass="mandatory"/>
+									<space spacing="2px"
+										id="space_SchdMthd" sclass="mandatory" />
 									<combobox id="cbSchdMthd"
-										width="260px" disabled="true"/>
+										width="260px" disabled="true" />
 								</hbox>
 							</row>
-							<row id="row_GrcPeriodEndDate" visible="false">
+							<row id="row_GrcFrq">
+								<label
+									id="label_ReScheduleDialog_GrcPftFrq"
+									value="${c:l('label_ReScheduleDialog_GrcPftFrq.value')}" />
+								<hbox>
+									<frequencybox id="grcPftFrq" />
+								</hbox>
+								<label
+									id="label_ReScheduleDialog_GrcCpzFrq"
+									value="${c:l('label_ReScheduleDialog_GrcCpzFrq.value')}" />
+								<hbox>
+									<frequencybox id="grcCpzFrq" />
+								</hbox>
+							</row>
+							<row id="row_GrcRvwFrq">
+								<label
+									id="label_ReScheduleDialog_GrcRvwFrq"
+									value="${c:l('label_ReScheduleDialog_GrcRvwFrq.value')}" />
+								<hbox>
+									<frequencybox id="grcRvwFrq" />
+								</hbox>
+							</row>
+							<row id="row_GrcPeriodEndDate">
+								<label
+									id="label_ReScheduleDialog_NextGrcRepayDate"
+									value="${c:l('label_ReScheduleDialog_NextGrcRepayDate.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<datebox id="nextGrcRepayDate"
+										width="120px" />
+								</hbox>
 								<label
 									id="label_ReScheduleDialog_GrcPeriodEndDate"
 									value="${c:l('label_ReScheduleDialog_GrcPeriodEndDate.value')}" />
@@ -61,17 +88,36 @@
 										width="120px" />
 								</hbox>
 							</row>
-							<row id="row_grcNextRepayDate" visible="false">
+							<row>
 								<label
-									id="label_ReScheduleDialog_NextGrcRepayDate"
-									value="${c:l('label_ReScheduleDialog_NextGrcRepayDate.value')}" />
+									id="label_ReScheduleDialog_RepayFrq"
+									value="${c:l('label_ReScheduleDialog_RepayFrq.value')}" />
 								<hbox>
-									<space spacing="2px" />
-									<datebox id="nextGrcRepayDate"
-										width="120px" />
+									<frequencybox id="repayFrq" />
+								</hbox>
+								<label
+									id="label_ReScheduleDialog_RepayPftFrq"
+									value="${c:l('label_ReScheduleDialog_RepayPftFrq.value')}" />
+								<hbox>
+									<frequencybox id="repayPftFrq" />
 								</hbox>
 							</row>
 							<row>
+								<label
+									id="label_ReScheduleDialog_RepayRvwFrq"
+									value="${c:l('label_ReScheduleDialog_RepayRvwFrq.value')}" />
+								<hbox>
+									<frequencybox id="repayRvwFrq" />
+								</hbox>
+								<label
+									id="label_ReScheduleDialog_RepayCpzFrq"
+									value="${c:l('label_ReScheduleDialog_RepayCpzFrq.value')}" />
+								<hbox>
+									<frequencybox id="repayCpzFrq" />
+								</hbox>
+							</row>
+							<row id="row_grcNextRepayDate"
+								visible="false">
 								<label
 									id="label_ReScheduleDialog_NextRepayDate"
 									value="${c:l('label_ReScheduleDialog_NextRepayDate.value')}" />
@@ -80,31 +126,31 @@
 									<datebox id="nextRepayDate"
 										width="120px" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_ReScheduleDialog_NumberOftTerms"
 									value="${c:l('label_ReScheduleDialog_NumberOftTerms.value')}" />
 								<hbox>
-									<space spacing="2px" 
+									<space spacing="2px"
 										sclass="mandatory" />
-									<intbox id="numberOfTerms" width="60px" maxlength="3"/>
+									<intbox id="numberOfTerms"
+										width="60px" maxlength="3" />
 								</hbox>
 							</row>
-							<row id="row_PftRate">
+							<row id="row_Rate">
+								<label
+									id="label_ReScheduleDialog_BaseRate"
+									value="${c:l('label_ReScheduleDialog_BaseRate.value')}" />
+								<hbox>
+									<ratebox id="rate" />
+								</hbox>
 								<label
 									id="label_ReScheduleDialog_RepayPftRate"
 									value="${c:l('label_ReScheduleDialog_RepayPftRate.value')}" />
 								<hbox>
-									<space spacing="2px" />
-									<decimalbox id="repayPftRate" width="180px"/>
+									<space spacing="2px"/>
+									<decimalbox id="repayPftRate"
+										width="180px" />
 								</hbox>
-							</row>
-							<row id="row_baseRate">
-								<label
-									id="label_ReScheduleDialog_BaseRate"
-									value="${c:l('label_ReScheduleDialog_BaseRate.value')}" />
-								<ratebox id="rate" />
 							</row>
 							<row id="row_PftIntact" visible="false">
 								<label
@@ -125,13 +171,11 @@
 									<uppercasebox id="serviceReqNo"
 										width="170px" visible="true" />
 								</hbox>
-							</row>
-							<row>
 								<label
 									id="label_ReScheduleDialog_Remarks"
 									value="${c:l('label_ReScheduleDialog_Remarks.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px"/>
 									<textbox id="remarks"
 										maxlength="200" width="250px" rows="2" />
 								</hbox>
@@ -148,9 +192,9 @@
 							<row valign="middle">
 								<hbox align="start">
 									<button id="btnReSchd"
-										 label="${c:l('btnReSchd.label')}"
+										label="${c:l('btnReSchd.label')}"
 										tooltiptext="${c:l('btnReSchd.tooltiptext')}" />
-									<button id="btnClose" 
+									<button id="btnClose"
 										label="${c:l('btnClose.label')}"
 										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>

@@ -108,6 +108,12 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	protected Window window_ReScheduleDialog; 		
 	protected FrequencyBox repayFrq;
+	protected FrequencyBox grcPftFrq;
+	protected FrequencyBox grcCpzFrq;
+	protected FrequencyBox grcRvwFrq;
+	protected FrequencyBox repayPftFrq;
+	protected FrequencyBox repayRvwFrq;
+	protected FrequencyBox repayCpzFrq;
 	protected Combobox cbFrqFromDate; 	
 	protected Combobox cbSchdMthd; 
 	protected Datebox grcPeriodEndDate; 				
@@ -122,10 +128,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	
 	protected Row row_GrcPeriodEndDate;
 	protected Row row_grcNextRepayDate;
-	protected Row row_PftRate;
-	protected Row row_baseRate;
+	protected Row row_Rate;
 	protected Row row_PftIntact;
-
+	protected Row row_GrcFrq;
+	protected Row row_GrcRvwFrq;
+	
 	// not auto wired vars
 	private FinScheduleData finScheduleData; 				// overhanded per param
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
@@ -228,6 +235,12 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.repayFrq.setMandatoryStyle(true);
+		this.grcPftFrq.setMandatoryStyle(true);
+		this.grcCpzFrq.setMandatoryStyle(true);
+		this.grcRvwFrq.setMandatoryStyle(true);
+		this.repayPftFrq.setMandatoryStyle(true);
+		this.repayRvwFrq.setMandatoryStyle(true);
+		this.repayCpzFrq.setMandatoryStyle(true);
 		this.rate.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
 		this.rate.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
 		this.rate.setEffectiveRateVisible(true);
@@ -241,6 +254,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.nextRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
+		
+		this.row_GrcPeriodEndDate.setVisible(false); 
+		this.row_GrcFrq.setVisible(false); 
+		this.row_GrcRvwFrq.setVisible(false); 
 		logger.debug("Leaving");
 
 	}
@@ -256,7 +273,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (!this.rate.isMarginReadonly()) {
 			this.rate.setMarginConstraint(new PTDecimalValidator(Labels.getLabel("label_ReScheduleDialog_MarginRate.value"), 9, false, true, -9999,9999));
 		}
-		if(this.row_baseRate.isVisible()) {
+		if(!this.rate.getBaseComp().isReadonly()) {
 			this.rate.setBaseConstraint(new PTStringValidator(Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),null,false, true));
 		}
 	}
@@ -345,13 +362,24 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbSchdMthd.setDisabled(true);
 		
 		if(StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)){
-			this.row_PftRate.setVisible(false);
-			this.row_baseRate.setVisible(false);
+			this.row_Rate.setVisible(false);
 			this.row_PftIntact.setVisible(false);
 		}
 		
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
+		this.grcPftFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.grcPftFrq.setValue(aFinanceMain.getGrcPftFrq());
+		this.grcCpzFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.grcCpzFrq.setValue(aFinanceMain.getGrcCpzFrq());
+		this.grcRvwFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.grcRvwFrq.setValue(aFinanceMain.getGrcPftRvwFrq());
+		this.repayPftFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.repayPftFrq.setValue(aFinanceMain.getRepayPftFrq());
+		this.repayRvwFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.repayRvwFrq.setValue(aFinanceMain.getRepayRvwFrq());
+		this.repayCpzFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
+		this.repayCpzFrq.setValue(aFinanceMain.getRepayCpzFrq());
 		fillSchFromDates(aFinSchData.getFinanceScheduleDetails());
 		if(aFinSchData.getFinanceType().isFinPftUnChanged()){
 			this.pftIntact.setChecked(true);
@@ -359,6 +387,20 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}else{
 			this.pftIntact.setDisabled(false);
 			this.pftIntact.setChecked(false);
+		}
+		
+		// Frequencies based on Conditions
+		if(!aFinanceMain.isAllowGrcPftRvw()){
+			this.grcRvwFrq.setDisabled(true);
+		}
+		if(!aFinanceMain.isAllowGrcCpz()){
+			this.grcCpzFrq.setDisabled(true);
+		}
+		if(!aFinanceMain.isAllowRepayRvw()){
+			this.repayRvwFrq.setDisabled(true);
+		}
+		if(!aFinanceMain.isAllowRepayCpz()){
+			this.repayCpzFrq.setDisabled(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -457,6 +499,66 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				frq = this.repayFrq.getValue() == null ? "" : this.repayFrq.getValue();
 			}
 			finServiceInstruction.setRepayFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (this.row_GrcFrq.isVisible() && this.grcPftFrq.isValidComboValue()) {
+				frq = this.grcPftFrq.getValue() == null ? "" : this.grcPftFrq.getValue();
+			}
+			finServiceInstruction.setGrcPftFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (financeMain.isAllowGrcCpz() && this.grcCpzFrq.isValidComboValue()) {
+				frq = this.grcCpzFrq.getValue() == null ? "" : this.grcCpzFrq.getValue();
+			}
+			finServiceInstruction.setGrcCpzFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (financeMain.isAllowGrcPftRvw() && this.grcRvwFrq.isValidComboValue()) {
+				frq = this.grcRvwFrq.getValue() == null ? "" : this.grcRvwFrq.getValue();
+			}
+			finServiceInstruction.setGrcRvwFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (this.repayPftFrq.isValidComboValue()) {
+				frq = this.repayPftFrq.getValue() == null ? "" : this.repayPftFrq.getValue();
+			}
+			finServiceInstruction.setRepayPftFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (financeMain.isAllowRepayRvw() && this.repayRvwFrq.isValidComboValue()) {
+				frq = this.repayRvwFrq.getValue() == null ? "" : this.repayRvwFrq.getValue();
+			}
+			finServiceInstruction.setRepayRvwFrq(frq);
+		} catch (WrongValueException we) {
+			wve.add(we);
+			frqValid = false;
+		}
+		try {
+			frq = "";
+			if (financeMain.isAllowRepayCpz() && this.repayCpzFrq.isValidComboValue()) {
+				frq = this.repayCpzFrq.getValue() == null ? "" : this.repayCpzFrq.getValue();
+			}
+			finServiceInstruction.setRepayCpzFrq(frq);
 		} catch (WrongValueException we) {
 			wve.add(we);
 			frqValid = false;
@@ -614,7 +716,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// IF Single Rate required based on Origination Selection please comment below try-catch block
 		try {
-			if (this.row_PftRate.isVisible() && ((this.repayPftRate.getValue() != null && this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
+			if (this.row_Rate.isVisible() && ((this.repayPftRate.getValue() != null && this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
 					&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
 				throw new WrongValueException(this.repayPftRate, Labels.getLabel("EITHER_OR",
 						new String[] {Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
@@ -624,7 +726,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if (this.row_PftRate.isVisible() && (this.repayPftRate.getValue() == null
+			if (this.row_Rate.isVisible() && (this.repayPftRate.getValue() == null
 					&& (StringUtils.isEmpty(this.rate.getBaseValue())))) {
 				throw new WrongValueException(this.repayPftRate, Labels.getLabel("EITHER_OR",
 						new String[] {Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
@@ -661,6 +763,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Service details calling for Schedule calculation
 		setFinScheduleData(reScheduleService.doReSchedule(getFinScheduleData(), finServiceInstruction));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
+		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 		
 		//Show Error Details in Schedule Maintenance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
@@ -756,7 +859,9 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$cbFrqFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		
-		this.row_GrcPeriodEndDate.setVisible(false);
+		this.row_GrcPeriodEndDate.setVisible(false); 
+		this.row_GrcFrq.setVisible(false); 
+		this.row_GrcRvwFrq.setVisible(false); 
 		this.row_grcNextRepayDate.setVisible(false);
 		
 		this.cbSchdMthd.setDisabled(true);
@@ -775,7 +880,9 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
 						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
 							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
-								this.row_GrcPeriodEndDate.setVisible(true);
+								this.row_GrcPeriodEndDate.setVisible(true); 
+								this.row_GrcFrq.setVisible(true); 
+								this.row_GrcRvwFrq.setVisible(true); 
 								this.row_grcNextRepayDate.setVisible(true);
 								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 							}else{
