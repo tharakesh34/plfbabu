@@ -14248,5 +14248,10 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
     		INSERT INTO SeqPromotions Values((Select coalesce(Max(PromotionID),0) + 1 from Promotions));
     	</sql>
     </changeSet>
-    
+      <changeSet id="694" author="Kesav">
+    	<sql>
+    update reportfilterfields set FieldName='Limit Line', Fieldlabel='Limit Line'
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid='2';
+    </sql>
+    </changeSet>
 </databaseChangeLog>
