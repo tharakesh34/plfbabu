@@ -14003,7 +14003,6 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
 	</changeSet>
-	
 		<changeSet id="675" author="Kesav">
 	<sql>
 		create table Promotions_Backup as Select * from Promotions;
@@ -14080,7 +14079,11 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 	<changeSet id="681" author="Kesav">
 		<dropTable tableName="Promotions_Backup" /> 
 	</changeSet>
-	<!-- <changeSet id="682" author="Kesav">
-		<dropTable tableName="Promotions_Temp" /> 
-	</changeSet> -->
+				<changeSet author="pruthvi" id="682">
+		<sql>
+	update reportconfiguration set reportname='Excel:NPA Report' where Reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_NPAReport')
+	</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
