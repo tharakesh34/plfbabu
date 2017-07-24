@@ -14147,4 +14147,91 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 			oldColumnName="Id" tableName="Promotions" />
 	</changeSet>
 	
+	<changeSet id="688" author="Kesav">
+		<createView viewName="ETL_PROMOTIONS" replaceIfExists="true">
+			select P.PromotionId, P.PROMOTIONCODE FinType, LT.FinCategory, P.PROMOTIONDESC FinTypeDesc
+			  ,  UDF_CONVERTCURRENCY(P.FINMAXAMOUNT, LT.FinCcy, LT.FinCcy) FinMaxAmount
+			  ,  UDF_CONVERTCURRENCY(P.FINMINAMOUNT, LT.FinCcy, LT.FinCcy) FinMinAmount
+			  , LT.FinIsAlwMD, LT.FInIsAlwGrace, LT.FinRateType, P.FinBaseRate, P.FinSplRate
+			  , P.FinMargin, P.ACTUALINTERESTRATE FinIntRate, P.FInMinRate, P.FinMaxRate
+			  , LT.FinSchdMthd, LT.FinGrcRateType, LT.FinGrcBaseRate, LT.FinGrcSplRate
+			  , LT.FinGrcMargin, P.FinMinTerm, P.FinMaxTerm, LT.FInRepayMethod, P.ACTIVE FinIsActive
+			  , LT.StepFinance, LT.SteppingMandatory, LT.AlwManualSteps, LT.AlwdStepPolicies, LT.DftStepPolicy
+			  , P.FINTYPE Product, P.StartDate, P.EndDate, LT.AlwMultiPartyDisb, LT.PlanEMIHAlw
+			  , LT.PlanEMIHMethod, LT.PlanEMIHMaxPerYear, LT.PlanEMIHMax, LT.PlanEMIHLockPeriod
+			  , LT.UnPlanEMIHLockPeriod, LT.UnPlanEMICpz, LT.MaxUnplannedEmi, LT.AlwUnPlanEmiHoliday
+			  , LT.AlwMaxDisbCheckReq
+			from PROMOTIONS P
+			  inner join RMTFINANCETYPES LT on LT.FinType = P.FinType		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="689" author="Kesav">
+		<createView viewName="PROMOTIONS_AVIEW" replaceIfExists="true">
+			SELECT		T1.PromotionId, T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+						T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+						T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			
+			FROM    	Promotions T1 
+						INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+						LEFT JOIN  Rules T3 ON T1.DownPayRule = T3.RuleId
+						LEFT JOIN  Rules T4 ON T1.RpyPricingMethod = T4.RuleId		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="690" author="Kesav">
+		<createView viewName="PROMOTIONS_TVIEW" replaceIfExists="true">
+			SELECT		T1.PromotionId, T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+						T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+						T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			
+			FROM    	Promotions_Temp T1 
+						INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+						LEFT JOIN  Rules T3 ON T1.DownPayRule = T3.RuleId
+						LEFT JOIN  Rules T4 ON T1.RpyPricingMethod = T4.RuleId		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="691" author="Kesav">
+		<createView viewName="PROMOTIONS_VIEW" replaceIfExists="true">
+			SELECT		T1.PromotionId, T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+						T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+						T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId			
+			
+			UNION ALL
+			
+			SELECT		T1.PromotionId, T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			            T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			            T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+			            T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+			            T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+			            T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+			            T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+			            T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+			WHERE       NOT EXISTS (SELECT 1 FROM Promotions_TEMP WHERE PromotionCode = T1.PromotionCode and PromotionId = T1.PromotionId)		
+		</createView>
+	</changeSet>
 </databaseChangeLog>
