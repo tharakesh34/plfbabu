@@ -247,7 +247,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		// Calculate closing balance.
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
-			entry.getValue().setClosingBalance(entry.getValue().getClosingBalance()
+			entry.getValue().setClosingBalance(entry.getValue().getOpeningBalance()
 					.subtract(entry.getValue().getDebitAmount()).add(entry.getValue().getCreditAmount()));
 
 			if (entry.getValue().getClosingBalance().compareTo(BigDecimal.ZERO) < 0) {
@@ -285,30 +285,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, TrailBalance>>() {
-						@Override
-						public Map<String, TrailBalance> extractData(ResultSet rs)
-								throws SQLException, DataAccessException {
-							Map<String, TrailBalance> map = new HashMap<>();
-
-							while (rs.next()) {
-								TrailBalance trailBalance = new TrailBalance();
-								trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-								trailBalance.setAccountType(rs.getString("GROUPCODE"));
-								trailBalance.setAccountTypeDes(rs.getString("ACTYPEDESC"));
-
-								map.put(trailBalance.getLedgerAccount(), trailBalance);
-							}
-
-							return map;
-						}
-					});
+			return extractAccountDetails(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, TrailBalance> extractAccountDetails(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, TrailBalance>>() {
+					@Override
+					public Map<String, TrailBalance> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
+						Map<String, TrailBalance> map = new HashMap<>();
+
+						while (rs.next()) {
+							TrailBalance trailBalance = new TrailBalance();
+							trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
+							trailBalance.setAccountType(rs.getString("GROUPCODE"));
+							trailBalance.setAccountTypeDes(rs.getString("ACTYPEDESC"));
+
+							map.put(trailBalance.getLedgerAccount(), trailBalance);
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private Map<String, TrailBalance> getLedgerDetails() {
@@ -319,30 +323,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, TrailBalance>>() {
-						@Override
-						public Map<String, TrailBalance> extractData(ResultSet rs)
-								throws SQLException, DataAccessException {
-							Map<String, TrailBalance> map = new HashMap<>();
-
-							while (rs.next()) {
-								TrailBalance trailBalance = new TrailBalance();
-								trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-								trailBalance.setProfitCenter(rs.getString("PROFITCENTERCODE"));
-								trailBalance.setCostCenter(rs.getString("COSTCENTERCODE"));
-
-								map.put(trailBalance.getLedgerAccount(), trailBalance);
-							}
-
-							return map;
-						}
-					});
+			return extractLedgerDetails(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, TrailBalance> extractLedgerDetails(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, TrailBalance>>() {
+					@Override
+					public Map<String, TrailBalance> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
+						Map<String, TrailBalance> map = new HashMap<>();
+
+						while (rs.next()) {
+							TrailBalance trailBalance = new TrailBalance();
+							trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
+							trailBalance.setProfitCenter(rs.getString("PROFITCENTERCODE"));
+							trailBalance.setCostCenter(rs.getString("COSTCENTERCODE"));
+
+							map.put(trailBalance.getLedgerAccount(), trailBalance);
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private List<TrailBalance> getOpeningBalance() {
@@ -370,13 +378,14 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select P.Account ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
+		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
 		sql.append(" from POSTINGS P");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
-		sql.append(" group by P.Account, RB.BRANCHPROVINCE");
+		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
@@ -398,13 +407,14 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select P.Account ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
+		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
 		sql.append(" from POSTINGS P");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
-		sql.append(" group by P.Account, RB.BRANCHPROVINCE");
+		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
@@ -427,19 +437,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" select CPPROVINCE, BUSINESSAREA from RMTCOUNTRYVSPROVINCE");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, String>>() {
-						@Override
-						public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-							Map<String, String> map = new HashMap<>();
-
-							while (rs.next()) {
-								map.put(rs.getString("CPPROVINCE"), rs.getString("BUSINESSAREA"));
-							}
-
-							return map;
-						}
-					});
+			return extractStates(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -447,29 +445,49 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return null;
 	}
 
+	private Map<String, String> extractStates(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, String>>() {
+					@Override
+					public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						Map<String, String> map = new HashMap<>();
+
+						while (rs.next()) {
+							map.put(rs.getString("CPPROVINCE"), rs.getString("BUSINESSAREA"));
+						}
+
+						return map;
+					}
+				});
+	}
+
 	private Map<String, String> getStateDescriptions() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select CPPROVINCE, CPPROVINCENAME from RMTCOUNTRYVSPROVINCE");
 
 		try {
-			return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-					new ResultSetExtractor<Map<String, String>>() {
-						@Override
-						public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-							Map<String, String> map = new HashMap<>();
-
-							while (rs.next()) {
-								map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
-							}
-
-							return map;
-						}
-					});
+			return extractStateDescriptions(sql);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return null;
+	}
+
+	private Map<String, String> extractStateDescriptions(StringBuilder sql) {
+		return namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
+				new ResultSetExtractor<Map<String, String>>() {
+					@Override
+					public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						Map<String, String> map = new HashMap<>();
+
+						while (rs.next()) {
+							map.put(rs.getString("CPPROVINCE"), rs.getString("CPPROVINCENAME"));
+						}
+
+						return map;
+					}
+				});
 	}
 
 	private void saveTrailBalance(List<TrailBalance> list) throws SQLException {
@@ -580,9 +598,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		StringBuilder builder = new StringBuilder();
 		builder.append("TRIAL_BALANCE");
 		builder.append("_");
-		builder.append(DateUtil.format(monthStartDate, "ddMMYYYY"));
+		builder.append(DateUtil.format(monthStartDate, "ddMMyyyy"));
 		builder.append("_");
-		builder.append(DateUtil.format(monthEndDate, "ddMMYYYY"));
+		builder.append(DateUtil.format(monthEndDate, "ddMMyyyy"));
 		builder.append("_");
 		builder.append(String.valueOf(headerId));
 		builder.append(".CSV");
@@ -1005,8 +1023,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMYYYY"));
-		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMYYYY"));
+		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
+		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMyyyy"));
 		parameterMap.put("HEADER_ID", headerId);
 
 		parameterMap.put("COMPANY_NAME", companyName);
@@ -1015,9 +1033,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");
-		builder.append(DateUtil.format(monthStartDate, "dd-MMM-YY").toUpperCase());
+		builder.append(DateUtil.format(monthStartDate, "dd-MMM-yy").toUpperCase());
 		builder.append(" To ");
-		builder.append(DateUtil.format(monthEndDate, "dd-MMM-YY").toUpperCase());
+		builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
 
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
 		parameterMap.put("CURRENCY", currency + " - " + currency);

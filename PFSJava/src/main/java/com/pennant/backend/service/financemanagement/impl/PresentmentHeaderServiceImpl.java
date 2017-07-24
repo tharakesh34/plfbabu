@@ -557,7 +557,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), receivedDate, receiptHeader.getReceiptPurpose(), true);
 			finReceiptData.setAllocationMap(allocationMap);
 
-			finReceiptData = receiptService.calculateRepayments(finReceiptData);
+			finReceiptData = receiptService.calculateRepayments(finReceiptData, true);
 			AuditHeader auditHeader = getAuditHeader(finReceiptData, PennantConstants.TRAN_WF);
 			auditHeader = receiptService.doApprove(auditHeader);
 			FinReceiptData finReceipt = (FinReceiptData) auditHeader.getAuditDetail().getModelData();

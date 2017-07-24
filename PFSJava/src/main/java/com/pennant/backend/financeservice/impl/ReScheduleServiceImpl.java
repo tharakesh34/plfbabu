@@ -174,7 +174,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setMaturityDate(recalToDate);
 
 			// Schedule Dates Generation Process calculation
-			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, frequency, fromDate, startRepayCalDate,
+			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate, startRepayCalDate,
 					recalToDate);
 		} else {
 			if (finServiceInstruction.getNextRepayDate() != null) {
@@ -224,7 +224,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setMaturityDate(recalToDate);
 
 			// Schedule Dates Generation Process calculation
-			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, frequency, fromDate, startRepayCalDate,
+			scheduleData = ScheduleGenerator.getScheduleDateList(scheduleData, finServiceInstruction, fromDate, startRepayCalDate,
 					recalToDate);
 		}
 		

@@ -21,7 +21,7 @@ public interface ReceiptService {
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment, String type);
-	FinReceiptData calculateRepayments(FinReceiptData finReceiptData);
+	FinReceiptData calculateRepayments(FinReceiptData finReceiptData, boolean isPresentment);
 	FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction, String purpose) 
 			throws IllegalAccessException, 
 	InvocationTargetException, InterfaceException;

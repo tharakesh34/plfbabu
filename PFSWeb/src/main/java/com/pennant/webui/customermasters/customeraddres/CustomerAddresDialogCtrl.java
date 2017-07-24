@@ -721,7 +721,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		
 		if (!this.custAddrZIP.isReadonly()){
-			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
+			this.custAddrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, true));
 		}
 		
 		if (!this.custAddrPriority.isDisabled()) {

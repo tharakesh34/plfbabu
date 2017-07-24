@@ -47,7 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.rmtmasters.Promotion;
 
 public interface PromotionDAO {
-	Promotion getPromotionById(String id,String type);
+	Promotion getPromotionById(String promotionCode,String type);
 	void update(Promotion promotion,String type);
 	void delete(Promotion promotion,String type);
 	String save(Promotion promotion,String type);

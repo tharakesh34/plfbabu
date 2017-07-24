@@ -146,7 +146,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	private List<FinAdvancePayments>					finAdvancePaymentsList	= new ArrayList<FinAdvancePayments>();
 	private String										ModuleType_POISSUE		= "POISSUE";
-	private FinAdvancePaymentsCtrl						finAdvancePaymentsCtrl;
+	private DisbursementInstCtrl						disbursementInstCtrl;
 	private FinanceMain									financeMain;
 	private int											ccyformat;
 
@@ -423,8 +423,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			wve.add(we);
 		}
 
-		finAdvancePaymentsCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
-		List<ErrorDetails> valid = finAdvancePaymentsCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
+		disbursementInstCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
+		List<ErrorDetails> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
 				aPayOrderIssueHeader.isLoanApproved());
 		valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 		if (valid != null && !valid.isEmpty()) {
@@ -485,10 +485,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		}
 
 		try {
-			finAdvancePaymentsCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(),
+			disbursementInstCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(),
 					header.isAlwMultiPartyDisb(), getRole());
-			finAdvancePaymentsCtrl.setFinanceDisbursement(header.getFinanceDisbursements());
-			finAdvancePaymentsCtrl.setFinanceMain(financeMain);
+			disbursementInstCtrl.setFinanceDisbursement(header.getFinanceDisbursements());
+			disbursementInstCtrl.setFinanceMain(financeMain);
 			// fill the components with the data
 			doWriteBeanToComponents(header);
 			if (!header.isLoanApproved()) {
@@ -875,7 +875,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
-		finAdvancePaymentsCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails);
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		logger.debug("Leaving");
 	}
@@ -913,7 +913,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		finAdvancePaymentsCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
+		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
 				getFinAdvancePaymentsList());
 
 		logger.debug("Leaving" + event.toString());
@@ -921,7 +921,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		finAdvancePaymentsCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule);
+		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1177,8 +1177,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		this.disbursementPostings = disbursementPostings;
 	}
 	
-	public void setFinAdvancePaymentsCtrl(FinAdvancePaymentsCtrl finAdvancePaymentsCtrl) {
-		this.finAdvancePaymentsCtrl = finAdvancePaymentsCtrl;
+	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
+		this.disbursementInstCtrl = disbursementInstCtrl;
 	}
 
 }

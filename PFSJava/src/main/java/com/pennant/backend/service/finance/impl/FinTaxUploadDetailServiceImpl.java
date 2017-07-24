@@ -407,7 +407,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 					errParm[2] = 20 + "";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
-				} else {
+				}
+				//commented As confirmed by chaitanya Dt:24.07.2017
+				/* else {
 					FinanceTaxDetail fintaxDetail = getFinanceTaxDetailDAO()
 							.getFinanceTaxDetail(taxuploadDetail.getAggrementNo(), "_View");
 					if (fintaxDetail != null) {
@@ -417,7 +419,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 								new ErrorDetails(PennantConstants.KEY_FIELD, "99016", errParams, valueParm),
 								usrLanguage));
 					}
-				}
+				}*/
 			}
 
 			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() > 20) {
@@ -542,8 +544,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 									new ErrorDetails(PennantConstants.KEY_FIELD, "99009", errParm, valueParm),
 									usrLanguage));
 						} else {
-							//if co applicant available then get the customer object related to the co applicant
+							//if co applicant available then get the customer object related to the co-applicant
 							Customer customer = customerDAO.getCustomerByCIF(taxuploadDetail.getApplicant(), "_View");
+							financeMain.setCustID(customer.getCustID());
 							validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, financeMain,
 									customer);
 						}
@@ -623,8 +626,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			String gstStateCode = null;
 			String panNumber = customer.getCustCRCPR();
 			//if GST Number is already exist or not
-			int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),
-					taxuploadDetail.getTaxCode(), "_View");
+			int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),taxuploadDetail.getTaxCode(), "_View");
 			if (count != 0) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ": ";
@@ -659,14 +661,6 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				}
 			}
 		}
-		//commented as the validation not required by client
-		/*
-		 * else { //If tax code not given in the file String[] errParams = new String[2]; errParams[0] =
-		 * PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ":" + taxuploadDetail.getTaxCode(); errParams[1] =
-		 * taxuploadDetail.getAggrementNo(); auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-		 * ErrorDetails(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage)); }
-		 */
-
 	}
 
 	@Override

@@ -173,7 +173,7 @@
 									id="label_CustomerAddresDialog_CustAddrZIP"
 									value="${c:l('label_CustomerAddresDialog_CustAddrZIP.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory"/>
 									<textbox id="custAddrZIP" width="155px" />
 								</hbox>
 							</row>

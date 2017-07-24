@@ -145,7 +145,7 @@ public class FinJointAccountDetailValidation {
 			boolean coApplicantExists = getFinanceTaxDetailDAO()
 					.isReferenceExists(jountAccountDetail.getFinReference(),jountAccountDetail.getCustCIF());
 			if (coApplicantExists) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
 			}
 		}
 

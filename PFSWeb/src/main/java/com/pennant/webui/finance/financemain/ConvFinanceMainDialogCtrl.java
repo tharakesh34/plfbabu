@@ -60,7 +60,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -253,7 +253,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 				&& (PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
 						|| PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus))
 				&& StringUtils.isEmpty(moduleDefiner)) {
-			boolean allow = FinAdvancePaymentsCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
+			boolean allow = DisbursementInstCtrl.allowReject(getFinanceDetail().getAdvancePaymentsList());
 			if (!allow) {
 				MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Cancelled"));
 				return;

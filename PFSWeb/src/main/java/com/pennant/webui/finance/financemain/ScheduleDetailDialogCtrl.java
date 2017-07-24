@@ -1057,6 +1057,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("showAdvRate", showAdvRate);
 				map.put("totalAdvPft", totalAdvPft);
 				map.put("isEMIHEditable", !getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
+				map.put("moduleDefiner", moduleDefiner);
 				
 				if(curSchd.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
 						aFinSchData.getFinFeeDetailList() != null && !aFinSchData.getFinFeeDetailList().isEmpty()){

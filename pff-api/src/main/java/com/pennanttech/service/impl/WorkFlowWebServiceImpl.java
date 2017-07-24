@@ -19,7 +19,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.pff.core.engine.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pffws.WorkFlowRESTService;
 import com.pennanttech.pffws.WorkFlowSOAPService;
 import com.pennanttech.ws.service.APIErrorHandlerService;

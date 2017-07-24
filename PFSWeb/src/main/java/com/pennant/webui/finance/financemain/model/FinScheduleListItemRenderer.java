@@ -116,6 +116,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 	private boolean 	addExternalCols = false;
 	private boolean 	showAdvRate = false;
 	private boolean 	isEMIHEditable = false;
+	private String 		moduleDefiner = "";
 	private transient 	BigDecimal 	totalAdvPft = BigDecimal.ZERO;
 	boolean isLimitIncrease = false;
 	int odCount = 0;
@@ -1126,6 +1127,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 		if (map.containsKey("window")) {
 			window = (Window) map.get("window");
+		}
+		
+		if (map.containsKey("moduleDefiner")) {
+			setModuleDefiner((String) map.get("moduleDefiner"));
 		}
 
 		if (map.containsKey("paymentDetailsMap")) {
@@ -2474,7 +2479,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 				lc = new Listcell();
 				Checkbox planEMIHDate = new Checkbox();
-				planEMIHDate.setDisabled(isEMIHEditable);
+				
+				if(StringUtils.equals(getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI) && 
+						DateUtility.compare(data.getSchDate(), DateUtility.getAppDate()) <= 0){
+					planEMIHDate.setDisabled(true);
+				}else{
+					planEMIHDate.setDisabled(isEMIHEditable);
+				}
 
 				if(!isEMIHEditable){
 					List<Object> dataList = new ArrayList<>();
@@ -4024,6 +4035,14 @@ public class FinScheduleListItemRenderer implements Serializable{
 	}
 	public void setPenalties(List<OverdueChargeRecovery> penalties) {
 		this.penalties = penalties;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
 	}
 
 }

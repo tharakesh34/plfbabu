@@ -118,7 +118,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.isNew()) {
 			getPromotionDAO().save(promotion, tableType);
 			auditHeader.getAuditDetail().setModelData(promotion);
-			auditHeader.setAuditReference(promotion.getId());
+			auditHeader.setAuditReference(promotion.getPromotionCode());
 		} else {
 			getPromotionDAO().update(promotion, tableType);
 		}
@@ -667,15 +667,15 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		Promotion tempPromotion = null;
 		if (promotion.isWorkflow()) {
-			tempPromotion = getPromotionDAO().getPromotionById(promotion.getId(), "_Temp");
+			tempPromotion = getPromotionDAO().getPromotionById(promotion.getPromotionCode(), "_Temp");
 		}
-		Promotion befPromotion = getPromotionDAO().getPromotionById(promotion.getId(), "");
+		Promotion befPromotion = getPromotionDAO().getPromotionById(promotion.getPromotionCode(), "");
 
 		Promotion oldPromotion = promotion.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = promotion.getId();
+		valueParm[0] = promotion.getPromotionCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PromotionCode") + ":" + valueParm[0];
 
 		if (promotion.isNew()) { // for New record or new record into work flow

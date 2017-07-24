@@ -40,13 +40,13 @@ public class FinServiceInstrutionDAOImpl extends BasisNextidDaoImpl<FinServiceIn
 		StringBuilder insertSql = new StringBuilder("Insert Into FinServiceInstruction" );
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate," );
-		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate," );
-		insertSql.append(" BaseRate, SplRate, Margin, GrcPeriodEndDate," );
+		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate," );
+		insertSql.append(" RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq," );
 		insertSql.append(" NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType," );
 		insertSql.append(" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks )" );
 		insertSql.append(" Values(:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate," );
-		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate," );
-		insertSql.append(" :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate," );
+		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate," );
+		insertSql.append(" :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq," );
 		insertSql.append(" :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount," );
 		insertSql.append(" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks)");
 		
@@ -99,6 +99,7 @@ public class FinServiceInstrutionDAOImpl extends BasisNextidDaoImpl<FinServiceIn
 		
 		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
 		selectSql.append(",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		selectSql.append(",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks");
 		selectSql.append(" From FinServiceInstruction");	
 		selectSql.append(StringUtils.trimToEmpty(type));

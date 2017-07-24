@@ -72,7 +72,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.framework.web.components.ButtonControl;
-import com.pennanttech.pff.core.engine.WorkflowEngine;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 
 /**
  * A skeletal composer that will be extended by the abstract list and dialog controllers. This provides common

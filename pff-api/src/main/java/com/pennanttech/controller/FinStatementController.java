@@ -265,6 +265,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -455,6 +456,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -489,6 +491,16 @@ public class FinStatementController extends SummaryDetailService {
 		return financeDetail;
 	}
 
+	/**
+	 * Method for fetch Schedule Date against the presentment bounce charge
+	 * 
+	 * @param receiptId
+	 * @return
+	 */
+	private Date getBounceDueDate(long receiptId) {
+		Date schdDate = manualAdviseDAO.getPresentmentBounceDueDate(receiptId);
+		return schdDate;
+	}
 
 	/**
 	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
@@ -601,12 +613,16 @@ public class FinStatementController extends SummaryDetailService {
 
 		// Calculate overdue Penalties
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
-		List<FinODDetails> overdueList = null;
-		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) == 0) {
-			overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
-		} else {
-			overdueList = getReceiptService().getValueDatePenalties(finScheduleData, priBalance.add(pftAmt).add(totFeeAmount),
-					valueDate, null, true);
+		List<FinODDetails> overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
+		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
+			if(overdueList != null) {
+				for(FinODDetails odDetail: overdueList) {
+					if(odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+						overdueList = getReceiptService().getValueDatePenalties(finScheduleData, priBalance.add(pftAmt).add(totFeeAmount),
+								valueDate, null, true);
+					}
+				}
+			}
 		}
 
 		// Calculating Actual Sum of Penalty Amount & Late Pay Interest

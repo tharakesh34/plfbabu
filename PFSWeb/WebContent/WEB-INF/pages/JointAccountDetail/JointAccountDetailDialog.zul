@@ -83,7 +83,7 @@
 											width="180px" />
 										<longbox id="custID"
 											width="150px" maxlength="26" visible="false" />
-										<button id="btnSearchCustCIF"
+										<button id="btnSearchCustCIF" visible="false"
 											image="/images/icons/LOVSearch.png" />
 										<space spacing="2px" />
 										<button id="viewCustInfo"

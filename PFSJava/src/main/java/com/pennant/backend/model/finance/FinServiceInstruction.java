@@ -62,6 +62,13 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	private List<WSReturnStatus> returnStatus = null;
 	@XmlElement
 	private String repayFrq;
+	private String repayPftFrq;
+	private String repayRvwFrq;
+	private String repayCpzFrq;
+	
+	private String grcPftFrq;
+	private String grcRvwFrq;
+	private String grcCpzFrq;
 	@XmlElement
 	private Date grcPeriodEndDate;
 	@XmlElement
@@ -480,4 +487,47 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	public void setReceiptDetail(FinReceiptDetail receiptDetail) {
 		this.receiptDetail = receiptDetail;
 	}
+
+	public String getRepayPftFrq() {
+		return repayPftFrq;
+	}
+	public void setRepayPftFrq(String repayPftFrq) {
+		this.repayPftFrq = repayPftFrq;
+	}
+
+	public String getRepayRvwFrq() {
+		return repayRvwFrq;
+	}
+	public void setRepayRvwFrq(String repayRvwFrq) {
+		this.repayRvwFrq = repayRvwFrq;
+	}
+
+	public String getRepayCpzFrq() {
+		return repayCpzFrq;
+	}
+	public void setRepayCpzFrq(String repayCpzFrq) {
+		this.repayCpzFrq = repayCpzFrq;
+	}
+
+	public String getGrcPftFrq() {
+		return grcPftFrq;
+	}
+	public void setGrcPftFrq(String grcPftFrq) {
+		this.grcPftFrq = grcPftFrq;
+	}
+
+	public String getGrcRvwFrq() {
+		return grcRvwFrq;
+	}
+	public void setGrcRvwFrq(String grcRvwFrq) {
+		this.grcRvwFrq = grcRvwFrq;
+	}
+
+	public String getGrcCpzFrq() {
+		return grcCpzFrq;
+	}
+	public void setGrcCpzFrq(String grcCpzFrq) {
+		this.grcCpzFrq = grcCpzFrq;
+	}
+	
 }

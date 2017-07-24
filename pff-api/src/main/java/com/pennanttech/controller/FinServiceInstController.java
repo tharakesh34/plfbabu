@@ -1282,7 +1282,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose);
 		} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
-			finReceiptData = receiptService.calculateRepayments(finReceiptData);
+			finReceiptData = receiptService.calculateRepayments(finReceiptData, false);
 		} else {
 			doProcessPayments(finReceiptData, finServiceInst);
 		}

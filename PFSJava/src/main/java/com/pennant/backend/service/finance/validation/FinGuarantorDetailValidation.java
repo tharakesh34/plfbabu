@@ -136,7 +136,7 @@ public class FinGuarantorDetailValidation {
 			boolean guarantorExists = getFinanceTaxDetailDAO()
 					.isReferenceExists(guarantorDetail.getFinReference(),guarantorDetail.getGuarantorCIF());
 			if (guarantorExists) {
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
 			}
 		}
 

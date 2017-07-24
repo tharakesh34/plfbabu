@@ -675,6 +675,7 @@ public class ScheduleCalculator {
 
 		Date datePlanEMIHLock = DateUtility.addMonths(finMain.getFinStartDate(), finMain.getPlanEMIHLockPeriod());
 		Date dateAfterYear = DateUtility.addMonths(finMain.getFinStartDate(), 12);
+		Date curBussDate = DateUtility.getAppDate();
 
 		for (int i = 0; i < sdSize - 1; i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -687,6 +688,12 @@ public class ScheduleCalculator {
 
 			//Before Grace Period should not mark as Holiday
 			if (DateUtility.compare(schdDate,finMain.getGrcPeriodEndDate()) <= 0) {
+				continue;
+			}
+			
+			// ON Maintenance Process, Not allow before Current Application Date
+			if(StringUtils.equals(finMain.getProcMethod(), PROC_GETFRQEMIH) && 
+					DateUtility.compare(schdDate, curBussDate) <= 0){
 				continue;
 			}
 

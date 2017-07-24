@@ -82,11 +82,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 
-/**
- * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssueHeader/PayOrderIssueDialog.zul file.
- */
-public class FinAdvancePaymentsCtrl {
-	private static final Logger			logger				= Logger.getLogger(FinAdvancePaymentsCtrl.class);
+public class DisbursementInstCtrl {
+	private static final Logger			logger				= Logger.getLogger(DisbursementInstCtrl.class);
 	private Listbox						listbox;
 	private String						ccy;
 	private int							ccyFormat;
@@ -251,7 +248,7 @@ public class FinAdvancePaymentsCtrl {
 
 				for (FinAdvancePayments detail : list) {
 
-					if (!FinAdvancePaymentsCtrl.isDeleteRecord(detail)) {
+					if (!DisbursementInstCtrl.isDeleteRecord(detail)) {
 						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
 						subTotal = subTotal.add(detail.getAmtToBeReleased());
 					}
@@ -378,7 +375,6 @@ public class FinAdvancePaymentsCtrl {
 			map.put("finAdvancePaymentsListCtrl", listCtrl);
 			map.put("financeMainDialogCtrl", dialogCtrl);
 		}
-		map.put("finAdvancePaymentsCtrl", this);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {

@@ -1347,10 +1347,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		// Proof Name
 		try {
-			if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) || this.guarantorProofContent == null)) {
+			/*if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) || this.guarantorProofContent == null)) {
 				throw new WrongValueException(this.guarantorProofName, Labels.getLabel("MUST_BE_UPLOADED",
 						new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorProof.value")}));
-			}
+			}*/
 			aGuarantorDetail.setGuarantorProofName(this.guarantorProofName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1543,7 +1543,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			
 			if (!this.addrZIP.isReadonly()){
-				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
+				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, true));
 			}
 			
 		
@@ -1714,7 +1714,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_EmailId.setSclass(PennantConstants.mandateSclass);
 			this.space_Name.setSclass(PennantConstants.mandateSclass);
 			this.space_MobileNo.setSclass(PennantConstants.mandateSclass);
-			this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
+			//this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
 			
 			this.addrHNbr.setReadonly(isReadOnly("GuarantorDetailDialog_addrHNbr"));
 			this.flatNbr.setReadonly(isReadOnly("GuarantorDetailDialog_flatNbr"));
@@ -1739,14 +1739,33 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if (!isNewRecord()) {
 			readOnlyExposureFields(true);
 			this.guarantorCIF.setReadonly(true);
-			this.guarantorCIFName.setReadonly(true);
+			//this.guarantorCIFName.setReadonly(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorProofName.setReadonly(true);
-			this.mobileNo.setReadonly(true);
-			this.emailId.setReadonly(true);
+			//this.mobileNo.setReadonly(true);
+			//this.emailId.setReadonly(true);
 		} else {
 			readOnlyExposureFields(false);
+		}
+		
+		if(enqModule){
+			this.btnSearchGuarantorCIF.setVisible(false);
+			this.guarantorCIFName.setReadonly(true);
+			this.mobileNo.setReadonly(true);
+			this.emailId.setReadonly(true);
+			this.guranteePercentage.setReadonly(true);
+			this.addrHNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_addrHNbr"));
+			this.flatNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_flatNbr"));
+			this.addrStreet.setReadonly(!isReadOnly("GuarantorDetailDialog_addrStreet"));
+			this.addrLine1.setReadonly(!isReadOnly("GuarantorDetailDialog_addrLine1"));
+			this.addrLine2.setReadonly(!isReadOnly("GuarantorDetailDialog_addrLine2"));
+			this.poBox.setReadonly(!isReadOnly("GuarantorDetailDialog_poBox"));
+			this.addrCountry.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCountry"));
+			this.addrProvince.setReadonly(!isReadOnly("GuarantorDetailDialog_addrProvince"));
+			this.addrCity.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
+			this.cityName.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
+			this.addrZIP.setReadonly(!isReadOnly("GuarantorDetailDialog_addrZIP"));
 		}
 		logger.debug("Leaving");
 	}

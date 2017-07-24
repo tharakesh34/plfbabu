@@ -101,7 +101,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -985,7 +985,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						aFinAdvancePayments.setLLDate(this.llDate.getValue());
 					}
 
-					BigDecimal disAmt = FinAdvancePaymentsCtrl.getTotalByDisbursment(disbursement, financeMain);
+					BigDecimal disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
 					BigDecimal insAmt = getAdjustedAmount(disbursement);
 					insAmt=insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
 					if (insAmt.compareTo(disAmt) > 0) {
@@ -1775,7 +1775,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (item != null && item.getValue() != null) {
 			FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
 			if (disbursement != null) {
-				BigDecimal disAmt = FinAdvancePaymentsCtrl.getTotalByDisbursment(disbursement, financeMain);
+				BigDecimal disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
 				disAmt = disAmt.subtract(getAdjustedAmount(disbursement));
 
 				this.disbDateAmount.setValue(PennantAppUtil.formateAmount(disAmt, ccyFormatter));
@@ -1803,7 +1803,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (this.paymentSequence.intValue() == finAdvPayments.getPaymentSeq()) {
 					continue;
 				}
-				if (FinAdvancePaymentsCtrl.isDeleteRecord(finAdvPayments)) {
+				if (DisbursementInstCtrl.isDeleteRecord(finAdvPayments)) {
 					continue;
 				}
 				adjustedAmount = adjustedAmount.add(finAdvPayments.getAmtToBeReleased());

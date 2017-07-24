@@ -2241,9 +2241,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					if(finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0){
 						finFeeDetail.setActualAmount(feeResult);
 					}
-					if (finFeeDetail.isNewRecord() && !finFeeDetail.isOriginationFee()) {
-						finFeeDetail.setPaidAmount(feeResult);
-					}
+					
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 							subtract(finFeeDetail.getWaivedAmount()));
 				}
@@ -2253,20 +2251,26 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
+		
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)){
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
-			}else if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
-			}else if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)){
-				if(finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0){
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
 					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
 				}
-			}else if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)){
-				if(finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0){
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
 					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
 				}
 			}
+			
+			if (finFeeDetail.isNewRecord() && !finFeeDetail.isOriginationFee()) {
+				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			}
+			
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
 							subtract(finFeeDetail.getWaivedAmount()));
 		}

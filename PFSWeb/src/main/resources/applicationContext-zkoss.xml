@@ -2596,7 +2596,7 @@
 	<bean id="finAdvancePaymentsListCtrl"
 		class="com.pennant.webui.finance.financemain.FinAdvancePaymentsListCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="finAdvancePaymentsCtrl" ref="finAdvancePaymentsCtrl" />
+		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 	</bean>
 
 	<bean id="finAdvancePaymentsDialogCtrl"
@@ -2652,7 +2652,7 @@
 		<property name="payOrderIssueService" ref="payOrderIssueService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
-		<property name="finAdvancePaymentsCtrl" ref="finAdvancePaymentsCtrl" />
+		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -4698,8 +4698,8 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-	<bean id="finAdvancePaymentsCtrl"
-		class="com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl"
+	<bean id="disbursementInstCtrl"
+		class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl"
 		scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 	</bean>

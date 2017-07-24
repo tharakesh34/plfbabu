@@ -583,7 +583,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//Fee Type Code
 		if (!this.feeTypeCode.isReadonly()) {
 			this.feeTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_FeeTypeCode.value"), PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+					.getLabel("label_FeeTypeDialog_FeeTypeCode.value"), PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		//Description
 		if (!this.feeTypeDesc.isReadonly()) {
