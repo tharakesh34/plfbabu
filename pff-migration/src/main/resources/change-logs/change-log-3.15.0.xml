@@ -14234,4 +14234,19 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 			WHERE       NOT EXISTS (SELECT 1 FROM Promotions_TEMP WHERE PromotionCode = T1.PromotionCode and PromotionId = T1.PromotionId)		
 		</createView>
 	</changeSet>
+	
+	 <changeSet author="Kesav" id="692">
+        <createTable tableName="SeqPromotions">
+            <column name="SeqNo" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="693" author="Kesav">
+    	<sql>
+    		INSERT INTO SeqPromotions Values((Select coalesce(Max(PromotionID),0) + 1 from Promotions));
+    	</sql>
+    </changeSet>
+    
 </databaseChangeLog>
