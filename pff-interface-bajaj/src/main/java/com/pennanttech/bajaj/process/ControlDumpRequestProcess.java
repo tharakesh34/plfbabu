@@ -73,11 +73,11 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	private void loadcount() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT count(*) FROM FINANCEMAIN FM");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
 		sql.append(" INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
 		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
+		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
 		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate ");
 
 		try {
@@ -122,19 +122,20 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" FINSTARTDATE,");
 		sql.append(" FM.CUSTID,");
 		sql.append(" CUSTSHRTNAME,");
-		sql.append(" BRANCHSWIFTBRNCDE,");
+		sql.append(" BANKREFNO,");
 		sql.append(" BRANCHDESC,");
 		sql.append(" CCYEDITFIELD,");
 		sql.append(" CCYMINORCCYUNITS,");
-		sql.append(" FT.ID,");
-		sql.append(" FT.FINTYPEDESC,");
+		sql.append(" PM.PROMOTIONID,");
+		sql.append(" PM.PROMOTIONDESC,");
 		sql.append(" M.MANDATETYPE");
 		sql.append(" FROM FINANCEMAIN FM");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
+		
 		sql.append(" INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
 		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
+		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
 		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
 
 		List<ControlDump> list = new ArrayList<>();
@@ -179,9 +180,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 					int monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"));
 					cd.setSanctionedTenure(monts);
 
-					// FIXME PROMOTIONS.PROMOTIONCODE && PROMOTIONS.PROMOTIONDESC
-					cd.setSchemeId(rs.getInt("ID"));
-					cd.setSchemeName(rs.getString("FINTYPEDESC"));
+					cd.setSchemeId(rs.getInt("PROMOTIONID"));
+					cd.setSchemeName(rs.getString("PROMOTIONDESC"));
 
 					cd.setFlatRate(getAmount(rs, "EFFECTIVERATEOFRETURN"));
 					if (cd.getFlatRate().compareTo(new BigDecimal(999)) > 0) {
@@ -194,7 +194,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 					}
 
 					// Loan Branch details
-					String branchId = rs.getString("BRANCHSWIFTBRNCDE");
+					String branchId = rs.getString("BANKREFNO");
 					if (StringUtils.isNumeric(branchId)) {
 						cd.setBranchId(Long.parseLong(branchId));
 					} else {
@@ -443,7 +443,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.FINREFERENCE, FINEVENT, SUM(REPAYAMOUNT) FROM FINREPAYHEADER RH");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RH.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE FINEVENT = :PS");
+		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
 		sql.append(" GROUP BY FM.FINREFERENCE, FINEVENT");
 
 		try {
@@ -455,14 +456,23 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractRepaymentAmounts(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
+		paramMap.addValue("PS", "PartialSettlement");
+		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
 				ControlDump cd = null;
 				String event = null;
+				String key = null;
 				while (rs.next()) {
-					cd = new ControlDump();
+					key = rs.getString("FINREFERENCE");
+					
+					cd = map.get(key);
+					if (cd == null) {
+						cd = new ControlDump();
+					}
+					
 					event = StringUtils.trimToEmpty(rs.getString("FINEVENT"));
 
 					if ("PartialSettlement".equals(event)) {
@@ -612,7 +622,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.FINREFERENCE, FINEVENT, SUM(PAIDAMOUNT) FROM FINFEEDETAIL FEE");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FEE.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE FINEVENT=:ES");
+		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
 		sql.append(" GROUP BY FM.FINREFERENCE, FINEVENT");
 
 		try {
@@ -624,20 +635,30 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractFeeAmounts(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
+		paramMap.addValue("ES", "EarlySettlement");
+		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
 				ControlDump cd = null;
 				String finEvent = null;
+				String key = null;
 				while (rs.next()) {
-					cd = new ControlDump();
+					key = rs.getString("FINREFERENCE");
+					
+					cd = map.get(key);
+					if (cd == null) {
+						cd = new ControlDump();
+					}
+					
 					finEvent = StringUtils.trimToEmpty(rs.getString("FINEVENT"));
 
 					if (StringUtils.equals("EarlySettlement", finEvent)) {
 						cd.setForeClosureChargesDue(getAmount(rs, "PAIDAMOUNT"));
-						map.put(rs.getString("FINREFERENCE"), cd);
 					}
+					
+					map.put(key, cd);
 
 				}
 				return map;
@@ -647,12 +668,13 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private Map<String, ControlDump> getReceiptAmounts() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select FM.FINREFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT, RH.ALLOCATIONTYPE");
+		sql.append(" select FM.FINREFERENCE, SUM(WAIVEDAMOUNT) WAIVEDAMOUNT, RD.ALLOCATIONTYPE");
 		sql.append(" from FINRECEIPTHEADER RH");
 		sql.append(" INNER JOIN RECEIPTALLOCATIONDETAIL RD ON RD.RECEIPTID = RH.RECEIPTID");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RH.REFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
-		sql.append(" GROUP BY FM.FINREFERENCE, RH.ALLOCATIONTYPE");
+		sql.append(" WHERE (RD.ALLOCATIONTYPE = :PRI OR RD.ALLOCATIONTYPE = :PFT)");
+		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" GROUP BY FM.FINREFERENCE, RD.ALLOCATIONTYPE");
 
 		try {
 			return extractReceiptAmounts(sql);
@@ -664,25 +686,34 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractReceiptAmounts(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
+		paramMap.addValue("PRI", "PRI");
+		paramMap.addValue("PFT", "PFT");
+		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
 				ControlDump cd = null;
 				String allocationType = null;
+				String key = null;
 				while (rs.next()) {
-					cd = new ControlDump();
-
+					key = rs.getString("FINREFERENCE");
+					
+					cd = map.get(key);
+					if (cd == null) {
+						cd = new ControlDump();
+					}
+					
 					allocationType = StringUtils.trimToEmpty(rs.getString("ALLOCATIONTYPE"));
 
 					if (allocationType.equals("PRI")) {
 						cd.setEmiPrincipalWaived(getAmount(rs, "WAIVEDAMOUNT"));
 						cd.setPrincipalWaived(getAmount(rs, "WAIVEDAMOUNT"));
-					} else {
+					} else if(allocationType.equals("PFT")){
 						cd.setEmiInterestWaived(getAmount(rs, "WAIVEDAMOUNT"));
 					}
 
-					map.put(rs.getString("FINREFERENCE"), cd);
+					map.put(key, cd);
 				}
 				return map;
 			}
