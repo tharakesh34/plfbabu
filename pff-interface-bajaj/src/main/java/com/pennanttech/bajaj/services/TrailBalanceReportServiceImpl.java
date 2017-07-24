@@ -247,7 +247,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		// Calculate closing balance.
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
-			entry.getValue().setClosingBalance(entry.getValue().getClosingBalance()
+			entry.getValue().setClosingBalance(entry.getValue().getOpeningBalance()
 					.subtract(entry.getValue().getDebitAmount()).add(entry.getValue().getCreditAmount()));
 
 			if (entry.getValue().getClosingBalance().compareTo(BigDecimal.ZERO) < 0) {
