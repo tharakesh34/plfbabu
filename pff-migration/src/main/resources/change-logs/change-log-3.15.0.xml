@@ -14142,5 +14142,9 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 		<addUniqueConstraint disabled="true" tableName="Promotions_Temp" constraintName="UK_Promotions_Temp" columnNames="PromotionCode" initiallyDeferred="true" deferrable="true"/>
 	</changeSet>
 	
-
+	<changeSet author="Kesav" id="687">
+		<renameColumn columnDataType="bigint" newColumnName="PromotionId"
+			oldColumnName="Id" tableName="Promotions" />
+	</changeSet>
+	
 </databaseChangeLog>
