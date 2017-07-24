@@ -13980,4 +13980,11 @@ Insert into REPORTFILTERFIELDS
 values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today'),5,'CustCIF','LOVSEARCH','Customer Number','custid',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 	</sql>
 	</changeSet>
+		<changeSet author="pruthvi" id="674">
+		<sql>
+	delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_ManualPaymentsDue') and fieldid='5';
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ManualPaymentsDue'),5,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
