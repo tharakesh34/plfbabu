@@ -97,6 +97,8 @@ public class FeeScheduleCalculator {
 		if (isNewLoan) {
 			evtFromDate = financeMain.getFinStartDate();
 		} else {
+			evtFromDate = financeMain.getEventFromDate();
+			
 			if (evtFromDate == null) {
 				evtFromDate = DateUtility.getAppDate();
 			}
