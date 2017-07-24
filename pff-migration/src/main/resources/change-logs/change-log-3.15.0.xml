@@ -13967,5 +13967,10 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			Insert into REPORTFILTERFIELDS (REPORTID,FIELDID,FIELDNAME,FIELDTYPE,FIELDLABEL,FIELDDBNAME,APPUTILMETHODNAME,MODULENAME,LOVHIDDENFIELDMETHOD,LOVTEXTFIELDMETHOD,MULTISELECTSEARCH,FIELDLENGTH,FIELDMAXVALUE,FIELDMINVALUE,SEQORDER,MANDATORY,FIELDCONSTRAINT,FIELDERRORMESSAGE,WHERECONDITION,STATICVALUE,FIELDWIDTH,FILTERREQUIRED,DEFAULTFILTER,VERSION,LASTMNTBY,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON) 
 			values ((Select reportid from reportconfiguration where reportjaspername='FinTypeInvestment'),4,'FinReference','LOVSEARCH','Loan Reference','T1.FinReference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
+	</changeSet>
+	<changeSet author="Irfan" id="672">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('65025','EN','E','{0} Using in Loan GST. Cannot be deleted','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
 	</changeSet>	
 </databaseChangeLog>
