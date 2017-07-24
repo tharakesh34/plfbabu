@@ -123,7 +123,7 @@
 													<textbox
 														id="guarantorCIF" width="200px" visible="true" />
 													<button
-														id="btnSearchGuarantorCIF"
+														id="btnSearchGuarantorCIF" visible="false"
 														image="/images/icons/LOVSearch.png" />
 													<space
 														spacing="2px" />
@@ -272,7 +272,7 @@
 											value="${c:l('label_GuarantorDetailDialog_AddrZIP.value')}"
 											visible="true" />
 										<hlayout spacing="2px">
-											<space spacing="2px" />
+											<space spacing="2px" sclass="mandatory"/>
 											<textbox id="addrZIP"
 												 width="155px" />
 										</hlayout>

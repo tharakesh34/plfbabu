@@ -1543,7 +1543,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			
 			if (!this.addrZIP.isReadonly()){
-				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, false));
+				this.addrZIP.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrZIP.value"), PennantRegularExpressions.REGEX_ZIP, true));
 			}
 			
 		
@@ -1747,6 +1747,25 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			//this.emailId.setReadonly(true);
 		} else {
 			readOnlyExposureFields(false);
+		}
+		
+		if(enqModule){
+			this.btnSearchGuarantorCIF.setVisible(false);
+			this.guarantorCIFName.setReadonly(true);
+			this.mobileNo.setReadonly(true);
+			this.emailId.setReadonly(true);
+			this.guranteePercentage.setReadonly(true);
+			this.addrHNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_addrHNbr"));
+			this.flatNbr.setReadonly(!isReadOnly("GuarantorDetailDialog_flatNbr"));
+			this.addrStreet.setReadonly(!isReadOnly("GuarantorDetailDialog_addrStreet"));
+			this.addrLine1.setReadonly(!isReadOnly("GuarantorDetailDialog_addrLine1"));
+			this.addrLine2.setReadonly(!isReadOnly("GuarantorDetailDialog_addrLine2"));
+			this.poBox.setReadonly(!isReadOnly("GuarantorDetailDialog_poBox"));
+			this.addrCountry.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCountry"));
+			this.addrProvince.setReadonly(!isReadOnly("GuarantorDetailDialog_addrProvince"));
+			this.addrCity.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
+			this.cityName.setReadonly(!isReadOnly("GuarantorDetailDialog_addrCity"));
+			this.addrZIP.setReadonly(!isReadOnly("GuarantorDetailDialog_addrZIP"));
 		}
 		logger.debug("Leaving");
 	}
