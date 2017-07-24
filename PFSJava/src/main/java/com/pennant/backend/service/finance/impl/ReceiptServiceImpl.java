@@ -953,8 +953,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Overdue Details updation , if Value Date is Back dated.
 		List<FinODDetails> overdueList = null;
 		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
-			Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
-			overdueList = getValueDatePenalties(scheduleData, BigDecimal.ZERO, curBusDate, null, false);
+			overdueList = calCurDatePenalties(scheduleData, rceiptData, valueDate);
 			if (overdueList != null && !overdueList.isEmpty()) {
 				getFinODDetailsDAO().updateList(overdueList);
 			}
@@ -982,7 +981,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			getFinODDetailsDAO().updateODDetails(curODList);
 			
 		}
-		
 		// Save Receipt Header
 		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY) || 
 				StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
@@ -1913,11 +1911,179 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 		}
-		
-		// Overdue Details recalculation based on Value date requested
+
 		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
-				schdList, repayments, resetReq);
+				schdList, repayments, resetReq,true);
+
+		logger.debug("Leaving");
+		return overdueList;
+	}
+	
+	/**
+	 * Method for Fetch Overdue Penalty details as per passing Value Date
+	 * @param finScheduleData
+	 * @param receiptData 
+	 * @param receiptData
+	 * @param valueDate
+	 * @return
+	 */
+	public List<FinODDetails> calCurDatePenalties(FinScheduleData finScheduleData, 
+			FinReceiptData receiptData, Date valueDate){
+		logger.debug("Entering");
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		
+		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+		if(overdueList == null || overdueList.isEmpty()){
+			logger.debug("Leaving");
+			return overdueList;
+		}
+		
+		Date curBusDate = DateUtility.addDays(DateUtility.getAppDate(), -1);
+		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+		List<FinanceRepayments> repayments = 	getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+		
+		//recreate the od as per allocated.
+		for (FinODDetails fod : overdueList) {
+			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);
+			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().subtract(penalty));
+			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
+		}
+		
+		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
+				schdList, repayments,true,false);
+		
+		// Re-Create OD Details
+		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, curBusDate, 
+				schdList, repayments, false,false);
+		
+		for (FinODDetails fod : overdueList) {
+			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);
+			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(penalty));
+			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
+		}
+		
+		logger.debug("Leaving");
+		return overdueList;
+	}
+	
+	
+	private BigDecimal getPenaltyPaid(Date schDate, FinReceiptData receiptData){
+		List<FinReceiptDetail> receiptDetailList = receiptData.getReceiptHeader().getReceiptDetails();
+		BigDecimal penaltypaidNow=BigDecimal.ZERO;
+		for (FinReceiptDetail finReceiptDetail : receiptDetailList) {
+			List<FinRepayHeader> rpyheaders = finReceiptDetail.getRepayHeaders();
+			for (FinRepayHeader finRepayHeader : rpyheaders) {
+				List<RepayScheduleDetail> repaysch = finRepayHeader.getRepayScheduleDetails();
+				for (RepayScheduleDetail repayScheduleDetail : repaysch) {
+					if (DateUtility.compare(repayScheduleDetail.getSchDate(), schDate)==0) {
+						penaltypaidNow=penaltypaidNow.add(repayScheduleDetail.getPenaltyPayNow());
+					}
+				}
+			}
+		}
+		return penaltypaidNow;
+	} 
+	
+	/**
+	 * Method for Fetch Overdue Penalty details as per passing Value Date
+	 * @param finScheduleData
+	 * @param receiptData
+	 * @param valueDate
+	 * @return
+	 */
+	public List<FinODDetails> calculateODDetails(FinScheduleData finScheduleData, List<FinODDetails> overdueList, BigDecimal orgReceiptAmount, 
+			Date valueDate, List<FinanceRepayments> finRepayments, boolean resetReq){
+		logger.debug("Entering");
+		
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		if(overdueList == null || overdueList.isEmpty()){
+			logger.debug("Leaving");
+			return overdueList;
+		}
+		
+		// Repayment Details
+		List<FinanceRepayments> repayments = new ArrayList<FinanceRepayments>();
+		if(finRepayments != null && !finRepayments.isEmpty()) {
+			repayments = finRepayments;
+		} else {
+			repayments = getFinanceRepaymentsDAO().getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+		}
+		BigDecimal totReceiptAmt = orgReceiptAmount;
+		
+		// Newly Paid Amount Repayment Details
+		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+		if(totReceiptAmt.compareTo(BigDecimal.ZERO) > 0){
+			char[] rpyOrder = finScheduleData.getFinanceType().getRpyHierarchy().replace("CS", "C").toCharArray();
+			FinanceScheduleDetail curSchd = null;
+			for (int i = 0; i < schdList.size(); i++) {
+				curSchd = schdList.get(i);
+				if(curSchd.getSchDate().compareTo(valueDate) > 0){
+					break;
+				}
+				
+				if(totReceiptAmt.compareTo(BigDecimal.ZERO) == 0){
+					break;
+				}
+				
+				if((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0 || 
+						(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())).compareTo(BigDecimal.ZERO) > 0 ||
+						(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0){
+					
+					FinanceRepayments repayment = new FinanceRepayments();
+					repayment.setFinValueDate(valueDate);
+					repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+					repayment.setFinSchdDate(curSchd.getSchDate());
+					repayment.setFinRpyAmount(orgReceiptAmount);
+					
+					for (int j = 0; j < rpyOrder.length; j++) {
+						
+						char repayTo = rpyOrder[j];
+						if(repayTo == RepayConstants.REPAY_PENALTY){
+							continue;
+						}
+						BigDecimal balAmount = BigDecimal.ZERO;
+						if(repayTo == RepayConstants.REPAY_PRINCIPAL){
+							balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+							if(totReceiptAmt.compareTo(balAmount) < 0){
+								balAmount = totReceiptAmt;
+							}
+							repayment.setFinSchdPriPaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+							
+						}else if(repayTo == RepayConstants.REPAY_PROFIT){
+							
+							balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+							if(totReceiptAmt.compareTo(balAmount) < 0){
+								balAmount = totReceiptAmt;
+							}
+							repayment.setFinSchdPftPaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+							
+						}else if(repayTo == RepayConstants.REPAY_FEE){
+							
+							balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+							if(totReceiptAmt.compareTo(balAmount) < 0){
+								balAmount = totReceiptAmt;
+							}
+							repayment.setSchdFeePaid(balAmount);
+							totReceiptAmt = totReceiptAmt.subtract(balAmount);
+						}
+						
+					}
+					repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
+					repayment.setFinType(financeMain.getFinType());
+					repayment.setFinBranch(financeMain.getFinBranch());
+					repayment.setFinCustID(financeMain.getCustID());
+					repayment.setFinPaySeq(100);
+					repayments.add(repayment);
+				}
+			}
+		}
+
+		overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate, 
+				schdList, repayments, resetReq,true);
+
 		logger.debug("Leaving");
 		return overdueList;
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.customermasters.impl.GCDCustomerBajjajDAOImpl;
 import com.pennant.backend.dao.finance.GCDCustomerDAO;
@@ -18,6 +19,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -89,6 +91,8 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		gcdCustomer.setFinnCustId(customer.getCustCoreBank());
 		gcdCustomer.setSfdcCustomerId(customer.getCustID());
 		gcdCustomer.setBranchId(Long.parseLong(customer.getCustDftBranch()));
+		gcdCustomer.setEmiCardElig(String.valueOf(PennantApplicationUtil.formateAmount(customer.getCustAddlDec1(),
+				CurrencyUtil.getFormat(customer.getCustBaseCcy()))));
 
 		return gcdCustomer;
 	}

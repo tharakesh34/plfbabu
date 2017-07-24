@@ -69,7 +69,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
-		"custEmpSts", "custDSA", "custDSADept", "returnStatus" })
+		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -272,6 +272,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String phoneNumber;
 	private String phoneAreaCode;
 	private String phoneCountryCode;
+	@XmlElement(name="emiCardEligibilityAmt")
 	private BigDecimal custAddlDec1 = BigDecimal.ZERO;
 	private double custAddlDec2;
 	private double custAddlDec3;
