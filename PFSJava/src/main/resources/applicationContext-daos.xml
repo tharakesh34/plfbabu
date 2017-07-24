@@ -9387,7 +9387,7 @@
 
 	<bean id="promotionDAO"
 		class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl"
-		parent="basisCodeDAO">
+		parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 

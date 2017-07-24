@@ -60,7 +60,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -71,7 +71,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
  * 
  */
 
-public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements PromotionDAO {
+public class PromotionDAOImpl extends BasisNextidDaoImpl<Promotion> implements PromotionDAO {
 
 	private static Logger logger = Logger.getLogger(PromotionDAOImpl.class);
 
@@ -85,21 +85,21 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param id
+	 * @param promotionCode
 	 *            (String)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
-	public Promotion getPromotionById(final String id, String type) {
+	public Promotion getPromotionById(final String promotionCode, String type) {
 		logger.debug("Entering");
 
 		Promotion promotion = new Promotion();
-		promotion.setId(id);
+		promotion.setPromotionCode(promotionCode);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
+		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
 		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
 		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
 		sql.append(" finMaxRate,active,");
@@ -186,18 +186,24 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder();
+		
+		if (promotion.getPromotionId() == Long.MIN_VALUE) {
+			promotion.setPromotionId(getNextidviewDAO().getNextId("SeqPromotions"));
+			logger.debug("get NextID:" + promotion.getPromotionId());
+		}
+		
 		sql.append("Insert Into Promotions");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
-		sql.append("downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
-		sql.append("rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
-		sql.append(" finMaxRate,active,");
+		sql.append("(PromotionId, promotionCode, promotionDesc, finType, startDate, endDate, finIsDwPayRequired,");
+		sql.append(" downPayRule, actualInterestRate, finBaseRate, finSplRate, finMargin, applyRpyPricing,");
+		sql.append(" rpyPricingMethod, finMinTerm, finMaxTerm, finMinAmount, finMaxAmount, finMinRate,");
+		sql.append(" finMaxRate, active,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
-		sql.append(" :promotionCode,:promotionDesc,:finType,:startDate,:endDate,:finIsDwPayRequired,");
-		sql.append(" :downPayRule,:actualInterestRate,:finBaseRate,:finSplRate,:finMargin,:applyRpyPricing,");
-		sql.append(" :rpyPricingMethod,:finMinTerm,:finMaxTerm,:finMinAmount,:finMaxAmount,:finMinRate,");
-		sql.append(" :finMaxRate,:active,");
+		sql.append(" :PromotionId, :promotionCode, :promotionDesc, :finType, :startDate, :endDate, :finIsDwPayRequired,");
+		sql.append(" :downPayRule, :actualInterestRate, :finBaseRate, :finSplRate, :finMargin, :applyRpyPricing,");
+		sql.append(" :rpyPricingMethod, :finMinTerm, :finMaxTerm, :finMinAmount, :finMaxAmount, :finMinRate,");
+		sql.append(" :finMaxRate, :active,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
@@ -207,7 +213,7 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		
 		logger.debug("Leaving");
 		
-		return promotion.getId();
+		return promotion.getPromotionCode();
 	}
 
 	/**
@@ -231,17 +237,17 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 
 		updateSql.append("Update Promotions");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set promotionCode=:promotionCode,promotionDesc=:promotionDesc,finType=:finType,");
-		updateSql.append(" startDate=:startDate,endDate=:endDate,finIsDwPayRequired=:finIsDwPayRequired,");
-		updateSql.append(" downPayRule=:downPayRule,actualInterestRate=:actualInterestRate,finBaseRate=:finBaseRate,");
-		updateSql.append(" finSplRate=:finSplRate,finMargin=:finMargin,applyRpyPricing=:applyRpyPricing,");
-		updateSql.append(" rpyPricingMethod=:rpyPricingMethod,finMinTerm=:finMinTerm,finMaxTerm=:finMaxTerm,");
-		updateSql.append(" finMinAmount=:finMinAmount,finMaxAmount=:finMaxAmount,finMinRate=:finMinRate,");
-		updateSql.append(" finMaxRate=:finMaxRate,active=:active,");
+		updateSql.append("  Set PromotionId = :PromotionId, promotionCode=:promotionCode, promotionDesc=:promotionDesc, finType=:finType,");
+		updateSql.append(" startDate=:startDate, endDate=:endDate, finIsDwPayRequired=:finIsDwPayRequired,");
+		updateSql.append(" downPayRule=:downPayRule, actualInterestRate=:actualInterestRate, finBaseRate=:finBaseRate,");
+		updateSql.append(" finSplRate=:finSplRate, finMargin=:finMargin, applyRpyPricing=:applyRpyPricing,");
+		updateSql.append(" rpyPricingMethod=:rpyPricingMethod, finMinTerm=:finMinTerm, finMaxTerm=:finMaxTerm,");
+		updateSql.append(" finMinAmount=:finMinAmount, finMaxAmount=:finMaxAmount, finMinRate=:finMinRate,");
+		updateSql.append(" finMaxRate=:finMaxRate, active=:active,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where PromotionCode =:PromotionCode");
+		updateSql.append(" Where PromotionCode =:PromotionCode and PromotionId = :PromotionId");
 
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
@@ -335,7 +341,7 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		Promotion promotion = new Promotion();
 		promotion.setFinType(finType);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT FinType, FinTypeDesc,PromotionCode,PromotionDesc");
+		selectSql.append("SELECT FinType, FinTypeDesc, PromotionCode, PromotionDesc");
 		selectSql.append(" From Promotions");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType");

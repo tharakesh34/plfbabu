@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -60,9 +61,10 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Promotion table</b>.<br>
  * 
  */
-public class Promotion extends AbstractWorkflowEntity {
+public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
+	private long promotionId = Long.MIN_VALUE;
 	private String promotionCode;
 	private String promotionDesc;
 	private String finType;
@@ -112,7 +114,7 @@ public class Promotion extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public Promotion(String id) {
+	public Promotion(long id) {
 		super();
 		this.setId(id);
 	}
@@ -136,12 +138,12 @@ public class Promotion extends AbstractWorkflowEntity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public String getId() {
-		return promotionCode;
+	public long getId() {
+		return promotionId;
 	}
 
-	public void setId(String id) {
-		this.promotionCode = id;
+	public void setId(long promotionId) {
+		this.promotionId = promotionId;
 	}
 
 	public String getPromotionCode() {
@@ -430,6 +432,14 @@ public class Promotion extends AbstractWorkflowEntity {
 
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
+	}
+
+	public long getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(long promotionId) {
+		this.promotionId = promotionId;
 	}
 
 }
