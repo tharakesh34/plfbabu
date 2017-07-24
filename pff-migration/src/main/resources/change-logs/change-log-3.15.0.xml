@@ -14076,4 +14076,11 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 			From 	Promotions_Backup;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="681" author="Kesav">
+		<dropTable tableName="Promotions_Backup" /> 
+	</changeSet>
+	<!-- <changeSet id="682" author="Kesav">
+		<dropTable tableName="Promotions_Temp" /> 
+	</changeSet> -->
 </databaseChangeLog>
