@@ -14085,5 +14085,62 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 	</sql>
 	</changeSet>
 
+	<changeSet id="683" author="Kesav">
+		<dropTable tableName="Promotions_Temp" /> 
+	</changeSet>
+	
+	<changeSet author="Kesav" id="684">
+        <createTable tableName="Promotions_Temp">
+			 <column name="PromotionId" remarks="PromotionId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="EndDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FInMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="685" author="Kesava">
+		<addPrimaryKey columnNames="PromotionId" constraintName="PK_Promotions_Temp" tableName="Promotions_Temp" />
+	</changeSet>
+	<changeSet id="686" author="Kesava">
+		<addUniqueConstraint disabled="true" tableName="Promotions_Temp" constraintName="UK_Promotions_Temp" columnNames="PromotionCode" initiallyDeferred="true" deferrable="true"/>
+	</changeSet>
+	
 
 </databaseChangeLog>
