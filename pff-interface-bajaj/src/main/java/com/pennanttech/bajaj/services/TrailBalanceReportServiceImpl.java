@@ -598,9 +598,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		StringBuilder builder = new StringBuilder();
 		builder.append("TRIAL_BALANCE");
 		builder.append("_");
-		builder.append(DateUtil.format(monthStartDate, "ddMMYYYY"));
+		builder.append(DateUtil.format(monthStartDate, "ddMMyyyy"));
 		builder.append("_");
-		builder.append(DateUtil.format(monthEndDate, "ddMMYYYY"));
+		builder.append(DateUtil.format(monthEndDate, "ddMMyyyy"));
 		builder.append("_");
 		builder.append(String.valueOf(headerId));
 		builder.append(".CSV");
@@ -1023,8 +1023,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
 
 		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMYYYY"));
-		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMYYYY"));
+		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
+		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMyyyy"));
 		parameterMap.put("HEADER_ID", headerId);
 
 		parameterMap.put("COMPANY_NAME", companyName);
@@ -1033,9 +1033,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");
-		builder.append(DateUtil.format(monthStartDate, "dd-MMM-YY").toUpperCase());
+		builder.append(DateUtil.format(monthStartDate, "dd-MMM-yy").toUpperCase());
 		builder.append(" To ");
-		builder.append(DateUtil.format(monthEndDate, "dd-MMM-YY").toUpperCase());
+		builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
 
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
 		parameterMap.put("CURRENCY", currency + " - " + currency);
