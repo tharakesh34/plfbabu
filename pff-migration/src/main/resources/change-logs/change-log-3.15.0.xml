@@ -14003,4 +14003,77 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
 	</changeSet>
+	
+		<changeSet id="675" author="Kesav">
+	<sql>
+		create table Promotions_Backup as Select * from Promotions;
+	</sql>
+	</changeSet>
+	<changeSet id="676" author="Kesav">
+		<dropTable tableName="Promotions" /> 
+	</changeSet>
+	
+	<changeSet author="Kesav" id="677">
+        <createTable tableName="Promotions">
+			 <column name="Id" remarks="Id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="EndDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FInMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="678" author="Kesava">
+		<addPrimaryKey columnNames="Id" constraintName="PK_Promotions" tableName="Promotions" />
+	</changeSet>
+	<changeSet id="679" author="Kesava">
+		<addUniqueConstraint disabled="true" tableName="Promotions" constraintName="UK_Promotions" columnNames="PromotionCode" initiallyDeferred="true" deferrable="true"/>
+	</changeSet>
+	
+	<changeSet id="680" author="Kesav">
+		<sql>
+			Insert 	Into Promotions
+					select  row_number() over(order by Promotioncode) Id,
+					PROMOTIONCODE, PROMOTIONDESC, FINTYPE, STARTDATE, ENDDATE, FINISDWPAYREQUIRED, DOWNPAYRULE, ACTUALINTERESTRATE, FINBASERATE, FINSPLRATE, FINMARGIN, APPLYRPYPRICING,
+					RPYPRICINGMETHOD, FINMINTERM, FINMAXTERM, FINMINAMOUNT, FINMAXAMOUNT, FINMINRATE, FINMAXRATE, ACTIVE,
+					VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID 
+			From 	Promotions_Backup;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
