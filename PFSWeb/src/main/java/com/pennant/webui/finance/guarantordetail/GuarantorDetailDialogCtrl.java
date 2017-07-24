@@ -1739,12 +1739,12 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if (!isNewRecord()) {
 			readOnlyExposureFields(true);
 			this.guarantorCIF.setReadonly(true);
-			this.guarantorCIFName.setReadonly(true);
+			//this.guarantorCIFName.setReadonly(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorProofName.setReadonly(true);
-			this.mobileNo.setReadonly(true);
-			this.emailId.setReadonly(true);
+			//this.mobileNo.setReadonly(true);
+			//this.emailId.setReadonly(true);
 		} else {
 			readOnlyExposureFields(false);
 		}
