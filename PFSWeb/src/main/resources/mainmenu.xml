@@ -394,7 +394,7 @@
 	   <menuItem id="menu_Item_OverdueChargeRecovery" zulNavigation="/WEB-INF/pages/FinanceManagement/OverdueChargeRecovery/OverdueChargeRecoveryList.zul" rightName="menuItem_FinanceManagement_OverdueChargeRecovery" />
 	   <menuItem id="menu_Item_OverdraftSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_OverdraftSchedule"/> 
 	   <!-- <menuItem id="menu_Item_PartialSettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_PartialSettlement" /> -->
-	   <!-- <menuItem id="menu_Item_PlannedEMI" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_PlannedEMIH"/> -->
+	   <menuItem id="menu_Item_PlannedEMI" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_PlannedEMIH"/>
 	   <menuItem id="menu_Item_Postponement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Postponement"/>
        <menuItem id="menu_Item_Provision" zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionList.zul?rightName=menuItem_FinanceManagement_Provision"  rightName="menuItem_FinanceManagement_Provision"/>
        <menuItem id="menu_Item_CoreProvision" zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"  rightName="menuItem_FinanceManagement_CoreProvision"/>

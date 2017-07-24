@@ -1686,7 +1686,7 @@ public class ReceiptCalculator implements Serializable {
 						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
 							
 							FinODDetails overdue = overdueMap.get(schdDate);
-							if(overdue != null){
+							if(overdue != null && DateUtility.compare(overdue.getFinODSchdDate(), valueDate) <= 0){
 								BigDecimal balLatePft = overdue.getLPIBal();
 								if(balLatePft.compareTo(BigDecimal.ZERO) > 0){
 									if(totalReceiptAmt.compareTo(balLatePft) > 0){
@@ -1710,7 +1710,7 @@ public class ReceiptCalculator implements Serializable {
 				}else if(repayTo == RepayConstants.REPAY_PENALTY){
 					if(!seperatePenalties){
 						FinODDetails overdue = overdueMap.get(schdDate);
-						if(overdue != null){
+						if(overdue != null && DateUtility.compare(overdue.getFinODSchdDate(), valueDate) <= 0){
 							BigDecimal balPenalty = overdue.getTotPenaltyBal();
 							if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
 								if(totalReceiptAmt.compareTo(balPenalty) > 0){
@@ -1865,7 +1865,7 @@ public class ReceiptCalculator implements Serializable {
 				for (int i = 0; i < odDateList.size(); i++) {
 
 					FinODDetails overdue = overdueMap.get(odDateList.get(i));
-					if(overdue != null){
+					if(overdue != null && DateUtility.compare(overdue.getFinODSchdDate(), valueDate) <= 0){
 						BigDecimal balPenalty = overdue.getTotPenaltyBal();
 						if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
 							if(totalReceiptAmt.compareTo(balPenalty) > 0){
