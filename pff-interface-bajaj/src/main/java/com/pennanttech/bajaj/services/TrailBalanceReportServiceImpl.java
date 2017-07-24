@@ -378,13 +378,14 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select P.Account ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
+		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
 		sql.append(" from POSTINGS P");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
-		sql.append(" group by P.Account, RB.BRANCHPROVINCE");
+		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
@@ -406,13 +407,14 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		MapSqlParameterSource paramMap = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select P.Account ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
+		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
 		sql.append(" from POSTINGS P");
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
-		sql.append(" group by P.Account, RB.BRANCHPROVINCE");
+		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
