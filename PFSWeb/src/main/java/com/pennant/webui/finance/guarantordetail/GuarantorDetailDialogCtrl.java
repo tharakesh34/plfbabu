@@ -1347,10 +1347,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		// Proof Name
 		try {
-			if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) || this.guarantorProofContent == null)) {
+			/*if (!this.bankCustomer.isChecked() && (StringUtils.isBlank(this.guarantorProofName.getValue()) || this.guarantorProofContent == null)) {
 				throw new WrongValueException(this.guarantorProofName, Labels.getLabel("MUST_BE_UPLOADED",
 						new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorProof.value")}));
-			}
+			}*/
 			aGuarantorDetail.setGuarantorProofName(this.guarantorProofName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1714,7 +1714,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_EmailId.setSclass(PennantConstants.mandateSclass);
 			this.space_Name.setSclass(PennantConstants.mandateSclass);
 			this.space_MobileNo.setSclass(PennantConstants.mandateSclass);
-			this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
+			//this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
 			
 			this.addrHNbr.setReadonly(isReadOnly("GuarantorDetailDialog_addrHNbr"));
 			this.flatNbr.setReadonly(isReadOnly("GuarantorDetailDialog_flatNbr"));

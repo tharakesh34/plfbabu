@@ -175,7 +175,7 @@
 										<hlayout
 											id="hlayout_GuarantorProof" spacing="2px">
 											<space
-												id="space_GuarantorProof" spacing="2px" sclass="mandatory" />
+												id="space_GuarantorProof" spacing="2px" />
 											<textbox
 												id="guarantorProofName" width="200px"
 												readonly="true" disabled="true" />
