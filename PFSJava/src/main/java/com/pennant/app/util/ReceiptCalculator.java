@@ -103,12 +103,12 @@ public class ReceiptCalculator implements Serializable {
 	 * ___________________________________________________________________________________________
 	 */
 
-	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
-		return procInitiateReceipt(receiptData, scheduleData, valueDate, receiptPurpose);
+	public FinReceiptData initiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose, boolean isPresentment) {
+		return procInitiateReceipt(receiptData, scheduleData, valueDate, receiptPurpose, isPresentment);
 	}
 
 	/** To Calculate the Amounts for given schedule */
-	private FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
+	private FinReceiptData procInitiateReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose,  boolean isPresentment) {
 		logger.debug("Entering");
 
 		// Initialize Repay
@@ -118,7 +118,7 @@ public class ReceiptCalculator implements Serializable {
 
 		// Recalculate Repay
 		if ("R".equals(receiptData.getBuildProcess())) {
-			receiptData = recalReceipt(receiptData, scheduleData, valueDate, receiptPurpose);
+			receiptData = recalReceipt(receiptData, scheduleData, valueDate, receiptPurpose, isPresentment);
 		}
 		
 		logger.debug("Leaving");
@@ -606,7 +606,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @param scheduleData
 	 * @return
 	 */
-	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose) {
+	private FinReceiptData recalReceipt(FinReceiptData receiptData, FinScheduleData scheduleData, Date valueDate, String receiptPurpose,boolean isPresentment) {
 		logger.debug("Entering");
 		
 		FinanceMain financeMain = scheduleData.getFinanceMain();
@@ -760,8 +760,7 @@ public class ReceiptCalculator implements Serializable {
 				Date schdDate = curSchd.getSchDate();
 				RepayScheduleDetail rsd = null;
 				
-				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
-						curSchd.getPresentmentId() > 0){
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) &&  curSchd.getPresentmentId() > 0 && !isPresentment){
 					continue;
 				}
 
@@ -1567,8 +1566,7 @@ public class ReceiptCalculator implements Serializable {
 				break;
 			}
 			
-			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && 
-					curSchd.getPresentmentId() > 0){
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) &&  curSchd.getPresentmentId() > 0 && !isPresentment){
 				continue;
 			}
 			

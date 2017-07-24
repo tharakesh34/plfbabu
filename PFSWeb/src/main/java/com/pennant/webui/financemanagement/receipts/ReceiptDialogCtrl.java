@@ -795,7 +795,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		receiptData.setTotReceiptAmount(totReceiptAmount);
 		
-		receiptData = getReceiptCalculator().initiateReceipt(receiptData, aFinScheduleData, valueDate, getReceiptHeader().getReceiptPurpose());
+		receiptData = getReceiptCalculator().initiateReceipt(receiptData, aFinScheduleData, valueDate, getReceiptHeader().getReceiptPurpose(), false);
 		if(StringUtils.isEmpty(financeMain.getRcdMaintainSts())){
 			setReceiptData(receiptData);
 		}else{
@@ -1563,7 +1563,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptData.setFinanceDetail(getFinanceDetail());
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		receiptData.setTotReceiptAmount(totReceiptAmount);
-		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, valueDate, tempReceiptPurpose));
+		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, valueDate, tempReceiptPurpose, false));
 
 		doFillAllocationDetail(null, null, false);
 		
@@ -2229,7 +2229,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(this.receivedDate.getValue() != null){
 			valueDate = this.receivedDate.getValue();
 		}
-		receiptData = getReceiptCalculator().initiateReceipt(getReceiptData(), aFinScheduleData, valueDate, receiptHeader.getReceiptPurpose());
+		receiptData = getReceiptCalculator().initiateReceipt(getReceiptData(), aFinScheduleData, valueDate, receiptHeader.getReceiptPurpose(), false);
 		setReceiptData(receiptData);
 
 		logger.debug("Leaving");

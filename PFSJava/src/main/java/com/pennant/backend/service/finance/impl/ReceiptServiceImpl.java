@@ -1525,7 +1525,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @return
 	 */
 	@Override
-	public FinReceiptData calculateRepayments(FinReceiptData finReceiptData) {
+	public FinReceiptData calculateRepayments(FinReceiptData finReceiptData, boolean isPresentment) {
 		logger.debug("Entering");
 
 		finReceiptData.setBuildProcess("R");
@@ -1613,7 +1613,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		finReceiptData.setReceiptHeader(receiptHeader);
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, financeDetail.getFinScheduleData(),
-				receiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose());
+				receiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), isPresentment);
 
 		logger.debug("Leaving");
 		return finReceiptData;
@@ -1812,7 +1812,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		//Repayments Calculation
-		receiptData = calculateRepayments(receiptData);
+		receiptData = calculateRepayments(receiptData, false);
 		logger.debug("Leaving");
 		return receiptData;
 	}
