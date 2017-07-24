@@ -1083,6 +1083,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if(advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -1147,6 +1148,17 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for fetch Schedule Date against the presentment bounce charge
+	 * 
+	 * @param receiptId
+	 * @return
+	 */
+	private Date getBounceDueDate(long receiptId) {
+		Date schdDate = manualAdviseDAO.getPresentmentBounceDueDate(receiptId);
+		return schdDate;
+	}
+	
 	private void doEmptyResponseObject(FinanceDetail detail) {
 		detail.setFinScheduleData(null);
 		detail.setDocumentDetailsList(null);

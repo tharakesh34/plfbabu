@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -71,5 +72,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt);
 	void updateUtilise(long adviseID, BigDecimal amount);
 	void reverseUtilise(long adviseID, BigDecimal amount);
+	Date getPresentmentBounceDueDate(long receiptId);
 	
 }

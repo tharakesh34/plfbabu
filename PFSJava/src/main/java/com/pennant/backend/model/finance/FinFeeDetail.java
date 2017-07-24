@@ -46,6 +46,7 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,8 +64,8 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-@XmlType(propOrder = { "feeCategory", "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount", "feeScheduleMethod",
-		"terms", "remainingFee" })
+@XmlType(propOrder = { "feeCategory", "schdDate", "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount",
+		"feeScheduleMethod", "terms", "remainingFee" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -112,7 +113,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	private boolean dataModified = false;
 	private boolean rcdVisible = true;
-	
+	@XmlElement
+	private Date schdDate;
 	private boolean newRecord=false;
 	private String lovValue;
 	private FinFeeDetail befImage;
@@ -146,6 +148,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("rcdVisible");
 		excludeFields.add("validateFinFeeDetail");
 		excludeFields.add("feeCategory");
+		excludeFields.add("schdDate");
 		return excludeFields;
 	}
 	
@@ -426,6 +429,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Date getSchdDate() {
+		return schdDate;
+	}
+
+	public void setSchdDate(Date schdDate) {
+		this.schdDate = schdDate;
 	}
 
 }

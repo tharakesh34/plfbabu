@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -264,7 +265,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId " );
+		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId " );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc ");
 		}
@@ -660,6 +661,31 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public Date getPresentmentBounceDueDate(long receiptId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptId", receiptId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT T5.schDate	FROM MANUALADVISE M ");
+		selectSql.append(" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
+		selectSql.append(" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
+		selectSql.append(" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
+		selectSql.append(" AND M.ReceiptId =:ReceiptId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		Date schDate = null;
+		try {
+			schDate = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+		} catch (EmptyResultDataAccessException ede) {
+			logger.warn("Warning:", ede);
+		}
+		logger.debug("Leaving");
+
+		return schDate;
 	}
 	
 	

@@ -265,6 +265,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -455,6 +456,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -489,6 +491,16 @@ public class FinStatementController extends SummaryDetailService {
 		return financeDetail;
 	}
 
+	/**
+	 * Method for fetch Schedule Date against the presentment bounce charge
+	 * 
+	 * @param receiptId
+	 * @return
+	 */
+	private Date getBounceDueDate(long receiptId) {
+		Date schdDate = manualAdviseDAO.getPresentmentBounceDueDate(receiptId);
+		return schdDate;
+	}
 
 	/**
 	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
