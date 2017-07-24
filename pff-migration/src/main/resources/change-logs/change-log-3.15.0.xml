@@ -13973,4 +13973,11 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			INSERT INTO ErrorDetails VALUES('65025','EN','E','{0} Using in Loan GST. Cannot be deleted','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>	
+	<changeSet author="pruthvi" id="673">
+		<sql>
+	delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid='5';
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today'),5,'CustCIF','LOVSEARCH','Customer Number','custid',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,4,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
