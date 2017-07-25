@@ -195,13 +195,13 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
 		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,");
-		insertSql.append(" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate, AccountType )");
+		insertSql.append(" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate, AccountType, OldLinkedTranId )");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
 		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account,");
 		insertSql.append(" :ShadowPosting,:PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,");
 		insertSql.append(" :ExchangeRate,:PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, ");
 		insertSql.append(" :AcCcy,:TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch, ");
-		insertSql.append(" :PostCategory , :CustAppDate, :AccountType)");
+		insertSql.append(" :PostCategory , :CustAppDate, :AccountType, :OldLinkedTranId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
