@@ -1048,15 +1048,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Etihad Credit Bureau Details
-				financeDetail.setEtihadCreditBureauDetail(getEtihadCreditBureauDetailService()
-						.getEtihadCreditBureauDetailById(finReference, "_View"));
+				if (ImplementationConstants.ALLOW_CREDITBUREAU) {
+					financeDetail.setEtihadCreditBureauDetail(getEtihadCreditBureauDetailService()
+							.getEtihadCreditBureauDetailById(finReference, "_View"));
+				}
 
 				// Bundled Products Details
-				if (scheduleData.getFinanceType() != null
-						&& StringUtils.equals(scheduleData.getFinanceType().getFinDivision(),
-								FinanceConstants.FIN_DIVISION_RETAIL)) {
-					financeDetail.setBundledProductsDetail(getBundledProductsDetailService()
-							.getBundledProductsDetailById(finReference, "_View"));
+				if (ImplementationConstants.ALLOW_BUNDLEDPRODUCT) {
+					if (scheduleData.getFinanceType() != null
+							&& StringUtils.equals(scheduleData.getFinanceType().getFinDivision(),
+									FinanceConstants.FIN_DIVISION_RETAIL)) {
+						financeDetail.setBundledProductsDetail(getBundledProductsDetailService()
+								.getBundledProductsDetailById(finReference, "_View"));
+					}
 				}
 
 				// Agreement Field Details
@@ -1075,8 +1079,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						finReference, "_View"));
 
 				// Covenant Type Details
-				financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference,
-						"_View",false));
+				if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
+					financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(finReference,
+							"_View",false));
+				}
 
 				// Asset Evaluation Details
 				financeDetail.setFinAssetEvaluation(getFinAssetEvaluationService().getFinAssetEvaluationById(
