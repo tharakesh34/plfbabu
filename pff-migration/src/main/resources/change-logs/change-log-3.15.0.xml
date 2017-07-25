@@ -14580,7 +14580,7 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		<dropTable tableName="POSTINGS_TAXDOWNLOAD" />
 	</changeSet>
 	
-	<!-- <changeSet id="711" author="Durgaprasad.g">
+	<changeSet id="711" author="Durgaprasad.g">
 	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
 	   SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
 				T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
@@ -14609,7 +14609,7 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 				INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
 				INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
 	</createView>
-	</changeSet> -->
+	</changeSet>
 	<changeSet author="Madhubabu" id="712">
 		<dropPrimaryKey tableName="gcdcustomers_test"
 			constraintName="PK_GCDCUSTOMERS_TEST" />
