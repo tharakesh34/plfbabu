@@ -14615,4 +14615,16 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			constraintName="PK_GCDCUSTOMERS_TEST" />
 	</changeSet>
 	
+	<changeSet id="705" author="Chaitanya.ch">
+  	<addColumn tableName="Postings">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
+  <changeSet id="706" author="Chaitanya.ch">
+  	<addColumn tableName="Postings_Temp">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
 </databaseChangeLog>
