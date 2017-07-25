@@ -468,15 +468,17 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		for (JointAccountDetail jointAccountDetail : jointAcDetailList) {
 			JointAccountDetail detail = new JointAccountDetail();
 			BeanUtils.copyProperties(jointAccountDetail, detail);
-			
-			jointAccountDetail.setRoleCode("");
-			jointAccountDetail.setNextRoleCode("");
-			jointAccountDetail.setTaskId("");
-			jointAccountDetail.setNextTaskId("");
-			jointAccountDetail.setWorkflowId(0);
-			jointAccountDetail.setRecordType("");
+			if (!jointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+				jointAccountDetail.setRoleCode("");
+				jointAccountDetail.setNextRoleCode("");
+				jointAccountDetail.setTaskId("");
+				jointAccountDetail.setNextTaskId("");
+				jointAccountDetail.setWorkflowId(0);
+				jointAccountDetail.setRecordType("");
 
-			getJountAccountDetailDAO().save(jointAccountDetail, tableType);
+				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
+			}
+			
 			
 			if(!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
 				getJountAccountDetailDAO().delete(jointAccountDetail, "_Temp");
