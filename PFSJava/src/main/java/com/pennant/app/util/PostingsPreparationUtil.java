@@ -734,13 +734,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 		
 		
-		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
-		
 		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
-		for (ReturnDataSet returnDataSet : returnDataSets) {
-			returnDataSet.setOldLinkedTranId(returnDataSet.getLinkedTranId());
-			returnDataSet.setLinkedTranId(newLinkedTranID);
-		}
 
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
 
