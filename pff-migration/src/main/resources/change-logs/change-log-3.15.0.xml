@@ -14317,6 +14317,22 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="700.1" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_event_properties 
+			set bucket_name = 'bfl-npd-etl-masterdata', 
+			  access_key = 'AKIAICXDVTEHK65CWI6A', 
+			  secret_key = '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', 
+			  prefix = null,
+			  sse_algorithm = 'AES_256'
+			where config_id in (
+			  select id from data_engine_config
+			  where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE')
+			);
+			]]>
+		</sql>
+	</changeSet>
 	<changeSet author="Amit" id="701">
 		<dropPrimaryKey tableName="GCDCUSTOMERS"
 			constraintName="PK_GCDCUSTOMERS" />
