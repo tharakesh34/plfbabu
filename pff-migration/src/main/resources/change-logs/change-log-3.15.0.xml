@@ -14304,11 +14304,23 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			ORDER BY ID
  </createView>
 </changeSet>
-<changeSet author="Amit" id="701">
+	<changeSet id="699" author="Sai">
+		<addColumn tableName="data_engine_event_properties">
+			<column name="SSE_ALGORITHM" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="700" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_config set filenameformat = '${yyyyMMddHHmmss}'
+			where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet author="Amit" id="701">
 		<dropPrimaryKey tableName="GCDCUSTOMERS"
 			constraintName="PK_GCDCUSTOMERS" />
 	</changeSet>
-
 	<changeSet author="Amit" id="702">
 		<addColumn tableName="gcdcustomers">
 			<column name="CUSTID" type="NUMBER(19,0)"/>
