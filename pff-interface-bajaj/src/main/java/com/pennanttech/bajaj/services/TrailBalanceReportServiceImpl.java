@@ -515,11 +515,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private void saveTransactionDetails(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("insert into TRANSACTION_DETAIL_REPORT_TEMP values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" insert into TRANSACTION_DETAIL_REPORT_TEMP(LINK, BSCHL, HKONT, UMSKZ,");
+		sql.append(" WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT)");
+		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		List<Object[]> inputList = new ArrayList<Object[]>();
 		for (TrailBalance item : list) {
-			Object[] object = { item.getRowNumber(), item.getLink(), item.getTransactionAmountType(),
+			Object[] object = { item.getLink(), item.getTransactionAmountType(),
 					item.getLedgerAccount(), item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(),
 					item.getBusinessUnit(), item.getCostCenter(), item.getProfitCenter(), item.getNarration1(),
 					item.getNarration2() };
@@ -529,6 +531,66 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		jdbcTemplate.batchUpdate(sql.toString(), inputList);
 
 		inputList = null;
+	}
+	
+	private void groupTransactionDetails(List<TrailBalance> list) throws SQLException {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" insert into TRANSACTION_DETAIL_REPORT_STGE(LINK, BSCHL, HKONT, UMSKZ,");
+		sql.append(" WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT)");
+		sql.append(" values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		List<Object[]> inputList = new ArrayList<Object[]>();
+		for (TrailBalance item : list) {
+			Object[] object = { item.getLink(), item.getTransactionAmountType(),
+					item.getLedgerAccount(), item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(),
+					item.getBusinessUnit(), item.getCostCenter(), item.getProfitCenter(), item.getNarration1(),
+					item.getNarration2() };
+			inputList.add(object);
+		}
+
+		jdbcTemplate.batchUpdate(sql.toString(), inputList);
+
+		inputList = null;
+	}
+	
+	private void groupTransactions() throws SQLException {
+		
+		String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
+		String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT BUPLA, BSCHL, HKONT, SUM(WRBTR) WRBTR");
+		sql.append(" from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY HKONT, BUPLA, BSCHL");
+		List<TrailBalance> list = new ArrayList<TrailBalance>();
+		namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				TrailBalance tb = new TrailBalance();
+				tb.setLink(0);
+				tb.setTransactionAmountType(rs.getString("BSCHL"));
+				tb.setLedgerAccount(rs.getString("HKONT"));
+				tb.setUmskz(UMSKZ);
+				tb.setTransactionAmount(rs.getBigDecimal("WRBTR"));
+				tb.setBusinessUnit(rs.getString("BUPLA"));
+				tb.setBusinessArea(GSBER);
+				tb.setCostCenter(KOSTL);
+				tb.setProfitCenter(PRCTR);
+				tb.setNarration1(ZUONR);
+				tb.setNarration2(SGTXT);
+				list.add(tb);
+				
+				if(list.size() > batchSize) {
+					groupTransactionDetails(list);
+					list.clear();
+				}
+			}
+		});
+		
+		if(!list.isEmpty()) {
+			groupTransactionDetails(list);
+			list.clear();
+		}
 	}
 
 	private void clearPreviousMonthTrailBalace() {
@@ -670,9 +732,11 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	}
 
 	private void prepareTransactionDetails() throws Exception {
-		int totalTransactions = extractTransactionsData();
+		extractTransactionsData();
 		int pageSize = SAPGL_TRAN_RECORD_COUNT;
 
+		int totalTransactions = getTotalTransactions();
+		
 		int pages = totalTransactions / pageSize;
 		if (pages == 0) {
 			pages = 1;
@@ -753,7 +817,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" :PRCTR,");
 		sql.append(" ZUONR,");
 		sql.append(" SGTXT");
-		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_STGE WHERE ROWNUM =:ROWNUM");
 
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("LINK", pageItr);
@@ -808,29 +872,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_SUMMARY_REPORT");
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_TEMP");
+		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_STGE");
 		jdbcTemplate.execute("TRUNCATE TABLE TRAIL_BALANCE_REPORT_FILE");
+		
+		
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (  start with 1)");
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (  start with 1)");
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (  start with 1)");
+		
 	}
 
-	private int extractTransactionsData() throws Exception {
+	private void extractTransactionsData() throws Exception {
 		logger.info("Extracting the GL Transaction Details..");
 
 		String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
 		String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
 
-		int rowNum = 0;
 		List<TrailBalance> list = new ArrayList<>();
 
 		Map<String, TrailBalance> ledgers = getLedgerDetails();
 		Map<String, String> states = getStates();
+		
+		
 
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
-			entry.getValue().setRowNumber(++rowNum);
-
 			/* LINK */
 			entry.getValue().setLink(0);
 
-			entry.getValue().setTransactionAmount(
-					entry.getValue().getCreditAmount().subtract(entry.getValue().getDebitAmount()));
+			entry.getValue().setTransactionAmount(entry.getValue().getCreditAmount().subtract(entry.getValue().getDebitAmount()));
 
 			if (entry.getValue().getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
 				entry.getValue()
@@ -848,14 +917,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				entry.getValue().setProfitCenter(PRCTR);
 			}
 
-			entry.getValue().setBusinessArea(states.get(entry.getKey().split("-")[1]));
-			if (trailBalance.getBusinessArea() == null) {
-				entry.getValue().setProfitCenter(GSBER);
+			entry.getValue().setBusinessUnit(states.get(entry.getKey().split("-")[1]));
+			if (trailBalance.getBusinessUnit() == null) {
+				entry.getValue().setBusinessUnit(BUPLA);
 			}
 
 			entry.getValue().setUmskz(UMSKZ);
 			entry.getValue().setBusinessArea(GSBER);
-			entry.getValue().setBusinessUnit(BUPLA);
 
 			entry.getValue().setCostCenter(KOSTL);
 			entry.getValue().setNarration1(ZUONR);
@@ -874,7 +942,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			saveTransactionDetails(list);
 		}
 
-		return rowNum;
+		groupTransactions();
 	}
 
 	private void prepareTrailbalanceDate() throws Exception {
@@ -993,7 +1061,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT (LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA,");
 		sql.append(" KOSTL, PRCTR, ZUONR, SGTXT)");
 		sql.append(" SELECT LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
-		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP  WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_STGE  WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
 
 		/*
 		 * sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT * FROM  TRANSACTION_DETAIL_REPORT_TEMP");
@@ -1169,6 +1237,10 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
 
+	}
+	
+	private int getTotalTransactions() {
+		return jdbcTemplate.queryForObject("select count(*) from TRANSACTION_DETAIL_REPORT_STGE", Integer.class);
 	}
 
 	public class GenerateTransactionReport implements Runnable {
