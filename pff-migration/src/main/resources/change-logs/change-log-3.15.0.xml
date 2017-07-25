@@ -14637,7 +14637,7 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
   		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE'
   		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
   	</sql>
-  </changeSet> 
+  </changeSet>
   
   <changeSet id="715" author="Durgaprasad g">
    <createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
@@ -14668,5 +14668,9 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 				INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
 				INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
    </createView>
+  </changeSet>
+  
+  <changeSet id="716" author="Durgaprasad G">
+   <modifyDataType tableName="LEA_GST_TMP_DTL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
   </changeSet>
 </databaseChangeLog>
