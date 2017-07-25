@@ -14498,4 +14498,82 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
         WHERE C.CUSTCOREBANK IS NOT NULL
   	</createView>
   </changeSet>
+  
+  <changeSet id="705" author="Durgaprasad G">
+		<createTable tableName="TRANSACTIN_DETAIL_REPORT_STAGE">
+			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="TRA_DET_REP_STA_ID"/>
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="706" author="Durgaprasad G">
+		<dropTable tableName="TRANSACTION_DETAIL_REPORT_TEMP" />
+	</changeSet>
+	
+	<changeSet id="707" author="Durgaprasad G">
+	<createTable tableName="TRANSACTION_DETAIL_REPORT_TEMP">
+		<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+			<constraints primaryKey="true" nullable="false"  primaryKeyName="TRA_DET_REP_STA_TEMP_ID" />
+		</column>
+		<column name="LINK" type="decimal(5,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BSCHL" type="decimal(5,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="HKONT" type="varchar(20)" />
+		<column name="UMSKZ" type="varchar(20)" />
+		<column name="WRBTR" type="decimal(20,2)" />
+		<column name="GSBER" type="varchar(10)" />
+		<column name="BUPLA" type="varchar(10)" />
+		<column name="KOSTL" type="varchar(20)" />
+		<column name="PRCTR" type="varchar(20)" />
+		<column name="ZUONR" type="varchar(50)" />
+		<column name="SGTXT" type="varchar(50)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="708" author="Durgaprasad G">
+<dropTable tableName="TRANSACTIN_DETAIL_REPORT_STAGE"/>
+</changeSet>
+
+ <changeSet id="709" author="Durgaprasad G">
+		<createTable tableName="TRANSACTION_DETAIL_REPORT_STGE">
+			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="TRA_DET_REP_STA_ID"/>
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
