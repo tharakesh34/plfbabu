@@ -14295,4 +14295,14 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		</createTable>
 </changeSet>
 
+<changeSet id="698" author="Durgaprasad G">
+	<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true"> 
+  			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
+			ORDER BY ID
+ </createView>
+</changeSet>
+
 </databaseChangeLog>
