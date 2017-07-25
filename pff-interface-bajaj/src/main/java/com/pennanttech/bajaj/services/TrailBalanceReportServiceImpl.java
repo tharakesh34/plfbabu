@@ -1036,21 +1036,24 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		try {
 			GenerateTransactionReport gtr = new GenerateTransactionReport();
-			gtr.run();
+			Thread thread1 = new Thread(gtr);
+			thread1.start();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
 			GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport();
-			gtsr.run();
+			Thread thread2 = new Thread(gtsr);
+			thread2.start();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
 			GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport();
-			gtbr.run();
+			Thread thread3 = new Thread(gtbr);
+			thread3.start();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
