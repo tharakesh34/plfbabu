@@ -2161,12 +2161,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		//process to send finone request and create or update the data.
-		/*processFinOneCheck(aAuditHeader);
+		processFinOneCheck(aAuditHeader);
 
 		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
 				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
 			return aAuditHeader;
-		}*/
+		}
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
@@ -2329,10 +2329,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Customer";
-		if (customerDetails.getCustomer().getCustCoreBank() != null) {
+		if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
 			// call the finone procedure to update a customer in Finone 
-			getgCDCustomerService().processGcdCustomer(customerDetails, "U");
-			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), "R")) {
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
 				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
@@ -2345,8 +2345,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		} else {
 			// call the finone procedure to create a customer in Finone 
-			getgCDCustomerService().processGcdCustomer(customerDetails, "I");
-			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), "R")) {
+			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
 				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
