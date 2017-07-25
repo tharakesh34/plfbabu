@@ -14304,5 +14304,14 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			ORDER BY ID
  </createView>
 </changeSet>
+<changeSet author="Amit" id="701">
+		<dropPrimaryKey tableName="GCDCUSTOMERS"
+			constraintName="PK_GCDCUSTOMERS" />
+	</changeSet>
 
+	<changeSet author="Amit" id="702">
+		<addColumn tableName="gcdcustomers">
+			<column name="CUSTID" type="NUMBER(19,0)"/>
+		</addColumn>
+  </changeSet>
 </databaseChangeLog>
