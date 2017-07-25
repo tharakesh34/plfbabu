@@ -862,7 +862,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.row_GrcPeriodEndDate.setVisible(false); 
 		this.row_GrcFrq.setVisible(false); 
 		this.row_GrcRvwFrq.setVisible(false); 
-		this.row_grcNextRepayDate.setVisible(false);
+		this.row_grcNextRepayDate.setVisible(true);
 		
 		this.cbSchdMthd.setDisabled(true);
 		fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
@@ -877,13 +877,13 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 					
 					if(curSchd.isRepayOnSchDate() ||
-							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)){
+							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) || 
+							fromDate.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
 						if(fromDate.compareTo(curSchd.getSchDate()) == 0){
 							if(fromDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0){
 								this.row_GrcPeriodEndDate.setVisible(true); 
 								this.row_GrcFrq.setVisible(true); 
 								this.row_GrcRvwFrq.setVisible(true); 
-								this.row_grcNextRepayDate.setVisible(true);
 								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 							}else{
 								fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,");
