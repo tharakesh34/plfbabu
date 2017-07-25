@@ -109,7 +109,7 @@ public class FeeScheduleCalculator {
 		}
 
 		//Fill Repayments Schedules to Map to simplify the schedule search
-		fillSchdMap(finScheduleData, evtFromDate, rpySchdMap, hldSchdMap);
+		Map<Date, Integer> avlSchdMap =  fillSchdMap(finScheduleData, evtFromDate, rpySchdMap, hldSchdMap);
 		String feeScheduleMethod ;
 		
 		for (FinFeeDetail finFeeDetail : feeDetails) {
@@ -136,7 +136,7 @@ public class FeeScheduleCalculator {
 			if (isNewLoan) {
 				prepareNewLoanSchd(financeMain, rpySchdMap, finFeeDetail);
 			} else {
-				prepareExistingLoanSchd(financeMain, rpySchdMap, finFeeDetail, evtFromDate);
+				prepareExistingLoanSchd(financeMain, rpySchdMap, avlSchdMap, finFeeDetail, evtFromDate);
 			}
 
 			calFeeSchd(financeMain, rpySchdMap, finFeeDetail, evtFromDate);
@@ -192,10 +192,9 @@ public class FeeScheduleCalculator {
 	 * @param feeIdx
 	 * @param evtFromDate
 	 */
-	private static void prepareExistingLoanSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap,
+	private static void prepareExistingLoanSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap, Map<Date, Integer> avlSchdMap,
 			FinFeeDetail finFeeDetail, Date evtFromDate) {
 		logger.debug("Entering");
-
 
 		List<FinFeeScheduleDetail> feeSchdDetails = finFeeDetail.getFinFeeScheduleDetailList();
 		FinFeeScheduleDetail feeSchdDetail;
@@ -214,6 +213,12 @@ public class FeeScheduleCalculator {
 
 			//Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
+				feeSchdDate = DateUtility.getDBDate(DateUtility.formatDate(feeSchdDate, PennantConstants.DBDateFormat));
+				if (!avlSchdMap.containsKey(feeSchdDate)) {
+					recalFee = recalFee.add(feeSchdDetail.getSchAmount());
+					feeSchdDetails.remove(i);
+					i = i - 1;
+				}
 				continue;
 			}
 
@@ -236,7 +241,7 @@ public class FeeScheduleCalculator {
 			feeSchdDetails.remove(i);
 			i = i - 1;
 		}
-
+		
 		//Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
 		Collections.sort(rpySchdList);
@@ -279,9 +284,7 @@ public class FeeScheduleCalculator {
 
 	}
 
-	private static void calFeeSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap, FinFeeDetail finFeeDetail,
-			Date evtFromDate) {
-
+	private static void calFeeSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap, FinFeeDetail finFeeDetail, Date evtFromDate) {
 		logger.debug("Entering");
 
 		List<FinFeeScheduleDetail> feeSchdDetails = finFeeDetail.getFinFeeScheduleDetailList();
@@ -291,7 +294,7 @@ public class FeeScheduleCalculator {
 		int schTerms = 0;
 		int recalTerms = financeMain.getRecalTerms();
 		
-		if(recalTerms == 0 ){
+		if (recalTerms == 0) {
 			return;
 		}
 		
@@ -347,25 +350,25 @@ public class FeeScheduleCalculator {
 			if (totFeeAdjusted) {
 				break;
 			}
-
 		}
 
 		logger.debug("Leaving");
-
 	}
 
-	private static void fillSchdMap(FinScheduleData finScheduleData, Date evtFromDate, Map<Date, Integer> rpySchdMap,
+	private static Map<Date, Integer> fillSchdMap(FinScheduleData finScheduleData, Date evtFromDate, Map<Date, Integer> rpySchdMap,
 			Map<Date, Integer> hldSchdMap) {
 		logger.debug("Entering");
 
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		FinanceScheduleDetail curSchd;
-
+		Map<Date, Integer> avlSchdMap = new HashMap<>();
+		
 		//Place Repayment Schedule dates and Holiday Schedule Dates to respective maps
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			curSchd = finSchdDetails.get(i);
 
 			if (curSchd.getSchDate().before(evtFromDate)) {
+				avlSchdMap.put(curSchd.getSchDate(), i);
 				continue;
 			}
 			curSchd.setFeeSchd(BigDecimal.ZERO);							//This might cause issue  in servicing
@@ -390,6 +393,7 @@ public class FeeScheduleCalculator {
 
 		logger.debug("Leaving");
 
+		return avlSchdMap;
 	}
 
 	private static void setFeeToSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap,
