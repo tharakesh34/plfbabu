@@ -37,7 +37,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private Date monthStartDate = null;
 	private Date monthEndDate = null;
 	private long headerId = 0;
-	private String currency = null;
 	private String companyName = null;
 	private String reportName = null;
 	private String fileName = null;
@@ -139,7 +138,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private Map<String, TrailBalance> prepareLedgerAccounts() throws Exception {
 		return namedJdbcTemplate.query(LEDGER_QUERY, new MapSqlParameterSource(),
 				new ResultSetExtractor<Map<String, TrailBalance>>() {
-
 					@Override
 					public Map<String, TrailBalance> extractData(ResultSet rs)
 							throws SQLException, DataAccessException {
@@ -1162,7 +1160,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
 
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
-		parameterMap.put("CURRENCY", currency + " - " + currency);
+		parameterMap.put("CURRENCY", APP_DFT_CURR + " - " + APP_DFT_CURR);
 
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setValueDate(valueDate);
