@@ -117,7 +117,7 @@ public abstract class BajajService {
 		this.transDef = new DefaultTransactionDefinition();
 		this.transDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-		this.transDef.setTimeout(60);
+		this.transDef.setTimeout(120);
 	}
 	
 	protected long getSeq(String seqName) {

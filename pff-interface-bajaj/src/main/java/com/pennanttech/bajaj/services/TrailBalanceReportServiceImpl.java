@@ -1,5 +1,12 @@
 package com.pennanttech.bajaj.services;
 
+import com.pennant.backend.model.finance.TrailBalance;
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.TrailBalanceReportService;
+import com.pennanttech.pff.core.util.DateUtil;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -21,14 +27,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.TransactionStatus;
-
-import com.pennant.backend.model.finance.TrailBalance;
-import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class TrailBalanceReportServiceImpl extends BajajService implements TrailBalanceReportService {
 	private final Logger logger = Logger.getLogger(getClass());
@@ -47,17 +45,37 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private static final String LEDGER_QUERY = "select distinct HOSTACCOUNT, BRANCHCOUNTRY, BRANCHPROVINCE from ACCOUNTMAPPING, RMTBRANCHES";
 	private Map<String, TrailBalance> dataMap = null;
 
+	String HKONT;
+	String BLART;
+	String PRCTR;
+	String KOSTL;
+	String BUKRS;
+	String BUPLA;
+	String UMSKZ;
+	String GSBER;
+	String APP_DFT_CURR;
+	String SAPGL_TBR_COMPANY;
+	int SAPGL_TRAN_RECORD_COUNT;
+
 	@Override
 	public void generateReport(Object... params) throws Exception {
 		this.userId = (long) params[0];
 		try {
-			prepareGLDates();
+
+			initializeParameters();
+
+			prepareTrailbalanceDate();
 
 			clearTables();
+
 			createHeader();
+
 			prepareLedgerAccounts();
+
 			prepareTrailBalace();
+
 			prepareTransactionDetails();
+
 			prepareTransactionSummary();
 
 			TransactionStatus txnStatus = transManager.getTransaction(transDef);
@@ -65,7 +83,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				clearPreviousMonthTrailBalace();
 				saveCurrentMonthTrailBalace();
 				prepareDtatForFile();
-				updateGLDates();
 				transManager.commit(txnStatus);
 			} catch (Exception e) {
 				transManager.rollback(txnStatus);
@@ -103,13 +120,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("BLDAT", monthEndDate);
-		paramMap.addValue("BLART", getSMTParameter("BLART", String.class));
-		paramMap.addValue("BUKRS", getSMTParameter("BUKRS", String.class));
+		paramMap.addValue("BLART", BLART);
+		paramMap.addValue("BUKRS", BUKRS);
 		paramMap.addValue("BUDAT", monthEndDate);
 		paramMap.addValue("MONAT", getFinancialMonth());
-		paramMap.addValue("APP_DFT_CURR", getSMTParameter("APP_DFT_CURR", String.class));
-		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
-		paramMap.addValue("BKTXT", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF"));
+		paramMap.addValue("APP_DFT_CURR", APP_DFT_CURR);
+		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF"));
+		paramMap.addValue("BKTXT", StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF"));
 
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
@@ -120,12 +137,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	}
 
 	private Map<String, TrailBalance> prepareLedgerAccounts() throws Exception {
-		String umskz = (String) getSMTParameter("UMSKZ", String.class);
-		String businessArea = (String) getSMTParameter("GSBER", String.class);
-		String businessUnit = (String) getSMTParameter("BUPLA", String.class);
-		String narration1 = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF");
-		String narration2 = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM YY") + " - PLF");
-
 		return namedJdbcTemplate.query(LEDGER_QUERY, new MapSqlParameterSource(),
 				new ResultSetExtractor<Map<String, TrailBalance>>() {
 
@@ -144,12 +155,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 							trailBalance.setOpeningBalanceType("Cr");
 							trailBalance.setDebitAmount(BigDecimal.ZERO);
 							trailBalance.setCreditAmount(BigDecimal.ZERO);
-
-							trailBalance.setBusinessArea(businessArea);
-							trailBalance.setBusinessUnit(businessUnit);
-							trailBalance.setUmskz(umskz);
-							trailBalance.setNarration1(narration1);
-							trailBalance.setNarration2(narration2);
 
 							dataMap.put(trailBalance.getLedgerAccount().concat("-").concat(trailBalance.getStateCode()),
 									trailBalance);
@@ -559,8 +564,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		createNextId();
 		createFileName();
 
-		currency = (String) getSMTParameter("APP_DFT_CURR", String.class);
-		companyName = (String) getSMTParameter("SAPGL_TBR_COMPANY", String.class);
 		reportName = "Consolidated Trial Balance - Ledger A/C wise";
 
 		MapSqlParameterSource paramMap;
@@ -578,11 +581,11 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ID", headerId);
 		paramMap.addValue("FILENAME", fileName);
-		paramMap.addValue("COMPANYNAME", getSMTParameter("SAPGL_TBR_COMPANY", String.class));
+		paramMap.addValue("COMPANYNAME", SAPGL_TBR_COMPANY);
 		paramMap.addValue("REPORTNAME", "Trial Balance Report");
 		paramMap.addValue("STARTDATE", monthStartDate);
 		paramMap.addValue("ENDDATE", monthEndDate);
-		paramMap.addValue("CURRENCY", getSMTParameter("APP_DFT_CURR", String.class));
+		paramMap.addValue("CURRENCY", APP_DFT_CURR);
 
 		try {
 			namedJdbcTemplate.update(sql.toString(), paramMap);
@@ -670,14 +673,12 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void prepareTransactionDetails() throws Exception {
 		int totalTransactions = extractTransactionsData();
-		int pageSize = (Integer) getSMTParameter("SAPGL_TRAN_RECORD_COUNT", Integer.class);
+		int pageSize = SAPGL_TRAN_RECORD_COUNT;
 
 		int pages = totalTransactions / pageSize;
 		if (pages == 0) {
 			pages = 1;
 		}
-
-		int summaryRecordId = totalTransactions;
 
 		int fromRange = 1;
 		int toRange = pageSize;
@@ -685,16 +686,15 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		int mainRecords = 0;
 		boolean pagesInserted = false;
 		for (int page = 1; page <= pages; page++) {
-			++summaryRecordId;
 			pageItr = page;
 			mainRecords = mainRecords + saveGLTranactions(fromRange, toRange);
 			pagesInserted = true;
 			fromRange = toRange + 1;
 			toRange = toRange + pageSize;
-			update(pageItr, fromRange, toRange);
+			update(pageItr);
 
 			if (pagesInserted) {
-				saveGLSummary(pageItr, summaryRecordId);
+				saveGLSummary(pageItr);
 				pagesInserted = false;
 			}
 		}
@@ -702,16 +702,18 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		if (totalTransactions > mainRecords) {
 			mainRecords = mainRecords + saveGLTranactions(fromRange, toRange);
 			pagesInserted = true;
-			update(pageItr, fromRange, toRange);
+			fromRange = toRange + 1;
+			toRange = toRange + pageSize;
+			pageItr = pageItr + 1;
+			update(pageItr);
 		}
 
 		if (pagesInserted) {
-			++summaryRecordId;
-			saveGLSummary(pageItr, summaryRecordId);
+			saveGLSummary(pageItr);
 		}
 	}
 
-	private void saveGLSummary(int pageItr, int summaryRecordId) throws Exception {
+	private void saveGLSummary(int pageItr) throws Exception {
 		Map<Integer, BigDecimal> map = getSummaryAmounts(pageItr);
 
 		BigDecimal summaryAmount = BigDecimal.ZERO;
@@ -726,7 +728,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			creditAmount = map.get(50);
 		}
 
-		summaryAmount = creditAmount.subtract(debitAmount);
+		summaryAmount = debitAmount.subtract(creditAmount);
 
 		String BSCHL = "";
 		BigDecimal WRBTR = summaryAmount;
@@ -740,29 +742,44 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		MapSqlParameterSource parameterSource;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT");
-		sql.append(" :ID,");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT(LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER,");
+		sql.append(" BUPLA, KOSTL, PRCTR, ZUONR, SGTXT) SELECT");
 		sql.append(" :LINK,");
 		sql.append(" :BSCHL,");
-		sql.append(" HKONT,");
-		sql.append(" UMSKZ,");
+		sql.append(" :HKONT,");
+		sql.append(" :UMSKZ,");
 		sql.append(" :WRBTR,");
-		sql.append(" GSBER,");
-		sql.append(" BUPLA,");
-		sql.append(" KOSTL,");
-		sql.append(" PRCTR,");
+		sql.append(" :GSBER,");
+		sql.append(" :BUPLA,");
+		sql.append(" :KOSTL,");
+		sql.append(" :PRCTR,");
 		sql.append(" ZUONR,");
 		sql.append(" SGTXT");
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
 
 		parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("ID", summaryRecordId);
 		parameterSource.addValue("LINK", pageItr);
 		parameterSource.addValue("BSCHL", BSCHL);
+		parameterSource.addValue("HKONT", HKONT);
+		parameterSource.addValue("UMSKZ", UMSKZ);
 		parameterSource.addValue("WRBTR", WRBTR);
+		parameterSource.addValue("GSBER", GSBER);
+		parameterSource.addValue("BUPLA", BUPLA);
+		parameterSource.addValue("KOSTL", KOSTL);
+		parameterSource.addValue("PRCTR", PRCTR);
 		parameterSource.addValue("ROWNUM", 1);
 
 		try {
+			namedJdbcTemplate.update(sql.toString(), parameterSource);
+
+			if ("40".equals(BSCHL)) {
+				BSCHL = "50";
+			} else {
+				BSCHL = "40";
+			}
+			parameterSource.addValue("BSCHL", BSCHL);
+			parameterSource.addValue("LINK", pageItr + 1);
+
 			namedJdbcTemplate.update(sql.toString(), parameterSource);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -774,7 +791,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BSCHL, COALESCE(SUM(WRBTR), 0) WRBTR FROM TRANSACTION_DETAIL_REPORT");
+		sql.append(" SELECT BSCHL, SUM(WRBTR) WRBTR FROM TRANSACTION_DETAIL_REPORT");
 		sql.append(" WHERE LINK = ? GROUP BY BSCHL");
 
 		jdbcTemplate.query(sql.toString(), new Object[] { pageItr }, new RowCallbackHandler() {
@@ -799,6 +816,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private int extractTransactionsData() throws Exception {
 		logger.info("Extracting the GL Transaction Details..");
 
+		String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
+		String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
+
 		int rowNum = 0;
 		List<TrailBalance> list = new ArrayList<>();
 
@@ -807,6 +827,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
 			entry.getValue().setRowNumber(++rowNum);
+
+			/* LINK */
 			entry.getValue().setLink(0);
 
 			entry.getValue().setTransactionAmount(
@@ -820,21 +842,26 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				entry.getValue().setTransactionAmountType("50");
 			}
 
-			// set cost and profit center details
+			// KOSTL && PRCTR cost and profit center details
 			TrailBalance trailBalance = ledgers.get(entry.getKey().split("-")[0]);
-			if (StringUtils.trimToNull(trailBalance.getProfitCenter()) != null) {
-				entry.getValue().setProfitCenter(trailBalance.getProfitCenter());
+			entry.getValue().setProfitCenter(trailBalance.getProfitCenter());
+
+			if (trailBalance.getProfitCenter() == null) {
+				entry.getValue().setProfitCenter(PRCTR);
 			}
 
-			if (StringUtils.trimToNull(trailBalance.getCostCenter()) != null) {
-				entry.getValue().setCostCenter(trailBalance.getCostCenter());
+			entry.getValue().setBusinessArea(states.get(entry.getKey().split("-")[1]));
+			if (trailBalance.getBusinessArea() == null) {
+				entry.getValue().setProfitCenter(GSBER);
 			}
 
-			// set business area
-			String businessArea = states.get(entry.getKey().split("-")[1]);
-			if (businessArea != null) {
-				entry.getValue().setBusinessArea(businessArea);
-			}
+			entry.getValue().setUmskz(UMSKZ);
+			entry.getValue().setBusinessArea(GSBER);
+			entry.getValue().setBusinessUnit(BUPLA);
+
+			entry.getValue().setCostCenter(KOSTL);
+			entry.getValue().setNarration1(ZUONR);
+			entry.getValue().setNarration2(SGTXT);
 
 			// Saving transaction details
 			list.add(entry.getValue());
@@ -843,7 +870,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				saveTransactionDetails(list);
 				list.clear();
 			}
-
 		}
 
 		if (!list.isEmpty()) {
@@ -853,15 +879,19 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return rowNum;
 	}
 
-	private void prepareGLDates() throws Exception {
-		logger.info("Preparing GL Dates..");
-		int year = (Integer) getSMTParameter("SAPGL_LAST_RUN_YEAR", Integer.class);
-		int month = (Integer) getSMTParameter("SAPGL_LAST_RUN_MONTH", Integer.class);
+	private void prepareTrailbalanceDate() throws Exception {
+		logger.info("Preparing Trailbalance Date..");
+		Date lastRunDate = getLastRunDate();
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
-		calendar.set(Calendar.MONTH, month);
-		calendar.set(Calendar.YEAR, year);
+
+		/*
+		 * Since the first month of the year in the Gregorian and Julian calendars is JANUARY which is 0 so that we no
+		 * need to add one month implicitly
+		 */
+		calendar.set(Calendar.MONTH, DateUtil.getMonth(lastRunDate));
+		calendar.set(Calendar.YEAR, DateUtil.getYear(lastRunDate));
 		glDate = calendar.getTime();
 
 		monthStartDate = DateUtil.getMonthStart(glDate);
@@ -870,13 +900,107 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		valueDate = getValueDate();
 	}
 
+	private Date getLastRunDate() throws Exception {
+		String query = null;
+		Date date = null;
+
+		try {
+			query = "select STARTDATE from TRAIL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRAIL_BALANCE_HEADER)";
+			date = jdbcTemplate.queryForObject(query, Date.class);
+			return date;
+		} catch (Exception e) {
+
+		}
+
+		// To Handle Day 0
+		try {
+			query = "select MIN(POSTDATE) from POSTINGS";
+			date = jdbcTemplate.queryForObject(query, Date.class);
+			date = DateUtil.addMonths(date, -1);
+			return date;
+		} catch (Exception e) {
+
+		}
+
+		date = getAppDate();
+
+		date = DateUtil.addMonths(date, -1);
+
+		return date;
+
+	}
+
+	/**
+	 * This method will initialize the all the required system parameters;
+	 * 
+	 * @throws Exception
+	 */
+	private void initializeParameters() throws Exception {
+		logger.debug("Initializing parameters....");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select ");
+		sql.append(" (SELECT SYSPARMVALUE HKONT FROM SMTPARAMETERS where SYSPARMCODE = :HKONT) HKONT,");
+		sql.append(" (SELECT SYSPARMVALUE BLART FROM SMTPARAMETERS where SYSPARMCODE = :BLART) BLART,");
+		sql.append(" (SELECT SYSPARMVALUE BUKRS FROM SMTPARAMETERS where SYSPARMCODE = :BUKRS) BUKRS,");
+		sql.append(" (SELECT SYSPARMVALUE BUPLA FROM SMTPARAMETERS where SYSPARMCODE = :BUPLA) BUPLA,");
+		sql.append(" (SELECT SYSPARMVALUE UMSKZ FROM SMTPARAMETERS where SYSPARMCODE = :UMSKZ) UMSKZ,");
+		sql.append(" (SELECT SYSPARMVALUE GSBER FROM SMTPARAMETERS where SYSPARMCODE = :GSBER) GSBER,");
+		sql.append(" (SELECT SYSPARMVALUE PRCTR FROM SMTPARAMETERS where SYSPARMCODE = :PRCTR) PRCTR,");
+		sql.append(" (SELECT SYSPARMVALUE KOSTL FROM SMTPARAMETERS where SYSPARMCODE = :KOSTL) KOSTL,");
+		sql.append(
+				" (SELECT SYSPARMVALUE APP_DFT_CURR FROM SMTPARAMETERS where SYSPARMCODE = :DFT_CURR) APP_DFT_CURR,");
+		sql.append(
+				" (SELECT SYSPARMVALUE SAPGL_TBR_COMPANY FROM SMTPARAMETERS where SYSPARMCODE = :COMPANY) SAPGL_TBR_COMPANY,");
+		sql.append(
+				" (SELECT SYSPARMVALUE SAPGL_TRAN_RECORD_COUNT FROM SMTPARAMETERS where SYSPARMCODE = :COUNT) SAPGL_TRAN_RECORD_COUNT");
+		sql.append(" from SMTPARAMETERS where SYSPARMCODE=:HKONT");
+
+		paramMap.addValue("HKONT", "HKONT");
+		paramMap.addValue("BLART", "BLART");
+		paramMap.addValue("BUKRS", "BUKRS");
+		paramMap.addValue("BUPLA", "BUPLA");
+		paramMap.addValue("UMSKZ", "UMSKZ");
+		paramMap.addValue("GSBER", "GSBER");
+		paramMap.addValue("PRCTR", "PRCTR");
+		paramMap.addValue("KOSTL", "KOSTL");
+		paramMap.addValue("DFT_CURR", "APP_DFT_CURR");
+		paramMap.addValue("COMPANY", "SAPGL_TBR_COMPANY");
+		paramMap.addValue("COUNT", "SAPGL_TRAN_RECORD_COUNT");
+
+		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				HKONT = rs.getString("HKONT");
+				BLART = rs.getString("BLART");
+				BUKRS = rs.getString("BUKRS");
+				BUPLA = rs.getString("BUPLA");
+				UMSKZ = rs.getString("UMSKZ");
+				GSBER = rs.getString("GSBER");
+				PRCTR = rs.getString("PRCTR");
+				KOSTL = rs.getString("KOSTL");
+				APP_DFT_CURR = rs.getString("APP_DFT_CURR");
+				SAPGL_TBR_COMPANY = rs.getString("SAPGL_TBR_COMPANY");
+				SAPGL_TRAN_RECORD_COUNT = rs.getInt("SAPGL_TRAN_RECORD_COUNT");
+			}
+		});
+
+	}
+
 	private int saveGLTranactions(int fromRange, int toRange) {
 		MapSqlParameterSource parameterSource;
 
 		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT (LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA,");
+		sql.append(" KOSTL, PRCTR, ZUONR, SGTXT)");
+		sql.append(" SELECT LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP  WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
 
-		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT * FROM  TRANSACTION_DETAIL_REPORT_TEMP");
-		sql.append(" WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
+		/*
+		 * sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT * FROM  TRANSACTION_DETAIL_REPORT_TEMP");
+		 * sql.append(" WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
+		 */
 
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("FROM_RANGE", fromRange);
@@ -890,7 +1014,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return 0;
 	}
 
-	private void update(int page, int fromRange, int toRange) {
+	private void update(int page) {
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
@@ -1044,11 +1168,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
 
-	}
-
-	private void updateGLDates() throws Exception {
-		updateParameter("SAPGL_LAST_RUN_YEAR", DateUtil.getYear(monthEndDate));
-		updateParameter("SAPGL_LAST_RUN_MONTH", DateUtil.getMonth(monthEndDate));
 	}
 
 	public class GenerateTransactionReport implements Runnable {
