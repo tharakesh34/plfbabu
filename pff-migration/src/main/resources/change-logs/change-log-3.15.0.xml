@@ -14333,6 +14333,14 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="700.2" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_config set filenameformat = '${yyyyMMdd}'
+			where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE');
+			]]>
+		</sql>
+	</changeSet>
 	<changeSet author="Amit" id="701">
 		<dropPrimaryKey tableName="GCDCUSTOMERS"
 			constraintName="PK_GCDCUSTOMERS" />
