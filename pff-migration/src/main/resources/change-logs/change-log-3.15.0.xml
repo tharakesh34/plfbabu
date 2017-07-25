@@ -14627,4 +14627,9 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
   	</addColumn>
    
   </changeSet>
+  <changeSet id="713" author="Chaitanya.ch">
+  	<sql>
+  		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 		'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+  	</sql>
+  </changeSet>
 </databaseChangeLog>
