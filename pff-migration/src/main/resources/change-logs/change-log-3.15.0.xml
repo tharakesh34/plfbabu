@@ -14254,4 +14254,17 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid='2';
     </sql>
     </changeSet>
+
+	<changeSet id="695" author="Durgaprasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_LAST_RUN_YEAR';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_LAST_RUN_MONTH';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_CODE';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'HKONT';
+			INSERT INTO SMTPARAMETERS VALUES ('HKONT', 'SAP GL Code for additional
+			transaction', 'String', 1, '90000003', '30', 0, NULL, NULL, 'SAP GL
+			Code for additional transaction',1,1000, CURRENT_TIMESTAMP,
+			'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
