@@ -14579,7 +14579,18 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 	<changeSet id="710" author="Durgaprasad.g">
 		<dropTable tableName="POSTINGS_TAXDOWNLOAD" />
 	</changeSet>
-	
+	<changeSet id="705" author="Chaitanya.ch">
+  	<addColumn tableName="Postings">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
+  <changeSet id="706" author="Chaitanya.ch">
+  	<addColumn tableName="Postings_Temp">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
 	<changeSet id="711" author="Durgaprasad.g">
 	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
 	   SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
@@ -14615,26 +14626,16 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			constraintName="PK_GCDCUSTOMERS_TEST" />
 	</changeSet>
 	
-	<changeSet id="705" author="Chaitanya.ch">
-  	<addColumn tableName="Postings">
-  		<column name="OldLinkedTranID" type="bigint"></column>
-  	</addColumn>
-   
-  </changeSet>
-  <changeSet id="706" author="Chaitanya.ch">
-  	<addColumn tableName="Postings_Temp">
-  		<column name="OldLinkedTranID" type="bigint"></column>
-  	</addColumn>
-   
-  </changeSet>
+	
   <changeSet id="713" author="Chaitanya.ch">
   	<sql>
+  	    DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE';
   		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
   	</sql>
   </changeSet>
  <changeSet id="714" author="Chaitanya.ch">
   	<sql>
-  		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE'
+  		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE';
   		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
   	</sql>
   </changeSet>
