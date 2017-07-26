@@ -14709,5 +14709,23 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
   <changeSet id="721" author="Manoj">
 		<dropTable tableName="Posidex_Customer_Loans"/>
 </changeSet>
+
+<changeSet id="722" author="Manoj">
+	<createTable tableName="Posidex_CustomerLoans">
+		<column name="Cust_Id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="Fin_Reference" type="varchar(20)" />
+		<column name="Customer_Type" type="varchar(20)" />
+		<column name="Extracted_On" type="datetime" />
+	</createTable>
+</changeSet>
+
+
+<changeSet id="723" author="Manoj.P">
+	<addForeignKeyConstraint constraintName="FK_PCL_CID"
+		referencedTableName="Posidex_Customers" referencedColumnNames="Cust_Id"
+		baseTableName="Posidex_CustomerLoans" baseColumnNames="Cust_Id" />
+</changeSet>
   
 </databaseChangeLog>
