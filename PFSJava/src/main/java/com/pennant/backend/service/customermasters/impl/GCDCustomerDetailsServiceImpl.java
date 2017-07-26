@@ -49,9 +49,10 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 	private GcdCustomer preparegcdCustomer(CustomerDetails customerDetails, GcdCustomer gcdCustomer) {
 		Customer customer = customerDetails.getCustomer();
 
+		gcdCustomer.setCustId(customer.getCustID());
 		gcdCustomer.setFinCustId(customer.getCustCoreBank());
 		gcdCustomer.setCustomerName(customer.getCustShrtName());
-		gcdCustomer.setConstId(customer.getCustID());
+		gcdCustomer.setConstId(Long.valueOf(customer.getCustTypeCode()));
 		gcdCustomer.setIndustryId(Long.parseLong(customer.getCustIndustry()));
 
 		if ("RETAIL".equalsIgnoreCase(customer.getCustCtgCode())) {
