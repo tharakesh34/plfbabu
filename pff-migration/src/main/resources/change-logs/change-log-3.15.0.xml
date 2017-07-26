@@ -14740,5 +14740,12 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
 	</sql>
 
 </changeSet>
-  
+<changeSet id="Irfan" author="726">
+	<sql>
+		update CUSTOMERBANKINFO_Temp set accounttype = 'SA' where ACCOUNTTYPE = 'OD';
+		update Mandates set accType = '10' where accType = '13';
+		update Mandates_Temp set accType = '10' where accType = '13';
+	</sql>
+
+</changeSet>  
 </databaseChangeLog>
