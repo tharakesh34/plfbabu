@@ -372,7 +372,8 @@ public class LimitServiceController {
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setLastMntOn(new Timestamp(new Date().getTime()));
 				detail.setUserDetails(userDetails);
-				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), 
+						CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
 			}
 		}
 
@@ -401,9 +402,6 @@ public class LimitServiceController {
 				}
 
 				prvLimitHeader.setActive(limitHeader.isActive());
-				if (limitHeader.isActive()) {
-					// prvLimitHeader.setRe
-				}
 
 				prvLimitHeader.setNewRecord(false);
 				prvLimitHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -438,10 +436,23 @@ public class LimitServiceController {
 						}
 					}
 				}
+				for (LimitDetails detail : limitHeader.getCustomerLimitDetailsList()) {
+					for(LimitDetails prvDetail : prvLimitHeader.getCustomerLimitDetailsList()) {
+						if(detail.getLimitStructureDetailsID() == prvDetail.getLimitStructureDetailsID()) {
+							prvDetail.setLastMntBy(userDetails.getLoginUsrID());
+							prvDetail.setNewRecord(false);
+							prvDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+							prvDetail.setLastMntOn(new Timestamp(new Date().getTime()));
+							prvDetail.setUserDetails(userDetails);
+							prvDetail.setLimitCheck(detail.isLimitCheck());
+							prvDetail.setVersion(prvDetail.getVersion() + 1);
+							prvDetail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), 
+									CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+						}
+					}
+				}
 			}
 
-			// reset limit header object in case of update
-			prvLimitHeader.setCustomerLimitDetailsList(limitHeader.getCustomerLimitDetailsList());
 			limitHeader = prvLimitHeader;
 			auditHeader.getAuditDetail().setModelData(prvLimitHeader);
 		}
