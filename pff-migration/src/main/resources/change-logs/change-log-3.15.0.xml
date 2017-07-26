@@ -14727,5 +14727,10 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
 		referencedTableName="Posidex_Customers" referencedColumnNames="Cust_Id"
 		baseTableName="Posidex_CustomerLoans" baseColumnNames="Cust_Id" />
 </changeSet>
+
+<changeSet author="Manoj.P" id="724">
+		<renameTable newTableName="Posidex_Customer_Loans"
+			oldTableName="Posidex_CustomerLoans" />
+</changeSet>
   
 </databaseChangeLog>
