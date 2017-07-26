@@ -103,7 +103,7 @@
 									<hbox id="hlayout_HostFeeTypeCode"
 										visible="true">
 										<space
-											id="space_HostFeeTypeCode" spacing="2px" />
+											id="space_HostFeeTypeCode" spacing="2px" sclass="mandatory"/>
 										<textbox id="hostFeeTypeCode"
 											width="200px" maxlength="50" />
 									</hbox>

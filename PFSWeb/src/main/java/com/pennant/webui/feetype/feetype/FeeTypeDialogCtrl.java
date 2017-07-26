@@ -593,7 +593,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//Description
 		if (!this.hostFeeTypeCode.isReadonly()) {
 			this.hostFeeTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, false));
+					.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 		if (!this.accountingSetID.isReadonly()) {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels
