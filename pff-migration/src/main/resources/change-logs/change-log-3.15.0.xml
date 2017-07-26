@@ -14900,4 +14900,60 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="734" author="Durgaprasad G">
+	<createTable tableName="POSTINGS_TAXDOWNLOAD">
+		<column name="LINKEDTRANID" type="NUMBER(19)">
+			<constraints nullable="false" />
+		</column>
+		<column name="POSTREF" type="VARCHAR(50)" />
+		<column name="POSTINGID" type="VARCHAR(50)" />
+		<column name="FINREFERENCE" type="VARCHAR(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="FINEVENT" type="VARCHAR(20) ">
+			<constraints nullable="false" />
+		</column>
+		<column name="SHADOWPOSTING" type="CHAR(1)" />
+		<column name="POSTDATE" type="datetime"/>
+		<column name="VALUEDATE" type="datetime"/>
+		<column name="TRANCODE" type="VARCHAR(20)" />
+		<column name="TRANDESC" type="VARCHAR(50)" />
+		<column name="REVTRANCODE" type="VARCHAR(20)" />
+		<column name="DRORCR" type="CHAR(1)" />
+		<column name="ACCOUNT" type="VARCHAR(50)" />
+		<column name="POSTAMOUNT" type="NUMBER(18)" />
+		<column name="AMOUNTTYPE" type="VARCHAR(10)" />
+		<column name="POSTSTATUS" type="VARCHAR(20)" />
+		<column name="ERRORID" type="VARCHAR(8)" />
+		<column name="ERRORMSG" type="VARCHAR(50)" />
+		<column name="ACCCY" type="VARCHAR(3)" />
+		<column name="TRANORDERID" type="VARCHAR(20)" />
+		<column name="FINRUNNINGBAL" type="NUMBER(18)" />
+		<column name="POSTTOSYS" type="CHAR(1)" />
+		<column name="EXCHANGERATE" type="NUMBER(13,9)" />
+		<column name="POSTBRANCH" type="VARCHAR(12)" />
+		<column name="DERIVEDTRANORDER" type="NUMBER(10)" />
+		<column name="TRANSORDER" type="NUMBER(10)" />
+		<column name="POSTAMOUNTLCCCY" type="NUMBER(18)" />
+		<column name="APPDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="APPVALUEDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="USERBRANCH" type="VARCHAR(12)" />
+		<column name="CUSTAPPDATE" type="datetime" />
+		<column name="POSTCATEGORY" type="NUMBER(10)" />
+		<column name="ACCOUNTTYPE" type="VARCHAR(15)" />
+		<column name="OLDLINKEDTRANID" type="NUMBER(19) " />
+	</createTable>
+</changeSet>
+
+<changeSet id="735" author="Durgaprasad G">
+	<sql>
+	UPDATE RMTACCOUNTTYPES SET EXTRACTIONTYPE = 'TRN' WHERE TAXAPPLICABLE = '1'; 
+	UPDATE POSTINGS SET OLDLINKEDTRANID = 0 WHERE OLDLINKEDTRANID IS NULL;
+	</sql>
+</changeSet>
 </databaseChangeLog>
