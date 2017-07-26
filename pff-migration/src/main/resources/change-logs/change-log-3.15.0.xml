@@ -14872,4 +14872,10 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
 	                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
 	   </createView>
 	 </changeSet>
+	 	 <changeSet id="732" author="pruthvi">
+	 	 <sql>
+	 update reportfilterfields set mandatory=0
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PayoffDeals') and fieldid='1';
+</sql>
+</changeSet>
 </databaseChangeLog>
