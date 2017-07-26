@@ -14701,4 +14701,9 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
 		<column name="Fin_Reference" type="varchar(20)" />
 	</createTable>
 </changeSet>
+
+ <changeSet id="720" author="Durgaprasad G">
+   <modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
+  </changeSet>
+  
 </databaseChangeLog>
