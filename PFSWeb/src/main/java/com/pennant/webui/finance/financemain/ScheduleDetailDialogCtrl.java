@@ -2336,6 +2336,20 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				setFinScheduleData(ScheduleCalculator.getAdhocEMIHoliday(getFinScheduleData()));
 			}
 			doFillScheduleList(getFinScheduleData());
+
+			// Resetting Planned Holidays after calculation
+			if (getFinanceMainDialogCtrl() != null) {
+				try {
+
+					if (financeMainDialogCtrl.getClass().getMethod("resetPlanEMIH", List.class, List.class) != null) {
+						financeMainDialogCtrl.getClass().getMethod("resetPlanEMIH", List.class, List.class)
+								.invoke(financeMainDialogCtrl, getFinScheduleData().getPlanEMIHmonths(), getFinScheduleData().getPlanEMIHDates());
+					}
+
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2386,7 +2400,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
-	protected List<Integer> getPlanEMIHMonths(){
+	public List<Integer> getPlanEMIHMonths(){
 		logger.debug("Entering");
 		
 		List<Integer> planEMIHMonths = new ArrayList<>();

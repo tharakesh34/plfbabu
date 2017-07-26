@@ -458,6 +458,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient int								oldVar_dftBpiTreatment;
 
 	protected transient int								oldVar_tenureInMonths;
+	
+	protected transient List<Integer>					oldVar_planEMIMonths;
+	protected transient List<Date>						oldVar_planEMIDates;
+
 
 	private transient String							oldVar_recordStatus;
 
@@ -2573,6 +2577,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_ProfitRate.setVisible(true);
 				this.rpyPftFrqRow.setVisible(true);
 			}
+			
+			this.oldVar_planEMIMonths = getFinanceDetail().getFinScheduleData().getPlanEMIHmonths();
+			this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
+			
 			// stores the initial data for comparing if they are changed
 			// during user action.
 			doStoreInitValues();
@@ -4041,6 +4049,23 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return;
+		}
+		
+		// After Changing Planned EMI Dates / Months Validation for Recalculated or not
+		if(getScheduleDetailDialogCtrl() != null && aFinanceMain.isPlanEMIHAlw()){
+			if(StringUtils.equals(aFinanceMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+				if (!getScheduleDetailDialogCtrl().getPlanEMIHMonths().containsAll(this.oldVar_planEMIMonths) ||
+						!this.oldVar_planEMIMonths.containsAll(getScheduleDetailDialogCtrl().getPlanEMIHMonths())) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+					return;
+				}
+			}else if(StringUtils.equals(aFinanceMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)){
+				if (!getScheduleDetailDialogCtrl().getPlanEMIHDateList().containsAll(this.oldVar_planEMIDates) ||
+						!this.oldVar_planEMIDates.containsAll(getScheduleDetailDialogCtrl().getPlanEMIHDateList())) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+					return;
+				}
+			}
 		}
 
 		isNew = aFinanceDetail.isNew();
@@ -7064,6 +7089,17 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCurrAssetValue(utilizedAmt);
 	}
+	
+	/**
+	 * Method for Resetting Data after Recalculate of Planned EMI Holidays
+	 * @param planEMIMonths
+	 * @param planEMIDates
+	 */
+	public void resetPlanEMIH(List<Integer> planEMIMonths, List<Date> planEMIDates){
+		this.oldVar_planEMIMonths = planEMIMonths;
+		this.oldVar_planEMIDates = planEMIDates;
+	}
+
 	
 	private void setComboboxSelectedItem(Combobox combobox, String selectedValue) {
 		List<Comboitem> comboitems = combobox.getItems();
