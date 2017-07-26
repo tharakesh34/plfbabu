@@ -14681,4 +14681,24 @@ update reportconfiguration set reportname='Excel:Daily Pastdues Report', reporth
 where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
 </sql>
 </changeSet>
+
+ <changeSet id="718" author="Manoj">
+	<createTable tableName="Posidex_Customers">
+		<column name="Cust_Id" type="bigint">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="Cust_No" type="varchar(20)" />
+		<column name="Cust_Type " type="varchar(8)" />
+		<column name="Extracted_On" type="datetime" />
+	</createTable>
+</changeSet>
+
+<changeSet id="719" author="Manoj">
+	<createTable tableName="Posidex_Customer_Loans">
+		<column name="Cust_Id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="Fin_Reference" type="varchar(20)" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
