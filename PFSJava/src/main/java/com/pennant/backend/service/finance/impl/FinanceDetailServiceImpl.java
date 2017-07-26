@@ -5497,7 +5497,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		getFinMandateService().validateMandate(auditDetail, financeDetail);
-		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
+		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 			getFinMandateService().promptMandate(auditDetail, financeDetail);
 		}
 
