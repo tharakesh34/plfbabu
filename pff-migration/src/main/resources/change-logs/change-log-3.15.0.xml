@@ -14706,4 +14706,8 @@ where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
    <modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
   </changeSet>
   
+  <changeSet id="721" author="Manoj">
+		<dropTable tableName="Posidex_Customer_Loans"/>
+</changeSet>
+  
 </databaseChangeLog>
