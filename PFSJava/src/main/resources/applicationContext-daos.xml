@@ -10323,6 +10323,8 @@
 		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerBajjajDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
+		<property name="finOneDatasource" ref="finOneDatasource" />
+		
 	</bean>
 	<!-- GCDCustomers END -->
 	
