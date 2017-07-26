@@ -945,4 +945,10 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtPromotions" tableName="AdtPromotions" />
 	</changeSet>
 	
+	<changeSet id="52" author="Vinay">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="RcdMaintainSts" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
