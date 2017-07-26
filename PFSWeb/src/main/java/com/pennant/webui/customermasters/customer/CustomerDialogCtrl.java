@@ -2809,7 +2809,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
 
-		/*if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
+		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
 					this.window_CustomerDialog, curLoginUser);
@@ -2819,7 +2819,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				return true;
 			}
-		}*/
+		}
 
 		logger.debug("Leaving");
 		return true;
