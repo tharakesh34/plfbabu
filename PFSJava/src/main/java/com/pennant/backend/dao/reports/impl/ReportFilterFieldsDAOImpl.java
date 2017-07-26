@@ -129,7 +129,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName," );
 		selectSql.append(" AppUtilMethodName, ModuleName, LovHiddenFieldMethod, LovTextFieldMethod, MultiSelectSearch, FieldLength," );
 		selectSql.append(" FieldMaxValue, FieldMinValue, SeqOrder, Mandatory, FieldConstraint, FieldErrorMessage," );
-		selectSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter," );
+		selectSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter,FilterFileds," );
 		if(type.contains("View")){
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
@@ -169,7 +169,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName," );
 		selectSql.append(" AppUtilMethodName, ModuleName, LovHiddenFieldMethod, LovTextFieldMethod, MultiSelectSearch, FieldLength," );
 		selectSql.append(" FieldMaxValue, FieldMinValue, SeqOrder, Mandatory, FieldConstraint, FieldErrorMessage," );
-		selectSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter," );
+		selectSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter, FilterFileds," );
 		if(type.contains("View")){
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
@@ -177,6 +177,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		selectSql.append(" FROM  ReportFilterFields");
 		selectSql.append(StringUtils.trimToEmpty(type) );
 		selectSql.append("  Where ReportID =:ReportID ");
+		selectSql.append(" order by SeqOrder ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportFilterFields);
@@ -273,13 +274,13 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		insertSql.append(" (ReportID, FieldID, FieldName, FieldType, FieldLabel, FieldDBName,");
 		insertSql.append(" AppUtilMethodName, ModuleName, LovHiddenFieldMethod, LovTextFieldMethod, MultiSelectSearch, FieldLength," );
 		insertSql.append(" FieldMaxValue, FieldMinValue, SeqOrder, Mandatory, FieldConstraint, FieldErrorMessage," );
-		insertSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter," );
+		insertSql.append(" WhereCondition, StaticValue, FieldWidth, FilterRequired, DefaultFilter, FilterFileds," );
 		insertSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
 		insertSql.append(" Values( :ReportID, :FieldID, :FieldName, :FieldType, :FieldLabel, :FieldDBName,");
 		insertSql.append(" :AppUtilMethodName, :ModuleName, :LovHiddenFieldMethod, :LovTextFieldMethod, :MultiSelectSearch, :FieldLength," );
 		insertSql.append(" :FieldMaxValue, :FieldMinValue, :SeqOrder, :Mandatory, :FieldConstraint, :FieldErrorMessage," );
-		insertSql.append(" :WhereCondition, :StaticValue, :FieldWidth, :FilterRequired, :DefaultFilter," );
+		insertSql.append(" :WhereCondition, :StaticValue, :FieldWidth, :FilterRequired, :DefaultFilter, :FilterFileds," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -317,7 +318,7 @@ public class ReportFilterFieldsDAOImpl extends BasisNextidDaoImpl<ReportFilterFi
 		updateSql.append(" FieldMinValue = :FieldMinValue, SeqOrder = :SeqOrder, Mandatory = :Mandatory," );
 		updateSql.append(" FieldConstraint = :FieldConstraint, FieldErrorMessage = :FieldErrorMessage,");
 		updateSql.append(" WhereCondition = :WhereCondition, StaticValue = :StaticValue, FieldWidth = :FieldWidth," );
-		updateSql.append(" FilterRequired = :FilterRequired, DefaultFilter = :DefaultFilter," );
+		updateSql.append(" FilterRequired = :FilterRequired, DefaultFilter = :DefaultFilter, FilterFileds =:FilterFileds," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

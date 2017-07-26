@@ -133,7 +133,7 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		setItemRender(new ReportConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_ReportConfigurationList_NewReportConfiguration, "button_ReportConfigurationList_NewReportConfiguration", true);
+		//registerButton(button_ReportConfigurationList_NewReportConfiguration, "button_ReportConfigurationList_NewReportConfiguration", true);
 		registerButton(button_ReportConfigurationList_ReportConfigurationSearch);
 
 		registerField("REPORTID", SortOrder.ASC);
