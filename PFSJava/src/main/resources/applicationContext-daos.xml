@@ -2586,6 +2586,7 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />
+		<property name="gCDCustomerService" ref="gCDCustomerService" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
