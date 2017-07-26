@@ -246,20 +246,20 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			updateFailStatus(gcdCustomer.getConstId()); // updating failure flag
+			updateFailStatus(gcdCustomer); // updating failure flag
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void updateFailStatus(long constId) {
+	public void updateFailStatus(GcdCustomer gcdCustomer) {
+
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("UPDATE GCDCUSTOMERS SET IsSuccess = 0");
 		updateSql.append(" Where custId =:custId");
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("ConstId", constId);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), parameterSource);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

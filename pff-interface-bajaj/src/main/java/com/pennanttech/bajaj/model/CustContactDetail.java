@@ -1,12 +1,19 @@
 package com.pennanttech.bajaj.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CustContactDetail {
+	
+	@XmlElement
 	private String phoneType;
+	@XmlElement
 	private String stdCode;
+	@XmlElement
 	private String phoneNumber;
+	
 	public String getPhoneType() {
 		return phoneType;
 	}

@@ -51,7 +51,7 @@ public class CustomerDedupService extends BajajService {
 			customerResponse = prepareResponse(response);
 			logger.warn("response-->" + response);
 		} catch (Exception exception) {
-			logger.error("Error from Dedup Response : " + exception.getMessage(), exception);
+			logger.error("Exception: ", exception);
 			throw exception;
 		}
 		return customerResponse;
@@ -245,6 +245,7 @@ public class CustomerDedupService extends BajajService {
 		logger.debug(" Dedupe Response Code : " + customerResponse.getErrorCode());
 		logger.debug(" Dedupe Response Desc: " + customerResponse.getErrorDesc());
 		return customerResponse;
+
 	}
 
 	private DedupCustomerDetail prepareCustomerDetail(DemographicDetail detail) {

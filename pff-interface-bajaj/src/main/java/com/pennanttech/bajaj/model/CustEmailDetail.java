@@ -1,14 +1,10 @@
 package com.pennanttech.bajaj.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-@JsonPropertyOrder({ "appscore", "appscoreDP" })
-@JsonSerialize
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CustEmailDetail {
 
 	@XmlElement

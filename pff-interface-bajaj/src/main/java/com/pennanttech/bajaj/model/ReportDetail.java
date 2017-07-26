@@ -1,27 +1,28 @@
 package com.pennanttech.bajaj.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-@JsonPropertyOrder({"FILLER_STRING_1","FILLER_STRING_2","FILLER_STRING_3","FILLER_STRING_4",
-	"FILLER_STRING_5","FILLER_STRING_6","FILLER_STRING_7"})
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlAccessorType(XmlAccessType.NONE)
 public class ReportDetail {
-	@JsonProperty("FILLER_STRING_1")
+	@XmlElement(name = "FILLER_STRING_1")
 	private String filler1;
-	@JsonProperty("FILLER_STRING_2")
+	@XmlElement(name = "FILLER_STRING_2")
 	private String filler2;
-	@JsonProperty("FILLER_STRING_3")
+	@XmlElement(name = "FILLER_STRING_3")
 	private String filler3;
-	@JsonProperty("FILLER_STRING_4")
+	@XmlElement(name = "FILLER_STRING_4")
 	private String filler4;
-	@JsonProperty("FILLER_STRING_5")
+	@XmlElement(name = "FILLER_STRING_5")
 	private String filler5;
-	@JsonProperty("FILLER_STRING_6")
+	@XmlElement(name = "FILLER_STRING_6")
 	private String filler6;
-	@JsonProperty("FILLER_STRING_7")
+	@XmlElement(name = "FILLER_STRING_7")
 	private String filler7;
+	@XmlElement(name = "RejectDate")
+	private String rejectDate;
+	
 	public String getFiller1() {
 		return filler1;
 	}
@@ -63,6 +64,12 @@ public class ReportDetail {
 	}
 	public void setFiller7(String filler7) {
 		this.filler7 = filler7;
+	}
+	public String getRejectDate() {
+		return rejectDate;
+	}
+	public void setRejectDate(String rejectDate) {
+		this.rejectDate = rejectDate;
 	}
 	@Override
 	public String toString() {

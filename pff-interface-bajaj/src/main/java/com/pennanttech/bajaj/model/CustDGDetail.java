@@ -1,89 +1,147 @@
 package com.pennanttech.bajaj.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-
-@JsonPropertyOrder({"Customer_ID__c","Customer_Type__c","Name","Fathers_Husband_s_Name__c","DOB__c","PAN__c","Voterid__c","Source_System"})
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlAccessorType(XmlAccessType.NONE)	
 public class CustDGDetail {
-	@JsonProperty("Customer_ID__c")
+	@XmlElement(name = "Customer_ID__c")
 	private String customerId;
-	@JsonProperty("Customer_Type__c")
+	@XmlElement(name = "Customer_Type__c")
 	private String customerType;
-	@JsonProperty("Name")
+	@XmlElement(name = "Name")
 	private String customerName;
-	@JsonProperty("Fathers_Husband_s_Name__c")
+	@XmlElement(name = "Fathers_Husband_s_Name__c")
 	private String FatherorHusbandName;
-	@JsonProperty("DOB__c")
+	@XmlElement(name = "DOB__c")
 	private String dateOfBirth;
-	@JsonProperty("PAN__c")
+	@XmlElement(name = "PAN__c")
 	private String panNumber;
-	@JsonProperty("Voterid__c")
+	@XmlElement(name = "Voterid__c")
 	private String voiterId;
-	@JsonProperty("Source_System")
+	@XmlElement(name = "Cin__c")
+	private String cinNumber;
+	@XmlElement(name = "Din__c")
+	private String dinNumber;
+	@XmlElement(name = "AadhaarNo")
+	private String aadhaarNo;
+	@XmlElement(name = "Gender_Flag")
+	private String gender;
+	@XmlElement(name = "Marital_Status_Flag")
+	private String maritalSts;
+	@XmlElement(name = "Source_System")
 	private String sourceSystem;
-	
-	
-	
+
 	public String getCustomerId() {
 		return customerId;
 	}
+
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
+
 	public String getCustomerType() {
 		return customerType;
 	}
+
 	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
 	}
+
 	public String getCustomerName() {
 		return customerName;
 	}
+
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
 	}
+
 	public String getFatherorHusbandName() {
 		return FatherorHusbandName;
 	}
+
 	public void setFatherorHusbandName(String fatherorHusbandName) {
 		FatherorHusbandName = fatherorHusbandName;
 	}
+
 	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
+
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
+
 	public String getPanNumber() {
 		return panNumber;
 	}
+
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
 	}
+
 	public String getVoiterId() {
 		return voiterId;
 	}
+
 	public void setVoiterId(String voiterId) {
 		this.voiterId = voiterId;
 	}
-	
+
 	public String getSourceSystem() {
 		return sourceSystem;
 	}
+
 	public void setSourceSystem(String sourceSystem) {
 		this.sourceSystem = sourceSystem;
 	}
-	@Override
-	public String toString() {
-		return "CustDGDetail [customerId=" + customerId + ", customerType="
-				+ customerType + ", customerName=" + customerName
-				+ ", FatherorHusbandName=" + FatherorHusbandName
-				+ ", dateOfBirth=" + dateOfBirth + ", panNumber=" + panNumber
-				+ ", voiterId=" + voiterId + "]";
+
+	public String getCinNumber() {
+		return cinNumber;
 	}
 
-	
+	public void setCinNumber(String cinNumber) {
+		this.cinNumber = cinNumber;
+	}
+
+	public String getDinNumber() {
+		return dinNumber;
+	}
+
+	public void setDinNumber(String dinNumber) {
+		this.dinNumber = dinNumber;
+	}
+
+	public String getAadhaarNo() {
+		return aadhaarNo;
+	}
+
+	public void setAadhaarNo(String aadhaarNo) {
+		this.aadhaarNo = aadhaarNo;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getMaritalSts() {
+		return maritalSts;
+	}
+
+	public void setMaritalSts(String maritalSts) {
+		this.maritalSts = maritalSts;
+	}
+
+	@Override
+	public String toString() {
+		return "CustDGDetail [customerId=" + customerId + ", customerType=" + customerType + ", customerName="
+				+ customerName + ", FatherorHusbandName=" + FatherorHusbandName + ", dateOfBirth=" + dateOfBirth
+				+ ", panNumber=" + panNumber + ", voiterId=" + voiterId + ", sourceSystem=" + sourceSystem + "]";
+	}
+
 }
