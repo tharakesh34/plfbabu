@@ -138,6 +138,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug("Entering");
 		String tranCode = "";
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		int seq= 1;
 		for (ReturnDataSet returnDataSet : returnDataSetList) {
 
 			returnDataSet.setOldLinkedTranId(returnDataSet.getLinkedTranId());
@@ -153,6 +154,8 @@ public class AccountEngineExecution implements Serializable {
 			} else {
 				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
 			}
+			returnDataSet.setTransOrder(seq);
+			seq++;
 		}
 		logger.debug("Leaving");
 	}
