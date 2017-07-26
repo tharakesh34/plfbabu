@@ -556,16 +556,16 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 			GuarantorDetail detail = new GuarantorDetail();
 			BeanUtils.copyProperties(guarantorDetail, detail);
-			
-			guarantorDetail.setRoleCode("");
-			guarantorDetail.setNextRoleCode("");
-			guarantorDetail.setTaskId("");
-			guarantorDetail.setNextTaskId("");
-			guarantorDetail.setWorkflowId(0);
-			guarantorDetail.setRecordType("");
-			
-			getGuarantorDetailDAO().save(guarantorDetail, tableType);
-			
+			if (!guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
+				guarantorDetail.setRoleCode("");
+				guarantorDetail.setNextRoleCode("");
+				guarantorDetail.setTaskId("");
+				guarantorDetail.setNextTaskId("");
+				guarantorDetail.setWorkflowId(0);
+				guarantorDetail.setRecordType("");
+
+				getGuarantorDetailDAO().save(guarantorDetail, tableType);
+			}
 			if(!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API)) {
 				getGuarantorDetailDAO().delete(guarantorDetail, "_Temp");
 			}

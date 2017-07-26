@@ -134,12 +134,14 @@ public class AccountEngineExecution implements Serializable {
 	 * 
 	 * @param returnDataSet
 	 */
-	public void getReversePostings(List<ReturnDataSet> returnDataSetList){
+	public void getReversePostings(List<ReturnDataSet> returnDataSetList, long newLinkedTranID){
 		logger.debug("Entering");
 		String tranCode = "";
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet returnDataSet : returnDataSetList) {
-			
+
+			returnDataSet.setOldLinkedTranId(returnDataSet.getLinkedTranId());
+			returnDataSet.setLinkedTranId(newLinkedTranID);
 			returnDataSet.setPostAmount(returnDataSet.getPostAmount());
 			tranCode = returnDataSet.getTranCode();
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());

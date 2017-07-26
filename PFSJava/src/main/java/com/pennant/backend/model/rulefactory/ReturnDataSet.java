@@ -80,6 +80,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String secondaryAccounts;//multiple accounts with ";" separated
 	private String finRpyFor;
 	private String userBranch;
+	private long oldLinkedTranId = 0;
 	
 	/**
 	 * Possible values 
@@ -489,6 +490,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setPostCategory(int postCategory) {
 		this.postCategory = postCategory;
+	}
+
+	public long getOldLinkedTranId() {
+		return oldLinkedTranId;
+	}
+
+	public void setOldLinkedTranId(long oldLinkedTranId) {
+		this.oldLinkedTranId = oldLinkedTranId;
 	}
 
 	

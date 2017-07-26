@@ -574,11 +574,11 @@
 		</menu>
 		<menu id="menu_Category_FinReports" rightName="menuCat_FinReports">
 			<menuItem id="menu_Item_BriefDealInformation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_BriefDealInformation" />
-			<menuItem id="menu_Item_RetailInvestment" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_RetailInvestment" />
+			<!-- <menuItem id="menu_Item_RetailInvestment" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_RetailInvestment" /> -->
 			<menuItem id="menu_Item_FinTypeInvestment" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_FinTypeInvestment" />	
-			<menuItem id="menu_Item_AdminandTakafulFee" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_AdminandTakafulFee" />
+			<!-- <menuItem id="menu_Item_AdminandTakafulFee" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_AdminandTakafulFee" /> -->
 			<!-- <menuItem id="menu_Item_RepaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_RepaymentSchedule" /> -->
-			<menuItem id="menu_Item_TakafulPremium" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulPremium" />
+			<!-- <menuItem id="menu_Item_TakafulPremium" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulPremium" /> -->
 			<menuItem id="menu_Item_FinanceBasicInformation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_FinanceBasicInformation" />
 			<menuItem id="menu_Item_DealDetail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_DealDetail"/>	
 			<menuItem id="menu_Item_TakafulMonthly" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulMonthly"/>	

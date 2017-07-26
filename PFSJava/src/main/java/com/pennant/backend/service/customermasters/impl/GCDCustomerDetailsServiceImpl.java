@@ -91,8 +91,10 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		gcdCustomer.setFinnCustId(customer.getCustCoreBank());
 		gcdCustomer.setSfdcCustomerId(customer.getCustID());
 		gcdCustomer.setBranchId(Long.parseLong(customer.getCustDftBranch()));
-		gcdCustomer.setEmiCardElig(String.valueOf(PennantApplicationUtil.formateAmount(customer.getCustAddlDec1(),
-				CurrencyUtil.getFormat(customer.getCustBaseCcy()))));
+		if(customer.getCustAddlDec1() != null) {
+			gcdCustomer.setEmiCardElig(String.valueOf(PennantApplicationUtil.formateAmount(customer.getCustAddlDec1(),
+					CurrencyUtil.getFormat(customer.getCustBaseCcy()))));
+		}
 
 		return gcdCustomer;
 	}

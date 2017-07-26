@@ -13991,8 +13991,8 @@ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_
 		<sql>
 	delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER') and fieldid in (2,3);
 
-Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),2,'FinType','LOVSEARCH','Loan Type','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('24-JUL-2017 15:39:17','DD-MON-RRRR HH24:MI:SS'));
-Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,to_date('24-JUL-2017 15:39:17','DD-MON-RRRR HH24:MI:SS'));
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),2,'FinType','LOVSEARCH','Loan Type','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
 	</changeSet>
 				<changeSet author="pruthvi" id="676">
@@ -14254,4 +14254,423 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid='2';
     </sql>
     </changeSet>
+
+	<changeSet id="695" author="Durgaprasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_LAST_RUN_YEAR';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_LAST_RUN_MONTH';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'SAPGL_CODE';
+			DELETE FROM SMTPARAMETERS Where SysParmCode = 'HKONT';
+			INSERT INTO SMTPARAMETERS VALUES ('HKONT', 'SAP GL Code for additional
+			transaction', 'String', 1, '90000003', '30', 0, NULL, NULL, 'SAP GL
+			Code for additional transaction',1,1000, CURRENT_TIMESTAMP,
+			'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="696" author="Durgaprasad G">
+		<dropTable tableName="TRANSACTION_DETAIL_REPORT" />
+	</changeSet>
+	
+	<changeSet id="697" author="Durgaprasad G">
+		<createTable tableName="TRANSACTION_DETAIL_REPORT">
+			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+</changeSet>
+
+<changeSet id="698" author="Durgaprasad G">
+	<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true"> 
+  			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
+			ORDER BY ID
+ </createView>
+</changeSet>
+	<changeSet id="699" author="Sai">
+		<addColumn tableName="data_engine_event_properties">
+			<column name="SSE_ALGORITHM" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="700" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_config set filenameformat = '${yyyyMMddHHmmss}'
+			where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="700.1" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_event_properties 
+			set bucket_name = 'bfl-npd-etl-masterdata', 
+			  access_key = 'AKIAICXDVTEHK65CWI6A', 
+			  secret_key = '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', 
+			  prefix = null,
+			  sse_algorithm = 'AES_256'
+			where config_id in (
+			  select id from data_engine_config
+			  where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE')
+			);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="700.2" author="Sai">
+		<sql>
+			<![CDATA[
+			update data_engine_config set filenameformat = '${yyyyMMdd}'
+			where name in ('ME_AMTVEHICLEDEALER_VASMANF', 'ME_BANKBRANCHES', 'ME_BMTBANKDETAIL', 'ME_BMTCUSTCATEGORIES', 'ME_BMTPRODUCT', 'ME_BUILDERCOMPANY', 'ME_BUILDERGROUP', 'ME_BUILDERPROJCET', 'ME_FINTYPEPARTNERBANKS', 'ME_LOCALITY', 'ME_PROMOTIONS', 'ME_RMTBASERATECODES', 'ME_RMTBASERATES', 'ME_RMTBRANCHES', 'ME_RMTCOUNTRYVSPROVINCE', 'ME_RMTFINANCETYPES', 'ME_RMTPROVINCEVSCITY', 'ME_RMTSPLRATECODES', 'ME_RMTSPLRATES', 'ME_VASPRODUCTTYPE', 'ME_VASSTRUCTURE');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet author="Amit" id="701">
+		<dropPrimaryKey tableName="GCDCUSTOMERS"
+			constraintName="PK_GCDCUSTOMERS" />
+	</changeSet>
+	<changeSet author="Amit" id="702">
+		<addColumn tableName="gcdcustomers">
+			<column name="CUSTID" type="NUMBER(19,0)"/>
+		</addColumn>
+  </changeSet>
+	<changeSet author="Siva" id="703">
+		<sql>
+						
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECUSEROPERATIONS SET SEQNO= (SELECT MAX(USROPRID) FROM SECUSEROPERATIONS);
+			
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'RECEIPTBOUNCE_APPROVER', 'Receipt Bounce/Cancel Approver','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_RECEIPTBOUNCE_APPROVER', 'Receipt Bounce/Cancel Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTBOUNCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_Receipts'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTBOUNCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ReceiptDialog_btnReceipt'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTBOUNCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_RECEIPTBOUNCE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTBOUNCE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'RBCA', 'Receipt Bounce/Cancel Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='RBCA'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTBOUNCE_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecUserOperations values((Select MAX(UsrOprID)+1 From SecUserOperations),(Select UsrId  From SecUsers Where UsrLogin='APPROVER'), (Select  OprID  From SecOperations Where OprCode='RBCA'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECUSEROPERATIONS SET SEQNO= (SELECT MAX(USROPRID) FROM SECUSEROPERATIONS);
+						
+		</sql>
+  </changeSet>
+  <changeSet id="704" author="Manoj">
+  	<createView viewName="INT_POSIDEX_CUST_VIEW" replaceIfExists="true">
+  		SELECT C.CUSTID CUSTOMER_NO,
+				  '' SOURCE_SYS_ID,
+          C.CUSTCOREBANK FILLER_STRING_1,
+				  C.CUSTFNAME FIRST_NAME,
+				  C.CUSTMNAME MIDDLE_NAME,
+				  C.CUSTLNAME LAST_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DOB,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPAN.CUSTDOCTITLE
+				    ELSE ''
+				  END PAN,
+          CBA.ACCOUNTNUMBER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDDLN.CUSTDOCTITLE
+				    ELSE ''
+				  END DRIVING_LICENSE_NUMBER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDVTR.CUSTDOCTITLE
+				    ELSE ''
+				  END VOTER_ID,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DATE_OF_INCORPORATION,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDTAN.CUSTDOCTITLE
+				    ELSE ''
+				  END TAN_NO,
+				  '' PROCESS_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN 'I'
+				    ELSE 'C'
+				  END APPLICANT_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CAST(EMPNAME AS VARCHAR(105))
+				    ELSE NULL
+				  END EMPOYER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTMOTHERMAIDEN
+				    ELSE ''
+				  END FATHER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPPT.CUSTDOCTITLE
+				    ELSE ''
+				  END PASSPORT_NO,
+				 '' ACCOUNT_NUMBER,
+				  '' CREDIT_CARD_NUMBER,
+				  'N' PROCESS_FLAG,
+				  '' ERROR_CODE,
+				  '' ERROR_DESC,
+				  C.CUSTCIF CUSTOMER_ID,
+				  '' SOURCE_SYSTEM,
+				  CAST(NULL AS NUMERIC(18,0)) PSX_BATCH_ID,
+				  '' UCIN_FLAG,
+				  CAST(NULL AS NUMERIC(18,0)) EOD_BATCH_ID,
+				  SYSDATE INSERT_TS,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTGENDERCODE
+				    ELSE ''
+				  END GENDER,
+				  CDADR.CUSTDOCTITLE
+           AADHAR_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCIN.CUSTDOCTITLE
+				    ELSE ''
+				  END CIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDDIN.CUSTDOCTITLE
+				    ELSE ''
+				  END DIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDRGNO.CUSTDOCTITLE
+				    ELSE ''
+				  END REGISTRATION_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCANO.CUSTDOCTITLE
+				    ELSE ''
+				  END CA_NUMBER,
+				  'CF' SEGMENT,
+				 C.LASTMNTON 
+				FROM CUSTOMERS C
+        LEFT JOIN (select CUSTID, ACCOUNTNUMBER from CUSTOMERBANKINFO WHERE ROWNUM  =1 order by BANKID) CBA ON CBA.CUSTID = C.CUSTID
+				LEFT JOIN CUSTOMERDOCUMENTS CDPAN ON CDPAN.CUSTID = C.CUSTID AND CDPAN.CUSTDOCCATEGORY='03'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDLN ON CDDLN.CUSTID = C.CUSTID AND CDDLN.CUSTDOCCATEGORY='04'
+				LEFT JOIN CUSTOMERDOCUMENTS CDVTR ON CDVTR.CUSTID = C.CUSTID AND CDVTR.CUSTDOCCATEGORY='05'
+				LEFT JOIN CUSTOMERDOCUMENTS CDTAN ON CDTAN.CUSTID = C.CUSTID AND CDTAN.CUSTDOCCATEGORY='15'
+				LEFT JOIN CUSTOMERDOCUMENTS CDPPT ON CDPPT.CUSTID = C.CUSTID AND CDPPT.CUSTDOCCATEGORY='02'
+				LEFT JOIN CUSTOMERDOCUMENTS CDADR ON CDADR.CUSTID = C.CUSTID AND CDADR.CUSTDOCCATEGORY='01'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCIN ON CDCIN.CUSTID = C.CUSTID AND CDCIN.CUSTDOCCATEGORY='16'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDIN ON CDDIN.CUSTID = C.CUSTID AND CDDIN.CUSTDOCCATEGORY='17'
+				LEFT JOIN CUSTOMERDOCUMENTS CDRGNO ON CDRGNO.CUSTID = C.CUSTID AND CDRGNO.CUSTDOCCATEGORY='18'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCANO ON CDCANO.CUSTID  = C.CUSTID AND CDCANO.CUSTDOCCATEGORY='19'
+				LEFT JOIN CUSTEMPLOYEEDETAIL CE ON CE.CUSTID = C.CUSTID LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = C.CUSTID AND CUSTADDRPRIORITY=5
+        WHERE C.CUSTCOREBANK IS NOT NULL
+  	</createView>
+  </changeSet>
+  
+  <changeSet id="705" author="Durgaprasad G">
+		<createTable tableName="TRANSACTIN_DETAIL_REPORT_STAGE">
+			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="TRA_DET_REP_STA_ID"/>
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="706" author="Durgaprasad G">
+		<dropTable tableName="TRANSACTION_DETAIL_REPORT_TEMP" />
+	</changeSet>
+	
+	<changeSet id="707" author="Durgaprasad G">
+	<createTable tableName="TRANSACTION_DETAIL_REPORT_TEMP">
+		<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+			<constraints primaryKey="true" nullable="false"  primaryKeyName="TRA_DET_REP_STA_TEMP_ID" />
+		</column>
+		<column name="LINK" type="decimal(5,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BSCHL" type="decimal(5,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="HKONT" type="varchar(20)" />
+		<column name="UMSKZ" type="varchar(20)" />
+		<column name="WRBTR" type="decimal(20,2)" />
+		<column name="GSBER" type="varchar(10)" />
+		<column name="BUPLA" type="varchar(10)" />
+		<column name="KOSTL" type="varchar(20)" />
+		<column name="PRCTR" type="varchar(20)" />
+		<column name="ZUONR" type="varchar(50)" />
+		<column name="SGTXT" type="varchar(50)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="708" author="Durgaprasad G">
+<dropTable tableName="TRANSACTIN_DETAIL_REPORT_STAGE"/>
+</changeSet>
+
+ <changeSet id="709" author="Durgaprasad G">
+		<createTable tableName="TRANSACTION_DETAIL_REPORT_STGE">
+			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="TRA_DET_REP_STA_ID"/>
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BSCHL" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HKONT" type="varchar(20)" />
+			<column name="UMSKZ" type="varchar(20)" />
+			<column name="WRBTR" type="decimal(20,2)" />
+			<column name="GSBER" type="varchar(10)" />
+			<column name="BUPLA" type="varchar(10)" />
+			<column name="KOSTL" type="varchar(20)" />
+			<column name="PRCTR" type="varchar(20)" />
+			<column name="ZUONR" type="varchar(50)" />
+			<column name="SGTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="710" author="Durgaprasad.g">
+		<dropTable tableName="POSTINGS_TAXDOWNLOAD" />
+	</changeSet>
+	
+	<changeSet id="711" author="Durgaprasad.g">
+	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+	   SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
+				T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
+				T1.POSTAMOUNT,  
+				T2.FINTYPE, T2.FINBRANCH, T2.FINAPPROVEDDATE, T2.CUSTID CUSTID,
+				T4.ENTITYCODE, 
+				T5.CUSTSHRTNAME, T5.CUSTCIF, T5.CUSTCRCPR,
+				T6.CUSTADDRHNBR, T6.CUSTFLATNBR, T6.CUSTADDRSTREET, T6.CUSTADDRLINE1,
+				T6.CUSTADDRLINE2, T6.CUSTADDRCITY, T6.CUSTADDRPROVINCE, T6.CUSTADDRCOUNTRY, 
+				T6.CUSTADDRZIP CUSTADDRZIP, T6.LASTMNTON CUSTADDRLASTMNTON, T6.CUSTPOBOX, 
+				T7.TAXNUMBER CUSTOMERGSTIN, T7.ADDRLINE1 TAXADDRLINE1, T7.ADDRLINE2 TAXADDRLINE2,
+				T7.ADDRLINE3 TAXADDRLINE3, T7.ADDRLINE4 TAXADDRLINE4, T7.COUNTRY TAXCOUNTRY, 
+				T7.PROVINCE TAXPROVINCE, T7.CITY TAXCITY, T7.PINCODE TAXPINCODE, T7.LASTMNTON TAXLASTMNTON,
+				T8.CUSTCIF TAXCUSTCIF, T8.CUSTSHRTNAME TAXCUSTSHRTNAME, T8.CUSTCRCPR TAXCUSTCRCPR, 
+				T9.ACCADDLVAR1 HSNSACCODE, T9.ACCADDLVAR2 NATUREOFSERVICE, T9.aCCADDLCHAR1 REVERSECHARGEAPPLICABLE,
+	      		T9.TAXAPPLICABLE, 
+				 '' ORIGINALINVOICENO, T10.CCYMINORCCYUNITS
+				FROM POSTINGS T1 
+				INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+				INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+				INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+				INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID
+				INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5
+				LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE 
+				LEFT JOIN CUSTOMERS T8 ON T8.CUSTID = T7.TAXCUSTID
+				INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+				INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
+	</createView>
+	</changeSet>
+	<changeSet author="Madhubabu" id="712">
+		<dropPrimaryKey tableName="gcdcustomers_test"
+			constraintName="PK_GCDCUSTOMERS_TEST" />
+	</changeSet>
+	
+	<changeSet id="705" author="Chaitanya.ch">
+  	<addColumn tableName="Postings">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
+  <changeSet id="706" author="Chaitanya.ch">
+  	<addColumn tableName="Postings_Temp">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
+  <changeSet id="713" author="Chaitanya.ch">
+  	<sql>
+  		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+  	</sql>
+  </changeSet>
+ <changeSet id="714" author="Chaitanya.ch">
+  	<sql>
+  		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE'
+  		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+  	</sql>
+  </changeSet>
+  
+  <changeSet id="715" author="Durgaprasad g">
+   <createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+     			SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
+				T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
+				T1.POSTAMOUNT,  
+				T2.FINTYPE, T2.FINBRANCH, T2.FINAPPROVEDDATE, T2.CUSTID CUSTID,
+				T4.ENTITYCODE, 
+				T5.CUSTSHRTNAME, T5.CUSTCIF, T5.CUSTCRCPR,
+				T6.CUSTADDRHNBR, T6.CUSTFLATNBR, T6.CUSTADDRSTREET, T6.CUSTADDRLINE1,
+				T6.CUSTADDRLINE2, T6.CUSTADDRCITY, T6.CUSTADDRPROVINCE, T6.CUSTADDRCOUNTRY, 
+				T6.CUSTADDRZIP CUSTADDRZIP, T6.LASTMNTON CUSTADDRLASTMNTON, T6.CUSTPOBOX, 
+				T7.TAXNUMBER CUSTOMERGSTIN, T7.ADDRLINE1 TAXADDRLINE1, T7.ADDRLINE2 TAXADDRLINE2,
+				T7.ADDRLINE3 TAXADDRLINE3, T7.ADDRLINE4 TAXADDRLINE4, T7.COUNTRY TAXCOUNTRY, 
+				T7.PROVINCE TAXPROVINCE, T7.CITY TAXCITY, T7.PINCODE TAXPINCODE, T7.LASTMNTON TAXLASTMNTON,
+				T8.CUSTCIF TAXCUSTCIF, T8.CUSTSHRTNAME TAXCUSTSHRTNAME, T8.CUSTCRCPR TAXCUSTCRCPR, 
+				T9.ACCADDLVAR1 HSNSACCODE, T9.ACCADDLVAR2 NATUREOFSERVICE, T9.aCCADDLCHAR1 REVERSECHARGEAPPLICABLE,
+	      		T9.TAXAPPLICABLE, 
+				 '' ORIGINALINVOICENO, T10.CCYMINORCCYUNITS
+				FROM POSTINGS T1 
+				INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+				INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+				INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+				INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID
+				INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5
+				LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE 
+				LEFT JOIN CUSTOMERS T8 ON T8.CUSTID = T7.TAXCUSTID
+				INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+				INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
+   </createView>
+  </changeSet>
+  
+  <changeSet id="716" author="Durgaprasad G">
+   <modifyDataType tableName="LEA_GST_TMP_DTL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
+  </changeSet>
 </databaseChangeLog>

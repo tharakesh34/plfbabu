@@ -1282,15 +1282,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		List<FinTypeFees> finTypeFeesList = null;
 		if (StringUtils.isNotEmpty(eventCode)) {
-			
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int moduleID = FinanceConstants.MODULEID_FINTYPE;
-			if (StringUtils.isNotBlank(getFinanceDetail().getFinScheduleData().getFinanceMain().getPromotionCode())) {
+			
+			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				moduleID = FinanceConstants.MODULEID_PROMOTION;
 			}
 
 			// Finance Type Fee details based on Selected Receipt Purpose Event
-			finTypeFeesList = this.financeDetailService.getFinTypeFees(
-					getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType(), eventCode, false, moduleID);
+			finTypeFeesList = this.financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false, moduleID);
 		}
 		
 		// Existing Fee Details maintenance
@@ -2449,13 +2449,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.allocationMethod.setSelectedIndex(0);
 		}
 
-		if(this.excessAdjustTo.getSelectedIndex() > 0){
+		if (this.excessAdjustTo.getSelectedIndex() > 0) {
 			readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
-		}else{
+		} else {
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
 		
 		Events.sendEvent("onFulfill", this.receiptAmount, null);
+		
+		feesRecalculation(true);
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -5832,11 +5835,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 	
 	/**
-	 * to get the Remaining Balance After Allocation Amount
+	 * to get the Receipt Amount
 	 * @return
 	 */
-	public BigDecimal getRemBalAfterAllocationAmt() {	//Used in Fees Execution
-		return remBalAfterAllocation.getValue();
+	public BigDecimal getReceiptAmount() {	//Used in Fees Execution
+		return receiptAmount.getActualValue();
 	}
 
 	/**

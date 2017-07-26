@@ -53,9 +53,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.appDate = valueDate;
-/*		this.toDate.setDate(05);
-		this.fromDate.setDate(05);
-*/	}
+	}
 
 	@Override
 	protected void processData() {
@@ -64,10 +62,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		taxStateCodesMap = null;
 		try {
 			loadDefaults();
-
-			clearTables();
 			try {
-				preparePosingsData();
 				long id = saveHeader();
 				processTaxDownloadData(id);
 				if (recordCount <= 0) {
@@ -79,7 +74,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 				logger.error(Literal.EXCEPTION, e);
 				throw e;
 			} finally {
-				clearTables();
 				if (isError) {
 					clearTaxDownlaodTables();
 				}
@@ -277,15 +271,15 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		map.addValue("REVERSE_CHARGE_APPLICABLE", "Y");
 
 		// InvoiceType
-		String status = rs.getString("Status");
-		if ("R".equalsIgnoreCase(status)) {
+		String oldTransactionID = rs.getString("OLDLINKEDTRANID");
+		if (StringUtils.trimToNull(oldTransactionID) != null) {
 			map.addValue("INVOICE_TYPE", "C");
-			map.addValue("ORIGINAL_INVOICE_NO", hostSystemTransactionID);
+			map.addValue("ORIGINAL_INVOICE_NO",  oldTransactionID.concat("-").concat(rs.getString("TRANSORDER")));
 		} else {
 			map.addValue("INVOICE_TYPE", "I");
 			map.addValue("ORIGINAL_INVOICE_NO", null);
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
@@ -543,9 +537,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private void saveDetails(MapSqlParameterSource map) {
 		StringBuilder sql = null;
 		sql = getTaxDownLoadDetailSql();
-/*		System.out.println(sql.toString());
-		System.out.println(map);
-*/		destinationJdbcTemplate.update(sql.toString(), map);
+		destinationJdbcTemplate.update(sql.toString(), map);
 
 		sql = getGSTSql();
 		destinationJdbcTemplate.update(sql.toString(), map);
@@ -611,20 +603,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	}
 
 	/**
-	 * Duplicate the postings data to a new Table, to avoid any dependencies
-	 */
-	private void preparePosingsData() {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FROMDATE", fromDate);
-		source.addValue("TODATE", toDate);
-		jdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM POSTINGS WHERE POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE", source);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Update the Total Count in Tax Downloader Header 
 	 * @param id
 	 * @param recordCnt
@@ -641,17 +619,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	}
 
 	/**
-	 * Clear the stageing table
-	 */
-	private void clearTables() {
-		logger.debug(Literal.ENTERING);
-
-		jdbcTemplate.update("TRUNCATE TABLE POSTINGS_TAXDOWNLOAD", new MapSqlParameterSource());
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Clear the Taxdetails and Taxheader table if error occurred during the
 	 */
 	private void clearTaxDownlaodTables() {
@@ -663,7 +630,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

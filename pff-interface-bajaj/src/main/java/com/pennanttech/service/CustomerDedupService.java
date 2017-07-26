@@ -45,7 +45,7 @@ public class CustomerDedupService extends BajajService {
 		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceURL);
-			response = (DedupeResponse) client.postProcess(serviceURL, "getCustomerDetails",
+			response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService",
 					prepareRequest(dedupCustomerDetail), DedupeResponse.class);
 			logger.info("Response : " + response.toString());
 			customerResponse = prepareResponse(response);
@@ -62,7 +62,7 @@ public class CustomerDedupService extends BajajService {
 
 		DedupeRequest request = new DedupeRequest();
 		//request.setDealId(dealId);
-		request.setOrg("CL");
+		request.setOrg("PLF");
 		request.setRequestType("Q");
 		request.setDataSource("E");
 

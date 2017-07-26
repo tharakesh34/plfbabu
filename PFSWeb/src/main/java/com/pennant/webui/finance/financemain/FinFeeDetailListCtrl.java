@@ -2222,7 +2222,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					ReceiptDialogCtrl receiptDialogCtrl = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
 					BigDecimal totalPayment = receiptDialogCtrl.getTotalReceiptAmount(false);
 					executionMap.put("totalPayment", totalPayment);
-					executionMap.put("partialPaymentAmount", receiptDialogCtrl.getRemBalAfterAllocationAmt());
+					executionMap.put("partialPaymentAmount", receiptDialogCtrl.getReceiptAmount());
 					executionMap.put("totalDueAmount", receiptDialogCtrl.getCustPaidAmt());
 				}
 				

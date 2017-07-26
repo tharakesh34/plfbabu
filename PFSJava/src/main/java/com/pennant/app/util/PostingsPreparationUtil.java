@@ -732,7 +732,8 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
-
+		
+		
 		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
 
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
@@ -757,7 +758,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
-
+		
 		getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 
 		getPostingsDAO().saveBatch(returnDataSets);
@@ -779,10 +780,12 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) {
 		logger.debug("Entering");
+		
+		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
 
-		getEngineExecution().getReversePostings(returnDataSets);
+		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
 		logger.debug("Leaving");
 		return returnDataSets;
@@ -799,10 +802,11 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
-
+		
+		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference);
 
-		getEngineExecution().getReversePostings(returnDataSets);
+		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
 		logger.debug("Leaving");
 		return returnDataSets;
