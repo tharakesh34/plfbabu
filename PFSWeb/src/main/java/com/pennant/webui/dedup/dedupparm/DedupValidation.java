@@ -139,7 +139,7 @@ public class DedupValidation implements Serializable {
 		String corebank = details.getCustomer().getCustCoreBank();
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
-		if (StringUtils.isBlank(corebank)) {
+		/*if (StringUtils.isBlank(corebank)) {
 
 			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role,finType, ref, details, window, curLoginUser);
 
@@ -148,7 +148,7 @@ public class DedupValidation implements Serializable {
 			} else {
 				return true;
 			}
-		}
+		}*/
 		logger.debug("Leaving");
 		return true;
 	}
