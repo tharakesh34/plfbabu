@@ -532,7 +532,8 @@
 		<menuItem id="menu_Item_LISTOFDOCUMENTEXTRACT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_LISTOFDOCUMENTEXTRACT"/>
 		<menuItem id="menu_Item_TERMLOANTRACKER" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_TERMLOANTRACKER"/>
 		<menuItem id="menu_Item_DAILYDISBURSALREPORT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DAILYDISBURSALREPORT"/>
-		 
+		 <menuItem id="menu_Item_LoanwiseVoucherDetail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName=""/>
+		  
 		<!-- <menu id="menu_Category_AdminReports" rightName="menuCat_AdminReports">
 			<menuItem id="menu_Item_RoleGroups" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_RoleGroups" />
 			<menuItem id="menu_Item_GroupRights" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_AdminReports_GroupRights" />	
