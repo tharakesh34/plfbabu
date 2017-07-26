@@ -14674,4 +14674,11 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
   <changeSet id="716" author="Durgaprasad G">
    <modifyDataType tableName="LEA_GST_TMP_DTL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
   </changeSet>
+    <changeSet id="717" author="Pruthvi">
+    <sql>
+  update reportconfiguration set reportjaspername='DailyPastduesReport' where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
+update reportconfiguration set reportname='Excel:Daily Pastdues Report', reportheading='Excel:Daily Pastdues Report'
+where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
+</sql>
+</changeSet>
 </databaseChangeLog>
