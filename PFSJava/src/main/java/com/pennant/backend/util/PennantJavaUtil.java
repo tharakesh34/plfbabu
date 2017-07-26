@@ -929,7 +929,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("CustomerGroup", new ModuleMapping("CustomerGroup", CustomerGroup.class, new String[] {
 				"CustomerGroups", "CustomerGroups_AView" }, masterWF, new String[] { "CustGrpID", "CustGrpCode",
-				"CustGrpDesc" }, new String[][] { { "CustGrpID", "1", "0" } }, 300));
+				"CustGrpDesc" }, new String[][] { { "CustGrpisActive", "1", "0" } }, 300));
 
 		ModuleUtil.register("DedupParm", new ModuleMapping("DedupParm", DedupParm.class, new String[] { "DedupParams",
 				"DedupParams_AView" }, masterWF, new String[] { "QueryCode", "QueryModule" }, null, 300));
