@@ -1455,8 +1455,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	
 	@Override
-	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details) throws Exception {
-		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details);
+	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details,String finType) throws Exception {
+		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(details,finType);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
 			response = customerDedupService.invokeDedup(dedupCustomerDetail);
@@ -1511,7 +1511,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return custDedupList;
 	}
 	
-	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails) {
+	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails,String finType) {
 
 		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
 		Customer customer = customerDetails.getCustomer();
@@ -1521,7 +1521,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
 
 			dedupCustomerDetail.setCustomer(customer);
-			//dedupCustomerDetail.setFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+			dedupCustomerDetail.setFinType(finType);
 			// customer documents
 			if (customerDetails.getCustomerDocumentsList() != null) {
 				dedupCustomerDetail.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());
