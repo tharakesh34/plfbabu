@@ -45,6 +45,7 @@ package com.pennant.backend.service.customermasters.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,12 +56,14 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -79,6 +82,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;
 	private IncomeTypeDAO incomeTypeDAO;
+	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
 
 	public CustomerServiceImpl() {
 		super();
@@ -543,7 +547,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		customer.setCustCoreBank(customerDetails.getCustCoreBank());
 		customer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		customer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
-
+		customer.setCustID(customerDetails.getCustID());
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
@@ -569,6 +573,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		logger.debug("Entering");
 
 		// validate conditional mandatory fields
+		ErrorDetails errorDetail = new ErrorDetails();
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			if (StringUtils.isBlank(customer.getCustFName())) {
 				String[] valueParm = new String[2];
@@ -646,7 +651,6 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			auditDetail.setErrorDetail(validateMasterCode("BMTEmpStsCodes", "EmpStsCode", customer.getCustEmpSts()));
 
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
-			ErrorDetails errorDetail = new ErrorDetails();
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
 			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
@@ -654,6 +658,19 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
+		}
+		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO.
+										getCustomerEmploymentDetailsByID(customer.getCustID(), "");
+		for (CustomerEmploymentDetail custEmpDetails : customerEmploymentDetailList) {
+			if(custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())){
+				String[] valueParm = new String[2];
+				valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
+						PennantConstants.XMLDateFormat);
+				valueParm[1] = "Cust DOB:"+ DateUtility.formatDate(customer.getCustDOB(), 
+						PennantConstants.XMLDateFormat);
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;

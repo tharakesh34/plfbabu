@@ -2628,6 +2628,7 @@
 		class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

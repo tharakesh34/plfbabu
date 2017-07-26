@@ -58,6 +58,7 @@ import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
@@ -343,8 +344,9 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerEmploymentDetail custEmpDetails) {
+	public AuditDetail doValidations(CustomerEmploymentDetail custEmpDetails,Customer customer) {
 		AuditDetail auditDetail = new AuditDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
 		if (custEmpDetails != null) {
 			auditDetail.setErrorDetail(validateMasterCode("EmployerDetail", "EmployerId", String.valueOf(custEmpDetails.getCustEmpName())));
 			auditDetail.setErrorDetail(validateMasterCode("RMTEmpTypes", "EmpType", custEmpDetails.getCustEmpType()));
@@ -354,7 +356,6 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 			}
 			if (custEmpDetails.getCustEmpTo() != null) {
 				if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) > 0) {
-					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[2];
 					valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
 							PennantConstants.XMLDateFormat);
@@ -365,7 +366,6 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 				}	
 				if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 ||
 						SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
-					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[2];
 					valueParm[0] = "employment endDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
 							PennantConstants.XMLDateFormat);
@@ -378,12 +378,23 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 			
 			if (custEmpDetails.getCustEmpFrom() != null && custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 
 					|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {
-				ErrorDetails errorDetail = new ErrorDetails();
+				
 				String[] valueParm = new String[2];
 				valueParm[0] = "employment startDate" + DateUtility.formatDate(custEmpDetails.getCustEmpFrom(),
 						PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
+			}
+			if (custEmpDetails.getCustEmpFrom() != null && customer.getCustDOB() != null) {
+					if(custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())){
+						String[] valueParm = new String[2];
+						valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
+								PennantConstants.XMLDateFormat);
+						valueParm[1] = "Cust DOB:"+ DateUtility.formatDate(customer.getCustDOB(), 
+								PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
 			}
 		}
 		return auditDetail;

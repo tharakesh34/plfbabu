@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 
 /**
@@ -73,7 +74,7 @@ public interface CustomerEmploymentDetailService {
 
 	List<CustomerEmploymentDetail> getApprovedCustomerEmploymentDetailById(long custID);
 	
-	AuditDetail doValidations(CustomerEmploymentDetail customerEmploymentDetail);
+	AuditDetail doValidations(CustomerEmploymentDetail customerEmploymentDetail, Customer customer);
 	
 	int getVersion(long custId, long custEmpName);
 
