@@ -868,7 +868,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		if (!this.bankRefNo.isReadonly()) {
 			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BankRefNo.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
+					PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setConstraint(
