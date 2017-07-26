@@ -14,7 +14,6 @@
 			classpath:applicationContext-zkoss.xml, 
 			classpath:applicationContext-db.xml,
 			classpath:applicationContext-daos.xml,
-			classpath:eod-batch-config-service.xml,
  			classpath:customize-applicationContext.xml,
  			classpath:securityContext.xml,
  			<!-- classpath:applicationContext-mq-interface.xml,  -->

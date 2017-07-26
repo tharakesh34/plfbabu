@@ -115,33 +115,35 @@ public class LimitRebuildService implements LimitRebuild {
 			long headerId = limitHeader.getHeaderId();
 			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
 			// Verify the structure for changes
-			processStructuralChanges(limitDetailsList, limitHeader);
-			//reset limit details
-			resetLimitDetails(limitDetailsList);
+			boolean isChanged = processStructuralChanges(limitDetailsList, limitHeader);
+			if (isChanged) {
+				//reset limit details
+				resetLimitDetails(limitDetailsList);
+				List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
+				// get all the finance in the group
+				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, false));
+				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, true));
 
-			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-			// get all the finance in the group
-			financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, false));
-			financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, true));
-
-			List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
-			for (FinanceMain finMain : financeMains) {
-				//identify the limit line 
-				LimitReferenceMapping mapping = identifyLine(finMain, null, null, headerId, limitDetailsList);
-				//process rebuild
-				processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
-				// add the mapping
-				mappings.add(mapping);
-			}
-
-			//save mapping by deleting and delete or move the transaction log
-			if (mappings.isEmpty()) {
-				limitReferenceMappingDAO.deleteByHeaderID(headerId);
-				for (LimitReferenceMapping limitReferenceMapping : mappings) {
-					limitReferenceMappingDAO.save(limitReferenceMapping);
+				List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+				for (FinanceMain finMain : financeMains) {
+					//identify the limit line 
+					LimitReferenceMapping mapping = identifyLine(finMain, null, null, headerId, limitDetailsList);
+					//process rebuild
+					processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
+					// add the mapping
+					mappings.add(mapping);
 				}
+
+				//save mapping by deleting and delete or move the transaction log
+				if (!mappings.isEmpty()) {
+					limitReferenceMappingDAO.deleteByHeaderID(headerId);
+					for (LimitReferenceMapping limitReferenceMapping : mappings) {
+						limitReferenceMappingDAO.save(limitReferenceMapping);
+					}
+				}
+				limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
 			}
-			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+
 		}
 	}
 
@@ -418,15 +420,16 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @param limitHeader
 	 * @throws DatatypeConfigurationException
 	 */
-	private void processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader) {
+	private boolean processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader) {
 		logger.debug(" Entering ");
-
+		boolean changed=false;
 		List<LimitDetails> list = new ArrayList<LimitDetails>();
 		List<LimitStructureDetail> structureList = limitStructureDetailDAO
 				.getLimitStructureDetailById(limitHeader.getLimitStructureCode(), "");
 
 		for (LimitStructureDetail limitStructureDetail : structureList) {
 			if (!isExist(limitDetailsList, limitStructureDetail)) {
+				changed=true;
 				LimitDetails details = getLimitDetails(limitStructureDetail, limitHeader);
 				list.add(details);
 			}
@@ -438,6 +441,7 @@ public class LimitRebuildService implements LimitRebuild {
 		}
 
 		logger.debug(" Leaving ");
+		return changed;
 	}
 
 	/**

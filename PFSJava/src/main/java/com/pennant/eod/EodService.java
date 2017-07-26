@@ -20,6 +20,7 @@ import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.service.limitservice.LimitRebuild;
 
 public class EodService {
 
@@ -37,6 +38,8 @@ public class EodService {
 	private AutoDisbursementService		autoDisbursementService;
 	private ReceiptPaymentService		receiptPaymentService;
 	private InstallmentDueService		installmentDueService;
+	@Autowired
+	private LimitRebuild 				limitRebuild;
 
 	private PlatformTransactionManager	transactionManager;
 
@@ -53,6 +56,8 @@ public class EodService {
 		if (custEODEvent.isCheckPresentment()) {
 			getReceiptPaymentService().processrReceipts(custEODEvent);
 		}
+		
+		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID());
 		//customer Date update
 		String newCustStatus = null;
 		if (custEODEvent.isUpdCustomer()) {
