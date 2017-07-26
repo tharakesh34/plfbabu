@@ -86,7 +86,7 @@ public class DedupValidation implements Serializable {
 	public  boolean doCheckDedup(FinanceDetail aFinanceDetail,String ref,String role,Window window,String curLoginUser) throws Exception {
 		try {
 			// Customer Dedup Process Check
-			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),ref,role,window,curLoginUser);
+			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),ref,role,window,curLoginUser);
 			if(!processCompleted){
 				return false;
 			}
@@ -132,23 +132,23 @@ public class DedupValidation implements Serializable {
 	 * @return
 	 * @throws Exception 
 	 */
-	private boolean doCustomerDedupe(CustomerDetails details, String ref, String role, Window window,
+	private boolean doCustomerDedupe(CustomerDetails details,String finType, String ref, String role, Window window,
 			String curLoginUser) throws Exception {
 		logger.debug("Entering");
 
 		String corebank = details.getCustomer().getCustCoreBank();
 
-	/*	//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
 		if (StringUtils.isBlank(corebank)) {
 
-			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, ref, details, window, curLoginUser);
+			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role,finType, ref, details, window, curLoginUser);
 
 			if (details.getCustomer().isDedupFound() && !details.getCustomer().isSkipDedup()) {
 				return false;
 			} else {
 				return true;
 			}
-		}*/
+		}
 		logger.debug("Leaving");
 		return true;
 	}
