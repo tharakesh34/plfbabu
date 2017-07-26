@@ -112,7 +112,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	public IncomeTypeDAO getIncomeTypeDAO() {
 	    return incomeTypeDAO;
     }
-
+	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
+		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
+	}
 	public Customer getCustomer() {
 		return getCustomerDAO().getCustomer(false);
 	}
