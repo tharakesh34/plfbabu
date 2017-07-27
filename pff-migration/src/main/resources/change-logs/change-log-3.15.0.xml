@@ -14956,4 +14956,13 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 	UPDATE POSTINGS SET OLDLINKEDTRANID = 0 WHERE OLDLINKEDTRANID IS NULL;
 	</sql>
 </changeSet>
+	<changeSet id="736" author="Siva">
+		<createView viewName="ManualAdviseMovements_TView"
+			replaceIfExists="true">
+		  Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+			 From ManualAdviseMovements_Temp T1 INNER JOIN
+				  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID LEFT JOIN
+				  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
