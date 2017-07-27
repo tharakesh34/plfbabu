@@ -88,8 +88,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		microEODMonitor;
 
 	protected ProcessExecution		snapShotPreparation;
-	protected ProcessExecution		dataExtract;
 	protected ProcessExecution		accountsUpdate;
+	protected ProcessExecution		dataExtract;
+	protected ProcessExecution		alm;
+	protected ProcessExecution		controlDump;
+	protected ProcessExecution		posidex;
+	protected ProcessExecution		dataMart;
+	protected ProcessExecution		trailBalance;
+	protected ProcessExecution		cibil;
+	protected ProcessExecution		gstTaxDownload;
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
@@ -100,9 +107,16 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		masterStep,
 		microEOD,
 		microEODMonitor,
+		accountsUpdate,
 		snapShotPreparation,
 		dataExtract,
-		accountsUpdate
+		alm,
+		controlDump,
+		posidex,
+		dataMart,
+		trailBalance,
+		cibil,
+		gstTaxDownload
 	}
 
 	public BatchAdminCtrl() {
@@ -188,10 +202,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	private void setDates() {
 		lable_Value_Date.setValue(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
-		lable_NextBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
-				.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
-		lable_LastBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
-				.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		lable_NextBusiness_Date
+				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
+		lable_LastBusiness_Date
+				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
 	}
 
 	private void setRunningStatus() {
@@ -422,76 +436,76 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 			switch (processName) {
 			case beforeEOD:
-				this.beforeEOD.setProcess(status);
-				this.beforeEOD.render();
-				setRunningProcess(this.beforeEOD);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.beforeEOD);
-				}
+				renderDetials(this.beforeEOD, status);
 				break;
+				
 			case prepareCustomerQueue:
-				this.prepareCustomerQueue.setProcess(status);
-				this.prepareCustomerQueue.render();
-				setRunningProcess(this.prepareCustomerQueue);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.prepareCustomerQueue);
-				}
+				renderDetials(this.prepareCustomerQueue, status);
 				break;
+				
 			case masterStep:
-				this.masterStep.setProcess(status);
-				this.masterStep.render();
-				setRunningProcess(this.masterStep);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.masterStep);
-				}
+				renderDetials(this.masterStep, status);
 				break;
+				
 			case microEOD:
-				this.microEOD.setProcess(status);
-				this.microEOD.render();
-				setRunningProcess(this.microEOD);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.microEOD);
-				}
+				renderDetials(this.microEOD, status);
 				break;
+				
 			case microEODMonitor:
-				this.microEODMonitor.setProcess(status);
-				this.microEODMonitor.render();
-				setRunningProcess(this.microEODMonitor);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.microEODMonitor);
-				}
+				renderDetials(this.microEODMonitor, status);
 				break;
 
-			case snapShotPreparation:
-				this.snapShotPreparation.setProcess(status);
-				this.snapShotPreparation.render();
-				setRunningProcess(this.snapShotPreparation);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.snapShotPreparation);
-				}
-				break;
-
-			case dataExtract:
-				this.dataExtract.setProcess(status);
-				this.dataExtract.render();
-				setRunningProcess(this.dataExtract);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.dataExtract);
-				}
-				break;
 			case accountsUpdate:
-				this.accountsUpdate.setProcess(status);
-				this.accountsUpdate.render();
-				setRunningProcess(this.accountsUpdate);
-				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.accountsUpdate);
-				}
+				renderDetials(this.accountsUpdate, status);
 				break;
-
+				
+			case snapShotPreparation:
+				renderDetials(this.snapShotPreparation, status);
+				break;
+				
+			case dataExtract:
+				renderDetials(this.dataExtract, status);
+				break;
+				
+			case alm:
+				renderDetials(this.alm, status);
+				break;
+				
+			case controlDump:
+				renderDetials(this.controlDump, status);
+				break;
+				
+			case posidex:
+				renderDetials(this.posidex, status);
+				break;
+			case dataMart:
+				renderDetials(this.dataMart, status);
+				break;
+			case trailBalance:
+				renderDetials(this.trailBalance, status);
+				break;
+			case cibil:
+				renderDetials(this.cibil, status);
+				break;
+			case gstTaxDownload:
+				renderDetials(this.gstTaxDownload, status);
+				break;
+			default:
+				break;
+				
 			}
 		}
 
 		status = null;
+	}
+
+	private void renderDetials(ProcessExecution execution, ExecutionStatus status) {
+		execution.setProcess(status);
+		execution.render();
+		setRunningProcess(execution);
+		if ("EXECUTING".equals(status.getStatus())) {
+			setRunningProcess(execution);
+		}
 	}
 
 	private void setRunningProcess(ProcessExecution panel) {
@@ -505,36 +519,32 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	private void resetPanels() {
 
-		if (beforeEOD.getChildren() != null) {
-			beforeEOD.getChildren().clear();
-		}
-		if (prepareCustomerQueue.getChildren() != null) {
-			prepareCustomerQueue.getChildren().clear();
-		}
-		if (masterStep.getChildren() != null) {
-			masterStep.getChildren().clear();
-		}
-		if (microEOD.getChildren() != null) {
-			microEOD.getChildren().clear();
-		}
-		if (microEODMonitor.getChildren() != null) {
-			microEODMonitor.getChildren().clear();
-		}
-
-		if (snapShotPreparation.getChildren() != null) {
-			snapShotPreparation.getChildren().clear();
-		}
-		if (dataExtract.getChildren() != null) {
-			dataExtract.getChildren().clear();
-		}
-		if (accountsUpdate.getChildren() != null) {
-			accountsUpdate.getChildren().clear();
-		}
+		clearChilds(beforeEOD);
+		clearChilds(prepareCustomerQueue);
+		clearChilds(masterStep);
+		clearChilds(microEOD);
+		clearChilds(microEODMonitor);
+		clearChilds(accountsUpdate);
+		clearChilds(snapShotPreparation);
+		clearChilds(dataExtract);
+		clearChilds(alm);
+		clearChilds(controlDump);
+		clearChilds(posidex);
+		clearChilds(dataMart);
+		clearChilds(trailBalance);
+		clearChilds(cibil);
+		clearChilds(gstTaxDownload);
 
 		if (listBoxThread.getItems() != null) {
 			this.listBoxThread.getItems().clear();
 		}
 
+	}
+
+	private void clearChilds(ProcessExecution execution) {
+		if (execution.getChildren() != null) {
+			execution.getChildren().clear();
+		}
 	}
 
 	private ExecutionStatus copyDetails(StepExecution source, ExecutionStatus destination) {
@@ -566,8 +576,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (source.getExecutionContext().containsKey(EodConstants.DATA_TOTALCUSTOMER)) {
-			destination.setTotalCustomer(((Number) (source.getExecutionContext().get(EodConstants.DATA_TOTALCUSTOMER)))
-					.longValue());
+			destination.setTotalCustomer(
+					((Number) (source.getExecutionContext().get(EodConstants.DATA_TOTALCUSTOMER))).longValue());
 		}
 
 		destination.setExecutionName(source.getStepName());
@@ -681,9 +691,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listcell.setId(threadId + EodConstants.STATUS);
 			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
-			
-			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(),
-					status.getStartTime()));
+
+			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
 			listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 

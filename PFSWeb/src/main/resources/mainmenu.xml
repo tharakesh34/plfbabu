@@ -16,7 +16,7 @@
 	
 	<menuItem id="menu_Item_ReloadResources" zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul" rightName = 'menuItem_Reload_Resources'/>
 	
-	<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataExtraction"/>
+<!-- 	<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataExtraction.zul" rightName="menuItem_DataExtraction"/> -->
 	
 	<menuItem id="menu_Item_DataEngine_MasterExport" zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul" rightName="menuItem_DataExtraction"/>
 	

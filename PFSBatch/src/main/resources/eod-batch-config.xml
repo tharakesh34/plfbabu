@@ -41,11 +41,46 @@
 		</step>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
-			<next on="*" to="dataExtract" />
+			<next on="*" to="alm" />
 			<fail on="FAILED" />
 		</step>
-		<step id="dataExtract">
+	<!-- 	<step id="dataExtract">
 			<tasklet ref="dataExtractTaskLet" />
+			<next on="*" to="completeEOD" />
+			<fail on="FAILED" />
+		</step> -->
+		<step id="alm">
+			<tasklet ref="almTaskLet" />
+			<next on="*" to="controlDump" />
+			<fail on="FAILED" />
+		</step>
+		<step id="controlDump">
+			<tasklet ref="controlDumpTaskLet" />
+			<next on="*" to="posidex" />
+			<fail on="FAILED" />
+		</step>
+		<step id="posidex">
+			<tasklet ref="posidexTaskLet" />
+			<next on="*" to="dataMart" />
+			<fail on="FAILED" />
+		</step>
+		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet" />
+			<next on="*" to="trailBalance" />
+			<fail on="FAILED" />
+		</step>
+		<step id="trailBalance">
+			<tasklet ref="trailBalanceTaskLet" />
+			<next on="*" to="cibil" />
+			<fail on="FAILED" />
+		</step>
+		<step id="cibil">
+			<tasklet ref="cibilTaskLet" />
+			<next on="*" to="gstTaxDownload" />
+			<fail on="FAILED" />
+		</step>
+		<step id="gstTaxDownload">
+			<tasklet ref="gstTaxDownloadTaskLet" />
 			<next on="*" to="completeEOD" />
 			<fail on="FAILED" />
 		</step>
