@@ -2199,8 +2199,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
-		//process to send finone request and create or update the data.
-		processFinOneCheck(aAuditHeader);
 
 		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
 				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
@@ -2240,6 +2238,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			customerDetails.setCustID(customer.getCustID());
+			
+			//process to send finone request and create or update the data.
+				processFinOneCheck(aAuditHeader);
 
 			if (customerDetails.getCustEmployeeDetail() != null) {
 				CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
