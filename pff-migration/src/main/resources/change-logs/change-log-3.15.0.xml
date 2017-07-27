@@ -15284,4 +15284,29 @@ update Customers_temp set CUSTADDLDEC1 = null;
 		</sql>
 	</changeSet> -->
 	
+	<changeSet id="754" author="Irfan">
+		<createView viewName="FinWaiverHeader_View" replaceIfExists="true">
+			SELECT     T1.WaiverID, T1.FinReference, T1.TotalWaiver, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T2.FinIsActive
+							FROM         FinWaiverHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode 
+				UNION ALL
+				SELECT     T1.WaiverID, T1.FinReference, T1.TotalWaiver, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T2.FinIsActive
+							FROM         FinWaiverHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode 
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinWaiverHeader_TEMP 
+				                            WHERE      WaiverID = T1.WaiverID)
+		</createView>
+	</changeSet>
+	
+	
 </databaseChangeLog>
