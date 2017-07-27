@@ -15097,4 +15097,37 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 	]]>
 	</sql>
 	</changeSet>
+	
+ <changeSet id="739" author="Durgaprasad G">
+	<dropTable tableName="GSTSUMMARYDETAILS" />
+	<dropTable tableName="TAXDOWNLOADSUMMARYDETAILS" />
+</changeSet>
+	
+	<changeSet id="740" author="Durgaprasad G">
+	<createTable tableName="GSTSUMMARYDETAILS">
+	    <column name="TRANSACTION_DATE" type="datetime"/>
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="741" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADSUMMARYDETAILS">
+		<column name="HEADERID" type="NUMBER(19)" />
+		<column name="TRANSACTION_DATE" type="datetime"/>
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+	
 </databaseChangeLog>
