@@ -58,7 +58,7 @@ public interface CustomerEmploymentDetailDAO {
 	 CustomerEmploymentDetail isEmployeeExistWithCustID(long id,String type);
 	 List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type);
 	 void deleteByCustomer(long custID, String tableType);
-	 int getVersion(long custID, long empName);
+	 int getVersion(long custID, long custEmpId);
 	 int getCustomerEmploymentByCustEmpName(long id,long custEmpName,long custEmpId, String type);
 	
 }

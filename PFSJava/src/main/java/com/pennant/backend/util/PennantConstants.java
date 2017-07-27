@@ -677,8 +677,11 @@ public class PennantConstants {
 	public static final String TAXAPPLICABLEFOR_GUARANTOR= "G";
 
 	//Customer Dedup source sstem
-	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENANT";
+	public static final String CUSTOMER_DEDUP_SOURCE_SYSTEM_PENNANT= "PENNANT";
 	public static final String CUSTOMER_DEDUP_REJECTED= "R";
 	public static final String CUSTOMER_DEDUP_UPDATE= "U";
 	public static final String CUSTOMER_DEDUP_INSERT= "I";
+	
+	//Fin-one customer creation stored procedure
+	public static final String CUSTOMER_DEDUP_PROCNAME= "CREATE_CUSTOMER_IN_FINNONE";
 }

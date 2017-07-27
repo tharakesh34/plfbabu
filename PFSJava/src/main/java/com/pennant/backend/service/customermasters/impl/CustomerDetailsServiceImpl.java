@@ -3,6 +3,8 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -47,6 +49,7 @@ import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
+import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
@@ -88,6 +91,7 @@ import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.model.systemmasters.NationalityCode;
+import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
@@ -115,6 +119,7 @@ import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.rits.cloning.Cloner;
@@ -184,6 +189,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
 	private LimitRebuild limitRebuild;
 	private GCDCustomerService gCDCustomerService;
+	private PhoneTypeDAO    phoneTypeDAO;
 	
 
 	public CustomerDetailsServiceImpl() {
@@ -1663,10 +1669,27 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (CustomerPhoneNumber custPhoneDetail : custPhones) {
 				//Validate Phone number
 				String mobileNumber= custPhoneDetail.getPhoneNumber();
-				if (!(mobileNumber.matches("\\d{10}"))){
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;	
+				PhoneType custPhoneType = phoneTypeDAO.getPhoneTypeById(custPhoneDetail.getPhoneTypeCode(), "");
+				if(custPhoneType != null){
+					String regex=custPhoneType.getPhoneTypeRegex();
+					if(regex!=null){			
+						String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
+						int mobilelength=Integer.parseInt(length);
+						if(mobileNumber.length()!=mobilelength){
+							String[] valueParm = new String[2];
+							valueParm[0] = "PhoneNumber";
+							valueParm[1] = String.valueOf(mobilelength) + " characters";;	
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;	
+						}
+						if (!(mobileNumber.matches(regex))){
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;	
+						}
+					}
+					
 				}
 				auditDetail.setErrorDetail(validateMasterCode("PhoneType",custPhoneDetail.getPhoneTypeCode()));
 				if(!(custPhoneDetail.getPhoneTypePriority()>=1 && custPhoneDetail.getPhoneTypePriority()<=5)){
@@ -1713,7 +1736,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			
 		}
 
 		// customer Email details
@@ -1809,7 +1831,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		} 
-		if(!panMandatory){
+		if(StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory){
 			String[] valueParm = new String[1];
 			valueParm[0] = "PAN document";
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
@@ -1992,36 +2014,72 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditDetail.setErrorDetail(validateMasterCode("Sector", customer.getCustSector()));
 		auditDetail.setErrorDetail(validateMasterCode("Industry", customer.getCustIndustry()));
 
-		if (StringUtils.isNotBlank(customer.getCustLng()))
+		if (StringUtils.isNotBlank(customer.getCustLng())){
 			auditDetail.setErrorDetail(validateMasterCode("BMTLanguage", "LngCode", customer.getCustLng()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustCOB()))
+		if (StringUtils.isNotBlank(customer.getCustCOB())){
 			auditDetail.setErrorDetail(validateMasterCode("Country", customer.getCustCOB()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustNationality()))
+		if (StringUtils.isNotBlank(customer.getCustNationality())){
 			auditDetail.setErrorDetail(validateMasterCode("Country", customer.getCustNationality()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustSubSector()))
+		if (StringUtils.isNotBlank(customer.getCustSubSector())){
 			auditDetail.setErrorDetail(validateMasterCode("SubSector", customer.getCustSubSector()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustSegment()))
+		if (StringUtils.isNotBlank(customer.getCustSegment())){
 			auditDetail.setErrorDetail(validateMasterCode("Segment", customer.getCustSegment()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustSubSegment()))
+		if (StringUtils.isNotBlank(customer.getCustSubSegment())){
 			auditDetail.setErrorDetail(validateMasterCode("SubSegment",customer.getCustSubSegment()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustParentCountry() ))
+		if (StringUtils.isNotBlank(customer.getCustParentCountry() )){
 			auditDetail.setErrorDetail(validateMasterCode("Country",customer.getCustParentCountry()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustRiskCountry()))
+		if (StringUtils.isNotBlank(customer.getCustRiskCountry())){
 			auditDetail.setErrorDetail(validateMasterCode("Country", customer.getCustRiskCountry()));
+		}
 
-		if (StringUtils.isNotBlank(customer.getCustEmpSts()))
+		if (StringUtils.isNotBlank(customer.getCustEmpSts())){
 			auditDetail.setErrorDetail(validateMasterCode("EmpStsCode", customer.getCustEmpSts()));
+		}
 		
-		if (StringUtils.isNotBlank(customer.getCustDSADept()))
+		if (StringUtils.isNotBlank(customer.getCustDSADept())){
 			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
-
+		}
+		if (StringUtils.isNotBlank(customer.getCustDSA())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustDSA());
+			if (matcher.matches() == false) {
+				/*ErrorDetails errorDetail = new ErrorDetails();
+				String[] valueParm = new String[1];
+				valueParm[0] = "saleAgent";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);*/
+			}
+		}
+		if (customer.getCustGroupID()>0){
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
+		}
+		if (StringUtils.isNotBlank(customer.getCustStaffID())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustStaffID());
+			if (matcher.matches() == false) {
+				/*ErrorDetails errorDetail = new ErrorDetails();
+				String[] valueParm = new String[1];
+				valueParm[0] = "saleAgent";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);*/
+			}
+		}
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			ErrorDetails errorDetail = new ErrorDetails();
 			String[] valueParm = new String[3];
@@ -2160,8 +2218,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
-		//process to send finone request and create or update the data.
-		processFinOneCheck(aAuditHeader);
 
 		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
 				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
@@ -2201,6 +2257,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			customerDetails.setCustID(customer.getCustID());
+			
+			//process to send finone request and create or update the data.
+				processFinOneCheck(aAuditHeader);
 
 			if (customerDetails.getCustEmployeeDetail() != null) {
 				CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
@@ -5137,6 +5196,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
 		this.gCDCustomerService = gCDCustomerService;
+	}
+	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
+		this.phoneTypeDAO = phoneTypeDAO;
 	}
 
 

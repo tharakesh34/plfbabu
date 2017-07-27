@@ -39,18 +39,17 @@ import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class MandateWebServiceImpl implements MandateRestService,MandateSoapService {
-	private static final Logger logger = Logger.getLogger(MandateWebServiceImpl.class);
+public class MandateWebServiceImpl implements MandateRestService, MandateSoapService {
+	private static final Logger			logger	= Logger.getLogger(MandateWebServiceImpl.class);
 
-	private ValidationUtility		validationUtility;
-	private MandateController		mandateController;
-	private CustomerDetailsService	customerDetailsService;
-	private BankBranchService		bankBranchService;
-	private MandateService			mandateService;;
-	private BankDetailService		bankDetailService;
-	private FinanceMainService		financeMainService;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-
+	private ValidationUtility			validationUtility;
+	private MandateController			mandateController;
+	private CustomerDetailsService		customerDetailsService;
+	private BankBranchService			bankBranchService;
+	private MandateService				mandateService;;
+	private BankDetailService			bankDetailService;
+	private FinanceMainService			financeMainService;
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -114,6 +113,18 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		if (mandateDetails != null) {
 			returnStatus = doMandateValidation(mandate);
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
+				if (StringUtils.equals(MandateConstants.STATUS_AWAITCON, mandateDetails.getStatus())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Awaiting Confirmation";
+					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+					return returnStatus;
+				}
+				if (StringUtils.equals(MandateConstants.STATUS_HOLD, mandateDetails.getStatus())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Hold";
+					returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+					return returnStatus;
+				}
 				returnStatus = mandateController.updateMandate(mandate);
 			} else {
 				return returnStatus;
@@ -198,7 +209,7 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	@Override
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandate) throws ServiceException {
 		logger.debug("Entering");
-		
+
 		// validate customer details as per the API specification
 		WSReturnStatus response = doValidation(mandate);
 		if (response == null) {
@@ -219,25 +230,25 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		logger.debug("Entering");
 
 		WSReturnStatus returnStatus = null;
-		if(mandateDetail.getFinReference() == null){
+		if (mandateDetail.getFinReference() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FinReference";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		}
-		if(mandateDetail.getOldMandateId() == null || mandateDetail.getOldMandateId()<=0 ){
+		if (mandateDetail.getOldMandateId() == null || mandateDetail.getOldMandateId() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "OldMandateId";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		}
-		if(mandateDetail.getNewMandateId() == null || mandateDetail.getNewMandateId()<=0 ){
+		if (mandateDetail.getNewMandateId() == null || mandateDetail.getNewMandateId() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "NewMandateId";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		}
-		
+
 		// validate oldMandate
 		Mandate oldMandate = mandateService.getApprovedMandateById(mandateDetail.getOldMandateId());
 		if (oldMandate == null) {
@@ -247,7 +258,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			return returnStatus;
 		}
 		// validate FinanceReference
-		int count = financeMainService.getFinanceCountById(mandateDetail.getFinReference(),mandateDetail.getOldMandateId());
+		int count = financeMainService.getFinanceCountById(mandateDetail.getFinReference(),
+				mandateDetail.getOldMandateId());
 		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = mandateDetail.getFinReference();
@@ -261,35 +273,37 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
 			return returnStatus;
 		}
-		List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(mandateDetail.getFinReference(), "", false);
-		BigDecimal repayAmt= BigDecimal.ZERO;
+		List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
+				.getFinScheduleDetails(mandateDetail.getFinReference(), "", false);
+		BigDecimal repayAmt = BigDecimal.ZERO;
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate())>= 0 && curSchd.isRepayOnSchDate()) {
+				if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
+						&& curSchd.isRepayOnSchDate()) {
 					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
 							.add(curSchd.getInsSchd());
 					break;
 				}
 			}
 		}
-			if (repayAmt.compareTo(newMandate.getMaxLimit()) > 0) {
-				returnStatus = APIErrorHandlerService.getFailedStatus("90320");
-				return returnStatus;
-			}
+		if (repayAmt.compareTo(newMandate.getMaxLimit()) > 0) {
+			returnStatus = APIErrorHandlerService.getFailedStatus("90320");
+			return returnStatus;
+		}
 		//validate cif
-		if(!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())){
+		if (!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())) {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
 			return returnStatus;
 		}
 		// validations for MandateRef
-		if(!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
-		if (StringUtils.isBlank(newMandate.getMandateRef())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
-			return returnStatus;
-		}
+		if (!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
+			if (StringUtils.isBlank(newMandate.getMandateRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+				returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
+				return returnStatus;
+			}
 		// validations for Status
 		if (StringUtils.equals(MandateConstants.STATUS_REJECTED, newMandate.getStatus())) {
 			String[] valueParm = new String[1];
@@ -299,11 +313,11 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		}
 		// openMandate
 		if (!newMandate.isOpenMandate()) {
-			if(StringUtils.isNotBlank(newMandate.getOrgReference())){
-			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
-			returnStatus = APIErrorHandlerService.getFailedStatus("90312", valueParm);
-			return returnStatus;
+			if (StringUtils.isNotBlank(newMandate.getOrgReference())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+				returnStatus = APIErrorHandlerService.getFailedStatus("90312", valueParm);
+				return returnStatus;
 			}
 		}
 		logger.debug("Leaving");
@@ -396,8 +410,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[0] = mandate.getPeriodicity();
 				return getErrorDetails("90207", valueParm);
 			}
-		} 
-		boolean isValidBranch=true;
+		}
+		boolean isValidBranch = true;
 		// validate Mandate fields
 		if (StringUtils.isNotBlank(mandate.getIFSC())) {
 			BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
@@ -405,16 +419,16 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getIFSC();
 				return getErrorDetails("90301", valueParm);
-			} else{
+			} else {
 				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-				 if(returnStatus.getReturnCode()!=null){
-					 return returnStatus;
-				 }
+				if (returnStatus.getReturnCode() != null) {
+					return returnStatus;
+				}
 				mandate.setBankCode(bankBranch.getBankCode());
-				if(StringUtils.isBlank(mandate.getMICR())){
+				if (StringUtils.isBlank(mandate.getMICR())) {
 					mandate.setMICR(bankBranch.getMICR());
 				} else {
-					if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+					if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "MICR";
 						valueParm[1] = mandate.getMICR();
@@ -423,8 +437,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				}
 			}
 		} else if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getBranchCode())) {
-			BankBranch bankBranch = bankBranchService
-					.getBankBrachByCode(mandate.getBankCode(), mandate.getBranchCode());
+			BankBranch bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(),
+					mandate.getBranchCode());
 			if (bankBranch == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = mandate.getBankCode();
@@ -432,14 +446,14 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("90302", valueParm);
 			} else {
 				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
-				 if(returnStatus.getReturnCode()!=null){
-					 return returnStatus;
-				 }
+				if (returnStatus.getReturnCode() != null) {
+					return returnStatus;
+				}
 				mandate.setBankCode(bankBranch.getBankCode());
-				if(StringUtils.isBlank(mandate.getMICR())){
+				if (StringUtils.isBlank(mandate.getMICR())) {
 					mandate.setMICR(bankBranch.getMICR());
 				} else {
-					if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+					if (!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "MICR";
 						valueParm[1] = mandate.getMICR();
@@ -448,18 +462,18 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				}
 			}
 		}
-		if(!isValidBranch){
+		if (!isValidBranch) {
 			String[] valueParm = new String[1];
 			valueParm[0] = mandate.getMandateType();
-			 return getErrorDetails("90333", valueParm);
+			return getErrorDetails("90333", valueParm);
 		}
 		//validate AccNumber length
-		if(StringUtils.isNotBlank(mandate.getBankCode())){
+		if (StringUtils.isNotBlank(mandate.getBankCode())) {
 			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-			if(mandate.getAccNumber().length()!=accNoLength){
+			if (mandate.getAccNumber().length() != accNoLength) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "AccountNumber";
-				valueParm[1] = String.valueOf(accNoLength)+" characters";
+				valueParm[1] = String.valueOf(accNoLength) + " characters";
 				return getErrorDetails("30570", valueParm);
 			}
 		}
@@ -478,18 +492,19 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 			}
 		}
 		//validate Dates
-		if(mandate.getExpiryDate() !=null){
-		if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
-				|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
-			String[] valueParm = new String[3];
-			valueParm[0] = "ExpiryDate";
-			valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-			valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-			return getErrorDetails("90318", valueParm);
-		}	
+		if (mandate.getExpiryDate() != null) {
+			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "ExpiryDate";
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
+				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				return getErrorDetails("90318", valueParm);
+			}
 		}
-		if(mandate.getStartDate() != null){
-			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+		if (mandate.getStartDate() != null) {
+			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
+					-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 			if (mandate.getStartDate().before(mandbackDate)
 					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
@@ -497,26 +512,24 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
 				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 				return getErrorDetails("90318", valueParm);
-			}	
+			}
 		}
 		logger.debug("Leaving");
-		
-		
-		
+
 		return returnStatus;
 	}
 
 	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
-		if(StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())){
-			if(!bankBranch.isEcs()){
+		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
+			if (!bankBranch.isEcs()) {
 				isValidBranch = false;
 			}
-		} else if(StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())){
-			if(!bankBranch.isDda()){
+		} else if (StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())) {
+			if (!bankBranch.isDda()) {
 				isValidBranch = false;
 			}
-		}else if(StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())){
-			if(!bankBranch.isNach()){
+		} else if (StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())) {
+			if (!bankBranch.isNach()) {
 				isValidBranch = false;
 			}
 		}
@@ -570,18 +583,20 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
 	}
+
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+
 	@Autowired
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
+
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-
 
 }

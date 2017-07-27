@@ -33,7 +33,8 @@ public class FetchFinCustomerDedupDetails {
 	
 	
 	@SuppressWarnings("unchecked")
-	public static CustomerDetails getFinCustomerDedup(String userRole,String ref, CustomerDetails  custdetails, Window parentWindow, String curLoginUser) throws Exception {
+	public static CustomerDetails getFinCustomerDedup(String userRole, String finType, String ref,
+			CustomerDetails custdetails, Window parentWindow, String curLoginUser) throws Exception {
 		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList=null;
 		int userAction= -1;
@@ -55,7 +56,7 @@ public class FetchFinCustomerDedupDetails {
 
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				// get customer dedup details from interface
-				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails);
+				custDedupData = dedupParmService.getDedupCustomerDetails(custdetails,finType);
 				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,custCoreBank,address,override";
 			} 
 
@@ -72,9 +73,7 @@ public class FetchFinCustomerDedupDetails {
 					userAction = details.getUserAction();
 					customerDedupList = (List<CustomerDedup>) details.getObject();
 				}
-			} else {
-				userAction = -1;
-			}
+			} 
 
 			custdetails.setCustomerDedupList(null);
 
@@ -83,21 +82,24 @@ public class FetchFinCustomerDedupDetails {
 			 * userAction = 1 if user click on DuplicateFound button userAction = 0 if no customer found as a duplicate
 			 * customer then userAction = -1
 			 */
-			if (userAction == -1) {
-				custdetails.getCustomer().setSkipDedup(true);
-					throw new InterfaceException("41001",Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
-			} else if (userAction == 1) {
-				custdetails.setCustomerDedupList(customerDedupList);
-				custdetails.getCustomer().setSkipDedup(true);
-				custdetails.getCustomer().setDedupFound(true);
-			} else if (userAction == 2) {
-				custdetails.getCustomer().setDedupFound(true);
+			if (userAction == 0) {
 				custdetails.getCustomer().setSkipDedup(false);
-				throw new InterfaceException("41002", Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
 			} else {
-				custdetails.getCustomer().setDedupFound(true);
-			}
+				if (userAction == 1) {
+					custdetails.setCustomerDedupList(customerDedupList);
+					custdetails.getCustomer().setSkipDedup(true);
+					custdetails.getCustomer().setDedupFound(true);
+				} else if (userAction == 2) {
+					custdetails.getCustomer().setDedupFound(true);
+					custdetails.getCustomer().setSkipDedup(false);
+					throw new InterfaceException("41002",
+							Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
+				} else {
+					custdetails.getCustomer().setDedupFound(false);
+				}
 
+			}
+		
 			logger.debug("Leaving");
 
 		}

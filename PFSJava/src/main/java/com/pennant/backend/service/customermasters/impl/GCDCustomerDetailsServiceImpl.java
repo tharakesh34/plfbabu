@@ -49,9 +49,10 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 	private GcdCustomer preparegcdCustomer(CustomerDetails customerDetails, GcdCustomer gcdCustomer) {
 		Customer customer = customerDetails.getCustomer();
 
+		gcdCustomer.setCustId(customer.getCustID());
 		gcdCustomer.setFinCustId(customer.getCustCoreBank());
 		gcdCustomer.setCustomerName(customer.getCustShrtName());
-		gcdCustomer.setConstId(customer.getCustID());
+		gcdCustomer.setConstId(Long.valueOf(customer.getCustTypeCode()));
 		gcdCustomer.setIndustryId(Long.parseLong(customer.getCustIndustry()));
 
 		if ("RETAIL".equalsIgnoreCase(customer.getCustCtgCode())) {
@@ -106,44 +107,46 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		String phoneAreaCode = "";
 		String eMail = "";
 		int noOfAddressFlag = 1;
-		List<CustomerAddres> cca = customerDetails.getAddressList();
-
-		Collections.sort(cca, new Comparator<CustomerAddres>() {
-			public int compare(CustomerAddres o1, CustomerAddres o2) {
-				return (int) (o2.getCustAddrPriority() - o1.getCustAddrPriority());
-			}
-		});
-
-		for (CustomerAddres address : cca) {
-			if (noOfAddress >= noOfAddressFlag) {
-				char isPriorityVeryHigh = 'N';
-				if (address.getCustAddrPriority() == 5) {
-					isPriorityVeryHigh = 'Y';
+		List<CustomerAddres> custAddressList = customerDetails.getAddressList();
+		if (custAddressList != null) {
+			Collections.sort(custAddressList, new Comparator<CustomerAddres>() {
+				public int compare(CustomerAddres o1, CustomerAddres o2) {
+					return (int) (o2.getCustAddrPriority() - o1.getCustAddrPriority());
 				}
-				phoneNo = "";
-				phoneAreaCode = "";
-				eMail = "";
+			});
 
-				for (CustomerPhoneNumber phone : customerDetails.getCustomerPhoneNumList()) {
-					if (phone.getPhoneTypePriority() == address.getCustAddrPriority()) {
-						phoneNo = phone.getPhoneNumber();
-						phoneAreaCode = phone.getPhoneAreaCode();
+			for (CustomerAddres address : custAddressList) {
+				if (noOfAddress >= noOfAddressFlag) {
+					char isPriorityVeryHigh = 'N';
+					if (address.getCustAddrPriority() == 5) {
+						isPriorityVeryHigh = 'Y';
 					}
-				}
+					phoneNo = "";
+					phoneAreaCode = "";
+					eMail = "";
 
-				for (CustomerEMail mail : customerDetails.getCustomerEMailList()) {
-					if (mail.getCustEMailPriority() == address.getCustAddrPriority()) {
-						eMail = mail.getCustEMail();
+					for (CustomerPhoneNumber phone : customerDetails.getCustomerPhoneNumList()) {
+						if (phone.getPhoneTypePriority() == address.getCustAddrPriority()) {
+							phoneNo = phone.getPhoneNumber();
+							phoneAreaCode = phone.getPhoneAreaCode();
+						}
 					}
-				}
 
-				addressDetails += address.getCustAddrType() + separator + address.getCustAddrCity() + separator
-						+ address.getCustAddrCountry() + separator + address.getCustAddrProvince() + separator
-						+ address.getCustAddrZIP() + separator + phoneNo + separator + isPriorityVeryHigh + separator
-						+ address.getCustAddrHNbr() + separator + address.getCustFlatNbr() + separator
-						+ address.getCustAddrStreet() + separator + address.getCustAddrLine1() + separator
-						+ address.getCustAddrLine2() + separator + phoneAreaCode + separator + separator + eMail + ";";
-				noOfAddressFlag++;
+					for (CustomerEMail mail : customerDetails.getCustomerEMailList()) {
+						if (mail.getCustEMailPriority() == address.getCustAddrPriority()) {
+							eMail = mail.getCustEMail();
+						}
+					}
+
+					addressDetails += address.getCustAddrType() + separator + address.getCustAddrCity() + separator
+							+ address.getCustAddrCountry() + separator + address.getCustAddrProvince() + separator
+							+ address.getCustAddrZIP() + separator + phoneNo + separator + isPriorityVeryHigh
+							+ separator + address.getCustAddrHNbr() + separator + address.getCustFlatNbr() + separator
+							+ address.getCustAddrStreet() + separator + address.getCustAddrLine1() + separator
+							+ address.getCustAddrLine2() + separator + phoneAreaCode + separator + separator + eMail
+							+ ";";
+					noOfAddressFlag++;
+				}
 			}
 		}
 		return addressDetails;

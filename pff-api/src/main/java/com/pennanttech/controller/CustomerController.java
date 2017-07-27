@@ -227,6 +227,7 @@ public class CustomerController {
 			customerDetails.setCustID(prvCustomer.getCustID());
 			curCustomer.setCustCIF(customerDetails.getCustCIF());
 			curCustomer.setCustID(prvCustomer.getCustID());
+			curCustomer.setCustCRCPR(prvCustomer.getCustCRCPR());
 			curCustomer.setNewRecord(false);
 			curCustomer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -787,6 +788,7 @@ public class CustomerController {
 		curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
 		curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
 		curCustomer.setCustID(prvCustomer.getCustID());
+		curCustomer.setCustCRCPR(prvCustomer.getCustCRCPR());
 		curCustomer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		curCustomer.setNewRecord(false);
 		curCustomer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -928,7 +930,7 @@ public class CustomerController {
 			customerEmploymentDetail.setLastMntBy(userDetails.getLoginUsrID());
 			customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerEmploymentDetail.setVersion((customerEmploymentDetailService.getVersion(
-					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpName())) + 1);
+					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpId())) + 1);
 
 			// call service method to update customer Employment details
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);

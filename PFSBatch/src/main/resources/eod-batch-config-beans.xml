@@ -538,6 +538,36 @@
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<bean id="limitStructureDetailDAO"
+		class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+		
+	<bean id="limitRebuild"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="limitRebuildServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="limitRebuildServiceTarget"
+		class="com.pennant.backend.service.limitservice.impl.LimitRebuildService">
+	</bean>
+	
+	
 	<!-- EODConfig -->
 	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />

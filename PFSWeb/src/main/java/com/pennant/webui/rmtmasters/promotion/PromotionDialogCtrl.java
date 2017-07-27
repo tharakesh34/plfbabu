@@ -604,8 +604,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (StringUtils.isNotBlank(aPromotion.getFinType())) {
 			appendFeeDetailTab();
-			//appendInsuranceDetailsTab();
 			appendAccountingDetailsTab();
+			//appendInsuranceDetailsTab();	//commented as per Bajaj requirement
 		}
 
 		logger.debug("Leaving");

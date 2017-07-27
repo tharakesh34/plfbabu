@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ReportConfigurationDialogCtrl.java                                                   * 	  
+ * FileName    		:  ReportConfigurationDialogCtrl.java                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -53,6 +53,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -115,7 +116,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Combobox 		dataSourceName; 				// autoWired
 	protected Checkbox 		showTempLibrary; 				// autoWired
 	protected Textbox 	    menuItemCode; 			        // autoWired
-
+	protected Checkbox 		alwMultiFormat; 
 
 	protected Label 		label_ReportConfigurationDialog_ReportName;
 	protected Label 		label_ReportConfigurationDialog_ReportHeading;
@@ -124,6 +125,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Label 		label_ReportConfigurationDialog_DataSourceName;
 	protected Label 		label_ReportConfigurationDialog_ShowTempLibrary;
 	protected Label 		label_ReportConfigurationDialog_MenuItemCode;
+	protected Label         label_ReportConfigurationDialog_AlwMultiFormat;
 
 	protected Row			row_Zero;
 	protected Row			row_One;
@@ -137,7 +139,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Hlayout 		hlayout_DataSourceName;
 	protected Hlayout 		hlayout_ShowTempLibrary;
 	protected Hlayout 		hlayout_MenuItemCode;
-
+	protected Hlayout 		hlayout_AlwMultiFormat;
+	
 	protected Space 		space_ReportName; 				// autoWired
 	protected Space 		space_ReportHeading; 			// autoWired
 	protected Space 		space_PromptRequired; 				// autoWired
@@ -145,7 +148,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Space 		space_DataSourceName; 		// autoWired
 	protected Space 		space_ShowTempLibrary; 	      // autoWired
 	protected Space 		space_MenuItemCode; 			// autoWired
-
+	protected Space 		space_AlwMultiFormat;
 
 	// not auto wired Var's
 	private ReportConfiguration reportConfiguration; // overHanded per parameter
@@ -165,9 +168,11 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Button     btnPreviewReport;
 	protected Paging     pagingReportFilterFieldsList;
 	protected Listbox    listBoxReportFilterFields;
+	//protected Listbox    listBoxReportAdditionalConditions;
 	private List<ReportFilterFields> reportFilterFieldsList=new ArrayList<ReportFilterFields>();
+	//private List<ReportAdditionalConditions> reportAdditionalConditionsList=new ArrayList<ReportAdditionalConditions>();
 	private PagedListWrapper<ReportFilterFields> reportFilterFieldsPagedListWrapper;
-
+	//private PagedListWrapper<ReportAdditionalConditions> reportAdditionalConditionsPagedListWrapper;
 	private List<ValueLabel> dataSourceNamesList = PennantStaticListUtil.getDataSourceNames();
 
 	/**
@@ -213,7 +218,6 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 				ReportConfiguration befImage =new ReportConfiguration();
 				BeanUtils.copyProperties(this.reportConfiguration, befImage);
 				this.reportConfiguration.setBefImage(befImage);
-
 				setReportConfiguration(this.reportConfiguration);
 			} else {
 				setReportConfiguration(null);
@@ -248,6 +252,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getReportConfiguration());
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_ReportConfigurationDialog.onClose();
@@ -290,12 +295,17 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		logger.debug("Entering ");
 
 		if(!enqModule){
-			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationDialog_btnNew"));
+			/*this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationDialog_btnDelete"));
+			this.btnNew_ReportFilterFields.setVisible(true);*/
+			
+			this.btnNew.setVisible(true);
+			this.btnEdit.setVisible(true);
+			this.btnDelete.setVisible(true);
 			this.btnNew_ReportFilterFields.setVisible(true);
 			this.btnPreviewReport.setVisible(true);
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReportConfigurationDialog_btnSave"));
+			this.btnSave.setVisible(true);
 		}
 		logger.debug("Leaving ");
 	}
@@ -320,6 +330,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entering" + event.toString());
 		doEdit();
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -384,7 +395,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul", null, map);
-		} catch (Exception e) {
+	} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
@@ -402,6 +413,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		doReadOnly(true);
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
+		flag=false;
+		this.listBoxReportFilterFields.setTooltiptext("");
 		logger.debug("Leaving ");
 	}
 
@@ -423,6 +436,11 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 				this.showTempLibrary.setChecked(aReportConfiguration.isShowTempLibrary());
 			}else{
 				this.showTempLibrary.setDisabled(true);
+			}
+			if(aReportConfiguration.isPromptRequired()){
+				this.alwMultiFormat.setChecked(aReportConfiguration.isAlwMultiFormat());
+			}else{
+				this.alwMultiFormat.setDisabled(true);
 			}
 			this.dataSourceName.setValue(PennantAppUtil.getlabelDesc(
 					String.valueOf(aReportConfiguration.getDataSourceName()),PennantStaticListUtil.getDataSourceNames()));
@@ -481,6 +499,12 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		try {
+
+			aReportConfiguration.setAlwMultiFormat(this.alwMultiFormat.isChecked());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
 
 		try {
 
@@ -490,7 +514,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		}
 
 		aReportConfiguration.setListReportFieldsDetails(this.reportFilterFieldsList);
-
+		reportFilterFieldsList.equals(this.menuItemCode.getValue());
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -542,7 +567,6 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aReportConfiguration);
-
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -562,7 +586,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 
 		if (!this.reportName.isReadonly()){
 			this.reportName.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportConfigurationDialog_ReportName.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.reportHeading.isReadonly()) {
 			this.reportHeading.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportConfigurationDialog_ReportHeading.value"),
@@ -570,7 +594,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		}
 		if (!this.reportJasperName.isReadonly()){
 			this.reportJasperName.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportConfigurationDialog_ReportJasperName.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE_SPACE, true));
 		}
 		if (!this.dataSourceName.isDisabled()){
 			this.dataSourceName.setConstraint(new PTListValidator(
@@ -682,28 +706,40 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Set the components for edit mode. <br>
 	 */
+	boolean flag;
 	private void doEdit() {
 		logger.debug("Entering ");
 		doReadOnly(false);
-		if (getReportConfiguration().isNewRecord()){
+		if (getReportConfiguration().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-		}else{
+			this.btnNew_ReportFilterFields.setDisabled(false);
+		} else {
 			this.btnCancel.setVisible(true);
+			this.btnNew_ReportFilterFields.setDisabled(false);
+			this.listBoxReportFilterFields.setTooltiptext("Use double click for editing");
 		}
 
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.reportConfiguration.isNewRecord()){
+			if (this.reportConfiguration.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
+			if(flag = true){
+				List<Component> items = listBoxReportFilterFields.getChildren();
+				for (Component component : items) {
+					if (component instanceof Listitem) {
+						((Listitem) component).setDisabled(false);
+					}
+				}
+			}
 		}
 		logger.debug("Leaving ");
 	}
@@ -725,21 +761,28 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		setComponentAccessType("ReportConfigurationDialog_reportHeading", tempReadOnly, this.reportHeading, this.space_ReportHeading, 
 				this.label_ReportConfigurationDialog_ReportHeading, this.hlayout_ReportHeading,null);
 		setRowInvisible(this.row_Zero,this.hlayout_ReportName, this.hlayout_ReportHeading);
-
+         
 		setComponentAccessType("ReportConfigurationDialog_promptRequired", tempReadOnly, this.promptRequired, null,
 				this.label_ReportConfigurationDialog_PromptRequired, this.hlayout_PromptRequired,null);
-		setRowInvisible(this.row_One,this.hlayout_PromptRequired, this.hlayout_ShowTempLibrary);
-
+		
+		setComponentAccessType("ReportConfigurationDialog_showTempLibrary", tempReadOnly, this.showTempLibrary, this.space_ShowTempLibrary, 
+				this.label_ReportConfigurationDialog_ShowTempLibrary, this.hlayout_ShowTempLibrary,this.row_One);
+		//setRowInvisible(this.row_One,this.hlayout_PromptRequired, this.hlayout_ShowTempLibrary);
 		setComponentAccessType("ReportConfigurationDialog_reportJasperName", tempReadOnly, this.reportJasperName, this.space_ReportJasperName, 
 				this.label_ReportConfigurationDialog_ReportJasperName, this.hlayout_ReportJasperName,null);
+		
 		setComponentAccessType("ReportConfigurationDialog_dataSourceName", tempReadOnly, this.dataSourceName, this.space_DataSourceName,
 				this.label_ReportConfigurationDialog_DataSourceName, this.hlayout_DataSourceName,null);
 		setRowInvisible(this.row_Two,this.hlayout_ReportJasperName, this.hlayout_DataSourceName);
 
 		setComponentAccessType("ReportConfigurationDialog_menuItemCode", tempReadOnly, this.menuItemCode, this.space_MenuItemCode, 
 				this.label_ReportConfigurationDialog_MenuItemCode, this.hlayout_MenuItemCode,this.row_Three);
-		this.btnPreviewReport.setDisabled(tempReadOnly);
-		this.btnNew_ReportFilterFields.setDisabled(tempReadOnly);
+		
+		setComponentAccessType("ReportConfigurationDialog_alwMultiFormat", tempReadOnly, this.alwMultiFormat, this.space_AlwMultiFormat, 
+				this.label_ReportConfigurationDialog_AlwMultiFormat, this.hlayout_AlwMultiFormat,this.row_Three);
+		//setRowInvisible(this.row_Three,this.hlayout_PromptRequired, this.hlayout_AlwMultiFormat);
+		this.btnPreviewReport.setDisabled(false);
+		this.btnNew_ReportFilterFields.setDisabled(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -762,6 +805,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.dataSourceName.setValue("");
 		this.showTempLibrary.setValue("");
 		this.menuItemCode.setValue("");
+		this.alwMultiFormat.setValue("");
 		logger.debug("Leaving ");
 	}
 
@@ -818,7 +862,6 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 				// Close the Existing Dialog
 				closeDialog();
 			}
-
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -999,7 +1042,12 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		ReportFilterFields  reportFilterFields = new ReportFilterFields();
 		reportFilterFields.setNewRecord(true);
 		reportFilterFields.setWorkflowId(0);
-
+		/*if(getReportConfiguration().getListReportFieldsDetails()!=null){
+		long fieldID =  getReportConfiguration().getListReportFieldsDetails().size();
+		reportFilterFields.setFieldID(fieldID+1);
+		}else{
+			reportFilterFields.setFieldID(1);
+		}*/
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("reportConfigurationDialogCtrl", this);
 		map.put("reportFilterFields",reportFilterFields);
@@ -1010,10 +1058,41 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		try {
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportConfiguration/ReportFilterFieldsDialog.zul",null, map);
 		} catch (Exception e) {
+			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
+
+	// OnChange Events
+
+	/*	*//**
+		 * When user clicks on "btnNew_AdditionalConditions"
+		 * @param event
+		 * @throws Exception
+		 *//*
+	public void onClick$btnNew_AdditionalConditions(Event event) throws Exception {
+		logger.debug("Entering " + event.toString());
+
+		ReportAdditionalConditions reportAdditionalConditions = new ReportAdditionalConditions();
+		reportAdditionalConditions.setNewRecord(true);
+		reportAdditionalConditions.setWorkflowId(0);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportConfigurationDialogCtrl", this);
+		map.put("reportAdditionalConditions", reportAdditionalConditions);
+		map.put("reportConfiguration", getReportConfiguration());
+		map.put("newRecord", "true");
+		map.put("roleCode", getRole());
+
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/Reports/ReportConfiguration/ReportAdditionalConditionsDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+
+		}
+		logger.debug("Leaving " + event.toString());
+	}*/
 
 	/**
 	 * When user double clicks "ReportFilterFields"
@@ -1033,6 +1112,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			map.put("reportFilterFields", reportFilterFields);
 			map.put("reportConfiguration", getReportConfiguration());
 			map.put("roleCode", getRole());
+			map.put("listBoxReportFilterFields",listBoxReportFilterFields );
 			if(enqModule){
 				map.put("enqModule", true);
 			}else{
@@ -1059,21 +1139,34 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.reportFilterFieldsPagedListWrapper.initList(reportFilterFieldsList,this.listBoxReportFilterFields, new Paging());
 		this.listBoxReportFilterFields.setItemRenderer(new ReportFilterFieldsListModelItemRenderer());
 		getReportConfiguration().setListReportFieldsDetails(reprtFiltrFieldsList);
-
+		
 		logger.debug("Leaving ");
 	}
 
+	/**      
+	 * This method fills ReportFilterFieldsList
+	 * @param expenseDetails
+	 *//*
+	public void doFillReportAdditionalConditionsList(List<ReportAdditionalConditions> reportAdditionalConditions){
+		logger.debug("Entering ");
+		
+		setReportAdditionalConditionsList(reportAdditionalConditionsList);
+		this.reportAdditionalConditionsPagedListWrapper.initList(reportAdditionalConditionsList,this.listBoxReportAdditionalConditions, new Paging());
+		getReportConfiguration().setListReportAdditionalConditionsDetails(reportAdditionalConditionsList);
+
+		logger.debug("Leaving ");
+	}*/
 
 	/**
 	 * Item renderer for listItems in the listBox.
 	 * 
 	 */
 	private class ReportFilterFieldsListModelItemRenderer implements ListitemRenderer<ReportFilterFields> {
-	
+
 		public ReportFilterFieldsListModelItemRenderer() {
-			
+
 		}
-		
+
 		@Override
 		public void render(Listitem item, ReportFilterFields reportFilterFields, int count) throws Exception {
 			Listcell lc;
@@ -1085,7 +1178,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			lc.setParent(item);
 			lc = new Listcell(reportFilterFields.getFieldDBName());
 			lc.setParent(item);
-			Checkbox chkbox=new Checkbox();
+			Checkbox chkbox = new Checkbox();
 			chkbox.setChecked(reportFilterFields.isMandatory());
 			chkbox.setDisabled(true);
 			lc = new Listcell();
@@ -1094,9 +1187,31 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			lc = new Listcell(String.valueOf(reportFilterFields.getSeqOrder()));
 			lc.setParent(item);
 			item.setAttribute("data", reportFilterFields);
+			setRender(reportFilterFields);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onReportFilterFieldsItemDoubleClicked");
+			
 		}
 	}
+	
+	private void setRender(ReportFilterFields reportFilterFields) {
+		if (flag == true) {
+			List<Component> items = listBoxReportFilterFields.getChildren();
+			for (Component component : items) {
+				if (component instanceof Listitem) {
+					((Listitem) component).setDisabled(false);
+				}
+			}
+		} else {
+			List<Component> items = listBoxReportFilterFields.getChildren();
+			for (Component component : items) {
+				if (component instanceof Listitem) {
+					((Listitem) component).setDisabled(true);
+				}
+			}
+		}
+
+	}
+
 	/**
 	 * When user clicks on "onlineProcess"
 	 * @param event
@@ -1104,11 +1219,15 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 */
 	public void onCheck$promptRequired(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
+		
 		if(!this.promptRequired.isChecked()){
 			this.showTempLibrary.setChecked(false);
 			this.showTempLibrary.setDisabled(true);
+			this.alwMultiFormat.setChecked(false);
+			this.alwMultiFormat.setDisabled(true);
 		}else {
 			this.showTempLibrary.setDisabled(false);
+			this.alwMultiFormat.setDisabled(false);
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -1223,4 +1342,29 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.pagedListService = pagedListService;
 	}
 
+	/*public List<ReportAdditionalConditions> getReportAdditionalConditionsList() {
+		return reportAdditionalConditionsList;
+	}
+
+	public void setReportAdditionalConditionsList(List<ReportAdditionalConditions> reportAdditionalConditionsList) {
+		this.reportAdditionalConditionsList = reportAdditionalConditionsList;
+	}
+
+	public PagedListWrapper<ReportAdditionalConditions> getReportAdditionalConditionsPagedListWrapper() {
+		return reportAdditionalConditionsPagedListWrapper;
+	}
+
+	public void setReportAdditionalConditionsPagedListWrapper(
+			PagedListWrapper<ReportAdditionalConditions> reportAdditionalConditionsPagedListWrapper) {
+		this.reportAdditionalConditionsPagedListWrapper = reportAdditionalConditionsPagedListWrapper;
+	}
+
+	public Listbox getListBoxReportAdditionalConditions() {
+		return listBoxReportAdditionalConditions;
+	}
+
+	public void setListBoxReportAdditionalConditions(Listbox listBoxReportAdditionalConditions) {
+		this.listBoxReportAdditionalConditions = listBoxReportAdditionalConditions;
+	}
+*/
 }

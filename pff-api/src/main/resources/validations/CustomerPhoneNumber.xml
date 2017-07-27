@@ -69,7 +69,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>phoneNumber should have maximum 10 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -84,7 +84,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="min">10</element>
-			</constraint>
+			</constraint> -->
 		</field>
 
 	<field name="phoneTypePriority">

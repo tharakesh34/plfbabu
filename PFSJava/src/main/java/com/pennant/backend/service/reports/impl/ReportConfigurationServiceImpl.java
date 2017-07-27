@@ -178,7 +178,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			reportConfiguration.setListReportFieldsDetails(
 					getReportFilterFieldsDAO().getReportFilterFieldsByReportId(reportConfiguration.getReportID(), "_View"));
 		}
-		return getReportConfigurationDAO().getReportConfigurationById(id,"_View");
+		return reportConfiguration;
 	}
 
 	/**
@@ -485,13 +485,13 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			if(delete){
 				reportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_MDEL);
 			}else{
-				if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				if (PennantConstants.RCD_ADD.equalsIgnoreCase(reportFilterFields.getRecordType())) {
 					reportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					isRcdType=true;
-				}else if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				}else if (PennantConstants.RCD_UPD.equalsIgnoreCase(reportFilterFields.getRecordType())) {
 					reportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					isRcdType=true;
-				}else if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				}else if (PennantConstants.RCD_DEL.equalsIgnoreCase(reportFilterFields.getRecordType())) {
 					reportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					isRcdType=true;
 				}
@@ -503,10 +503,10 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			}
 
 			if(!auditTranType.equals(PennantConstants.TRAN_WF)){
-				if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(reportFilterFields.getRecordType())) {
 					auditTranType= PennantConstants.TRAN_ADD;
-				} else if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(reportFilterFields.getRecordType())
+						|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(reportFilterFields.getRecordType())) {
 					auditTranType= PennantConstants.TRAN_DEL;
 				}else{
 					auditTranType= PennantConstants.TRAN_UPD;

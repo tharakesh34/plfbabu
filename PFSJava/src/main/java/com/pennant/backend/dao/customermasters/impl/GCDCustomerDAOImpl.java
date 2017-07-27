@@ -79,7 +79,7 @@ public class GCDCustomerDAOImpl implements GCDCustomerDAO {
 		try {
 			StringBuilder insertSql = new StringBuilder();
 			insertSql.append(" Insert Into GCDCUSTOMERS");
-			insertSql.append(" (FinCustId, SourceSystem, CustomerName, ConstId, IndustryId, CategoryId, Spousename,");
+			insertSql.append(" (CustId, FinCustId, SourceSystem, CustomerName, ConstId, IndustryId, CategoryId, Spousename,");
 			insertSql.append(" IndvCorpFlag, FName, MName, Lname, DOB, Sex,");
 			insertSql.append(
 					" IncomeSource, YearsOfCurrJob, DOI, MpAkerId, MakerDate, AuthId, AuthDate, AccType, ApCcocatg,");
@@ -92,7 +92,7 @@ public class GCDCustomerDAOImpl implements GCDCustomerDAO {
 					" InsertUpdateFlag, StatusFromFinnOne, RejectionReason, FinnCustId, SfdcCustomerId, BranchId)");
 
 			insertSql.append(
-					" Values(:FinCustId, :SourceSystem, :CustomerName, :ConstId, :IndustryId, :CategoryId, :Spousename,");
+					" Values(:CustId, :FinCustId, :SourceSystem, :CustomerName, :ConstId, :IndustryId, :CategoryId, :Spousename,");
 			insertSql.append(" :IndvCorpFlag, :FName, :MName, :Lname, :DOB, :Sex,");
 			insertSql.append(" :IncomeSource, :YearsOfCurrJob, :DOI, :MpAkerId, :MakerDate, :AuthId,");
 			insertSql.append(" :AuthDate, :AccType, :ApCcocatg, :DateLastUpdate, :NationalId, :PassportNo,");

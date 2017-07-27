@@ -1,5 +1,8 @@
 package com.pennanttech.bajaj.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorDescription {
 
 	private String errorCode;

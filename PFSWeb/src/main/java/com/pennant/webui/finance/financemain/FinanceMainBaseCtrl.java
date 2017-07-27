@@ -638,6 +638,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient int									oldVar_maxPlanEmi;
 	protected transient int									oldVar_planEmiHLockPeriod;
 	protected transient boolean								oldVar_cpzAtPlanEmi;
+	
+	protected transient List<Integer>						oldVar_planEMIMonths;
+	protected transient List<Date>							oldVar_planEMIDates;
 
 	protected Vbox											discrepancies;
 
@@ -3898,6 +3901,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				this.windowTitle.setValue(Labels.getLabel(moduleDefiner + "_Window.Title"));
 			}
+			
+			if (StringUtils.isEmpty(moduleDefiner) || 
+					StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+				this.oldVar_planEMIMonths = getFinanceDetail().getFinScheduleData().getPlanEMIHmonths();
+				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
+			}
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
@@ -5607,6 +5616,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (aFinScheduleData.getPlanEMIHDates() == null || aFinScheduleData.getPlanEMIHDates().isEmpty()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
 					return;
+				}
+			}
+		}
+		
+		// After Changing Planned EMI Dates / Months Validation for Recalculated or not
+		if (StringUtils.isEmpty(moduleDefiner) || 
+				StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+			
+			// Planned EMI Holiday Months
+			if(getScheduleDetailDialogCtrl() != null && aFinanceMain.isPlanEMIHAlw()){
+				if(StringUtils.equals(aFinanceMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+					if (!getScheduleDetailDialogCtrl().getPlanEMIHMonths().containsAll(this.oldVar_planEMIMonths) ||
+							!this.oldVar_planEMIMonths.containsAll(getScheduleDetailDialogCtrl().getPlanEMIHMonths())) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+						return;
+					}
+				}else if(StringUtils.equals(aFinanceMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)){
+					if (!getScheduleDetailDialogCtrl().getPlanEMIHDateList().containsAll(this.oldVar_planEMIDates) ||
+							!this.oldVar_planEMIDates.containsAll(getScheduleDetailDialogCtrl().getPlanEMIHDateList())) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+						return;
+					}
 				}
 			}
 		}
@@ -14148,6 +14179,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
 				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(utilizedAmt, formatter));
+	}
+	
+	/**
+	 * Method for Resetting Data after Recalculate of Planned EMI Holidays
+	 * @param planEMIMonths
+	 * @param planEMIDates
+	 */
+	public void resetPlanEMIH(List<Integer> planEMIMonths, List<Date> planEMIDates){
+		this.oldVar_planEMIMonths = planEMIMonths;
+		this.oldVar_planEMIDates = planEMIDates;
 	}
 
 	/**

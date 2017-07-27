@@ -1,15 +1,23 @@
 package com.pennanttech.bajaj.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CustAddressDetail {
 	
+	@XmlElement
 	private String addressType;
+	@XmlElement
 	private String address;
+	@XmlElement
 	private String city;
+	@XmlElement
 	private String pin;
+	@XmlElement
 	private String landmark;
+	
 	public String getAddressType() {
 		return addressType;
 	}
@@ -46,6 +54,4 @@ public class CustAddressDetail {
 				+ address + ", city=" + city + ", pin=" + pin + ", landmark="
 				+ landmark + "]";
 	}
-
-	
 }

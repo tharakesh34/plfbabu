@@ -1101,8 +1101,16 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void generateGLReport() throws Exception {
 		logger.info("Generating GL Report..");
-
+		
 		try {
+			generateTransactionReport();
+			generateTransactionSummaryReport();
+			generateTrailBalanceReport();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		/*try {
 			GenerateTransactionReport gtr = new GenerateTransactionReport();
 			Thread thread1 = new Thread(gtr);
 			thread1.start();
@@ -1124,7 +1132,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			thread3.start();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		}
+		}*/
 
 	}
 
@@ -1170,7 +1178,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			public void processRow(ResultSet rs) throws SQLException {
 
 				try {
-
 					dataMap.addValue("PROVINCE", rs.getString("PROVINCE"));
 					dataMap.addValue("DESCRIPTION", states.get(rs.getString("PROVINCE")));
 

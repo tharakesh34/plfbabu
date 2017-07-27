@@ -535,7 +535,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		source.addValue("CustDocCategory", docType);
 
 		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Version FROM CustomerEMails");
+		selectSql.append("SELECT Version FROM CustomerDocuments");
 
 		selectSql.append(" WHERE CustId = :CustId AND CustDocCategory = :CustDocCategory");
 

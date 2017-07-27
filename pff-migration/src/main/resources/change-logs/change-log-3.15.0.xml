@@ -12772,13 +12772,33 @@ union
 		</createView>
 	</changeSet>
 	
-	<changeSet id="627" author="Kesav">
+	<changeSet id="627" author="Kesav" dbms="oracle">
 		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
 			SELECT      T1.FinReference, T1.FinBranch, T1.RoleCode, T1.NextRoleCode, T1.FinType, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt,
 			            T1.FinStartDate,T1.LastMntBy, T1.FinCcy, T1.RecordType, T1.FinAssetValue,
 			            T2.CustID, T2.CustCIF, T2.CustShrtName, 
 			            T3.RoleDesc PrvRoleDesc, 
 			            COALESCE(T4.RoleDesc,  FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,
+			            T6.DeptDesc,
+			            T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,
+			            T9.FinTypeDesc, T9.FinDivision lovDescFinDivision
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustID = T2.CustID   LEFT OUTER JOIN
+			            SecRoles T3 ON T3.RoleCd = T1.RoleCode LEFT OUTER JOIN
+			            SecRoles T4 ON T4.RoleCd = T1.NextRoleCode LEFT OUTER JOIN
+			            SecUsers T5 ON T5.UsrID = T1.LastMntBy LEFT OUTER JOIN
+			            BMTDepartments T6 ON T6.DeptCode = T5.UsrDeptCode LEFT OUTER JOIN
+			            SecUsers  T7 on T1.LastMntBy =T7.UsrID LEFT OUTER JOIN
+			            RMTFinanceTypes T9 on T1.FinType=T9.FinType	
+		</createView>
+	</changeSet>
+	<changeSet id="627" author="Kesav" dbms="mssql">
+		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
+			SELECT      T1.FinReference, T1.FinBranch, T1.RoleCode, T1.NextRoleCode, T1.FinType, T1.FinAmount, T1.DownPayment, T1.FeeChargeAmt,
+			            T1.FinStartDate,T1.LastMntBy, T1.FinCcy, T1.RecordType, T1.FinAssetValue,
+			            T2.CustID, T2.CustCIF, T2.CustShrtName, 
+			            T3.RoleDesc PrvRoleDesc, 
+			            COALESCE(T4.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) NextRoleDesc,
 			            T6.DeptDesc,
 			            T7.UsrFName UsrFName,T7.UsrLName lastMntByUser,
 			            T9.FinTypeDesc, T9.FinDivision lovDescFinDivision
@@ -12946,7 +12966,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		</createView>
 	</changeSet>
 	
-	<changeSet id="635" author="Manoj">
+	<changeSet id="635" author="Manoj" dbms="oracle">
 		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
 				  SELECT 		HEADERID,
 				  COUNTRY,
@@ -12964,7 +12984,24 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
 		</createView>
 	</changeSet>
-	
+		<changeSet id="635" author="Manoj" dbms="mssql">
+		<createView viewName="TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+				  SELECT 		HEADERID,
+				  COUNTRY,
+				  PROVINCE,
+				  ACTYPEGRPID,
+				  HOSTACCOUNT,
+				  DESCRIPTION,
+				  dbo.UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+				  OPENINGBALTYPE,
+				  dbo.UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+				  dbo.UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+				  dbo.UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+				  CLOSINGBALTYPE
+				  FROM TRAIL_BALANCE_REPORT_LAST_RUN TBR
+				  INNER JOIN TRAIL_BALANCE_HEADER TBH ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
 	<changeSet id="636" author="Manoj">
 		<dropTable tableName="TRAIL_BALANCE_REPORT_FILE"/>
 	</changeSet>
@@ -12988,7 +13025,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="638" author="Manoj">
+	<changeSet id="638" author="Manoj" dbms="oracle">
 		<createView viewName="TRAIL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
 			SELECT ID,COUNTRY,
 			  PROVINCE,
@@ -13004,7 +13041,22 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			  FROM TRAIL_BALANCE_REPORT_FILE order by ID, PROVINCE
 		</createView>
 	</changeSet>
-	
+	<changeSet id="638" author="Manoj" dbms="mssql">
+		<createView viewName="TRAIL_BALANCE_REPORT_FILE_VIEW" replaceIfExists="true">
+			SELECT ID,COUNTRY,
+			  PROVINCE,
+			  ACTYPEGRPID,
+			  HOSTACCOUNT,
+			  DESCRIPTION,
+			  OPENINGBAL,
+			  OPENINGBALTYPE,
+			  DEBITAMOUNT,
+			  CREDITAMOUNT,
+			  CLOSINGBAL,
+			  CLOSINGBALTYPE
+			  FROM TRAIL_BALANCE_REPORT_FILE 
+		</createView>
+	</changeSet>
 	<changeSet id="639" author="Manoj">
 		<sql>
 			update data_engine_table set Filter = NULL where name = 'TRAIL_BALANCE_REPORT_VIEW';
@@ -13767,7 +13819,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 
 		</createView>
 </changeSet>
-<changeSet id="662" author="Srikanth">
+<changeSet id="662" author="Srikanth" dbms="oracle">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
 			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
@@ -13811,7 +13863,50 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))
 	</createView>
 </changeSet>
-
+<changeSet id="662" author="Srikanth" dbms="mssql">
+		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,
+						coalesce(T9.NOINST,0) NOINST
+			FROM        FinanceMain_Temp T1 INNER JOIN
+			            Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN
+                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
+			
+			UNION ALL
+			
+			SELECT	    T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms,
+			            T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt,
+			            T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate, T1.AlwMultiDisb, T1.Defferments, T1.NextRoleCode, T1.RecordStatus, T1.RecordType,
+			            T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, 
+			            T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T1.RepayRateBasis, T1.ManualSchedule, T1.FinCurrAssetValue,  
+			            T1.TakeOverFinance , T1.NextRolloverDate, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,
+			            T1.DownPayment, T1.planEMIHAlw, T1.CalTerms, T1.RateChgAnyDay, T1.finAssetValue,
+			            T2.CustCIF LovDescCustCIF, 
+			            T3.FinIsAlwDifferment lovDescFinAlwDeferment, T3.FinDivision LovDescFinDivision, T3.FinCategory LovDescProductCodeName, 
+			            T4.ProductCategory,
+			            COALESCE(T5.RoleDesc,  dbo.FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,
+						coalesce(T9.NOINST,0) NOINST
+			FROM        FinanceMain T1 INNER JOIN
+				    	Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+			            RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+			            SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+			            BMTProduct T4 ON T3.FinCategory = T4.ProductCode LEFT JOIN
+                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
+			WHERE     	(NOT EXISTS (SELECT 1 Expr1 FROM FinanceMain_Temp WHERE (FinReference = T1.FinReference)))
+	</createView>
+</changeSet>
 	<changeSet id="663" author="murthy.y">
 		<renameColumn columnDataType="decimal(18,2)"
 			newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE"
@@ -14003,7 +14098,12 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS'),3,'BranchCode','LOVSEARCH','Branch','FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
 	</changeSet>
-		<changeSet id="675" author="Kesav">
+		<changeSet id="675" author="Kesav" dbms="oracle">
+	<sql>
+		create table Promotions_Backup as Select * from Promotions;
+	</sql>
+	</changeSet>
+	<changeSet id="675" author="Kesav" dbms="mssql">
 	<sql>
 		create table Promotions_Backup as Select * from Promotions;
 	</sql>
@@ -14579,7 +14679,18 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 	<changeSet id="710" author="Durgaprasad.g">
 		<dropTable tableName="POSTINGS_TAXDOWNLOAD" />
 	</changeSet>
-	
+	<changeSet id="705" author="Chaitanya.ch">
+  	<addColumn tableName="Postings">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
+  <changeSet id="706" author="Chaitanya.ch">
+  	<addColumn tableName="Postings_Temp">
+  		<column name="OldLinkedTranID" type="bigint"></column>
+  	</addColumn>
+   
+  </changeSet>
 	<changeSet id="711" author="Durgaprasad.g">
 	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
 	   SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
@@ -14615,26 +14726,16 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 			constraintName="PK_GCDCUSTOMERS_TEST" />
 	</changeSet>
 	
-	<changeSet id="705" author="Chaitanya.ch">
-  	<addColumn tableName="Postings">
-  		<column name="OldLinkedTranID" type="bigint"></column>
-  	</addColumn>
-   
-  </changeSet>
-  <changeSet id="706" author="Chaitanya.ch">
-  	<addColumn tableName="Postings_Temp">
-  		<column name="OldLinkedTranID" type="bigint"></column>
-  	</addColumn>
-   
-  </changeSet>
+	
   <changeSet id="713" author="Chaitanya.ch">
   	<sql>
+  	    DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE';
   		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
   	</sql>
   </changeSet>
  <changeSet id="714" author="Chaitanya.ch">
   	<sql>
-  		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE'
+  		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE='FINONE_DEF_FINTYPE';
   		INSERT INTO SMTPARAMETERS VALUES ('FINONE_DEF_FINTYPE','Fin one default product code', 'String', 1,  'LAP', 	'200', 	0, NULL, NULL, 'Fin one default product code', 	1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
   	</sql>
   </changeSet>
@@ -14673,4 +14774,386 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
   <changeSet id="716" author="Durgaprasad G">
    <modifyDataType tableName="LEA_GST_TMP_DTL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
   </changeSet>
+    <changeSet id="717" author="Pruthvi">
+    <sql>
+  update reportconfiguration set reportjaspername='DailyPastduesReport' where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
+update reportconfiguration set reportname='Excel:Daily Pastdues Report', reportheading='Excel:Daily Pastdues Report'
+where menuitemcode='menu_Item_DailyPastduesReportRetailbySchedule';
+</sql>
+</changeSet>
+
+ <changeSet id="718" author="Manoj">
+	<createTable tableName="Posidex_Customers">
+		<column name="Cust_Id" type="bigint">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="Cust_No" type="varchar(20)" />
+		<column name="Cust_Type " type="varchar(8)" />
+		<column name="Extracted_On" type="datetime" />
+	</createTable>
+</changeSet>
+
+<changeSet id="719" author="Manoj">
+	<createTable tableName="Posidex_Customer_Loans">
+		<column name="Cust_Id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="Fin_Reference" type="varchar(20)" />
+	</createTable>
+</changeSet>
+
+ <changeSet id="720" author="Durgaprasad G">
+   <modifyDataType tableName="TAXDOWNLOADDETAIL" columnName="NATURE_OF_SERVICE" newDataType="VARCHAR2(200)"/>
+  </changeSet>
+  
+  <changeSet id="721" author="Manoj">
+		<dropTable tableName="Posidex_Customer_Loans"/>
+</changeSet>
+
+<changeSet id="722" author="Manoj">
+	<createTable tableName="Posidex_CustomerLoans">
+		<column name="Cust_Id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="Fin_Reference" type="varchar(20)" />
+		<column name="Customer_Type" type="varchar(20)" />
+		<column name="Extracted_On" type="datetime" />
+	</createTable>
+</changeSet>
+
+
+<changeSet id="723" author="Manoj.P">
+	<addForeignKeyConstraint constraintName="FK_PCL_CID"
+		referencedTableName="Posidex_Customers" referencedColumnNames="Cust_Id"
+		baseTableName="Posidex_CustomerLoans" baseColumnNames="Cust_Id" />
+</changeSet>
+
+<changeSet author="Manoj.P" id="724">
+		<renameTable newTableName="Posidex_Customer_Loans"
+			oldTableName="Posidex_CustomerLoans" />
+</changeSet>
+<changeSet id="Irfan" author="725">
+	<sql>
+		update CUSTOMERBANKINFO set accounttype = 'SA' where ACCOUNTTYPE = 'OD';
+		delete from RMTLOVFIELDDETAIL where FIELDCODEVALUE = 'OD';
+		
+	</sql>
+
+</changeSet>
+<changeSet id="Irfan" author="726">
+	<sql>
+		update CUSTOMERBANKINFO_Temp set accounttype = 'SA' where ACCOUNTTYPE = 'OD';
+		update Mandates set accType = '10' where accType = '13';
+		update Mandates_Temp set accType = '10' where accType = '13';
+	</sql>
+
+</changeSet>
+
+<changeSet id="726" author="Vinay">
+		<addColumn tableName="FINRECEIPTHEADER">
+			<column name="RcdMaintainSts" type="char(1)" />
+		</addColumn>
+</changeSet>
+<changeSet id="727" author="Vinay">
+		<addColumn tableName="FINRECEIPTHEADER_Temp">
+			<column name="RcdMaintainSts" type="char(1)" />
+		</addColumn>
+</changeSet>  
+
+ <changeSet id="728" author="Vinay">
+   <createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+   SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+			UNION ALL
+			SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+               	WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+   
+   </createView>
+ </changeSet>
+ 
+  <changeSet id="729" author="Vinay">
+   <createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
+  SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+   
+   </createView>
+ </changeSet>
+ 
+  <changeSet id="730" author="Vinay">
+   <createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+     
+               SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, T1.WaviedAmt, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+				UNION ALL
+				 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, T1.WaviedAmt, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+   
+   </createView>
+ </changeSet>  
+	 <changeSet id="731" author="Kesav">
+	   <createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+	   			SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.CalTerms NumberOfTerms,
+				            T1.CustID, T1.FinAmount, T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,
+				            T1.DownPayment, T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate,T1.FinCurrAssetvalue, T1.Blacklisted, T1.FeeChargeAmt,
+				            T1.ClosingStatus, T1.GraceTerms, T1.AlwMultiDisb, T1.Defferments, T1.FinStatus ,T1.MandateID,T1.FinRepayMethod, T1.FINASSETVALUE, T1.InsuranceAmt,
+				            (T1.FinCurrAssetvalue+ T1.FeeChargeAmt+T1.InsuranceAmt) FinancingAmount,
+				            (T1.FinCurrAssetvalue- T1.FinRepaymentAmount+ T1.FeeChargeAmt+T1.InsuranceAmt) CurFinAmount,
+				            T2.FinTypeDesc LovDescFinTypeName, T2.FinScheduleOn LovDescFinScheduleOn, T2.FinDivision lovDescFinDivision, 
+				            T2.FinCategory lovDescProductCodeName,  T2.FinIsAlwDifferment lovDescFinAlwDeferment,
+				            T3.CustCIF LovDescCustCIF, T3.CustShrtName LovDescCustShrtName, 
+				            T4.BranchDesc LovDescFinBranchName, 
+				            T5.CustTypeCtg,coalesce(T9.NOINST,0) NOINST               
+				FROM        FinanceMain T1 INNER JOIN
+				            RMTFinanceTypes T2 ON T1.FinType = T2.FinType INNER JOIN
+				            Customers T3 ON T1.CustID = T3.CustID INNER JOIN
+				            RMTBranches T4 ON T1.FinBranch = T4.BranchCode INNER JOIN
+				            RMTCustTypes T5 ON T3.CustTypeCode = T5.CustTypeCode LEFT JOIN
+	                        FinPftDetails T9 ON T1.FinReference = T9.FinReference
+	   </createView>
+	 </changeSet>
+	 	 <changeSet id="732" author="pruthvi">
+	 	 <sql>
+	 update reportfilterfields set mandatory=0
+where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PayoffDeals') and fieldid='1';
+</sql>
+</changeSet>
+	<changeSet id="733" author="Siva">
+		<sql>
+						
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_bounceCode','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_bounceRemarks','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_bounceDate','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_cancelReason','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_receiptModeStatus','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_bounceCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_bounceRemarks'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_bounceDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_cancelReason'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPTREALIZE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_receiptModeStatus'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="734" author="Durgaprasad G">
+	<createTable tableName="POSTINGS_TAXDOWNLOAD">
+		<column name="LINKEDTRANID" type="NUMBER(19)">
+			<constraints nullable="false" />
+		</column>
+		<column name="POSTREF" type="VARCHAR(50)" />
+		<column name="POSTINGID" type="VARCHAR(50)" />
+		<column name="FINREFERENCE" type="VARCHAR(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="FINEVENT" type="VARCHAR(20) ">
+			<constraints nullable="false" />
+		</column>
+		<column name="SHADOWPOSTING" type="CHAR(1)" />
+		<column name="POSTDATE" type="datetime"/>
+		<column name="VALUEDATE" type="datetime"/>
+		<column name="TRANCODE" type="VARCHAR(20)" />
+		<column name="TRANDESC" type="VARCHAR(50)" />
+		<column name="REVTRANCODE" type="VARCHAR(20)" />
+		<column name="DRORCR" type="CHAR(1)" />
+		<column name="ACCOUNT" type="VARCHAR(50)" />
+		<column name="POSTAMOUNT" type="NUMBER(18)" />
+		<column name="AMOUNTTYPE" type="VARCHAR(10)" />
+		<column name="POSTSTATUS" type="VARCHAR(20)" />
+		<column name="ERRORID" type="VARCHAR(8)" />
+		<column name="ERRORMSG" type="VARCHAR(50)" />
+		<column name="ACCCY" type="VARCHAR(3)" />
+		<column name="TRANORDERID" type="VARCHAR(20)" />
+		<column name="FINRUNNINGBAL" type="NUMBER(18)" />
+		<column name="POSTTOSYS" type="CHAR(1)" />
+		<column name="EXCHANGERATE" type="NUMBER(13,9)" />
+		<column name="POSTBRANCH" type="VARCHAR(12)" />
+		<column name="DERIVEDTRANORDER" type="NUMBER(10)" />
+		<column name="TRANSORDER" type="NUMBER(10)" />
+		<column name="POSTAMOUNTLCCCY" type="NUMBER(18)" />
+		<column name="APPDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="APPVALUEDATE" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="USERBRANCH" type="VARCHAR(12)" />
+		<column name="CUSTAPPDATE" type="datetime" />
+		<column name="POSTCATEGORY" type="NUMBER(10)" />
+		<column name="ACCOUNTTYPE" type="VARCHAR(15)" />
+		<column name="OLDLINKEDTRANID" type="NUMBER(19) " />
+	</createTable>
+</changeSet>
+
+<changeSet id="735" author="Durgaprasad G">
+	<sql>
+	UPDATE RMTACCOUNTTYPES SET EXTRACTIONTYPE = 'TRN' WHERE TAXAPPLICABLE = '1'; 
+	UPDATE POSTINGS SET OLDLINKEDTRANID = 0 WHERE OLDLINKEDTRANID IS NULL;
+	</sql>
+</changeSet>
+	<changeSet id="736" author="Siva">
+		<createView viewName="ManualAdviseMovements_TView"
+			replaceIfExists="true">
+		  Select T1.MovementID, T1.AdviseID, T1.MovementDate, T1.MovementAmount, T1.PaidAmount,  T1.WaivedAmount, T1.Status, T1.ReceiptID, T1.ReceiptSeqID ,T3.FeeTypeCode
+			 From ManualAdviseMovements_Temp T1 INNER JOIN
+				  Manualadvise  T2 ON T1.AdviseID = T2.AdviseID LEFT JOIN
+				  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
+		</createView>
+	</changeSet>
+	
+<changeSet id="737" author="Durgaprasad G">
+	<createTable tableName="GSTSUMMARYDETAILS">
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="738" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADSUMMARYDETAILS">
+		<column name="HEADERID" type="NUMBER(19)" />
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+<changeSet id="737" author="Srikanth">
+	<sql>
+	<![CDATA[
+		INSERT INTO ErrorDetails VALUES('90345','EN','E','Can not update mandate when mandate status is {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	]]>
+	</sql>
+	</changeSet>
+	
+ <changeSet id="739" author="Durgaprasad G">
+	<dropTable tableName="GSTSUMMARYDETAILS" />
+	<dropTable tableName="TAXDOWNLOADSUMMARYDETAILS" />
+</changeSet>
+	
+	<changeSet id="740" author="Durgaprasad G">
+	<createTable tableName="GSTSUMMARYDETAILS">
+	    <column name="TRANSACTION_DATE" type="datetime"/>
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="741" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADSUMMARYDETAILS">
+		<column name="HEADERID" type="NUMBER(19)" />
+		<column name="TRANSACTION_DATE" type="datetime"/>
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+	<changeSet id="742" author="pruthvi raj G">
+	<sql>
+	
+delete from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus';
+
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from REPORTCONFIGURATION),'Customer Creation Finone Status','Customer Creation Finone Status',1,'CustomerCreationInFinnoneStatus','pfsDatasource',1,'menu_Item_CustomerCreationInFinOneStatus',2,1000,null,null,null,null,null,null,0,current_timestamp,1);
+
+
+delete from reportfilterfields where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus');
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),1,'API DATE','DATERANGE','API DATE','AuthDate',null,'---Select----',null,null,0,0,0,0,1,1,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS
+ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),2,'CustCIF','LOVSEARCH','Customer CIF','CUSTCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS
+ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),3,'Status','STATICLIST','Status','StatusFromFinnOne','getCustCreationFinoneStatus',null,null,null,0,0,0,0,3,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	</sql>
+	</changeSet>
+	<changeSet author="Srikanth" id="743">
+<sql>
+update Customers set CUSTADDLDEC1 = null;
+update Customers_temp set CUSTADDLDEC1 = null;
+</sql>
+<modifyDataType tableName="Customers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+<modifyDataType tableName="Customers_Temp" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+</changeSet>
 </databaseChangeLog>

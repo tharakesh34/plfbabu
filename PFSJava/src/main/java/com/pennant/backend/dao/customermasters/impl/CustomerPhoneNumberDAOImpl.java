@@ -280,7 +280,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
-			selectSql.append(" lovDescCustRecordType ,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
@@ -346,7 +345,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		selectSql.append(" SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName," );
-			selectSql.append(" lovDescCustRecordType ,lovDescCustCIF,lovDescCustShrtName,");
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );

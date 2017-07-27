@@ -49,7 +49,7 @@ import java.util.Date;
  */
 public class GcdCustomer {
 	private static final long serialVersionUID = 216846029043076055L;
-
+	private long custId;//Customer id
 	private String finCustId; // FinnOne CustomerID in case of updating the customer details
 	private String sourceSystem = "PLF"; // HARD CODE
 	private String customerName; // Full Name of Customer (Individual)/ Name of Corporate Customer
@@ -114,6 +114,15 @@ public class GcdCustomer {
 	public GcdCustomer(){
 		super();
 	}
+	
+	public long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(long custId) {
+		this.custId = custId;
+	}
+
 	public String getFinCustId() {
 		return finCustId;
 	}

@@ -78,7 +78,8 @@ public class ReportFilterFields extends AbstractWorkflowEntity implements Entity
 	private String lovValue;
 	private ReportFilterFields befImage;
 	private LoggedInUser userDetails;
-
+	private String filterFileds= null;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -281,7 +282,12 @@ public class ReportFilterFields extends AbstractWorkflowEntity implements Entity
 	@Override
 	public void setId(long id) {
 		this.fieldID = id;
-
+	}
+	public String getFilterFileds() {
+		return filterFileds;
+	}
+	public void setFilterFileds(String filterFileds) {
+		this.filterFileds = filterFileds;
 	}
 }
 

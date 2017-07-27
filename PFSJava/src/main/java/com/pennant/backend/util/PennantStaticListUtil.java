@@ -199,6 +199,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> taxApplicableFor;
 	private static ArrayList<ValueLabel> channelTypes;
 	private static ArrayList<ValueLabel> phoneTypeRegex;
+	private static ArrayList<ValueLabel> custCreationFinoneStatus;
 	
 	private static ArrayList<ValueLabel> extractionType;
 	
@@ -2135,11 +2136,10 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getAccTypeList() {
 		if(accTypeList == null){
-			accTypeList = new ArrayList<ValueLabel>(4);
+			accTypeList = new ArrayList<ValueLabel>(3);
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CA,Labels.getLabel("label_Mandate_CA")));
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_SA,Labels.getLabel("label_Mandate_SA")));
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CC,Labels.getLabel("label_Mandate_CC")));
-			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_OD,Labels.getLabel("label_Mandate_OD")));
 		}
 		return accTypeList;
 	}
@@ -2764,5 +2764,15 @@ public class PennantStaticListUtil {
 		}
 		return extractionType;
 	}
+	public static ArrayList<ValueLabel> getCustCreationFinoneStatus() {
+
+		if(custCreationFinoneStatus == null){
+			custCreationFinoneStatus = new ArrayList<ValueLabel>(2);
+			custCreationFinoneStatus.add(new ValueLabel("S", Labels.getLabel("label_CustCreationFinone_Sucess")));
+			custCreationFinoneStatus.add(new ValueLabel("R", Labels.getLabel("label_CustCreationFinone_Rejected")));
+		}
+		return custCreationFinoneStatus;
+	}
+
 }
 

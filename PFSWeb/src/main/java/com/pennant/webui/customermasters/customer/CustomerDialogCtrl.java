@@ -153,6 +153,7 @@ import com.pennant.webui.customermasters.customeremploymentdetail.model.Customer
 import com.pennant.webui.customermasters.directordetail.model.DirectorDetailListModelItemRenderer;
 import com.pennant.webui.dedup.dedupparm.FetchCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
+import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -2808,9 +2809,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
 
-		/*if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
+		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(), "", customerDetails,
+			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
 					this.window_CustomerDialog, curLoginUser);
 
 			if (customerDetails.getCustomer().isDedupFound() && !customerDetails.getCustomer().isSkipDedup()) {
@@ -2820,7 +2821,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 
-		logger.debug("Leaving");*/
+		logger.debug("Leaving");
 		return true;
 	}
 

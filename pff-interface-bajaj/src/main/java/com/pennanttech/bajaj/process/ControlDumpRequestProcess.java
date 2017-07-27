@@ -49,8 +49,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		try {
 
 			filterMap = new MapSqlParameterSource();
-			filterMap.addValue("monthStartDate", monthStartDate);
-			filterMap.addValue("monthEndDate", monthEndDate);
+			filterMap.addValue("CLOSINGSTATUS", "C");
 
 			// Handling retry on same day.
 			deleteData();
@@ -78,7 +77,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
 		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
 		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate ");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		try {
 			totalRecords = jdbcTemplate.queryForObject(sql.toString(), filterMap, Integer.class);
@@ -136,7 +135,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
 		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
 		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		List<ControlDump> list = new ArrayList<>();
 
@@ -444,7 +443,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" SELECT FM.FINREFERENCE, FINEVENT, SUM(REPAYAMOUNT) FROM FINREPAYHEADER RH");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RH.FINREFERENCE");
 		sql.append(" WHERE FINEVENT = :PS");
-		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" AND COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE, FINEVENT");
 
 		try {
@@ -492,7 +491,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" SUM(TOTPENALTYBAL) TOTPENALTYBAL, SUM(TOTPENALTYPAID) TOTPENALTYPAID");
 		sql.append(" FROM FINODDETAILS OD");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = OD.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE");
 
 		try {
@@ -525,7 +524,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.FINREFERENCE, WRITTENOFFPRI, WRITTENOFFPFT FROM FINWRITEOFFDETAIL WO");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = WO.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		try {
 			return extractWriteOffAmounts(sql);
 		} catch (Exception e) {
@@ -555,7 +554,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.FINREFERENCE, SUM(WRITEOFFPAYAMOUNT) WRITEOFFPAYAMOUNT FROM FINWRITEOFFPAYMENT WP");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = WP.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE");
 
 		try {
@@ -588,7 +587,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN FINEXCESSAMOUNT EA ON EA.EXCESSID = EA.EXCESSID");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = EA.FINREFERENCE");
 		sql.append(" WHERE TRANTYPE = :TRANTYPE AND AMOUNTTYPE = :AMOUNTTYPE");
-		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" AND COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE");
 
 		try {
@@ -623,7 +622,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" SELECT FM.FINREFERENCE, FINEVENT, SUM(PAIDAMOUNT) FROM FINFEEDETAIL FEE");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FEE.FINREFERENCE");
 		sql.append(" WHERE FINEVENT=:ES");
-		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" AND COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE, FINEVENT");
 
 		try {
@@ -673,7 +672,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RECEIPTALLOCATIONDETAIL RD ON RD.RECEIPTID = RH.RECEIPTID");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RH.REFERENCE");
 		sql.append(" WHERE (RD.ALLOCATIONTYPE = :PRI OR RD.ALLOCATIONTYPE = :PFT)");
-		sql.append(" AND LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" AND COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE, RD.ALLOCATIONTYPE");
 
 		try {
@@ -744,7 +743,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" ACRTILLLBD");
 		sql.append(" from FINPFTDETAILS PD");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = PD.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		try {
 			return extractProfitDetails(sql);
@@ -801,7 +800,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 		sql.append(" select FM.FINREFERENCE, AMOUNT, BALANCEAMT, UTILISEDAMT, AMOUNTTYPE from FINEXCESSAMOUNT BA");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = BA.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		try {
 			return extractBalanceAmounts(sql);
@@ -843,7 +842,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 		sql.append(" select FM.FINREFERENCE, MAX(DISBDATE) DISBDATE from FINDISBURSEMENTDETAILS DD");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = DD.FINREFERENCE");
-		sql.append(" WHERE LASTREPAYDATE BETWEEN :monthStartDate AND :monthEndDate");
+		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 		sql.append(" GROUP BY FM.FINREFERENCE");
 		try {
 			return extractgDisbursementDetails(sql);

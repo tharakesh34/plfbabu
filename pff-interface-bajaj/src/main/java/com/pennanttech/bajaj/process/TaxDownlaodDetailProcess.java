@@ -130,9 +130,22 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		map.addValue("HEADERID", id);
 		map.addValue("TRANSACTION_DATE", rs.getObject("POSTDATE"));
+		
+		// InvoiceType && hostSystemTransactionID
+		
+		String hostSystemTransactionID ;
+		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
+		if (oldTransactionID > 0) {
+			map.addValue("INVOICE_TYPE", "C");
+			map.addValue("ORIGINAL_INVOICE_NO",  String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
+			hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANSORDER"));
+		} else {
+			map.addValue("INVOICE_TYPE", "I");
+			map.addValue("ORIGINAL_INVOICE_NO", null);
+			hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANORDERID"));
+		}
 
 		// hostSystemTransactionID
-		String hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANSORDER"));
 		map.addValue("HOST_SYSTEM_TRANSACTION_ID", hostSystemTransactionID);
 
 		map.addValue("TRANSACTION_TYPE", rs.getObject("FINEVENT"));
@@ -217,7 +230,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		Branch loanBranch = branchMap.get(rs.getObject("FINBRANCH"));
 	//	map.addValue("LOAN_BRANCH", loanBranch.getBranchSwiftBrnCde());
-		map.addValue("LOAN_BRANCH", loanBranch.getBranchCode());
+		map.addValue("LOAN_BRANCH", loanBranch.getBankRefNo());
 		map.addValue("LOAN_BRANCH_ADDRESS", getBranchAddress(loanBranch));
 		
 		// LoanBranchState
@@ -269,16 +282,12 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		map.addValue("TRANSACTION_AMOUNT", transactionAmt);
 
 		map.addValue("REVERSE_CHARGE_APPLICABLE", "Y");
-
-		// InvoiceType
-		String oldTransactionID = rs.getString("OLDLINKEDTRANID");
-		if (StringUtils.trimToNull(oldTransactionID) != null) {
-			map.addValue("INVOICE_TYPE", "C");
-			map.addValue("ORIGINAL_INVOICE_NO",  oldTransactionID.concat("-").concat(rs.getString("TRANSORDER")));
-		} else {
-			map.addValue("INVOICE_TYPE", "I");
-			map.addValue("ORIGINAL_INVOICE_NO", null);
+		
+		for (Map.Entry<String, Object> entry : map.getValues().entrySet())
+		{
+		    System.out.println(entry.getKey() + "/" + entry.getValue());
 		}
+	
 		
 		logger.debug(Literal.LEAVING);
 		return map;
@@ -420,7 +429,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		final Map<String, Branch> map = new HashMap<String, Branch>();
 		StringBuilder sql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1," );
 		sql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
-		sql.append(" BranchFax, BranchTel, BranchSwiftBrnCde, BranchIsActive,");
+		sql.append(" BranchFax, BranchTel, BranchSwiftBrnCde, BranchIsActive, BankRefNo,");
 		sql.append(" BranchAddrHNbr,BranchFlatNbr,BranchAddrStreet, PinCode ");
 		sql.append(" From RMTBranches ");
 

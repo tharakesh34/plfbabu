@@ -1,11 +1,18 @@
 package com.pennanttech.bajaj.process;
 
+import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.util.DateUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -14,33 +21,27 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.TransactionStatus;
 
-import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.util.DateUtil;
-
 public class PosidexRequestProcess extends DatabaseDataEngine {
-	private static final Logger	logger					= Logger.getLogger(PosidexRequestProcess.class);
+	private static final Logger logger = Logger.getLogger(PosidexRequestProcess.class);
 
-	private Date				lastRunDate;
-	private long				headerId;
+	private Date lastRunDate;
+	private long headerId;
 
-	private String				SOURCE_SYSTEM_ID;
-	private String				SOURCE_SYSTEM;
+	private String SOURCE_SYSTEM_ID;
+	private String SOURCE_SYSTEM;
 
-	private String[]			customerKey				= new String[] { "CUSTOMER_NO" };
-	private String[]			customerLoanKey			= new String[] { "CUSTOMER_NO", "LAN_NO", "CUSTOMER_TYPE" };
-	private String[]			reportKey				= new String[] { "FILLER_STRING_1" };
+	private String[] customerKey = new String[] { "CUSTOMER_NO" };
+	private String[] customerLoanKey = new String[] { "CUSTOMER_NO", "LAN_NO", "CUSTOMER_TYPE" };
+	private String[] reportKey = new String[] { "FILLER_STRING_1" };
 
-	private static final String	CUSTOMER_DETAILS		= "PSX_DEDUP_EOD_CUST_DEMO_DTL";
-	private static final String	CUSTOMER_ADDR_DETAILS	= "PSX_DEDUP_EOD_CUST_ADDR_DTL";
-	private static final String	CUSTOMER_LOAN_DETAILS	= "PSX_DEDUP_EOD_CUST_LOAN_DTL";
-	private static final String	CUSTOMER_REPORT_DETAILS	= "DEDUP_EOD_CUST_REP_DTL";
+	private static final String CUSTOMER_DETAILS = "PSX_DEDUP_EOD_CUST_DEMO_DTL";
+	private static final String CUSTOMER_ADDR_DETAILS = "PSX_DEDUP_EOD_CUST_ADDR_DTL";
+	private static final String CUSTOMER_LOAN_DETAILS = "PSX_DEDUP_EOD_CUST_LOAN_DTL";
+	private static final String CUSTOMER_REPORT_DETAILS = "DEDUP_EOD_CUST_REP_DTL";
 
-	private String				summary					= null;
+	private String summary = null;
+	private Map<String, String> parameterCodes =  new HashMap<>();
+	
 
 	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
@@ -75,7 +76,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private CustomerPhoneNumber getPhoneNumber(long custId, String addrtype) {
-		String phoneCode = (String) getSMTParameter("POSIDEX_PHONE_" + addrtype, String.class);
+		String phoneCode = getParameteCode("POSIDEX_PHONE_", addrtype);
+		
 		if (phoneCode == null) {
 			return null;
 		}
@@ -83,7 +85,9 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
-		sql.append("SELECT PHONECOUNTRYCODE, PHONEAREACODE, PHONENUMBER FROM CUSTOMERPHONENUMBERS where PHONETYPECODE = :PHONETYPECODE AND PHONECUSTID = :PHONECUSTID");
+		sql.append("SELECT PHONECOUNTRYCODE, PHONEAREACODE, PHONENUMBER FROM CUSTOMERPHONENUMBERS");
+		sql.append(" where PHONETYPECODE = :PHONETYPECODE AND PHONECUSTID = :PHONECUSTID");
+		
 		paramMap.addValue("PHONETYPECODE", phoneCode);
 		paramMap.addValue("PHONECUSTID", custId);
 
@@ -91,16 +95,26 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, CustomerPhoneNumber.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			paramMap = null;
-			sql = null;
-		}
-
+		} 
 		return null;
 	}
 
+	private String getParameteCode(String prefix, String suffix) {
+		String key = prefix.concat(suffix);
+		String paramCode = parameterCodes.get(key);
+		
+		if (paramCode == null) {
+			paramCode = (String) getSMTParameter(key, String.class);
+			
+			if(paramCode != null) {
+				parameterCodes.put(key, paramCode);
+			}
+		}
+		return paramCode;
+	}
+
 	private CustomerEMail getEmail(long custId, String addrtype) {
-		String emailCode = (String) getSMTParameter("POSIDEX_EMAIL" + addrtype, String.class);
+		String emailCode =  getParameteCode("POSIDEX_EMAIL_", addrtype);
 		if (emailCode == null) {
 			return null;
 		}
@@ -114,9 +128,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, CustomerEMail.class);
 		} catch (Exception e) {
-		} finally {
-			paramMap = null;
-			sql = null;
 		}
 
 		return null;
@@ -135,10 +146,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, type);
 		} catch (Exception e) {
 			logger.error("The parameter code " + sysParmCode + " not configured.");
-		} finally {
-			paramMap = null;
-			sql = null;
-		}
+		} 
 		return null;
 	}
 
@@ -163,7 +171,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
-			TransactionStatus	txnStatus	= null;
+			TransactionStatus txnStatus = null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -217,6 +225,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("SOURCE_SYS_ID", SOURCE_SYSTEM_ID);
 		parmMap.addValue("CUSTOMER_ID", custMap.getValue("CUSTOMER_ID"));
 		parmMap.addValue("FILLER_STRING_1", custMap.getValue("FILLER_STRING_1"));
+		parmMap.addValue("SOURCE_SYSTEM", SOURCE_SYSTEM);
 
 		try {
 			isExist = isRecordExist(custMap, CUSTOMER_REPORT_DETAILS, destinationJdbcTemplate, reportKey);
@@ -272,7 +281,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * from INT_POSIDEX_CUST_LOAN_VIEW");
-		
+
 		if (lastRunDate != null) {
 			sql.append(" WHERE LASTMNTON > :LASTMNTON");
 			parmMap.addValue("LASTMNTON", lastRunDate);
@@ -481,9 +490,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private String getPhoneNumber(CustomerPhoneNumber landLine1) {
-		return StringUtils.trimToEmpty(landLine1.getPhoneCountryCode())
-				+ (StringUtils.trimToEmpty(landLine1.getPhoneAreaCode()) + StringUtils.trimToEmpty(landLine1
-						.getPhoneNumber()));
+		return StringUtils.trimToEmpty(landLine1.getPhoneCountryCode()).concat(StringUtils.trimToEmpty(landLine1.getPhoneAreaCode())).concat(StringUtils.trimToEmpty(landLine1.getPhoneNumber()));
 	}
 
 	private MapSqlParameterSource mapCustData(ResultSet rs) throws SQLException {

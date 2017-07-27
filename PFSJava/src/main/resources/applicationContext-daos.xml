@@ -2586,6 +2586,8 @@
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />
+		<property name="gCDCustomerService" ref="gCDCustomerService" />
+		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -2627,6 +2629,7 @@
 		class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -3175,6 +3178,7 @@
 	<bean name="customerPhoneNumberServiceTarget"
 		class="com.pennant.backend.service.customermasters.impl.CustomerPhoneNumberServiceImpl">
 		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -10322,6 +10326,8 @@
 		class="com.pennant.backend.dao.customermasters.impl.GCDCustomerBajjajDAOImpl"
 		parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
+		<property name="finOneDatasource" ref="finOneDatasource" />
+		
 	</bean>
 	<!-- GCDCustomers END -->
 	

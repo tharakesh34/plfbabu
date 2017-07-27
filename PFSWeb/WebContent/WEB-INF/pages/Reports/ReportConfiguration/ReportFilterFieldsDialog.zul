@@ -7,7 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_ReportFilterFieldsDialog" border="normal"
-		apply="${reportFilterFieldsDialogCtrl}" width="80%" height="500px"
+		apply="${reportFilterFieldsDialogCtrl}" width="80%" height="700px"
 		sizable="false">
 		<borderlayout id="borderlayoutReportFilterFields">
 			<north>
@@ -58,10 +58,9 @@
 					</hbox>
 				</div>
 			</north>
-
 			<center border="none" autoscroll="true">
 				<div height="100%">
-					<groupbox id="gb_basicDetails" height="60%">
+					<groupbox id="gb_basicDetails" height="40%">
 						<grid sclass="GridLayoutNoBorder"
 							fixedLayout="true" style="border:0px">
 							<columns>
@@ -123,8 +122,8 @@
 									<hlayout
 										id="hlayout_AppUtilMethodName">
 										<space
-											id="space_AppUtilMethodName" spacing="2px" />
-										<combobox readonly="true"
+											id="space_AppUtilMethodName" spacing="2px" sclass="mandatory" visible="false" />
+										<combobox readonly="true"   
 											id="appUtilMethodName" maxlength="100" width="150px" />
 									</hlayout>
 
@@ -133,7 +132,7 @@
 										value="${c:l('label_ReportFilterFieldsDialog_ModuleName.value')}" />
 									<hlayout id="hlayout_ModuleName">
 										<space id="space_ModuleName"
-											spacing="2px" />
+											spacing="2px"  sclass="mandatory" visible="false"  />
 										<combobox id="moduleName"
 											width="150px" maxlength="50" />
 									</hlayout>
@@ -205,7 +204,7 @@
 										value="${c:l('label_ReportFilterFieldsDialog_SeqOrder.value')}" />
 									<hlayout id="hlayout_SeqOrder">
 										<space id="space_SeqOrder"
-											spacing="2px" />
+											spacing="2px" sclass="mandatory" />
 										<intbox id="seqOrder"
 											width="50px" maxlength="2" />
 									</hlayout>
@@ -256,7 +255,7 @@
 												id="space_WhereCondition" spacing="2px" />
 											<textbox id="whereCondition"
 												maxlength="500" multiline="true" rows="2" width="600px"
-												height="50px" />
+												height="40px" />
 										</hlayout>
 									</cell>
 								</row>
@@ -306,7 +305,7 @@
 										<space id="space_DefaultFilter"
 											spacing="2px" />
 										<combobox id="defaultFilter"
-											readonly="true" width="100px" />
+											readonly="true" width="50px" />
 									</hlayout>
 
 									<label
@@ -323,13 +322,40 @@
 						</grid>
 					</groupbox>
 					<groupbox id="gb_instrictions" mold="3d"
-						height="30%"
+						height="25%"
 						contentStyle="border: 2px green dashed;border-top:1px">
 						<caption label="Instructions"></caption>
 						<textbox id="txt_PasswordInstructions" rows="8"
 							multiline="true" width="99.5%" height="98%" readonly="true"
 							style="font-family: verdana; border: none; background-color: white;">
 						</textbox>
+					</groupbox>
+					<groupbox id="gb_basicFilter" mold="3d" height="35%">	
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<listbox id="listBox" width="100%"
+										height="200px" multiple="false" sizedByContent="true"
+										span="true">
+										<listhead sizable="true">
+											<listheader id="listShow"
+												label="${c:l('label_ReportFilterFieldsDialog_ListShow.value')}"
+												sort="false" hflex="min" />
+											<listheader id="dbField"
+												label="${c:l('label_ReportFilterFieldsDialog_DBFields.value')}"
+												sort="false" hflex="min" />
+											<listheader id="tableField"
+												label="${c:l('label_ReportFilterFieldsDialog_TableFields.value')}"
+												sort="false" hflex="min" />
+										</listhead>
+									</listbox>
+								</row>
+							</rows>
+                         </grid>
 					</groupbox>
 				</div>
 			</center>

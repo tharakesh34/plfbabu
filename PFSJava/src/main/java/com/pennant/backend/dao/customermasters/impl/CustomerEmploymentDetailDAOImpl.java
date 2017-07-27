@@ -347,21 +347,25 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 	 * @return Integer
 	 */
 	@Override
-	public int getVersion(long custID, long empName) {
+	public int getVersion(long custID, long custEmpId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustId", custID);
-		source.addValue("CustEmpName", empName);
+		source.addValue("CustEmpId", custEmpId);
 
 		StringBuffer selectSql = new StringBuffer();
 		selectSql.append("SELECT Version FROM CustomerEmpDetails");
 
-		selectSql.append(" WHERE CustId = :CustId AND CustEmpName = :CustEmpName");
+		selectSql.append(" WHERE CustId = :CustId AND CustEmpId = :CustEmpId");
 
 		logger.debug("insertSql: " + selectSql.toString());
-
-		int returnRcds = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
+		int returnRcds = 0;
+		try{
+			returnRcds = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class); 
+		} catch (Exception e) {
+			
+		}
 		logger.debug("Leaving");
 		return returnRcds;
 	}

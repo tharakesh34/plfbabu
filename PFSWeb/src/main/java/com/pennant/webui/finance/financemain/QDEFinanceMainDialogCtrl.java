@@ -1608,7 +1608,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(corebank)) {
 
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),
+			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
 					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference(),
 					aFinanceDetail.getCustomerDetails(), getMainWindow(), curLoginUser);
 
