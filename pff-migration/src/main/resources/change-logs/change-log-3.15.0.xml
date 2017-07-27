@@ -15065,4 +15065,29 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 				  FEETYPES T3 ON T2.FeeTypeID = T3.FeeTypeID
 		</createView>
 	</changeSet>
+	
+<changeSet id="737" author="Durgaprasad G">
+	<createTable tableName="GSTSUMMARYDETAILS">
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="738" author="Durgaprasad G">
+	<createTable tableName="TAXDOWNLOADSUMMARYDETAILS">
+		<column name="HEADERID" type="NUMBER(19)" />
+		<column name="ENTITYNAME" type="VARCHAR(50)" />
+		<column name="ENTITYGSTIN" type="VARCHAR(200)" />
+		<column name="LEDGERCODE" type="VARCHAR(50)" />
+		<column name="FINNONEBRANCHID" type="VARCHAR(12)" />
+		<column name="REGISTEREDUNREGISTERED" type="VARCHAR(15)" />
+		<column name="INTERINTRASTATE" type="VARCHAR(8)" />
+		<column name="AMOUNT" type="NUMBER(18)" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
