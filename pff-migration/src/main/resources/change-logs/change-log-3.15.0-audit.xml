@@ -950,5 +950,10 @@
 			<column name="RcdMaintainSts" type="char(1)" />
 		</addColumn>
 	</changeSet>
-
+<changeSet author="Srikanth" id="53">
+<sql>
+update ADtCustomers set CUSTADDLDEC1 = null;
+</sql>
+<modifyDataType tableName="ADTCustomers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+</changeSet>
 </databaseChangeLog>
