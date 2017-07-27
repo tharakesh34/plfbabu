@@ -83,7 +83,7 @@ public class FetchFinCustomerDedupDetails {
 			 * customer then userAction = -1
 			 */
 			if (userAction == 0) {
-				custdetails.getCustomer().setDedupFound(true);
+				custdetails.getCustomer().setSkipDedup(false);
 			} else {
 				if (userAction == 1) {
 					custdetails.setCustomerDedupList(customerDedupList);
