@@ -15148,4 +15148,12 @@ Insert into REPORTFILTERFIELDS
  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),3,'Status','STATICLIST','Status','StatusFromFinnOne','getCustCreationFinoneStatus',null,null,null,0,0,0,0,3,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 	</sql>
 	</changeSet>
+	<changeSet author="Srikanth" id="743">
+<sql>
+update Customers set CUSTADDLDEC1 = null;
+update Customers_temp set CUSTADDLDEC1 = null;
+</sql>
+<modifyDataType tableName="Customers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+<modifyDataType tableName="Customers_Temp" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+</changeSet>
 </databaseChangeLog>
