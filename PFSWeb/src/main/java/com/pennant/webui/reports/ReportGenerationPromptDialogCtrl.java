@@ -2371,13 +2371,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				if ("FinanceMain".equals(aReportFieldsDetails.getModuleName())) {
 					searchValue = getUsrFinAuthenticationQry(false);
 				} 
-				 Object dataObject = null;
-				if (filters != null){
-				 dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  "", filters, searchValue);
-				}else{
-				  dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl, button.getId(), 
-						 searchValue);
-				}
+				  Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  "", filters, searchValue);
+				
 				 if (dataObject instanceof String) {
 					valuestextBox.setValue(dataObject.toString());
 					labelstextBox.setValue("");
