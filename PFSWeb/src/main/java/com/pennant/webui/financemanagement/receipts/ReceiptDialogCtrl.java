@@ -5835,11 +5835,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 	
 	/**
-	 * to get the Receipt Amount
+	 * to get the Remaining Balance After Allocation Amount
 	 * @return
 	 */
-	public BigDecimal getReceiptAmount() {	//Used in Fees Execution
-		return receiptAmount.getActualValue();
+	public BigDecimal getRemBalAfterAllocationAmt() {	//Used in Fees Execution
+		return remBalAfterAllocation.getValue();
 	}
 
 	/**
