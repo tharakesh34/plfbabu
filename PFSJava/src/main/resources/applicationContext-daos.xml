@@ -2587,6 +2587,7 @@
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
+		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -3177,6 +3178,7 @@
 	<bean name="customerPhoneNumberServiceTarget"
 		class="com.pennant.backend.service.customermasters.impl.CustomerPhoneNumberServiceImpl">
 		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="phoneTypeDAO" ref="phoneTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

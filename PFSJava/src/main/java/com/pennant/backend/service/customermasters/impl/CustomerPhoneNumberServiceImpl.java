@@ -51,10 +51,12 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
+import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
@@ -71,6 +73,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerPhoneNumberDAO customerPhoneNumberDAO;
 	private CustomerPhoneNumberValidation customerPhoneNumberValidation;
+	private PhoneTypeDAO		phoneTypeDAO;
 
 	public CustomerPhoneNumberServiceImpl() {
 		super();
@@ -370,17 +373,97 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber) {
+	public AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber,String method) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetails errorDetail = new ErrorDetails();
 		//Validate Phone number
 		String mobileNumber= customerPhoneNumber.getPhoneNumber();
-		
-		if (!(mobileNumber.matches("\\d{10}"))){
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;	
+		if(StringUtils.equals(method, "Create")){
+		List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumberDAO
+				.getCustomerPhoneNumberById(customerPhoneNumber.getPhoneCustID(),"");
+		if(customerPhoneNumberList != null && !customerPhoneNumberList.isEmpty() ){
+		for (CustomerPhoneNumber custPhoneNumber : customerPhoneNumberList) {
+			if(custPhoneNumber.getPhoneTypePriority()==customerPhoneNumber.getPhoneTypePriority()){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Priority";
+				valueParm[1] = String.valueOf(customerPhoneNumber.getPhoneTypePriority());
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			if(StringUtils.equals(custPhoneNumber.getPhoneTypeCode(), customerPhoneNumber.getPhoneTypeCode())){
+				String[] valueParm = new String[2];
+				valueParm[0] = "PhoneType";
+				valueParm[1] = customerPhoneNumber.getPhoneTypeCode();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
 		}
+		} else {
+			if(customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)){
+				String[] valueParm = new String[2];
+				valueParm[0] = "Phone Details";
+				valueParm[1] = "Phone";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+		}
+		}
+		if (StringUtils.equals(method, "Update")) {
+			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumberDAO
+					.getCustomerPhoneNumberById(customerPhoneNumber.getPhoneCustID(), "");
+			if (customerPhoneNumberList != null && !customerPhoneNumberList.isEmpty()) {
+				for (CustomerPhoneNumber prvCustPhoneNumber : customerPhoneNumberList) {
+					if (StringUtils.equals(prvCustPhoneNumber.getPhoneTypeCode(),
+							customerPhoneNumber.getPhoneTypeCode())) {
+						if (prvCustPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+							if (customerPhoneNumber.getPhoneTypePriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "Phone Details";
+								valueParm[1] = "Phone should not update";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						} 
+					} else{
+						if (prvCustPhoneNumber.getPhoneTypePriority() == customerPhoneNumber.getPhoneTypePriority()){
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(customerPhoneNumber.getPhoneTypePriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;	
+						}
+					}
+				}
+			}
+		}
+		PhoneType phoneType = phoneTypeDAO.getPhoneTypeById(customerPhoneNumber.getPhoneTypeCode(), "");
+		if(phoneType != null){
+			String regex=phoneType.getPhoneTypeRegex();
+			if(regex!=null){			
+				String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
+				int mobilelength=Integer.parseInt(length);
+				if(customerPhoneNumber.getPhoneNumber().length()!=mobilelength){
+					String[] valueParm = new String[2];
+					valueParm[0] = "PhoneNumber";
+					valueParm[1] = String.valueOf(mobilelength) + " characters";;	
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;	
+				}
+				if (!(mobileNumber.matches(regex))){
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;	
+				}
+			}
+			
+		}
+		
 		// Validate Master code with PLF system masters
 		int count = getCustomerPhoneNumberDAO().getPhoneTypeCodeCount(customerPhoneNumber.getPhoneTypeCode());
 		if (count <= 0) {
@@ -400,6 +483,14 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 		}
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;
+	}
+
+	public PhoneTypeDAO getPhoneTypeDAO() {
+		return phoneTypeDAO;
+	}
+
+	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
+		this.phoneTypeDAO = phoneTypeDAO;
 	}
 
 }

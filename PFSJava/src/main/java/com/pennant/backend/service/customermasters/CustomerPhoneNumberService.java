@@ -62,6 +62,6 @@ public interface CustomerPhoneNumberService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<CustomerPhoneNumber> getApprovedCustomerPhoneNumberById(long id);
-	AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber);
+	AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber,String method);
 	int getVersion(long id, String typeCode);
 }

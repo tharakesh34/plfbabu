@@ -551,8 +551,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "phone";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(custPhoneNumber.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(custPhoneNumber.getCif());
+			customer = customerDetailsService.getCustomerByCIF(custPhoneNumber.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custPhoneNumber.getCif();
@@ -560,10 +561,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
-
+		custPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custPhoneNumber.getCustomerPhoneNumber(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerPhoneNumberService.doValidations(custPhoneNumber.getCustomerPhoneNumber());
+		AuditDetail auditDetail = customerPhoneNumberService.doValidations(custPhoneNumber.getCustomerPhoneNumber(),APIConstants.SERVICE_TYPE_CREATE);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -610,10 +611,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			}
 		}
 		AuditHeader auditHeader = getAuditHeader(customerPhoneNumber.getCustomerPhoneNumber(), PennantConstants.TRAN_WF);
-
+		customerPhoneNumber.getCustomerPhoneNumber().setPhoneCustID(customer.getCustID());
 		// validate customer details as per the API specification
 		AuditDetail auditDetail = customerPhoneNumberService
-				.doValidations(customerPhoneNumber.getCustomerPhoneNumber());
+				.doValidations(customerPhoneNumber.getCustomerPhoneNumber(),APIConstants.SERVICE_TYPE_UPDATE);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());

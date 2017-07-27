@@ -34,5 +34,7 @@ public class APIConstants {
 	public static final String STMT_REPAY_SCHD = "REPYSCHD";
 	public static final String STMT_NOC = "NOC";
 	public static final String STMT_FORECLOSURE = "FORECLOSURE";
+	public static final String SERVICE_TYPE_CREATE = "Create";
+	public static final String SERVICE_TYPE_UPDATE = "Update";
 	
 }

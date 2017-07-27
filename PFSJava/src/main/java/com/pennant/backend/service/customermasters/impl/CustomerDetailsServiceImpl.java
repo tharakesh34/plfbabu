@@ -49,6 +49,7 @@ import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
+import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
@@ -90,6 +91,7 @@ import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.model.systemmasters.NationalityCode;
+import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
@@ -187,6 +189,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
 	private LimitRebuild limitRebuild;
 	private GCDCustomerService gCDCustomerService;
+	private PhoneTypeDAO    phoneTypeDAO;
 	
 
 	public CustomerDetailsServiceImpl() {
@@ -1666,10 +1669,27 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (CustomerPhoneNumber custPhoneDetail : custPhones) {
 				//Validate Phone number
 				String mobileNumber= custPhoneDetail.getPhoneNumber();
-				if (!(mobileNumber.matches("\\d{10}"))){
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;	
+				PhoneType custPhoneType = phoneTypeDAO.getPhoneTypeById(custPhoneDetail.getPhoneTypeCode(), "");
+				if(custPhoneType != null){
+					String regex=custPhoneType.getPhoneTypeRegex();
+					if(regex!=null){			
+						String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
+						int mobilelength=Integer.parseInt(length);
+						if(mobileNumber.length()!=mobilelength){
+							String[] valueParm = new String[2];
+							valueParm[0] = "PhoneNumber";
+							valueParm[1] = String.valueOf(mobilelength) + " characters";;	
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;	
+						}
+						if (!(mobileNumber.matches(regex))){
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;	
+						}
+					}
+					
 				}
 				auditDetail.setErrorDetail(validateMasterCode("PhoneType",custPhoneDetail.getPhoneTypeCode()));
 				if(!(custPhoneDetail.getPhoneTypePriority()>=1 && custPhoneDetail.getPhoneTypePriority()<=5)){
@@ -1716,7 +1736,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			
 		}
 
 		// customer Email details
@@ -5177,6 +5196,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setgCDCustomerService(GCDCustomerService gCDCustomerService) {
 		this.gCDCustomerService = gCDCustomerService;
+	}
+	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
+		this.phoneTypeDAO = phoneTypeDAO;
 	}
 
 
