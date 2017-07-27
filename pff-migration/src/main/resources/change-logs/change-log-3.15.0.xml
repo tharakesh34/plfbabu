@@ -15156,4 +15156,121 @@ update Customers_temp set CUSTADDLDEC1 = null;
 <modifyDataType tableName="Customers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 <modifyDataType tableName="Customers_Temp" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 </changeSet>
+<changeSet id="744" author="Irfan">
+  	<createTable tableName="FinWaiverHeader">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+  
+  <changeSet id="745" author="Irfan">
+  	<createTable tableName="FinWaiverHeader_Temp">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+  <changeSet id="746" author="Irfan">
+		<createTable tableName="FinWaiverDetail">
+			<column name="WaiverID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="WaiverSeqID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="WaiverType" type="char(1)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="number(18,0)">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+</changeSet>
+
+<changeSet id="747" author="Irfan" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqFinWaiverDetail START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="748" author="Irfan" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+   execute 'CREATE SEQUENCE SeqFinWaiverDetail START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ 	<changeSet id="749" author="Irfan" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SeqFinWaivertDetail(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+	</changeSet>
+
+	<changeSet id="750" author="Irfan" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqFinWaiverHeader START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="751" author="Irfan" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+  		 execute 'CREATE SEQUENCE SeqFinWaiverHeader START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="752" author="Irfan" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SeqFinWaiverHeader(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
