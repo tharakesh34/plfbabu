@@ -73,5 +73,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	void updateUtilise(long adviseID, BigDecimal amount);
 	void reverseUtilise(long adviseID, BigDecimal amount);
 	Date getPresentmentBounceDueDate(long receiptId);
+	List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type);
+	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
 	
 }

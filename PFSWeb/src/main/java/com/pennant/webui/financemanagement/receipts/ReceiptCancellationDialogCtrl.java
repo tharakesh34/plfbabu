@@ -553,18 +553,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if(!recReject){
 			doSetValidation();
 		}
-		try {
-			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
-			} else {
-				aReceiptHeader.setBounceDate(null);
-			}
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-
+		
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
+			
+			try {
+				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
 
 			// Bounce Details capturing
 			ManualAdvise bounce = aReceiptHeader.getManualAdvise();
@@ -749,6 +747,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bounceCode.setErrorMessage("");
 		this.bounceRemarks.setErrorMessage("");
 		this.cancelReason.setErrorMessage("");
+		this.bounceDate.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 

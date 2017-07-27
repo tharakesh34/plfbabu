@@ -5,7 +5,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
 
-	FinReceiptHeader getReceiptHeaderByRef(String finReference, String type);
+	FinReceiptHeader getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type);
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 	void update(FinReceiptHeader receiptHeader, TableType tableType);
 	void deleteByReceiptID(long receiptID, TableType tableType);

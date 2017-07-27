@@ -19,6 +19,7 @@ public interface ReceiptService {
 	FinReceiptData getFinReceiptDataById(String finReference, String eventCode,String procEdtEvent, String userRole);
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doReversal(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment, String type);
 	FinReceiptData calculateRepayments(FinReceiptData finReceiptData, boolean isPresentment);

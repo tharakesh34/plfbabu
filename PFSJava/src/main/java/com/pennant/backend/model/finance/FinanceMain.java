@@ -501,6 +501,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean cadrequired = false;
 	private boolean feeExists = false;
 	private String receiptMode;
+	private String receiptModeStatus;
 	private String receiptPurpose;
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
 
@@ -723,6 +724,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("lastDisbDate");
 		excludeFields.add("swiftBranchCode");
 		excludeFields.add("receiptMode");
+		excludeFields.add("receiptModeStatus");
 		excludeFields.add("receiptPurpose");
 		excludeFields.add("waivedAmt");
 		excludeFields.add("recalFee");
@@ -3525,5 +3527,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setNOInst(int nOInst) {
 		NOInst = nOInst;
+	}
+
+	public String getReceiptModeStatus() {
+		return receiptModeStatus;
+	}
+
+	public void setReceiptModeStatus(String receiptModeStatus) {
+		this.receiptModeStatus = receiptModeStatus;
 	}
 }

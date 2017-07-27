@@ -154,6 +154,7 @@ public class PennantConstants {
 
 	// WorkFlow Service Method Types
 	public static final String method_doApprove = "doApprove";
+	public static final String method_doReversal = "doReversal";
 	public static final String method_doPreApprove = "doPreApprove";
 	public static final String method_doReject = "doReject";
 	public static final String method_doDedup = "doDedup";

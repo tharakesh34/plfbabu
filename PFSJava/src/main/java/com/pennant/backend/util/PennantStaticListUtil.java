@@ -183,6 +183,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptPurposes;
 	private static ArrayList<ValueLabel> excessAdjustTo;
 	private static ArrayList<ValueLabel> receiptModes;
+	private static ArrayList<ValueLabel> receiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
 	private static ArrayList<ValueLabel> ManualAdviseTypes;
 	private static ArrayList<ValueLabel> reasonTypeList;
@@ -2574,6 +2575,16 @@ public class PennantStaticListUtil {
 			receiptModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
 		}
 		return receiptModes;
+	}
+	
+	public static ArrayList<ValueLabel> getReceiptModeStatus(){
+		if(receiptModeStatus == null){
+			receiptModeStatus = new ArrayList<ValueLabel>(3);
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_REALIZED, Labels.getLabel("label_ReceiptModeStatus_Realize")));
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_BOUNCE, Labels.getLabel("label_ReceiptModeStatus_Bounce")));
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_CANCEL, Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+		}
+		return receiptModeStatus;
 	}
 	
 	public static ArrayList<ValueLabel> getAllocationMethods(){

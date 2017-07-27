@@ -560,19 +560,6 @@
 														style="font-weight:bold;" />
 												</hbox>
 											</row>
-											<row
-												id="row_RealizationDate">
-												<label
-													id="label_ReceiptDialog_RealizationDate"
-													value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
-												<hbox
-													id="hbox_ReceiptDialog_RealizationDate">
-													<space spacing="2px"
-														sclass="mandatory" />
-													<datebox
-														id="realizationDate" width="100px" />
-												</hbox>
-											</row>
 											<row>
 												<label
 													id="label_ReceiptDialog_Remarks"
@@ -584,6 +571,73 @@
 													<textbox
 														id="remarks" width="180px" />
 												</hbox>
+												<label
+													id="label_ReceiptDialog_ReceiptModeStatus"
+													value="${c:l('label_ReceiptDialog_ReceiptModeStatus.value')}"
+													visible="false" />
+												<hbox
+													id="hbox_ReceiptModeStatus" visible="false">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<combobox
+														id="receiptModeStatus" width="180px" readonly="true" />
+												</hbox>
+											</row>
+											<row
+												id="row_RealizationDate" visible="false">
+												<label
+													id="label_ReceiptDialog_RealizationDate"
+													value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_RealizationDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="realizationDate" width="100px" />
+												</hbox>
+											</row>
+											<row
+												id="row_BounceReason" visible="false">
+												<label
+													id="label_ReceiptDialog_BounceReason"
+													value="${c:l('label_ReceiptDialog_BounceReason.value')}" />
+												<extendedcombobox
+													id="bounceCode" />
+												<label
+													id="label_ReceiptDialog_BounceCharge"
+													value="${c:l('label_ReceiptDialog_BounceCharge.value')}" />
+												<currencyBox
+													id="bounceCharge" />
+											</row>
+											<row
+												id="row_BounceRemarks" visible="false">
+												<label
+													id="label_ReceiptDialog_BounceRemarks"
+													value="${c:l('label_ReceiptDialog_BounceRemarks.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="bounceRemarks" width="180px" />
+												</hbox>
+												<label
+													id="label_ReceiptDialog_BounceDate"
+													value="${c:l('label_ReceiptDialog_BounceDate.value')}" />
+												<hbox
+													id="hbox_ReceiptDialog_BounceDate">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<datebox
+														id="bounceDate" width="100px" />
+												</hbox>
+											</row>
+											<row
+												id="row_CancelReason" visible="false">
+												<label
+													id="label_ReceiptDialog_CancelReason"
+													value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
+												<extendedcombobox
+													id="cancelReason" />
 											</row>
 										</rows>
 									</grid>
@@ -710,7 +764,8 @@
 													value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
 												<hbox
 													id="hbox_ReceiptDialog_paymentReference">
-													<space spacing="2px" />
+													<space
+														spacing="2px" />
 													<uppercasebox
 														id="paymentRef" width="180px" />
 												</hbox>

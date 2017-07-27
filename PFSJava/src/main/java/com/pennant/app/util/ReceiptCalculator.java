@@ -481,7 +481,7 @@ public class ReceiptCalculator implements Serializable {
 			if(overdueList != null && !overdueList.isEmpty()){
 				for (int i = 0; i < overdueList.size(); i++) {
 					FinODDetails finODDetail = overdueList.get(i);
-					if (finODDetail.getFinODSchdDate().compareTo(valueDate) > 0) {
+					if (finODDetail.getFinODSchdDate().compareTo(valueDate) >= 0) {
 						continue;
 					}
 					
@@ -585,10 +585,17 @@ public class ReceiptCalculator implements Serializable {
 				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 				// Adding Advise Details to Map
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
-					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
 					if(advise.getBounceID() > 0){
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(),
-								"Bounce Charge : "+advise.getBounceCode()+"-"+advise.getBounceCodeDesc());
+					
+						if(receiptData.getAllocationMap().containsKey(RepayConstants.ALLOCATION_BOUNCE)){
+							adviseBal = adviseBal.add(receiptData.getAllocationMap().get(RepayConstants.ALLOCATION_BOUNCE));
+							receiptData.getAllocationMap().remove(RepayConstants.ALLOCATION_BOUNCE);
+						}
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_BOUNCE, adviseBal);
+						
+						if(!receiptData.getAllocationDescMap().containsKey(RepayConstants.ALLOCATION_BOUNCE)){
+							receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_BOUNCE,"Bounce Charges");
+						}
 					}else{
 						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
 					}
@@ -787,8 +794,15 @@ public class ReceiptCalculator implements Serializable {
 								ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
 								if(advise != null){
 									
-									if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
-										BigDecimal advAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+									String allocateType = "";
+									if(advise.getBounceID() > 0){
+										allocateType = RepayConstants.ALLOCATION_BOUNCE;
+									}else{
+										allocateType = RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID();
+									}
+									
+									if(paidAllocationMap.containsKey(allocateType)){
+										BigDecimal advAllocateBal = paidAllocationMap.get(allocateType);
 										if(advAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 											BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 											if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
@@ -801,12 +815,12 @@ public class ReceiptCalculator implements Serializable {
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 												advAmountPaid = advAmountPaid.add(balAdvise);
-												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
+												paidAllocationMap.put(allocateType, advAllocateBal.subtract(balAdvise));
 												
 												// Save Movements for Manual Advise
 												ManualAdviseMovements movement = new ManualAdviseMovements();
 												movement.setAdviseID(advise.getAdviseID());
-												movement.setMovementDate(DateUtility.getAppDate());
+												movement.setMovementDate(valueDate);
 												movement.setMovementAmount(balAdvise);
 												movement.setPaidAmount(balAdvise);
 												movement.setWaivedAmount(BigDecimal.ZERO);
@@ -823,7 +837,7 @@ public class ReceiptCalculator implements Serializable {
 					// Only For Partial Settlement
 					if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
 						isPartialPayNow = true;
-						partialSettleAmount = totalReceiptAmt;
+						partialSettleAmount = curSchd.getPartialPaidAmt();
 					}
 				}
 
@@ -1123,8 +1137,15 @@ public class ReceiptCalculator implements Serializable {
 						ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
 						if(advise != null){
 							
-							if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
-								BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+							String allocateType = "";
+							if(advise.getBounceID() > 0){
+								allocateType = RepayConstants.ALLOCATION_BOUNCE;
+							}else{
+								allocateType = RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID();
+							}
+							
+							if(paidAllocationMap.containsKey(allocateType)){
+								BigDecimal insAllocateBal = paidAllocationMap.get(allocateType);
 								if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 									BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 									if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
@@ -1137,12 +1158,12 @@ public class ReceiptCalculator implements Serializable {
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 										advAmountPaid = advAmountPaid.add(balAdvise);
-										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+										paidAllocationMap.put(allocateType, insAllocateBal.subtract(balAdvise));
 										
 										// Save Movements for Manual Advise
 										ManualAdviseMovements movement = new ManualAdviseMovements();
 										movement.setAdviseID(advise.getAdviseID());
-										movement.setMovementDate(DateUtility.getAppDate());
+										movement.setMovementDate(valueDate);
 										movement.setMovementAmount(balAdvise);
 										movement.setPaidAmount(balAdvise);
 										movement.setWaivedAmount(BigDecimal.ZERO);
@@ -1157,14 +1178,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			FinRepayHeader repayHeader = null;
-			BigDecimal balAmount = actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount);
+			BigDecimal balAmount = actualReceiptAmt.subtract(totalReceiptAmt);
 			if(actualReceiptAmt.compareTo(totalReceiptAmt) > 0 && 
 					actualReceiptAmt.compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
-				repayHeader.setValueDate(DateUtility.getAppDate());
-				repayHeader.setRepayAmount(actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount));
+				repayHeader.setValueDate(valueDate);
+				repayHeader.setRepayAmount(actualReceiptAmt.subtract(totalReceiptAmt));
 				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 				}else{
@@ -1189,7 +1210,7 @@ public class ReceiptCalculator implements Serializable {
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
-				repayHeader.setValueDate(DateUtility.getAppDate());
+				repayHeader.setValueDate(valueDate);
 				repayHeader.setRepayAmount(totalReceiptAmt);
 				repayHeader.setFinEvent(receiptData.getReceiptHeader().getExcessAdjustTo());
 				repayHeader.setPriAmount(BigDecimal.ZERO);
@@ -1212,7 +1233,7 @@ public class ReceiptCalculator implements Serializable {
 				// Prepare Repay Header for Partial Settlement 
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
-				repayHeader.setValueDate(DateUtility.getAppDate());
+				repayHeader.setValueDate(valueDate);
 				repayHeader.setRepayAmount(partialSettleAmount);
 				repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYRPY);
 				repayHeader.setPriAmount(partialSettleAmount);
@@ -1349,17 +1370,36 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			// Schedule Fee Amount
-			if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV)){
+			if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV) ||
+					waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_BOUNCE)){
 				for (ManualAdviseMovements advMovement : rd.getAdvMovements()) {
+					
+					boolean isBounce = false;
+					if(adviseMap.containsKey(advMovement.getAdviseID())){
+						ManualAdvise advise = adviseMap.get(advMovement.getAdviseID());
+						if(advise.getBounceID() > 0){
+							isBounce = true;
+						}
+					}
 					BigDecimal waivedNow = advMovement.getPaidAmount();
-					BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_MANADV);
+					BigDecimal balWaived = BigDecimal.ZERO;
+					if(isBounce){
+						balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_BOUNCE);
+					}else{
+						balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_MANADV);
+					}
 					if(waivedNow.compareTo(balWaived) > 0){
 						waivedNow = balWaived;
 					}
 					advMovement.setWaivedAmount(waivedNow);
 					advMovement.setPaidAmount(advMovement.getPaidAmount().subtract(waivedNow));
 					totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-					waivedAllocationMap.put(RepayConstants.ALLOCATION_MANADV, balWaived.subtract(waivedNow));
+					
+					if(isBounce){
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_BOUNCE, balWaived.subtract(waivedNow));
+					}else{
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_MANADV, balWaived.subtract(waivedNow));
+					}
 				}
 			}
 			
@@ -1898,6 +1938,7 @@ public class ReceiptCalculator implements Serializable {
 						ManualAdvise advise = adviseMap.get(adviseIdList.get(i));
 						if(advise != null){
 							BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+							
 							if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
 								if(totalReceiptAmt.compareTo(balAdvise) > 0){
 									totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
@@ -1907,11 +1948,19 @@ public class ReceiptCalculator implements Serializable {
 								}
 								
 								BigDecimal totAdvisePayNow = BigDecimal.ZERO;
-								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
-									totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
-									allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+								if(advise.getBounceID() > 0){
+									if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_BOUNCE)){
+										totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_BOUNCE);
+										allocatePaidMap.remove(RepayConstants.ALLOCATION_BOUNCE);
+									}
+									allocatePaidMap.put(RepayConstants.ALLOCATION_BOUNCE, totAdvisePayNow.add(balAdvise));
+								}else{
+									if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
+										totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+										allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+									}
+									allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
 								}
-								allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
 							}
 						}
 					}

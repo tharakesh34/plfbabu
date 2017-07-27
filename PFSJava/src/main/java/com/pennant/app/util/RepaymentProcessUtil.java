@@ -40,6 +40,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -55,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -360,7 +362,7 @@ public class RepaymentProcessUtil {
 		}
 		
 		
-		doSaveReceipts(receiptHeader, null);
+		doSaveReceipts(receiptHeader, null, true);
 		financeMainDAO.updatePaymentInEOD(financeMain);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
@@ -718,7 +720,7 @@ public class RepaymentProcessUtil {
 	 * 
 	 * @param receiptHeader
 	 */
-	public void doSaveReceipts(FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetails) {
+	public void doSaveReceipts(FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetails, boolean isApproval) {
 		logger.debug("Entering");
 		
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
@@ -728,23 +730,51 @@ public class RepaymentProcessUtil {
 		Map<String, BigDecimal> allocationPaidMap = null;
 		Map<String, BigDecimal> allocationWaivedMap = null;
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
-			allocationPaidMap = new HashMap<>();
-			allocationWaivedMap = new HashMap<>();
+			if(isApproval){
+				allocationPaidMap = new HashMap<>();
+				allocationWaivedMap = new HashMap<>();
+			}
 			
+			List<Long> bounceAdvises = null;
 			for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
 				ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
 				allocation.setReceiptID(receiptID);
 				allocation.setAllocationID(i+1);
 				
-				allocationPaidMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getPaidAmount());
-				allocationWaivedMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getWaivedAmount());
+				if(isApproval){
+					allocationPaidMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getPaidAmount());
+					allocationWaivedMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getWaivedAmount());
 
-				// Manual Advises updation
-				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
-					if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
-							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
-						getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
-								allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
+					// Manual Advises update
+					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+						if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
+								allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
+							getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
+									allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
+						}
+					}
+					
+					// Bounce Charges Update
+					if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)){
+						if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
+								allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
+							
+							if(bounceAdvises == null){
+								bounceAdvises = getManualAdviseDAO().getBounceAdvisesListByRef(receiptHeader.getReference(), 
+										FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
+							}
+							
+							List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+							for (FinReceiptDetail receiptDetail : receiptDetails) {
+								for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+									if(bounceAdvises.contains(movement.getAdviseID())){
+										getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(),
+												movement.getPaidAmount(), movement.getWaivedAmount(), TableType.MAIN_TAB);
+									}
+								}
+							}
+							
+						}
 					}
 				}
 			}
@@ -756,11 +786,15 @@ public class RepaymentProcessUtil {
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 			receiptDetail.setReceiptID(receiptID);
-			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
+			if(isApproval){
+				receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
+			}else{
+				receiptDetail.setStatus(receiptHeader.getReceiptModeStatus());
+			}
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
 
 			// Excess Amounts
-			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
 
 				long payAgainstID = receiptDetail.getPayAgainstID();
@@ -768,24 +802,38 @@ public class RepaymentProcessUtil {
 				// Excess Amount make utilization
 				if (payAgainstID != 0) {
 					
-					if (receiptDetail.isNoReserve()) {
-						//update only utilization
-						getFinExcessAmountDAO().updateUtiliseOnly(payAgainstID, receiptDetail.getAmount());
+					if(isApproval){
+						if (receiptDetail.isNoReserve()) {
+							//update only utilization
+							getFinExcessAmountDAO().updateUtiliseOnly(payAgainstID, receiptDetail.getAmount());
+						}else{
+							getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+						}
+
+						// Delete Reserved Log against Excess and Receipt ID
+						getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
+
+						// Excess Movement Creation
+						FinExcessMovement movement = new FinExcessMovement();
+						movement.setExcessID(payAgainstID);
+						movement.setReceiptID(receiptSeqID);
+						movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+						movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+						movement.setAmount(receiptDetail.getAmount());
+						getFinExcessAmountDAO().saveExcessMovement(movement);
 					}else{
-						getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+						
+						// Excess Amount make utilization
+						FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptSeqID, payAgainstID);
+						if(exReserve != null){
+
+							// Update Reserve Amount in FinExcessAmount
+							getFinExcessAmountDAO().updateExcessReserve(payAgainstID, exReserve.getReservedAmt().negate());
+
+							// Delete Reserved Log against Excess and Receipt ID
+							getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
+						}
 					}
-
-					// Delete Reserved Log against Excess and Receipt ID
-					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
-
-					// Excess Movement Creation
-					FinExcessMovement movement = new FinExcessMovement();
-					movement.setExcessID(payAgainstID);
-					movement.setReceiptID(receiptSeqID);
-					movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-					movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-					movement.setAmount(receiptDetail.getAmount());
-					getFinExcessAmountDAO().saveExcessMovement(movement);
 				}
 			}
 			
@@ -796,28 +844,44 @@ public class RepaymentProcessUtil {
 
 				// Payable Advise Amount make utilization
 				if (payAgainstID != 0) {
-					getManualAdviseDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					
+					if(isApproval){
+						getManualAdviseDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
 
-					// Delete Reserved Log against Advise and Receipt Seq ID
-					getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
+						// Delete Reserved Log against Advise and Receipt Seq ID
+						getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
 
-					// Payable Advise Movement Creation
-					ManualAdviseMovements movement = new ManualAdviseMovements();
-					movement.setAdviseID(payAgainstID);
-					movement.setReceiptID(receiptID);
-					movement.setReceiptSeqID(receiptSeqID);
-					movement.setMovementDate(DateUtility.getAppDate());
-					movement.setMovementAmount(receiptDetail.getAmount());
-					movement.setPaidAmount(receiptDetail.getAmount());
-					getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+						// Payable Advise Movement Creation
+						ManualAdviseMovements movement = new ManualAdviseMovements();
+						movement.setAdviseID(payAgainstID);
+						movement.setReceiptID(receiptID);
+						movement.setReceiptSeqID(receiptSeqID);
+						movement.setMovementDate(DateUtility.getAppDate());
+						movement.setMovementAmount(receiptDetail.getAmount());
+						movement.setPaidAmount(receiptDetail.getAmount());
+						getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+					}else{
+						// Payable Amount make utilization
+						ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, payAgainstID);
+						if(payableReserve != null){
+
+							// Update Reserve Amount in ManualAdvise
+							getManualAdviseDAO().updatePayableReserve(payAgainstID, payableReserve.getReservedAmt().negate());
+
+							// Delete Reserved Log against Payable Advise ID and Receipt ID
+							getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
+						}
+					}
 				}
 			}
 
 			// Manual Advise Movements
-			for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
-				movement.setReceiptID(receiptID);
-				movement.setReceiptSeqID(receiptSeqID);
-				getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+			if(isApproval){
+				for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+					movement.setReceiptID(receiptID);
+					movement.setReceiptSeqID(receiptSeqID);
+					getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+				}
 			}
 
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
@@ -836,11 +900,13 @@ public class RepaymentProcessUtil {
 						rpySchd.setRepaySchID(i + 1);
 						rpySchd.setLinkedTranId(rpyHeader.getLinkedTranId());
 						
-						//update fee schedule details
-						updateFeeDetails(rpySchd, finFeeDetails, allocationPaidMap, allocationWaivedMap);
-						
-						//update insurance schedule details
-						updateInsuranceDetails(rpySchd);
+						if(isApproval){
+							//update fee schedule details
+							updateFeeDetails(rpySchd, finFeeDetails, allocationPaidMap, allocationWaivedMap);
+
+							//update insurance schedule details
+							updateInsuranceDetails(rpySchd);
+						}
 					}
 
 					// Save Repayment Schedule Details

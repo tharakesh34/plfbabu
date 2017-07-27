@@ -48,6 +48,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal waviedAmt = BigDecimal.ZERO;
 	private BigDecimal totFeeAmount = BigDecimal.ZERO;
 	private Date		bounceDate;
+	private String		rcdMaintainSts;
 	
 	private String	remarks;
 	private boolean newRecord;
@@ -453,6 +454,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getRcdMaintainSts() {
+		return rcdMaintainSts;
+	}
+
+	public void setRcdMaintainSts(String rcdMaintainSts) {
+		this.rcdMaintainSts = rcdMaintainSts;
 	}
 
 }
