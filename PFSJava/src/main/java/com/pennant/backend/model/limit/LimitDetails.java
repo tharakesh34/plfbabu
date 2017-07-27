@@ -60,7 +60,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.util.WorkFlowUtil;
 
 /**
  * Model class for the <b>LimitDetail table</b>.<br>
@@ -186,7 +185,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	}
 
 	public LimitDetails() {
-		this.workflowId = WorkFlowUtil.getWorkFlowID("LimitDetail");
 	}
 
 	public LimitDetails(long id) {
