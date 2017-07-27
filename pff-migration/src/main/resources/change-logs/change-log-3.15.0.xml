@@ -15338,4 +15338,9 @@ update Customers_temp set CUSTADDLDEC1 = null;
 	
 	</changeSet>
 	
+	<changeSet id="755" author="Manoj">
+		<dropForeignKeyConstraint baseTableName="POSIDEX_CUSTOMER_LOANS"
+			constraintName="FK_PCL_CID" />
+	</changeSet>
+	
 </databaseChangeLog>
