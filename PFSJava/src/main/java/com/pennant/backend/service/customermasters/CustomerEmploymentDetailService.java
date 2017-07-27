@@ -76,6 +76,6 @@ public interface CustomerEmploymentDetailService {
 	
 	AuditDetail doValidations(CustomerEmploymentDetail customerEmploymentDetail, Customer customer);
 	
-	int getVersion(long custId, long custEmpName);
+	int getVersion(long custId, long custEmpId);
 
 }

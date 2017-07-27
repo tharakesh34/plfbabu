@@ -930,7 +930,7 @@ public class CustomerController {
 			customerEmploymentDetail.setLastMntBy(userDetails.getLoginUsrID());
 			customerEmploymentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerEmploymentDetail.setVersion((customerEmploymentDetailService.getVersion(
-					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpName())) + 1);
+					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpId())) + 1);
 
 			// call service method to update customer Employment details
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);

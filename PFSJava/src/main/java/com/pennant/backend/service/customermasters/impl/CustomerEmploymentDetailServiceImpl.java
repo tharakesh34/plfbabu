@@ -435,8 +435,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 	}
 
 	@Override
-	public int getVersion(long custID, long custEmpName) {
-		return getCustomerEmploymentDetailDAO().getVersion(custID, custEmpName);
+	public int getVersion(long custID, long custEmpId) {
+		return getCustomerEmploymentDetailDAO().getVersion(custID, custEmpId);
 	}
 
 }
