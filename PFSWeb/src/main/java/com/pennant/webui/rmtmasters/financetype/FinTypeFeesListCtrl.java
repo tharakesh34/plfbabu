@@ -130,7 +130,6 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 				parent = event.getTarget().getParent();
 			}
 			
-			
 			// if (arguments.containsKey("parentTab")) {
 			// parentTab = (Tab) arguments.get("parentTab");
 			// }
@@ -198,7 +197,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		
 		doStoreEventDetails();
 		doFillFinTypeFeesOrigination(getFinTypeFeesByModule(this.finTypeFeesList, true));
-		doFillFinTypeFeesServicing(getFinTypeFeesByModule(this.finTypeFeesList,false));
+		doFillFinTypeFeesServicing(getFinTypeFeesByModule(this.finTypeFeesList, false));
 		
 		if (parent != null) {
 			this.window_FinTypeFeesList.setHeight(borderLayoutHeight-75+"px");
