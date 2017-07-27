@@ -15090,4 +15090,11 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		<column name="AMOUNT" type="NUMBER(18)" />
 	</createTable>
 </changeSet>
+<changeSet id="737" author="Srikanth">
+	<sql>
+	<![CDATA[
+		INSERT INTO ErrorDetails VALUES('90345','EN','E','Can not update mandate when mandate status is {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	]]>
+	</sql>
+	</changeSet>
 </databaseChangeLog>
