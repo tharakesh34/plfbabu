@@ -179,6 +179,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
 		logger.debug("Entering");
+		
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinScheduleData);
@@ -199,6 +200,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
+		
 		// Empty sent any required attributes
 		this.grcPeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -206,8 +208,8 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.repayFrq.setMandatoryStyle(true);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
-		logger.debug("Leaving");
 
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -284,6 +286,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/** To fill schedule dates */
 	public void fillSchFromDates(List<FinanceScheduleDetail> financeScheduleDetails) {
 		logger.debug("Entering");
+		
 		this.cbFrqFromDate.getItems().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
@@ -371,6 +374,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 		}
+		
 		logger.debug("Leaving");
 	}
 
