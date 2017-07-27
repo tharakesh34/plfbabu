@@ -15129,5 +15129,23 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		<column name="AMOUNT" type="NUMBER(18)" />
 	</createTable>
 </changeSet>
+	<changeSet id="742" author="pruthvi raj G">
+	<sql>
 	
+delete from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus';
+
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from REPORTCONFIGURATION),'Customer Creation Finone Status','Customer Creation Finone Status',1,'CustomerCreationInFinnoneStatus','pfsDatasource',1,'menu_Item_CustomerCreationInFinOneStatus',2,1000,null,null,null,null,null,null,0,current_timestamp,1);
+
+
+delete from reportfilterfields where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus');
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),1,'API DATE','DATERANGE','API DATE','AuthDate',null,'---Select----',null,null,0,0,0,0,1,1,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS
+ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),2,'CustCIF','LOVSEARCH','Customer CIF','CUSTCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS
+ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_CustomerCreationInFinOneStatus'),3,'Status','STATICLIST','Status','StatusFromFinnOne','getCustCreationFinoneStatus',null,null,null,0,0,0,0,3,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
