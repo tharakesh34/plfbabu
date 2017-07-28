@@ -2324,11 +2324,23 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinScheduleData().getFinanceMain().getScheduleMethod());
 			
+			// Re-check Event From Date in Case of Servicing
+			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)){
+				List<FinanceScheduleDetail> schList = getFinScheduleData().getFinanceScheduleDetails();
+				Date curBussDate = DateUtility.getAppDate();
+				for (FinanceScheduleDetail curSchd : schList) {
+					if(curSchd.getSchDate().compareTo(curBussDate) <= 0){
+						getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
+						continue;
+					}
+					getFinScheduleData().getFinanceMain().setRecalFromDate(curSchd.getSchDate());
+					break;
+				}
+			}
+			
 			if(this.grid_monthDetails.isVisible()){
 				getFinScheduleData().setPlanEMIHmonths(getPlanEMIHMonths());
 				getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
-				
-				
 				setFinScheduleData(ScheduleCalculator.getFrqEMIHoliday(getFinScheduleData()));
 			}else{
 				getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());

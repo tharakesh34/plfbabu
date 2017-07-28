@@ -675,7 +675,6 @@ public class ScheduleCalculator {
 
 		Date datePlanEMIHLock = DateUtility.addMonths(finMain.getFinStartDate(), finMain.getPlanEMIHLockPeriod());
 		Date dateAfterYear = DateUtility.addMonths(finMain.getFinStartDate(), 12);
-		Date curBussDate = DateUtility.getAppDate();
 
 		for (int i = 0; i < sdSize - 1; i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -691,12 +690,6 @@ public class ScheduleCalculator {
 				continue;
 			}
 			
-			// ON Maintenance Process, Not allow before Current Application Date
-			if(StringUtils.equals(finMain.getProcMethod(), PROC_GETFRQEMIH) && 
-					DateUtility.compare(schdDate, curBussDate) <= 0){
-				continue;
-			}
-
 			// First payment date also cannot be allowed in planned EMI holiday declaration
 			if (curSchd.getInstNumber() == 1) {
 				continue;
@@ -734,6 +727,7 @@ public class ScheduleCalculator {
 							if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 								markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
 								markedEMIHMax = markedEMIHMax + 1;
+								break;
 							}
 						}
 					}
