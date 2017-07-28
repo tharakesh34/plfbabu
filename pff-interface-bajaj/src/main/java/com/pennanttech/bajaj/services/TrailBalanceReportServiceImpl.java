@@ -26,7 +26,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.transaction.TransactionStatus;
 
 public class TrailBalanceReportServiceImpl extends BajajService implements TrailBalanceReportService {
 	private final Logger logger = Logger.getLogger(getClass());
@@ -77,20 +76,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 			prepareTransactionSummary();
 
-			TransactionStatus txnStatus = transManager.getTransaction(transDef);
-			try {
-				clearPreviousMonthTrailBalace();
-				saveCurrentMonthTrailBalace();
-				prepareDtatForFile();
-				transManager.commit(txnStatus);
-			} catch (Exception e) {
-				transManager.rollback(txnStatus);
-				logger.error(Literal.EXCEPTION, e);
-				throw e;
-			} finally {
-				txnStatus.flush();
-				txnStatus = null;
-			}
+			clearPreviousMonthTrailBalace();
+			saveCurrentMonthTrailBalace();
+			prepareDtatForFile();
 
 			generateGLReport();
 
@@ -521,10 +509,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		List<Object[]> inputList = new ArrayList<Object[]>();
 		for (TrailBalance item : list) {
-			Object[] object = { item.getLink(), item.getTransactionAmountType(),
-					item.getLedgerAccount(), item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(),
-					item.getBusinessUnit(), item.getCostCenter(), item.getProfitCenter(), item.getNarration1(),
-					item.getNarration2() };
+			Object[] object = { item.getLink(), item.getTransactionAmountType(), item.getLedgerAccount(),
+					item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(), item.getBusinessUnit(),
+					item.getCostCenter(), item.getProfitCenter(), item.getNarration1(), item.getNarration2() };
 			inputList.add(object);
 		}
 
@@ -532,7 +519,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		inputList = null;
 	}
-	
+
 	private void groupTransactionDetails(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -542,10 +529,9 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		List<Object[]> inputList = new ArrayList<Object[]>();
 		for (TrailBalance item : list) {
-			Object[] object = { item.getLink(), item.getTransactionAmountType(),
-					item.getLedgerAccount(), item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(),
-					item.getBusinessUnit(), item.getCostCenter(), item.getProfitCenter(), item.getNarration1(),
-					item.getNarration2() };
+			Object[] object = { item.getLink(), item.getTransactionAmountType(), item.getLedgerAccount(),
+					item.getUmskz(), item.getTransactionAmount(), item.getBusinessArea(), item.getBusinessUnit(),
+					item.getCostCenter(), item.getProfitCenter(), item.getNarration1(), item.getNarration2() };
 			inputList.add(object);
 		}
 
@@ -553,12 +539,12 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		inputList = null;
 	}
-	
+
 	private void groupTransactions() throws SQLException {
-		
+
 		String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
 		String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(glDate, "MMM yy") + " - PLF");
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT BUPLA, BSCHL, HKONT, SUM(WRBTR) WRBTR");
 		sql.append(" from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY HKONT, BUPLA, BSCHL");
@@ -579,15 +565,15 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				tb.setNarration1(ZUONR);
 				tb.setNarration2(SGTXT);
 				list.add(tb);
-				
-				if(list.size() > batchSize) {
+
+				if (list.size() > batchSize) {
 					groupTransactionDetails(list);
 					list.clear();
 				}
 			}
 		});
-		
-		if(!list.isEmpty()) {
+
+		if (!list.isEmpty()) {
 			groupTransactionDetails(list);
 			list.clear();
 		}
@@ -736,7 +722,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		int pageSize = SAPGL_TRAN_RECORD_COUNT;
 
 		int totalTransactions = getTotalTransactions();
-		
+
 		int pages = totalTransactions / pageSize;
 		if (pages == 0) {
 			pages = 1;
@@ -874,12 +860,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_STGE");
 		jdbcTemplate.execute("DELETE FROM TRAIL_BALANCE_REPORT_FILE");
-		
-		
+
 		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (start with 1)");
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (start with 1)");
-		
+		jdbcTemplate
+				.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (start with 1)");
+		jdbcTemplate
+				.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (start with 1)");
+
 	}
 
 	private void extractTransactionsData() throws Exception {
@@ -892,14 +879,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		Map<String, TrailBalance> ledgers = getLedgerDetails();
 		Map<String, String> states = getStates();
-		
-		
 
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
 			/* LINK */
 			entry.getValue().setLink(0);
 
-			entry.getValue().setTransactionAmount(entry.getValue().getCreditAmount().subtract(entry.getValue().getDebitAmount()));
+			entry.getValue().setTransactionAmount(
+					entry.getValue().getCreditAmount().subtract(entry.getValue().getDebitAmount()));
 
 			if (entry.getValue().getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
 				entry.getValue()
@@ -1101,7 +1087,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void generateGLReport() throws Exception {
 		logger.info("Generating GL Report..");
-		
+
 		try {
 			generateTransactionReport();
 			generateTransactionSummaryReport();
@@ -1110,29 +1096,16 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		/*try {
-			GenerateTransactionReport gtr = new GenerateTransactionReport();
-			Thread thread1 = new Thread(gtr);
-			thread1.start();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		try {
-			GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport();
-			Thread thread2 = new Thread(gtsr);
-			thread2.start();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		try {
-			GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport();
-			Thread thread3 = new Thread(gtbr);
-			thread3.start();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}*/
+		/*
+		 * try { GenerateTransactionReport gtr = new GenerateTransactionReport(); Thread thread1 = new Thread(gtr);
+		 * thread1.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
+		 * 
+		 * try { GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport(); Thread thread2 = new
+		 * Thread(gtsr); thread2.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
+		 * 
+		 * try { GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport(); Thread thread3 = new Thread(gtbr);
+		 * thread3.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
+		 */
 
 	}
 
@@ -1245,7 +1218,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
 
 	}
-	
+
 	private int getTotalTransactions() {
 		return jdbcTemplate.queryForObject("select count(*) from TRANSACTION_DETAIL_REPORT_STGE", Integer.class);
 	}
