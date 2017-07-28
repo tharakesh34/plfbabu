@@ -595,7 +595,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void clearPreviousMonthTrailBalace() {
 		try {
-			jdbcTemplate.execute("TRUNCATE TABLE TRAIL_BALANCE_REPORT_LAST_RUN");
+			jdbcTemplate.execute("DELETE FROM TRAIL_BALANCE_REPORT_LAST_RUN");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -869,16 +869,16 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 	private void clearTables() {
 		logger.info("Clearing GL Tables..");
-		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_SUMMARY_REPORT");
-		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT");
-		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_TEMP");
-		jdbcTemplate.execute("TRUNCATE TABLE TRANSACTION_DETAIL_REPORT_STGE");
-		jdbcTemplate.execute("TRUNCATE TABLE TRAIL_BALANCE_REPORT_FILE");
+		jdbcTemplate.execute("DELETE FROM TRANSACTION_SUMMARY_REPORT");
+		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
+		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
+		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_STGE");
+		jdbcTemplate.execute("DELETE FROM TRAIL_BALANCE_REPORT_FILE");
 		
 		
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (  start with 1)");
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (  start with 1)");
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (  start with 1)");
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (start with 1)");
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (start with 1)");
 		
 	}
 
