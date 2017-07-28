@@ -495,8 +495,9 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
 		BigDecimal transactionAmt = postAmount.divide(new BigDecimal(ccyMinorUnits));
 		taxDownload.setTransactionAmount(transactionAmt);
+		boolean revChargeApplicable = rs.getBoolean("REVERSECHARGEAPPLICABLE");
 		
-		taxDownload.setReverseChargeApplicable(CON_YES);
+		taxDownload.setReverseChargeApplicable(revChargeApplicable? CON_YES : CON_NO);
 		// InvoiceType
 		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
 		if (oldTransactionID != 0) {
