@@ -63,7 +63,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final String REG_INTER = "2";
 	private static final String UNREG_INTRA = "3";	
 	private static final String UNREG_INTER = "4";
-	private static final String ADDR_DELIMITER = "|";
+	private static final String ADDR_DELIMITER = " ";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not 	Required
 
 	public TaxDownlaodDetailProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
