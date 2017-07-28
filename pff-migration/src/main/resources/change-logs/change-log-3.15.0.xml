@@ -15272,17 +15272,17 @@ update Customers_temp set CUSTADDLDEC1 = null;
 			);	
 		</sql>
 	</changeSet>
- 	<!-- <changeSet id="753" author="Siva" >
+ 	 <changeSet id="753" author="Siva" >
 		<sql>
-			Update FinanceMain set FinrepaymentAmount =  (select Sum(SchdPriPaid) as paidpri from FinScheduleDetails 
+			<![CDATA[Update FinanceMain set FinrepaymentAmount =  (select Sum(SchdPriPaid) as paidpri from FinScheduleDetails 
 			where FinScheduleDetails.FinReference =  FinanceMain.FinReference group by Finreference)
 			Where Finreference IN (
 			select FinanceMain.FinReference from FinanceMain 
 			Inner Join (select FinReference, Sum(SchdPriPaid)  as paidpri from FinScheduleDetails group by Finreference ) t
 			on FinanceMain.FinReference = t.FinReference 
-			Where FInanceMain.FinRepaymentAmount <> paidpri )
+			Where FInanceMain.FinRepaymentAmount <> paidpri )]]>
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="754" author="Irfan">
 		<createView viewName="FinWaiverHeader_View" replaceIfExists="true">
