@@ -43,6 +43,18 @@
 
 package com.pennanttech.interfacebajaj;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.services.TrailBalanceReportService;
+import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +65,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
@@ -69,19 +80,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.EncryptionUtil;
-import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
-import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,7 +106,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected AmazonS3Bucket bucket;
 	
 	@Autowired
-	private CIBILReport cibilReport;
+	private TrailBalanceReportService trailBalanceReportService;
 
 	/**
 	 * default constructor.<br>
@@ -123,7 +121,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.pageRightName = "FileDownload";
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
-
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -193,7 +190,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		cibilReport.generateReport();
+		trailBalanceReportService.generateReport(getUserWorkspace().getUserDetails().getUserId());
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {

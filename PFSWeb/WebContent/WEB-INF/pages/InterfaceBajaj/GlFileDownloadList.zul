@@ -13,13 +13,15 @@
 
 				<!-- COMMON BUTTONS -->
 				<label value="" />
+				<toolbar align="center" sclass="toolbar-center">
+					<button id="btnexecute" label="execute" sclass="z-toolbarbutton" autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"/>
+				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
+					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />
-					<button id="btnexecute" label="execute"  visible = "false" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
