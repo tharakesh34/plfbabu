@@ -15347,4 +15347,118 @@ update Customers_temp set CUSTADDLDEC1 = null;
 		INSERT INTO ErrorDetails VALUES('90346','EN','E','Phone Number is invalid. Allowed Characters are {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	
+	<changeSet id="757" author="Durgaprasad g">
+	<dropTable tableName="TAXDOWNLOADDETAIL"/>
+	</changeSet>
+	<changeSet  id="758" author="Durgaprasad G">
+		<createTable tableName="TAXDOWNLOADDETAIL">
+		    <column name="HEADERID" 				type=" NUMBER(19)" />
+		 	<column name="TRANSACTION_DATE" 				type="datetime" />
+			<column name="HOST_SYSTEM_TRANSACTION_ID" 		type="varchar(20)" />
+			<column name="TRANSACTION_TYPE" 				type="varchar(50)" />
+			<column name="BUSINESS_AREA" 					type="varchar(2)" />
+			<column name="SOURCE_SYSTEM" 					type="varchar(20)" />
+			<column name="COMPANY_CODE" 					type="varchar(50)" />
+			<column name="CUSTOMER_NAME" 					type="varchar(300)" />
+			<column name="REGISTERED_CUSTOMER" 				type="varchar(1)" />
+			<column name="CUSTOMER_ID" 						type="number(8)" />
+			<column name="CUSTOMER_GSTIN" 					type="varchar(30)" />
+			<column name="CUSTOMER_ADDRESS" 				type="varchar(500)" />
+			<column name="CUSTOMER_STATE_CODE" 				type="varchar(2)" />
+			<column name="ADDRESS_CHANGE_DATE" 				type="datetime" />
+			<column name="PAN_NO" 							type="varchar(30)" />
+			<column name="LEDGER_CODE" 						type="varchar(20)" />
+			<column name="HSN_SAC_CODE" 					type="varchar(50)" />
+			<column name="NATURE_OF_SERVICE" 				type="varchar(200)" />
+			<column name="LOAN_ACCOUNT_NO" 					type="varchar(20)" />
+			<column name="PRODUCT_CODE" 					type="varchar(8)" />
+			<column name="CHARGE_CODE" 						type="number(8)" />
+			<column name="LOAN_BRANCH" 						type="number(8)" />
+			<column name="LOAN_BRANCH_STATE" 				type="varchar(2)" />
+			<column name="LOAN_SERVICING_BRANCH" 			type="varchar(200)" />
+			<column name="TXN_BRANCH_ADDRESS" 				type="varchar(500)" />
+			<column name="TXN_BRANCH_STATE_CODE" 			type="varchar(2)" />
+			<column name="TRANSACTION_AMOUNT" 				type="number(25,2)" />
+			<column name="REVERSE_CHARGE_APPLICABLE" 		type="varchar(1)" />
+			<column name="INVOICE_TYPE" 					type="varchar(1)" />
+			<column name="ORIGINAL_INVOICE_NO" 				type="varchar(16)" />
+			<column name="BFL_GSTIN_NO" 					type="varchar(30)"/>
+			<column name="INVOICE_NO"                 		type="varchar(16)" />
+			<column name="SFDC_DEALID"                		type="varchar(20)" />
+			<column name="TAXABLE_AMOUNT"             		type="number(20,2)" />
+			<column name="CGST_RATE"                  		type="number(10,7)" />
+			<column name="CGST_AMOUNT"                		type="number(25,2)" />
+			<column name="CGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="CGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="CGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="CGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="SGST_RATE"                  		type="number(10,7)" />
+			<column name="SGST_AMOUNT"                		type="number(25,2)" />
+			<column name="SGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="SGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="SGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="SGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="IGST_RATE"                  		type="number(10,7)" />
+			<column name="IGST_AMOUNT"                		type="number(25,2)" />
+			<column name="IGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="IGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="IGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="IGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="UTGST_RATE"                 		type="number(10,7)" />
+			<column name="UTGST_AMOUNT"               		type="number(25,2)" />
+			<column name="UTGST_SURCHARGE_RATE"       		type="number(10,7)" />
+			<column name="UTGST_SURCHARGE_AMOUNT"     		type="number(25,2)" />
+			<column name="UTGST_CESS_RATE"            		type="number(10,7)" />
+			<column name="UTGST_CESS_AMOUNT"          		type="number(25,2)" />
+			<column name="TXNADVICEID"                		type="number(16)" />
+			<column name="TO_STATE"                   		type="varchar(2)" />
+			<column name="FROM_STATE"                 		type="varchar(2)" />
+			<column name="CHEQUEID"                   		type="number" />
+			<column name="EXEMPTED"                   		type="varchar(1)" />
+			<column name="BUSINESSdatetime"               	type="datetime" />
+			<column name="PROCESSdatetime"                	type="datetime" />
+			<column name="PROCESSED_FLAG"             		type="varchar(1)" />
+			<column name="REVERSE_CHARGECODEID"       		type="number(16)" />
+			<column name="AGREEMENTID"                		type="number(8)" />
+			<column name="CONSIDER_FOR_GST"           		type="varchar(1)" />
+			<column name="EXEMPTED_STATE"             		type="varchar(1)" />
+			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
+			<column name="LOAN_BRANCH_ADDRESS"             type="varchar(500)" />
+		</createTable>
+</changeSet>
+
+<changeSet id="759" author="chaitanya.ch">
+	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+		SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
+        T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
+        T1.POSTAMOUNT, T1.ACCOUNTTYPE, 
+        T2.FINTYPE, T2.FINBRANCH, T2.FINAPPROVEDDATE, T2.CUSTID CUSTID,
+        T4.ENTITYCODE, 
+        T5.CUSTSHRTNAME, T5.CUSTCIF, T5.CUSTCRCPR,
+        T6.CUSTADDRHNBR, T6.CUSTFLATNBR, T6.CUSTADDRSTREET, T6.CUSTADDRLINE1,
+        T6.CUSTADDRLINE2, T6.CUSTADDRCITY, T6.CUSTADDRPROVINCE, T6.CUSTADDRCOUNTRY, 
+        T6.CUSTADDRZIP CUSTADDRZIP, T6.LASTMNTON CUSTADDRLASTMNTON, T6.CUSTPOBOX, 
+        T7.TAXNUMBER CUSTOMERGSTIN, T7.ADDRLINE1 TAXADDRLINE1, T7.ADDRLINE2 TAXADDRLINE2,
+        T7.ADDRLINE3 TAXADDRLINE3, T7.ADDRLINE4 TAXADDRLINE4, T7.COUNTRY TAXCOUNTRY, 
+        T7.PROVINCE TAXPROVINCE, T7.CITY TAXCITY, T7.PINCODE TAXPINCODE, T7.LASTMNTON TAXLASTMNTON,
+        T7.TAXEXEMPTED,
+        T8.CUSTCIF TAXCUSTCIF, T8.CUSTSHRTNAME TAXCUSTSHRTNAME, T8.CUSTCRCPR TAXCUSTCRCPR, 
+        T9.ACCADDLVAR1 HSNSACCODE, T9.ACCADDLVAR2 NATUREOFSERVICE, T9.ACCADDLCHAR1 REVERSECHARGEAPPLICABLE,
+        T9.TAXAPPLICABLE, T9.EXTRACTIONTYPE, '' ORIGINALINVOICENO, T9.ACCADDLCHAR1, T10.CCYMINORCCYUNITS
+        FROM POSTINGS_TAXDOWNLOAD T1 
+        INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+        INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+        INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+        INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID
+        INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5
+        LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE 
+        LEFT JOIN CUSTOMERS T8 ON T8.CUSTID = T7.TAXCUSTID
+        INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+        INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
+	
+	</createView> 
+
+</changeSet>
+
 </databaseChangeLog>
