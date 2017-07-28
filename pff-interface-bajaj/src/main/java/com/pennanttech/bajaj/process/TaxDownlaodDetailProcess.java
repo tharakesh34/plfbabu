@@ -451,7 +451,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		loanBranchState =loanProvince.getTaxStateCode();
 		taxDownload.setLoanBranchState(loanBranchState);
-		taxDownload.setToState(loanBranchState);
+		taxDownload.setFromState(loanBranchState);
 		userBranchCode = rs.getString("USERBRANCH");
 		if (userBranchCode == null || userBranchCode.equals(CON_EOD)) {
 			userBranch = loanBranch;
