@@ -62,6 +62,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final String REG_INTER = "2";
 	private static final String UNREG_INTRA = "3";	
 	private static final String UNREG_INTER = "4";
+	private static final String ADDR_DELIMITER = ",";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not 	Required
 
 	public TaxDownlaodDetailProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
@@ -357,14 +358,20 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			// Address Details
 			customerAddress = new StringBuilder();
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE1")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXPINCODE")));
-
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("TAXCITY"))));
 			province = rs.getString("TAXPROVINCE");
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(provinceMap.get(province));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"))));
 			lastMntOn = rs.getDate("TAXLASTMNTON");
 
@@ -382,16 +389,24 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			// Address Details
 			customerAddress = new StringBuilder();
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTPOBOX")));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP")));
-
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"))));
 			province = rs.getString("CUSTADDRPROVINCE");
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(provinceMap.get(province));
+			customerAddress.append(ADDR_DELIMITER);
 			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"))));
 			lastMntOn = rs.getDate("CUSTADDRLASTMNTON");
 		}
@@ -434,12 +449,19 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 			StringBuilder gstAddress = new StringBuilder();
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine1()));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine2()));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine3()));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine4()));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getPinCode()));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(cityMap.get(StringUtils.trimToEmpty(entityDetail.getCityCode())));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(provinceMap.get(StringUtils.trimToEmpty(entityDetail.getStateCode())));
+			gstAddress.append(ADDR_DELIMITER);
 			gstAddress.append(countryMap.get(StringUtils.trimToEmpty(entityDetail.getCountry())));
 			txnBranchAddress = gstAddress.toString();
 			txnBranchStateCode = entityDetail.getStateCode();
@@ -456,6 +478,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
 		BigDecimal transactionAmt = postAmount.divide(new BigDecimal(ccyMinorUnits));
 		taxDownload.setTransactionAmount(transactionAmt);
+		
 		taxDownload.setReverseChargeApplicable(CON_YES);
 		// InvoiceType
 		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
@@ -495,14 +518,21 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private String getBranchAddress(Branch branch) {
 		StringBuilder branchAddress = new StringBuilder();// 1
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchPOBox()));
-
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(cityMap.get(StringUtils.trimToEmpty(branch.getBranchCity())));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(provinceMap.get(StringUtils.trimToEmpty(branch.getBranchProvince())));
+		branchAddress.append(ADDR_DELIMITER);
 		branchAddress.append(countryMap.get(StringUtils.trimToEmpty(branch.getBranchCountry())));
 		return branchAddress.toString();
 	}
