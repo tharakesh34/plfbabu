@@ -54,9 +54,6 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		if(enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){
 			finAmount = finAmount.add(enquiry.getInsuranceAmt());
 		}
-		if(enquiry.getDownPayment() != null && enquiry.getDownPayment().compareTo(BigDecimal.ZERO) > 0){
-			finAmount = finAmount.subtract(enquiry.getDownPayment());
-		}
 		
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount,CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");

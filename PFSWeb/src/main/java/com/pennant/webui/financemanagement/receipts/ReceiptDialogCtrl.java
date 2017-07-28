@@ -1236,7 +1236,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// User entered Receipt amounts and paid on manual Allocation validation
-		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid); 
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid).subtract(feeToBePaid); 
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
 		}
@@ -1314,51 +1314,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose, true);
 		
-		// If Early Settlement then Excess Paid's should be set automatically
-		if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			
-			int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-			
-			List<FinExcessAmount> excessAmountList = getExcessList();
-			for (FinExcessAmount excess : excessAmountList) {
-				
-				// Fetch Excess Amounts
-				if(listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType()) != null){
-					CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType());
-					BigDecimal balAmount = excess.getBalanceAmt();
-					if(getExcessReserveList() != null && !getExcessReserveList().isEmpty()){
-						for (FinExcessAmountReserve reserve : getExcessReserveList()) {
-							if(reserve.getExcessID() == excess.getExcessID()){
-								balAmount = balAmount.add(reserve.getReservedAmt());
-								break;
-							}
-						}
-					}
-					excessBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
-				}
-			}
-			
-			// Payable Amounts
-			List<ManualAdvise> payableList = getPayableList();
-			for (ManualAdvise payable : payableList) {
-				
-				// Fetch Excess Amounts
-				if(listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID()) != null){
-					CurrencyBox payableBox = (CurrencyBox) listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID());
-					BigDecimal balAmount = payable.getBalanceAmt();
-					if(getPayableReserveList() != null && !getPayableReserveList().isEmpty()){
-						for (ManualAdviseReserve reserve : getPayableReserveList()) {
-							if(reserve.getAdviseID() == payable.getAdviseID()){
-								balAmount = balAmount.add(reserve.getReservedAmt());
-								break;
-							}
-						}
-					}
-					payableBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
-				}
-			}
-		}
-		
 		boolean makeFeeRender = false;
 		eventCode = "";
 		
@@ -1377,6 +1332,112 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		feesRecalculation(makeFeeRender);
 		
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for Excess Amount Adjustments when Early settlement Selected on default
+	 * @param recPurpose
+	 */
+	private void doExcessAdjustments(String recPurpose){
+		// If Early Settlement then Excess Paid's should be set automatically
+		if (!StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			return;
+		}
+
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		
+		BigDecimal totalDue = BigDecimal.ZERO;
+		// Past due Details
+		if(this.listBoxPastdues.getFellowIfAny("allocation_totalDue") != null){
+			Label due = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalDue");
+			totalDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
+		}
+		// Manual Advises
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue") != null){
+			Label due = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue");
+			totalDue = totalDue.add(PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter));
+		}
+		
+		// Fee Amounts including
+		BigDecimal feeToBePaid = BigDecimal.ZERO;
+		if(getFinFeeDetailListCtrl() != null){
+			feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
+			totalDue = totalDue.add(feeToBePaid);
+		}
+
+		List<FinExcessAmount> excessAmountList = getExcessList();
+		if(excessAmountList != null && !excessAmountList.isEmpty()){
+			for (FinExcessAmount excess : excessAmountList) {
+				
+				if(totalDue.compareTo(BigDecimal.ZERO) == 0){
+					break;
+				}
+
+				// Fetch Excess Amounts
+				if(listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType()) != null){
+					CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_"+excess.getAmountType());
+					BigDecimal balAmount = excess.getBalanceAmt();
+					if(getExcessReserveList() != null && !getExcessReserveList().isEmpty()){
+						for (FinExcessAmountReserve reserve : getExcessReserveList()) {
+							if(reserve.getExcessID() == excess.getExcessID()){
+								balAmount = balAmount.add(reserve.getReservedAmt());
+								break;
+							}
+						}
+					}
+					
+					// Paid Amount Setting
+					if(totalDue.compareTo(balAmount) < 0){
+						balAmount = totalDue;
+					}
+					excessBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
+					totalDue = totalDue.subtract(balAmount);
+					
+					// Balance amount Setting
+					if(listBoxExcess.getFellowIfAny("ExcessBal_"+excess.getAmountType()) != null){
+						Label label = (Label) listBoxExcess.getFellowIfAny("ExcessBal_"+excess.getAmountType());
+						label.setValue(PennantApplicationUtil.amountFormate(excess.getBalanceAmt().subtract(balAmount), formatter));
+					}
+					
+				}
+			}
+		}
+
+		// Payable Amounts
+		List<ManualAdvise> payableList = getPayableList();
+		if(payableList != null && !payableList.isEmpty()){
+			for (ManualAdvise payable : payableList) {
+				
+				if(totalDue.compareTo(BigDecimal.ZERO) == 0){
+					break;
+				}
+
+				// Fetch Excess Amounts
+				if(listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID()) != null){
+					CurrencyBox payableBox = (CurrencyBox) listBoxExcess.getFellowIfAny("PayableAmount_"+payable.getAdviseID());
+					BigDecimal balAmount = payable.getBalanceAmt();
+					if(getPayableReserveList() != null && !getPayableReserveList().isEmpty()){
+						for (ManualAdviseReserve reserve : getPayableReserveList()) {
+							if(reserve.getAdviseID() == payable.getAdviseID()){
+								balAmount = balAmount.add(reserve.getReservedAmt());
+								break;
+							}
+						}
+					}
+					if(totalDue.compareTo(balAmount) < 0){
+						balAmount = totalDue;
+					}
+					payableBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
+					totalDue = totalDue.subtract(balAmount);
+					
+					// Balance amount Setting
+					if(listBoxExcess.getFellowIfAny("PayableBal_"+payable.getAdviseID()) != null){
+						Label label = (Label) listBoxExcess.getFellowIfAny("PayableBal_"+payable.getAdviseID());
+						label.setValue(PennantApplicationUtil.amountFormate(payable.getBalanceAmt().subtract(balAmount), formatter));
+					}
+				}
+			}
+		}
 	}
 
 	private void feesRecalculation(boolean makeFeeRender) throws InterruptedException {
@@ -1467,10 +1528,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.effScheduleMethod);
 			this.effScheduleMethod.setSelectedIndex(0);
 			
-			/*if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) && this.allocationMethod.getSelectedIndex() == 0){
 				fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
-				readOnlyComponent(true, this.allocationMethod);
-			}*/
+			}
 		} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			readOnlyComponent(true, this.excessAdjustTo);
 			this.excessAdjustTo.setSelectedIndex(0);
@@ -1714,6 +1774,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinScheduleData schData = new FinScheduleData();
 		Cloner cloner = new Cloner();
 		schData = cloner.deepClone(getFinanceDetail().getFinScheduleData());
+		
+		// Excess Adjustments After calculation of Total Paid's
+		doExcessAdjustments(tempReceiptPurpose);
 
 		receiptData.setAccruedTillLBD(schData.getFinanceMain().getLovDescAccruedTillLBD());
 		receiptData.setFinanceDetail(getFinanceDetail());
@@ -3159,8 +3222,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		List<String> excessAmountTypes = new ArrayList<>();
-		excessAmountTypes.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		excessAmountTypes.add(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		excessAmountTypes.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
 
 		Map<String, BigDecimal> excessMap = new HashMap<>();
 		List<FinExcessAmount> excessAmountList = getExcessList();
@@ -3641,41 +3704,30 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			
-			List<FinExcessAmount> excessAmountList = getExcessList();
-			BigDecimal totExcessAutoPaid = BigDecimal.ZERO;
-			for (FinExcessAmount excess : excessAmountList) {
-
-				// Fetch Excess Amounts
-				BigDecimal balAmount = excess.getBalanceAmt();
-				if(getExcessReserveList() != null && !getExcessReserveList().isEmpty()){
-					for (FinExcessAmountReserve reserve : getExcessReserveList()) {
-						if(reserve.getExcessID() == excess.getExcessID()){
-							balAmount = balAmount.add(reserve.getReservedAmt());
-							break;
-						}
-					}
-				}
-				totExcessAutoPaid = totExcessAutoPaid.add(balAmount);
-			}
-
-			// Payable Amounts
-			List<ManualAdvise> payableList = getPayableList();
-			for (ManualAdvise payable : payableList) {
-
-				// Fetch Excess Amounts
-				BigDecimal balAmount = payable.getBalanceAmt();
-				if(getPayableReserveList() != null && !getPayableReserveList().isEmpty()){
-					for (ManualAdviseReserve reserve : getPayableReserveList()) {
-						if(reserve.getAdviseID() == payable.getAdviseID()){
-							balAmount = balAmount.add(reserve.getReservedAmt());
-							break;
-						}
-					}
-				}
-				totExcessAutoPaid = totExcessAutoPaid.add(balAmount);
+			// Fetch Excess Amounts
+			BigDecimal totExAutoPaid = BigDecimal.ZERO;
+			if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
+				CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_E");
+				totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(excessBox.getActualValue(), formatter));
 			}
 			
-			this.custPaid.setValue(PennantApplicationUtil.formateAmount(totCustPaid.subtract(totExcessAutoPaid), formatter));
+			// Fetch EMI in Advance Amount
+			if(listBoxExcess.getFellowIfAny("ExcessAmount_A") != null){
+				CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
+				totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(emiInAdvBox.getActualValue(), formatter));
+			}
+			
+			// Payable Amounts
+			List<Listitem> payableItems = this.listBoxExcess.getItems();
+			for (int i = 0; i < payableItems.size(); i++) {
+				Listitem item = payableItems.get(i);
+				if(item.getId().contains("Payable")){
+					CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
+					totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), formatter));
+				}
+			}
+			
+			this.custPaid.setValue(PennantApplicationUtil.formateAmount(totCustPaid.subtract(totExAutoPaid), formatter));
 		}
 	}
 	
