@@ -330,10 +330,74 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerEMail customerEMail) {
+	public AuditDetail doValidations(CustomerEMail customerEMail,String method) {
 			AuditDetail auditDetail = new AuditDetail();
 			ErrorDetails errorDetail = new ErrorDetails();
 
+		if (StringUtils.equals(method, "Create")) {
+			List<CustomerEMail> prvCustomerEmailList = customerEMailDAO
+					.getCustomerEmailByCustomer(customerEMail.getCustID(), "");
+			if (prvCustomerEmailList != null && !prvCustomerEmailList.isEmpty()) {
+				for (CustomerEMail prvcustEmail : prvCustomerEmailList) {
+					if (prvcustEmail.getCustEMailPriority() == customerEMail.getCustEMailPriority()) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Priority";
+						valueParm[1] = String.valueOf(customerEMail.getCustEMailPriority());
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+					if (StringUtils.equals(prvcustEmail.getCustEMailTypeCode(), customerEMail.getCustEMailTypeCode())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CustEMailType";
+						valueParm[1] = customerEMail.getCustEMailTypeCode();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+			} else {
+				if (customerEMail.getCustEMailPriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Email Details";
+					valueParm[1] = "Email";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+		}
+		if (StringUtils.equals(method, "Update")) {
+			List<CustomerEMail> prvCustomerEmailList = customerEMailDAO
+					.getCustomerEmailByCustomer(customerEMail.getCustID(), "");
+			if (prvCustomerEmailList != null && !prvCustomerEmailList.isEmpty()) {
+				for (CustomerEMail prvCustEmail : prvCustomerEmailList) {
+					if (StringUtils.equals(prvCustEmail.getCustEMailTypeCode(), customerEMail.getCustEMailTypeCode())) {
+						if (prvCustEmail.getCustEMailPriority() == Integer
+								.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+							if (customerEMail.getCustEMailPriority() != Integer
+									.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "Email Details";
+								valueParm[1] = "Email should not update";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						}
+					} else {
+						if (prvCustEmail.getCustEMailPriority() == customerEMail.getCustEMailPriority()) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(customerEMail.getCustEMailPriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
+			}
+		}
 			// validate Master code with PLF system masters
 			int count = getCustomerEMailDAO().getEMailTypeCount(customerEMail.getCustEMailTypeCode());
 			if (count <= 0) {

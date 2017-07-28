@@ -62,7 +62,7 @@ public interface CustomerEMailService {
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<String> getCustEmailsByCustId(long custId);
 	List<CustomerEMail> getApprovedCustomerEMailById(long id);
-	AuditDetail doValidations(CustomerEMail customerEMail);
+	AuditDetail doValidations(CustomerEMail customerEMail,String method);
 	int getVersion(long id, String typeCode);
 	
 }

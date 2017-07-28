@@ -352,10 +352,75 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres>
 	}
 
 	@Override
-	public AuditDetail doValidations(CustomerAddres customerAddres) {
+	public AuditDetail doValidations(CustomerAddres customerAddres,String method) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetails errorDetail = new ErrorDetails();
 
+		if (StringUtils.equals(method, "Create")) {
+			List<CustomerAddres> prvCustomerAddrList = customerAddresDAO
+					.getCustomerAddresByCustomer(customerAddres.getCustID(), "");
+			if (prvCustomerAddrList != null && !prvCustomerAddrList.isEmpty()) {
+				for (CustomerAddres prvcustAddr : prvCustomerAddrList) {
+					if (prvcustAddr.getCustAddrPriority() == customerAddres.getCustAddrPriority()) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Priority";
+						valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+					if (StringUtils.equals(prvcustAddr.getCustAddrType(), customerAddres.getCustAddrType())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "AddressType";
+						valueParm[1] = customerAddres.getCustAddrType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+			} else {
+				if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Address Details";
+					valueParm[1] = "Address";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
+		}
+		if (StringUtils.equals(method, "Update")) {
+			List<CustomerAddres> prvCustomerAddrList = customerAddresDAO
+					.getCustomerAddresByCustomer(customerAddres.getCustID(), "");
+			if (prvCustomerAddrList != null && !prvCustomerAddrList.isEmpty()) {
+				for (CustomerAddres prvCustAddrr : prvCustomerAddrList) {
+					if (StringUtils.equals(prvCustAddrr.getCustAddrType(), customerAddres.getCustAddrType())) {
+						if (prvCustAddrr.getCustAddrPriority() == Integer
+								.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+							if (customerAddres.getCustAddrPriority() != Integer
+									.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "Address Details";
+								valueParm[1] = "Address should not update";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						}
+					} else {
+						if (prvCustAddrr.getCustAddrPriority() == customerAddres.getCustAddrPriority()) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
+			}
+		}
+		
 		// validate Master code with PLF system masters
 		int count = getCustomerAddresDAO().getAddrTypeCount(customerAddres.getCustAddrType());
 		if (count <= 0) {
