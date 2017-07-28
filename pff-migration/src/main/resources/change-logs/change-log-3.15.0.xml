@@ -15342,5 +15342,9 @@ update Customers_temp set CUSTADDLDEC1 = null;
 		<dropForeignKeyConstraint baseTableName="POSIDEX_CUSTOMER_LOANS"
 			constraintName="FK_PCL_CID" />
 	</changeSet>
-	
+	<changeSet id="756" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90346','EN','E','Phone Number is invalid. Allowed Characters are {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
