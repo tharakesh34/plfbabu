@@ -1089,23 +1089,28 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		logger.info("Generating GL Report..");
 
 		try {
-			generateTransactionReport();
-			generateTransactionSummaryReport();
-			generateTrailBalanceReport();
+			GenerateTransactionReport gtr = new GenerateTransactionReport();
+			Thread thread1 = new Thread(gtr);
+			thread1.start();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		/*
-		 * try { GenerateTransactionReport gtr = new GenerateTransactionReport(); Thread thread1 = new Thread(gtr);
-		 * thread1.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
-		 * 
-		 * try { GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport(); Thread thread2 = new
-		 * Thread(gtsr); thread2.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
-		 * 
-		 * try { GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport(); Thread thread3 = new Thread(gtbr);
-		 * thread3.start(); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
-		 */
+		try {
+			GenerateTransactionSummaryReport gtsr = new GenerateTransactionSummaryReport();
+			Thread thread2 = new Thread(gtsr);
+			thread2.start();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		try {
+			GenerateTrailBalanceReport gtbr = new GenerateTrailBalanceReport();
+			Thread thread3 = new Thread(gtbr);
+			thread3.start();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 	}
 
@@ -1175,7 +1180,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		DataEngineExport dataEngine = null;
 		logger.info("Generating Transaction Detail Report ..");
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+				BajajInterfaceConstants.GL_TRANSACTION_EXPORT);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
@@ -1184,7 +1189,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		logger.info("Generating Transaction Summary Report ..");
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+				BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT);
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
@@ -1193,7 +1198,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		logger.info("Generating Trail Balance Report ..");
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
@@ -1223,8 +1228,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		return jdbcTemplate.queryForObject("select count(*) from TRANSACTION_DETAIL_REPORT_STGE", Integer.class);
 	}
 
-	public class GenerateTransactionReport implements Runnable {
-
+	public class GenerateTransactionReport extends Thread {
 		@Override
 		public void run() {
 			try {
@@ -1235,8 +1239,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		}
 	}
 
-	public class GenerateTransactionSummaryReport implements Runnable {
-
+	public class GenerateTransactionSummaryReport extends Thread  {
 		@Override
 		public void run() {
 			try {
@@ -1247,8 +1250,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		}
 	}
 
-	public class GenerateTrailBalanceReport implements Runnable {
-
+	public class GenerateTrailBalanceReport extends Thread  {
 		@Override
 		public void run() {
 			try {

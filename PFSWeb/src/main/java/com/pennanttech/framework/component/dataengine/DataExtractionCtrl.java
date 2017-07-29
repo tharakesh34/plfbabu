@@ -105,8 +105,8 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 			
 			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {
-				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
-				doFillPanel(config, BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
+				doFillPanel(config, BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
 			}
 			
 		}

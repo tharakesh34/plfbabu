@@ -1,23 +1,19 @@
 package com.pennanttech.bajaj.process;
 
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
+import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionStatus;
-
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
-import com.pennanttech.pff.core.App;
 
 public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequestProcess.class);
@@ -40,7 +36,6 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource	map			= null;
-			TransactionStatus		txnStatus	= null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -48,7 +43,6 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 				logger.debug("Processing the disbursement " + id);
 
 				processedCount++;
-				txnStatus = transManager.getTransaction(transDef);
 				try {
 					map = mapData(rs);
 					updateDisbursement(rs.getLong("DISBURSEMENT_ID"), rs.getString("CHANNEL"));
@@ -57,18 +51,13 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 					save(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
 					successCount++;
 
-					transManager.commit(txnStatus);
-
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-					transManager.rollback(txnStatus);
 					failedCount++;
 					logger.debug("Disbursement request: " + map.toString());
 					saveBatchLog(rs.getString("DISBURSEMENT_ID"), "F", e.getMessage());
 				} finally {
 					map = null;
-					txnStatus.flush();
-					txnStatus = null;
 				}
 
 			}

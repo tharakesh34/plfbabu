@@ -1,18 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-
-import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-
 import com.pennanttech.bajaj.process.datamart.DataMartMapper;
 import com.pennanttech.bajaj.process.datamart.DataMartTable;
 import com.pennanttech.dataengine.DatabaseDataEngine;
@@ -20,15 +7,33 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.sql.DataSource;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 public class DataMartRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DataMartRequestProcess.class);
 
 	private long headerId;
 	private String summary = null;
+	private AtomicLong completedThreads = null;
+	private long totalThreads;
+	private MapSqlParameterSource parmMap = null;
 
 	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
+
+		this.parmMap = new MapSqlParameterSource();
+		this.totalThreads = 0;
+		this.completedThreads = new AtomicLong(0L);
 	}
 
 	@Override
@@ -43,168 +48,173 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		try {
-			ApplicantDetailsDataMart appDM = new ApplicantDetailsDataMart();
-			appDM.run();
+			new ApplicantDetailsDataMart(new String[]{"CUSTOMERID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			ApplicationDetailsDataMart appDM = new ApplicationDetailsDataMart();
-			appDM.run();
+			new ApplicationDetailsDataMart(new String[]{"APPLID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			BounceDetailsDataMart bouncedetailsDM = new BounceDetailsDataMart();
-			bouncedetailsDM.run();
+			new BounceDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			CoApplicantDetailsDataMart coAppDM = new CoApplicantDetailsDataMart();
-			coAppDM.run();
+			new CoApplicantDetailsDataMart(new String[] { "APPLID" }).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			DisbursementDataMart disbDM = new DisbursementDataMart();
-			disbDM.run();
+			new DisbursementDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" }).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			HTSUnadjustedAmtDataMart htsDM = new HTSUnadjustedAmtDataMart();
-			htsDM.run();
+			new HTSUnadjustedAmtDataMart(new String[]{"APPLID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			ForeClosureChargesDataMart fCCDM = new ForeClosureChargesDataMart();
-			fCCDM.run();
+			new ForeClosureChargesDataMart(new String[]{"AGREEMENTID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			InsuranceDetailsDataMart insuranceDM = new InsuranceDetailsDataMart();
-			insuranceDM.run();
+			new InsuranceDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			IVRFlexiDataMart ivrDM = new IVRFlexiDataMart();
-			ivrDM.run();
+			new IVRFlexiDataMart( new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			LeaDocDetailsDataMart leaDM = new LeaDocDetailsDataMart();
-			leaDM.run();
+			new LeaDocDetailsDataMart(new String[]{"AGREEMENTID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			LoanDetailDataMart loanDM = new LoanDetailDataMart();
-			loanDM.run();
+			new LoanDetailDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			LoanVoucherDetailsDataMart loanVoucherDM = new LoanVoucherDetailsDataMart();
-			loanVoucherDM.run();
+			new LoanVoucherDetailsDataMart(new String[]{"AGREEMENTID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			LoanWiseChargeDataMart loanWiseChargeDM = new LoanWiseChargeDataMart();
-			loanWiseChargeDM.run();
+			new LoanWiseChargeDataMart(new String[]{"AGREEMENTID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			LoanWiseRepayScheduleDataMart loanWiseRepayDM = new LoanWiseRepayScheduleDataMart();
-			loanWiseRepayDM.run();
+			new LoanWiseRepayScheduleDataMart(new String[] { "AGREEMENTNO", "DUEDATE" }).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			NOCEligibleLoansDataMart nOCLoanDM = new NOCEligibleLoansDataMart();
-			nOCLoanDM.run();
+			new NOCEligibleLoansDataMart(new String[]{ "AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			OpenEcsDetailDataMart openECSDM = new OpenEcsDetailDataMart();
-			openECSDM.run();
+			new OpenEcsDetailDataMart(new String[] {"ECS_ID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			PrePaymentDetailsDataMart prePaymentDetailsDM = new PrePaymentDetailsDataMart();
-			prePaymentDetailsDM.run();
+			new PrePaymentDetailsDataMart(new String[] {"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			PresentationDetailsDataMart presentationDM = new PresentationDetailsDataMart();
-			presentationDM.run();
+			new PresentationDetailsDataMart(new String[] {"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			PropertyDetailsDataMart propertyDetailDM = new PropertyDetailsDataMart();
-			propertyDetailDM.run();
+			new PropertyDetailsDataMart(new String[] {"APPLICATIONID"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			ReschDetailsDataMart prePaymentDetailsDM = new ReschDetailsDataMart();
-			prePaymentDetailsDM.run();
+			new ReschDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			SendSOAEmailDataMart soaEmailDetailsDM = new SendSOAEmailDataMart();
-			soaEmailDetailsDM.run();
+			new SendSOAEmailDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			SubQDisbDataMart subQDisbDetailsDM = new SubQDisbDataMart();
-			subQDisbDetailsDM.run();
+			new SubQDisbDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" }).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			WriteOffDetailsDataMart writeOffDetailsDM = new WriteOffDetailsDataMart();
-			writeOffDetailsDM.run();
+			new WriteOffDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-         finally {
- 			updateHeader();
+
+		while (true) {
+			if (totalThreads == completedThreads.get()) {
+				updateHeader();
+				break;
+			}
 		}
+
 	}
 
 	private void loadCount() {
@@ -284,7 +294,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 			jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "BATCHID" });
 
 		} catch (Exception e) {
-			logger.error("Exception :", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return keyHolder.getKey().longValue();
 	}
@@ -309,26 +319,36 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	public class ApplicantDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public ApplicantDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-					String[] keyFields = new String[1];
-					keyFields[0] = "CUSTOMERID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_APPLICANT_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -337,7 +357,6 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 						executionStatus.setSuccessRecords(successCount++);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-						logger.debug("Data " + map.toString());
 						String keyId = getKeyId(DataMartTable.DM_APPLICANT_DETAILS.name(), map, keyFields);
 						executionStatus.setFailedRecords(failedCount++);
 						saveBatchLog(keyId, "F", e.getMessage());
@@ -347,7 +366,6 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
@@ -355,12 +373,22 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_ADDRESS_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
@@ -386,31 +414,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 				}
 			});
-			logger.debug(Literal.LEAVING);
-
 		}
 	}
 
 	public class ApplicationDetailsDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public ApplicationDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_APPLICATION_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "APPLID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_APPLICATION_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -428,29 +464,38 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class BounceDetailsDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public BounceDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_BOUNCE_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
 
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_BOUNCE_DETAILS, rs);
@@ -468,29 +513,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class CoApplicantDetailsDataMart implements Runnable {
+		
+		String[] keyFields;
+
+		public CoApplicantDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_COAPPLICANT_DTLS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[] { "APPLID" };
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_COAPPLICANT_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -508,29 +564,38 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class DisbursementDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public DisbursementDataMart(String[] keyFields) {
+			this.keyFields =keyFields; 
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
-
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[] { "AGREEMENTNO", "DISBURSEMENTNO" };
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_DISB_DETAILS_DAILY, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -548,30 +613,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class ForeClosureChargesDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public ForeClosureChargesDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from FORECLOSURECHARGES_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.FORECLOSURECHARGES, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -588,20 +662,33 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class HTSUnadjustedAmtDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public HTSUnadjustedAmtDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_HTS_UNADJUSTED_AMT_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
@@ -609,12 +696,9 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
 
-					String[] keyFields = new String[1];
-					keyFields[0] = "APPLID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_HTS_UNADJUSTED_AMT, rs);
-						map.addValue("BATCH_ID", headerId); 
+						map.addValue("BATCH_ID", headerId);
 						saveOrUpdate(map, DataMartTable.DM_HTS_UNADJUSTED_AMT.name(), destinationJdbcTemplate,
 								keyFields);
 						executionStatus.setSuccessRecords(successCount++);
@@ -629,30 +713,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class InsuranceDetailsDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public InsuranceDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_INSURANCE_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_INSURANCE_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -670,30 +764,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class IVRFlexiDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public IVRFlexiDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_IVR_GATEWAY_FLEXI_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs);
 						map.addValue("BATCH_ID", executionStatus.getId());
@@ -711,31 +814,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class LeaDocDetailsDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public LeaDocDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
 
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_LEA_DOC_DTLE_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_LEA_DOC_DTL, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -752,30 +864,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class LoanDetailDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public LoanDetailDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_LOAN_DETAILS_DAILY_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_DETAILS_DAILY, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -793,29 +914,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class LoanVoucherDetailsDataMart implements Runnable {
+		private String[] keyFields;
+		
+		public LoanVoucherDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_LOAN_VOUCHER_DETAILS_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTID";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_VOUCHER_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -833,30 +965,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class LoanWiseChargeDataMart implements Runnable {
+		private String[] keyFields;
+
+		public LoanWiseChargeDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_LOANWISE_CHARGE_DTLS_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTID";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_CHARGE_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -873,29 +1015,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class LoanWiseRepayScheduleDataMart implements Runnable {
+		private String[] keyFields;
+
+		public LoanWiseRepayScheduleDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_LOANWISE_REPAYSCHEDULE_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[] { "AGREEMENTNO", "DUEDATE" };
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -913,30 +1066,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class NOCEligibleLoansDataMart implements Runnable {
+		private String[] keyFields;
+
+		public NOCEligibleLoansDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_NOC_ELIGIBLE_LOANS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_NOC_ELIGIBLE_LOANS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -954,29 +1117,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class OpenEcsDetailDataMart implements Runnable {
+		private String[] keyFields;
+
+		public OpenEcsDetailDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_OPENECS_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "ECS_ID";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_OPENECS_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -993,29 +1167,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class PrePaymentDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public PrePaymentDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_PREPAYMENT_DETAILS_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
 
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_PREPAYMENT_DETAILS, rs);
@@ -1034,29 +1219,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class PresentationDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public PresentationDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_PRESENTATION_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_PRESENTATION_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1074,29 +1270,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class PropertyDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public PropertyDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_PROPERTY_DTL_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "APPLICATIONID";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_PROPERTY_DTL, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1113,30 +1320,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class ReschDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public ReschDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_RESCH_DETAILS_DAILY_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
-
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_RESCH_DETAILS_DAILY, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1154,29 +1371,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class SendSOAEmailDataMart implements Runnable {
+		private String[] keyFields;
+
+		public SendSOAEmailDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_SEND_SOA_EMAIL_VIEW");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_SEND_SOA_EMAIL, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1194,28 +1421,39 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class SubQDisbDataMart implements Runnable {
+		private String[] keyFields;
+
+		public SubQDisbDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_SUBQ_DISB_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
+			logger.debug(Literal.LEAVING);
+		}
 
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[] { "AGREEMENTNO", "DISBURSEMENTNO" };
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_SUBQ_DISB_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1233,29 +1471,40 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 
 	public class WriteOffDetailsDataMart implements Runnable {
+		private String[] keyFields;
+
+		public WriteOffDetailsDataMart(String[] keyFields) {
+			this.keyFields = keyFields;
+		}
+		
 		@Override
 		public void run() {
 			logger.debug(Literal.ENTERING);
-			MapSqlParameterSource parmMap;
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT * from DM_WRITEOFF_DETAILS_VIEW ");
 
-			parmMap = new MapSqlParameterSource();
+			try {
+				extract(sql);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			} finally {
+				completedThreads.incrementAndGet();
+			}
 
+			logger.debug(Literal.LEAVING);
+		}
+
+		private void extract(StringBuilder sql) {
 			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
-
-					String[] keyFields = new String[1];
-					keyFields[0] = "AGREEMENTNO";
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_WRITEOFF_DETAILS, rs);
 						map.addValue("BATCH_ID", headerId);
@@ -1272,7 +1521,6 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					}
 				}
 			});
-			logger.debug(Literal.LEAVING);
 		}
 	}
 

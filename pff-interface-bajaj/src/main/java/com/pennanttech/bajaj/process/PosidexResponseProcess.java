@@ -48,7 +48,6 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 					MapSqlParameterSource dataMap = null;
 
 					executionStatus.setProcessedRecords(processedCount++);
-					txnStatus = transManager.getTransaction(transDef);
 					try {
 						custMap = mapCustData(rs);
 						dataMap = mapData(rs);
@@ -57,10 +56,8 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 						updateDataStatus(dataMap);
 
 						executionStatus.setSuccessRecords(successCount++);
-						transManager.commit(txnStatus);
 					} catch (Exception e) {
 						logger.error(Literal.ENTERING);
-						transManager.rollback(txnStatus);
 						executionStatus.setFailedRecords(failedCount++);
 
 						String keyId = rs.getString("CUSTOMER_ID");

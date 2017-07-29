@@ -1,23 +1,24 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.services.ALMRequestService;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.core.services.ALMRequestService;
 
 public class ALM implements Tasklet {
 	private Logger logger = Logger.getLogger(ALM.class);
@@ -67,7 +68,18 @@ public class ALM implements Tasklet {
 
 			}
 
-			this.almRequestService.sendReqest(new Long(1000), DateUtility.getAppValueDate(), DateUtility.getAppDate());
+			new ALMProcessThread(new Long(1000), almRequestService).start();
+			DataEngineStatus status = BajajInterfaceConstants.ALM_EXTRACT_STATUS;
+			status.setStatus("I");
+			
+			while("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+				
+				if ("F".equals(status.getStatus())) {
+					throw new Exception("Unable to process the ALM.");
+				}
+			}
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -87,6 +99,25 @@ public class ALM implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
+	}
+	
+	public class ALMProcessThread extends Thread {
+		private long userId;
+		private ALMRequestService almRequestService;
+
+		public ALMProcessThread(long userId, ALMRequestService almRequestService) {
+			this.userId = userId;
+			this.almRequestService = almRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("ALM Request Service started...");
+				this.almRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
 

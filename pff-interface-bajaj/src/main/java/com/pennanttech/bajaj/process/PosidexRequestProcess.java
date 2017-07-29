@@ -76,7 +76,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		try {
 			do {
 				extractData();
-			} while (totalRecords != processedCount);
+			} while (totalRecords > 0 && totalRecords != processedCount);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -86,12 +86,11 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	
 	public void extractData() throws SQLException {
 		Map<Long, PosidexCustomer> customers = getCustomers();
 		setAddresses(customers);
 		setLoans(customers);
-		
+
 		for (PosidexCustomer customer : customers.values()) {
 			try {
 				saveOrUpdate(customer);
@@ -702,21 +701,23 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private void prepareCustomers() {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-	
+
 		sql.append(" insert into POSIDEX_CUSTOMERS");
 		sql.append(" select CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON from CUSTOMERS C");
 		sql.append(" WHERE C.CUSTCOREBANK IS NOT NULL AND CUSTID not in ( select cust_id  from Posidex_customers)");
-		
+
 		if (lastRunDate != null) {
-			sql.append("AND (C.LASTMNTON > :LASTMNTON OR (SELECT LASTMNTON FROM FINANCEMAIN WHERE CUSTID= C.CUSTID) > :LASTMNTON ");
+			sql.append(
+					"AND (C.LASTMNTON > :LASTMNTON OR (SELECT LASTMNTON FROM FINANCEMAIN WHERE CUSTID= C.CUSTID) > :LASTMNTON ");
 		}
-		
+
 		parmMap.addValue("LASTMNTON", lastRunDate);
 		parmMap.addValue("EXTRACTED_ON", appDate);
 
 		jdbcTemplate.update(sql.toString(), parmMap);
 
 	}
+
 	private long logHeader() {
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 
