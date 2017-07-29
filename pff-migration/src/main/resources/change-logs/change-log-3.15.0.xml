@@ -15508,4 +15508,14 @@ update Customers_temp set CUSTADDLDEC1 = null;
 			<where>workflowtype='RECEIPT_PROCESS'and workflowactive=1</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="763" author="Manoj">
+		<dropView viewName="INT_POSIDEX_CUST_ADDR_VIEW"/>
+		<dropView viewName="INT_POSIDEX_CUST_LOAN_VIEW"/>
+		<dropView viewName="INT_POSIDEX_CUST_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="764" author="Manoj">
+		<dropTable tableName="POSIDEX_CUSTOMER_LOANS"/>
+	</changeSet>
 </databaseChangeLog>
