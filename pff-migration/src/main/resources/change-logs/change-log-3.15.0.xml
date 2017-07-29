@@ -15518,4 +15518,22 @@ update Customers_temp set CUSTADDLDEC1 = null;
 	<changeSet id="764" author="Manoj">
 		<dropTable tableName="POSIDEX_CUSTOMER_LOANS"/>
 	</changeSet>
+	
+	<changeSet id="764.1" author="Manoj">
+	<sql>
+		delete from PSX_DEDUP_EOD_CUST_DEMO_DTL;
+		delete from PSX_DEDUP_EOD_CUST_ADDR_DTL;
+		delete from PSX_DEDUP_EOD_CUST_LOAN_DTL;
+		delete from PUSH_PULL_CONTROL_T;
+		delete from DEDUP_EOD_CUST_REP_DTL;
+	</sql>
+	</changeSet>
+	
+	<changeSet id="765" author="Manoj">
+    	<addPrimaryKey columnNames="CUSTOMER_NO, ADDRESS_TYPE" constraintName="PK_CN_AT" tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL"/>
+	</changeSet>
+	
+	<changeSet id="766" author="Manoj">
+    	<addPrimaryKey columnNames="CUSTOMER_NO" constraintName="PK_CN" tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL"/>
+	</changeSet>
 </databaseChangeLog>
