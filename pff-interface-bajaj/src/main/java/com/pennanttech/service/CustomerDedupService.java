@@ -236,9 +236,10 @@ public class CustomerDedupService extends BajajService {
 			customerResponse.setErrorCode(response.getErrorDescription().getErrorCode());
 			customerResponse.setErrorDesc(response.getErrorDescription().getErrorDescription());
 		}
-
-		for (DemographicDetail detail : response.getDemographicDetails()) {
-			details.add(prepareCustomerDetail(detail));
+		if(response.getDemographicDetails()!=null && !response.getDemographicDetails().isEmpty()){
+			for (DemographicDetail detail : response.getDemographicDetails()) {
+				details.add(prepareCustomerDetail(detail));
+			}
 		}
 
 		customerResponse.setDedupCustomerDetails(details);
