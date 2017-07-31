@@ -25,9 +25,8 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
 
 	private Date appDate;
-
-	ProjectedAccrualProcess projectedAccrualProcess;
-
+	private ProjectedAccrualProcess projectedAccrualProcess;
+		
 	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
 			ProjectedAccrualProcess projectedAccrualProcess) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
