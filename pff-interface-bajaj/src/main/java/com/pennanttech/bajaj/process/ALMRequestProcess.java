@@ -1,5 +1,12 @@
 package com.pennanttech.bajaj.process;
 
+import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennanttech.bajaj.model.alm.ALM;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
@@ -7,20 +14,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
-import com.pennant.backend.model.finance.ProjectedAccrual;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
@@ -45,20 +44,47 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		loadCount();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select * from INT_ALM_VIEW");
+		sql.append("select * from INT_ALM_VIEW");
 
+		extract(sql);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void extract(StringBuilder sql) {
 		jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
+			List<ALM> list = null;
+			ALM alm = null;
+			String finReference = null;
+			String agreementId = null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				executionStatus.setProcessedRecords(processedCount++);
 				try {
-					saveAccrualDetails(rs);
+					alm = new ALM();
+
+					finReference = rs.getString("FINREFERENCE");
+					agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+
+					alm.setAgreementNo(finReference);
+					alm.setAgreementId(Long.parseLong(agreementId));
+					alm.setProductFlag(rs.getString("FINTYPE"));
+					alm.setNpaStageId(rs.getString("CLOSINGSTATUS"));
+					alm.setAdvFlag(rs.getString("ADVFLAG"));
+
+					list = getAccruedAmounts(alm, rs.getDate("FINSTARTDATE"), rs.getDate("MATURITYDATE"),
+							rs.getBigDecimal("CCYMINORCCYUNITS"), rs.getInt("CCYEDITFIELD"));
+
+					if (!list.isEmpty()) {
+						save(list);
+						list = null;
+					}
+
 					executionStatus.setSuccessRecords(successCount++);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					executionStatus.setFailedRecords(failedCount++);
-					String keyId = rs.getString("FINREFERENCE");
+					String keyId = finReference;
 
 					if (StringUtils.trimToNull(keyId) == null) {
 						keyId = String.valueOf(processedCount);
@@ -69,7 +95,6 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 			}
 		});
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void loadCount() {
@@ -86,47 +111,51 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	private void saveAccrualDetails(ResultSet rs) throws Exception {
-		String finReference = rs.getString("FINREFERENCE");
-		String agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
-		Date startDate = rs.getDate("FINSTARTDATE");
-		Date maturityDate = rs.getDate("MATURITYDATE");
-		String clostingStatus = rs.getString("CLOSINGSTATUS");
-		String finType = rs.getString("FINTYPE");
-		String advanceFlag = rs.getString("ADVFLAG");
-		BigDecimal minorCcyUnits = rs.getBigDecimal("CCYMINORCCYUNITS");
-		int editField = rs.getInt("CCYEDITFIELD");
-
+	private List<ALM> getAccruedAmounts(ALM alm, Date finStartDate, Date maturityDate, BigDecimal minorCcyUnits,
+			int editField) throws Exception {
+		List<ALM> list = new ArrayList<>();
 		List<ProjectedAccrual> accrualDetails = null;
-		accrualDetails = projectedAccrualProcess.calculateAccrualsOnMonthEnd(finReference, startDate, maturityDate,
-				appDate);
+		accrualDetails = projectedAccrualProcess.calculateAccrualsOnMonthEnd(alm.getAgreementNo(), finStartDate,
+				maturityDate, appDate);
 
-		if (accrualDetails.isEmpty()) {
-			return;
-		}
-
-		List<Object[]> parameters = new ArrayList<Object[]>();
-
-		BigDecimal schdTot = null;
-		BigDecimal schdPri = null;
-		BigDecimal schdPft = null;
-		BigDecimal pftAccrued = null;
-		BigDecimal cumulativeAccrued = null;
-
+		ALM item = null;
 		for (ProjectedAccrual accrual : accrualDetails) {
-			schdTot = getAmount(accrual.getSchdTot(), minorCcyUnits, editField);
-			schdPri = getAmount(accrual.getSchdPri(), minorCcyUnits, editField);
-			schdPft = getAmount(accrual.getSchdPft(), minorCcyUnits, editField);
-			pftAccrued = getAmount(accrual.getPftAccrued(), minorCcyUnits, editField);
-			cumulativeAccrued = getAmount(accrual.getCumulativeAccrued(), minorCcyUnits, editField);
+			item = new ALM();
 
-			parameters.add(new Object[] { agreementId, finReference, finType, clostingStatus, schdTot, schdPri, schdPft,
-					accrual.getSchdDate(), pftAccrued, accrual.getAccruedOn(), cumulativeAccrued, advanceFlag });
+			item.setAgreementNo(alm.getAgreementNo());
+			item.setAgreementId(alm.getAgreementId());
+			item.setProductFlag(alm.getProductFlag());
+			item.setInstallment(getAmount(accrual.getSchdTot(), minorCcyUnits, editField));
+			item.setPrinComp(getAmount(accrual.getSchdPri(), minorCcyUnits, editField));
+			item.setIntComp(getAmount(accrual.getSchdPft(), minorCcyUnits, editField));
+			item.setAccruedAmt(getAmount(accrual.getPftAccrued(), minorCcyUnits, editField));
+			item.setCumulativeAccrualAmt(getAmount(accrual.getCumulativeAccrued(), minorCcyUnits, editField));
+			item.setDueDate(accrual.getSchdDate());
+			item.setAccruedOn(accrual.getAccruedOn());
+
+			list.add(item);
 		}
+		return list;
 
+	}
+
+	private void save(List<ALM> list) throws Exception {
 		StringBuilder query = new StringBuilder();
-		query.append("INSERT INTO ALM VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		destinationJdbcTemplate.getJdbcOperations().batchUpdate(query.toString(), parameters);
+		query.append(" INSERT INTO ALM VALUES(");
+		query.append(" :AgreementId,");
+		query.append(" :AgreementNo,");
+		query.append(" :ProductFlag,");
+		query.append(" :NpaStageId,");
+		query.append(" :Installment,");
+		query.append(" :PrinComp,");
+		query.append(" :IntComp,");
+		query.append(" :DueDate,");
+		query.append(" :AccruedAmt,");
+		query.append(" :AccruedOn,");
+		query.append(" :CumulativeAccrualAmt,");
+		query.append(" :AdvFlag)");
+
+		destinationJdbcTemplate.batchUpdate(query.toString(), SqlParameterSourceUtils.createBatch(list.toArray()));
 
 	}
 
