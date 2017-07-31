@@ -1448,6 +1448,13 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90312", valueParm)));
 							return errorDetails;
 						}
+						if(!curMandate.isActive()){
+							String[] valueParm = new String[2];
+							valueParm[0] = "mandate:";
+							valueParm[1] = String.valueOf(mandate.getMandateID());
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("81004", valueParm)));
+							return errorDetails;
+						}
 						financeDetail.setMandate(curMandate);
 					}
 				}
