@@ -956,7 +956,7 @@ update ADtCustomers set CUSTADDLDEC1 = null;
 </sql>
 <modifyDataType tableName="ADTCustomers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 </changeSet>
-<changeSet id="54" author="Irfan">
+<changeSet id="744" author="Irfan">
   	<createTable tableName="AdtFinWaiverHeader">
 			<column name="WaiverID"  type="bigint">
 				<constraints primaryKey="true" nullable="false" />
