@@ -1331,7 +1331,11 @@ public class ExtendedFieldsGenerator {
 			dateValidator = new PTDateValidator(label, isMandatory, true, null, true);
 			break;
 		case "PAST_TODAY":
-			dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
+			if (!StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
+				dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
+			} else {
+				dateValidator = new PTDateValidator(label, isMandatory, null,  DateUtility.addDays(DateUtility.getAppDate(),1), false);
+			}
 			break;
 		case "FUTURE":
 			dateValidator = new PTDateValidator(label, isMandatory, false, null, false);
