@@ -15569,4 +15569,17 @@ update Customers_temp set CUSTADDLDEC1 = null;
 		INSERT INTO ErrorDetails VALUES('90347','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	     <changeSet id="769" author="Pruthvi">
+	<sql>
+	delete from reportconfiguration where menuitemcode='menu_Item_PresentationDetails';
+
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from reportconfiguration),'Excel:PresentationDetails','Presentation Details',1,'PresentationDetails','pfsDatasource',1,'menu_Item_PresentationDetails',4,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+delete from  REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails');
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails'),1,'FinReference','LOVSEARCH','Loan Reference','AGREEMENTNO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
