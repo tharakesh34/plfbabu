@@ -2630,6 +2630,7 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
 		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

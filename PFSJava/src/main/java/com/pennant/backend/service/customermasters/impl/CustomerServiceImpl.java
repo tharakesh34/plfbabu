@@ -46,6 +46,8 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,6 +57,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
@@ -69,6 +72,8 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * Service implementation for methods that depends on <b>Customer</b>.<br>
@@ -83,6 +88,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private CustomerDAO customerDAO;
 	private IncomeTypeDAO incomeTypeDAO;
 	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+
 
 	public CustomerServiceImpl() {
 		super();
@@ -651,6 +658,34 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		if (StringUtils.isNotBlank(customer.getCustEmpSts()))
 			auditDetail.setErrorDetail(validateMasterCode("BMTEmpStsCodes", "EmpStsCode", customer.getCustEmpSts()));
+		
+		if (StringUtils.isNotBlank(customer.getCustDSADept())){
+			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
+		}
+		if (customer.getCustGroupID()>0){
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
+		}
+		
+		if (StringUtils.isNotBlank(customer.getCustDSA())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustDSA());
+			if (matcher.matches() == false) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "saleAgent";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+			}
+		}
+		if (StringUtils.isNotBlank(customer.getCustStaffID())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustStaffID());
+			if (matcher.matches() == false) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "staffID";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+			}
+		}
 
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			String[] valueParm = new String[3];
@@ -687,6 +722,38 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	 * 
 	 * @return WSReturnStatus
 	 */
+	private ErrorDetails validateMasterCode(String moduleName,String fieldValue) {
+		logger.debug("Entering");
+
+		ErrorDetails errorDetail = new ErrorDetails();
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
+		if(moduleMapping != null) {
+			String[] lovFields = moduleMapping.getLovFields();
+			String[][] filters = moduleMapping.getLovFilters();
+			int count=0;
+			if(filters !=null){
+			 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
+			} 
+			if(count <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = lovFields[0];
+				valueParm[1] = fieldValue;
+				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
+			}
+		}
+
+		logger.debug("Leaving");
+		return errorDetail;
+	}
+	/**
+	 * Validate code or Id value with available masters in system.
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param value
+	 * 
+	 * @return WSReturnStatus
+	 */
 	private ErrorDetails validateMasterCode(String tableName, String columnName, String value) {
 		logger.debug("Entering");
 
@@ -703,5 +770,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		logger.debug("Leaving");
 		return errorDetail;
+	}
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 }

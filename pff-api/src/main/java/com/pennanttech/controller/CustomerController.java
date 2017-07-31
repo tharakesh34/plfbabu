@@ -413,6 +413,9 @@ public class CustomerController {
 								curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustDocument.setVersion(prvCustomerDocuments.getVersion() + 1);
 								curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+									customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
+								}
 								// copy properties
 								BeanUtils.copyProperties(curCustDocument, prvCustomerDocuments);
 

@@ -2050,11 +2050,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustDSA());
 			if (matcher.matches() == false) {
-				/*ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[1];
 				valueParm[0] = "saleAgent";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);*/
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
 		if (customer.getCustGroupID()>0){
@@ -2065,11 +2065,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustStaffID());
 			if (matcher.matches() == false) {
-				/*ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[1];
-				valueParm[0] = "saleAgent";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);*/
+				valueParm[0] = "staffID";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
@@ -2115,14 +2115,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
 			}
 		}
-		// validate Master code with PLF system masters
-		/*int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
-		if (count <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = columnName;
-			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-		}*/
 
 		logger.debug("Leaving");
 		return errorDetail;
