@@ -708,7 +708,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		if (lastRunDate != null) {
 			sql.append(
-					"AND (C.LASTMNTON > :LASTMNTON OR (SELECT LASTMNTON FROM FINANCEMAIN WHERE CUSTID= C.CUSTID) > :LASTMNTON ");
+					"AND (C.LASTMNTON > :LASTMNTON OR (SELECT LASTMNTON FROM FINANCEMAIN WHERE CUSTID= C.CUSTID) > :LASTMNTON)");
 		}
 
 		parmMap.addValue("LASTMNTON", lastRunDate);
