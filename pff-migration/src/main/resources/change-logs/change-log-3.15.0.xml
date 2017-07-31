@@ -15564,4 +15564,9 @@ update Customers_temp set CUSTADDLDEC1 = null;
        Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
        </createView>
        </changeSet>
+       <changeSet id="768" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90347','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
