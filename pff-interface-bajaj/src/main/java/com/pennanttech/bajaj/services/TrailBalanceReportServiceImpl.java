@@ -1049,11 +1049,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(" SELECT LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT_STGE  WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
 
-		/*
-		 * sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT SELECT * FROM  TRANSACTION_DETAIL_REPORT_TEMP");
-		 * sql.append(" WHERE ID >=:FROM_RANGE AND ID <=:TO_RANGE");
-		 */
-
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("FROM_RANGE", fromRange);
 		parameterSource.addValue("TO_RANGE", toRange);
@@ -1176,54 +1171,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		});
 	}
 
-	private void generateTransactionReport() throws Exception {
-		DataEngineExport dataEngine = null;
-		logger.info("Generating Transaction Detail Report ..");
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.GL_TRANSACTION_EXPORT);
-		dataEngine.setValueDate(valueDate);
-		dataEngine.exportData("GL_TRANSACTION_EXPORT");
-	}
-
-	private void generateTransactionSummaryReport() throws Exception {
-		logger.info("Generating Transaction Summary Report ..");
-		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT);
-		dataEngine.setValueDate(valueDate);
-		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
-	}
-
-	private void generateTrailBalanceReport() throws Exception {
-		logger.info("Generating Trail Balance Report ..");
-		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
-
-		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
-		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMyyyy"));
-		parameterMap.put("HEADER_ID", headerId);
-
-		parameterMap.put("COMPANY_NAME", companyName);
-		parameterMap.put("REPORT_NAME", reportName);
-		parameterMap.put("FILE_NAME", fileName);
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("From ");
-		builder.append(DateUtil.format(monthStartDate, "dd-MMM-yy").toUpperCase());
-		builder.append(" To ");
-		builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
-
-		parameterMap.put("TRANSACTION_DURATION", builder.toString());
-		parameterMap.put("CURRENCY", APP_DFT_CURR + " - " + APP_DFT_CURR);
-
-		dataEngine.setParameterMap(parameterMap);
-		dataEngine.setValueDate(valueDate);
-		dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
-
-	}
-
 	private int getTotalTransactions() {
 		return jdbcTemplate.queryForObject("select count(*) from TRANSACTION_DETAIL_REPORT_STGE", Integer.class);
 	}
@@ -1232,7 +1179,12 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		@Override
 		public void run() {
 			try {
-				generateTransactionReport();
+				DataEngineExport dataEngine = null;
+				logger.info("Generating Transaction Detail Report ..");
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+						BajajInterfaceConstants.GL_TRANSACTION_EXPORT);
+				dataEngine.setValueDate(valueDate);
+				dataEngine.exportData("GL_TRANSACTION_EXPORT");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -1243,7 +1195,12 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		@Override
 		public void run() {
 			try {
-				generateTransactionSummaryReport();
+				logger.info("Generating Transaction Summary Report ..");
+				DataEngineExport dataEngine = null;
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+						BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT);
+				dataEngine.setValueDate(valueDate);
+				dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -1254,7 +1211,34 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		@Override
 		public void run() {
 			try {
-				generateTrailBalanceReport();
+
+				logger.info("Generating Trail Balance Report ..");
+				DataEngineExport dataEngine = null;
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+						BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
+
+				Map<String, Object> parameterMap = new HashMap<>();
+				parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
+				parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMyyyy"));
+				parameterMap.put("HEADER_ID", headerId);
+
+				parameterMap.put("COMPANY_NAME", companyName);
+				parameterMap.put("REPORT_NAME", reportName);
+				parameterMap.put("FILE_NAME", fileName);
+
+				StringBuilder builder = new StringBuilder();
+				builder.append("From ");
+				builder.append(DateUtil.format(monthStartDate, "dd-MMM-yy").toUpperCase());
+				builder.append(" To ");
+				builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
+
+				parameterMap.put("TRANSACTION_DURATION", builder.toString());
+				parameterMap.put("CURRENCY", APP_DFT_CURR + " - " + APP_DFT_CURR);
+
+				dataEngine.setParameterMap(parameterMap);
+				dataEngine.setValueDate(valueDate);
+				dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
+
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
