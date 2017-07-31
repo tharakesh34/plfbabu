@@ -557,6 +557,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
 			financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+			financeDetail.getMandate().setActive(true);
 			financeDetail.getMandate().setInputDate(DateUtility.getAppDate());
 		}
 
