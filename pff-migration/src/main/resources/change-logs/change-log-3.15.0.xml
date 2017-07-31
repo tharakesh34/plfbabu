@@ -15574,12 +15574,12 @@ update Customers_temp set CUSTADDLDEC1 = null;
 	delete from reportconfiguration where menuitemcode='menu_Item_PresentationDetails';
 
 Insert into REPORTCONFIGURATION 
-values ((select max(reportid)+1 from reportconfiguration),'Excel:PresentationDetails','Presentation Details',1,'PresentationDetails','pfsDatasource',1,'menu_Item_PresentationDetails',4,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+values ((select max(reportid)+1 from reportconfiguration),'Excel:PresentationDetails','Presentation Details',1,'PresentationDetails','pfsDatasource',1,'menu_Item_PresentationDetails',4,1000,null,null,null,null,null,null,0,current_timestamp,0);
 
 delete from  REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails');
 
 Insert into REPORTFILTERFIELDS 
-values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails'),1,'FinReference','LOVSEARCH','Loan Reference','AGREEMENTNO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails'),1,'FinReference','LOVSEARCH','Loan Reference','AGREEMENTNO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 	</sql>
 	</changeSet>
 </databaseChangeLog>
