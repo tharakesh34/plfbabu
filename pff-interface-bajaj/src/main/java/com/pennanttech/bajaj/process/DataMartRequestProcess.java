@@ -48,161 +48,161 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		try {
-			new ApplicantDetailsDataMart(new String[]{"CUSTOMERID"}).run();
+			new Thread(new ApplicantDetailsDataMart(new String[]{"CUSTOMERID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new ApplicationDetailsDataMart(new String[]{"APPLID"}).run();
+			new Thread(new ApplicationDetailsDataMart(new String[]{"APPLID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new BounceDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new BounceDetailsDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new CoApplicantDetailsDataMart(new String[] { "APPLID" }).run();
+			new Thread(new CoApplicantDetailsDataMart(new String[] { "APPLID" })).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new DisbursementDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" }).run();
+			new Thread(new DisbursementDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" })).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new HTSUnadjustedAmtDataMart(new String[]{"APPLID"}).run();
+			new Thread(new HTSUnadjustedAmtDataMart(new String[]{"APPLID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new ForeClosureChargesDataMart(new String[]{"AGREEMENTID"}).run();
+			new Thread(new ForeClosureChargesDataMart(new String[]{"AGREEMENTID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new InsuranceDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new InsuranceDetailsDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new IVRFlexiDataMart( new String[]{"AGREEMENTNO"}).run();
+			new Thread(new IVRFlexiDataMart( new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new LeaDocDetailsDataMart(new String[]{"AGREEMENTID"}).run();
+			new Thread(new LeaDocDetailsDataMart(new String[]{"AGREEMENTID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new LoanDetailDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new LoanDetailDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new LoanVoucherDetailsDataMart(new String[]{"AGREEMENTID"}).run();
+			new Thread(new LoanVoucherDetailsDataMart(new String[]{"AGREEMENTID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new LoanWiseChargeDataMart(new String[]{"AGREEMENTID"}).run();
+			new Thread(new LoanWiseChargeDataMart(new String[]{"AGREEMENTID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new LoanWiseRepayScheduleDataMart(new String[] { "AGREEMENTNO", "DUEDATE" }).run();
+			new Thread(new LoanWiseRepayScheduleDataMart(new String[] { "AGREEMENTNO", "DUEDATE" })).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new NOCEligibleLoansDataMart(new String[]{ "AGREEMENTNO"}).run();
+			new Thread(new NOCEligibleLoansDataMart(new String[]{ "AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new OpenEcsDetailDataMart(new String[] {"ECS_ID"}).run();
+			new Thread(new OpenEcsDetailDataMart(new String[] {"ECS_ID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new PrePaymentDetailsDataMart(new String[] {"AGREEMENTNO"}).run();
+			new Thread(new PrePaymentDetailsDataMart(new String[] {"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new PresentationDetailsDataMart(new String[] {"AGREEMENTNO"}).run();
+			new Thread(new PresentationDetailsDataMart(new String[] {"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new PropertyDetailsDataMart(new String[] {"APPLICATIONID"}).run();
+			new Thread(new PropertyDetailsDataMart(new String[] {"APPLICATIONID"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new ReschDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new ReschDetailsDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new SendSOAEmailDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new SendSOAEmailDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new SubQDisbDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" }).run();
+			new Thread(new SubQDisbDataMart(new String[] { "AGREEMENTNO", "DISBURSEMENTNO" })).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		try {
-			new WriteOffDetailsDataMart(new String[]{"AGREEMENTNO"}).run();
+			new Thread(new WriteOffDetailsDataMart(new String[]{"AGREEMENTNO"})).start();
 			totalThreads++;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

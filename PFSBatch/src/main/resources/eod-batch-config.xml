@@ -60,7 +60,9 @@
 			<fail on="FAILED" />
 		</step>
 		<step id="posidex">
-			<tasklet ref="posidexTaskLet" />
+			<tasklet ref="posidexTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="dataMart" />
 			<fail on="FAILED" />
 		</step>

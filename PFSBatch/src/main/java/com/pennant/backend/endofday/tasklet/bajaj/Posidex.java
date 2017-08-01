@@ -17,6 +17,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.services.PosidexRequestService;
 
 public class Posidex implements Tasklet {
@@ -68,8 +72,18 @@ public class Posidex implements Tasklet {
 
 			}
 
-			// PosidexRequestService
-			this.posidexRequestService.sendReqest(new Long(1000), DateUtility.getAppValueDate(), DateUtility.getAppDate());
+			new PosidexProcessThread(new Long(1000), posidexRequestService).start();
+			DataEngineStatus status = BajajInterfaceConstants.POSIDEX_REQUEST_STATUS;
+			status.setStatus("I");
+			
+			while("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+				
+				if ("F".equals(status.getStatus())) {
+					throw new Exception("Unable to process the POSIDEX DATA UPDATE.");
+				}
+			}
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -91,4 +105,24 @@ public class Posidex implements Tasklet {
 		return dataSource;
 	}
 
+	public class PosidexProcessThread extends Thread {
+		private long userId;
+		private PosidexRequestService posidexRequestService;
+
+		public PosidexProcessThread(long userId, PosidexRequestService posidexRequestService) {
+			this.userId = userId;
+			this.posidexRequestService = posidexRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Control Dump Request Service started...");
+				this.posidexRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+	
 }
