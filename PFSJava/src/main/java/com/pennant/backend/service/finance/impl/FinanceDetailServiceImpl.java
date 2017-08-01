@@ -1710,8 +1710,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processFinOneCreation(aAuditHeader);
 		}
 
-		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
-				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
 			return aAuditHeader;
 		}
 		/*
@@ -2950,8 +2950,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processFinOneCreation(aAuditHeader);
 		}
 
-		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
-				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
 			return aAuditHeader;
 		}
 
@@ -3974,6 +3974,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
 					auditHeader.setAuditDetail(auditDetail);
 					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					auditHeader = nextProcess(auditHeader);
 					return auditHeader;
 				}
 
@@ -3990,9 +3991,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
 					auditHeader.setAuditDetail(auditDetail);
 					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					auditHeader = nextProcess(auditHeader);
 					return auditHeader;
 				}
-			} 
+			}
 		}
 		logger.debug("Leaving");
 		return auditHeader;
