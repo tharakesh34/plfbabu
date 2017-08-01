@@ -104,7 +104,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	private void delete() {
 		MapSqlParameterSource paramMap =  new MapSqlParameterSource();
 		paramMap.addValue("ACCRUEDON", appDate);
-		delete(paramMap, "ALM", destinationJdbcTemplate, "where ACCRUEDON >=  :ACCRUEDON");
+		delete(paramMap, "ALM", destinationJdbcTemplate, " where ACCRUEDON >=  :ACCRUEDON");
 	}
 
 	private void loadCount() {

@@ -1,10 +1,18 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.services.DataMartRequestService;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -12,20 +20,15 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.core.services.DataMartRequestService;
-
 public class DataMart implements Tasklet {
 	private Logger logger = Logger.getLogger(DataMart.class);
 
 	private DataSource dataSource;
+	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-
+	
+	@Autowired
 	private DataMartRequestService dataMartRequestService;
 
 	public EODConfig getEodConfig() {
@@ -66,9 +69,20 @@ public class DataMart implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			this.dataMartRequestService.sendReqest(new Long(1000), DateUtility.getAppValueDate(), DateUtility.getAppDate());
-
+			
+			new DataMartProcessThread(new Long(1000), dataMartRequestService).start();
+			DataEngineStatus status = BajajInterfaceConstants.DATA_MART_STATUS;
+			status.setStatus("I");
+			
+			while ("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+				status.setStatus("F");
+				if ("F".equals(status.getStatus())) {
+					throw new Exception(status.getRemarks());
+				}
+			}
+			
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -87,6 +101,26 @@ public class DataMart implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
+	}
+	
+	public class DataMartProcessThread extends Thread {
+		private long userId;
+		private DataMartRequestService dataMartRequestService;
+
+		public DataMartProcessThread(long userId, DataMartRequestService dataMartRequestService) {
+			this.userId = userId;
+			this.dataMartRequestService = dataMartRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("DataMart Request Service started...");
+				this.dataMartRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
 	

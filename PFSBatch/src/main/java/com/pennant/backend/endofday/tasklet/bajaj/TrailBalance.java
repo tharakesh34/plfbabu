@@ -24,12 +24,12 @@ public class TrailBalance implements Tasklet {
 	private Logger logger = Logger.getLogger(TrailBalance.class);
 
 	private DataSource dataSource;
+	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
 	@Autowired
 	private TrailBalanceReportService trailBalanceReportService;
-
 
 	public EODConfig getEodConfig() {
 		try {
