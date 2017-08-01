@@ -170,6 +170,18 @@
 											checked="false" />
 									</hlayout>
 								</row>
+								<row id="row_Four" visible="true">
+								<label
+										id="label_ReportConfigurationDialog_WhereCondition"
+										value="${c:l('label_ReportConfigurationDialog_WhereCondition.value')}" />
+									<hlayout
+										id="hlayout_WhereCondition">
+										<space
+											id="space_WhereCondition" spacing="2px" />
+										<checkbox id="whereCondition"
+											checked="true" />
+									</hlayout>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

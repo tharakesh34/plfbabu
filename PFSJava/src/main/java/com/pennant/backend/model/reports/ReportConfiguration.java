@@ -66,7 +66,8 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	private String lovValue;
 	private ReportConfiguration befImage;
 	private LoggedInUser userDetails;
-
+	private boolean whereCondition;
+	
     private  List<ReportFilterFields> listReportFieldsDetails;
 
 	// ******************************************************//
@@ -202,4 +203,10 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	public boolean isAlwMultiFormat() {
 	    return alwMultiFormat;
     }
+	public boolean isWhereCondition() {
+		return whereCondition;
+	}
+	public void setWhereCondition(boolean whereCondition) {
+		this.whereCondition = whereCondition;
+	}
 }

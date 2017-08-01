@@ -815,7 +815,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Entering");
 
 		String filter = "=";
-		StringBuilder whereCondition = new StringBuilder("where ");
+		StringBuilder whereCondition=null;
+		if(reportConfiguration.isWhereCondition()){
+		 whereCondition = new StringBuilder("where ");
+		}else{
+			whereCondition = new StringBuilder(" ");
+		}
 		searchCriteriaDesc = new StringBuilder();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		List<ReportSearchTemplate> reportSearchTemplateList = null;
@@ -1467,8 +1472,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * @param whereCondition
 	 */
 	private StringBuilder addAndCondition(StringBuilder whereCondition) {
+		if ("".equals(whereCondition.toString().trim())) {
+			whereCondition.append("and ");
+		}else{
 		if (!"where".equals(whereCondition.toString().trim()) && !("").equals(whereCondition.toString().trim())) {
 			whereCondition.append(" and ");
+		}
 		}
 		return whereCondition;
 	}
@@ -2224,6 +2233,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		doClearComponents();
 		rendermMap.clear();
 		valueMap.clear();
+		valueLabelMap.clear();
 		this.cbSelectTemplate.setValue(Labels.getLabel("Combo.Select"));
 		this.btnDeleteTemplate.setDisabled(true);
 		logger.debug("Leaving" + event.toString());
@@ -2411,7 +2421,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				String[] fieldStr = StringUtils.split(filterFields[i], "@");
 				 Object valueObject = rendermMap.get(fieldStr[0]);
 				  
-				 if (valueObject == null || valueObject.equals("")) {
+				 if (valueObject == null || valueObject.equals("") || valueObject.equals("#")) {
 					if (StringUtils.trimToNull(errBuffer.toString()) != null) {
 						errBuffer.append("\n");
 					}

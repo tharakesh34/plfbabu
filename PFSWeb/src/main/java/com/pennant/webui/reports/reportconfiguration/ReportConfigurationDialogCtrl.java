@@ -117,6 +117,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Checkbox 		showTempLibrary; 				// autoWired
 	protected Textbox 	    menuItemCode; 			        // autoWired
 	protected Checkbox 		alwMultiFormat; 
+	protected Checkbox 		whereCondition; 
 
 	protected Label 		label_ReportConfigurationDialog_ReportName;
 	protected Label 		label_ReportConfigurationDialog_ReportHeading;
@@ -126,11 +127,13 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Label 		label_ReportConfigurationDialog_ShowTempLibrary;
 	protected Label 		label_ReportConfigurationDialog_MenuItemCode;
 	protected Label         label_ReportConfigurationDialog_AlwMultiFormat;
+	protected Label         label_ReportConfigurationDialog_WhereCondition;
 
 	protected Row			row_Zero;
 	protected Row			row_One;
 	protected Row			row_Two;
 	protected Row			row_Three;
+	protected Row			row_Four;
 
 	protected Hlayout 		hlayout_ReportName;
 	protected Hlayout 		hlayout_ReportHeading;
@@ -140,6 +143,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Hlayout 		hlayout_ShowTempLibrary;
 	protected Hlayout 		hlayout_MenuItemCode;
 	protected Hlayout 		hlayout_AlwMultiFormat;
+	protected Hlayout 		hlayout_WhereCondition;
 	
 	protected Space 		space_ReportName; 				// autoWired
 	protected Space 		space_ReportHeading; 			// autoWired
@@ -149,6 +153,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	protected Space 		space_ShowTempLibrary; 	      // autoWired
 	protected Space 		space_MenuItemCode; 			// autoWired
 	protected Space 		space_AlwMultiFormat;
+	protected Space 		space_WhereCondition;
 
 	// not auto wired Var's
 	private ReportConfiguration reportConfiguration; // overHanded per parameter
@@ -448,6 +453,11 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.reportJasperName.setValue(aReportConfiguration.getReportJasperName());
 
 		this.menuItemCode.setValue(aReportConfiguration.getMenuItemCode());
+		if(aReportConfiguration.isNew()){
+			this.whereCondition.setChecked(true);
+		}else{
+			this.whereCondition.setChecked(aReportConfiguration.isWhereCondition());
+		}
 		this.recordStatus.setValue(aReportConfiguration.getRecordStatus());
 		if(aReportConfiguration.getListReportFieldsDetails()!=null && aReportConfiguration.getListReportFieldsDetails().size()>0){
 			doFillReportFilterFieldsList(aReportConfiguration.getListReportFieldsDetails());
@@ -513,11 +523,18 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			wve.add(we);
 		}
 
-		aReportConfiguration.setListReportFieldsDetails(this.reportFilterFieldsList);
-		reportFilterFieldsList.equals(this.menuItemCode.getValue());
-		
+		try {
+
+			aReportConfiguration.setWhereCondition(this.whereCondition.isChecked());
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
+		
+		aReportConfiguration.setListReportFieldsDetails(this.reportFilterFieldsList);
+		reportFilterFieldsList.equals(this.menuItemCode.getValue());
 
 		if (!wve.isEmpty()) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
@@ -780,6 +797,9 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		
 		setComponentAccessType("ReportConfigurationDialog_alwMultiFormat", tempReadOnly, this.alwMultiFormat, this.space_AlwMultiFormat, 
 				this.label_ReportConfigurationDialog_AlwMultiFormat, this.hlayout_AlwMultiFormat,this.row_Three);
+		
+		setComponentAccessType("ReportConfigurationDialog_WhereCondition", tempReadOnly, this.whereCondition, this.space_WhereCondition, 
+				this.label_ReportConfigurationDialog_WhereCondition, this.hlayout_WhereCondition,this.row_Four);
 		//setRowInvisible(this.row_Three,this.hlayout_PromptRequired, this.hlayout_AlwMultiFormat);
 		this.btnPreviewReport.setDisabled(false);
 		this.btnNew_ReportFilterFields.setDisabled(true);
@@ -806,6 +826,8 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.showTempLibrary.setValue("");
 		this.menuItemCode.setValue("");
 		this.alwMultiFormat.setValue("");
+		this.whereCondition.setValue("");
+		
 		logger.debug("Leaving ");
 	}
 
