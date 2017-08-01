@@ -60,6 +60,12 @@
 		    <version>8.5.12</version>
 		    <scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-spring3</artifactId>
+			<version>1.9.0</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- CXF Framwork  For dedupe -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
