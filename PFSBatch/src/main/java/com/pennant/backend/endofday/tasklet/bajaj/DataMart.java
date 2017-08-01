@@ -77,7 +77,7 @@ public class DataMart implements Tasklet {
 			while ("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-				status.setStatus("F");
+
 				if ("F".equals(status.getStatus())) {
 					throw new Exception(status.getRemarks());
 				}
