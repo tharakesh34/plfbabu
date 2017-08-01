@@ -133,17 +133,16 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
+				
+				recordCount++;
+				taxDownload = mapTrnExtractionTypeData(rs, id);
+				list.add(taxDownload);
 
-				while (rs.next()) {
-					recordCount++;
-					taxDownload = mapTrnExtractionTypeData(rs, id);
-					list.add(taxDownload);
-
-					if (list.size() >= batchSize) {
-						saveTrnExtractDetails(list);
-						list.clear();
-					}
+				if (list.size() >= batchSize) {
+					saveTrnExtractDetails(list);
+					list.clear();
 				}
+			
 			}
 		});
 
@@ -246,7 +245,9 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 						}
 					}  
 					
-					if (taxDownload != null && (taxDownload.getFinReference().equals(finReference) && taxDownload.getBranchProvince().equals(branchProvince) && taxDownload.getEntityCode().equals(entityCode) && taxDownload.getLedgerCode().equals(ledgerCode))) {
+					if (taxDownload != null && (taxDownload.getFinReference().equals(finReference) 
+							&& taxDownload.getBranchProvince().equals(branchProvince) && taxDownload.getEntityCode().equals(entityCode)
+							&& taxDownload.getLedgerCode().equals(ledgerCode))) {
 						if (map.containsKey(key)) {
 							TaxDownload download = map.get(key);
 							download.setAmount(download.getAmount().add(taxDownload.getAmount()));
@@ -270,8 +271,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 					}
 				}
 			}
-
-			
 		});
 
 		if (!list.isEmpty()) {
