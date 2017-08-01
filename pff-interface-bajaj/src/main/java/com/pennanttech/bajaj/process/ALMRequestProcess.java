@@ -37,16 +37,21 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
-
-		delete(new MapSqlParameterSource(), "ALM", destinationJdbcTemplate, new String[0]);
+		
+		// Handle retry case.
+		delete();
 
 		loadCount();
 
+		extractData();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void extractData() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from INT_ALM_VIEW");
 
 		extract(sql);
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void extract(StringBuilder sql) {
@@ -91,9 +96,15 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 					saveBatchLog(keyId, "F", e.getMessage());
 				}
-
 			}
 		});
+	}
+	
+	
+	private void delete() {
+		MapSqlParameterSource paramMap =  new MapSqlParameterSource();
+		paramMap.addValue("ACCRUEDON", appDate);
+		delete(paramMap, "ALM", destinationJdbcTemplate, "where ACCRUEDON >=  :ACCRUEDON");
 	}
 
 	private void loadCount() {
@@ -135,7 +146,16 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 			list.add(item);
 		}
 		return list;
+	}
+	
+	private BigDecimal getAmount(BigDecimal amount, BigDecimal minorCcyUnits, int editField) {
+		if (amount == null) {
+			amount = BigDecimal.ZERO;
+		}
 
+		amount = amount.divide(minorCcyUnits, 0, RoundingMode.HALF_DOWN);
+
+		return amount;
 	}
 
 	private void save(List<ALM> list) throws Exception {
@@ -156,16 +176,6 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 		destinationJdbcTemplate.batchUpdate(query.toString(), SqlParameterSourceUtils.createBatch(list.toArray()));
 
-	}
-
-	private BigDecimal getAmount(BigDecimal amount, BigDecimal minorCcyUnits, int editField) {
-		if (amount == null) {
-			amount = BigDecimal.ZERO;
-		}
-
-		amount = amount.divide(minorCcyUnits, 0, RoundingMode.HALF_DOWN);
-
-		return amount;
 	}
 
 	@Override
