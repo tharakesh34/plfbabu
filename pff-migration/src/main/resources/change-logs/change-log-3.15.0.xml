@@ -15582,4 +15582,16 @@ Insert into REPORTFILTERFIELDS
 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails'),1,'FinReference','LOVSEARCH','Loan Reference','AGREEMENTNO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 	</sql>
 	</changeSet>
+	  
+	   <changeSet id="770" author="Pruthvi">
+	 <addColumn tableName="REPORTCONFIGURATION">
+        <column name="WHERECONDITION" type="Boolean"/>
+    </addColumn>
+    </changeSet>
+    
+    <changeSet id="771" author="Pruthvi">
+    <sql>
+    update REPORTCONFIGURATION set WHERECONDITION=0;
+    </sql>
+    </changeSet>
 </databaseChangeLog>
