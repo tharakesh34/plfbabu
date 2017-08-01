@@ -15602,4 +15602,9 @@ values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_
 FROM          ReportConfiguration T1
     </createView>
     </changeSet>
+      <changeSet id="773" author="Pruthvi">
+    <sql>
+    update reportconfiguration set wherecondition=1;
+    </sql>
+    </changeSet>
 </databaseChangeLog>
