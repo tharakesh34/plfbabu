@@ -977,4 +977,15 @@ update ADtCustomers set CUSTADDLDEC1 = null;
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
   </changeSet>
+   <changeSet id="54" author="Pruthvi">
+	 <addColumn tableName="ADTREPORTCONFIGURATION">
+        <column name="WHERECONDITION" type="Boolean"/>
+    </addColumn>
+    </changeSet>
+    
+    <changeSet id="55" author="Pruthvi">
+    <sql>
+    update ADTREPORTCONFIGURATION set WHERECONDITION=0;
+    </sql>
+    </changeSet>
 </databaseChangeLog>
