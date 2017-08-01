@@ -584,7 +584,7 @@
 			<!-- <menuItem id="menu_Item_TakafulPremium" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulPremium" /> -->
 			<menuItem id="menu_Item_FinanceBasicInformation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_FinanceBasicInformation" />
 			<menuItem id="menu_Item_DealDetail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_DealDetail"/>	
-			<menuItem id="menu_Item_TakafulMonthly" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulMonthly"/>	
+			<!-- <menuItem id="menu_Item_TakafulMonthly" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinReports_TakafulMonthly"/> -->	
 			<!-- <menuItem id="menu_Item_PenaltyCalculation" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_PenaltyCalculation" /> -->	
 			<menuItem id="menu_Item_PayoffDeals" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinReports_PayoffDeals" />	
 		</menu>
@@ -602,9 +602,9 @@
 			<!-- <menuItem id="menu_Item_PastDueSummary" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_PastDueSummary" /> -->
 			<menuItem id="menu_Item_PastDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_PastDue" />
 		</menu>
-		<menu id="menu_Category_BackOfcDeptReports" rightName="menuCat_BackOfcDeptReports">
+		<!-- <menu id="menu_Category_BackOfcDeptReports" rightName="menuCat_BackOfcDeptReports">
 			<menuItem id="menu_Item_ActiveCommidities" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_BackOfcDeptReports_ActiveCommidities"/>	
-		</menu>
+		</menu> -->
 	   <!--  <menu id="menu_Category_StartOfMonth"  rightName="menuCat_StartOfMonth">
 			<menuItem id="menu_Item_DealwiseIncomeRpt_Recon" zulNavigation="/WEB-INF/pages/Reports/DealWiseIncomeReport.zul"  rightName="menuItem_StartOfMonth_DealwiseIncomeRpt"/>
 			<menuItem id="menu_Item_DailyDownload" zulNavigation="/WEB-INF/pages/Reports/DailyDownloadReport.zul" rightName="menuItem_StartOfMonth_DailyDownLoads" />
