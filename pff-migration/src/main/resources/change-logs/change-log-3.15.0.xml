@@ -15594,4 +15594,12 @@ values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_
     update REPORTCONFIGURATION set WHERECONDITION=0;
     </sql>
     </changeSet>
+    	<changeSet id="772" author="pruthvi">
+    <createView viewName="REPORTCONFIGURATION_VIEW" replaceIfExists="true">
+    SELECT     T1.ReportId, T1.ReportName, T1.ReportHeading, T1.PromptRequired, T1.ReportJasperName, T1.DataSourceName, T1.ShowTempLibrary, 
+                      T1.MenuItemCode, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+                      T1.RecordType, T1.WorkflowId, T1.ALWMULTIFORMAT, T1.WhereCondition
+FROM          ReportConfiguration T1
+    </createView>
+    </changeSet>
 </databaseChangeLog>
