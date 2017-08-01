@@ -87,6 +87,7 @@ public class CustomerDedupService extends BajajService {
 
 		if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			request.setDateOfIncorporation(dateFormater.format(customer.getCustDOB()));
+			request.setDateOfBirth(dateFormater.format(customer.getCustDOB()));
 			for (CustomerAddres customerAddres : listAddres) {
 				if (customerAddres.getCustAddrPriority() == 5) {
 					request.setAddress1(customerAddres.getCustAddrHNbr());
