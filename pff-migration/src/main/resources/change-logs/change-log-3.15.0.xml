@@ -15694,4 +15694,14 @@ Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration
 Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),5,'Product','LOVSEARCH','product','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,5,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 </sql>
 </changeSet>
+
+  <changeSet id="776" author="Pruthvi">
+    <sql>
+update reportfilterfields set multiselectsearch=1 where
+reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment') and fieldid=1;
+
+update reportfilterfields set multiselectsearch=1 where
+reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PresentationDetails') and fieldid=1;
+</sql>
+</changeSet>
 </databaseChangeLog>
