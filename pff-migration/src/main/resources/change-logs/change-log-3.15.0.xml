@@ -15683,4 +15683,15 @@ FROM          ReportConfiguration T1
 			<column name="LOAN_BRANCH_ADDRESS"             type="varchar(500)" />
 		</createTable>
 </changeSet>
+  <changeSet id="775" author="Pruthvi">
+    <sql>
+delete from reportfilterfields where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail');
+
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),1,'Post Date','DATERANGE','Post Date','PostDate',null,'---Select----',null,null,0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),3,'Branch','LOVSEARCH','Branch','Branch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),4,'Loan Status','STATICLIST','Loan Status','FinIsActive','getFinanceStatusList',null,null,null,0,0,0,0,4,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),5,'Product','LOVSEARCH','product','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,5,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+</sql>
+</changeSet>
 </databaseChangeLog>
