@@ -358,7 +358,8 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			taxDownload.setCustomerId(rs.getLong("TAXCUSTCIF"));
 			taxDownload.setCustomerName(rs.getString("TAXCUSTSHRTNAME"));
 			taxDownload.setCustomerGstin(customerGSTIN);
-			taxDownload.setExemptedCustomer(rs.getString("TAXEXEMPTED"));
+			boolean taxExempted = rs.getBoolean("TAXEXEMPTED");
+			taxDownload.setExemptedCustomer(taxExempted? CON_YES : CON_NO);
 			taxDownload.setPanNo(rs.getString("TAXCUSTCRCPR"));
 			// Address Details
 			customerAddress = new StringBuilder();
@@ -382,6 +383,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		} else {
 			taxDownload.setRegisteredCustomer(CON_NO);
+			taxDownload.setExemptedCustomer(CON_NO);
 			try {
 				taxDownload.setCustomerId(rs.getLong("CUSTCIF"));
 			} catch (Exception e) {
@@ -447,7 +449,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		taxDownload.setLoanBranchAddress(getBranchAddress(loanBranch));
 		
 		Province loanProvince =  getProvince(loanBranch.getBranchProvince());
-		taxDownload.setExemptedState(loanProvince.isTaxAvailable()? CON_YES : CON_NO);
+		taxDownload.setExemptedState(loanProvince.isTaxExempted()? CON_YES : CON_NO);
 		
 		loanBranchState =loanProvince.getTaxStateCode();
 		taxDownload.setLoanBranchState(loanBranchState);
