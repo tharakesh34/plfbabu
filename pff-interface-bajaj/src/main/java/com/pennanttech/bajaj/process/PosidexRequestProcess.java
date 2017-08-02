@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -98,12 +99,19 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		setAddresses(customers);
 		setLoans(customers);
 		
+		TransactionStatus txnStatus = null;
+		transDef.setTimeout(180);
 		for (PosidexCustomer customer : customers.values()) {
-			TransactionStatus txnStatus = transManager.getTransaction(transDef);
+			long start = System.currentTimeMillis();
+			long end = System.currentTimeMillis();
+			txnStatus = transManager.getTransaction(transDef);
 			try {
 				saveOrUpdate(customer);
 				successCount++;
 				transManager.commit(txnStatus);
+				end = System.currentTimeMillis();
+				
+				logger.info("Time take: "+TimeUnit.MILLISECONDS.toSeconds(end-start));
 			} catch (Exception e) {
 				transManager.rollback(txnStatus);
 				saveBatchLog(String.valueOf(customer.getCustomerNo()), "F", e.getMessage());
@@ -117,7 +125,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		}
 	}
 
-	private void saveOrUpdate(PosidexCustomer customer) {
+	private void saveOrUpdate(PosidexCustomer customer) throws Exception {
 		try {
 			if (customer.getProcessType().equals("I")) {
 				save(customer, true);
@@ -154,7 +162,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 			delete(customer);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw e;
+			
 		}
 	}
 
@@ -443,7 +452,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" LEFT JOIN CUSTOMERDOCUMENTS CD ON CD.CUSTID = C.CUSTID");
 		sql.append(" LEFT JOIN CUSTEMPLOYEEDETAIL CE ON CE.CUSTID = C.CUSTID");
 		sql.append(" LEFT JOIN (select CUSTID, ACCOUNTNUMBER from CUSTOMERBANKINFO");
-		sql.append(" WHERE ROWNUM  =1 order by BANKID) CBA ON CBA.CUSTID = C.CUSTID");
+		sql.append(" order by BANKID) CBA ON CBA.CUSTID = C.CUSTID AND ROWNUM  =1");
 		sql.append(" LEFT JOIN PSX_DEDUP_EOD_CUST_DEMO_DTL PC ON PC.CUSTOMER_NO = C.CUSTID");
 		sql.append(" WHERE C.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
 
@@ -452,11 +461,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private Map<Long, PosidexCustomer> extractCustomers(Map<Long, PosidexCustomer> customers, StringBuilder sql) {
 		return jdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, PosidexCustomer>>() {
+			PosidexCustomer customer = null;
 			@Override
 			public Map<Long, PosidexCustomer> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String docType = null;
 				while (rs.next()) {
-					PosidexCustomer customer = new PosidexCustomer();
+					
+					customer = customers.get(rs.getLong("CUSTID"));
+					if (customer == null) {
+						customer = new PosidexCustomer();
+						customers.put(rs.getLong("CUSTID"), customer);
+					}
+					
 					customer.setCustomerNo(rs.getLong("CUSTID"));
 					customer.setCustomerId(rs.getString("CUSTCIF"));
 					customer.setFirstName(rs.getString("CUSTFNAME"));
@@ -512,9 +528,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					customer.setSourceSystem(SOURCE_SYSTEM);
 					customer.setInsertTs(appDate);
 					customer.setSegment("CF");
-
-					customers.put(customer.getCustomerNo(), customer);
-
 				}
 				return customers;
 
@@ -873,12 +886,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-
-	/*private String getPhoneNumber(ResultSet rs) throws SQLException {
-		return StringUtils.trimToEmpty(rs.getString("PHONECOUNTRYCODE"))
-				.concat(StringUtils.trimToEmpty(rs.getString("PHONEAREACODE")))
-				.concat(StringUtils.trimToEmpty(rs.getString("PHONENUMBER")));
-	}*/
 
 	private void loaddefaults() {
 		SOURCE_SYSTEM_ID = parameterCodes.get("POSIDEX_SOURCE_SYSTEM_ID");
