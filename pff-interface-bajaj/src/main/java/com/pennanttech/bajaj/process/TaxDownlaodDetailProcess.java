@@ -180,6 +180,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		List<TaxDownload> list = new ArrayList<TaxDownload>();
 		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			@SuppressWarnings("unused")
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
@@ -198,77 +199,72 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 				String bflGSTIN = null;
 				String ledgerCode = null;
 				BigDecimal postAmount = BigDecimal.ZERO;
-				
-				while (rs.next()) {
-					recordCount++;
-					
-					entityName = rs.getString("ENTITYDESC");//1
-					
-					entityCode = rs.getString("ENTITYCODE");
-					Branch loanBranch = branchMap.get(rs.getString("FINBRANCH"));
-					loanProvince = loanBranch.getBranchProvince();
-					entityDetail = entityDetailMap.get(loanProvince + "_" + entityCode);
-					if (entityDetail != null) {
-						bflGSTIN = entityDetail.getTaxCode();//2
-					}  
-					ledgerCode = rs.getString("ACCOUNT");//3
-					finBranch = rs.getString("FINBRANCH");//4
-					postAmount = rs.getBigDecimal("POSTAMOUNT");//6
-					finReference = rs.getString("FINREFERENCE");
-					branchProvince = rs.getString("BRANCHPROVINCE");
-					
-					customerProvince = rs.getString("TAXPROVINCE");
-					boolean registered = false;
-					boolean inter = false;
-				
-					if (StringUtils.trimToNull(customerProvince) != null) {
-						registered = true;
-					} else {
-						customerProvince = rs.getString("CUSTADDRPROVINCE");
-					}
 
-					if (StringUtils.equals(customerProvince, loanProvince)) {
-						inter = true;
+				recordCount++;
+				entityName = rs.getString("ENTITYDESC");//1
+				entityCode = rs.getString("ENTITYCODE");
+				Branch loanBranch = branchMap.get(rs.getString("FINBRANCH"));
+				loanProvince = loanBranch.getBranchProvince();
+				entityDetail = entityDetailMap.get(loanProvince + "_" + entityCode);
+				if (entityDetail != null) {
+					bflGSTIN = entityDetail.getTaxCode();//2
+				}  
+				ledgerCode = rs.getString("ACCOUNT");//3
+				finBranch = rs.getString("FINBRANCH");//4
+				postAmount = rs.getBigDecimal("POSTAMOUNT");//6
+				finReference = rs.getString("FINREFERENCE");
+				branchProvince = rs.getString("BRANCHPROVINCE");
+				
+				customerProvince = rs.getString("TAXPROVINCE");
+				boolean registered = false;
+				boolean inter = false;
+			
+				if (StringUtils.trimToNull(customerProvince) != null) {
+					registered = true;
+				} else {
+					customerProvince = rs.getString("CUSTADDRPROVINCE");
+				}
+
+				if (StringUtils.equals(customerProvince, loanProvince)) {
+					inter = true;
+				}
+
+				 if (registered) {
+					if (inter) {
+						key = REG_INTER;
+					} else {
+						key = REG_INTRA;
 					}
- 
-					 if (registered) {
-						if (inter) {
-							key = REG_INTER;
-						} else {
-							key = REG_INTRA;
-						}
+				} else {
+					if (inter) {
+						key = UNREG_INTER;
 					} else {
-						if (inter) {
-							key = UNREG_INTER;
-						} else {
-							key = UNREG_INTRA;
-						}
-					}  
-					
-					if (taxDownload != null && (taxDownload.getFinReference().equals(finReference) 
-							&& taxDownload.getBranchProvince().equals(branchProvince) && taxDownload.getEntityCode().equals(entityCode)
-							&& taxDownload.getLedgerCode().equals(ledgerCode))) {
-						if (map.containsKey(key)) {
-							TaxDownload download = map.get(key);
-							download.setAmount(download.getAmount().add(taxDownload.getAmount()));
-						} else {
-							taxDownload = getTaxDetails(id, rs, finBranch, entityCode, finReference, branchProvince, entityName, bflGSTIN, ledgerCode, postAmount, registered, inter);
-							map.put(key, taxDownload);
-						}
+						key = UNREG_INTRA;
+					}
+				}  
+				
+				if (taxDownload != null && (taxDownload.getFinReference().equals(finReference) 
+						&& taxDownload.getBranchProvince().equals(branchProvince) && taxDownload.getEntityCode().equals(entityCode) && taxDownload.getLedgerCode().equals(ledgerCode))) {
+					if (map.containsKey(key)) {
+						TaxDownload download = map.get(key);
+						download.setAmount(download.getAmount().add(taxDownload.getAmount()));
 					} else {
-						for (TaxDownload item : map.values()) {
-							list.add(item);
-						}
-						map.clear();
-						
 						taxDownload = getTaxDetails(id, rs, finBranch, entityCode, finReference, branchProvince, entityName, bflGSTIN, ledgerCode, postAmount, registered, inter);
 						map.put(key, taxDownload);
-					}  
-					 
-					if (list.size() >= batchSize) {
-						saveSumExtractDetails(list);
-						list.clear();
 					}
+				} else {
+					for (TaxDownload item : map.values()) {
+						list.add(item);
+					}
+					map.clear();
+					
+					taxDownload = getTaxDetails(id, rs, finBranch, entityCode, finReference, branchProvince, entityName, bflGSTIN, ledgerCode, postAmount, registered, inter);
+					map.put(key, taxDownload);
+				}  
+				 
+				if (list.size() >= batchSize) {
+					saveSumExtractDetails(list);
+					list.clear();
 				}
 			}
 		});
@@ -362,22 +358,52 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			taxDownload.setPanNo(rs.getString("TAXCUSTCRCPR"));
 			// Address Details
 			customerAddress = new StringBuilder();
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE1")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("TAXPINCODE")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("TAXCITY"))));
-			province = rs.getString("TAXPROVINCE");
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(provinceMap.get(province).getCPProvinceName());
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"))));
+			String addrLine1 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE1"));
+			if (!addrLine1.isEmpty()) {
+				customerAddress.append(addrLine1);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addrLine2 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2"));
+			if (!addrLine2.isEmpty()) {
+				customerAddress.append(addrLine2);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addrLine3 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3"));
+			if (!addrLine3.isEmpty()) {
+				customerAddress.append(addrLine3);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addrLine4 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4"));
+			if (!addrLine4.isEmpty()) {
+				customerAddress.append(addrLine4);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+		
+			String pincode = StringUtils.trimToEmpty(rs.getString("TAXPINCODE"));
+			if (!pincode.isEmpty()) {
+				customerAddress.append(pincode);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String city = StringUtils.trimToEmpty(rs.getString("TAXCITY"));
+			if (!city.isEmpty()) {
+				customerAddress.append(cityMap.get(city));
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			province = StringUtils.trimToEmpty(rs.getString("TAXPROVINCE"));
+			if (!province.isEmpty()) {
+				customerAddress.append(provinceMap.get(province).getCPProvinceName());
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String country = StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"));
+			if (!country.isEmpty()) {
+				customerAddress.append(countryMap.get(country));
+			}
 			lastMntOn = rs.getDate("TAXLASTMNTON");
 
 		} else {
@@ -394,26 +420,65 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 			// Address Details
 			customerAddress = new StringBuilder();
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTPOBOX")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP")));
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(cityMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"))));
+			
+			String custAddRhnbr = StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR"));
+			if (!custAddRhnbr.isEmpty()) {
+				customerAddress.append(custAddRhnbr);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custFlatNbr = StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR"));
+			if (!custFlatNbr.isEmpty()) {
+				customerAddress.append(custFlatNbr);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrStreet = StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET"));
+			if (!custAddrStreet.isEmpty()) {
+				customerAddress.append(custAddrStreet);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrLine1 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1"));
+			if (!custAddrLine1.isEmpty()) {
+				customerAddress.append(custAddrLine1);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrLine2 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2"));
+			if (!custAddrLine2.isEmpty()) {
+				customerAddress.append(custAddrLine2);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custPoBox = StringUtils.trimToEmpty(rs.getString("CUSTPOBOX"));
+			if (!custPoBox.isEmpty()) {
+				customerAddress.append(custPoBox);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrZip = StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP"));
+			if (!custAddrZip.isEmpty()) {
+				customerAddress.append(custAddrZip);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrCity = StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"));
+			if (!custAddrCity.isEmpty()) {
+				customerAddress.append(cityMap.get(custAddrCity));
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
 			province = rs.getString("CUSTADDRPROVINCE");
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(provinceMap.get(province).getCPProvinceName());
-			customerAddress.append(ADDR_DELIMITER);
-			customerAddress.append(countryMap.get(StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"))));
+			if(!StringUtils.trimToEmpty(province).isEmpty()){
+				customerAddress.append(provinceMap.get(province).getCPProvinceName());
+				customerAddress.append(ADDR_DELIMITER);
+			}
+			
+			String custAddrCtry = StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"));
+			if(!custAddrCtry.isEmpty()){
+				customerAddress.append(countryMap.get(custAddrCtry));
+			}
 			lastMntOn = rs.getDate("CUSTADDRLASTMNTON");
 		}
 
@@ -466,21 +531,54 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			taxDownload.setBflGstinNo(entityDetail.getTaxCode());
 
 			StringBuilder gstAddress = new StringBuilder();
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine1()));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine2()));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine3()));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getAddressLine4()));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(StringUtils.trimToEmpty(entityDetail.getPinCode()));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(cityMap.get(StringUtils.trimToEmpty(entityDetail.getCityCode())));
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(provinceMap.get(StringUtils.trimToEmpty(entityDetail.getStateCode())).getCPProvinceName());
-			gstAddress.append(ADDR_DELIMITER);
-			gstAddress.append(countryMap.get(StringUtils.trimToEmpty(entityDetail.getCountry())));
+			
+			String addLine1 = StringUtils.trimToEmpty(entityDetail.getAddressLine1());
+			if (!addLine1.isEmpty()) {
+				gstAddress.append(addLine1);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addLine2 = StringUtils.trimToEmpty(entityDetail.getAddressLine2());
+			if (!addLine2.isEmpty()) {
+				gstAddress.append(addLine2);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addLine3 = StringUtils.trimToEmpty(entityDetail.getAddressLine3());
+			if (!addLine3.isEmpty()) {
+				gstAddress.append(addLine3);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String addLine4 = StringUtils.trimToEmpty(entityDetail.getAddressLine4());
+			if (!addLine4.isEmpty()) {
+				gstAddress.append(addLine4);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String pinCode = StringUtils.trimToEmpty(entityDetail.getPinCode());
+			if (!pinCode.isEmpty()) {
+				gstAddress.append(pinCode);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String cityCode = StringUtils.trimToEmpty(entityDetail.getCityCode());
+			if (!cityCode.isEmpty()) {
+				gstAddress.append(cityMap.get(cityCode));
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String stateCode = StringUtils.trimToEmpty(entityDetail.getStateCode());
+			if (!stateCode.isEmpty()) {
+				gstAddress.append(provinceMap.get(stateCode).getCPProvinceName());
+				gstAddress.append(ADDR_DELIMITER);
+			}
+			
+			String country = StringUtils.trimToEmpty(entityDetail.getCountry());
+			if (!country.isEmpty()) {
+				gstAddress.append(countryMap.get(country));
+			}
+			
 			txnBranchAddress = gstAddress.toString();
 			txnBranchStateCode = entityDetail.getStateCode();
 		} else {
