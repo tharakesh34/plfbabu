@@ -270,14 +270,16 @@ public class ReceiptCalculator implements Serializable {
 							newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 							newSchdlEP.setRepayOnSchDate(true);
 							newSchdlEP.setPftOnSchDate(true);
-							newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
-							newSchdlEP.setBaseRate(prvSchd.getBaseRate());
-							newSchdlEP.setSplRate(prvSchd.getSplRate());
-							newSchdlEP.setMrgRate(prvSchd.getMrgRate());
-							newSchdlEP.setActRate(prvSchd.getActRate());
-							newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
-							newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
-							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
+							if(prvSchd != null){
+								newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
+								newSchdlEP.setBaseRate(prvSchd.getBaseRate());
+								newSchdlEP.setSplRate(prvSchd.getSplRate());
+								newSchdlEP.setMrgRate(prvSchd.getMrgRate());
+								newSchdlEP.setActRate(prvSchd.getActRate());
+								newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
+								newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
+								newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
+							}
 							repayMain.setEarlyRepayNewSchd(newSchdlEP);
 						}
 					}

@@ -5487,7 +5487,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(this.receivedDate.getValue() != null){
 			curBussDate = this.receivedDate.getValue();
 		}
-		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
+		
+		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
+		
+		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null &&
+				!StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				&& curBussDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
 			return false;
@@ -5556,8 +5560,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(!isCalProcess){
 			return true;
 		}
-		
-		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 		
 		// Finance Should not allow for Partial Settlement & Early settlement when Maturity Date reaches Current application Date
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) ||
