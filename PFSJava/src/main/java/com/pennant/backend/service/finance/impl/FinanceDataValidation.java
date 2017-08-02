@@ -3727,8 +3727,9 @@ public class FinanceDataValidation {
 		Date bpiDate = DateUtility.getDate(	DateUtility.formatUtilDate(FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
 										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),PennantConstants.dateFormat));
 		if (DateUtility.compare(bpiDate, frqDate) >= 0) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null)));
-			return errorDetails;
+			/*errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null)));
+			return errorDetails;*/
+			finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 		}
 		}
 		if (StringUtils.isNotBlank(finMain.getBpiTreatment())) {
