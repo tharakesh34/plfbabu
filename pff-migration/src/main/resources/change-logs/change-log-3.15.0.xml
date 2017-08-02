@@ -15772,4 +15772,23 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		<dropPrimaryKey tableName="DM_SEND_SOA_EMAIL" constraintName="PK_DM_SOA_AGGNO"/>
 		<dropPrimaryKey tableName="DM_SUBQ_DISB_DETAILS" constraintName="PK_DM_AGG_DID"/>
 	</changeSet>
+	<changeSet id="781" author="murthy.y">
+		<sql>
+				<![CDATA[
+					update DATA_ENGINE_EVENT_PROPERTIES set 
+					BUCKET_NAME = 'bfl-npd-etl-masterdata', 
+					ACCESS_KEY = NULL, 
+					SECRET_KEY = NULL, 
+					SSE_ALGORITHM = 'AES_256'
+					WHERE CONFIG_ID IN (select ID from data_engine_config where NAME LIKE 'ME_%');
+
+					update DATA_ENGINE_EVENT_PROPERTIES set 
+					BUCKET_NAME = 'bfl-npu-plf-download-bucket', 
+					ACCESS_KEY = NULL, 
+					SECRET_KEY = NULL, 
+					SSE_ALGORITHM = 'AES_256'
+					WHERE CONFIG_ID NOT IN (select ID from data_engine_config where NAME LIKE 'ME_%');
+				]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
