@@ -70,8 +70,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -943,6 +945,46 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
 			this.row_Postpone.setVisible(true);
 		}
+	}
+	
+	/**
+	 * Change the branch for the Account on changing the finance Branch
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$covenantType(Event event) {
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.covenantType.getValue())) {
+			this.covenantType.setValue("");
+			this.covenantType.setDescription();
+		} else {
+			DocumentType dcoType = (DocumentType) this.covenantType.getObject();
+			if (dcoType != null) {
+				this.covenantType.setValue(dcoType.getDocTypeCode());
+				this.covenantType.setDescription(dcoType.getDocTypeDesc());
+				validatewithCustDoc(dcoType.getDocTypeCode());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	private void validatewithCustDoc(String docTypeCode) {
+		logger.debug("Entering");
+		if (getFinancedetail().getCustomerDetails() != null
+				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+			for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails().getCustomerDocumentsList()) {
+				if (custdocument.getCustDocCategory().equals(docTypeCode)) {
+					this.covenantType.setValue("");
+					this.covenantType.setDescription("");
+					MessageUtil.showError(custdocument.getLovDescCustDocCategory() + " : is Already Captured.Please Check in Customer Documents");
+				}
+			}
+
+		}
+
+		logger.debug("Leaving");
 	}
 
 	public void onCheck$alwPostpone(Event event) throws Exception {
