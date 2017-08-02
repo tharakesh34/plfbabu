@@ -15749,4 +15749,27 @@ INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(S
 UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 </sql>
 </changeSet>
+
+<changeSet author="Manoj" id="780">
+		<dropPrimaryKey tableName="DM_ADDRESS_DETAILS" constraintName="PK_DM_ADD_CUSTID"/>
+		<dropPrimaryKey tableName="DM_APPLICANT_DETAILS" constraintName="PK_DM_APP_CUSTID"/>
+		<dropPrimaryKey tableName="DM_APPLICATION_DETAILS" constraintName="PK_DM_APD_APPID"/>
+		<dropPrimaryKey tableName="DM_COAPPLICANT_DETAILS" constraintName="PK_DM_COAPP_APPID"/>
+		<dropPrimaryKey tableName="DM_DISB_DETAILS_DAILY" constraintName="PK_DM_AGN_DBN"/>
+		<dropPrimaryKey tableName="DM_HTS_UNADJUSTED_AMT" constraintName="PK_DM_HTS_UNA"/>
+		<dropPrimaryKey tableName="DM_INSURANCE_DETAILS" constraintName="PK_DM_ID_AGGNO"/>
+		<dropPrimaryKey tableName="DM_IVR_GATEWAY_FLEXI" constraintName="PK_DM_IVR_AGGNO"/>
+		<dropPrimaryKey tableName="DM_LEA_DOC_DTL" constraintName="PK_DM_LEA_AGID" />
+		<dropPrimaryKey tableName="DM_LOAN_DETAILS_DAILY" constraintName="PK_DM_LD_AGGNO"/>
+		<dropPrimaryKey tableName="DM_LOAN_VOUCHER_DETAILS" constraintName="PK_DM_LOV_AGGNO"/>
+		<dropPrimaryKey tableName="DM_LOANWISE_CHARGE_DETAILS" constraintName="PK_DM_LOC_AGGID"/>
+		<dropPrimaryKey tableName="DM_LOANWISE_REPAYSCHD_DTLS" constraintName="PK_DM_LWR_AGGIDDT"/>
+		<dropPrimaryKey tableName="DM_NOC_ELIGIBLE_LOANS" constraintName="PK_DM_NOC_AGGNO"/>
+		<dropPrimaryKey tableName="DM_OPENECS_DETAILS" constraintName="PK_DM_OPECS_ECSID"/>
+		<dropPrimaryKey tableName="DM_PREPAYMENT_DETAILS" constraintName="PK_DM_PPD_AGGNO"/>
+		<dropPrimaryKey tableName="DM_PRESENTATION_DETAILS" constraintName="PK_DM_PD_AGGNO"/>
+		<dropPrimaryKey tableName="DM_RESCH_DETAILS_DAILY" constraintName="PK_DM_RES_AGGNO"/>
+		<dropPrimaryKey tableName="DM_SEND_SOA_EMAIL" constraintName="PK_DM_SOA_AGGNO"/>
+		<dropPrimaryKey tableName="DM_SUBQ_DISB_DETAILS" constraintName="PK_DM_AGG_DID"/>
+	</changeSet>
 </databaseChangeLog>
