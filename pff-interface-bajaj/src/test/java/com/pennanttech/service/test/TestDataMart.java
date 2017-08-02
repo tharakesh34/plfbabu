@@ -1,18 +1,17 @@
 package com.pennanttech.service.test;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.services.DataMartRequestService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class TestDataMart {
 
 	DataMartRequestService dataMartRequestService;
 
-	@Before
+	@BeforeTest
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
