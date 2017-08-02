@@ -322,7 +322,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 		BigDecimal emiInAdvanceAmt;
 		String finReference = presentmentDetail.getFinReference();
-
+		
 		// Mandate Rejected
 		if (MandateConstants.STATUS_REJECTED.equals(presentmentDetail.getMandateStatus())) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
@@ -340,29 +340,29 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			return;
 		}
+		
+		boolean isECSMandate = MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType());
+		if(!isECSMandate){
+			if (!MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+				return;
+			}
 
-		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
-				&& !MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-			return;
+			// Mandate Not Approved
+		/*	if ( !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
+					|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus()))
+					|| (MandateConstants.STATUS_NEW.equals(presentmentDetail.getMandateStatus())))) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+				return;
+			}*/
+
+			// Mandate Expired
+			if (presentmentDetail.getMandateExpiryDate() != null && DateUtility.compare(presentmentDetail.getDefSchdDate(),
+					presentmentDetail.getMandateExpiryDate()) > 0) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
+				return;
+			}
 		}
-
-		// Mandate Not Approved
-		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
-				&& !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
-						|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus()))
-						|| (MandateConstants.STATUS_NEW.equals(presentmentDetail.getMandateStatus())))) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-			return;
-		}
-
-		// Mandate Expired
-		if (presentmentDetail.getMandateExpiryDate() != null && DateUtility.compare(presentmentDetail.getDefSchdDate(),
-				presentmentDetail.getMandateExpiryDate()) > 0) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
-			return;
-		}
-
 		// EMI IN ADVANCE
 		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
