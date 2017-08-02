@@ -1244,12 +1244,17 @@ public class FinServiceInstController extends SummaryDetailService {
 				totReceiptAmt, finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), false);
 		finReceiptData.setAllocationMap(allocationMap);
 
+		BigDecimal partialPaidAmt = BigDecimal.ZERO;
+		
 		// validate repayment amount
-		WSReturnStatus returnStatus = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
-		if(StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		Map<String, String> returnMap = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
+		if(StringUtils.isNotBlank(returnMap.get("ReturnCode"))) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
-				response.setReturnStatus(returnStatus);
+				WSReturnStatus status = new WSReturnStatus();
+				status.setReturnCode(returnMap.get("ReturnCode"));
+				status.setReturnText(returnMap.get("ReturnText"));
+				response.setReturnStatus(status);
 				return response;
 		}
 		
@@ -1280,7 +1285,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose);
+			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose, new BigDecimal(returnMap.get("partPaidAmt")));
 		} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			finReceiptData = receiptService.calculateRepayments(finReceiptData, false);
 		}
@@ -1494,8 +1499,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		return financeDetail;
 	}
 
-	private WSReturnStatus validateRepayAmount(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
+	private Map<String, String> validateRepayAmount(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
 			BigDecimal totReceiptAmt) {
+		
+		Map<String, String> returnMap = new HashMap<String, String>();
+		returnMap.put("ReturnCode", "");
+		returnMap.put("ReturnText", "");
+		returnMap.put("partPaidAmt", "0");
+		
 		// validate repayment amount
 		BigDecimal pftBalance = BigDecimal.ZERO;
 		BigDecimal priBalance = BigDecimal.ZERO;
@@ -1512,10 +1523,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		if(totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				return APIErrorHandlerService.getFailedStatus("90330");
+				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
+				returnMap.put("ReturnCode", status.getReturnCode());
+				returnMap.put("ReturnText", status.getReturnText());
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)
 					||StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
-				return APIErrorHandlerService.getFailedStatus("90331");
+				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90331");
+				returnMap.put("ReturnCode", status.getReturnCode());
+				returnMap.put("ReturnText", status.getReturnText());
 			}
 		}
 		
@@ -1629,19 +1644,26 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 			
 			BigDecimal remBal = priBalance.add(pftBalance).add(schFeeBal).add(latePayPftBal).add(penaltyBal).subtract(tdsReturns);
+			BigDecimal partialPaidAmt = totReceiptAmt.subtract(priBalance.add(pftBalance).add(schFeeBal).add(latePayPftBal).add(penaltyBal).subtract(tdsReturns));
+			returnMap.put("partPaidAmt", String.valueOf(partialPaidAmt));
 			
+			// calculate Remaining balance after
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				if (totReceiptAmt.compareTo(remBal) < 0) {
-					return APIErrorHandlerService.getFailedStatus("90330");
+					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
+					returnMap.put("ReturnCode", status.getReturnCode());
+					returnMap.put("ReturnText", status.getReturnText());
 				}
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				if (totReceiptAmt.compareTo(remBal) <= 0) {
-					return APIErrorHandlerService.getFailedStatus("90332");
+					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
+					returnMap.put("ReturnCode", status.getReturnCode());
+					returnMap.put("ReturnText", status.getReturnText());
 				}
 			}
 		}
-		return returnStatus;
+		return returnMap;
 	}
 
 	private BigDecimal getTotalFeePaid(List<FinFeeDetail> finFeeDetailList) {
