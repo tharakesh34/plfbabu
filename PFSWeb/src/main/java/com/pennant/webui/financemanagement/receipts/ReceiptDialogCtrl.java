@@ -1236,7 +1236,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// User entered Receipt amounts and paid on manual Allocation validation
-		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid).subtract(feeToBePaid); 
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid); 
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
 		}
@@ -1817,7 +1817,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method for fetch sum of Total user entered Receipts amounts
 	 * @return
 	 */
-	public BigDecimal getTotalReceiptAmount(boolean feeSch){
+	public BigDecimal getTotalReceiptAmount(boolean feeTobeConsider){
 		
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal totalReceiptAmount = BigDecimal.ZERO;
@@ -1847,7 +1847,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		if (feeSch) {
+		if (feeTobeConsider) {
 			// Fee Details
 			if(getFinFeeDetailListCtrl() != null){
 				BigDecimal feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
@@ -2209,7 +2209,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doSetValidation();
 		FinReceiptHeader receiptHeader = doWriteComponentsToBean();
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		receiptHeader.setReceiptAmount(getTotalReceiptAmount(true));
+		receiptHeader.setReceiptAmount(getTotalReceiptAmount(false));
 		BigDecimal feeAmount = BigDecimal.ZERO;
 		if(getFinFeeDetailListCtrl() != null){
 			feeAmount = getFinFeeDetailListCtrl().getFeePaidAmount(finFormatter);
@@ -3550,6 +3550,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				List<Object> paidList = new ArrayList<>();
 				paidList.add(totalCalAmount);
 				paidList.add(allocationPaid);
+				paidList.add(allocationWaived);
 				allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", paidList);
 
 				// Setting On Change Event for Amounts
@@ -3566,7 +3567,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
 						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
 					allocationPaid.setReadonly(true);
-					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT) && 
+							StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 						allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 					}else{
 						allocationWaived.setReadonly(true);
@@ -3804,10 +3806,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<Object> list = (List<Object>) event.getData();
 		BigDecimal pastdueAmt = (BigDecimal) list.get(0);
 		CurrencyBox allocatePaid = (CurrencyBox) list.get(1);
+		CurrencyBox allocateWaived = (CurrencyBox) list.get(2);
 		
 		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
-		if(paidAllocateAmt.compareTo(pastdueAmt) > 0){
-			paidAllocateAmt = pastdueAmt;
+		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
+		if(paidAllocateAmt.compareTo(pastdueAmt.subtract(waivedAllocateAmt)) > 0){
+			paidAllocateAmt = pastdueAmt.subtract(waivedAllocateAmt);
 			allocatePaid.setValue(PennantApplicationUtil.formateAmount(paidAllocateAmt, finFormatter));
 		}
 		
@@ -4569,7 +4573,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 					if(!feesExecuted){
 						feesExecuted = true;
-						prepareFeeRulesMap(amountCodes, dataMap);
+						prepareFeeRulesMap(amountCodes, dataMap,receiptDetail.getPaymentType());
 					}
 					aeEvent.setDataMap(dataMap);
 
@@ -4659,7 +4663,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				if(!feesExecuted){
 					feesExecuted = true;
-					prepareFeeRulesMap(amountCodes, dataMap);
+					prepareFeeRulesMap(amountCodes, dataMap,receiptDetail.getPaymentType());
 				}
 				aeEvent.setDataMap(dataMap);
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
@@ -4824,7 +4828,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param amountCodes
 	 * @param dataMap
 	 */
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap) {
+	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, String payType) {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
@@ -4837,6 +4841,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+					payType = "EX_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+					payType = "EA_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+					payType = "PA_";
+				}else{
+					payType = "PB_";
+				}
+				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 			}
 		}
 

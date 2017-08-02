@@ -599,7 +599,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
-		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList);
+		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
 		aeEvent.setDataMap(dataMap);
 
 		// Accounting Entry Execution
@@ -609,7 +609,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		return aeEvent;
 	}
 	
-	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList) {
+	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList,
+			String payType) {
 		logger.debug("Entering");
 
 		if (finFeeDetailList != null) {
@@ -621,6 +622,17 @@ public class RepaymentPostingsUtil implements Serializable {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+					payType = "EX_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+					payType = "EA_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+					payType = "PA_";
+				}else{
+					payType = "PB_";
+				}
+				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 			}
 		}
 
