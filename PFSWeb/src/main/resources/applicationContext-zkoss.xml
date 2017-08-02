@@ -2637,6 +2637,18 @@
 		class="com.pennant.webui.finance.financemain.FinCovenantTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<bean id="covenantTypeListCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantTypeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+	</bean>
+	
+	<bean id="covenantTypeDialogCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+	</bean>
 
 
 	<!--============ Payment Order Issue Details ============== -->
@@ -2941,7 +2953,6 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
-
 
 	<!--============ Manual Repayment Cancellation Details ============== -->
 	<bean id="repayCancellationDialogCtrl"

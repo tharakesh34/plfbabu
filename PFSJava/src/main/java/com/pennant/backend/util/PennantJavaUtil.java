@@ -205,6 +205,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -1390,7 +1391,6 @@ public class PennantJavaUtil {
 		"FinTaxUploadDetail_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 		
 		
-		
 		/************ Finance Related Module Details *************/
 
 		ModuleUtil.register("FinContributorHeader", new ModuleMapping("FinContributorHeader",
@@ -1681,6 +1681,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinCovenantType", new ModuleMapping("FinAdvancePayments", FinAdvancePayments.class,
 				new String[] { "FinCovenantType", " FinCovenantType_AView" }, masterWF , new String[] { "LoanRefNumber",
 						"CovenantType" }, null, 300));
+		
+		ModuleUtil.register("FinCovenantTypes", new ModuleMapping("FinCovenantType", FinCovenantType.class,
+				new String[] { "FinCovenantType", " FinCovenantType_AView" }, masterWF , new String[] { "LoanRefNumber",
+		"CovenantType" }, null, 300));
 
 
 		ModuleUtil.register("PayOrderIssueHeader", new ModuleMapping("PayOrderIssueHeader", PayOrderIssueHeader.class,

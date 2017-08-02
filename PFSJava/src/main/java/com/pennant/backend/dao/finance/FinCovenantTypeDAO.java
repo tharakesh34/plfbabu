@@ -44,6 +44,7 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennanttech.pff.core.TableType;
 
 
 public interface FinCovenantTypeDAO {
@@ -56,4 +57,9 @@ public interface FinCovenantTypeDAO {
 	String save(FinCovenantType finCovenantTypeDAO,String type);
 	List<FinCovenantType> getFinCovenantTypeByFinRef(String id, String type,boolean isEnquiry);
 	void deleteByFinRef(String finReference, String tableType);
+	boolean isDuplicateKey(String finReference, String covenantType, TableType tableType);
+	void delete(FinCovenantType finCovenantType, TableType mainTab);
+	String save(FinCovenantType aFinCovenantType, TableType tableType);
+	void update(FinCovenantType aFinCovenantType, TableType tableType);
+	FinCovenantType getCovenantTypeById(String finReference,String covenantType, String type);
 }

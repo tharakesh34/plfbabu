@@ -50,17 +50,20 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -150,7 +153,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 				}
 				
 				finPayment.setWorkflowId(0);		
-				if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				if (StringUtils.equalsIgnoreCase(finPayment.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
 				} else if (finPayment.isNewRecord()) {
 					saveRecord = true;
@@ -162,15 +165,15 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 						finPayment.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					}
 
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (StringUtils.equalsIgnoreCase(finPayment.getRecordType(),(PennantConstants.RECORD_TYPE_NEW))) {
 					if (approveRec) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
 					}
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				} else if (StringUtils.equalsIgnoreCase(finPayment.getRecordType(),(PennantConstants.RECORD_TYPE_UPD))) {
 					updateRecord = true;
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				} else if (StringUtils.equalsIgnoreCase(finPayment.getRecordType(),(PennantConstants.RECORD_TYPE_DEL))) {
 					if (approveRec) {
 						deleteRecord = true;
 					} else if (finPayment.isNew()) {
@@ -380,6 +383,172 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 			auditDetail.setBefImage(befFinAdvancePay);	
 		}
 		return auditDetail;
+	}
+
+	@Override
+	public AuditHeader delete(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+
+		aAuditHeader = businessValidation(aAuditHeader);
+		
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+
+		FinCovenantType finCovenantType = (FinCovenantType) aAuditHeader.getAuditDetail()
+				.getModelData();
+		getFinCovenantTypeDAO().delete(finCovenantType, TableType.MAIN_TAB);
+
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+		logger.debug("Leaving");
+		return aAuditHeader;
+	}
+
+	private AuditHeader businessValidation(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+		AuditDetail auditDetail = validation(aAuditHeader.getAuditDetail(), aAuditHeader.getUsrLanguage());
+		aAuditHeader.setAuditDetail(auditDetail);
+		aAuditHeader.setErrorList(auditDetail.getErrorDetails());
+		aAuditHeader=nextProcess(aAuditHeader);
+		logger.debug("Leaving");
+		return aAuditHeader;
+	}
+	
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
+		FinCovenantType finCovenantType = (FinCovenantType) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (finCovenantType.isNew()&& PennantConstants.RECORD_TYPE_NEW.equals(finCovenantType.getRecordType())&& finCovenantTypesDAO.isDuplicateKey(finCovenantType.getFinReference(), finCovenantType.getCovenantType(), finCovenantType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + finCovenantType.getFinReference();
+			parameters[1] = PennantJavaUtil.getLabel("label_CovenanType") + ": " + finCovenantType.getCovenantType();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+
+	@Override
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+
+		aAuditHeader = businessValidation(aAuditHeader);
+		
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+
+		FinCovenantType aFinCovenantType = (FinCovenantType) aAuditHeader.getAuditDetail()
+				.getModelData();
+
+		TableType tableType = TableType.MAIN_TAB;
+		if (aFinCovenantType.isWorkflow()) {
+			tableType = TableType.TEMP_TAB;
+		}
+
+		if (aFinCovenantType.isNew()) {
+			aFinCovenantType.setFinReference((getFinCovenantTypeDAO().save(aFinCovenantType, tableType)));
+			aAuditHeader.getAuditDetail().setModelData(aFinCovenantType);
+			aAuditHeader.setAuditReference(String.valueOf(aFinCovenantType.getFinReference()));
+		} else {
+			getFinCovenantTypeDAO().update(aFinCovenantType, tableType);
+		}
+
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+		logger.debug("Leaving");
+		return aAuditHeader;
+	}
+
+	@Override
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
+
+		logger.debug("Entering");
+
+		String tranType = "";
+		aAuditHeader = businessValidation(aAuditHeader);
+		
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+
+		FinCovenantType aFinCovenantType = new FinCovenantType();
+		BeanUtils.copyProperties((FinCovenantType) aAuditHeader.getAuditDetail()
+				.getModelData(), aFinCovenantType);
+
+		getFinCovenantTypeDAO().delete(aFinCovenantType, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(aFinCovenantType.getRecordType())) {
+			aAuditHeader.getAuditDetail().setBefImage(finCovenantTypesDAO.getCovenantTypeById(aFinCovenantType.getFinReference(),aFinCovenantType.getCovenantType(), ""));
+		}
+
+		if (aFinCovenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			tranType = PennantConstants.TRAN_DEL;
+			getFinCovenantTypeDAO().delete(aFinCovenantType, TableType.MAIN_TAB);
+		} else {
+			aFinCovenantType.setRoleCode("");
+			aFinCovenantType.setNextRoleCode("");
+			aFinCovenantType.setTaskId("");
+			aFinCovenantType.setNextTaskId("");
+			aFinCovenantType.setWorkflowId(0);
+
+			if (aFinCovenantType.getRecordType().equals(
+					PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
+				aFinCovenantType.setRecordType("");
+				getFinCovenantTypeDAO().save(aFinCovenantType, TableType.MAIN_TAB);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				aFinCovenantType.setRecordType("");
+				getFinCovenantTypeDAO().update(aFinCovenantType, TableType.MAIN_TAB);
+			}
+		}
+
+		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+
+		aAuditHeader.setAuditTranType(tranType);
+		aAuditHeader.getAuditDetail().setAuditTranType(tranType);
+		aAuditHeader.getAuditDetail().setModelData(aFinCovenantType);
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+		logger.debug("Leaving");
+		return aAuditHeader;
+	
+	}
+
+	@Override
+	public AuditHeader doReject(AuditHeader aAuditHeader) {
+		logger.debug("Entering");
+
+		aAuditHeader = businessValidation(aAuditHeader);
+		
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+
+		FinCovenantType aFinCovenantType = (FinCovenantType) aAuditHeader.getAuditDetail()
+				.getModelData();
+		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getFinCovenantTypeDAO().delete(aFinCovenantType, TableType.TEMP_TAB);
+
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+		logger.debug("Leaving");
+		return aAuditHeader;
+	}
+
+	@Override
+	public FinCovenantType getFinCovenantTypeById(String reference, String covenType, String type) {
+		return getFinCovenantTypeDAO().getCovenantTypeById(reference, covenType, type);
 	}
 
 

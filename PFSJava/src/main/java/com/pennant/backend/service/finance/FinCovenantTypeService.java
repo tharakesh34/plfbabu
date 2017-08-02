@@ -46,6 +46,7 @@ package com.pennant.backend.service.finance;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 
 public interface FinCovenantTypeService {
@@ -54,4 +55,9 @@ public interface FinCovenantTypeService {
 	List<AuditDetail> doApprove(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> delete(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> validate(List<FinCovenantType> finCovenantTypeDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	FinCovenantType getFinCovenantTypeById(String reference,String covenType,String type);
+	AuditHeader delete(AuditHeader aAuditHeader);
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader);
+	AuditHeader doApprove(AuditHeader aAuditHeader);
+	AuditHeader doReject(AuditHeader aAuditHeader);
 }
