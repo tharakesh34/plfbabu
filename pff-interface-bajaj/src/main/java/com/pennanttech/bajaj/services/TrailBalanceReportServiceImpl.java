@@ -51,7 +51,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	String UMSKZ;
 	String GSBER;
 	String APP_DFT_CURR;
-	String SAPGL_TBR_COMPANY;
+	String TRAIL_BALANCE_COMPANY_NAME;
 	int SAPGL_TRAN_RECORD_COUNT;
 
 	@Override
@@ -626,7 +626,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ID", headerId);
 		paramMap.addValue("FILENAME", fileName);
-		paramMap.addValue("COMPANYNAME", SAPGL_TBR_COMPANY);
+		paramMap.addValue("COMPANYNAME", TRAIL_BALANCE_COMPANY_NAME);
 		paramMap.addValue("REPORTNAME", "Trial Balance Report");
 		paramMap.addValue("STARTDATE", monthStartDate);
 		paramMap.addValue("ENDDATE", monthEndDate);
@@ -1001,7 +1001,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		sql.append(
 				" (SELECT SYSPARMVALUE APP_DFT_CURR FROM SMTPARAMETERS where SYSPARMCODE = :DFT_CURR) APP_DFT_CURR,");
 		sql.append(
-				" (SELECT SYSPARMVALUE SAPGL_TBR_COMPANY FROM SMTPARAMETERS where SYSPARMCODE = :COMPANY) SAPGL_TBR_COMPANY,");
+				" (SELECT SYSPARMVALUE TRAIL_BALANCE_COMPANY_NAME FROM SMTPARAMETERS where SYSPARMCODE = :COMPANY) TRAIL_BALANCE_COMPANY_NAME,");
 		sql.append(
 				" (SELECT SYSPARMVALUE SAPGL_TRAN_RECORD_COUNT FROM SMTPARAMETERS where SYSPARMCODE = :COUNT) SAPGL_TRAN_RECORD_COUNT");
 		sql.append(" from SMTPARAMETERS where SYSPARMCODE=:HKONT");
@@ -1015,7 +1015,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		paramMap.addValue("PRCTR", "PRCTR");
 		paramMap.addValue("KOSTL", "KOSTL");
 		paramMap.addValue("DFT_CURR", "APP_DFT_CURR");
-		paramMap.addValue("COMPANY", "SAPGL_TBR_COMPANY");
+		paramMap.addValue("COMPANY", "TRAIL_BALANCE_COMPANY_NAME");
 		paramMap.addValue("COUNT", "SAPGL_TRAN_RECORD_COUNT");
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
@@ -1030,7 +1030,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				PRCTR = rs.getString("PRCTR");
 				KOSTL = rs.getString("KOSTL");
 				APP_DFT_CURR = rs.getString("APP_DFT_CURR");
-				SAPGL_TBR_COMPANY = rs.getString("SAPGL_TBR_COMPANY");
+				TRAIL_BALANCE_COMPANY_NAME = rs.getString("TRAIL_BALANCE_COMPANY_NAME");
 				SAPGL_TRAN_RECORD_COUNT = rs.getInt("SAPGL_TRAN_RECORD_COUNT");
 			}
 		});

@@ -15771,9 +15771,17 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	
 	<changeSet id="782" author="Manoj">
 		<sql>
-			delete from SMTparameters where sysparmcode='NO_FUTURE_DAYS_DISB_DOWNLOAD';
-	      	insert into SMTparameters values('NO_FUTURE_DAYS_DISB_DOWNLOAD','Disbursement future days to allow for downlaod','int ',1,10,3,0,null,null,'Disbursement future days to allow for downlaod',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			<![CDATA[
+				delete from SMTparameters where sysparmcode='NO_FUTURE_DAYS_DISB_DOWNLOAD';
+	      		insert into SMTparameters values('NO_FUTURE_DAYS_DISB_DOWNLOAD','Disbursement future days to allow for downlaod','int ',1,10,3,0,null,null,'Disbursement future days to allow for downlaod',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	      	]]>
 		</sql>
-		
+	</changeSet>
+	<changeSet id="783" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update SMTPARAMETERS  set SYSPARMCODE = 'TRAIL_BALANCE_COMPANY_NAME' where SYSPARMCODE = 'SAPGL_TBR_COMPANY';
+	      	]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
