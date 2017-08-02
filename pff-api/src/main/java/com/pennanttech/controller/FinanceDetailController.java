@@ -344,7 +344,12 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			} else {
 				List<FinanceStepPolicyDetail> finStepDetails = finScheduleData.getStepPolicyDetails();
-				
+				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
+					@Override
+					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
+						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+					}
+				});
 				// method for prepare step installments
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
 			}
