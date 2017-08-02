@@ -789,7 +789,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Month End Date or Last installment which is Greater should be considered
 		Date mnthEndDate = DateUtility.getMonthEndDate(DateUtility.addMonths(currBussDate, -1));
 		if(mnthEndDate.compareTo(lastPaidDate) > 0){
-			lastPaidDate = mnthEndDate;
+			lastPaidDate = DateUtility.addDays(mnthEndDate,1);
 		}
 		
 		// Back Date Allowed Condition Check
