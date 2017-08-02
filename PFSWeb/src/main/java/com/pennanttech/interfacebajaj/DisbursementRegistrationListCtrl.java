@@ -45,6 +45,7 @@ package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +83,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -92,6 +94,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -176,9 +179,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-
+		int futureDays =  Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		java.util.Date date = DateUtility.getAppDate();
+		date = DateUtility.addDays(date,futureDays);
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
 		this.searchObject.addFilters(filter);
 
 		if (fromDate.getValue() != null) {
@@ -195,6 +200,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 	}
 
+	
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -239,6 +245,28 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
+	
+	
+	public void onChange$toDate(Event event) {
+		int futureDays =  Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
+		
+		if(this.fromDate.getValue()==null){
+			MessageUtil.showError("Please enter from date");
+			this.toDate.setValue(null);
+			return;
+		}
+		
+		Date date = DateUtility.addDays(this.fromDate.getValue(),futureDays);
+
+		
+		if (DateUtility.compare(this.toDate.getValue(),DateUtility.addDays(this.fromDate.getValue(), futureDays)) > 0) {
+			this.toDate.setConstraint(new PTDateValidator("To Date",
+					true, fromDate.getValue() ,date, true));
+		} 
+		//doRemoveValidation();
+		this.toDate.getValue();
+	}
+
 
 	private void doSetFieldProperties() {
 
@@ -501,6 +529,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		logger.debug("Entering ");
 		this.partnerBank.setConstraint("");
 		this.finType.setConstraint("");
+		this.toDate.setConstraint("");
 
 		logger.debug("Leaving ");
 	}
