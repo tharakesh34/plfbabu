@@ -15784,4 +15784,9 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	      	]]>
 		</sql>
 	</changeSet>
+	<changeSet id="784" author="Siva">
+		<sql>
+			Update FinreceiptHeader_Temp SET rcdmaintainsts = 'R' WHERE Recordtype = 'NEW';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
