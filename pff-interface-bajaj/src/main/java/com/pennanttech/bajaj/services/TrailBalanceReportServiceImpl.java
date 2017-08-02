@@ -31,7 +31,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	private final Logger logger = Logger.getLogger(getClass());
 
 	private long userId;
-	private Date valueDate = null;
 	private Date glDate = null;
 	private Date monthStartDate = null;
 	private Date monthEndDate = null;
@@ -948,8 +947,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 		monthStartDate = DateUtil.getMonthStart(glDate);
 		monthEndDate = DateUtil.getMonthEnd(glDate);
-
-		valueDate = getValueDate();
 	}
 
 	private Date getLastRunDate() throws Exception {
@@ -1181,9 +1178,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			try {
 				DataEngineExport dataEngine = null;
 				logger.info("Generating Transaction Detail Report ..");
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
 						BajajInterfaceConstants.GL_TRANSACTION_EXPORT);
-				dataEngine.setValueDate(valueDate);
 				dataEngine.exportData("GL_TRANSACTION_EXPORT");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -1197,9 +1193,8 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			try {
 				logger.info("Generating Transaction Summary Report ..");
 				DataEngineExport dataEngine = null;
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
 						BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT);
-				dataEngine.setValueDate(valueDate);
 				dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -1214,7 +1209,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 				logger.info("Generating Trail Balance Report ..");
 				DataEngineExport dataEngine = null;
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
 						BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
 
 				Map<String, Object> parameterMap = new HashMap<>();
@@ -1236,7 +1231,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 				parameterMap.put("CURRENCY", APP_DFT_CURR + " - " + APP_DFT_CURR);
 
 				dataEngine.setParameterMap(parameterMap);
-				dataEngine.setValueDate(valueDate);
 				dataEngine.exportData("GL_TRAIL_BALANCE_EXPORT");
 
 			} catch (Exception e) {
