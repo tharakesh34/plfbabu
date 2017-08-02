@@ -1178,7 +1178,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			try {
 				DataEngineExport dataEngine = null;
 				logger.info("Generating Transaction Detail Report ..");
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
 						BajajInterfaceConstants.GL_TRANSACTION_EXPORT);
 				dataEngine.exportData("GL_TRANSACTION_EXPORT");
 			} catch (Exception e) {
@@ -1193,7 +1193,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			try {
 				logger.info("Generating Transaction Summary Report ..");
 				DataEngineExport dataEngine = null;
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
 						BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT);
 				dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 			} catch (Exception e) {
@@ -1209,7 +1209,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 
 				logger.info("Generating Trail Balance Report ..");
 				DataEngineExport dataEngine = null;
-				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getAppDate(),
+				dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
 						BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
 
 				Map<String, Object> parameterMap = new HashMap<>();
