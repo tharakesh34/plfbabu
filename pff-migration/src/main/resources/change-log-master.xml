@@ -63,4 +63,5 @@
 	<include file="change-logs/change-log-3.13.0.xml" />
 	<include file="change-logs/change-log-3.14.0.xml" />
 	<include file="change-logs/change-log-3.15.0.xml" />
+	<include file="change-logs/change-log-3.16.0.xml" />
 </databaseChangeLog>
