@@ -15965,5 +15965,18 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	        Insert into REPORTLIST values ('FinCovenantTypes','FinCovenantTypes','listheader_CovenantReference.label,listheader_CovenantType.label,listheader_ALwWaiver.label,listheader_PostDoc.label','finReference,covenantType,alwWaiver,alwPostpone','String,String,boolean,boolean',' ','ReportList04','Covenant Details','Loan Management',2,1001,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 </changeSet>
+
+
+<changeSet author="Manoj" id="787">
+	<dropPrimaryKey tableName="DM_ADDRESS_DETAILS" constraintName="PK_DM_ADD_CUSTID"/>
+</changeSet>
+
+<changeSet author="Manoj" id="788">
+	<dropPrimaryKey tableName="DM_APPLICANT_DETAILS" constraintName="PK_DM_APP_CUSTID"/>
+</changeSet>	
+
+<changeSet author="Manoj" id="789">
+	<dropPrimaryKey tableName="DM_APPLICATION_DETAILS" constraintName="PK_DM_APD_APPID"/>
+</changeSet>
 	
 </databaseChangeLog>
