@@ -368,6 +368,13 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				btnCancel.setVisible(false);
 			}
 		}
+		
+		if(enqModule){
+			this.btnNew.setVisible(false);
+			this.btnEdit.setVisible(false);
+			this.btnDelete.setVisible(false);
+			this.btnSave.setVisible(false);
+		}
 
 		try {
 
@@ -454,12 +461,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCovenantTypeDialog_btnSave"));
-		} else {
-			this.btnNew.setVisible(false);
-			this.btnEdit.setVisible(false);
-			this.btnDelete.setVisible(false);
-			this.btnSave.setVisible(false);
-		}
+		} 
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -477,7 +479,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.covenantType.setValueColumn("DocTypeCode");
 		this.covenantType.setDescColumn("DocTypeDesc");
 		this.covenantType.setValidateColumns(new String[] { "DocTypeCode" });
-
+		
 		this.mandRole.setMaxlength(100);
 		this.mandRole.setTextBoxWidth(151);
 		this.mandRole.setMandatoryStyle(true);
