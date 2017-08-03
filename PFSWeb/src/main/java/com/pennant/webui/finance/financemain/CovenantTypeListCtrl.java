@@ -246,6 +246,11 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 		search();
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		searchObject.addWhereClause("finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory)");
+	}
 	/**
 	 * When user clicks on "fromWorkFlow"
 	 * 
