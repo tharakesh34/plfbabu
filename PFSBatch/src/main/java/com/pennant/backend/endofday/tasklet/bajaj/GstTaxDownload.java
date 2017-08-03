@@ -69,7 +69,7 @@ public class GstTaxDownload implements Tasklet {
 
 			}
 
-			Date appDate = DateUtility.getAppValueDate();
+			Date appDate = DateUtility.getAppDate();
 			Date monthEndDate = DateUtility.getMonthEndDate(appDate);
 			String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
 
