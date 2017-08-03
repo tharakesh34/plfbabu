@@ -13,9 +13,10 @@ public class TestPosidexResponseService {
 	PosidexResponseService responceService;
 
 	@Before
-	public void startAHI() {
+	public void start() {
+		ApplicationContext context = null;
 		try {
-			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			responceService = context.getBean(PosidexResponseService.class);
 		} catch (Exception e) {
 			e.printStackTrace();

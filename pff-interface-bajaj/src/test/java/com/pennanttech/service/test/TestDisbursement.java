@@ -16,10 +16,11 @@ public class TestDisbursement {
 	private DisbursementRequestService	disbursementRequestService;
 
 	@Before
-	public void startAHI() {
+	public void start() {
+		ApplicationContext context = null;
 		try {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		disbursementRequestService = context.getBean(DisbursementRequestService.class);
+			context  = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			disbursementRequestService = context.getBean(DisbursementRequestService.class);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

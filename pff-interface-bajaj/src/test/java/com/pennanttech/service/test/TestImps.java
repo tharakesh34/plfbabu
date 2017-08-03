@@ -18,9 +18,10 @@ public class TestImps {
 	private DataSource dataSource;
 
 	@Before
-	public void startAHI() {
+	public void start() {
+		ApplicationContext context = null;
 		try {
-			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			dataSource = (DataSource) context.getBean("dataSource");
 		} catch (Exception e) {
 			e.printStackTrace();

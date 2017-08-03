@@ -7,12 +7,13 @@ import org.testng.annotations.Test;
 import com.pennanttech.pff.core.services.TrailBalanceReportService;
 
 public class TestSAPGL {
-	private TrailBalanceReportService	trailBalanceReport;
+	private TrailBalanceReportService trailBalanceReport;
 
 	@BeforeTest
-	public void startAHI() {
+	public void start() {
+		ApplicationContext context = null;
 		try {
-			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			trailBalanceReport = context.getBean(TrailBalanceReportService.class);
 		} catch (Exception e) {
 			e.printStackTrace();
