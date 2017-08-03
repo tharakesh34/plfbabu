@@ -79,7 +79,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 		super.moduleCode = "FinCovenantTypes";
 		super.pageRightName = "FinCovenantTypeList";
 		super.tableName = "FinCovenantType_AView";
-		super.queueTableName = "FinCovenantType_View";
+		super.queueTableName = "FinCovenantType_AView";
 		super.enquiryTableName = "FinCovenantType_View";
 	}
 
