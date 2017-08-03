@@ -482,7 +482,7 @@ public class RepaymentProcessUtil {
 						}
 
 						HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
-						if(!feesExecuted){
+						if(!feesExecuted && StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
 							feesExecuted = true;
 							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList);
 						}
@@ -558,14 +558,18 @@ public class RepaymentProcessUtil {
 					logScheduleData.setFinanceScheduleDetails(scheduleDetails);
 					listSave(logScheduleData, "_Log", logKey);
 				}
-				if(feesExecuted){
-					finFeeDetailList = null;
+
+				boolean executeFeesNow = false;
+				if(!feesExecuted && (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) ||
+						(!StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
+								StringUtils.equals(receiptHeader.getReceiptPurpose(), repayHeader.getFinEvent())))){
+					executeFeesNow = true;
 				}
 				
 				String accEvent = getEventCode(repayHeader.getFinEvent());
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, finFeeDetailList, pftDetailTemp, repaySchdList,
+				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, (executeFeesNow ? finFeeDetailList : null), pftDetailTemp, repaySchdList,
 						accEvent, valueDate,postingDate, receiptDetail, receiptHeader.getPostBranch(), executePftChg);
 				
 				if(StringUtils.equals(accEvent, AccountEventConstants.ACCEVENT_EARLYPAY)){
@@ -574,7 +578,9 @@ public class RepaymentProcessUtil {
 					executePftChg = false;
 				}
 
-				feesExecuted = true;
+				if(executeFeesNow){
+					feesExecuted = true;
+				}
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
 					throw new InterfaceException("9999", errParm);

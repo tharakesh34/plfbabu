@@ -4571,7 +4571,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 
 					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
-					if(!feesExecuted){
+					if(!feesExecuted && StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
 						feesExecuted = true;
 						prepareFeeRulesMap(amountCodes, dataMap,receiptDetail.getPaymentType());
 					}
@@ -4661,7 +4661,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
-				if(!feesExecuted){
+				if(!feesExecuted && (StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) ||
+						(!StringUtils.equals(getReceiptHeader().getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
+								StringUtils.equals(getReceiptHeader().getReceiptPurpose(), repayHeader.getFinEvent())))){
 					feesExecuted = true;
 					prepareFeeRulesMap(amountCodes, dataMap,receiptDetail.getPaymentType());
 				}
