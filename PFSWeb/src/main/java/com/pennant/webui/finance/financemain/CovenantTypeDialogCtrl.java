@@ -467,6 +467,14 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		if (!this.finReference.isReadonly()){
 			this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCovenantTypeDialog_FinReference.value"),null,true, true));
 		}
+		
+		if (!this.covenantType.isReadonly()) {
+			this.covenantType.setConstraint(new PTStringValidator(Labels.getLabel("label_CovenantSearch_CovenantType.value"),null,true, true));
+		}
+
+		if (!this.mandRole.isReadonly()) {
+			this.mandRole.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCovenantTypeDialog_MandRole.value"),null,true, true));
+		}
 		if (!this.description.isReadonly()) {
 			this.description.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FinCovenantTypeDialog_Description.value"), null, false));
