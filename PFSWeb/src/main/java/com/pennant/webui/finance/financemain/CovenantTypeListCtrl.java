@@ -107,6 +107,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 				Operators.BOOLEAN);
 		registerField("alwPostpone", listheader_PostDoc, SortOrder.NONE, postDoc, sortOperator_postDoc,
 				Operators.BOOLEAN);
+		registerField("covenantTypeDesc");
 
 		// Render the page and display the data.
 		doRenderPage();

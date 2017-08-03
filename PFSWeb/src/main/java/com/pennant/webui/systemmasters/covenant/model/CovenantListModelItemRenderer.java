@@ -26,7 +26,7 @@ public class CovenantListModelItemRenderer implements ListitemRenderer<FinCovena
 		Listcell lc;
 		lc = new Listcell(finCovenantType.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(finCovenantType.getCovenantType());
+		lc = new Listcell(finCovenantType.getCovenantType()+"-"+finCovenantType.getCovenantTypeDesc());
 		lc.setParent(item);
 		lc = new Listcell();
 		final Checkbox alwWaiver = new Checkbox();
