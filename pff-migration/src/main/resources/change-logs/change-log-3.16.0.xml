@@ -25,5 +25,16 @@
 	        delete from smtparameters where sysparmcode in('GCD_CUSTOMER_DRIVER','GCD_CUSTOMER_URL','GCD_CUSTOMER_USERNAME','GCD_CUSTOMER_PWD');
 		</sql>
 </changeSet>
-	  
+ <changeSet id="02" author="Madhubabu">
+	    <sql>
+delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastdue') and fieldid='3';
+delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastduebyCustomer') and fieldid='3';
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastdue'),3,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastduebyCustomer'),3,'CustCIF','LOVSEARCH','Customer Number','CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	  </sql>
+	  </changeSet>
 </databaseChangeLog>
