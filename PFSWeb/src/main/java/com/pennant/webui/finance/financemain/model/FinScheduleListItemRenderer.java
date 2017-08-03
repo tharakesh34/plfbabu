@@ -719,7 +719,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate() && 
-					getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
+					getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0 && 
+					DateUtility.compare(getFinanceScheduleDetail().getSchDate(), getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && 
 						getFinanceScheduleDetail().getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) == 0) {
@@ -1705,7 +1706,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate() && 
-					getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
+					getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0 && 
+					DateUtility.compare(getFinanceScheduleDetail().getSchDate(), getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && 
 						getFinanceScheduleDetail().getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) == 0) {

@@ -164,6 +164,7 @@ import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryServic
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
@@ -1040,15 +1041,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		
-		percentageFees(); 
-		
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnReceipt.setDisabled(true);
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
 		
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		setAutoAllocationPayments();
+		//setAutoAllocationPayments();
+		percentageFees(false); 
 		
 		logger.debug("Leaving");
 	}
@@ -1070,7 +1070,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
 		
 		// Check Auto Allocation Process existence
-		setAutoAllocationPayments();
+		setAutoAllocationPayments(true);
 		
 		logger.debug("Leaving");
 	}
@@ -1183,7 +1183,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		paidAllocationMap = new HashMap<>();
 		
 		// Check Auto Allocation Process existence
-		setAutoAllocationPayments();
+		setAutoAllocationPayments(true);
 		
 		logger.debug("Leaving");
 	}
@@ -1191,7 +1191,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Resetting totals based on Modifications in Screen
 	 */
-	public void resetFeeAmounts(){
+	public void resetFeeAmounts(Boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
 		
 		BigDecimal feeToBePaid = BigDecimal.ZERO;
@@ -1200,7 +1200,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
 		}
 		
-		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(isFeeConsiderOnAmount);
 		BigDecimal totReceivable = BigDecimal.ZERO;
 		if(totReceiptAmount.compareTo(BigDecimal.ZERO) > 0){
 			totReceivable = totReceiptAmount.add(feeToBePaid);
@@ -1329,7 +1329,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			makeFeeRender = true;
 		}
 		
-		feesRecalculation(makeFeeRender);
+		feesRecalculation(makeFeeRender, false);
 		
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1440,7 +1440,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 	}
 
-	private void feesRecalculation(boolean makeFeeRender) throws InterruptedException {
+	private void feesRecalculation(boolean makeFeeRender, boolean isFeeConsiderOnAmount) throws InterruptedException {
 		logger.debug("Entering");
 		
 		List<FinTypeFees> finTypeFeesList = null;
@@ -1503,11 +1503,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
 		getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetails);
 		
+		// To set Payment details by default using Auto Allocation mode , if exists
+		setAutoAllocationPayments(isFeeConsiderOnAmount);
+		
 		//Fee Details Tab Addition
 		appendFeeDetailTab(makeFeeRender);
-		
-		// To set Payment details by default using Auto Allocation mode , if exists
-		setAutoAllocationPayments();
 		
 		logger.debug("Leaving");
 	}
@@ -1674,7 +1674,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Due to changes in Receipt Amount, call Auto Allocations
 		if(isUserAction){
-			setAutoAllocationPayments();
+			setAutoAllocationPayments(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -1692,9 +1692,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocationDetailsTab.setDisabled(false);
 		//waivedAllocationMap = new HashMap<>();
 		if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
-			setAutoAllocationPayments();
+			setAutoAllocationPayments(true);
 		}else if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
-			doFillAllocationDetail(null, null, true);
+			doFillAllocationDetail(null, null, true, true);
 		}else{
 			this.allocationDetailsTab.setDisabled(true);
 		}
@@ -1753,7 +1753,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Allocation Details recalculation
 	 */
-	private void setAutoAllocationPayments(){
+	private void setAutoAllocationPayments(boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
 		
 		this.allocationMethod.setConstraint("");
@@ -1780,15 +1780,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		receiptData.setAccruedTillLBD(schData.getFinanceMain().getLovDescAccruedTillLBD());
 		receiptData.setFinanceDetail(getFinanceDetail());
-		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(isFeeConsiderOnAmount);
 		receiptData.setTotReceiptAmount(totReceiptAmount);
 		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, valueDate, tempReceiptPurpose, false));
 
-		doFillAllocationDetail(null, null, false);
+		doFillAllocationDetail(null, null, false, isFeeConsiderOnAmount);
 		
 		// Allocation Process start
 		if(!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
-			resetFeeAmounts();
+			resetFeeAmounts(isFeeConsiderOnAmount);
 			logger.debug("Leaving");
 			return;
 		}
@@ -1807,8 +1807,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		doFillAllocationDetail(null, paidAllocatedMap, true);
-		resetFeeAmounts();
+		doFillAllocationDetail(null, paidAllocatedMap, true, isFeeConsiderOnAmount);
+		resetFeeAmounts(isFeeConsiderOnAmount);
 		
 		logger.debug("Leaving");
 	}
@@ -2677,7 +2677,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		Events.sendEvent("onFulfill", this.receiptAmount, null);
 		
-		feesRecalculation(true);
+		//feesRecalculation(true);
 		
 		logger.debug("Leaving" + event.toString());
 	}
@@ -3140,7 +3140,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		doFillAllocationDetail(header.getAllocations(), null, false);
+		doFillAllocationDetail(header.getAllocations(), null, false,true);
 
 		// Only In case of partial settlement process, Display details for effective Schedule
 		boolean visibleSchdTab = true;
@@ -3396,7 +3396,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param header
 	 * @param allocatePaidMap
 	 */
-	private void doFillAllocationDetail(List<ReceiptAllocationDetail> allocations, Map<String, BigDecimal> allocatePaidMap, boolean isUserAction){
+	private void doFillAllocationDetail(List<ReceiptAllocationDetail> allocations, Map<String, BigDecimal> allocatePaidMap, boolean isUserAction, boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
 		
 		// Allocation Details & Manual Advises
@@ -3610,7 +3610,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Setting Valid Components to open based upon Remaining Balance
-		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
+		BigDecimal totReceiptAmount = getTotalReceiptAmount(isFeeConsiderOnAmount);
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaidAmount).subtract(totalAdvPaidAmount);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
@@ -3742,7 +3742,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onExcessPayableAmountChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
 		
-		percentageFees();
+		percentageFees(false);
 		
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		
@@ -3764,29 +3764,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		excessBal.setValue(PennantApplicationUtil.amountFormate(bal, finFormatter));
 		
 		// Setting Auto Allocation Process
-		setAutoAllocationPayments();
+		setAutoAllocationPayments(true);
 		
 		logger.debug("Leaving");
 	}
 
-	private void percentageFees() throws InterruptedException {
+	private void percentageFees(boolean isFeeConsiderOnAmount) throws InterruptedException {
 		logger.debug("Entering");
 		
 		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
-			boolean recalculation = false;
-
-			for (FinFeeDetail finFeeDeatil : finFeeDetails) {
-				if (StringUtils.equals(finFeeDeatil.getCalculateOn(), PennantConstants.FEE_CALCULATEDON_PAYAMOUNT) ||
-						StringUtils.equals(finFeeDeatil.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_RULE)) {
-					recalculation = true;
-					break;
-				}
-			}
-			
-			if (recalculation) {
-				feesRecalculation(true);
-			}
+			feesRecalculation(true, isFeeConsiderOnAmount);
 		}
 		
 		logger.debug("Leaving");
@@ -3872,7 +3860,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Render total List box on Change of Amounts
-		doFillAllocationDetail(null, allocateTypePaidMap, true);
+		doFillAllocationDetail(null, allocateTypePaidMap, true, true);
 		
 		logger.debug("Leaving");
 	}
@@ -6009,6 +5997,68 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * 
+	 * @throws InterruptedException
+	 */
+	protected void appendFeeDetailTab(boolean isLoadProcess) throws InterruptedException {
+		logger.debug("Entering");
+		
+		try {
+			Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+			
+			if (tab == null) {
+				createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
+				tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+				Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_FEE);
+				if (tabPanel != null) {
+					tabPanel.getChildren().clear();
+				}
+
+				HashMap<String, Object> map = getDefaultArguments();
+				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
+				map.put("moduleDefiner", this.moduleDefiner);
+				map.put("eventCode", eventCode);
+				map.put("isReceiptsProcess", isReceiptsProcess);
+				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
+			} 
+			
+			tab.setVisible(isLoadProcess);
+			
+			if (isLoadProcess) {
+				if (getFinFeeDetailListCtrl() != null) {
+					getFinFeeDetailListCtrl().setEventCode(eventCode);
+					getFinFeeDetailListCtrl().setReceiptsProcess(isReceiptsProcess);
+					financeDetail.getFinScheduleData().setFeeEvent(eventCode);
+					getFinFeeDetailListCtrl().doWriteBeanToComponents(financeDetail);
+				}
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		
+		logger.debug("Leaving");
+	}
+	
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+	
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+	
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+	
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
 	// ******************************************************//

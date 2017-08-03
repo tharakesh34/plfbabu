@@ -422,10 +422,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
-
+				
+				boolean receiptFlag = false;
+				if (isReceiptsProcess && this.financeMainDialogCtrl != null && this.financeMainDialogCtrl instanceof ReceiptDialogCtrl) {
+					isReceiptsProcess = false;
+					receiptFlag = true;
+				}
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
 				financeDetail.getFinScheduleData().getFinFeeDetailList().addAll(originationFeeList);
 
+				if (receiptFlag) {
+					isReceiptsProcess = true;
+				}
+				
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 			} else {
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
@@ -1516,7 +1525,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		// To Reset Totals
 		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
-				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts").invoke(getFinanceMainDialogCtrl());
+				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts",Boolean.class).invoke(getFinanceMainDialogCtrl(), true);
 			} catch (Exception e) {
 				logger.info(e);
 			}
@@ -2581,4 +2590,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public void setFeeRuleDetailsMap(Map<String, FeeRule> feeRuleDetailsMap) {
 		this.feeRuleDetailsMap = feeRuleDetailsMap;
 	}
+	
+	public boolean isReceiptsProcess() {
+		return isReceiptsProcess;
+	}
+
+	public void setReceiptsProcess(boolean isReceiptsProcess) {
+		this.isReceiptsProcess = isReceiptsProcess;
+	}
+
 }
