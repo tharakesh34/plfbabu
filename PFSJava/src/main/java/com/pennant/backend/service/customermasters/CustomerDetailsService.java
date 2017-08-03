@@ -92,4 +92,6 @@ public interface CustomerDetailsService {
 
 	Customer checkCustomerByCIF(String cif, String type);
 
+	int updateCustCRCPR(String custDocTitle,long custID);
+
 }

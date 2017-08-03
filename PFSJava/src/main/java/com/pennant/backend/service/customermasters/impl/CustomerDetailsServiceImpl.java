@@ -1659,6 +1659,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
+		} else {
+			ErrorDetails errorDetail = new ErrorDetails();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Address Details";
+			valueParm[1] = "Address";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 
 		// customer Phone details
@@ -1728,6 +1736,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
+		} else {
+			ErrorDetails errorDetail = new ErrorDetails();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Phone Details";
+			valueParm[1] = "Phone";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 
 		// customer Email details
@@ -5105,7 +5121,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR) {
 		return customerDAO.isDuplicateCrcpr(custId, custCRCPR);
 	}
-
+	@Override
+	public int updateCustCRCPR(String custDocTitle,long custID) {
+		return customerDAO.updateCustCRCPR(custDocTitle,custID);
+	}
 	@Override
 	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
 		logger.debug("Entering");

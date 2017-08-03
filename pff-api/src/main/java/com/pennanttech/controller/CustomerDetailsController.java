@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 
@@ -1437,6 +1438,9 @@ public class CustomerDetailsController {
 				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
 			}
 		} else {
+			if(StringUtils.equals(customerDocument.getCustDocCategory(), "03")){
+			customerDetailsService.updateCustCRCPR(customerDocument.getCustDocTitle(),customerDocument.getCustID());
+			}
 			response = APIErrorHandlerService.getSuccessStatus();
 		}
 		}catch(Exception e){

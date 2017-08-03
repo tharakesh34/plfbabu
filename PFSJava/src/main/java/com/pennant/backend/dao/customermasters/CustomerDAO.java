@@ -172,4 +172,6 @@ public interface CustomerDAO {
 
 	List<Customer> getCustomerByGroupID(long custGroupID);
 
+	int updateCustCRCPR(String custDocTitle,long custID);
+
 }

@@ -1875,5 +1875,26 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		return list;
 	}
+
+	@Override
+	public int updateCustCRCPR(String custDocTitle, long custID) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustCRCPR(custDocTitle);
+		customer.setCustID(custID);
+		StringBuilder updateSql = new StringBuilder("Update Customers");
+		updateSql.append(" Set CustCRCPR=:CustCRCPR");
+		updateSql.append(" Where CustID =:CustID");
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+		return recordCount;
+
+	}
 	
 }	

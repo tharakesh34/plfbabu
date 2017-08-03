@@ -161,8 +161,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
 		// customer validations
+		Customer customer = null;
 		if (StringUtils.isNotBlank(customerDetails.getCustCIF())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
+			customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDetails.getCustCIF();
