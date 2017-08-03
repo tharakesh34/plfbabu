@@ -36,7 +36,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SystemMaster/Covenant/CovenantList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/CovenantType.zul file.
  */
 public class CovenantTypeListCtrl extends GFCBaseListCtrl<FinCovenantType> {
 	private static final long serialVersionUID = 5327118548986437717L;

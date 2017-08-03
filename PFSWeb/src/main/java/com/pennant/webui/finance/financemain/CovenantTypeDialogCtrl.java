@@ -47,7 +47,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/SystemMaster/Academic/AcademicDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/CovenantTypeDialog.zul file. <br>
  * ************************************************************<br>
  */
 public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
@@ -273,7 +273,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param academic
+	 * @param finCovenantType
 	 * 
 	 */
 	public void doWriteBeanToComponents(FinCovenantType finCovenantType) {
@@ -345,7 +345,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aAcademic
+	 * @param aFinCovenantType
 	 */
 	public void doWriteComponentsToBean(FinCovenantType aFinCovenantType) {
 		logger.debug("Entering");
@@ -423,7 +423,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
+	 * @param finCovenantType
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(FinCovenantType finCovenantType) {
@@ -534,7 +534,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 	
 	/**
-	 * Deletes a Academic entity from database.<br>
+	 * Deletes a FinCovenantType entity from database.<br>
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -666,7 +666,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		// force validation, if on, than execute by component.getValue()
 		// ************************************************************
 		doSetValidation();
-		// fill the Academic object with the components data
+		// fill the FinCovenantType object with the components data
 		doWriteComponentsToBean(aFinCovenantType);
 
 		// Write the additional validations as per below example
@@ -712,8 +712,8 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAcademic
-	 *            (Academic)
+	 * @param aFinCovenantType
+	 *            (FinCovenantType)
 	 * 
 	 * @param tranType
 	 *            (String)
