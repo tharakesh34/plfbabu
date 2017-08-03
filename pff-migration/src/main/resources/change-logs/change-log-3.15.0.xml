@@ -15992,4 +15992,10 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 <changeSet author="Manoj" id="792">
 	<dropPrimaryKey tableName="DM_HTS_UNADJUSTED_AMT" constraintName="PK_DM_HTS_UNA"/>
 </changeSet>
+ <changeSet id="790" author="Madhubabu">
+    <sql>
+    	 delete from errordetails where errorcode='99017';
+   		 INSERT INTO ErrorDetails VALUES('99017','EN','E','For Agreement No :{0} the {1} length Should be :{2}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+   		 </sql>
+    </changeSet>
 </databaseChangeLog>
