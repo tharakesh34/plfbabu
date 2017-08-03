@@ -705,6 +705,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerPhoneNumber prvCustomerPhoneNumber = customerPhoneNumberService.getApprovedCustomerPhoneNumberById(
 				customerPhoneNumber.getPhoneCustID(), customerPhoneNumber.getPhoneTypeCode());
 		if (prvCustomerPhoneNumber != null) {
+			if (prvCustomerPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "cannot delete";
+				valueParm[1] = "Phone";
+				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerPhoneNumber(customerPhoneNumber);
 		} else {
@@ -886,6 +893,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerAddres prvCustomerAddres = customerAddresService.getApprovedCustomerAddresById(
 				customerAddres.getCustID(), customerAddres.getCustAddrType());
 		if (prvCustomerAddres != null) {
+			if (prvCustomerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "cannot delete";
+				valueParm[1] = "Address";
+				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerAddress(customerAddres);
 		} else {
