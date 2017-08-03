@@ -3,11 +3,10 @@ package com.pennanttech.service.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pff.core.services.DisbursementRequestService;
 
@@ -15,7 +14,7 @@ public class TestDisbursement {
 
 	private DisbursementRequestService	disbursementRequestService;
 
-	@Before
+	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;
 		try {
@@ -26,7 +25,7 @@ public class TestDisbursement {
 		}
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			

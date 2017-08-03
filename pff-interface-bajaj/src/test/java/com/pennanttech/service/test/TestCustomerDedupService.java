@@ -4,9 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
-
+import org.testng.annotations.Test;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -20,7 +18,7 @@ public class TestCustomerDedupService {
 
 	SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
 
-	@Test
+	@Test(enabled=false)
 	public void testRequest() throws ParseException {
 		CustomerDedupService service = new CustomerDedupService();
 		DedupCustomerDetail customerDetails = new DedupCustomerDetail();
@@ -70,7 +68,7 @@ public class TestCustomerDedupService {
 		
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void testCust1()  throws ParseException {
 		CustomerDedupService service = new CustomerDedupService();
 		DedupCustomerDetail customerDetails = new DedupCustomerDetail();
@@ -120,7 +118,7 @@ public class TestCustomerDedupService {
 		
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void testCust2()  throws ParseException {
 		CustomerDedupService service = new CustomerDedupService();
 		DedupCustomerDetail customerDetails = new DedupCustomerDetail();

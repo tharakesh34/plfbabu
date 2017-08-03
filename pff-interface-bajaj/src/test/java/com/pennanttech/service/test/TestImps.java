@@ -1,23 +1,20 @@
 package com.pennanttech.service.test;
 
+import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class TestImps {
 
 	private DataSource dataSource;
 
-	@Before
+	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;
 		try {
@@ -28,7 +25,7 @@ public class TestImps {
 		}
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, new Long(1000),

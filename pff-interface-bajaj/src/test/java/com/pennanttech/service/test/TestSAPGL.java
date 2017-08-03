@@ -20,7 +20,7 @@ public class TestSAPGL {
 		}
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			trailBalanceReport.generateReport(new Long(1000));

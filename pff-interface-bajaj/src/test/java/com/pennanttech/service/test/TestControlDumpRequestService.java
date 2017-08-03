@@ -23,7 +23,7 @@ public class TestControlDumpRequestService {
 		}
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			

@@ -22,7 +22,7 @@ public class TestDataMart {
 		} 
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			dataMartRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());

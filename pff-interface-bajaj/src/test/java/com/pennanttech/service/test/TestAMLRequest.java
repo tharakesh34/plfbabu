@@ -28,7 +28,7 @@ public class TestAMLRequest {
 		}
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			almRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), projectedAccrualProcess);
