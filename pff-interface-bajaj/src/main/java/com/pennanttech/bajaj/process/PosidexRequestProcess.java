@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -102,23 +101,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		TransactionStatus txnStatus = null;
 		transDef.setTimeout(180);
 		for (PosidexCustomer customer : customers.values()) {
-			long start = System.currentTimeMillis();
-			long end = System.currentTimeMillis();
 			txnStatus = transManager.getTransaction(transDef);
 			try {
 				saveOrUpdate(customer);
-				successCount++;
+				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS.setSuccessRecords(successCount++);
 				transManager.commit(txnStatus);
-				end = System.currentTimeMillis();
-				
-				logger.info("Time take: "+TimeUnit.MILLISECONDS.toSeconds(end-start));
 			} catch (Exception e) {
 				transManager.rollback(txnStatus);
 				saveBatchLog(String.valueOf(customer.getCustomerNo()), "F", e.getMessage());
-				failedCount++;
+				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS.setFailedRecords(failedCount++);
 				logger.error(Literal.EXCEPTION, e);
 			} finally {
-				processedCount++;
+				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS.setProcessedRecords(processedCount++);
 				txnStatus.flush();
 				txnStatus = null;
 			}
@@ -285,7 +279,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" REGISTRATION_NO=:RegistrationNo,");
 		sql.append(" CA_NUMBER=:CaNumber,");
 		sql.append(" SEGMENT=:Segment");
-		sql.append(" WHERE CustomerNo = :CustomerNo");
+		sql.append(" WHERE CUSTOMER_NO = :CustomerNo");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
 		jdbcTemplate.update(sql.toString(), beanParameters);
@@ -294,8 +288,35 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private void save(PosidexCustomerAddress address, boolean stage) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Insert into ").append(CUSTOMER_ADDR_DETAILS);
-		sql.append(" values (");
+		sql.append("INSERT INTO ");
+		sql.append(CUSTOMER_ADDR_DETAILS).append("(");
+		sql.append(" BatchID,");
+		sql.append(" CUSTOMER_NO,");
+		sql.append(" SOURCE_SYS_ID,");
+		sql.append(" SEGMENT,");
+		sql.append(" ADDRESS_TYPE,");
+		sql.append(" ADDRESS_1,");
+		sql.append(" ADDRESS_2,");
+		sql.append(" ADDRESS_3,");
+		sql.append(" STATE,");
+		sql.append(" CITY,");
+		sql.append(" PIN,");
+		sql.append(" LANDLINE_1,");
+		sql.append(" LANDLINE_2,");
+		sql.append(" MOBILE,");
+		sql.append(" AREA,");
+		sql.append(" LANDMARK,");
+		sql.append(" STD,");
+		sql.append(" PROCESS_TYPE,");
+		sql.append(" EMAIL,");
+		sql.append(" PROCESS_FLAG,");
+		sql.append(" ERROR_CODE,");
+		sql.append(" ERROR_DESC,");
+		sql.append(" CUSTOMER_ID,");
+		sql.append(" SOURCE_SYSTEM,");
+		sql.append(" PSX_BATCH_ID,");
+		sql.append(" EOD_BATCH_ID ");
+		sql.append(" ) VALUES (");
 		sql.append(" :BatchID,");
 		sql.append(" :CustomerNo,");
 		sql.append(" :SourceSysId,");
@@ -314,7 +335,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" :Landmark,");
 		sql.append(" :Std,");
 		sql.append(" :ProcessType,");
-		sql.append(" :EMail,");
+		sql.append(" :Email,");
 		sql.append(" :ProcessFlag,");
 		sql.append(" :ErrorCode,");
 		sql.append(" :ErrorDesc,");
@@ -325,7 +346,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(address);
-
+		
 		if (stage) {
 			jdbcTemplate.update(sql.toString(), beanParameters);
 		} else {
@@ -356,7 +377,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" LANDMARK=:Landmark,");
 		sql.append(" STD=:Std,");
 		sql.append(" PROCESS_TYPE=:ProcessType,");
-		sql.append(" EMAIL=:EMail,");
+		sql.append(" EMAIL=:Email,");
 		sql.append(" PROCESS_FLAG=:ProcessFlag,");
 		sql.append(" ERROR_CODE=:ErrorCode,");
 		sql.append(" ERROR_DESC=:ErrorDesc,");
@@ -367,6 +388,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE CUSTOMER_NO = :CustomerNo AND ADDRESS_TYPE=:Addresstype");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addresses);
+		
 		jdbcTemplate.update(sql.toString(), beanParameters);
 
 	}
@@ -623,8 +645,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						if(eMail == null) {
 							continue;
 						}
-						if (address.geteMail() == null) {
-							address.seteMail(eMail.getCustEMail());
+						if (address.getEmail() == null) {
+							address.setEmail(eMail.getCustEMail());
 							eMail = null;
 						}
 					}
