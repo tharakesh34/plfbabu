@@ -90,10 +90,7 @@ public class ReportUtil implements Serializable {
 					JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
 
 					//set virtualizer read only to optimize performance. must be set after print object has been generated
-					if(virtualizer!=null){
-						virtualizer.setReadOnly(true);
-					}
-
+					virtualizer.setReadOnly(true);
 
 					JRXlsExporter excelExporter = new JRXlsExporter();
 					excelExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
@@ -129,15 +126,17 @@ public class ReportUtil implements Serializable {
 					virtualizer.cleanup();
 				}
 					
-			}else{
-				//MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}
+			
+			/*else{
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+			}*/
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			if(!bulkReportProc){
-				//MessageUtil.showErrorMessage("Error in Configuring the " +reportName+ " report");
-			}
+			/*if(!bulkReportProc){
+				MessageUtil.showErrorMessage("Error in Configuring the " +reportName+ " report");
+			}*/
 			return false;
 		}finally{
 			reportSrc = null;

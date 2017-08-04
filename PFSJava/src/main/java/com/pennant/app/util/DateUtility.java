@@ -176,6 +176,9 @@ public final class DateUtility extends DateUtil {
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
 		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
+		}
 		return new Date(uDate.getTime());
 	}
 
@@ -186,6 +189,9 @@ public final class DateUtility extends DateUtil {
 			uDate = df.parse(date);
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
+		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
 	}
@@ -240,6 +246,9 @@ public final class DateUtility extends DateUtil {
 			uDate = df.parse(temp);
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
+		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
 	}

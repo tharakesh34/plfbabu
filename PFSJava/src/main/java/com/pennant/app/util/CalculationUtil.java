@@ -395,8 +395,8 @@ public class CalculationUtil implements Serializable {
 			toCcy = localCcy;
 		}
 
-		Currency fromCurrency = null;
-		Currency toCurrency = null;
+		Currency fromCurrency = new Currency();
+		Currency toCurrency = new Currency();
 		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {

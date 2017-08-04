@@ -396,11 +396,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					if (i != 0
 							&& StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, scheduleData.getFinanceType()
 									.getFinCategory())) {
-						curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? prvSchd
-								.getAdvPftRate() : BigDecimal.ZERO);
-						curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
-						curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? BigDecimal.ZERO
-								: prvSchd.getAdvMargin());
+						if(prvSchd != null){
+							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? prvSchd
+									.getAdvPftRate() : BigDecimal.ZERO);
+							curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
+							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? BigDecimal.ZERO
+									: prvSchd.getAdvMargin());
+						}
 					}
 
 				}

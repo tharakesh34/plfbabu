@@ -61,6 +61,7 @@ public class CalendarUpdation implements Tasklet {
 
 	private AccountsDAO accountsDAO;
 	private CalendarInterfaceService calendarInterfaceService;
+	boolean COREBANK_CALENDAR_REQ = false;
 
 
 	public CalendarUpdation() {
@@ -70,8 +71,6 @@ public class CalendarUpdation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		
-		boolean coreBankCalReq = false;
-		
 		// Date Parameter List
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: CalendarUpdation for Value Date: " + valueDate);
@@ -80,7 +79,7 @@ public class CalendarUpdation implements Tasklet {
 			getAccountsDAO().updateAccrualBalance(); 
 
 			//Calendar Updation from Core Bank only When Flag becomes TRUE
-			if(coreBankCalReq){
+			if(COREBANK_CALENDAR_REQ){
 				getCalendarInterfaceService().calendarUpdate();
 			}else{
 				//BETTER TO MAKE SURE NEXT BUSINESS DATE AND COONFIRM WITH EOD USER

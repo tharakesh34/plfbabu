@@ -355,6 +355,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
+			stmt.close();
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);

@@ -294,6 +294,9 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		List<FeeRule> feeRules = existFeeList;
+		if(feeRules == null){
+			feeRules = new ArrayList<>();
+		}
 		String ruleEvent = (String) dataMap.get("ae_finEvent");
 		if (ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)) {
 			ruleEvent = AccountEventConstants.ACCEVENT_ADDDBS;
@@ -384,7 +387,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 		aeEvent.setDataMap(dataMap);
 
-		if (transactionEntries != null && transactionEntries.size() > 0) {
+		if (!transactionEntries.isEmpty()) {
 			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
 

@@ -80,10 +80,8 @@ public class PDFConversion implements IFieldMergingCallback{
 		}
 
 		finally {
-			if (iis != null) {
-				iis.close();
-				reader.dispose();
-			}
+			iis.close();
+			reader.dispose();
 		}
 
 		doc.save(outputFileName);

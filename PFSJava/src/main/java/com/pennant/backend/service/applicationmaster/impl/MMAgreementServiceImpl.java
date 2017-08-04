@@ -296,9 +296,7 @@ public class MMAgreementServiceImpl extends GenericService<MMAgreement> implemen
 			tempMMAgreement = getmMAgreementDAO().getMMAgreementById(aMMAgreement.getMMAId(),
 					 "_Temp");
 		}
-		MMAgreement befMMAgreement = getmMAgreementDAO().getMMAgreementById(aMMAgreement.getMMAId(),"");
-		befMMAgreement = getmMAgreementDAO().getMMAgreementByMMARef(aMMAgreement.getMMAReference(),"");
-
+		MMAgreement befMMAgreement = getmMAgreementDAO().getMMAgreementByMMARef(aMMAgreement.getMMAReference(),"");
 		MMAgreement oldMMAgreement = aMMAgreement.getBefImage();
 
 		String[] valueParm = new String[1];
