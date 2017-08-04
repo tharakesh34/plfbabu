@@ -154,4 +154,117 @@ update reportfilterfields set FieldDbname='T1.FinIsActive'
 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RepaymentsProcessedToday') and fieldid=3;
 </sql>
 	  </changeSet>
+	   	  <changeSet id="10" author="pruthvi">
+	    <sql> 
+	    update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_DetailListofFINandINV';
+
+update reportfilterfields set FieldDbname='T3.FinDivision'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=9;
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=1;
+
+update reportfilterfields set FieldDbname='T1.FinType'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=3;
+
+update reportfilterfields set FieldDbname='T1.FinStartDate'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=5;
+
+update reportfilterfields set FieldDbname='T1.MaturityDate'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=6;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DetailListofFINandINV') and fieldid=8;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="11" author="pruthvi">
+	    <sql> 
+	    update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_FinByMaturity';
+
+
+update reportfilterfields set FieldDbname='T2.FinDivision'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=9;
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=1;
+
+update reportfilterfields set FieldDbname='T1.FinType'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=3;
+
+update reportfilterfields set FieldDbname='T1.FinStartDate'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=5;
+
+update reportfilterfields set FieldDbname='T1.MaturityDate'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=6;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FinByMaturity') and fieldid=8;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="12" author="pruthvi">
+	    <sql> 
+	    update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_Presentment';
+
+update reportfilterfields set FieldDbname='PRD.FinReference'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment') and fieldid=1;
+
+update reportfilterfields set FieldDbname='PRD.status'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment') and fieldid=2;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="13" author="pruthvi">
+	    <sql> 
+	    update reportfilterfields set FieldDbname='t.fintype'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PendingFinances') and fieldid=1;
+	    
+	    </sql>
+	  </changeSet>
+	   <changeSet id="14" author="pruthvi">
+	    <sql> 
+	    update reportfilterfields set FieldDbname='T5.rulecode'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid=2;
+
+update reportfilterfields set FieldDbname='T7.Branchcode'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_CLLIMITMIS') and fieldid=3;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="15" author="pruthvi">
+	    <sql> 
+	    update reportfilterfields set FieldDbname='T4.custid'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER') and fieldid=1;
+
+update reportfilterfields set FieldDbname='T1.fintype'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER') and fieldid=2;
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_TERMLOANTRACKER') and fieldid=3;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="16" author="pruthvi">
+	    <sql> 
+	    update reportfilterfields set FieldDbname='fpd.fintype'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT') and fieldid=1;
+
+update reportfilterfields set FieldDbname='fpd.FinReference'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT') and fieldid=2;
+
+update reportfilterfields set FieldDbname='fdd.DisbDate'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_DAILYDISBURSALREPORT') and fieldid=3;
+	    </sql>
+	  </changeSet>
+	   <changeSet id="17" author="pruthvi">
+	    <sql> 
+	    update reportfilterfields set FieldDbname='P.finreference'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=2;
+
+update reportfilterfields set FieldDbname='FM.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=3;
+
+update reportfilterfields set FieldDbname='FM.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=4;
+
+update reportfilterfields set FieldDbname='Fm.fintype'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=5;
+	    </sql>
+	  </changeSet>
 </databaseChangeLog>
