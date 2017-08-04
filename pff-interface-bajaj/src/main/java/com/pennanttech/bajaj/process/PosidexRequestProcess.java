@@ -55,7 +55,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private int batchSize = 50000;
 	private MapSqlParameterSource paramMa = null;
-	private boolean localUpdate = false;
+	private boolean localUpdate = true;
 
 	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
@@ -487,6 +487,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 					if (customer.getProcessType() == null) {
 						customer.setProcessType("I");
+					} else {
+						customer.setProcessType("U");
 					}
 
 					if ("RETAIL".equals(customer.getApplicantType())) {
