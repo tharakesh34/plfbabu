@@ -287,8 +287,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" SEGMENT=:Segment");
 		sql.append(" WHERE CustomerNo = :CustomerNo");
 
-		sql.append(")");
-
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
 		jdbcTemplate.update(sql.toString(), beanParameters);
 
