@@ -18,7 +18,7 @@ public class PosidexCustomerAddress extends Posidex implements Serializable {
 	private String area;
 	private String landmark;
 	private String std;
-	private String eMail;
+	private String email;
 
 	public PosidexCustomerAddress() {
 
@@ -128,16 +128,12 @@ public class PosidexCustomerAddress extends Posidex implements Serializable {
 		this.std = std;
 	}
 
-	public String geteMail() {
-		return eMail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void seteMail(String eMail) {
-		this.eMail = eMail;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }
