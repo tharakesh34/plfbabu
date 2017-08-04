@@ -423,6 +423,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.customerListCtrl.buildDialogWindow(customerDetails, newRecord);
 			}
 			this.window_CoreCustomer.onClose();
+		} catch (WrongValueException wve) {
+			throw wve;
 		} catch (WrongValuesException wve) {
 			throw wve;
 		} catch (InterfaceException pfe) {
