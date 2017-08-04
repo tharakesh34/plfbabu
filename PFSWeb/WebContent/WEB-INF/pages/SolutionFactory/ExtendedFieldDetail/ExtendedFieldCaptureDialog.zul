@@ -26,7 +26,7 @@
 									tooltiptext="${c:l('btnEdit.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									sclass="z-toolbarbutton" />
-								<button id="btnDelete" visible="false"
+								<button id="btnDelete" label="${c:l('btnDelete.label')}"
 									tooltiptext="${c:l('btnDelete.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 									sclass="z-toolbarbutton" />
