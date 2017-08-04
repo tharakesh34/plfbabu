@@ -2691,7 +2691,8 @@ public class ScheduleCalculator {
 				finMain.setLastRepay(curSchd.getRepayAmount());
 			}
 
-			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
+			if ((curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) && 
+					!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				instNumber = instNumber + 1;
 				curSchd.setInstNumber(instNumber);
 			} else {
@@ -2822,6 +2823,7 @@ public class ScheduleCalculator {
 			finScheduleData = prepareFirstSchdCal(finScheduleData);
 
 			if (finMain.isStepFinance()) {
+				finScheduleData = adjustBPISchd(finScheduleData);
 				finScheduleData = setFinanceTotals(finScheduleData);
 				logger.debug("Leaving");
 				return finScheduleData;
