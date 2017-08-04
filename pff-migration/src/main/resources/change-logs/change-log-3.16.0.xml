@@ -49,4 +49,109 @@ values ((select reportid from reportconfiguration where menuitemcode='menu_Item_
 	
 	  </sql>
 	  </changeSet>
+	   <changeSet id="04" author="pruthvi">
+	    <sql>
+	  update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_Postings';
+
+update reportfilterfields set Fielddbname='B.BranchCode' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=1;
+
+update reportfilterfields set Fielddbname='P.Account' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=3;
+
+update reportfilterfields set Fielddbname='F.FinType' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=5;
+
+update reportfilterfields set Fielddbname='P.FinEvent' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=6;
+
+update reportfilterfields set Fielddbname='P.PostStatus' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=7;
+
+update reportfilterfields set Fielddbname='P.FinReference' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=8;
+
+update reportfilterfields set Fielddbname='F.FinIsActive' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=9;
+
+update reportfilterfields set Fielddbname='T2.FinDivision' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=10;
+
+update reportfilterfields set Fielddbname='P.PostDate' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=11;
+</sql>
+	  </changeSet>
+	  <changeSet id="05" author="pruthvi">
+	    <sql>
+	  update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_Install_Due_Today';
+
+update reportfilterfields set Fielddbname='FinBranch' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Install_Due_Today') and fieldid=1;
+
+update reportfilterfields set Fielddbname='FM.FinType' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Install_Due_Today') and fieldid=2;
+
+update reportfilterfields set Fielddbname='FS.FinReference' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Install_Due_Today') and fieldid=3;
+
+update reportfilterfields set Fielddbname='FM.FinIsActive' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Install_Due_Today') and fieldid=5;
+</sql>
+	  </changeSet>
+	   <changeSet id="06" author="pruthvi">
+	    <sql>
+	  update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_Finances_Opened_Today';
+
+update reportfilterfields set Fielddbname='A.FinBranch' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid=1;
+
+update reportfilterfields set Fielddbname='A.FinType' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid=2;
+
+update reportfilterfields set Fielddbname='A.FinStartDate' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid=3;
+
+update reportfilterfields set Fielddbname='T1.FinDivision' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid=4;
+
+update reportfilterfields set Fielddbname='C.CustCIF' where reportid in
+(select reportid from reportconfiguration where menuitemcode='menu_Item_Finances_Opened_Today') and fieldid=5;
+</sql>
+	  </changeSet>
+	  <changeSet id="07" author="pruthvi">
+	    <sql>
+update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_RateReviewDue';
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RateReviewDue') and fieldid=1;
+
+update reportfilterfields set FieldDbname='CurODDays'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RateReviewDue') and fieldid=2;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RateReviewDue') and fieldid=3;
+</sql>
+	  </changeSet>
+	  	  <changeSet id="08" author="pruthvi">
+	    <sql>
+update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_RepaymentsToBeDoneToday';
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RepaymentsToBeDoneToday') and fieldid=1;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RepaymentsToBeDoneToday') and fieldid=3;
+</sql>
+	  </changeSet>
+	  	  	  <changeSet id="09" author="pruthvi">
+	    <sql>
+update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_RepaymentsProcessedToday';
+
+update reportfilterfields set FieldDbname='T1.FinBranch'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RepaymentsProcessedToday') and fieldid=1;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_RepaymentsProcessedToday') and fieldid=3;
+</sql>
+	  </changeSet>
 </databaseChangeLog>
