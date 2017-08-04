@@ -6393,7 +6393,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				
 				//both step and EMI holiday not allowed
-				if (financeType.isPlanEMIHAlw()) {
+				if (this.alwPlannedEmiHoliday.isChecked()) {
 					errorList.add(new ErrorDetails("30573", null));
 				}	
 				
