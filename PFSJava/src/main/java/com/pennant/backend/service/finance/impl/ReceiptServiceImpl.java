@@ -1996,7 +1996,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			List<FinanceScheduleDetail> scheduleList = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
 			for(FinanceScheduleDetail curSchd: scheduleList) {
 				if(DateUtility.compare(curSchd.getSchDate(), curBussniessDate) == 0) {
-					curSchd.setPartialPaidAmt(partPaidAmt);
+					curSchd.setPartialPaidAmt(curSchd.getPartialPaidAmt().add(partPaidAmt));
 				}
 			}
 			
