@@ -1,6 +1,5 @@
 package com.pennanttech.framework.web;
 
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -437,7 +435,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID)
-			throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
+			throws FactoryConfigurationError {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 
@@ -448,7 +446,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID, String roleCode)
-			throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
+			throws FactoryConfigurationError {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 
