@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.UnhandledException;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -121,7 +120,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * FROM TAXDOWNLOADDETAIL_GST_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" SELECT * FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
 		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
 
 		parmMap.addValue("FROMDATE", fromDate);
@@ -134,7 +133,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
-				System.out.println("-----------------------------------"+rs.getString("FINREFERENCE"));
+				
 				recordCount++;
 				taxDownload = mapTrnExtractionTypeData(rs, id);
 				list.add(taxDownload);
@@ -152,7 +151,6 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			list.clear();
 		}
 		logger.debug(Literal.LEAVING);
-		//throw new UnhandledException(new Throwable());
 	}
 
 	private void processSumExtractionTypeData(long id) {
@@ -683,7 +681,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		sql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
 		sql.append(" BranchFax, BranchTel, BranchSwiftBrnCde, BranchIsActive,");
 		sql.append(" BankRefNo, BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode ");
-		sql.append(" From RMTBranches_GST ");
+		sql.append(" From RMTBranches ");
 
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
 
@@ -709,7 +707,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,");
 		selectSql.append(" BankRefNo,CPIsActive," );
 		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea " );		
-		selectSql.append(" FROM  RMTCountryVsProvince_GST");
+		selectSql.append(" FROM  RMTCountryVsProvince");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		
@@ -737,7 +735,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, country, stateCode, entityCode, taxCode, addressLine1, ");
 		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode ");
-		sql.append(" From TaxDetail_GST ");
+		sql.append(" From TaxDetail ");
 
 		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
 
@@ -759,7 +757,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		final Map<String, String> map = new HashMap<String, String>();
-		String sql = "SELECT COUNTRYCODE, COUNTRYDESC FROM BMTCOUNTRIES_GST";
+		String sql = "SELECT COUNTRYCODE, COUNTRYDESC FROM BMTCOUNTRIES";
 
 		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
 			public Map<String, String> extractData(ResultSet rs) throws SQLException {
@@ -782,7 +780,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		final Map<String, String> map = new HashMap<String, String>();
-		String sql = "SELECT PCCITY, PCCITYNAME FROM RMTPROVINCEVSCITY_GST";
+		String sql = "SELECT PCCITY, PCCITYNAME FROM RMTPROVINCEVSCITY";
 
 		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
 			public Map<String, String> extractData(ResultSet rs) throws SQLException {
@@ -964,7 +962,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FROMDATE", fromDate);
 		source.addValue("TODATE", toDate);
-		jdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS_GST WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
+		jdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
 		source);
 
 		logger.debug(Literal.LEAVING);
