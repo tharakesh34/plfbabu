@@ -8,7 +8,7 @@ public class AuthKey {
 	@Test
 	public void generate() {
 		// Usage: user:<user name>:<password>
-		String authDetails = "user:admin:admin";
+		String authDetails = "user:admin:Pennant@123";
 		String authKey = Base64.encodeBase64String(authDetails.getBytes());
 
 		System.out.println(authKey);
