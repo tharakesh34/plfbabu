@@ -452,5 +452,19 @@ update reportfilterfields set FieldDbname='T1.FinIsActive'
 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue') and fieldid=7;
 	    </sql>
 	  </changeSet>
-	    	   
+	  
+<changeSet author="Srikanth" id="32">
+	<createTable tableName="APILOGDETAILS">
+		<column name="Reference" type="int" />
+		<column name="EndPoint" type="varchar(400)" />
+		<column name="Method" type="varchar(10)" />
+		<column name="Type" type="varchar(10)" />
+		<column name="ServiceName" type="varchar(200)" />
+		<column name="Authorization" type="varchar(100)" />
+		<column name="ClientIP" type="varchar(50)" />
+		<column name="ValueDate" type="datetime" />
+		<column name="PayLoad" type="clob" />
+		<column name="ResponseCode" type="varchar(10)" />
+	</createTable>
+</changeSet> 	   
 </databaseChangeLog>
