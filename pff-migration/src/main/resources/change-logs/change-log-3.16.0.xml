@@ -829,4 +829,7 @@ inner join FinScheduleDetails t2 on t1.finreference=t2.finreference]]>
 		  inner join financemain t2 on t1.finreference=t2.finreference]]>
 		</createView>
 	</changeSet>
+		<changeSet id="46" author="PRASAD">
+			<dropPrimaryKey tableName="DM_PROPERTY_DTL" constraintName="PK_DM_PD_APPID"/>
+	 </changeSet>
 </databaseChangeLog>
