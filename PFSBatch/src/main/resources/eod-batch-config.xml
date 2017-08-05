@@ -67,7 +67,9 @@
 			<fail on="FAILED" />
 		</step>
 		<step id="dataMart">
-			<tasklet ref="dataMartTaskLet" />
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="trailBalance" />
 			<fail on="FAILED" />
 		</step>
