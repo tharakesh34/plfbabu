@@ -161,7 +161,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		if (StringUtils.equals(mnadteType, "ECS")) {
 			map.addValue("INSTRUMENT_MODE", "E");
 		} else if (StringUtils.equals(mnadteType, "DDM")) {
-			map.addValue("INSTRUMENT_MODE", "D");
+			map.addValue("INSTRUMENT_MODE", "A");
 		} else if (StringUtils.equals(mnadteType, "NACH")) {
 			map.addValue("INSTRUMENT_MODE", "Z");
 		}
