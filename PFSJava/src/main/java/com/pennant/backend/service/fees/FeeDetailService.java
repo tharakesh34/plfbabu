@@ -285,7 +285,7 @@ public class FeeDetailService {
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
-			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100));
+			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 			//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
 			if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
 				String[] valueParm = new String[3];
@@ -368,7 +368,7 @@ public class FeeDetailService {
 		default:
 			break;
 		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100));
+		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
 		return calculatedAmt;
 	}
 	
