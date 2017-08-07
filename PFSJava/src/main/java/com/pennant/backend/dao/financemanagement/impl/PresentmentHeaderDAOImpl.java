@@ -45,6 +45,7 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -264,13 +265,14 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 
 	@Override
-	public ResultSet getPresentmentDetails(PresentmentHeader detailHeader) throws Exception {
+	public List<Object> getPresentmentDetails(PresentmentHeader detailHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		int index = 0;
+		List<Object> list = new ArrayList<Object>();
 		try {
 			sql = new StringBuilder();
 			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
@@ -355,11 +357,13 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			stmt.close();
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
-		return rs;
+		list.add(rs);
+		list.add(stmt);
+		
+		return list;
 	}
 
 	private java.sql.Date getDate(Date date) {

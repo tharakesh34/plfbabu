@@ -43,6 +43,7 @@
 package com.pennant.backend.service.financemanagement.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -209,8 +210,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		boolean isEmptyRecords = false;
 		Map<Date, Long> map = new HashMap<Date, Long>();
 		long presentmentId = 0;
+		ResultSet rs = null;
+		List<Object> resultList = null;
 		try {
-			ResultSet rs = presentmentHeaderDAO.getPresentmentDetails(header);
+			resultList = presentmentHeaderDAO.getPresentmentDetails(header);
+			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
 
 				PresentmentDetail pDetail = new PresentmentDetail();
@@ -289,6 +293,14 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			PreparedStatement stmt = (PreparedStatement) resultList.get(1);
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 		return PennantJavaUtil.getLabel("label_PresentmentExtractedMessage");
