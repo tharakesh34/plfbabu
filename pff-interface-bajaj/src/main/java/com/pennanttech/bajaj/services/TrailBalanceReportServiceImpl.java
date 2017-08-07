@@ -151,7 +151,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 	}
 
 	private void prepareTrailBalace() throws Exception {
-
 		// Get group code and description.
 		Map<String, TrailBalance> groups = getAccountDetails();
 		String key = null;
@@ -235,16 +234,26 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 		}
 		creditAmounts = null;
 
+		
 		// Calculate closing balance.
+		TrailBalance trialBalance;
+		BigDecimal openingBal;
 		for (Entry<String, TrailBalance> entry : dataMap.entrySet()) {
-			entry.getValue().setClosingBalance(entry.getValue().getOpeningBalance()
-					.subtract(entry.getValue().getDebitAmount()).add(entry.getValue().getCreditAmount()));
+			trialBalance = entry.getValue();
+			openingBal = trialBalance.getOpeningBalance();
 
-			if (entry.getValue().getClosingBalance().compareTo(BigDecimal.ZERO) < 0) {
-				entry.getValue().setClosingBalanceType("Dr");
-				entry.getValue().setClosingBalance(BigDecimal.ZERO.subtract(entry.getValue().getClosingBalance()));
+			if (trialBalance.getOpeningBalanceType().equals("Dr")) {
+				openingBal = openingBal.negate();
+			}
+
+			trialBalance.setClosingBalance(
+					openingBal.subtract(trialBalance.getDebitAmount()).add(trialBalance.getCreditAmount()));
+
+			if (trialBalance.getClosingBalance().compareTo(BigDecimal.ZERO) < 0) {
+				trialBalance.setClosingBalanceType("Dr");
+				trialBalance.setClosingBalance(trialBalance.getClosingBalance().abs());
 			} else {
-				entry.getValue().setClosingBalanceType("Cr");
+				trialBalance.setClosingBalanceType("Cr");
 			}
 		}
 
@@ -479,7 +488,7 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 					}
 				});
 	}
-
+	
 	private void saveTrailBalance(List<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -897,9 +906,13 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			// KOSTL && PRCTR cost and profit center details
 			TrailBalance trailBalance = ledgers.get(entry.getKey().split("-")[0]);
 			entry.getValue().setProfitCenter(trailBalance.getProfitCenter());
-
 			if (trailBalance.getProfitCenter() == null) {
 				entry.getValue().setProfitCenter(PRCTR);
+			}
+			
+			entry.getValue().setCostCenter(trailBalance.getCostCenter());
+			if (trailBalance.getCostCenter() == null) {
+				entry.getValue().setCostCenter(KOSTL);
 			}
 
 			entry.getValue().setBusinessUnit(states.get(entry.getKey().split("-")[1]));
@@ -910,7 +923,6 @@ public class TrailBalanceReportServiceImpl extends BajajService implements Trail
 			entry.getValue().setUmskz(UMSKZ);
 			entry.getValue().setBusinessArea(GSBER);
 
-			entry.getValue().setCostCenter(KOSTL);
 			entry.getValue().setNarration1(ZUONR);
 			entry.getValue().setNarration2(SGTXT);
 
