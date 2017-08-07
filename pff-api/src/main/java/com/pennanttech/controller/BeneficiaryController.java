@@ -80,7 +80,7 @@ public class BeneficiaryController {
 		}
 
 		logger.debug("Leaving");
-		PhaseInterceptorChain.getCurrentMessage().getExchange().put("APIHeader.API_HEADER_KEY",reqHeaderDetails);
+		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_HEADER_KEY,reqHeaderDetails);
 		return response;
 	}
 

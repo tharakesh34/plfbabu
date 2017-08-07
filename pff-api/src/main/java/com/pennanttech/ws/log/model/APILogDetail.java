@@ -1,42 +1,34 @@
-package com.pennant.app.util;
+package com.pennanttech.ws.log.model;
 
 import java.util.Date;
-import java.util.Map;
 
-public class APIHeader {
+public class APILogDetail {
 
-	// Private Variables
-	private String serviceName;
+	private int		reference;
+	private int 	type;
+	private String	endPoint;
+	private String	serviceName;
+	private String	method;
+	private String	authorization;
+	private String	serverIP;
+	private String	clientIP;
+	private Date	valueDate;
+	private String	responseCode;
+	private String	payLoad;
+	
+	//header Details
     private String serviceVersion;
-    private String entityId;
-    private String ipAddress;
+	private String entityId;
     private String channelId;
     private String userId;
     private String language;
     private String securityInfo;
     private String messageId;
     private Date requestTime;
-    private Map<String, String> additionalInfo;
     private String returnCode;
     private String returnDesc;
     private Date responseTime;
     
-    // Public Constants
-    public static final String API_HEADER_KEY = "HeaderKey";
-	public static final String API_AUTHORIZATION = "Authorization";
-	public static final String API_SERVICENAME = "ServiceName";
-	public static final String API_SERVICEVERSION = "ServiceVersion";
-	public static final String API_ENTITYID = "EntityId";
-	public static final String API_MESSAGEID = "MessageId";
-	public static final String API_LANGUAGE = "Language";
-	public static final String API_REQ_TIME = "RequestTime";
-	public static final String API_RES_TIME = "ResponseTime";
-	public static final String API_RETURNCODE = "ReturnCode";
-	public static final String API_RETURNDESC = "ReturnText";
-	public static final String API_LOG_KEY = "LogDetails";
-
-
-	/***** Setters / Getters ******/
 	
 	public String getServiceName() {
 		return serviceName;
@@ -46,7 +38,63 @@ public class APIHeader {
 		this.serviceName = serviceName;
 	}
 
-	public String getServiceVersion() {
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public String getAuthorization() {
+		return authorization;
+	}
+
+	public void setAuthorization(String authorization) {
+		this.authorization = authorization;
+	}
+
+	public String getServerIP() {
+		return serverIP;
+	}
+
+	public void setServerIP(String serverIP) {
+		this.serverIP = serverIP;
+	}
+
+	public String getClientIP() {
+		return clientIP;
+	}
+
+	public void setClientIP(String clientIP) {
+		this.clientIP = clientIP;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public String getResponseCode() {
+		return responseCode;
+	}
+
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
+	}
+
+	public String getPayLoad() {
+		return payLoad;
+	}
+
+	public void setPayLoad(String payLoad) {
+		this.payLoad = payLoad;
+	}
+
+    public String getServiceVersion() {
 		return serviceVersion;
 	}
 
@@ -62,7 +110,7 @@ public class APIHeader {
 		this.entityId = entityId;
 	}
 
-	
+
 	public String getChannelId() {
 		return channelId;
 	}
@@ -119,14 +167,6 @@ public class APIHeader {
 		this.returnCode = returnCode;
 	}
 
-	public Map<String, String> getAdditionalInfo() {
-		return additionalInfo;
-	}
-
-	public void setAdditionalInfo(Map<String, String> additionalInfo) {
-		this.additionalInfo = additionalInfo;
-	}
-
 	public String getReturnDesc() {
 		return returnDesc;
 	}
@@ -143,21 +183,27 @@ public class APIHeader {
 		this.responseTime = responseTime;
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
+	public int getType() {
+		return type;
 	}
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
+	public void setType(int type) {
+		this.type = type;
 	}
 
-	@Override
-	public String toString() {
-		return "APIHeader [serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", entityId="
-				+ entityId + ", ipAddress=" + ipAddress + ", channelId=" + channelId + ", userId=" + userId
-				+ ", language=" + language + ", securityInfo=" + securityInfo + ", messageId=" + messageId
-				+ ", requestTime=" + requestTime + ", additionalInfo=" + additionalInfo + ", returnCode=" + returnCode
-				+ ", returnDesc=" + returnDesc + ", responseTime=" + responseTime + "]";
+	public String getEndPoint() {
+		return endPoint;
 	}
-	
+
+	public void setEndPoint(String endPoint) {
+		this.endPoint = endPoint;
+	}
+
+	public int getReference() {
+		return reference;
+	}
+
+	public void setReference(int reference) {
+		this.reference = reference;
+	}
 }

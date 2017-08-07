@@ -12,6 +12,12 @@ import org.apache.cxf.io.CachedOutputStreamCallback;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.util.APILogDetailDAO;
+import com.pennanttech.util.TypeConstants;
+import com.pennanttech.ws.log.model.APILogDetail;
 
 /**
  * A simple logging handler to log the outgoing API response message details.
@@ -20,7 +26,7 @@ import org.apache.log4j.Logger;
 public class LogResponseInterceptor extends LoggingOutInterceptor {
 
 	private static final Logger LOG = Logger.getLogger(LogResponseInterceptor.class);
-
+	private APILogDetailDAO aPILogDetailDAO;
 	public LogResponseInterceptor() {
 		super(Phase.PRE_STREAM);
 	}
@@ -44,6 +50,10 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	@Override
 	protected java.util.logging.Logger getLogger() {
 		return LogUtils.getLogger(LogResponseInterceptor.class);
+	}
+	@Autowired
+	public void setaPILogDetailDAO(APILogDetailDAO aPILogDetailDAO) {
+		this.aPILogDetailDAO = aPILogDetailDAO;
 	}
 
 	private class LoggingCallback implements CachedOutputStreamCallback {
@@ -106,6 +116,13 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				// ignore
 			}
 			message.setContent(OutputStream.class, origStream);
+			APILogDetail apiLogDetail= new APILogDetail();
+			apiLogDetail.setReference(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
+			apiLogDetail.setResponseCode(String.valueOf(buffer.getResponseCode()));
+			apiLogDetail.setPayLoad(String.valueOf(buffer.getPayload()));
+			apiLogDetail.setValueDate(DateUtil.getSysDate());
+			apiLogDetail.setType(TypeConstants.RESPONSE.get());
+			aPILogDetailDAO.saveLogDetails(apiLogDetail);
 		}
 
 		private LoggingMessage setupBuffer(Message message) {
@@ -150,6 +167,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 			return buffer;
 		}
+		
 
 	}
 
