@@ -158,7 +158,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	protected String reportMenuCode;
 	private ReportConfiguration reportConfiguration;
 	private StringBuilder saticValuesWhereCondition = new StringBuilder();
-
+	private String parentFlag;
 	// NEEDED for the ReUse in the SearchWindow
 	protected Map<String, Object> lovSearchBufferMap = new HashMap<String, Object>(1);// It is For LovSearch selected
 																						// Values
@@ -189,7 +189,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	Window dialogWindow = null;
 	private Map<String, Object> valueMap = new HashMap<String, Object>();
 	private Map<String, Object> valueLabelMap = new HashMap<String, Object>();
-	private Map<String, Object> rendermMap= new HashMap<String, Object>();
+	private Map<String, Object> renderMap= new HashMap<String, Object>();
 
 	public ReportGenerationPromptDialogCtrl() {
 		super();
@@ -816,10 +816,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		String filter = "=";
 		StringBuilder whereCondition=null;
-		if(reportConfiguration.isWhereCondition()){
-		 whereCondition = new StringBuilder("where ");
-		}else{
-			whereCondition = new StringBuilder(" ");
+		if (reportConfiguration.isWhereCondition()) {
+			whereCondition = new StringBuilder("where ");
+		} else {
+			whereCondition = new StringBuilder("");
 		}
 		searchCriteriaDesc = new StringBuilder();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -1472,12 +1472,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * @param whereCondition
 	 */
 	private StringBuilder addAndCondition(StringBuilder whereCondition) {
-		if ("".equals(whereCondition.toString().trim())) {
+		if (("").equals(whereCondition.toString().trim())) {
 			whereCondition.append("and ");
-		}else{
-		if (!"where".equals(whereCondition.toString().trim()) && !("").equals(whereCondition.toString().trim())) {
-			whereCondition.append(" and ");
-		}
+		} else if (!"where".equals(whereCondition.toString().trim())
+				&& !("").equals(whereCondition.toString().trim())) {
+			whereCondition.append("and ");
 		}
 		return whereCondition;
 	}
@@ -2231,7 +2230,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	public void onClick$btnClear(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doClearComponents();
-		rendermMap.clear();
+		renderMap.clear();
 		valueMap.clear();
 		valueLabelMap.clear();
 		this.cbSelectTemplate.setValue(Labels.getLabel("Combo.Select"));
@@ -2296,6 +2295,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			valuesMap = null;
 		}
 	}
+	
+	
 	public void onComboFieldSelected(Event event) {
 		logger.debug("Entering" + event.toString());
 		
@@ -2329,6 +2330,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		try {
 			filters = doLovFilter(aReportFieldsDetails);
 		} catch (Exception e) {
+			logger.error("Exception: ", e);
 			MessageUtil.showError(e.getMessage());
 			return;
 		}
@@ -2380,17 +2382,26 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				String searchValue = null;
 				if ("FinanceMain".equals(aReportFieldsDetails.getModuleName())) {
 					searchValue = getUsrFinAuthenticationQry(false);
-				} 
-				  Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  "", filters, searchValue);
+				} else if (getParentFlag() != null && aReportFieldsDetails.getFilterFileds() != null) {
+					valuestextBox.setValue("");
+				}
+				  Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  valuestextBox.getValue(), filters, searchValue);
 				
 				 if (dataObject instanceof String) {
 					valuestextBox.setValue(dataObject.toString());
 					labelstextBox.setValue("");
+					doClearFields();
 				} else {
 					Object details = (Object) dataObject;
+
 					if (details != null) {
+						String tempValuestextBox = valuestextBox.getValue();
 						valuestextBox.setValue(details.getClass()
 								.getMethod(aReportFieldsDetails.getLovHiddenFieldMethod()).invoke(details).toString());
+
+						if (!tempValuestextBox.equals("")) {
+							setParentFlag(aReportFieldsDetails.getFieldDBName());
+						}
 						String label = details.getClass().getMethod(aReportFieldsDetails.getLovTextFieldMethod())
 								.invoke(details).toString();
 						labelstextBox.setValue(label);
@@ -2407,21 +2418,22 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Leaving" + event.toString());
 	}
 
+	
 	private Filter[] doLovFilter(ReportFilterFields aReportFieldsDetails) throws Exception {
 		logger.debug("Entering");
 		
 		Filter[] filters = null;
 		StringBuffer errBuffer = new StringBuffer();
-		rendermMap.putAll(valueMap);
-		rendermMap.putAll(valueLabelMap);
+		renderMap.putAll(valueMap);
+		renderMap.putAll(valueLabelMap);
 		if (StringUtils.trimToNull(aReportFieldsDetails.getFilterFileds()) != null) {
 			String[] filterFields = StringUtils.split(aReportFieldsDetails.getFilterFileds(), "|");
 			filters = new Filter[filterFields.length];
 			for (int i = 0; i < filterFields.length; i++) {
 				String[] fieldStr = StringUtils.split(filterFields[i], "@");
-				 Object valueObject = rendermMap.get(fieldStr[0]);
-				  
-				 if (valueObject == null || valueObject.equals("") || valueObject.equals("#")) {
+				Object valueObject = renderMap.get(fieldStr[0]);
+
+				if (valueObject == null || valueObject.equals("") || valueObject.equals("#")) {
 					if (StringUtils.trimToNull(errBuffer.toString()) != null) {
 						errBuffer.append("\n");
 					}
@@ -2434,6 +2446,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 			}
 		}
+
 		if (StringUtils.trimToNull(errBuffer.toString()) != null) {
 			throw new Exception(errBuffer.toString());
 		}
@@ -2591,6 +2604,28 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	}
 	
 	/**
+	 * Clear components
+	 * 
+	 * @throws Exception
+	 */
+	private void doClearFields() throws Exception {
+		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
+			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
+
+			if (aReportFieldsDetails.getFilterFileds() != null) {
+				String filedId = Long.toString(aReportFieldsDetails.getFieldID());
+				Component component = dymanicFieldsRows.getFellow(filedId);
+				Textbox textbox = (Textbox) component;
+				textbox.setValue("");
+				Textbox lovDisplayText = (Textbox) component.getNextSibling();
+				lovDisplayText.setValue("");
+				renderMap.clear();
+			}
+		}
+	}
+	
+	
+	/**
 	 * This method shows Message box with error message
 	 * 
 	 * @param e
@@ -2623,5 +2658,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	public void setUnitName(String unitName) {
 		this.unitName = unitName;
+	}
+
+	public String getParentFlag() {
+		return parentFlag;
+	}
+
+	public void setParentFlag(String parentFlag) {
+		this.parentFlag = parentFlag;
 	}
 }
