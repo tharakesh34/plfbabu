@@ -1319,7 +1319,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Product Code
 		if (!this.productCode.isReadonly()) {
 			this.productCode.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProductCode.value"), 
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		// Product Description
 		if (!this.productDesc.isReadonly()) {
