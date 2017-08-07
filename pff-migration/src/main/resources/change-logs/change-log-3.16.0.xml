@@ -1388,5 +1388,11 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 		left join (select receiptid,sum(WaivedAmount)PFTWaivedAmount from ReceiptAllocationDetail where allocationType = 'PFT' group by receiptid) t7 on  t7.receiptid=t5.receiptid  
 		left join (select receiptid,sum(WaivedAmount)ODCWaivedAmount from ReceiptAllocationDetail where allocationType = 'ODC' group by receiptid) t8 on  t8.receiptid=t5.receiptid
 	</createView>
-</changeSet>	
+</changeSet>
+<changeSet id="72" author="pruthvi">
+<sql>
+delete from reportfilterfields where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment')
+and fieldid='2';	
+</sql>
+</changeSet>
 </databaseChangeLog>
