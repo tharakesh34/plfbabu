@@ -864,6 +864,17 @@ inner join FinScheduleDetails t2 on t1.finreference=t2.finreference]]>
 	</createView>
 
 </changeSet>
+ <changeSet id="34" author="Pruthvi Raj">
+ <sql>
+ update reportfilterfields set FieldDbname='T.FinReference'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue') and fieldid=5;
 
+update reportfilterfields set FieldDbname='T6.FinDivision'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue') and fieldid=7;
+
+update reportfilterfields set FieldDbname='T1.FinIsActive'
+where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue') and fieldid=6;
+ </sql>
+ </changeSet>
 	 
 </databaseChangeLog>
