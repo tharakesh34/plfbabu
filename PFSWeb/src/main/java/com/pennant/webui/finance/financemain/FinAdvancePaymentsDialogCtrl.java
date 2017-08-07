@@ -1696,11 +1696,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_NeftDetails.setVisible(true);
 			gb_ChequeDetails.setVisible(false);
-			this.beneficiaryAccNo.setDisabled(true);
-			this.beneficiaryName.setDisabled(true);
-			this.phoneNumber.setDisabled(true);
-			this.bankBranchID.setReadonly(false);
-			this.bankBranchID.setButtonDisabled(true);
 			this.bankCode.setValue("");
 			this.bankCode.setDescription("");
 			this.liabilityHoldName.setValue("");
