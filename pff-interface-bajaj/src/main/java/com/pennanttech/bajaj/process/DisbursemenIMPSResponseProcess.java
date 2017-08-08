@@ -61,7 +61,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 			source.addValue("E", "E");
 			source.addValue("R", "R");
 
-			return this.jdbcTemplate.update(sql.toString(), source);
+			return this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -81,7 +81,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 			source.addValue("PROCESSFLAG", "Y");
 			source.addValue("RESP_BATCH_ID", batchId);
 
-			return this.jdbcTemplate.update(sql.toString(), source);
+			return this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

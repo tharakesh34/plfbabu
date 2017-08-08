@@ -112,7 +112,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 			paramMap.addValue("STATUS", "AC");
 			paramMap.addValue("PAYMENTID", paymentId);
 
-			return jdbcTemplate.update(sql.toString(), paramMap);
+			return parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -130,7 +130,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 			paramMap.addValue("BATCH_ID", batchId);
 			paramMap.addValue("ID", id);
 
-			return jdbcTemplate.update(sql.toString(), paramMap);
+			return parameterJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
