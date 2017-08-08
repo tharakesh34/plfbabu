@@ -1581,5 +1581,13 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
     <addPrimaryKey columnNames="CUSTOMERID,BATCH_ID" constraintName="PK_DM_APP_CID_BID" tableName="DM_APPLICANT_DETAILS"/>
 </changeSet>
 
-
+<changeSet  id="97" author="murthy.y">
+    <dropForeignKeyConstraint baseTableName="PSX_DEDUP_EOD_CUST_DEMO_DTL" constraintName="FK_PSX_CDD_PPC_BID"/>
+</changeSet>
+<changeSet  id="98" author="murthy.y">
+    <dropForeignKeyConstraint baseTableName="PSX_DEDUP_EOD_CUST_ADDR_DTL" constraintName="FK_PSX_CAD_PPC_BID"/>
+</changeSet>
+<changeSet  id="99" author="murthy.y">
+    <dropForeignKeyConstraint baseTableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" constraintName="FK_PSX_CLD_PPC_BID"/>
+</changeSet>
 </databaseChangeLog>
