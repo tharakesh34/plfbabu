@@ -622,6 +622,7 @@ public class ExtendedFieldsGenerator {
 				rateBox.setBaseProperties("BaseRateCode","BRType","BRTypeDesc");
 				rateBox.setSpecialProperties("SplRateCode","SRType","SRTypeDesc");
 				rateBox.setMandatoryStyle(detail.isFieldMandatory());
+				rateBox.setReadonly(isReadOnly);
 
 				//Data Setting 
 				if(fieldValueMap.containsKey(detail.getFieldName().concat("_BR")) &&

@@ -7477,10 +7477,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.hbox_planEmiMethod.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
 			this.row_PlanEmiHLockPeriod.setVisible(true);
-			this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
-			this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
-			this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
-			this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			if(isAction){
+				this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
+				this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
+				this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
+				this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			}
 			
 			if (planEmiHMType == null) {
 				setComboboxSelectedItem(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ);

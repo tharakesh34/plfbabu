@@ -861,7 +861,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptData.setFinanceDetail(getFinanceDetail());
 		
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
-		receiptData.setTotReceiptAmount(totReceiptAmount);
+		if (isChgReceipt) {
+			receiptData.setTotReceiptAmount(totReceiptAmount);
+		}else{
+			receiptData.setTotReceiptAmount(getReceiptHeader().getReceiptAmount().subtract(getReceiptHeader().getTotFeeAmount()));
+		}
+		
 		
 		receiptData = getReceiptCalculator().initiateReceipt(receiptData, aFinScheduleData, valueDate, getReceiptHeader().getReceiptPurpose(), false);
 		if(StringUtils.isEmpty(financeMain.getRcdMaintainSts())){
