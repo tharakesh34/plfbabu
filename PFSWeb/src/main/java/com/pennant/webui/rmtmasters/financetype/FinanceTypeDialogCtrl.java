@@ -6562,9 +6562,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void onClick$btnAlwVasProducts(Event event) throws Exception {
-		logger.debug("Entering  " + event.toString());
+		logger.debug("Entering");
+		
 		setVasProductDetails(true);
-		logger.debug("Leaving  " + event.toString());
+		
+		if (this.finTypeAccountingListCtrl != null ) {
+			boolean vasFlag = false;
+			if (StringUtils.isNotBlank(this.alwdVasProduct.getValue())) {
+				vasFlag = true;
+			}
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
+		}
+		
+		logger.debug("Leaving");
 	}
 
 	/**
