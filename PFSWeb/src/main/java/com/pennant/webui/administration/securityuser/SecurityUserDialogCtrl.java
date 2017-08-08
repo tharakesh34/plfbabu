@@ -1037,9 +1037,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.btnCancel.setVisible(true);
 			this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 			this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
+			this.usrLogin.setReadonly(true);
 		}
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
-		this.usrLogin.setReadonly(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));
