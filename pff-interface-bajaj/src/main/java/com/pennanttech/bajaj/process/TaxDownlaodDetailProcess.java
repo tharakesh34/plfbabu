@@ -1,14 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import com.pennant.backend.model.finance.TaxDownload;
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.Branch;
-import com.pennanttech.bajaj.model.Province;
-import com.pennanttech.bajaj.model.TaxDetail;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -28,6 +21,16 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.backend.model.finance.TaxDownload;
+import com.pennanttech.app.util.DateUtility;
+import com.pennanttech.bajaj.model.Branch;
+import com.pennanttech.bajaj.model.Province;
+import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.App;
 
 public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodDetailProcess.class);
@@ -959,8 +962,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FROMDATE", fromDate);
 		source.addValue("TODATE", toDate);
-		jdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
-		source);
+		parameterJdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE", source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -977,7 +979,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RECORDCOUNT", recordCnt);
 		source.addValue("ID", id);
-		jdbcTemplate.update("UPDATE TAXDOWNLOADHAEDER SET RECORDCOUNT = :RECORDCOUNT WHERE ID = :ID", source);
+		parameterJdbcTemplate.update("UPDATE TAXDOWNLOADHAEDER SET RECORDCOUNT = :RECORDCOUNT WHERE ID = :ID", source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1044,7 +1046,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private void clearTables() {
 		logger.debug(Literal.ENTERING);
 
-		jdbcTemplate.update("TRUNCATE TABLE POSTINGS_TAXDOWNLOAD", new MapSqlParameterSource());
+		parameterJdbcTemplate.update("TRUNCATE TABLE POSTINGS_TAXDOWNLOAD", new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
 	}
