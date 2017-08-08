@@ -1501,5 +1501,14 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		INSERT INTO SMTPARAMETERS VALUES ('LOAN_REFERENCE_IDENTIFIER','Loan reference number','String', 1,  'N','1',0, NULL, NULL,'Posidex dedup proceed',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
 </sql>
 </changeSet>
+<changeSet id="90" author="Irfan">
+<sql>
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINCOVENANTDETAIL_SER_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+</sql>
+</changeSet>
 
 </databaseChangeLog>
