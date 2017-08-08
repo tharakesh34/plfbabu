@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import com.pennanttech.pff.core.services.TrailBalanceReportService;
 
 public class TestSAPGL {
@@ -20,7 +21,7 @@ public class TestSAPGL {
 		}
 	}
 
-	@Test(enabled=false)
+	@Test(enabled = false)
 	public void process() {
 		try {
 			trailBalanceReport.generateReport(new Long(1000));
