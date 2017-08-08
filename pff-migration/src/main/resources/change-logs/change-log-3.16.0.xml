@@ -1520,4 +1520,35 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 </sql>
 </changeSet>
 
+<changeSet id="92" author="Manoj">
+	<sql>
+		<![CDATA[
+		delete from DM_APPLICANT_DETAILS;
+		delete from DM_ADDRESS_DETAILS;
+		delete from DM_APPLICATION_DETAILS;
+		delete from DM_BOUNCE_DETAILS;
+		delete from DM_COAPPLICANT_DETAILS;
+		delete from DM_DISB_DETAILS_DAILY;
+		delete from FORECLOSURECHARGES;
+		delete from DM_HTS_UNADJUSTED_AMT;
+		delete from DM_INSURANCE_DETAILS;
+		delete from DM_IVR_GATEWAY_FLEXI;
+		delete from DM_LEA_DOC_DTL;
+		delete from DM_LOAN_DETAILS_DAILY;
+		delete from DM_LOAN_VOUCHER_DETAILS;
+		delete from DM_LOANWISE_CHARGE_DETAILS;
+		delete from DM_LOANWISE_REPAYSCHD_DTLS;
+		delete from DM_NOC_ELIGIBLE_LOANS;
+		delete from DM_OPENECS_DETAILS;
+		delete from DM_PREPAYMENT_DETAILS;
+		delete from DM_PRESENTATION_DETAILS;
+		delete from DM_PROPERTY_DTL;
+		delete from DM_RESCH_DETAILS_DAILY;
+		delete from DM_SEND_SOA_EMAIL;
+		delete from DM_SUBQ_DISB_DETAILS;
+		delete from DM_WRITEOFF_DETAILS;
+		]]>
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
