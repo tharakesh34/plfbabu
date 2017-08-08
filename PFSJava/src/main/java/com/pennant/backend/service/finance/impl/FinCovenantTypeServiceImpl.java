@@ -265,10 +265,16 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		String[] fields = null;	
 		for (FinCovenantType finAdvancePay : finCovenantTypes) {
 			
-			if("doApprove".equals(method) && !StringUtils.trimToEmpty(finAdvancePay.getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED))  {
-				finAdvancePay.setWorkflowId(0);
-				finAdvancePay.setNewRecord(true);
-			} else {
+			if ("doApprove".equals(method) && !StringUtils.trimToEmpty(finAdvancePay.getRecordStatus())
+					.equals(PennantConstants.RCD_STATUS_SAVED)) {
+				if ("doApprove".equals(method) && !StringUtils.trimToEmpty(finAdvancePay.getRecordType())
+						.equals(PennantConstants.RECORD_TYPE_DEL)) {
+					finAdvancePay.setWorkflowId(0);
+					finAdvancePay.setNewRecord(true);
+				} else {
+					finAdvancePay.setWorkflowId(0);
+				}
+			}else {
 				finAdvancePay.setWorkflowId(workFlowId);
 			}
 			if (StringUtils.isEmpty(StringUtils.trimToEmpty(finAdvancePay.getRecordType()))) {
@@ -335,27 +341,28 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail,String usrLanguage,String method){
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-		FinCovenantType finAdvancePay = (FinCovenantType) auditDetail.getModelData();
+		FinCovenantType covenantType = (FinCovenantType) auditDetail.getModelData();
 		FinCovenantType tempFinAdvancePay= null;
-		if (finAdvancePay.isWorkflow()){
-			tempFinAdvancePay = getFinCovenantTypeDAO().getFinCovenantTypeById(finAdvancePay, "_Temp");
+		
+		if (covenantType.isWorkflow()){
+			tempFinAdvancePay = getFinCovenantTypeDAO().getFinCovenantTypeById(covenantType, "_Temp");
 		}
-		FinCovenantType befFinAdvancePay = getFinCovenantTypeDAO().getFinCovenantTypeById(finAdvancePay, "");
-		FinCovenantType oldFinAdvancePay= finAdvancePay.getBefImage();
+		FinCovenantType befFinAdvancePay = getFinCovenantTypeDAO().getFinCovenantTypeById(covenantType, "");
+		FinCovenantType oldFinAdvancePay= covenantType.getBefImage();
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
-		valueParm[0]= finAdvancePay.getFinReference();
+		valueParm[0]= covenantType.getFinReference();
 		errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
-		if (finAdvancePay.isNew()){ // for New record or new record into work flow
+		if (covenantType.isNew()){ // for New record or new record into work flow
 
-			if (!finAdvancePay.isWorkflow()){// With out Work flow only new records  
+			if (!covenantType.isWorkflow()){// With out Work flow only new records  
 				if (befFinAdvancePay !=null){	// Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 				}	
 			}else{ // with work flow
-				if (finAdvancePay.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
+				if (covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
 					if (befFinAdvancePay != null || tempFinAdvancePay!=null ){ // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,valueParm), usrLanguage));
 					}
@@ -367,7 +374,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 			}
 		}else{
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finAdvancePay.isWorkflow()){	// With out Work flow for update and delete
+			if (!covenantType.isWorkflow()){	// With out Work flow for update and delete
 
 				if (befFinAdvancePay ==null){ // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002", errParm,valueParm), usrLanguage));
@@ -394,7 +401,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !finAdvancePay.isWorkflow()){
+		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !covenantType.isWorkflow()){
 			auditDetail.setBefImage(befFinAdvancePay);	
 		}
 		return auditDetail;
@@ -429,7 +436,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		}
 		
 		//Mandate
-		financeDetail.setMandate(getMandateDAO().getMandateById(financeDetail.getFinScheduleData().getFinanceMain().getMandateID(), ""));
+		//financeDetail.setMandate(getMandateDAO().getMandateById(financeDetail.getFinScheduleData().getFinanceMain().getMandateID(), ""));
 
 		//Fin Covenant Type
 		

@@ -295,9 +295,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setCovenantTypeList(finCovenantTypesDetailList);
 		}
 		/*for (FinCovenantType finCovenantType : aFinanceDetail.getCovenantTypeList()) {
-			finCovenantType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			finCovenantType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			finCovenantType.setUserDetails(getUserWorkspace().getLoggedInUser());
+			finCovenantType.setWorkflowId(aFinanceDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 			
 		}*/
 
@@ -830,7 +828,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		final FinCovenantType aFinCovenantType = new FinCovenantType();
 		aFinCovenantType.setFinReference(financedetail.getFinScheduleData().getFinReference());
 		aFinCovenantType.setNewRecord(true);
-		aFinCovenantType.setWorkflowId(0);
+		aFinCovenantType.setWorkflowId(financedetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finCovenantTypes", aFinCovenantType);

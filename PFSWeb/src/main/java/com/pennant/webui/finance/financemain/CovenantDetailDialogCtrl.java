@@ -365,12 +365,12 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			} else {
 				this.btnCtrl.setInitEdit();
 				doReadOnly();
-				btnCancel.setVisible(false);
-				if(!getFinCovenantType().getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED) && !newRecord){
-					this.btnDelete.setVisible(true);
-				}else{
+				if(StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())){
 					this.btnDelete.setVisible(false);
+				}else{
+					this.btnDelete.setVisible(true);
 				}
+				btnCancel.setVisible(false);
 			}
 		}
 		
@@ -733,7 +733,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			}
 
 			try {
-				if (isNewCustomer()) {
+				
 					tranType = PennantConstants.TRAN_DEL;
 					AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
@@ -742,7 +742,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 						getCovenantDetailListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
 						closeDialog();
 					}
-				}
+				
 
 			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
