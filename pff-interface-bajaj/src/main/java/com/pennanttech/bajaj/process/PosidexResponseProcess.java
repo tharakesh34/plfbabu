@@ -98,7 +98,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 			sql = new StringBuilder();
 			sql.append("UPDATE CUSTOMERS SET CUSTADDLVAR1 = :CUSTADDLVAR1 WHERE CUSTID = :CUSTID");
 
-			this.jdbcTemplate.update(sql.toString(), custMap);
+			this.parameterJdbcTemplate.update(sql.toString(), custMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -111,7 +111,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 			sql = new StringBuilder();
 			sql.append(" UPDATE PSX_UCIN_REVERSE_FEED SET PROCESSED_FLAG = :PROCESSED_FLAG WHERE UCIN_NO = :UCIN_NO ");
 
-			this.jdbcTemplate.update(sql.toString(), dataMap);
+			this.parameterJdbcTemplate.update(sql.toString(), dataMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;

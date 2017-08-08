@@ -22,7 +22,7 @@ public class TestPosidexRequestService  {
 		}
 	}
 
-	@Test(enabled=false)
+	@Test(enabled=true)
 	public void process() {
 		try {
 			requestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());

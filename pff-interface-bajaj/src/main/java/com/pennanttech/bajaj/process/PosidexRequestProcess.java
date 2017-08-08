@@ -164,7 +164,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private void delete(PosidexCustomer cusotemr) throws Exception {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("CUST_ID", cusotemr.getCustomerNo());
-		jdbcTemplate.update("DELETE FROM POSIDEX_CUSTOMERS WHERE CUST_ID=:CUST_ID", paramMap);
+		parameterJdbcTemplate.update("DELETE FROM POSIDEX_CUSTOMERS WHERE CUST_ID=:CUST_ID", paramMap);
 	}
 
 	private void save(PosidexCustomer cusotemr, boolean stage) {
@@ -211,7 +211,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
 
 		if (stage) {
-			jdbcTemplate.update(sql.toString(), beanParameters);
+			parameterJdbcTemplate.update(sql.toString(), beanParameters);
 		} else {
 			destinationJdbcTemplate.update(sql.toString(), beanParameters);
 		}
@@ -231,7 +231,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(")");
 
 		if (stage) {
-			jdbcTemplate.update(sql.toString(), beanParameters);
+			parameterJdbcTemplate.update(sql.toString(), beanParameters);
 		} else {
 			destinationJdbcTemplate.update(sql.toString(), beanParameters);
 		}
@@ -282,7 +282,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE CUSTOMER_NO = :CustomerNo");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
-		jdbcTemplate.update(sql.toString(), beanParameters);
+		parameterJdbcTemplate.update(sql.toString(), beanParameters);
 
 	}
 
@@ -348,7 +348,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(address);
 		
 		if (stage) {
-			jdbcTemplate.update(sql.toString(), beanParameters);
+			parameterJdbcTemplate.update(sql.toString(), beanParameters);
 		} else {
 			destinationJdbcTemplate.update(sql.toString(), beanParameters);
 		}
@@ -389,7 +389,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addresses);
 		
-		jdbcTemplate.update(sql.toString(), beanParameters);
+		parameterJdbcTemplate.update(sql.toString(), beanParameters);
 
 	}
 
@@ -421,7 +421,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		try {
 			if (stage) {
-				jdbcTemplate.update(sql.toString(), beanParameters);
+				parameterJdbcTemplate.update(sql.toString(), beanParameters);
 			} else {
 				destinationJdbcTemplate.update(sql.toString(), beanParameters);
 			}
@@ -457,7 +457,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE CUSTOMER_NO = :CustomerNo AND LAN_NO=:LanNo AND CUSTOMER_TYPE =:CustomerType");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(loan);
-		jdbcTemplate.update(sql.toString(), beanParameters);
+		parameterJdbcTemplate.update(sql.toString(), beanParameters);
 
 	}
 
@@ -848,19 +848,25 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" insert into POSIDEX_CUSTOMERS");
-		sql.append(" select CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON from CUSTOMERS C");
-		sql.append(" WHERE C.CUSTCOREBANK IS NOT NULL AND CUSTID not in ( select cust_id  from Posidex_customers)");
-
+		sql.append(" INSERT INTO POSIDEX_CUSTOMERS");
+		sql.append(" SELECT CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON FROM (");
+		sql.append(" SELECT CUSTID, CUSTCIF, CUSTCTGCODE, C.CUSTCOREBANK  FROM CUSTOMERS C");
+		sql.append(" WHERE CUSTID NOT IN(SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_DEMO_DTL)");
+		sql.append(" UNION ALL");
+		sql.append(" SELECT C.CUSTID, CUSTCIF, CUSTCTGCODE, C.CUSTCOREBANK  FROM CUSTOMERS C");
+		sql.append(" LEFT JOIN FINANCEMAIN FM ON FM.CUSTID = C.CUSTID");
+		
 		if (lastRunDate != null) {
-			sql.append(
-					"AND (C.LASTMNTON > :LASTMNTON OR (SELECT MAX(LASTMNTON) FROM FINANCEMAIN WHERE CUSTID= C.CUSTID) > :LASTMNTON)");
+			sql.append(" WHERE (C.LASTMNTON > :LASTMNTON) OR (FM.LASTMNTON > :LASTMNTON)");
 		}
+		
+		sql.append(" ) T WHERE T.CUSTCOREBANK IS NOT NULL AND T.CUSTID NOT IN (SELECT CUST_ID FROM POSIDEX_CUSTOMERS)");
 
+		
 		parmMap.addValue("LASTMNTON", lastRunDate);
 		parmMap.addValue("EXTRACTED_ON", appDate);
 
-		jdbcTemplate.update(sql.toString(), parmMap);
+		parameterJdbcTemplate.update(sql.toString(), parmMap);
 
 	}
 
@@ -877,7 +883,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			paramMap.addValue("STATUS", "S");
 			paramMap.addValue("INSERT_TIMESTAMP", DateUtil.getSysDate());
 
-			jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "BATCHID" });
+			parameterJdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "BATCHID" });
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -900,7 +906,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		paramMap.addValue("ERR_DESCRIPTION", summary);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramMap);
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

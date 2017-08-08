@@ -682,7 +682,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
 
-		List<Branch> branches = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
+		List<Branch> branches = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (Branch branch : branches) {
 			map.put(branch.getBranchCode(), branch);
 		}
@@ -710,7 +710,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 		
-		List<Province> provinces = this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
+		List<Province> provinces = this.parameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		for (Province province : provinces) {
 			map.put(province.getCPProvince(), province);
 		}
@@ -736,7 +736,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
 
-		List<TaxDetail> taxDetails = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
+		List<TaxDetail> taxDetails = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (TaxDetail taxDetail : taxDetails) {
 			map.put(taxDetail.getStateCode() + "_" + taxDetail.getEntityCode(), taxDetail);
 		}
@@ -889,7 +889,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		sql.append(" VALUES (:Id, :ProcessDate, :StartDate, :EndDate, :RecordCount, :Export)");
 
 		try {
-			jdbcTemplate.update(sql.toString(), map);
+			parameterJdbcTemplate.update(sql.toString(), map);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -917,8 +917,8 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PROCESSDATE_FROM", fromDate);
 		source.addValue("PROCESSDATE_TO", toDate);
-		jdbcTemplate.update(
-				"DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO", source);
+		
+		parameterJdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO", source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -933,16 +933,16 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
-		jdbcTemplate.update(
+		parameterJdbcTemplate.update(
 				"DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
-		jdbcTemplate.update(
+		parameterJdbcTemplate.update(
 				"DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
-		jdbcTemplate.update(
+		parameterJdbcTemplate.update(
 				"DELETE FROM TAXDOWNLOADSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
-		jdbcTemplate.update(
+		parameterJdbcTemplate.update(
 				"DELETE FROM GSTSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
 				source);
 

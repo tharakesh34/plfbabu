@@ -288,7 +288,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 			paramMap.addValue("STATUS", "S");
 			paramMap.addValue("INSERT_TIMESTAMP", DateUtil.getSysDate());
 
-			jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "BATCHID" });
+			parameterJdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "BATCHID" });
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -311,7 +311,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		paramMap.addValue("ERR_DESCRIPTION", summary);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramMap);
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

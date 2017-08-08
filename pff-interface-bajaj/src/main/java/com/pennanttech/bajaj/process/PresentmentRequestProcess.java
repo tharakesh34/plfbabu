@@ -194,7 +194,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		source.addValue("TOTALRECORDS", totalRecords);
 
 		try {
-			this.jdbcTemplate.update(sql.toString(), source);
+			this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -219,7 +219,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		source.addValue("EXCLUDEREASON", 0);
 
 		try {
-			this.jdbcTemplate.update(sql.toString(), source);
+			this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
