@@ -3960,39 +3960,41 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Loan";
-		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-			if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
-				// call the finone procedure to update a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					auditHeader = nextProcess(auditHeader);
-					return auditHeader;
-				}
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("GCD_FINONE_PROC_REQD"))) {
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+				if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
+					// call the finone procedure to update a customer in Finone 
+					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+								auditHeader.getUsrLanguage()));
+						auditDetail.setErrorDetails(
+								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
+						auditHeader = nextProcess(auditHeader);
+						return auditHeader;
+					}
 
-			} else {
-				// call the finone procedure to create a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					auditHeader = nextProcess(auditHeader);
-					return auditHeader;
+				} else {
+					// call the finone procedure to create a customer in Finone 
+					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+								auditHeader.getUsrLanguage()));
+						auditDetail.setErrorDetails(
+								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
+						auditHeader = nextProcess(auditHeader);
+						return auditHeader;
+					}
 				}
 			}
 		}

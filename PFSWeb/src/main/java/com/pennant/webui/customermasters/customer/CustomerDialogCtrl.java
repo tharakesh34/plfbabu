@@ -51,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.ProcessingException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -2797,7 +2799,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {
-			MessageUtil.showError(e);
+			if(e instanceof ProcessingException){				
+				MessageUtil.showError(Labels.getLabel("Dedupe_other_system_Process_Error"));
+			}else{				
+				MessageUtil.showError(e);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -2808,16 +2814,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		String corebank = customerDetails.getCustomer().getCustCoreBank();
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("POSIDEX_DEDUP_REQD"))) {
+			if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())
+					&& StringUtils.isBlank(corebank)) {
+				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+				customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),
+						SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
+						this.window_CustomerDialog, curLoginUser);
 
-		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
-			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
-					this.window_CustomerDialog, curLoginUser);
-
-			if (customerDetails.getCustomer().isDedupFound() && !customerDetails.getCustomer().isSkipDedup()) {
-				return false;
-			} else {
-				return true;
+				if (customerDetails.getCustomer().isDedupFound() && !customerDetails.getCustomer().isSkipDedup()) {
+					return false;
+				} else {
+					return true;
+				}
 			}
 		}
 
