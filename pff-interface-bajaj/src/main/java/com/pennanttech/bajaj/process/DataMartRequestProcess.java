@@ -61,6 +61,13 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		
+		try {
+			new Thread(new AddressDetailsDataMart()).start();
+			totalThreads++;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 		try {
 			new Thread(new BounceDetailsDataMart(new String[]{"AGREEMENTNO"})).start();
