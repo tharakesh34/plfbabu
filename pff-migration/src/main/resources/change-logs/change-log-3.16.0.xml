@@ -1491,4 +1491,15 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 </sql>
 </changeSet>
 
+<changeSet id="89" author="madhubabu.p">
+	<sql>
+		delete from SMTPARAMETERS where sysparmcode='POSIDEX_DEDUP_REQD';
+		INSERT INTO SMTPARAMETERS VALUES ('POSIDEX_DEDUP_REQD','Posidex dedup proceed','String', 1,  'Y','1',0, NULL, NULL,'Posidex dedup proceed',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
+		delete from SMTPARAMETERS where sysparmcode='GCD_FINONE_PROC_REQD';
+		INSERT INTO SMTPARAMETERS VALUES ('GCD_FINONE_PROC_REQD','GCD finone proc required','String', 1,  'Y','1',0, NULL, NULL,'Posidex dedup proceed',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
+		delete from SMTPARAMETERS where sysparmcode='LOAN_REFERENCE_IDENTIFIER';
+		INSERT INTO SMTPARAMETERS VALUES ('LOAN_REFERENCE_IDENTIFIER','Loan reference number','String', 1,  'N','1',0, NULL, NULL,'Posidex dedup proceed',1, 1000, CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0);
+</sql>
+</changeSet>
+
 </databaseChangeLog>
