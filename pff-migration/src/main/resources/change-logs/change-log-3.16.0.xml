@@ -1407,4 +1407,71 @@ and fieldid='2';
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+<changeSet id="75.1" author="murthy.y">
+	<sql>
+		<![CDATA[
+			delete from PSX_UCIN_REVERSE_FEED;
+			delete from PSX_DEDUP_EOD_CUST_LOAN_DTL;
+			delete from PSX_DEDUP_EOD_CUST_ADDR_DTL;
+			delete from PSX_DEDUP_EOD_CUST_DEMO_DTL;
+			delete from POSIDEX_CUSTOMERS;
+		]]>
+	</sql>
+</changeSet>
+<changeSet id="75" author="murthy.y">
+	 <dropPrimaryKey constraintName="PK_CN"  tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL"/>
+</changeSet>
+<changeSet id="76" author="murthy.y">
+	 <dropPrimaryKey constraintName="PK_CN_AT"  tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL"/>
+</changeSet>
+<changeSet id="77" author="murthy.y">
+	 <dropPrimaryKey constraintName="PK_CU_LN_CT"  tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL"/>
+</changeSet>
+<changeSet id="78" author="murthy.y">
+	 <addPrimaryKey columnNames="BATCHID, CUSTOMER_NO"  constraintName="PK_PSX_CUST_BID_CN" tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL" />
+</changeSet>
+<changeSet id="79" author="murthy.y">
+	 <addPrimaryKey columnNames="BATCHID, CUSTOMER_NO"  constraintName="PK_PSX_CUST_ADDR_BID_CN" tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL" />
+</changeSet>
+<changeSet id="80" author="murthy.y">
+	 <addPrimaryKey columnNames="BATCHID, CUSTOMER_NO, LAN_NO, CUSTOMER_TYPE"  constraintName="PK_PSX_CUST_LOAN_BID_CN_LN_CT" tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+</changeSet>
+<changeSet id="81" author="murthy.y">
+	 <addPrimaryKey columnNames="CUSTOMER_NO"  constraintName="PK_PSX_UCIN_RF_CN" tableName="PSX_UCIN_REVERSE_FEED" />
+</changeSet>
+<changeSet id="82" author="murthy.y">
+	 <createIndex indexName ="UK_PSX_CUST_CN"  tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL">
+	 	 <column name="CUSTOMER_NO" type="decimal(8,0)"/>
+	 </createIndex>
+</changeSet>
+<changeSet id="83" author="murthy.y">
+	 <createIndex indexName ="UK_PSX_CUST_ADDR_CN" tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL">
+	 	 <column name="CUSTOMER_NO" type="decimal(8,0)"/>
+	 </createIndex>
+</changeSet>
+<changeSet id="84" author="murthy.y">
+	 <createIndex indexName ="UK_PSX_CUST_LOAN_CN_LN_CT" tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL">
+	 	<column name="CUSTOMER_NO" type="decimal(8,0)"/>
+	 	<column name="LAN_NO" type="varchar(20)"/>
+	 	<column name="CUSTOMER_TYPE" type="varchar(1)"/>
+	 </createIndex>
+</changeSet>
+<changeSet id="85" author="murthy.y">
+	<sql>
+		<![CDATA[
+			delete from PSX_UCIN_REVERSE_FEED;
+			delete from PSX_DEDUP_EOD_CUST_LOAN_DTL;
+			delete from PSX_DEDUP_EOD_CUST_ADDR_DTL;
+			delete from PSX_DEDUP_EOD_CUST_DEMO_DTL;
+			delete from POSIDEX_CUSTOMERS;
+		]]>
+	</sql>
+</changeSet>
+<changeSet id="86" author="murthy.y">
+	 <dropPrimaryKey constraintName="PK_PSX_CUST_ADDR_BID_CN"  tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL"/>
+</changeSet>
+<changeSet id="87" author="murthy.y">
+	 <addPrimaryKey columnNames="BATCHID, CUSTOMER_NO, ADDRESS_TYPE"  constraintName="PK_PSX_CUST_ADDR_BID_CN_AT" tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL" />
+</changeSet>
+
 </databaseChangeLog>
