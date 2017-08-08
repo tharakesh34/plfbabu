@@ -4889,21 +4889,4 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	
-	<!--============ Penalty Waiver Details ============== -->
-	<bean id="penalityWaiverListCtrl"
-		class="com.pennant.webui.financemanagement.penaltywaiver.PenalityWaiverListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<!-- <property name="penaltyWaiverService" ref="penaltyWaiverService" /> -->
-	</bean>
-	<bean id="selectReferenceDialogCtrl"
-		class="com.pennant.webui.financemanagement.penaltywaiver.SelectReferenceDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="financeDetailService" ref="financeDetailService" />
-	</bean>
-	<bean id="penaltyWaiverDialogCtrl"
-		class="com.pennant.webui.financemanagement.penaltywaiver.PenaltyWaiverDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
-	
 </beans>
