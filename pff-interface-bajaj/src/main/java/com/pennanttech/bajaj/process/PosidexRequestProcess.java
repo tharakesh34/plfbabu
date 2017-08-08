@@ -83,6 +83,9 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		try {
 			do {
 				extractData();
+				System.out.println(totalRecords);
+				System.out.println(processedCount);
+				System.out.println(totalRecords > 0 && totalRecords != processedCount);
 			} while (totalRecords > 0 && totalRecords != processedCount);
 
 		} catch (Exception e) {
@@ -850,7 +853,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		sql.append(" INSERT INTO POSIDEX_CUSTOMERS");
 		sql.append(" SELECT CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON FROM (");
-		sql.append(" SELECT CUSTID, CUSTCIF, CUSTCTGCODE, C.CUSTCOREBANK  FROM CUSTOMERS C");
+		sql.append(" SELECT DISTINCT CUSTID, CUSTCIF, CUSTCTGCODE, :EXTRACTED_ON FROM (");
+		sql.append(" SELECT CUSTID, CUSTCIF, CUSTCTGCODE, C.CUSTCOREBANK FROM CUSTOMERS C");
 		sql.append(" WHERE CUSTID NOT IN(SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_DEMO_DTL)");
 		sql.append(" UNION ALL");
 		sql.append(" SELECT C.CUSTID, CUSTCIF, CUSTCTGCODE, C.CUSTCOREBANK  FROM CUSTOMERS C");
@@ -860,7 +864,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 			sql.append(" WHERE (C.LASTMNTON > :LASTMNTON) OR (FM.LASTMNTON > :LASTMNTON)");
 		}
 		
-		sql.append(" ) T WHERE T.CUSTCOREBANK IS NOT NULL AND T.CUSTID NOT IN (SELECT CUST_ID FROM POSIDEX_CUSTOMERS)");
+		sql.append(" ) T WHERE T.CUSTCOREBANK IS NOT NULL AND T.CUSTID NOT IN (SELECT CUST_ID FROM POSIDEX_CUSTOMERS)) ");
 
 		
 		parmMap.addValue("LASTMNTON", lastRunDate);
