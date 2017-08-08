@@ -2045,6 +2045,8 @@
 		<property name="repaymentCancellationService" ref="repaymentCancellationService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="receiptService" ref="receiptService" />
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="financeTypeService" ref="financeTypeService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2638,7 +2640,7 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	
-	<bean id="covenantTypeListCtrl"
+	<!-- <bean id="covenantTypeListCtrl"
 		class="com.pennant.webui.finance.financemain.CovenantTypeListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
@@ -2648,7 +2650,21 @@
 		class="com.pennant.webui.finance.financemain.CovenantTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+	</bean> -->
+	
+	<bean id="covenantDetailListCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		
 	</bean>
+	<bean id="covenantDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
 
 
 	<!--============ Payment Order Issue Details ============== -->
@@ -4870,6 +4886,23 @@
 	</bean>
 	<bean id="auditErrorDetailListCtrl" 
 		class="com.pennant.webui.errordetail.errordetail.AuditErrorDetailsListCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!--============ Penalty Waiver Details ============== -->
+	<bean id="penalityWaiverListCtrl"
+		class="com.pennant.webui.financemanagement.penaltywaiver.PenalityWaiverListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<!-- <property name="penaltyWaiverService" ref="penaltyWaiverService" /> -->
+	</bean>
+	<bean id="selectReferenceDialogCtrl"
+		class="com.pennant.webui.financemanagement.penaltywaiver.SelectReferenceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+	<bean id="penaltyWaiverDialogCtrl"
+		class="com.pennant.webui.financemanagement.penaltywaiver.PenaltyWaiverDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	

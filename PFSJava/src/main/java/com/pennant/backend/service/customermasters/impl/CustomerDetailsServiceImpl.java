@@ -5210,5 +5210,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.phoneTypeDAO = phoneTypeDAO;
 	}
 
+	@Override
+	public Customer getCustomerShrtName(long id) {
+		return getCustomerDAO().getCustomerByID(id);
+	}
+
 
 }

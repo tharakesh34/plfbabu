@@ -114,6 +114,7 @@ import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -2150,6 +2151,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Covenant Type Details
 			//=======================================
 			if (financeDetail.getCovenantTypeList() != null && !financeDetail.getCovenantTypeList().isEmpty()) {
+				for (FinCovenantType finCovenantType : financeDetail.getCovenantTypeList()) {
+					finCovenantType.setFinReference(finReference);
+					finCovenantType.setTaskId(financeMain.getTaskId());
+					finCovenantType.setNextTaskId(financeMain.getNextTaskId());
+					finCovenantType.setRoleCode(financeMain.getRoleCode());
+					finCovenantType.setNextRoleCode(financeMain.getNextRoleCode());
+					finCovenantType.setRecordStatus(financeMain.getRecordStatus());
+					finCovenantType.setWorkflowId(financeMain.getWorkflowId());
+				}
 				auditDetails.addAll(getFinCovenantTypeService().saveOrUpdate(financeDetail.getCovenantTypeList(),
 						tableType.getSuffix(), auditTranType));
 			}

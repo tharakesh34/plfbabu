@@ -83,7 +83,9 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -93,6 +95,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
+import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
@@ -101,6 +104,7 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -198,6 +202,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
 	private transient FinanceWorkFlowService  financeWorkFlowService;
+	private transient FinCovenantTypeService finCovenantTypeService;
+	private transient FinanceTypeService financeTypeService;
 	
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -1114,7 +1120,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL) &&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)&&
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			
 			openFinanceMainDialog(item);
 			
@@ -1151,7 +1158,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			openTakafulPremiumExcludeDialog(item); 
 			
-		} else {
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+
+			openFinanceCovenantDialog(item);
+
+		}else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
 				final Listitem li = this.getListBoxFinance().getSelectedItem();
 				final Object object = li.getAttribute("data");
@@ -1196,6 +1207,108 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
+
+	}
+	
+	private void openFinanceCovenantDialog(Listitem item) {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+			
+			// Set Workflow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+			String userRole = aFinanceMain.getNextRoleCode();
+			if(StringUtils.isEmpty(userRole)){
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+			
+			final FinanceDetail financeDetail = getFinCovenantTypeService().getFinanceDetailById(aFinanceMain.getId(),"_View", userRole, moduleDefiner, eventCodeRef);
+			financeDetail.setModuleDefiner(moduleDefiner);
+			//Role Code State Checking
+			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+			if(StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
+						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+				
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+			
+			String maintainSts = "";
+			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
+				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+
+			if(StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)){
+				String[] errParm= new String[1];
+				String[] valueParm= new String[1];
+				valueParm[0]=aFinanceMain.getId();
+				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+			}else{
+				
+				if(isWorkFlowEnabled()){
+					String whereCond =  " AND FinReference='"+ aFinanceMain.getFinReference()+"' AND version=" + aFinanceMain.getVersion()+" ";
+
+					boolean userAcces =  validateUserAccess(workFlowDetails.getId(),getUserWorkspace().getLoggedInUser().getLoginUsrID()
+							, workflowCode, whereCond, aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces){
+						showFinCovenantDetailView(financeDetail,aFinanceMain);
+					}else{
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				}else{
+					showFinCovenantDetailView(financeDetail,aFinanceMain);
+				}
+			}	
+		}
+		logger.debug("Leaving ");			
+			
+
+		}
+		
+	
+	private void showFinCovenantDetailView(FinanceDetail findetail, FinanceMain aFinanceMain) {
+		final FinCovenantType aFinCovenantType = new FinCovenantType();
+		aFinanceMain = findetail.getFinScheduleData().getFinanceMain();
+		aFinCovenantType.setFinReference(findetail.getFinScheduleData().getFinReference());
+
+		if (aFinanceMain.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+
+		FinScheduleData scheduleData = findetail.getFinScheduleData();
+		scheduleData.setFinReference(findetail.getFinScheduleData().getFinReference());
+		aFinCovenantType.setWorkflowId(getWorkFlowId());
+
+		map.put("finCovenantTypes", aFinCovenantType);
+		map.put("roleCode", getRole());
+		map.put("financeDetail", findetail);
+		map.put("financeMain", aFinanceMain);
+		map.put("financeSelectCtrl", this);
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CovenantDetailList.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
 
 	}
 	
@@ -2432,6 +2545,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_HOLDEMI;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_ROLLOVER;
 					workflowCode =  FinanceConstants.FINSER_EVENT_HOLDEMI;
+				}else if("tab_Covenants".equals(tab.getId())) {
+					moduleDefiner = FinanceConstants.FINSER_EVENT_COVENANTS;
+					eventCodeRef  = "";
+					workflowCode =  FinanceConstants.FINSER_EVENT_COVENANTS;
 				}
 				return;
 			}
@@ -2627,6 +2744,22 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	public FinCovenantTypeService getFinCovenantTypeService() {
+		return finCovenantTypeService;
+	}
+
+	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
+		this.finCovenantTypeService = finCovenantTypeService;
+	}
+
+	public FinanceTypeService getFinanceTypeService() {
+		return financeTypeService;
+	}
+
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
 	}
 	
 	

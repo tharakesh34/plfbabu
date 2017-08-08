@@ -8,7 +8,7 @@
  * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
  * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
  * violation of copyright law.
- */
+ *//*
 package com.pennant.webui.finance.financemain;
 
 import java.sql.Timestamp;
@@ -45,11 +45,11 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-/**
+*//**
  * ************************************************************<br>
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/CovenantTypeDialog.zul file. <br>
  * ************************************************************<br>
- */
+ *//*
 public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private static final long serialVersionUID = -6945930303723518608L;
 	private static final Logger logger = Logger.getLogger(CovenantTypeDialogCtrl.class);
@@ -80,9 +80,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private transient FinCovenantTypeService finCovenantTypeService;
 
 
-	/**
+	*//**
 	 * default constructor.<br>
-	 */
+	 *//*
 	public CovenantTypeDialogCtrl() {
 		super();
 	}
@@ -92,14 +92,14 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		super.pageRightName = "FinCovenantTypeDialog";
 	}
 
-	/**
+	*//**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
-	 */
+	 *//*
 	public void onCreate$window_CovenantTypeDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -139,9 +139,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set the properties of the fields, like maxLength.<br>
-	 */
+	 *//*
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.finReference.setMaxlength(20);
@@ -175,9 +175,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set Visible for components by checking if there's a right for it.
-	 */
+	 *//*
 	private void doCheckRights() {
 		logger.debug("Entering");
 		
@@ -193,72 +193,72 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnEdit(Event event) {
 		doEdit();
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnDelete(Event event) {
 		doDelete();
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnCancel(Event event) {
 		doCancel();
 	}
 
-	/**
+	*//**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of a component.
-	 */
+	 *//*
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
-	/**
+	*//**
 	 * Cancel the actual operation. <br>
 	 * <br>
 	 * Resets to the original status.<br>
 	 * 
-	 */
+	 *//*
 	private void doCancel() {
 		logger.debug("Entering");
 
@@ -270,12 +270,12 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param finCovenantType
 	 * 
-	 */
+	 *//*
 	public void doWriteBeanToComponents(FinCovenantType finCovenantType) {
 		logger.debug("Entering");
 		this.finReference.setValue(finCovenantType.getFinReference());
@@ -342,11 +342,11 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		}
 	}
 
-	/**
+	*//**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinCovenantType
-	 */
+	 *//*
 	public void doWriteComponentsToBean(FinCovenantType aFinCovenantType) {
 		logger.debug("Entering");
 		doSetLOVValidation();
@@ -420,12 +420,12 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Displays the dialog page.
 	 * 
 	 * @param finCovenantType
 	 *            The entity that need to be render.
-	 */
+	 *//*
 	public void doShowDialog(FinCovenantType finCovenantType) {
 		logger.debug("Entering");
 
@@ -458,9 +458,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 */
+	 *//*
 	private void doSetValidation() {
 		logger.debug("Entering");
 
@@ -472,7 +472,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.covenantType.setConstraint(new PTStringValidator(Labels.getLabel("label_CovenantSearch_CovenantType.value"),null,true, true));
 		}
 
-		if (!this.mandRole.isReadonly()) {
+		if (!this.mandRole.isReadonly() && this.mandRole.isVisible()) {
 			this.mandRole.setConstraint(new PTStringValidator(Labels.getLabel("label_FinCovenantTypeDialog_MandRole.value"),null,true, true));
 		}
 		if (!this.description.isReadonly()) {
@@ -494,9 +494,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Disables the Validation by setting empty constraints.
-	 */
+	 *//*
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.covenantType.setConstraint("");
@@ -507,21 +507,21 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set Validations for LOV Fields
-	 */
+	 *//*
 	private void doSetLOVValidation() {
 	}
 
-	/**
+	*//**
 	 * Remove Validations for LOV Fields
-	 */
+	 *//*
 	private void doRemoveLOVValidation() {
 	}
 
-	/**
+	*//**
 	 * Clears validation error messages from all the fields of the dialog controller.
-	 */
+	 *//*
 	@Override
 	protected void doClearMessage() {
 		logger.debug("Entering");
@@ -533,11 +533,11 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	}
 
 	
-	/**
+	*//**
 	 * Deletes a FinCovenantType entity from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 */
+	 *//*
 	private void doDelete() {
 		logger.debug("Entering");
 
@@ -578,9 +578,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set the components for edit mode. <br>
-	 */
+	 *//*
 	private void doEdit() {
 		logger.debug("Entering");
 
@@ -589,6 +589,8 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("");
 			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
 			this.receivableDate.setVisible(false);
+			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			this.mandRole.setVisible(false);
 		} else {
 			this.btnCancel.setVisible(true);
 			this.finReference.setReadonly(true);
@@ -599,7 +601,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.description.setReadonly(isReadOnly("FinCovenantTypeDialog_description"));
 		this.alwWaiver.setDisabled(isReadOnly("FinCovenantTypeDialog_alwWaiver"));
 		this.alwPostpone.setDisabled(isReadOnly("FinCovenantTypeDialog_alwPostpone"));
-		this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate"));
+		this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate-"));
 
 
 		if (isWorkFlowEnabled()) {
@@ -619,9 +621,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving ");
 	}
 
-	/**
+	*//**
 	 * Set the components to ReadOnly. <br>
-	 */
+	 *//*
 	public void doReadOnly() {
 		logger.debug("Entering");
 		if (isWorkFlowEnabled()) {
@@ -638,9 +640,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Clears the components values. <br>
-	 */
+	 *//*
 	public void doClear() {
 		logger.debug("Entering");
 
@@ -651,10 +653,10 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Saves the components to table. <br>
 	 * 
-	 */
+	 *//*
 	public void doSave() {
 		logger.debug("Entering");
 
@@ -709,7 +711,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
+	*//**
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aFinCovenantType
@@ -720,7 +722,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 * 
 	 * @return boolean
 	 * 
-	 */
+	 *//*
 	private boolean doProcess(FinCovenantType aFinCovenantType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -799,7 +801,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		return processCompleted;
 	}
 
-	/**
+	*//**
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
@@ -810,7 +812,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 * 
 	 * @return boolean
 	 * 
-	 */
+	 *//*
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -880,32 +882,32 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		return processCompleted;
 	}
 
-	/**
+	*//**
 	 * Get Audit Header Details
 	 * 
 	 * @param aFinCovenantType
 	 * @param tranType
 	 * @return AuditHeader
-	 */
+	 *//*
 	private AuditHeader getAuditHeader(FinCovenantType aFinCovenantType, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinCovenantType.getBefImage(), aFinCovenantType);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aFinCovenantType.getUserDetails(),
 				getOverideMap());
 	}
 
-	/**
+	*//**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 */
+	 *//*
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finCovenantType);
 	}
 
-	/**
+	*//**
 	 * Refresh the list page with the filters that are applied in list page.
-	 */
+	 *//*
 	private void refreshList() {
 		covenantListCtrl.search();
 	}
@@ -942,3 +944,4 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	
 
 }
+*/

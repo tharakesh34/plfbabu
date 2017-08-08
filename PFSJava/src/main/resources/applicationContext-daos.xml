@@ -5470,6 +5470,11 @@
 		class="com.pennant.backend.service.finance.impl.FinCovenantTypeServiceImpl">
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="mandateDAO" ref="mandateDAO" />
 	</bean>
 
 	<!--============ Payment Order Issue Details ============== -->

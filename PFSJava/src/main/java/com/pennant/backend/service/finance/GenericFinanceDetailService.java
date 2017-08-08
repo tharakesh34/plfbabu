@@ -1493,10 +1493,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		//Disbursement Instruction Posting
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
+		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBS)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSF)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSN)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
 			Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
 					financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());

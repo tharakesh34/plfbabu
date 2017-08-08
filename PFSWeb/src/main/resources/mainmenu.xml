@@ -379,7 +379,7 @@
 	   <menuItem id="menu_Item_ChangeRepayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeRepayment"/>
 	   <menuItem id="menu_Item_RpyBasicDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RpyBasicDetail"/>	
 	   <menuItem id="menu_Item_ChangeProfit" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeProfit"/>
-	    <menuItem id="menu_Item_Covenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/CovenantType.zul" rightName="menuItem_FinanceManagement_Covenants"/>
+	    <menuItem id="menu_Item_Covenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Covenants"/>
 	   <!-- <menuItem id="menu_Item_ChequePrinting" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingList.zul" rightName="menuItem_FinanceManagement_ChequePrinting"/> -->
        <menuItem id="menu_Item_CustSusp" zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/CustSuspenseList.zul"  rightName="menuItem_FinanceManagement_CustSuspense" />
 	   <!-- <menuItem id="menu_Item_EarlySettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_EarlySettlement" /> -->
