@@ -888,6 +888,14 @@ public class FinanceDataValidation {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
+			if (financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "QuickDisb";
+				valueParm[1] = "stp";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
 		}
 		// Validate customer
 		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {

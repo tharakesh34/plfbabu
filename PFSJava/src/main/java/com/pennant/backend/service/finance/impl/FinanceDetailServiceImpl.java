@@ -2133,7 +2133,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) ||!financeDetail.isStp()){
+				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || auditHeader.getApiHeader()==null){
 					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
 							tableType.getSuffix(), auditTranType));	
 				} else {
@@ -3160,7 +3160,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "");
 
-			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null))) {
 				//Additional Field Details Deletion
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "");
@@ -3735,7 +3735,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			// ScheduleDetails delete
 			//=======================================
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null)) {
 				listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), "_Temp", isWIF);
 			}
 
@@ -3750,7 +3750,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null))) {
 				//Additional Field Details Deletion in _Temp Table
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
@@ -3881,7 +3881,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || auditHeader.getApiHeader()==null) {
 
 				//Fin Fee Details Deletion
 				if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
