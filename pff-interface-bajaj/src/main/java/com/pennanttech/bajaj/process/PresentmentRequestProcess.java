@@ -45,7 +45,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("IdList", idList);
 		parmMap.addValue("EXCLUDEREASON", "0");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
 
 			@Override

@@ -108,13 +108,11 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	}
 
 	private void loadCount() {
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select count(*) from INT_ALM_VIEW");
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 			executionStatus.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

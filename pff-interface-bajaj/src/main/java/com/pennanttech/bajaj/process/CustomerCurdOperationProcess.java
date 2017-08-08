@@ -43,7 +43,7 @@ public class CustomerCurdOperationProcess extends DatabaseDataEngine {
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("IsSuccess", 0);
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 
 			@Override
 			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {

@@ -80,7 +80,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), filterMap, Integer.class);
+			totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), filterMap, Integer.class);
 			executionStatus.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -139,7 +139,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 		List<ControlDump> list = new ArrayList<>();
 
-		jdbcTemplate.query(sql.toString(), filterMap, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), filterMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				executionStatus.setProcessedRecords(processedCount++);
@@ -457,7 +457,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	private Map<String, ControlDump> extractRepaymentAmounts(StringBuilder sql) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
 		paramMap.addValue("PS", "PartialSettlement");
-		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -503,7 +503,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractOverDueDetails(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -534,7 +534,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractWriteOffAmounts(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -566,7 +566,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractWriteOffPayments(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -602,7 +602,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource parm = new MapSqlParameterSource(filterMap.getValues());
 		parm.addValue("TRANTYPE", "C");
 		parm.addValue("AMOUNTTYPE", "A");
-		return jdbcTemplate.query(sql.toString(), parm, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), parm, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -636,7 +636,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	private Map<String, ControlDump> extractFeeAmounts(StringBuilder sql) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
 		paramMap.addValue("ES", "EarlySettlement");
-		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -688,7 +688,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource(filterMap.getValues());
 		paramMap.addValue("PRI", "PRI");
 		paramMap.addValue("PFT", "PFT");
-		return jdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -754,7 +754,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractProfitDetails(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -811,7 +811,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractBalanceAmounts(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();
@@ -853,7 +853,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, ControlDump> extractgDisbursementDetails(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
+		return parameterJdbcTemplate.query(sql.toString(), filterMap, new ResultSetExtractor<Map<String, ControlDump>>() {
 			@Override
 			public Map<String, ControlDump> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				Map<String, ControlDump> map = new HashMap<>();

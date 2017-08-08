@@ -26,12 +26,9 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 	private String summary = null;
 	private AtomicLong completedThreads = null;
 	private long totalThreads;
-	private MapSqlParameterSource parmMap = null;
 
 	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
-
-		this.parmMap = new MapSqlParameterSource();
 		this.totalThreads = 0;
 		this.completedThreads = new AtomicLong(0L);
 	}
@@ -270,7 +267,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		sql.append(") T ");
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Integer.class);
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 			executionStatus.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -343,7 +340,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -388,7 +385,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -440,7 +437,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -488,7 +485,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -539,7 +536,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -588,7 +585,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 				@Override
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
@@ -636,7 +633,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -685,7 +682,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -736,7 +733,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -785,7 +782,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -835,7 +832,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -884,7 +881,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -934,7 +931,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -984,7 +981,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1033,7 +1030,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1083,7 +1080,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1133,7 +1130,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1183,7 +1180,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1234,7 +1231,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1284,7 +1281,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1334,7 +1331,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1383,7 +1380,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1433,7 +1430,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override
@@ -1483,7 +1480,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		}
 
 		private void extract(StringBuilder sql) {
-			jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 				MapSqlParameterSource map = null;
 
 				@Override

@@ -34,7 +34,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("ID", disbursments);
 		parmMap.addValue("STATUS", "APPROVED");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource	map			= null;
 
 			@Override

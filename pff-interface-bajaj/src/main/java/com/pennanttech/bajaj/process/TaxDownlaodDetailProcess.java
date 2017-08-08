@@ -1,27 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.model.finance.TaxDownload;
 import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.model.Branch;
@@ -31,6 +9,25 @@ import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodDetailProcess.class);
@@ -129,7 +126,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		List<TaxDownload> list = new ArrayList<TaxDownload>();
 
-		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
@@ -179,7 +176,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		parmMap.addValue("EXTRACTIONTYPE", EXTRACTION_TYPE_SUMMARY);	
 		
 		List<TaxDownload> list = new ArrayList<TaxDownload>();
-		jdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			@SuppressWarnings("unused")
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -685,7 +682,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
 
-		List<Branch> branches = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), typeRowMapper);
+		List<Branch> branches = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (Branch branch : branches) {
 			map.put(branch.getBranchCode(), branch);
 		}
@@ -713,7 +710,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
 		
-		List<Province> provinces = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
+		List<Province> provinces = this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		for (Province province : provinces) {
 			map.put(province.getCPProvince(), province);
 		}
@@ -739,7 +736,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 
 		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
 
-		List<TaxDetail> taxDetails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), typeRowMapper);
+		List<TaxDetail> taxDetails = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (TaxDetail taxDetail : taxDetails) {
 			map.put(taxDetail.getStateCode() + "_" + taxDetail.getEntityCode(), taxDetail);
 		}
@@ -807,7 +804,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		try {
 			sql = getTaxDownLoadDetailSql();
 			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 			throw e;
@@ -818,7 +815,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 		try {
 			sql = getGSTSql();
 			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 			throw e;
@@ -843,7 +840,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			sql.append(" :RegisteredCustomer, :InterIntraState, :Amount)");
 
 			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 			throw e;
@@ -860,7 +857,7 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 			sql.append(" :TransactionDate, :EntityName, :EntityGSTIN, :LedgerCode, :FinBranchId,");
 			sql.append(" :RegisteredCustomer, :InterIntraState, :Amount)");
 			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
 			throw e;

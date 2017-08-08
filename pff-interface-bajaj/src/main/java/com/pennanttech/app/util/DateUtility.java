@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
  * A suite of utilities surrounding the use of the {@link java.util.Calendar} and {@link java.util.Date} object.
  * </p>
  */
+ @Deprecated
 public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
 	

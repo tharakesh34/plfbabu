@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -30,7 +31,8 @@ public class DBProcessEngine extends DataAccess {
 
 	public DBProcessEngine(DataSource dataSource, String dataBase, DataEngineStatus executionStatus) {
 		this.database = dataBase;
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.parameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	protected void saveBatchLog(MapSqlParameterSource source, String sql) throws Exception {

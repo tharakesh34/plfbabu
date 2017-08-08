@@ -480,7 +480,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<Long, PosidexCustomer> extractCustomers(Map<Long, PosidexCustomer> customers, StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, PosidexCustomer>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, PosidexCustomer>>() {
 			PosidexCustomer customer = null;
 			@Override
 			public Map<Long, PosidexCustomer> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -583,7 +583,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private void extractAddresses(Map<Long, PosidexCustomer> customers, StringBuilder sql)
 			throws DataAccessException, SQLException {
-		jdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
 			Map<Long, List<CustomerPhoneNumber>> phoneNumbers = getPhoneNumbers();
 			Map<Long, List<CustomerEMail>> email = getEmail();
 			PosidexCustomerAddress address = null;
@@ -678,7 +678,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<Long, List<CustomerPhoneNumber>> extractPhoneNumbers(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), paramMa,
+		return parameterJdbcTemplate.query(sql.toString(), paramMa,
 				new ResultSetExtractor<Map<Long, List<CustomerPhoneNumber>>>() {
 
 					@Override
@@ -723,7 +723,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<Long, List<CustomerEMail>> extractEMails(StringBuilder sql) {
-		return jdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, List<CustomerEMail>>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, List<CustomerEMail>>>() {
 
 			@Override
 			public Map<Long, List<CustomerEMail>> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -780,7 +780,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private void extractLoans(Map<Long, PosidexCustomer> customers, String sql) {
-		jdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
 			PosidexCustomerLoan loan = null;
 			PosidexCustomer customer = null;
 
@@ -821,13 +821,10 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private void loadCount() {
 		StringBuilder sql = new StringBuilder();
-
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-
 		sql.append("SELECT count(*) from POSIDEX_CUSTOMERS");
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class);
+			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
 			BajajInterfaceConstants.POSIDEX_REQUEST_STATUS.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -839,7 +836,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T");
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Date.class);
+			return jdbcTemplate.queryForObject(sql.toString(), Date.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -923,7 +920,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("SELECT SYSPARMCODE, SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE like :SYSPARMCODE");
 		paramMap.addValue("SYSPARMCODE", "POSIDEX_%");
 
-		jdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
+		parameterJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				parameterCodes.put(rs.getString("SYSPARMCODE"), rs.getString("SYSPARMVALUE"));
