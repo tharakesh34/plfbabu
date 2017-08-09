@@ -508,7 +508,7 @@
 	 -->
 	<!-- Report Details -->
 	<menu id="menu_Category_Reports" rightName="menuCat_Reports" >
-		<menuItem id="menu_Item_SOA" zulNavigation="/WEB-INF/pages/Reports/SOAReportGenerationDialog.zul"  rightName=""/>
+		<!-- <menuItem id="menu_Item_SOA" zulNavigation="/WEB-INF/pages/Reports/SOAReportGenerationDialog.zul"  rightName=""/> -->
 		<!-- <menuItem id="menu_Item_AuditReports" zulNavigation="/WEB-INF/pages/Reports/AuditReport.zul"  rightName="menuItem_Reports_AuditReports"/> -->
 		<menuItem id="menu_Item_Postings" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_Reports_Postings"/>
 		<!-- <menuItem id="menu_Item_DataDownloadExceptions" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_BatchAdmin_BatchAdmin"/> -->
