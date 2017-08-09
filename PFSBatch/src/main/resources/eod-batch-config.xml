@@ -63,13 +63,6 @@
 			<tasklet ref="posidexTaskLet">
 				<transaction-attributes propagation="NEVER" />
 			</tasklet>
-			<next on="*" to="dataMart" />
-			<fail on="FAILED" />
-		</step>
-		<step id="dataMart">
-			<tasklet ref="dataMartTaskLet">
-				<transaction-attributes propagation="NEVER" />
-			</tasklet>
 			<next on="*" to="trailBalance" />
 			<fail on="FAILED" />
 		</step>
@@ -85,6 +78,13 @@
 		</step>
 		<step id="gstTaxDownload">
 			<tasklet ref="gstTaxDownloadTaskLet" />
+			<next on="*" to="dataMart" />
+			<fail on="FAILED" />
+		</step>
+		<step id="dataMart">
+			<tasklet ref="dataMartTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="completeEOD" />
 			<fail on="FAILED" />
 		</step>
