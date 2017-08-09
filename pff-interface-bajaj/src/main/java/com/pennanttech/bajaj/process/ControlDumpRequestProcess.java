@@ -33,10 +33,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private MapSqlParameterSource filterMap;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
-			Date monthStartDate, Date monthEndDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate,
-				BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
+	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
 		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;
