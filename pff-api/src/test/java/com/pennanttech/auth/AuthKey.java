@@ -2,27 +2,33 @@ package com.pennanttech.auth;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.crypto.codec.Base64;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test
 public class AuthKey {
-	@Test
+	private static Logger logger = Logger.getLogger(AuthKey.class);
+
+	@Test(enabled = false)
 	public void generate() throws UnsupportedEncodingException {
 		// Usage: user:<user name>:<password>
 		String authDetails = "user:maker:test";
 		String authKey = new String(Base64.encode(authDetails.getBytes()), "UTF-8");
 
-		System.out.println(authDetails);
-		System.out.println(authKey);
+		logger.info(authDetails);
+		logger.info(authKey);
+		Assert.assertNotNull(authKey);
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void crackDown() throws UnsupportedEncodingException {
-		String authKey = "dXNlcjp3cm06UGVubmFudEAxMjM=";
+		String authKey = "dXNlcjpiZnNkOlBlbm5hbnRAMTIz";
 		String authDetails = new String(Base64.decode(authKey.getBytes()), "UTF-8");
 
-		System.out.println(authKey);
-		System.out.println(authDetails);
+		logger.info(authKey);
+		logger.info(authDetails);
+		Assert.assertNotNull(authDetails);
 	}
 }
