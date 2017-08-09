@@ -28,6 +28,7 @@ public class TrailBalance implements Serializable {
 	private BigDecimal debitAmount = BigDecimal.ZERO;
 	private String countryCode;
 	private String stateCode;
+	private String entity;
 
 	public long getHeaderId() {
 		return headerId;
@@ -203,6 +204,14 @@ public class TrailBalance implements Serializable {
 
 	public void setBusinessUnit(String businessUnit) {
 		this.businessUnit = businessUnit;
+	}
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
 	}
 
 }
