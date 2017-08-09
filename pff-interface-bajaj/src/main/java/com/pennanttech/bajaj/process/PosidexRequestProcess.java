@@ -501,9 +501,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					customer.setFirstName(rs.getString("CUSTFNAME"));
 					customer.setMiddleName(rs.getString("CUSTMNAME"));
 					customer.setLastName(rs.getString("CUSTLNAME"));
-					customer.setDob(rs.getDate("CUSTDOB"));
-					customer.setGender(rs.getString("CUSTGENDERCODE"));
-					customer.setFatherName(rs.getString("CUSTMOTHERMAIDEN"));
+					
+					
 					customer.setProcessType(rs.getString("PROCESS_TYPE"));
 					customer.setApplicantType(rs.getString("CUSTCTGCODE"));
 					customer.setCustCoreBank(rs.getString("CUSTCOREBANK"));
@@ -516,7 +515,10 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 					if ("RETAIL".equals(customer.getApplicantType())) {
 						customer.setApplicantType("I");
+						customer.setDob(rs.getDate("CUSTDOB"));
+						customer.setGender(rs.getString("CUSTGENDERCODE"));
 					} else {
+						customer.setDateOfIncorporation(rs.getDate("CUSTDOB"));
 						customer.setApplicantType("C");
 						customer.setFirstName(rs.getString("CUSTSHRTNAME"));
 					}
