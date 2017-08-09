@@ -1848,5 +1848,35 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 <changeSet id="153" author="Manoj">
     <addPrimaryKey columnNames="AGREEMENTNO,BATCH_ID" constraintName="PK_DM_PRSTDT_AGGNO_BID" tableName="DM_PRESENTATION_DETAILS"/>
 </changeSet>
+<changeSet id="136" author="murthy.y">
+   <addColumn tableName="TRANSACTION_DETAIL_REPORT">
+        <column name="ENTITY" type="varchar(8)" />
+    </addColumn>
+</changeSet>
+<changeSet id="136.1" author="murthy.y">
+   <addColumn tableName="TRANSACTION_DETAIL_REPORT_TEMP">
+        <column name="ENTITY" type="varchar(8)"/>
+    </addColumn>
+</changeSet>
+<changeSet id="136.2" author="murthy.y">
+   <addColumn tableName="TRANSACTION_DETAIL_REPORT_STGE">
+        <column name="ENTITY" type="varchar(8)"/>
+    </addColumn>
+</changeSet>
+<changeSet id="130.3" author="murthy.y">
+	<sql>
+		<![CDATA[
+			DELETE FROM TRANSACTION_SUMMARY_REPORT;
+			DELETE FROM TRANSACTION_DETAIL_REPORT;
+			DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP;
+			DELETE FROM TRANSACTION_DETAIL_REPORT_STGE;
+		]]>
+	</sql>
+</changeSet>
+<changeSet id="136.4" author="murthy.y">
+	<addNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT"/>
+	<addNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_TEMP"/>
+	<addNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_STGE"/>
+</changeSet>
 
 </databaseChangeLog>
