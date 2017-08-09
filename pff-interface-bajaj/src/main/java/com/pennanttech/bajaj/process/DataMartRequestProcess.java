@@ -367,7 +367,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -421,7 +421,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1790,6 +1790,12 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		} finally {
 			txnStatus.flush();
 		}
+	}
+	
+	private void commit(TransactionStatus txnStatus) {
+		transManager.commit(txnStatus);
+		//txnStatus.flush();
+		//txnStatus = transManager.getTransaction(transDef);
 	}
 
 	@Override
