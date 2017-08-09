@@ -4228,18 +4228,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
 		aFinanceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-		if (getScheduleDetailDialogCtrl() != null) {
-			if (getScheduleDetailDialogCtrl().getFeeChargesMap() != null
-					&& getScheduleDetailDialogCtrl().getFeeChargesMap().size() > 0) {
-				List<Date> feeRuleKeys = new ArrayList<Date>(getScheduleDetailDialogCtrl().getFeeChargesMap().keySet());
-				List<FeeRule> feeRuleList = new ArrayList<FeeRule>();
-				for (Date date : feeRuleKeys) {
-					feeRuleList.addAll(getScheduleDetailDialogCtrl().getFeeChargesMap().get(date));
-				}
-				aFinanceDetail.getFinScheduleData().setFeeRules(feeRuleList);
-			}
-		}
-
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -6250,7 +6238,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		int retValue = PennantConstants.porcessOVERIDE;
 		while (retValue == PennantConstants.porcessOVERIDE) {
-			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 			ArrayList<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
 

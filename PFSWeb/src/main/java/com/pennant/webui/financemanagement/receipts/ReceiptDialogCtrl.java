@@ -2078,24 +2078,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 		if (sdSize > 0) {
 
-			// Find Out Fee charge Details on Schedule
-			Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
-			if (aFinScheduleData.getFeeRules() != null && aFinScheduleData.getFeeRules().size() > 0) {
-				feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-
-				for (FeeRule fee : aFinScheduleData.getFeeRules()) {
-					if (feeChargesMap.containsKey(fee.getSchDate())) {
-						ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					} else {
-						ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					}
-				}
-			}
-
 			// Find Out Finance Repayment Details on Schedule
 			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 			aFinScheduleData = getFinanceDetailService().getFinMaintainenceDetails(aFinScheduleData);
@@ -2176,15 +2158,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ReceiptDialog);
 				
-				if(aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
-						aFinScheduleData.getFinFeeDetailList() != null && !aFinScheduleData.getFinFeeDetailList().isEmpty()){
-					finRender.renderOrg(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate, false);
-				}else{
-					finRender.render(map, prvSchDetail, false, true, true, feeChargesMap, showRate, false);
-				}
-
+				finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate, false);
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, true, true, feeChargesMap, showRate, false);
+					finRender.render(map, prvSchDetail, true, true, true, aFinScheduleData.getFinFeeDetailList(), showRate, false);
 					break;
 				}
 			}

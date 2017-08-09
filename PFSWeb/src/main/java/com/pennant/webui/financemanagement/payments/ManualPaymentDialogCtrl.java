@@ -92,7 +92,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.aspose.words.SaveFormat;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
@@ -164,7 +163,6 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
-import com.pennant.util.TemplateEngine;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
@@ -1313,24 +1311,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 		if (sdSize > 0) {
 
-			// Find Out Fee charge Details on Schedule
-			Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
-			if (aFinScheduleData.getFeeRules() != null && aFinScheduleData.getFeeRules().size() > 0) {
-				feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-
-				for (FeeRule fee : aFinScheduleData.getFeeRules()) {
-					if (feeChargesMap.containsKey(fee.getSchDate())) {
-						ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					} else {
-						ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					}
-				}
-			}
-
 			// Find Out Finance Repayment Details on Schedule
 			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 			if (aFinScheduleData.getRepayDetails() != null && aFinScheduleData.getRepayDetails().size() > 0) {
@@ -1395,10 +1375,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ManualPaymentDialog);
-				finRender.render(map, prvSchDetail, false, true, false, feeChargesMap, showRate, false);
+				finRender.render(map, prvSchDetail, false, true, false, aFinScheduleData.getFinFeeDetailList(), showRate, false);
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, true, false, feeChargesMap, showRate, false);
+					finRender.render(map, prvSchDetail, true, true, false, aFinScheduleData.getFinFeeDetailList(), showRate, false);
 					break;
 				}
 			}

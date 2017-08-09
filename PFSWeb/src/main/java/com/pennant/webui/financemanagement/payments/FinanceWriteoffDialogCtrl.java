@@ -990,24 +990,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 		if (aFinScheduleData != null && sdSize > 0) {
 
-			// Find Out Fee charge Details on Schedule
-			Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
-			if (aFinScheduleData.getFeeRules() != null && aFinScheduleData.getFeeRules().size() > 0) {
-				feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-
-				for (FeeRule fee : aFinScheduleData.getFeeRules()) {
-					if (feeChargesMap.containsKey(fee.getSchDate())) {
-						ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					} else {
-						ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					}
-				}
-			}
-
 			// Find Out Finance Repayment Details on Schedule
 			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 			if (aFinScheduleData.getRepayDetails() != null && aFinScheduleData.getRepayDetails().size() > 0) {
@@ -1066,10 +1048,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_FinWriteoffDialog);
-				finRender.render(map, prvSchDetail, false, true, true, feeChargesMap, showRate, false);
+				finRender.render(map, prvSchDetail, false, true, true,  aFinScheduleData.getFinFeeDetailList(), showRate, false);
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, true, true, feeChargesMap, showRate, false);
+					finRender.render(map, prvSchDetail, true, true, true,  aFinScheduleData.getFinFeeDetailList(), showRate, false);
 					break;
 				}
 			}
