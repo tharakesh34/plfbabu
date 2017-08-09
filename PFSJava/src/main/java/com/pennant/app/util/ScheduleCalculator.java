@@ -3454,7 +3454,7 @@ public class ScheduleCalculator {
 		}
 
 		// NO PAYMENT: Applicable for Grace Period And REPAYMENT period with PFT or PRI+PFT)
-		if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_NOPAY)) {
+		if (CalculationConstants.SCHMTHD_NOPAY.equals(curSchd.getSchdMethod())) {
 			if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 					&& (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
 							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
