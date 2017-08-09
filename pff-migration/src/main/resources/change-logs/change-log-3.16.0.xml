@@ -2018,4 +2018,18 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
 	</createView>
 </changeSet>
+<changeSet id="175" author="Prasad">
+    <createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+       <![CDATA[Select substr(T1.FinReference,9,length(T1.FinReference)) APPLID,FavourNumber CHEQUEID,T1.FinReference AGREEMENTNO,
+		T3.Postdate BOUNCE_DATE,T4.Reason BOUNCE_REASON,T3.ADVISEAMOUNT BOUNCE_AMT,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1 
+		inner join FINRECEIPTHEADER T on t.Reference = T1.FinReference 
+		inner join FINRECEIPTDETAIL T2 on T.RECEIPTID =T2.RECEIPTID And T.ReceiptMode = T2.PaymentType  
+		inner join ManualAdvise T3 on T3.RECEIPTID = T.RECEIPTID 
+		inner join Bouncereasons T4 on T4.Bounceid =T3.Bounceid
+		Where T.ReceiptModeStatus  IN ('B') and T.ReceiptMode in ('CHEQUE','DD') and T3.Advisetype=1 and T3.Bounceid>0]]>
+	</createView>
+</changeSet>
 </databaseChangeLog>
