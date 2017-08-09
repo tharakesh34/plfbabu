@@ -1732,7 +1732,6 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
     <addPrimaryKey columnNames="AGREEMENTID,BATCH_ID" constraintName="PK_DM_LDD_AGGID_BID" tableName="DM_LEA_DOC_DTL"/>
 </changeSet>
 
-
 <changeSet id="130" author="Manoj" >
 	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_LOAN_DETAILS_DAILY" />
 </changeSet>
@@ -1746,7 +1745,6 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 <changeSet id="132" author="Manoj">
     <addPrimaryKey columnNames="AGREEMENTNO,BATCH_ID" constraintName="PK_DM_LOANDET_AGGNO_BID" tableName="DM_LOAN_DETAILS_DAILY"/>
 </changeSet>
-
 
 <changeSet id="133" author="Manoj" >
 	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_LOAN_VOUCHER_DETAILS" />
@@ -1820,7 +1818,6 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
     <addPrimaryKey columnNames="ECS_ID,BATCH_ID" constraintName="PK_DM_OPECS_ECS_BID" tableName="DM_OPENECS_DETAILS"/>
 </changeSet>
 
-
 <changeSet id="148" author="Manoj" >
 	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_PREPAYMENT_DETAILS" />
 </changeSet>
@@ -1893,7 +1890,6 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
     <addPrimaryKey columnNames="APPLICATIONID,BATCH_ID" constraintName="PK_DM_PROPDET_APPID_BID" tableName="DM_PROPERTY_DTL"/>
 </changeSet>
 
-
 <changeSet id="157" author="Manoj" >
 	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_RESCH_DETAILS_DAILY" />
 </changeSet>
@@ -1922,8 +1918,6 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 <changeSet id="162" author="Manoj">
     <addPrimaryKey columnNames="AGREEMENTNO,BATCH_ID" constraintName="PK_DM_SSE_AGGNO_BID" tableName="DM_SEND_SOA_EMAIL"/>
 </changeSet>
-
-
 
 
 <changeSet id="163" author="Manoj" >
