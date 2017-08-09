@@ -2159,6 +2159,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					finCovenantType.setNextRoleCode(financeMain.getNextRoleCode());
 					finCovenantType.setRecordStatus(financeMain.getRecordStatus());
 					finCovenantType.setWorkflowId(financeMain.getWorkflowId());
+					finCovenantType.setLastMntOn(financeMain.getLastMntOn());
 				}
 				auditDetails.addAll(getFinCovenantTypeService().saveOrUpdate(financeDetail.getCovenantTypeList(),
 						tableType.getSuffix(), auditTranType));
