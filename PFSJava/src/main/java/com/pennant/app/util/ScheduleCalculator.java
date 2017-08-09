@@ -3482,7 +3482,7 @@ public class ScheduleCalculator {
 			curSchd.setPrincipalSchd(BigDecimal.ZERO);
 
 			// EQUAL PAYMENT: Applicable for REPAYMENT period
-		} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_EQUAL)) {
+		} else if (CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())) {
 			BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd);
 
 			if (pftToSchd.compareTo(curSchd.getRepayAmount()) < 0) {
@@ -3494,12 +3494,12 @@ public class ScheduleCalculator {
 			curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 
 			// PRINCIPAL ONLY: Applicable for REPAYMENT period
-		} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PRI)) {
+		} else if (CalculationConstants.SCHMTHD_PRI.equals(curSchd.getSchdMethod())) {
 			curSchd.setProfitSchd(BigDecimal.ZERO);
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 
 			// CALCULATED PROFIT ONLY: Applicable for GRACE & REPAYMENT period
-		} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PFT)) {
+		} else if (CalculationConstants.SCHMTHD_PFT.equals(curSchd.getSchdMethod())) {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
@@ -3524,7 +3524,7 @@ public class ScheduleCalculator {
 
 			// PRINCIPAL + CALCULATED PROFIT: Applicable for GRACE & REPAYMENT
 			// period
-		} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
+		} else if (CalculationConstants.SCHMTHD_PRI_PFT.equals(curSchd.getSchdMethod())) {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
@@ -3549,7 +3549,7 @@ public class ScheduleCalculator {
 
 			// NOPAYMENT IN GRACE SCHEDULES AND COMPLETE PAYMENT AT GRACE END
 			// DATE: Applicable for GRACE period Only
-		} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
+		} else if (CalculationConstants.SCHMTHD_GRCENDPAY.equals(curSchd.getSchdMethod())) {
 
 			if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 					&& (finMain.getBpiTreatment().equals(FinanceConstants.BPI_DISBURSMENT)
