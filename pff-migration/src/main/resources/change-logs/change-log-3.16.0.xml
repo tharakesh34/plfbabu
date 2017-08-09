@@ -2283,4 +2283,22 @@ union
 	<dropNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_TEMP"/>
 	<dropNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_STGE"/>
 </changeSet>
+<changeSet id="183" author="Madhubabu">
+   <sql>
+		INSERT INTO SecRoles SELECT (select MAX(RoleID)+1 from SecRoles),1,'CUSTOMER_MAKER','Customer creation maker','',0,1000,null,' ',' ',null,' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+		INSERT INTO SecRoles SELECT (select MAX(RoleID)+1 from SecRoles),1,'CUSTOMER_APPROVER','Customer creation Approver','',0,1000,null,' ',' ',null,' ',' ',' ',0 FROM SeqSecRoles WHERE 0=0;
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_DDE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERADDRES_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERINCOME_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERPHONENUMBER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMEREMAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERTYPE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERDEDUP_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMERCATEGORY_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		
+   </sql>
+</changeSet>
 </databaseChangeLog>
