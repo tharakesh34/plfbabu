@@ -56,7 +56,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -83,7 +82,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	private FinanceTypeDAO		financeTypeDAO;
 	private FinanceScheduleDetailDAO		financeScheduleDetailDAO;
 	private CustomerDetailsService			customerDetailsService;
-	private MandateDAO					mandateDAO;
 
 	public FinCovenantTypeServiceImpl() {
 		super();
@@ -435,13 +433,9 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 		
-		//Mandate
-		//financeDetail.setMandate(getMandateDAO().getMandateById(financeDetail.getFinScheduleData().getFinanceMain().getMandateID(), ""));
-
 		//Fin Covenant Type
-		
 		List<FinCovenantType> finCovenantType = getFinCovenantTypeDAO()
-				.getFinCovenantTypeByFinRef(id, "_View", false);
+				.getFinCovenantDocTypeByFinRef(id, "_View", false);
 		financeDetail.setCovenantTypeList(finCovenantType);
 		
 		return financeDetail;
@@ -477,14 +471,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
-	}
-
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
 	}
 
 }

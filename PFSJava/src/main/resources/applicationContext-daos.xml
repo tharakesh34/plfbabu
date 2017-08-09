@@ -5474,7 +5474,6 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="mandateDAO" ref="mandateDAO" />
 	</bean>
 
 	<!--============ Payment Order Issue Details ============== -->

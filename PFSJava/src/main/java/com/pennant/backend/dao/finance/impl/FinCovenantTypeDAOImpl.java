@@ -462,6 +462,35 @@ public class FinCovenantTypeDAOImpl extends BasisCodeDAO<FinCovenantType> implem
 		logger.debug(Literal.LEAVING);
 		return aFinCovenantType;
 	}
+
+
+	@Override
+	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
+		logger.debug("Entering");
+		FinCovenantType finCovenantType = new FinCovenantType();
+		finCovenantType.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,lovdescIsCustDoc,");
+		if(isEnquiry){
+			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
+		}else{
+			if (StringUtils.trimToEmpty(type).contains("View")){
+				selectSql.append(" CovenantTypeDesc,MandRoleDesc,");
+			}
+		}
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From FinCovenantType");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference ");
+		selectSql.append(" AND finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory) ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
+		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCovenantType.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
 	
 	
 }

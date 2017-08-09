@@ -436,7 +436,11 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		this.description.setReadonly(true);
 		this.alwWaiver.setDisabled(true);
 		this.alwPostpone.setDisabled(true);
-		this.receivableDate.setDisabled(true);
+		if(StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, financedetail.getFinScheduleData().getFinanceMain().getRecordStatus())){
+			this.receivableDate.setDisabled(true);
+		}else{
+			this.receivableDate.setDisabled(false);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -549,6 +553,17 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		doSetWaiverProp();
 		
 		doSetPostponeProp();
+		
+		if (getFinCovenantType().isNewRecord()) {
+			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			this.mandRole.setVisible(false);
+		}if(aFinAdvnancePayments.getMandRole()!=null){
+			this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+			this.mandRole.setVisible(true);
+		}else{
+			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
+			this.mandRole.setVisible(false);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -949,8 +964,8 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 		} else{
-			this.mandRole.setVisible(true);
-			this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+			this.mandRole.setVisible(false);
+			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			this.row_Postpone.setVisible(true);
 		}
 	}
@@ -1013,8 +1028,8 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			}else{				
-				this.mandRole.setVisible(true);
-				this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
+				this.mandRole.setVisible(false);
+				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			}
 			this.space_receivableDate.setSclass("");
 			this.receivableDate.setErrorMessage("");

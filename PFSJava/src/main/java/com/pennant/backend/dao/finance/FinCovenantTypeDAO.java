@@ -56,6 +56,7 @@ public interface FinCovenantTypeDAO {
 	void delete(FinCovenantType finCovenantTypeDAO,String type);
 	String save(FinCovenantType finCovenantTypeDAO,String type);
 	List<FinCovenantType> getFinCovenantTypeByFinRef(String id, String type,boolean isEnquiry);
+	List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type,boolean isEnquiry);
 	void deleteByFinRef(String finReference, String tableType);
 	boolean isDuplicateKey(String finReference, String covenantType, TableType tableType);
 	void delete(FinCovenantType finCovenantType, TableType mainTab);
