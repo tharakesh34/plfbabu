@@ -294,6 +294,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 			finCovenantType.setWorkflowId(aFinanceDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 			
 		}*/
+		aFinanceMain.setRcdMaintainSts(financedetail.getModuleDefiner());
 
 		// save it to database
 		try {
