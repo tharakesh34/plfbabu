@@ -80,6 +80,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -121,7 +122,6 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient boolean newFinance;
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
-	private String allowedRoles;
 	private FinCovenantType finCovenantTypes;
 	private transient FinCovenantTypeService finCovenantTypeService;
 	protected transient FinanceSelectCtrl	financeSelectCtrl	= null;
@@ -208,10 +208,6 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(),this.pageRightName);
 			}else{
 				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
-			}
-			
-			if (arguments.containsKey("allowedRoles")) {
-				allowedRoles=(String) arguments.get("allowedRoles");
 			}
 			
 			doEdit();
@@ -303,10 +299,19 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
 			if (doProcess(aFinanceDetail, tranType)) {
-				if (getFinanceSelectCtrl() != null) {
-					refreshList();
+				// List Detail Refreshment
+				refreshList();
+
+				// Confirmation message
+				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
+						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference() + "", " Covenant Details ",
+						aFinanceMain.getRecordStatus());
+				if (StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+					msg = " Covenant Detail with Reference " + aFinanceMain.getFinReference()
+							+ " Approved Succesfully.";
 				}
-				// do Close the Dialog window
+				Clients.showNotification(msg, "info", null, null, -1);
+
 				closeDialog();
 			}
 		} catch (Exception e) {
@@ -836,7 +841,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("covenantDetailListCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", roleCode);
-		map.put("allowedRoles", allowedRoles);
+		map.put("allowedRoles",StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
 		map.put("financeDetail", getFinancedetail());
 		map.put("covenantDetail", covenantDetail);
 
@@ -868,7 +873,7 @@ public class CovenantDetailListCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("covenantDetailListCtrl", this);
 				map.put("roleCode", roleCode);
 				map.put("enqModule", isEnquiry);
-				map.put("allowedRoles", allowedRoles);
+				map.put("allowedRoles",StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
 				map.put("financeDetail", getFinancedetail());
 
 				// call the ZUL-file with the parameters packed in a map
