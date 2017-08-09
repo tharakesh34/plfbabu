@@ -9257,6 +9257,10 @@
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
+		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
+		<property name="feePostingsDAO" ref="feePostingsDAO" />
+		<property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
 
 	</bean>
 	<!--============ Reference ID Generation Configuration ============== -->
