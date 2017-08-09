@@ -1,21 +1,24 @@
 package com.pennanttech.service.test;
 
+import com.pennanttech.bajaj.process.SAPGLReportsProcess;
+import com.pennanttech.dataengine.util.DateUtil;
+import javax.sql.DataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
-
 public class TestSAPGL {
-	private TrailBalanceReportService trailBalanceReport;
+	
+	DataSource dataSource;
 
 	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			trailBalanceReport = context.getBean(TrailBalanceReportService.class);
+			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -24,7 +27,7 @@ public class TestSAPGL {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			trailBalanceReport.generateReport(new Long(1000));
+			new SAPGLReportsProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

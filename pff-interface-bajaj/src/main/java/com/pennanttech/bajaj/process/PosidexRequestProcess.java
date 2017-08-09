@@ -83,9 +83,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		try {
 			do {
 				extractData();
-				System.out.println(totalRecords);
-				System.out.println(processedCount);
-				System.out.println(totalRecords > 0 && totalRecords != processedCount);
 			} while (totalRecords > 0 && totalRecords != processedCount);
 
 		} catch (Exception e) {
