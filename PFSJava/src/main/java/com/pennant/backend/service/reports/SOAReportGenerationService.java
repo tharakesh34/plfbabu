@@ -52,6 +52,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
+import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 
 public interface SOAReportGenerationService {
@@ -74,4 +75,6 @@ public interface SOAReportGenerationService {
 	StatementOfAccount getSOAProductDetails(String finBranch, String finType);
 
 	SOASummaryReport getFinExcessAmountOfSummaryReport(String finReference);
+
+	List<SOATransactionReport> getFinFeeScheduleDetails(String finReference);
 }

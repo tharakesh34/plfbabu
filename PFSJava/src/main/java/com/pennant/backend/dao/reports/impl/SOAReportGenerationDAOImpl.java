@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
+import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -211,12 +212,13 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 	@Override
 	public List<FinODDetails> getFinODDetails(String finReference) {
 		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
 		List<FinODDetails> list;
 		
 		StringBuilder selectSql = new StringBuilder();
 		
 		selectSql.append(" Select * FROM FinODDetails");
-		selectSql.append(" Where TOtPenaltyAmt > 0");
+		selectSql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
 		
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
@@ -261,6 +263,38 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		return list;
 	}
 
+	@Override
+	public List<SOATransactionReport> getFinFeeScheduleDetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT Schdate transactionDate,'FEESCH' event, SchAmount transactionAmount, 'Debit' drOrCr"); 
+		selectSql.append(" FROM finfeescheduledetail T1 Inner Join");
+		selectSql.append(" FinFeeDetail T2 on T1.FeeID = T2.FeeID Inner Join");
+		selectSql.append(" FeeTypes T3 On T2.FeeTypeid = T3.FeeTypeId INNER JOIN"); 
+		selectSql.append(" Financemain T4 on T4.FINREFERENCE =T2.FINREFERENCE");
+		selectSql.append(" WHERE 	SchAmount !=0 and (T4.closingstatus!='C' or T4.closingstatus is null)"); 
+		selectSql.append(" And  Schdate <= (SELECT to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue FROM smtparameters WHERE SYSPARMCODE = 'APP_DATE')");
+		selectSql.append(" And  T2.FinReference = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
 	@Override
 	public StatementOfAccount getSOALoanDetails(String finReference) {
 		StatementOfAccount statementOfAccount = new StatementOfAccount();

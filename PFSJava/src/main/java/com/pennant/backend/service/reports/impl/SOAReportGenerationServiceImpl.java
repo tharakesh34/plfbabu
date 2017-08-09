@@ -53,6 +53,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
+import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
@@ -94,6 +95,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	@Override
 	public List<ManualAdvise> getManualAdvise(String finReference) {
 		return this.soaReportGenerationDAO.getManualAdvise(finReference);
+	}
+	
+	@Override
+	public List<SOATransactionReport> getFinFeeScheduleDetails(String finReference) {
+		return this.soaReportGenerationDAO.getFinFeeScheduleDetails(finReference);
 	}
 
 	@Override

@@ -74,8 +74,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
-import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -532,6 +532,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			List<PaymentInstruction>  paymentInstructionsList = this.soaReportGenerationService.getPaymentInstructions(finReference);
 			List<FinODDetails>  finODDetailsList = this.soaReportGenerationService.getFinODDetails(finReference);
 			List<ManualAdvise>  manualAdviseList = this.soaReportGenerationService.getManualAdvise(finReference);
+			List<SOATransactionReport> soaFinFeeScheduleReports = this.soaReportGenerationService.getFinFeeScheduleDetails(finReference);
 			
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 				
@@ -616,6 +617,9 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 					soaTransactionReports.add(soaTransactionReport);
 				}
 			}
+			
+			//FINFeeScheduleDetails
+			soaTransactionReports.addAll(soaFinFeeScheduleReports);
 			
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				
