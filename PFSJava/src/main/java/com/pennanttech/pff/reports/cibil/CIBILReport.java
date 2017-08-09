@@ -35,6 +35,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -42,9 +43,8 @@ import com.pennanttech.service.AmazonS3Bucket;
 
 public class CIBILReport {
 	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
-
+	
 	private static final String DATE_FORMAT = "ddMMYYYY";
-
 	private String CBIL_REPORT_PATH;
 	private String CBIL_REPORT_MEMBER_SHORT_NAME;
 	private String CBIL_REPORT_MEMBER_PASSWORD;
@@ -58,6 +58,8 @@ public class CIBILReport {
 	private long processedRecords;
 	private long successCount;
 	private long failedCount;
+	
+	public static DataEngineStatus EXE_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
 
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -90,6 +92,7 @@ public class CIBILReport {
 			cibilService.deleteDetails();
 
 			totalRecords = cibilService.extractCustomers();
+			EXE_STATUS.setTotalRecords(totalRecords);
 
 			new CBILHeader(writer).write();
 
@@ -101,7 +104,7 @@ public class CIBILReport {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					processedRecords++;
+					EXE_STATUS.setProcessedRecords(processedRecords++);
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
 
@@ -124,8 +127,9 @@ public class CIBILReport {
 						new AccountSegmentHistory(writer, list).write();
 						new EndofSubjectSegment(writer).write();
 
-						successCount++;
+						EXE_STATUS.setSuccessRecords(successCount++);
 					} catch (Exception e) {
+						EXE_STATUS.setFailedRecords(failedCount++);
 						failedCount++;
 						cibilService.logFileInfoException(headerId, finreference, e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
@@ -145,17 +149,17 @@ public class CIBILReport {
 				writer.close();
 			}
 
-			String remarks = updateRemarks();
-			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
-					remarks);
-
 			Configuration config = cibilService.getConfigDetails("CIBIL_REPORT");
-
 			if (Event.MOVE_TO_S3_BUCKET.name().equals(config.getPostEvent())) {
 				AmazonS3Bucket bucket = new AmazonS3Bucket(config.getRegionName(), config.getBucketName(),
 						EncryptionUtil.decrypt(config.getAccessKey()), EncryptionUtil.decrypt(config.getSecretKey()));
 				bucket.putObject(reportName, config.getPrefix());
 			}
+			
+			String remarks = updateRemarks();
+			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
+					remarks);
+			EXE_STATUS.setStatus(status);
 		}
 
 		logger.debug(Literal.LEAVING);

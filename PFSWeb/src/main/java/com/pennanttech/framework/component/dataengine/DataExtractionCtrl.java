@@ -1,16 +1,5 @@
 package com.pennanttech.framework.component.dataengine;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Hbox;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.Rows;
-import org.zkoss.zul.Timer;
-import org.zkoss.zul.Window;
-
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -20,6 +9,16 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
+import java.util.List;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Timer;
+import org.zkoss.zul.Window;
 
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
@@ -111,9 +110,9 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			
 		}
 		
-		BajajInterfaceConstants.CIBIL_EXPORT_STATUS=cibilService.getLatestExecution();
-		BajajInterfaceConstants.CIBIL_EXPORT_STATUS.setName("CIBIL_EXPORT_STATUS");
-		doFillPanel(null, BajajInterfaceConstants.CIBIL_EXPORT_STATUS);
+		CIBILReport.EXE_STATUS =cibilService.getLatestExecution();
+		CIBILReport.EXE_STATUS.setName("CIBIL_EXPORT_STATUS");
+		doFillPanel(null, CIBILReport.EXE_STATUS);
 		timer.start();
 		logger.debug(Literal.LEAVING);
 	}
