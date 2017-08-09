@@ -5589,7 +5589,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (closingBal != null) {
 					if (remBal.compareTo(closingBal) >= 0) {
 						MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
-								new String[] { Labels.getLabel("label_ReceiptDialog_Valid_TotalReceiptAmount"),
+								new String[] { Labels.getLabel("label_ReceiptDialog_Valid_TotalPartialSettlementAmount"),
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
 					}
