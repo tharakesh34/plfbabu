@@ -1806,4 +1806,19 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
     <addPrimaryKey columnNames="AGREEMENTNO,BATCH_ID" constraintName="PK_DM_NOC_AGGNO_BID" tableName="DM_NOC_ELIGIBLE_LOANS"/>
 </changeSet>
 
+<changeSet id="145" author="Manoj" >
+	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_OPENECS_DETAILS" />
+</changeSet>
+	
+<changeSet id="146" author="Manoj">
+	<addForeignKeyConstraint constraintName="FK_DM_OPECS_BID" 
+	referencedTableName="DATAMART_HEADER" referencedColumnNames="BATCHID"
+	baseTableName="DM_OPENECS_DETAILS" baseColumnNames="BATCH_ID" />
+</changeSet>
+
+<changeSet id="147" author="Manoj">
+    <addPrimaryKey columnNames="ECS_ID,BATCH_ID" constraintName="PK_DM_OPECS_ECS_BID" tableName="DM_OPENECS_DETAILS"/>
+</changeSet>
+	
+
 </databaseChangeLog>
