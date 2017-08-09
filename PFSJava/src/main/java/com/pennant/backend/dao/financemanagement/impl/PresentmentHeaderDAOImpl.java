@@ -794,4 +794,33 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for Fetching Count for Assigned partnerBankId to Different
+	 * Finances/Commitments
+	 */
+	@Override
+	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
+		logger.debug("Entering");
+
+		int assignedCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
+		selectSql.append(" From PresentmentHeader");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			assignedCount = 0;
+		}
+		logger.debug("Leaving");
+		return assignedCount;
+	}
+	
 }

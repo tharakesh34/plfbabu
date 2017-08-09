@@ -50,8 +50,12 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.payment.PaymentInstructionDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,8 +79,17 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 	private AuditHeaderDAO		auditHeaderDAO;
 
 	private PartnerBankDAO		partnerBankDAO;
-
+	
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+
+	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+
+	private PaymentInstructionDAO paymentInstructionDAO;
+
+	private FeePostingsDAO feePostingsDAO;
+
+	private PresentmentHeaderDAO presentmentHeaderDAO;
+	
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -383,6 +396,15 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 				&& getPartnerCodeExist(partnerBank.getPartnerBankCode(), "_View")) {
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, valueParm));
 		}
+		
+		// Check Dependency Validation
+		if (PennantConstants.RECORD_TYPE_DEL.equals(partnerBank.getRecordType())) {
+			boolean isPartnerBankUsed = checkDependencyValidation(partnerBank.getPartnerBankId());
+
+			if (isPartnerBankUsed) {
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -405,6 +427,46 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		return codeExist;
 	}
 
+	/**
+	 * Checking wile record deletion if partnerBank used in other area's or not.
+	 * If it used we cannot allow to delete that record.
+	 * @param partnerBankId
+	 * @return
+	 */
+	public boolean checkDependencyValidation(long partnerBankId) {
+		logger.debug("Entering");
+
+		int count = 0;
+
+		count = getFinTypePartnerBankDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = getFinAdvancePaymentsDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = getPaymentInstructionDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = getFeePostingsDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		count = getPresentmentHeaderDAO().getAssignedPartnerBankCount(partnerBankId, "_View");
+		if (count > 0) {
+			return true;
+		}
+
+		logger.debug("Leaving");
+		return false;
+	}
+	
 	@Override
 	public List<PartnerBranchModes> getPartnerBranchModesId(long id) {
 		return getPartnerBankDAO().getPartnerBranchModesId(id);
@@ -416,5 +478,37 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
+		return finTypePartnerBankDAO;
+	}
+
+	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
+		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	public PaymentInstructionDAO getPaymentInstructionDAO() {
+		return paymentInstructionDAO;
+	}
+
+	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
+		this.paymentInstructionDAO = paymentInstructionDAO;
+	}
+
+	public FeePostingsDAO getFeePostingsDAO() {
+		return feePostingsDAO;
+	}
+
+	public void setFeePostingsDAO(FeePostingsDAO feePostingsDAO) {
+		this.feePostingsDAO = feePostingsDAO;
+	}
+
+	public PresentmentHeaderDAO getPresentmentHeaderDAO() {
+		return presentmentHeaderDAO;
+	}
+
+	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
+		this.presentmentHeaderDAO = presentmentHeaderDAO;
 	}
 }

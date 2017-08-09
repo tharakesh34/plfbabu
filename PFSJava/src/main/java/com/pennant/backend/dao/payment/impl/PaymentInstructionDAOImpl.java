@@ -44,6 +44,7 @@ package com.pennant.backend.dao.payment.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -307,5 +308,33 @@ public class PaymentInstructionDAOImpl extends BasisNextidDaoImpl<PaymentInstruc
 
 		logger.debug(Literal.SQL + sql);
 		this.namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+	}
+
+	/**
+	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
+	 */
+	@Override
+	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
+		logger.debug("Entering");
+
+		int assignedCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
+		selectSql.append(" From PaymentInstructions");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try{
+			assignedCount	= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			assignedCount = 0;
+		}
+		logger.debug("Leaving");
+		return assignedCount;
 	}
 }

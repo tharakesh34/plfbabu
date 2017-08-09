@@ -87,5 +87,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
+	
+	int getAssignedPartnerBankCount(long partnerBankId, String type);
 
 }
