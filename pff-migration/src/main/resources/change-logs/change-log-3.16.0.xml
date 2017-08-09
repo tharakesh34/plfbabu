@@ -1975,5 +1975,47 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
 	</createView>
 </changeSet>	
-
+<changeSet id="171" author="Prasad">
+    <sql>
+       Delete from DM_BOUNCE_DETAILS where CHEQUEID is null;  
+    </sql>
+</changeSet>
+<changeSet id="172" author="Prasad">
+    <sql>
+        Alter table DM_BOUNCE_DETAILS drop constraint PK_DM_BCD_AGGNO_BID; 
+    </sql>
+</changeSet>
+<changeSet id="173" author="Prasad">
+    <sql>
+       alter table DM_BOUNCE_DETAILS add constraint PK_DM_BCD_AGGNO_BID PRIMARY KEY (AGREEMENTNO,CHEQUEID,BOUNCE_DATE,BATCH_ID);
+    </sql>
+</changeSet>
+<changeSet id="174" author="Prasad">
+	<createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+		SELECT NULL MODULEID,substr(P.FinEvent,1,1) STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+		substr(P.FinEvent,1,1) VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+		RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+		PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTR(FM.FinReference,9,
+		LENGTH(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+		FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+		P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+		AM.CostCenterid COST_CENTRE,
+		coalesce(Case when P.Drorcr='D' then P.postamount end,0) DRAMT,
+		coalesce(Case when P.Drorcr='C' then P.postamount end,0) CRAMT,
+		P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+		NULL CHEQUEID,
+		(SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		(SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+		NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+		FROM Postings P 
+		Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+		Inner join FinPftDetails FP on FM.finreference=FP.finreference
+		Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+		Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+		INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+		INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+		Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+		Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+	</createView>
+</changeSet>
 </databaseChangeLog>
