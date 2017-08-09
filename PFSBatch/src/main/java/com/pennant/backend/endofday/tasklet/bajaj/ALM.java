@@ -113,6 +113,7 @@ public class ALM implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("ALM Request Service started...");
+				sleep(1000);
 				this.almRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

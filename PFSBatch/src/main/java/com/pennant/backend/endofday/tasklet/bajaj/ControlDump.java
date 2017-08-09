@@ -1,23 +1,24 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.core.services.ControlDumpRequestService;
 
 public class ControlDump implements Tasklet {
 	private Logger logger = Logger.getLogger(ControlDump.class);
@@ -67,13 +68,19 @@ public class ControlDump implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			Date monthStartDate = DateUtility.getMonthStartDate(DateUtility.getAppValueDate());
-			Date monthEndDate = DateUtility.getMonthEnd(DateUtility.getAppValueDate());
-
-			this.controlDumpRequestService.sendReqest(new Long(1000), DateUtility.getAppValueDate(),
-					DateUtility.getAppDate(), monthStartDate, monthEndDate);
-
+			
+			new ControlDumpProcessThread(new Long(1000), controlDumpRequestService).start();
+			DataEngineStatus status = BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS;
+			status.setStatus("I");
+			
+			while("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+				
+				if ("F".equals(status.getStatus())) {
+					throw new Exception("Unable to process the ALM.");
+				}
+			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -94,5 +101,26 @@ public class ControlDump implements Tasklet {
 		return dataSource;
 	}
 
+	
+	public class ControlDumpProcessThread extends Thread {
+		private long userId;
+		private ControlDumpRequestService controlDumpRequestService;
 
+		public ControlDumpProcessThread(long userId, ControlDumpRequestService controlDumpRequestService) {
+			this.userId = userId;
+			this.controlDumpRequestService = controlDumpRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Control Dump Request Service started...");
+				sleep(1000);
+				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
+						DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
 }

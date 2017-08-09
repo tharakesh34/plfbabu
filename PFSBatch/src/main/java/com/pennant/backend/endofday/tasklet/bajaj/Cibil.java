@@ -1,23 +1,24 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class Cibil implements Tasklet {
 	private Logger logger = Logger.getLogger(Cibil.class);
@@ -70,8 +71,18 @@ public class Cibil implements Tasklet {
 
 			}
 
-			cibilReport.generateReport();
+			new CIBILProcessThread(cibilReport).start();
+			DataEngineStatus status = BajajInterfaceConstants.CIBIL_EXPORT_STATUS;
+			status.setStatus("I");
 
+			while ("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+
+				if ("F".equals(status.getStatus())) {
+					throw new Exception("Unable to generate CIBIL Report.");
+				}
+			}
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -93,6 +104,22 @@ public class Cibil implements Tasklet {
 		return dataSource;
 	}
 
+	public class CIBILProcessThread extends Thread {
+		private CIBILReport cibilReport;
 
+		public CIBILProcessThread(CIBILReport cibilReport) {
+			this.cibilReport = cibilReport;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Control Dump Request Service started...");
+				sleep(1000);
+				cibilReport.generateReport();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
 	
 }

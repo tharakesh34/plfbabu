@@ -115,6 +115,7 @@ public class DataMart implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("DataMart Request Service started...");
+				sleep(1000);
 				this.dataMartRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 
 			} catch (Exception e) {
