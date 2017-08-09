@@ -10339,4 +10339,33 @@
 	
 	<!-- <bean id="projectedAccrualProcess" class="com.pennanttech.pff.process.accruals.ProjectedAccrualProcessImpl"/> -->
 	
+	<bean id="soaReportGenerationDAO"
+		class="com.pennant.backend.dao.reports.impl.SOAReportGenerationDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="soaReportGenerationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="soaReportGenerationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="soaReportGenerationServiceTarget"
+		class="com.pennant.backend.service.reports.impl.SOAReportGenerationServiceImpl">
+		<property name="soaReportGenerationDAO" ref="soaReportGenerationDAO" />
+	</bean>
+	
 </beans>

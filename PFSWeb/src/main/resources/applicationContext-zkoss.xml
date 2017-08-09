@@ -4889,4 +4889,11 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	
+	<!-- SOA -->
+	<bean id="soaReportGenerationDialogCtrl"
+		class="com.pennant.webui.reports.SOAReportGenerationDialogCtrl"
+		scope="prototype" parent="basisListCtrl">
+		<property name="soaReportGenerationService" ref="soaReportGenerationService" />
+	</bean>
+	
 </beans>
