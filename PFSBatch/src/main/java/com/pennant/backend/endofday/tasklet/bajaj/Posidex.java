@@ -1,10 +1,18 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.PosidexRequestProcess;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -12,26 +20,12 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.services.PosidexRequestService;
-
 public class Posidex implements Tasklet {
 	private Logger logger = Logger.getLogger(Posidex.class);
 
 	private DataSource dataSource;
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-
-	@Autowired
-	private PosidexRequestService posidexRequestService;
 
 	public EODConfig getEodConfig() {
 		try {
@@ -71,8 +65,9 @@ public class Posidex implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			new PosidexProcessThread(new Long(1000), posidexRequestService).start();
+			
+			
+			new PosidexProcessThread(new Long(1000)).start();
 			DataEngineStatus status = BajajInterfaceConstants.POSIDEX_REQUEST_STATUS;
 			status.setStatus("I");
 			
@@ -107,17 +102,16 @@ public class Posidex implements Tasklet {
 
 	public class PosidexProcessThread extends Thread {
 		private long userId;
-		private PosidexRequestService posidexRequestService;
 
-		public PosidexProcessThread(long userId, PosidexRequestService posidexRequestService) {
+		public PosidexProcessThread(long userId) {
 			this.userId = userId;
-			this.posidexRequestService = posidexRequestService;
 		}
 
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				this.posidexRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

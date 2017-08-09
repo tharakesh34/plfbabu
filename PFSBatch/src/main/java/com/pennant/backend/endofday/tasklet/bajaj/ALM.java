@@ -6,10 +6,11 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.ALMRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.services.ALMRequestService;
+import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
@@ -26,9 +27,10 @@ public class ALM implements Tasklet {
 	private DataSource dataSource;
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
+	
 	@Autowired
-	private ALMRequestService almRequestService;
-
+	private ProjectedAccrualProcess projectedAccrualProcess;
+	
 	public EODConfig getEodConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -68,7 +70,7 @@ public class ALM implements Tasklet {
 
 			}
 
-			new ALMProcessThread(new Long(1000), almRequestService).start();
+			new ALMProcessThread(new Long(1000), projectedAccrualProcess).start();
 			DataEngineStatus status = BajajInterfaceConstants.ALM_EXTRACT_STATUS;
 			status.setStatus("I");
 			
@@ -103,17 +105,18 @@ public class ALM implements Tasklet {
 	
 	public class ALMProcessThread extends Thread {
 		private long userId;
-		private ALMRequestService almRequestService;
+		private ProjectedAccrualProcess projectedAccrualProcess;
 
-		public ALMProcessThread(long userId, ALMRequestService almRequestService) {
+		public ALMProcessThread(long userId, ProjectedAccrualProcess projectedAccrualProcess) {
 			this.userId = userId;
-			this.almRequestService = almRequestService;
+			this.projectedAccrualProcess = projectedAccrualProcess;
 		}
 
 		public void run() {
 			try {
 				logger.debug("ALM Request Service started...");
-				this.almRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				ALMRequestProcess process = new ALMRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
+				process.process("ALM_REQUEST");
 				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

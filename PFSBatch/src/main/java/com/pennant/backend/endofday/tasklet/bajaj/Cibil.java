@@ -8,7 +8,6 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +71,7 @@ public class Cibil implements Tasklet {
 			}
 
 			new CIBILProcessThread(cibilReport).start();
-			DataEngineStatus status = BajajInterfaceConstants.CIBIL_EXPORT_STATUS;
+			DataEngineStatus status = CIBILReport.EXE_STATUS;
 			status.setStatus("I");
 
 			while ("I".equals(status.getStatus())) {

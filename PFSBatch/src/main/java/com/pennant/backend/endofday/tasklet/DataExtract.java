@@ -1,10 +1,18 @@
 package com.pennant.backend.endofday.tasklet;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.services.ControlDumpRequestService;
+import com.pennanttech.pff.core.services.TrailBalanceReportService;
+import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -12,19 +20,6 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.services.ALMRequestService;
-import com.pennanttech.pff.core.services.ControlDumpRequestService;
-import com.pennanttech.pff.core.services.PosidexRequestService;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
-import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
 
 public class DataExtract implements Tasklet {
 	private Logger logger = Logger.getLogger(DataExtract.class);
@@ -34,11 +29,7 @@ public class DataExtract implements Tasklet {
 	private EODConfigDAO eodConfigDAO;
 
 	@Autowired
-	private ALMRequestService almRequestService;
-	@Autowired
 	private ControlDumpRequestService controlDumpRequestService;
-	@Autowired
-	private PosidexRequestService posidexRequestService;
 	
 	@Autowired
 	private TrailBalanceReportService trailBalanceReportService;
@@ -86,13 +77,9 @@ public class DataExtract implements Tasklet {
 
 			}
 
-			new AMLRequestThread(new Long(1000), almRequestService).start();
 			new TrailBalanceReportThread(new Long(1000), trailBalanceReportService).start();
 			new ControlDumpRequestThread(new Long(1000), controlDumpRequestService).start();
 			new TaxDownlaodDetailThread(new Long(1000), taxDownlaodDetailService).start();
-
-			// PosidexRequestService
-			new PosidexRequestThread(new Long(1000), posidexRequestService).start();
 			new CibilReportThread(cibilReport).start();
 
 		} catch (Exception e) {
@@ -113,27 +100,6 @@ public class DataExtract implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public class AMLRequestThread extends Thread {
-
-		private long userId;
-		private ALMRequestService almRequestService;
-
-		public AMLRequestThread(long userId, ALMRequestService almRequestService) {
-			this.userId = userId;
-			this.almRequestService = almRequestService;
-		}
-
-		public void run() {
-			// ALMRequestService
-			try {
-				logger.debug("ALM Request Service started...");
-				this.almRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
 	}
 
 	public class ControlDumpRequestThread extends Thread {
@@ -159,28 +125,6 @@ public class DataExtract implements Tasklet {
 			}
 		}
 	}
-
-	public class PosidexRequestThread extends Thread {
-		private long userId;
-		private PosidexRequestService posidexRequestService;
-
-		public PosidexRequestThread(long userId, PosidexRequestService posidexRequestService) {
-			this.userId = userId;
-			this.posidexRequestService = posidexRequestService;
-		}
-
-		public void run() {
-			try {
-				logger.debug("Control Dump Request Service started...");
-				this.posidexRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
-
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-	}
-
-	
 
 	public class TrailBalanceReportThread extends Thread {
 		private long userId;
