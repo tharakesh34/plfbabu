@@ -2278,4 +2278,9 @@ union
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where Debit!=0 or credit !=0]]>
     </createView>
 </changeSet>
+<changeSet id="184" author="murthy.y">
+	<dropNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT"/>
+	<dropNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_TEMP"/>
+	<dropNotNullConstraint columnDataType="varchar(8)" columnName="ENTITY"  tableName="TRANSACTION_DETAIL_REPORT_STGE"/>
+</changeSet>
 </databaseChangeLog>
