@@ -114,9 +114,9 @@ public class ControlDump implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				sleep(1000);
 				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
 						DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
+				sleep(1000);
 
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

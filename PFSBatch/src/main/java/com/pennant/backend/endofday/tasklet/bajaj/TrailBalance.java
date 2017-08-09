@@ -124,8 +124,8 @@ public class TrailBalance implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				sleep(1000);
 				this.trailBalanceReportService.generateReport(userId);
+				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

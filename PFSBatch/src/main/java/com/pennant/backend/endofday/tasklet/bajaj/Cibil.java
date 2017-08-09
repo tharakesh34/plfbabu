@@ -114,8 +114,8 @@ public class Cibil implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				sleep(1000);
 				cibilReport.generateReport();
+				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
