@@ -203,6 +203,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> custCreationFinoneStatus;
 	
 	private static ArrayList<ValueLabel> extractionType;
+	private static ArrayList<ValueLabel> accountMapping;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2785,6 +2786,17 @@ public class PennantStaticListUtil {
 		}
 		return custCreationFinoneStatus;
 	}
+	
+	public static ArrayList<ValueLabel> getAccountMapping() {
 
+		if(accountMapping == null){
+			accountMapping = new ArrayList<ValueLabel>(3);
+			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
+			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
+		}
+		return accountMapping;
+	}
+	
 }
 
