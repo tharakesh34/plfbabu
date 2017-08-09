@@ -2072,4 +2072,16 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		inner join BMTBankDetail T7 on T7.Bankcode=t6.bankcode
     </createView>
 </changeSet>
+<changeSet id="178" author="pruthvi">
+<sql>
+delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_AccountMappingReport');
+delete from reportconfiguration where menuitemcode='menu_Item_AccountMappingReport';
+
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from reportconfiguration),'Account Mapping','Account Mapping',1,'AccountMapping','pfsDatasource',1,'menu_Item_AccountMappingReport',4,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+Insert into REPORTFILTERFIELDS values 
+((select reportid from reportconfiguration where menuitemcode='menu_Item_AccountMappingReport'),1,'Status','STATICLIST','Status','Status','getAccountMapping',null,null,null,0,0,0,0,1,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,'');
+</sql>
+</changeSet>
 </databaseChangeLog>
