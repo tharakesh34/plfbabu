@@ -1939,8 +1939,20 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 <changeSet id="165" author="Manoj">
     <addPrimaryKey columnNames="AGREEMENTNO,DISBURSEMENTNO,BATCH_ID" constraintName="PK_DM_SUBQ_AGGNO_DISBNO_BID" tableName="DM_SUBQ_DISB_DETAILS"/>
 </changeSet>
-	
-	
 
+<changeSet id="166" author="Manoj" >
+	<addNotNullConstraint columnDataType="decimal(19,0)" columnName="BATCH_ID" tableName="DM_WRITEOFF_DETAILS" />
+</changeSet>
+	
+<changeSet id="167" author="Manoj">
+	<addForeignKeyConstraint constraintName="FK_DM_WOD_BID" 
+	referencedTableName="DATAMART_HEADER" referencedColumnNames="BATCHID"
+	baseTableName="DM_WRITEOFF_DETAILS" baseColumnNames="BATCH_ID" />
+</changeSet>
+
+<changeSet id="168" author="Manoj">
+    <addPrimaryKey columnNames="AGREEMENTNO,BATCH_ID" constraintName="PK_DM_WOD_AGGNO_BID" tableName="DM_WRITEOFF_DETAILS"/>
+</changeSet>
+	
 
 </databaseChangeLog>
