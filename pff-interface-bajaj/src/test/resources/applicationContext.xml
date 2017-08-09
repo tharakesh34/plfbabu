@@ -10,7 +10,7 @@
 	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@192.168.1.19:1521:orcl" />
-		<property name="username" value="Plf" />
+		<property name="username" value="Plfdev" />
 		<property name="password" value="pff123" />
 		<property name="maxTotal" value="100" />
 	</bean>
@@ -26,6 +26,5 @@
 	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/> 
 	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestServiceImpl" scope="prototype" parent="bajajService"/> 
 	 <bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/> 
-	 <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestServiceImpl" scope="prototype" parent="bajajService"/> 
 	 <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl" scope="prototype" parent="bajajService"/> 
 </beans>

@@ -28,8 +28,9 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 	private AtomicLong completedThreads = null;
 	private long totalThreads;
 	private int btachSize = 10000;
+	private Date appDate;
 
-	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate) {
+	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
 
 		this.totalThreads = 0;
@@ -47,7 +48,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
+		
 		try {
 			new Thread(new ApplicantDetailsDataMart(new String[]{"CUSTOMERID"})).start();
 			totalThreads++;
@@ -361,7 +362,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_APPLICANT_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_APPLICANT_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						save(map, DataMartTable.DM_APPLICANT_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
@@ -414,7 +415,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					String[] keyFields = new String[] { "ADDRESSID", "CUSTOMERID" };
 					
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_ADDRESS_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_ADDRESS_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, "DM_ADDRESS_DETAILS", destinationJdbcTemplate);
@@ -476,14 +477,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 					
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_APPLICATION_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_APPLICATION_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_APPLICATION_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -536,14 +537,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_BOUNCE_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_BOUNCE_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_BOUNCE_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -598,7 +599,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 					
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_COAPPLICANT_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_COAPPLICANT_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_COAPPLICANT_DETAILS.name(), destinationJdbcTemplate);
@@ -659,14 +660,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 					
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_DISB_DETAILS_DAILY, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_DISB_DETAILS_DAILY, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_DISB_DETAILS_DAILY.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 
 					} catch (Exception e) {
@@ -720,14 +721,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 					
 					try {
-						map = DataMartMapper.mapData(DataMartTable.FORECLOSURECHARGES, rs);
+						map = DataMartMapper.mapData(DataMartTable.FORECLOSURECHARGES, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.FORECLOSURECHARGES.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -781,14 +782,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_HTS_UNADJUSTED_AMT, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_HTS_UNADJUSTED_AMT, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_HTS_UNADJUSTED_AMT.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -842,14 +843,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_INSURANCE_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_INSURANCE_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_INSURANCE_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -902,14 +903,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs, appDate);
 						map.addValue("BATCH_ID", executionStatus.getId());
 						
 						save(map, DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -963,14 +964,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_LEA_DOC_DTL, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_LEA_DOC_DTL, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_LEA_DOC_DTL.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1023,14 +1024,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_DETAILS_DAILY, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_DETAILS_DAILY, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_LOAN_DETAILS_DAILY.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1080,14 +1081,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_VOUCHER_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_LOAN_VOUCHER_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_LOAN_VOUCHER_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1140,14 +1141,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_CHARGE_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_CHARGE_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_LOANWISE_CHARGE_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1200,14 +1201,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1260,14 +1261,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_NOC_ELIGIBLE_LOANS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_NOC_ELIGIBLE_LOANS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_NOC_ELIGIBLE_LOANS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1320,14 +1321,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_OPENECS_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_OPENECS_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_OPENECS_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1381,14 +1382,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_PREPAYMENT_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_PREPAYMENT_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_PREPAYMENT_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1441,14 +1442,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_PRESENTATION_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_PRESENTATION_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_PRESENTATION_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1501,14 +1502,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_PROPERTY_DTL, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_PROPERTY_DTL, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_PROPERTY_DTL.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1561,14 +1562,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_RESCH_DETAILS_DAILY, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_RESCH_DETAILS_DAILY, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_RESCH_DETAILS_DAILY.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1621,14 +1622,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_SEND_SOA_EMAIL, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_SEND_SOA_EMAIL, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 
 						save(map, DataMartTable.DM_SEND_SOA_EMAIL.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1681,14 +1682,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_SUBQ_DISB_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_SUBQ_DISB_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_SUBQ_DISB_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1742,14 +1743,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 				public void processRow(ResultSet rs) throws SQLException, DataAccessException {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						map = DataMartMapper.mapData(DataMartTable.DM_WRITEOFF_DETAILS, rs);
+						map = DataMartMapper.mapData(DataMartTable.DM_WRITEOFF_DETAILS, rs, appDate);
 						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_WRITEOFF_DETAILS.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
 						
 						if (inserted++ > btachSize) {
-							transManager.commit(txnStatus);
+							commit(txnStatus);
 						}
 						
 					} catch (Exception e) {
@@ -1791,11 +1792,12 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 			txnStatus.flush();
 		}
 	}
+
 	
 	private void commit(TransactionStatus txnStatus) {
 		transManager.commit(txnStatus);
-		//txnStatus.flush();
-		//txnStatus = transManager.getTransaction(transDef);
+		txnStatus.flush();
+		txnStatus = transManager.getTransaction(transDef);
 	}
 
 	@Override

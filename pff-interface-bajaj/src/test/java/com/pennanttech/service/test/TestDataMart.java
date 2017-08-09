@@ -1,31 +1,36 @@
 package com.pennanttech.service.test;
 
-import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.pff.core.services.DataMartRequestService;
+import javax.sql.DataSource;
+
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TestDataMart {
+import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.dataengine.util.DateUtil;
 
-	DataMartRequestService dataMartRequestService;
+public class TestDataMart {
+	
+	DataSource dataSource;
 
 	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			dataMartRequestService = context.getBean(DataMartRequestService.class);
+			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
 
-	@Test(enabled=false)
+	@Test
 	public void process() {
 		try {
-			dataMartRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
+			DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
+			requestProcess.process("DATA_MART_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

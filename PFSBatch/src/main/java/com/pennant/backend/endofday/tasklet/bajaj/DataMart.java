@@ -1,24 +1,27 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.services.DataMartRequestService;
 import java.util.Date;
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 
 public class DataMart implements Tasklet {
 	private Logger logger = Logger.getLogger(DataMart.class);
@@ -28,9 +31,6 @@ public class DataMart implements Tasklet {
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 	
-	@Autowired
-	private DataMartRequestService dataMartRequestService;
-
 	public EODConfig getEodConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -70,7 +70,7 @@ public class DataMart implements Tasklet {
 
 			}
 			
-			new DataMartProcessThread(new Long(1000), dataMartRequestService).start();
+			new DataMartProcessThread(new Long(1000)).start();
 			DataEngineStatus status = BajajInterfaceConstants.DATA_MART_STATUS;
 			status.setStatus("I");
 			
@@ -105,19 +105,17 @@ public class DataMart implements Tasklet {
 	
 	public class DataMartProcessThread extends Thread {
 		private long userId;
-		private DataMartRequestService dataMartRequestService;
 
-		public DataMartProcessThread(long userId, DataMartRequestService dataMartRequestService) {
+		public DataMartProcessThread(long userId) {
 			this.userId = userId;
-			this.dataMartRequestService = dataMartRequestService;
 		}
 
 		public void run() {
 			try {
 				logger.debug("DataMart Request Service started...");
 				sleep(1000);
-				this.dataMartRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
-
+				DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				requestProcess.process("DATA_MART_REQUEST");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

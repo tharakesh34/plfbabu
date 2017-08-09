@@ -21,7 +21,6 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.services.ALMRequestService;
 import com.pennanttech.pff.core.services.ControlDumpRequestService;
-import com.pennanttech.pff.core.services.DataMartRequestService;
 import com.pennanttech.pff.core.services.PosidexRequestService;
 import com.pennanttech.pff.core.services.TrailBalanceReportService;
 import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
@@ -40,8 +39,7 @@ public class DataExtract implements Tasklet {
 	private ControlDumpRequestService controlDumpRequestService;
 	@Autowired
 	private PosidexRequestService posidexRequestService;
-	@Autowired
-	private DataMartRequestService dataMartRequestService;
+	
 	@Autowired
 	private TrailBalanceReportService trailBalanceReportService;
 	@Autowired
@@ -95,7 +93,6 @@ public class DataExtract implements Tasklet {
 
 			// PosidexRequestService
 			new PosidexRequestThread(new Long(1000), posidexRequestService).start();
-			new DataMartRequestThread(new Long(1000), dataMartRequestService).start();
 			new CibilReportThread(cibilReport).start();
 
 		} catch (Exception e) {
@@ -183,25 +180,7 @@ public class DataExtract implements Tasklet {
 		}
 	}
 
-	public class DataMartRequestThread extends Thread {
-		private long userId;
-		private DataMartRequestService dataMartRequestService;
-
-		public DataMartRequestThread(long userId, DataMartRequestService dataMartRequestService) {
-			this.userId = userId;
-			this.dataMartRequestService = dataMartRequestService;
-		}
-
-		public void run() {
-			try {
-				logger.debug("DataMart Request Service started...");
-				this.dataMartRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
-
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-	}
+	
 
 	public class TrailBalanceReportThread extends Thread {
 		private long userId;

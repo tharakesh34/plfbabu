@@ -1,61 +1,62 @@
 package com.pennanttech.bajaj.process.datamart;
 
 import java.sql.ResultSet;
+import java.util.Date;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class DataMartMapper {
 
-	public static MapSqlParameterSource mapData(DataMartTable table, ResultSet rs) throws Exception {
+	public static MapSqlParameterSource mapData(DataMartTable table, ResultSet rs, Date appDate) throws Exception {
 		switch (table) {
 		case DM_APPLICANT_DETAILS:
-			return getApplicantMap(rs);
+			return getApplicantMap(rs, appDate);
 		case DM_ADDRESS_DETAILS:
-			return getAddressMap(rs);
+			return getAddressMap(rs, appDate);
 		case DM_APPLICATION_DETAILS:
-			return getApplicationDetails(rs);
+			return getApplicationDetails(rs, appDate);
 		case DM_BOUNCE_DETAILS:
-			return getBounceDetailsMap(rs);
+			return getBounceDetailsMap(rs, appDate);
 		case DM_COAPPLICANT_DETAILS:
-			return getCoApplicantDetailMap(rs);
+			return getCoApplicantDetailMap(rs, appDate);
 		case DM_DISB_DETAILS_DAILY:
-			return getDisbDetailsMap(rs);
+			return getDisbDetailsMap(rs, appDate);
 		case FORECLOSURECHARGES:
-			return getForeClosureChargesMap(rs);
+			return getForeClosureChargesMap(rs, appDate);
 		case DM_HTS_UNADJUSTED_AMT:
-			return getHTSUnadjustedMap(rs);
+			return getHTSUnadjustedMap(rs, appDate);
 		case DM_INSURANCE_DETAILS:
-			return getInsuranceDetailsMap(rs);
+			return getInsuranceDetailsMap(rs, appDate);
 		case DM_IVR_GATEWAY_FLEXI:
-			return getIVRDetailsMap(rs);
+			return getIVRDetailsMap(rs, appDate);
 		case DM_LEA_DOC_DTL:
-			return getLeaDocDtlMap(rs);
+			return getLeaDocDtlMap(rs, appDate);
 		case DM_LOAN_DETAILS_DAILY:
-			return getLoanDetailMap(rs);
+			return getLoanDetailMap(rs, appDate);
 		case DM_LOAN_VOUCHER_DETAILS:
-			return getLoanVoucherMap(rs);
+			return getLoanVoucherMap(rs, appDate);
 		case DM_LOANWISE_CHARGE_DETAILS:
-			return getLoanWiseChargeDetailMap(rs);
+			return getLoanWiseChargeDetailMap(rs, appDate);
 		case DM_LOANWISE_REPAYSCHD_DTLS:
-			return getLoanWiseRepayScheduleDetailMap(rs);
+			return getLoanWiseRepayScheduleDetailMap(rs, appDate);
 		case DM_NOC_ELIGIBLE_LOANS:
-			return getNoceligibleLoans(rs);
+			return getNoceligibleLoans(rs, appDate);
 		case DM_OPENECS_DETAILS:
-			return getOpenEcsDetailsMap(rs);
+			return getOpenEcsDetailsMap(rs, appDate);
 		case DM_PREPAYMENT_DETAILS:
-			return getPrePaymentDetailMap(rs);
+			return getPrePaymentDetailMap(rs, appDate);
 		case DM_PRESENTATION_DETAILS:
-			return getPresentationDetailsMap(rs);
+			return getPresentationDetailsMap(rs, appDate);
 		case DM_PROPERTY_DTL:
-			return getPropertyDetailMap(rs);
+			return getPropertyDetailMap(rs, appDate);
 		case DM_RESCH_DETAILS_DAILY:
-			return getReschDetailMap(rs);
+			return getReschDetailMap(rs, appDate);
 		case DM_SEND_SOA_EMAIL:
-			return getSoaEmailDetailMap(rs);
+			return getSoaEmailDetailMap(rs, appDate);
 		case DM_SUBQ_DISB_DETAILS:
-			return getSubQDisbDetailMap(rs);
+			return getSubQDisbDetailMap(rs, appDate);
 		case DM_WRITEOFF_DETAILS:
-			return getWriteOffDetailsMap(rs);
+			return getWriteOffDetailsMap(rs, appDate);
 
 		default:
 			break;
@@ -65,7 +66,7 @@ public class DataMartMapper {
 		return null;
 	}
 
-	protected static MapSqlParameterSource getApplicantMap(ResultSet rs) throws Exception {
+	protected static MapSqlParameterSource getApplicantMap(ResultSet rs, Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
@@ -109,8 +110,8 @@ public class DataMartMapper {
 		map.addValue("OCCUPATION", rs.getObject("OCCUPATION"));
 		map.addValue("ANNUAL_INCOME", rs.getObject("ANNUAL_INCOME"));
 		map.addValue("GUARDIAN", rs.getObject("GUARDIAN"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("CUSTOMERNAME", rs.getObject("CUSTOMERNAME"));
@@ -144,7 +145,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	protected static MapSqlParameterSource getAddressMap(ResultSet rs) throws Exception {
+	protected static MapSqlParameterSource getAddressMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("ADDRESSID", rs.getObject("ADDRESSID"));
@@ -165,7 +166,7 @@ public class DataMartMapper {
 		map.addValue("PHONE2", rs.getObject("PHONE2"));
 		map.addValue("MOBILE", rs.getObject("MOBILE"));
 		map.addValue("EMAIL", rs.getObject("EMAIL"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESSFLAG", rs.getObject("PROCESSFLAG"));
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("AREA", rs.getObject("AREA"));
@@ -176,7 +177,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	protected static MapSqlParameterSource getApplicationDetails(ResultSet rs) throws Exception {
+	protected static MapSqlParameterSource getApplicationDetails(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -244,8 +245,8 @@ public class DataMartMapper {
 		map.addValue("DLR_PARTICIPATION_RATE", rs.getObject("DLR_PARTICIPATION_RATE"));
 		map.addValue("LOCAL_OUTSTATION_FLG", rs.getObject("LOCAL_OUTSTATION_FLG"));
 		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("PRODUCT", rs.getObject("PRODUCT"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
@@ -298,7 +299,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	protected static MapSqlParameterSource getBounceDetailsMap(ResultSet rs) throws Exception {
+	protected static MapSqlParameterSource getBounceDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -307,8 +308,8 @@ public class DataMartMapper {
 		map.addValue("BOUNCE_DATE", rs.getObject("BOUNCE_DATE"));
 		map.addValue("BOUNCE_REASON", rs.getObject("BOUNCE_REASON"));
 		map.addValue("BOUNCE_AMT", rs.getObject("BOUNCE_AMT"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
@@ -318,7 +319,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getCoApplicantDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getCoApplicantDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
@@ -346,7 +347,7 @@ public class DataMartMapper {
 		map.addValue("PROCESS_FLAG", rs.getObject("PROCESS_FLAG"));
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("EMP_TYPE", rs.getObject("EMP_TYPE"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("INCOME", rs.getObject("INCOME"));
 		map.addValue("APPLID", rs.getObject("APPLID"));
 		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
@@ -354,7 +355,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	private static MapSqlParameterSource getDisbDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getDisbDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -380,8 +381,8 @@ public class DataMartMapper {
 		map.addValue("ICICI_LOMBARD", rs.getObject("ICICI_LOMBARD"));
 		map.addValue("BAGIC", rs.getObject("BAGIC"));
 		map.addValue("BALIC_CHARGES", rs.getObject("BALIC_CHARGES"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("FEE", rs.getObject("FEE"));
@@ -413,7 +414,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	private static MapSqlParameterSource getForeClosureChargesMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getForeClosureChargesMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
@@ -469,19 +470,19 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getHTSUnadjustedMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getHTSUnadjustedMap(ResultSet rs,  Date appDate) throws Exception {
 
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
 		map.addValue("UNADJUSTED_AMOUNT", rs.getObject("UNADJUSTED_AMOUNT"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 
 		return map;
 
 	}
 
-	private static MapSqlParameterSource getInsuranceDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getInsuranceDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -490,8 +491,8 @@ public class DataMartMapper {
 		map.addValue("INSURANCE_TYPE", rs.getObject("INSURANCE_TYPE"));
 		map.addValue("INSUR_PREMIUM", rs.getObject("INSUR_PREMIUM"));
 		map.addValue("INSURANCE_RENEWAL_DATE", rs.getObject("INSURANCE_RENEWAL_DATE"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
@@ -518,7 +519,7 @@ public class DataMartMapper {
 		return map;
 	}
 
-	private static MapSqlParameterSource getIVRDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getIVRDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
@@ -528,14 +529,14 @@ public class DataMartMapper {
 		map.addValue("PRINCIPLE_AMOUNT_PAID", rs.getObject("PRINCIPLE_AMOUNT_PAID"));
 		map.addValue("BALANCE_PRINCIPAL_OUTSTANDING", rs.getObject("BALANCE_PRINCIPAL_OUTSTANDING"));
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
 
 		return map;
 
 	}
 
-	private static MapSqlParameterSource getLeaDocDtlMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getLeaDocDtlMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		
@@ -580,7 +581,7 @@ public class DataMartMapper {
 		map.addValue("TXNDOCID", rs.getObject("TXNDOCID"));
 		map.addValue("VALIDTILLDATE", rs.getObject("VALIDTILLDATE"));
 		map.addValue("VAP_LOAN_FLAG", rs.getObject("VAP_LOAN_FLAG"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESSFLAG", rs.getObject("PROCESSFLAG"));
 		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
 		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
@@ -592,7 +593,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getLoanDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getLoanDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -604,11 +605,11 @@ public class DataMartMapper {
 		map.addValue("LMS_BUCKET", rs.getObject("LMS_BUCKET"));
 		map.addValue("COLL_BUCKET", rs.getObject("COLL_BUCKET"));
 		map.addValue("INSURANCE_APPLIED_FLG", rs.getObject("INSURANCE_APPLIED_FLG"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("CLOSUREDATE", rs.getObject("CLOSUREDATE"));
+		map.addValue("CLOSUREDATE", rs.getDate("CLOSUREDATE"));
 		map.addValue("TOPUP_AMT", rs.getObject("TOPUP_AMT"));
 		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
 		map.addValue("PDCID", rs.getObject("PDCID"));
@@ -653,7 +654,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getLoanVoucherMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getLoanVoucherMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("MODULEID", rs.getObject("MODULEID"));
@@ -688,16 +689,16 @@ public class DataMartMapper {
 		map.addValue("DRCR_AMT", rs.getObject("DRCR_AMT"));
 		map.addValue("NARRATION", rs.getObject("NARRATION"));
 		map.addValue("CHEQUEID", rs.getObject("CHEQUEID"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
 		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("PROCESSED_FLAG","N");
 
 		return map;
 
 	}
 
-	private static MapSqlParameterSource getLoanWiseChargeDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getLoanWiseChargeDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
@@ -711,9 +712,9 @@ public class DataMartMapper {
 		map.addValue("TXNADJUSTEDAMT", rs.getObject("TXNADJUSTEDAMT"));
 		map.addValue("ADVICEAMT", rs.getObject("ADVICEAMT"));
 		map.addValue("ADVICEDATE", rs.getObject("ADVICEDATE"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
 		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
 
@@ -721,7 +722,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getLoanWiseRepayScheduleDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getLoanWiseRepayScheduleDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
 		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
@@ -739,28 +740,28 @@ public class DataMartMapper {
 		map.addValue("ACT_AVAILABLE_LIMIT", rs.getObject("ACT_AVAILABLE_LIMIT"));
 		map.addValue("ACT_UTILISATION_LIMIT", rs.getObject("ACT_UTILISATION_LIMIT"));
 		map.addValue("EMI_HOLIDAY", rs.getObject("EMI_HOLIDAY"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 
 		return map;
 
 	}
 
-	private static MapSqlParameterSource getNoceligibleLoans(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getNoceligibleLoans(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
 		map.addValue("LOANACCTNUM", rs.getObject("LOANACCTNUM"));
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
 		map.addValue("EMAIL", rs.getObject("EMAIL"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("PROCESSED_FLAG","N");
 
 		return map;
 
 	}
 
-	private static MapSqlParameterSource getOpenEcsDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getOpenEcsDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
@@ -782,7 +783,7 @@ public class DataMartMapper {
 		map.addValue("ACTIVE_FLAG", rs.getObject("ACTIVE_FLAG"));
 		map.addValue("CITYID", rs.getObject("CITYID"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
 
@@ -790,7 +791,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getPrePaymentDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getPrePaymentDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -801,8 +802,8 @@ public class DataMartMapper {
 		map.addValue("PREPAYMENT_PENALTY_DUE", rs.getObject("PREPAYMENT_PENALTY_DUE"));
 		map.addValue("PREPAYMENT_PENALTY_PAID", rs.getObject("PREPAYMENT_PENALTY_PAID"));
 		map.addValue("PREPAYMENT_AMT", rs.getObject("PREPAYMENT_AMT"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("PREPAYMENT_DATE", rs.getObject("PREPAYMENT_DATE"));
@@ -812,7 +813,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getPresentationDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getPresentationDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
@@ -825,7 +826,7 @@ public class DataMartMapper {
 		map.addValue("REMARKS", rs.getObject("REMARKS"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("EMI_NO", rs.getObject("EMI_NO"));
 		map.addValue("CUSTOMER_BANK_NAME", rs.getObject("CUSTOMER_BANK_NAME"));
 		map.addValue("BOM_BOUNCE_BUCKET", rs.getObject("BOM_BOUNCE_BUCKET"));
@@ -846,7 +847,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getPropertyDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getPropertyDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("PROPERTYID", rs.getObject("PROPERTYID"));
@@ -858,7 +859,7 @@ public class DataMartMapper {
 		map.addValue("CITY", rs.getObject("CITY"));
 		map.addValue("STATE", rs.getObject("STATE"));
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
+		map.addValue("BUSINESSDATE", appDate);
 		map.addValue("PROPERTY_TYPE", rs.getObject("PROPERTY_TYPE"));
 		map.addValue("PROPERTY_DESC", rs.getObject("PROPERTY_DESC"));
 		map.addValue("PROPERTY_VALUE", rs.getObject("PROPERTY_VALUE"));
@@ -871,7 +872,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getReschDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getReschDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -884,8 +885,8 @@ public class DataMartMapper {
 		map.addValue("EMI", rs.getObject("EMI"));
 		map.addValue("REPAYMENT_MODE", rs.getObject("REPAYMENT_MODE"));
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("FREQ", rs.getObject("FREQ"));
@@ -916,7 +917,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getSoaEmailDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getSoaEmailDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
@@ -945,7 +946,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getSubQDisbDetailMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getSubQDisbDetailMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
@@ -972,8 +973,8 @@ public class DataMartMapper {
 		map.addValue("ICICI_LOMBARD", rs.getObject("ICICI_LOMBARD"));
 		map.addValue("BAGIC", rs.getObject("BAGIC"));
 		map.addValue("BALIC_CHARGES", rs.getObject("BALIC_CHARGES"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("FEE", rs.getObject("FEE"));
@@ -996,7 +997,7 @@ public class DataMartMapper {
 
 	}
 
-	private static MapSqlParameterSource getWriteOffDetailsMap(ResultSet rs) throws Exception {
+	private static MapSqlParameterSource getWriteOffDetailsMap(ResultSet rs,  Date appDate) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("APPLID", rs.getObject("APPLID"));
@@ -1007,8 +1008,8 @@ public class DataMartMapper {
 		map.addValue("SETTLEMENT_LOSS", rs.getObject("SETTLEMENT_LOSS"));
 		map.addValue("GROSS_WRITEOFF_AMT", rs.getObject("GROSS_WRITEOFF_AMT"));
 		map.addValue("NET_WRITEOFF_AMT", rs.getObject("NET_WRITEOFF_AMT"));
-		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
-		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
+		map.addValue("BUSINESSDATE", appDate);
+		map.addValue("PROCESSED_FLAG", "N");
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
 		map.addValue("RECEIPT_ON_CHARGEOFF", rs.getObject("RECEIPT_ON_CHARGEOFF"));
