@@ -2627,4 +2627,17 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			ORDER BY ID
 		</createView>
 	</changeSet>
+	<changeSet id="201" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME = 'CF_SAP_GL_REPORT_LINE_', FILENAMEFORMAT = '${ENTITY}'  WHERE NAME = 'GL_TRANSACTION_EXPORT';
+			]]>	
+		</sql>
+	</changeSet><changeSet id="202" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'ZH' WHERE SYSPARMCODE = 'BLART';
+			]]>	
+		</sql>
+	</changeSet>
 </databaseChangeLog>
