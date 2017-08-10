@@ -2611,4 +2611,20 @@ union all
 where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 </sql>
 </changeSet>
+	<changeSet id="199" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_TABLE SET FILTER = 'ENTITY=:ENTITY' WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_EXPORT');
+			]]>	
+		</sql>
+	</changeSet>
+	<changeSet id="200" author="murthy.y">
+		<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true">
+			SELECT ID, DR.ENTITY, DR.LINK, BSCHL, HKONT, UMSKZ, WRBTR/CCYMINORCCYUNITS WRBTR,GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
+			ORDER BY ID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
