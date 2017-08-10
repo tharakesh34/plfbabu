@@ -2640,4 +2640,9 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			]]>	
 		</sql>
 	</changeSet>
+	<changeSet author="Madhubabu" id="203">
+		<sql>
+			update workflowdetails set firsttaskowner='CUSTOMER_MAKER' where  workflowtype='CUSTOMER_PROCESS' and workflowactive=1
+		</sql>
+	</changeSet>
 </databaseChangeLog>
