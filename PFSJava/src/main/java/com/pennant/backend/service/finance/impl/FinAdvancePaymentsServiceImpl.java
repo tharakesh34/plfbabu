@@ -716,7 +716,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())) {
+				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
+				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
 			return true;
 		}
 		return false;
