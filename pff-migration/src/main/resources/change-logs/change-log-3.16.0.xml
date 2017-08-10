@@ -2605,4 +2605,10 @@ union all
 	<changeSet id="197.4" author="murthy.y">
 	    <addPrimaryKey columnNames="ID, ENTITY" constraintName="PK_TDR_IE" tableName="TRANSACTION_DETAIL_REPORT"/>
 	</changeSet>
+	<changeSet id="198" author="pruthvi">
+	<sql>
+	update reportconfiguration set reportname='Excel:Loan Wise Voucher Details', Reportheading='Excel:Loan Wise Voucher Details',alwmultiformat=0
+where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
+</sql>
+</changeSet>
 </databaseChangeLog>
