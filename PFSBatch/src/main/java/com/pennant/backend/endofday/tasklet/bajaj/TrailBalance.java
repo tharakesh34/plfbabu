@@ -66,9 +66,10 @@ public class TrailBalance implements Tasklet {
 
 			}
 
-			new TrailBalanceProcessThread(new Long(1000)).start();
 			DataEngineStatus status = TrailBalanceEngine.TB_STATUS;
 			status.setStatus("I");
+			new Thread(new TrailBalanceProcessThread(new Long(1000))).run();
+			
 		
 			while ("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -100,7 +101,7 @@ public class TrailBalance implements Tasklet {
 		return dataSource;
 	}
 
-	public class TrailBalanceProcessThread extends Thread {
+	public class TrailBalanceProcessThread implements Runnable {
 		private long userId;
 
 		public TrailBalanceProcessThread(long userId) {
@@ -110,7 +111,6 @@ public class TrailBalance implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				sleep(1000);
 				new TrailBalanceEngine(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

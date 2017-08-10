@@ -66,7 +66,7 @@ public class SAPGL implements Tasklet {
 
 			}
 
-			new SAPGLProcessThread(new Long(1000)).start();
+			new Thread(new SAPGLProcessThread(new Long(1000))).run();
 			DataEngineStatus status = SAPGLReportsProcess.SAP_GL_STATUS;
 			status.setStatus("I");
 		
@@ -100,7 +100,7 @@ public class SAPGL implements Tasklet {
 		return dataSource;
 	}
 
-	public class SAPGLProcessThread extends Thread {
+	public class SAPGLProcessThread implements Runnable{
 		private long userId;
 
 		public SAPGLProcessThread(long userId) {
@@ -110,7 +110,6 @@ public class SAPGL implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("SAP-GL Process initiated...");
-				sleep(1000);
 				new SAPGLReportsProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
