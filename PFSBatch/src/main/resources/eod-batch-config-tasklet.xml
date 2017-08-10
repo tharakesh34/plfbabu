@@ -67,6 +67,9 @@
 	<bean id="trailBalanceTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.TrailBalance">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>
+	<bean id="sapGLTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.SAPGL">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
 	<bean id="cibilTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Cibil">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>

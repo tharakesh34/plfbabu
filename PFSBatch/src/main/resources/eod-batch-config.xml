@@ -68,6 +68,11 @@
 		</step>
 		<step id="trailBalance">
 			<tasklet ref="trailBalanceTaskLet" />
+			<next on="*" to="sapGL" />
+			<fail on="FAILED" />
+		</step>
+		<step id="sapGL">
+			<tasklet ref="sapGLTaskLet" />
 			<next on="*" to="cibil" />
 			<fail on="FAILED" />
 		</step>

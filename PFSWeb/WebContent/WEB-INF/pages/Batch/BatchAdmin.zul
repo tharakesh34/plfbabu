@@ -137,14 +137,15 @@
 											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="posidex" border="normal" title="${c:l('label_posidex')}" imgSrc="/images/icons/send.gif" visible="true" />
-											<exePannel id="dataMart" border="normal" title="${c:l('label_dataMart')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="trailBalance" border="normal" title="${c:l('label_trailBalance')}" imgSrc="/images/icons/send.gif" visible="true" />
 										</hbox>
 									</row>
 									<row>
 										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
-											<exePannel id="trailBalance" border="normal" title="${c:l('label_trailBalance')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="sapGl" border="normal" title="${c:l('label_sapGL')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="dataMart" border="normal" title="${c:l('label_dataMart')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<space></space>
 										</hbox>
 									</row>
