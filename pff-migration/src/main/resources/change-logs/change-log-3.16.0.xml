@@ -2655,4 +2655,9 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 		</sql>
 	</changeSet>
+	<changeSet id="205" author="murthy.y">
+	 <createIndex indexName ="IX_DE_LOG_ID"  tableName="DATA_ENGINE_LOG">
+	 	 <column name="ID" type="decimal(19,0)"/>
+	 </createIndex>
+</changeSet>
 </databaseChangeLog>
