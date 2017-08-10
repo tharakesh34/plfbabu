@@ -66,10 +66,10 @@ public class Posidex implements Tasklet {
 
 			}
 			
-			
-			new PosidexProcessThread(new Long(1000)).start();
 			DataEngineStatus status = BajajInterfaceConstants.POSIDEX_REQUEST_STATUS;
 			status.setStatus("I");
+			
+			new Thread(new PosidexProcessThread(new Long(1000))).start();
 			
 			while("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -100,7 +100,7 @@ public class Posidex implements Tasklet {
 		return dataSource;
 	}
 
-	public class PosidexProcessThread extends Thread {
+	public class PosidexProcessThread implements Runnable {
 		private long userId;
 
 		public PosidexProcessThread(long userId) {
@@ -112,7 +112,6 @@ public class Posidex implements Tasklet {
 				logger.debug("Control Dump Request Service started...");
 				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 				process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
-				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

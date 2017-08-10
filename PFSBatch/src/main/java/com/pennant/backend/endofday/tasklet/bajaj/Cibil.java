@@ -69,10 +69,10 @@ public class Cibil implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			new CIBILProcessThread(cibilReport).start();
+			
 			DataEngineStatus status = CIBILReport.EXE_STATUS;
 			status.setStatus("I");
+			new Thread(new CIBILProcessThread(cibilReport)).start();	
 
 			while ("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -103,7 +103,7 @@ public class Cibil implements Tasklet {
 		return dataSource;
 	}
 
-	public class CIBILProcessThread extends Thread {
+	public class CIBILProcessThread implements Runnable {
 		private CIBILReport cibilReport;
 
 		public CIBILProcessThread(CIBILReport cibilReport) {
@@ -114,7 +114,6 @@ public class Cibil implements Tasklet {
 			try {
 				logger.debug("Control Dump Request Service started...");
 				cibilReport.generateReport();
-				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

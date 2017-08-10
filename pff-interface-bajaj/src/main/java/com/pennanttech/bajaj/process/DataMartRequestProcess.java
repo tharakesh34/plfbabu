@@ -25,8 +25,8 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 
 	private long batchID;
 	private String summary = null;
-	private AtomicLong completedThreads = null;
-	private long totalThreads;
+	public AtomicLong completedThreads = null;
+	public long totalThreads;
 	private int btachSize = 10000;
 	private Date appDate;
 	public static boolean running = false;

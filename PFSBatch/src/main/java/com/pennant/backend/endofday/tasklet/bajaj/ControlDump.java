@@ -68,10 +68,12 @@ public class ControlDump implements Tasklet {
 			if (monthEnd) {
 
 			}
-			
-			new ControlDumpProcessThread(new Long(1000), controlDumpRequestService).start();
+				
 			DataEngineStatus status = BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS;
 			status.setStatus("I");
+			
+			new Thread(new ControlDumpProcessThread(new Long(1000), controlDumpRequestService)).start();
+			
 			
 			while("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -102,7 +104,7 @@ public class ControlDump implements Tasklet {
 	}
 
 	
-	public class ControlDumpProcessThread extends Thread {
+	public class ControlDumpProcessThread implements Runnable {
 		private long userId;
 		private ControlDumpRequestService controlDumpRequestService;
 
@@ -116,8 +118,6 @@ public class ControlDump implements Tasklet {
 				logger.debug("Control Dump Request Service started...");
 				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
 						DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
-				sleep(1000);
-
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

@@ -69,10 +69,11 @@ public class ALM implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			new ALMProcessThread(new Long(1000), projectedAccrualProcess).start();
+			
 			DataEngineStatus status = BajajInterfaceConstants.ALM_EXTRACT_STATUS;
 			status.setStatus("I");
+			
+			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();
 			
 			while("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -103,7 +104,7 @@ public class ALM implements Tasklet {
 		return dataSource;
 	}
 	
-	public class ALMProcessThread extends Thread {
+	public class ALMProcessThread implements Runnable {
 		private long userId;
 		private ProjectedAccrualProcess projectedAccrualProcess;
 
@@ -117,7 +118,6 @@ public class ALM implements Tasklet {
 				logger.debug("ALM Request Service started...");
 				ALMRequestProcess process = new ALMRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
 				process.process("ALM_REQUEST");
-				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
