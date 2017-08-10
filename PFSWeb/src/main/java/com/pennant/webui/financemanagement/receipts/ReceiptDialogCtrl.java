@@ -1052,7 +1052,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		//setAutoAllocationPayments();
 		percentageFees(false); 
 		
 		logger.debug("Leaving");
@@ -1333,7 +1332,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			makeFeeRender = true;
 		}
-		
+		paidAllocationMap = new HashMap<>();
+		waivedAllocationMap = new HashMap<>();
 		feesRecalculation(makeFeeRender, false);
 		
 		logger.debug("Leaving" + event.toString());
@@ -3756,6 +3756,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			feesRecalculation(true, isFeeConsiderOnAmount);
+		}else{
+			setAutoAllocationPayments(false);
 		}
 		
 		logger.debug("Leaving");
@@ -5469,16 +5471,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			doWriteComponentsToBean();
 		}
 
-		Date curBussDate = DateUtility.getAppDate();
+		Date receiptValueDate = DateUtility.getAppDate();
 		if(this.receivedDate.getValue() != null){
-			curBussDate = this.receivedDate.getValue();
+			receiptValueDate = this.receivedDate.getValue();
 		}
 		
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 		
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null &&
 				!StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
-				&& curBussDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+				&& receiptValueDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
 			return false;
 		}
@@ -5552,9 +5554,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){ 
 
 			if((StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) && 
-					DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), curBussDate) < 0) ||
+					DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), receiptValueDate) < 0) ||
 					(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) &&
-							DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), curBussDate) < 0)){
+							DateUtility.compare(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(), receiptValueDate) < 0)){
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_MaturityDate" ,
 						new String[] { PennantAppUtil.getlabelDesc(tempReceiptPurpose, PennantStaticListUtil.getReceiptPurpose())}));
 				return false;
@@ -5576,11 +5578,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				BigDecimal closingBal = null;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(curBussDate, curSchd.getSchDate()) >= 0) {
+					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(curBussDate, curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
