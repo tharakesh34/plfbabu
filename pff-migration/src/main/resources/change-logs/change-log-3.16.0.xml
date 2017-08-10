@@ -2307,6 +2307,12 @@ union
       Alter table Dm_Lea_Doc_Dtl drop constraint PK_DM_LDD_AGGID_BID;      
     </sql>
 </changeSet>
+<changeSet id="185.1" author="Jayant">
+    <sql>
+      delete from Dm_Lea_Doc_Dtl ;      
+    </sql>
+</changeSet>
+
 <changeSet id="185" author="Jayant">
     <sql>
         alter table Dm_Lea_Doc_Dtl add constraint PK_DM_LDD_AGGID_BID PRIMARY KEY (APPLID,PROPERTY_CODE,BATCH_ID);
