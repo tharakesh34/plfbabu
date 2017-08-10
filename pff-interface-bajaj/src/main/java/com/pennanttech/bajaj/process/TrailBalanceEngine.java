@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +30,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 	public static DataEngineStatus TB_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
 
 	private int batchSize = 1000;
-	private Date monthStartDate = null;
 	private Date appDate = null;
-	private Date monthEndDate = null;
-	private Date trialBalanceDate = null;
+	private Date startDate = null;
+	private Date endDate = null;
 	private long headerId = 0;
 	private String fileName = null;
 
@@ -49,8 +47,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		generate();
 
 		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("START_DATE", DateUtil.format(monthStartDate, "ddMMyyyy"));
-		parameterMap.put("END_DATE", DateUtil.format(monthEndDate, "ddMMyyyy"));
+		parameterMap.put("START_DATE", DateUtil.format(startDate, "ddMMyyyy"));
+		parameterMap.put("END_DATE", DateUtil.format(endDate, "ddMMyyyy"));
 		parameterMap.put("HEADER_ID", headerId);
 
 		parameterMap.put("COMPANY_NAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
@@ -59,9 +57,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");
-		builder.append(DateUtil.format(monthStartDate, "dd-MMM-yy").toUpperCase());
+		builder.append(DateUtil.format(startDate, "dd-MMM-yy").toUpperCase());
 		builder.append(" To ");
-		builder.append(DateUtil.format(monthEndDate, "dd-MMM-yy").toUpperCase());
+		builder.append(DateUtil.format(endDate, "dd-MMM-yy").toUpperCase());
 
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
 		parameterMap.put("CURRENCY", parameters.get("APP_DFT_CURR").concat(" - ".concat(parameters.get("APP_DFT_CURR"))));
@@ -210,9 +208,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TRIAL_BALANCE");
 		builder.append("_");
-		builder.append(DateUtil.format(monthStartDate, "ddMMyyyy"));
+		builder.append(DateUtil.format(startDate, "ddMMyyyy"));
 		builder.append("_");
-		builder.append(DateUtil.format(monthEndDate, "ddMMyyyy"));
+		builder.append(DateUtil.format(endDate, "ddMMyyyy"));
 		builder.append("_");
 		builder.append(String.valueOf(headerId));
 		builder.append(".CSV");
@@ -242,8 +240,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("FILENAME", fileName);
 		paramMap.addValue("COMPANYNAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
 		paramMap.addValue("REPORTNAME", "Trial Balance Report");
-		paramMap.addValue("STARTDATE", monthStartDate);
-		paramMap.addValue("ENDDATE", monthEndDate);
+		paramMap.addValue("STARTDATE", startDate);
+		paramMap.addValue("ENDDATE", endDate);
 		paramMap.addValue("CURRENCY", parameters.get("APP_DFT_CURR"));
 
 		try {
@@ -286,41 +284,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	private void prepareTrialBalanceDate() throws Exception {
 		logger.info("Preparing Trailbalance Date..");
-		Date lastRunDate = getPrevoiusTrialBalanceStartDate();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
-
-		/*
-		 * Since the first month of the year in the Gregorian and Julian calendars is JANUARY which is 0 so that we no
-		 * need to add one month implicitly
-		 */
-		calendar.set(Calendar.MONTH, DateUtil.getMonth(lastRunDate));
-		calendar.set(Calendar.YEAR, DateUtil.getYear(lastRunDate));
-		trialBalanceDate = calendar.getTime();
-
-		monthStartDate = DateUtil.getMonthStart(trialBalanceDate);
-		monthEndDate = DateUtil.getMonthEnd(trialBalanceDate);
-	}
-
-	private Date getPrevoiusTrialBalanceStartDate() throws Exception {
-		String query = "SELECT STARTDATE from TRAIL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRAIL_BALANCE_HEADER)";
-
-		try {
-			return jdbcTemplate.queryForObject(query, Date.class);
-		} catch (Exception e) {
-
-		}
-
-		// To Handle Day 0
-		try {
-			query = "select MIN(POSTDATE) from POSTINGS";
-			return DateUtil.addMonths(jdbcTemplate.queryForObject(query, Date.class), -1);
-		} catch (Exception e) {
-
-		}
-
-		return DateUtil.addMonths(appDate, -1);
+		
+		startDate = DateUtil.getMonthStart(appDate);
+		endDate = appDate;
 	}
 
 	private void initilize() throws Exception {
@@ -330,19 +296,22 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private void clearTables() {
-		logger.info("Clearing staging tables..");
-		jdbcTemplate.execute("DELETE FROM TRANSACTION_SUMMARY_REPORT");
-		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
-		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
-		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_STGE");
+		logger.info("Clearing staging tables..");	
 		jdbcTemplate.execute("DELETE FROM TRAIL_BALANCE_REPORT_FILE");
 
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		jdbcTemplate
-				.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (start with 1)");
-		jdbcTemplate
-				.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (start with 1)");
-
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("START_DATE", DateUtil.getMonthStart(appDate));
+		paramMap.addValue("END_DATE", DateUtil.getMonthEnd(appDate));
+		
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" DELETE FROM TRAIL_BALANCE_REPORT WHERE HEADERID IN (");
+		sql.append(" SELECT ID FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE)");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
+		
+		sql = new StringBuilder();
+		sql = sql.append("DELETE FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
 	}
 
 	private void loadParameters() {
@@ -436,8 +405,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
-		paramMap.addValue("MONTH_ENDDATE", monthEndDate);
+		paramMap.addValue("MONTH_STARTDATE", startDate);
+		paramMap.addValue("MONTH_ENDDATE", endDate);
 		paramMap.addValue("DRORCR", "D");
 
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
@@ -465,8 +434,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
 
 		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MONTH_STARTDATE", monthStartDate);
-		paramMap.addValue("MONTH_ENDDATE", monthEndDate);
+		paramMap.addValue("MONTH_STARTDATE", startDate);
+		paramMap.addValue("MONTH_ENDDATE", endDate);
 		paramMap.addValue("DRORCR", "C");
 
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);

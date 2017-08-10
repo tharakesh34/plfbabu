@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 public class SAPGLReportsProcess extends DataEngineExport {
-	private static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
+	public static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRANSACTION_SUMMARY_EXPORT");
 
 	private Map<String, String> parameters = new HashMap<>();
 	private Date startDate;
@@ -36,10 +36,18 @@ public class SAPGLReportsProcess extends DataEngineExport {
 
 	public void extractReport() throws Exception {
 		generate();
+		
+		exportSummaryReport();
+		
+		exportTransactionReport();
 	}
 	
 	public void extractReport(Date startDate, Date endDate) throws Exception {
 		generate();
+				
+		exportSummaryReport();
+		
+		exportTransactionReport();
 	}
 
 	public void generate() throws Exception {
@@ -51,6 +59,8 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		saveTransactionDetails(transactions.values());
 
 		groupTransactions();
+
+		saveTransactionSummary();
 	}
 
 	private void initilize() throws Exception {
@@ -60,7 +70,6 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		if (startDate == null || endDate == null) {
 			prepareDates();
 		}
-
 	}
 
 	private void prepareDates() throws Exception {
@@ -88,7 +97,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
 		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
-		//sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
+		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" GROUP BY DD.ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR");
 		
@@ -170,7 +179,8 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		paramMap = new MapSqlParameterSource();
 	
 		sql.append("SELECT SYSPARMCODE, SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE");
-		sql.append(" IN (:HKONT, :BLART, :BUKRS, :BUPLA, :UMSKZ, :GSBER, :PRCTR, :KOSTL, :SAPGL_TRAN_RECORD_COUNT)");
+		sql.append(" IN (:HKONT, :BLART, :BUKRS, :BUPLA, :UMSKZ, :GSBER, :PRCTR, :KOSTL,");
+		sql.append(" :APP_DFT_CURR, :SAPGL_TRAN_RECORD_COUNT)");
 
 		paramMap.addValue("HKONT", "HKONT");
 		paramMap.addValue("BLART", "BLART");
@@ -180,6 +190,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		paramMap.addValue("GSBER", "GSBER");
 		paramMap.addValue("PRCTR", "PRCTR");
 		paramMap.addValue("KOSTL", "KOSTL");
+		paramMap.addValue("APP_DFT_CURR", "APP_DFT_CURR");
 		paramMap.addValue("SAPGL_TRAN_RECORD_COUNT", "SAPGL_TRAN_RECORD_COUNT");
 
 		parameterJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
@@ -239,15 +250,17 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_SUMMARY_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
+		
+		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
 	}
 	
 	private int saveTranactions(int fromRange, int toRange, String entity) {
 		MapSqlParameterSource parameterSource;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT (ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA,");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT (ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA,");
 		sql.append(" KOSTL, PRCTR, ZUONR, SGTXT)");
-		sql.append(" SELECT ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
+		sql.append(" SELECT ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP");
 		sql.append(" WHERE ENTITY = :ENTITY AND ID >=:FROM_RANGE AND ID <=:TO_RANGE");
 
@@ -264,23 +277,52 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		return 0;
 	}
 	
-	private void update(int page, String entity) {
+	private void update(int page) {
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" UPDATE TRANSACTION_DETAIL_REPORT SET LINK = :LINK");
-		sql.append(" WHERE ENTITY =:ENTITY AND LINK =:LINK");
+		sql.append(" WHERE LINK =0");
 
 		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("LINK", 0);
-		paramMap.addValue("ENTITY", entity);
+		paramMap.addValue("LINK", page);
 
 		try {
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+	
+	private void exportSummaryReport() throws Exception {
+		logger.info("Generating Transaction summary report ..");
+		SAP_GL_STATUS.setName("GL_TRANSACTION_SUMMARY_EXPORT");
+		exportData("GL_TRANSACTION_SUMMARY_EXPORT");
+	}
+	private void exportTransactionReport() {
+		logger.info("Generating Transaction detail report ..");
+		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
+		Map<String, Object> filterMap = new HashMap<>();
+		Map<String, Object> parameterMap = new HashMap<>();
+		jdbcTemplate.query(query, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				try {
+					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
+					
+					parameterMap.put("ENTITY", rs.getString("ENTITY"));
+					filterMap.put("ENTITY", rs.getString("ENTITY"));
+					
+					setParameterMap(parameterMap);
+					setFilterMap(filterMap);
+					
+					exportData("GL_TRANSACTION_EXPORT");
+				} catch (Exception e) {
+					throw new SQLException();
+				}
+			}
+		});
 	}
 	
 	private void groupTransactions() throws Exception {
@@ -310,7 +352,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 					pagesInserted = true;
 					fromRange = toRange + 1;
 					toRange = toRange + pageSize;
-					update(pageItr, rs.getString("ENTITY"));
+					update(pageItr);
 
 					if (pagesInserted) {
 						saveTransactionSummary(pageItr, rs.getString("ENTITY"));
@@ -324,7 +366,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 					fromRange = toRange + 1;
 					toRange = toRange + pageSize;
 					pageItr = pageItr + 1;
-					update(pageItr, rs.getString("ENTITY"));
+					update(pageItr);
 				}
 
 				if (pagesInserted) {
@@ -347,7 +389,6 @@ public class SAPGLReportsProcess extends DataEngineExport {
 			public void processRow(ResultSet rs) throws SQLException {
 				map.put(rs.getInt("BSCHL"), rs.getBigDecimal("WRBTR"));
 			}
-
 		});
 
 		return map;
@@ -383,8 +424,9 @@ public class SAPGLReportsProcess extends DataEngineExport {
 
 		MapSqlParameterSource parameterSource;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT(LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER,");
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT(ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER,");
 		sql.append(" BUPLA, KOSTL, PRCTR, ZUONR, SGTXT) SELECT");
+		sql.append(" :ENTITY,");
 		sql.append(" :LINK,");
 		sql.append(" :BSCHL,");
 		sql.append(" :HKONT,");
@@ -399,6 +441,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
 
 		parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("ENTITY", entity);
 		parameterSource.addValue("LINK", pageItr);
 		parameterSource.addValue("BSCHL", BSCHL);
 		parameterSource.addValue("HKONT", parameters.get("HKONT"));
@@ -428,7 +471,88 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		}
 	}
 	
+	private int getFinancialMonth() {
+		int financialMonth = 0;
+		int month = DateUtil.getMonth(endDate);
 
+		switch (month) {
+		case 4:
+			financialMonth = 1;
+			break;
+		case 5:
+			financialMonth = 2;
+			break;
+		case 6:
+			financialMonth = 3;
+			break;
+		case 7:
+			financialMonth = 4;
+			break;
+		case 8:
+			financialMonth = 5;
+			break;
+		case 9:
+			financialMonth = 6;
+			break;
+		case 10:
+			financialMonth = 7;
+			break;
+		case 11:
+			financialMonth = 8;
+			break;
+		case 12:
+			financialMonth = 9;
+			break;
+		case 1:
+			financialMonth = 10;
+			break;
+		case 2:
+			financialMonth = 11;
+			break;
+		case 3:
+			financialMonth = 12;
+			break;
+		default:
+			break;
+		}
+
+		return financialMonth;
+	}
+	
+	private void saveTransactionSummary() throws Exception {
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TRANSACTION_SUMMARY_REPORT SELECT");
+		sql.append("  DISTINCT LINK,");
+		sql.append(" :BLDAT,");
+		sql.append(" :BLART,");
+		sql.append(" :BUKRS,");
+		sql.append(" :BUDAT,");
+		sql.append(" :MONAT,");
+		sql.append(" :APP_DFT_CURR,");
+		sql.append(" :XBLNR,");
+		sql.append(" :BKTXT");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("BLDAT", endDate);
+		paramMap.addValue("BLART", parameters.get("BLART"));
+		paramMap.addValue("BUKRS", parameters.get("BUKRS"));
+		paramMap.addValue("BUDAT", endDate);
+		paramMap.addValue("MONAT", getFinancialMonth());
+		paramMap.addValue("APP_DFT_CURR", parameters.get("APP_DFT_CURR"));
+		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF"));
+		paramMap.addValue("BKTXT", StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF"));
+
+		try {
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception("Unable to prpare the transaction summary report.");
+		}
+	}
+	
 	private BigDecimal getAmount(ResultSet rs, String columnName) throws SQLException {
 		BigDecimal amount;
 
@@ -439,5 +563,4 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		}
 		return amount;
 	}
-
 }

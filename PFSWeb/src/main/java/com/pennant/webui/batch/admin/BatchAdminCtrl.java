@@ -95,6 +95,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		posidex;
 	protected ProcessExecution		dataMart;
 	protected ProcessExecution		trailBalance;
+	protected ProcessExecution		sapGL;
 	protected ProcessExecution		cibil;
 	protected ProcessExecution		gstTaxDownload;
 
@@ -115,6 +116,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		posidex,
 		dataMart,
 		trailBalance,
+		sapGL,
 		cibil,
 		gstTaxDownload
 	}
@@ -484,6 +486,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case trailBalance:
 				renderDetials(this.trailBalance, status);
 				break;
+			case sapGL:
+				renderDetials(this.sapGL, status);
+				break;
 			case cibil:
 				renderDetials(this.cibil, status);
 				break;
@@ -532,6 +537,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		clearChilds(posidex);
 		clearChilds(dataMart);
 		clearChilds(trailBalance);
+		clearChilds(sapGL);
 		clearChilds(cibil);
 		clearChilds(gstTaxDownload);
 

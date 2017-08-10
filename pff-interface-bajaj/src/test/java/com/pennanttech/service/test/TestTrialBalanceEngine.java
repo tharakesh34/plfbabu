@@ -30,7 +30,6 @@ public class TestTrialBalanceEngine {
 		try {
 			new TrailBalanceEngine(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
