@@ -2645,4 +2645,14 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			update workflowdetails set firsttaskowner='CUSTOMER_MAKER' where  workflowtype='CUSTOMER_PROCESS' and workflowactive=1
 		</sql>
 	</changeSet>
+	<changeSet author="Madhubabu" id="204">
+		<sql>
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMERDOCUMENT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CustomerBankInfo_Maker'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CustomerAccBehaviour_Maker'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CustomerExtLiability_Maker'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='BFSD_ORIGINATION_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
