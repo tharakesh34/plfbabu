@@ -41,7 +41,7 @@ public class GCDCustomerDetailsServiceImpl implements GCDCustomerService{
 		}
 		customer = preparegcdCustomer(custDetail, customer);
 		gCDCustomerDAO.save(customer);
-		gCDCustomerBajjajDAO.callStoredProcedure(customer);
+		gCDCustomerBajjajDAO.callStoredProcedure(custDetail,customer);
 
 		logger.debug(Literal.LEAVING);
 	}
