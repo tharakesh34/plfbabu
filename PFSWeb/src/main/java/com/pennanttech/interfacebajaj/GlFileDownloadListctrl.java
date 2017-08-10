@@ -53,7 +53,6 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
 import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,9 +104,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	
 	protected AmazonS3Bucket bucket;
 	
-	@Autowired
-	private TrailBalanceReportService trailBalanceReportService;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -186,13 +182,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		refresh();
 	}
 	
-	/**
-	 * Call the FileDownload dialog with a new empty entry. <br>
-	 */
-	public void onClick$btnexecute(Event event) throws Exception {
-		trailBalanceReportService.generateReport(getUserWorkspace().getUserDetails().getUserId());
-	}
-
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {

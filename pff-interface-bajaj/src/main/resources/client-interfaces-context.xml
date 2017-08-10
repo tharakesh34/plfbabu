@@ -39,7 +39,6 @@
 	<bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestServiceImpl" scope="prototype" parent="bajajService"/>
 	<bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/>
 	<bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/>
-	<bean id="trailBalanceReportService" class="com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl"  scope="prototype" parent="bajajService"/>
 	<bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl"  scope="prototype" parent="bajajService"/>
 	
 	

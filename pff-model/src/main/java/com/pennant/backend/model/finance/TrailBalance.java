@@ -7,6 +7,7 @@ public class TrailBalance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long headerId;
+	private int id;
 	private long link;
 	private BigDecimal transactionAmount = BigDecimal.ZERO;
 	private String transactionAmountType;
@@ -212,6 +213,14 @@ public class TrailBalance implements Serializable {
 
 	public void setEntity(String entity) {
 		this.entity = entity;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

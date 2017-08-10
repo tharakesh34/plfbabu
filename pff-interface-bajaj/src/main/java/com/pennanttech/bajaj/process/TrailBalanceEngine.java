@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 public class TrailBalanceEngine extends DataEngineExport {
-	private static DataEngineStatus TB_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
+	public static DataEngineStatus TB_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
 
 	private int batchSize = 1000;
 	private Date monthStartDate = null;

@@ -6,10 +6,9 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
 import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
@@ -27,9 +26,6 @@ public class TrailBalance implements Tasklet {
 	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-
-	@Autowired
-	private TrailBalanceReportService trailBalanceReportService;
 
 	public EODConfig getEodConfig() {
 		try {
@@ -70,23 +66,15 @@ public class TrailBalance implements Tasklet {
 
 			}
 
-			new TrailBalanceProcessThread(new Long(1000), trailBalanceReportService).start();
-			DataEngineStatus status1 = BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT;
-			DataEngineStatus status2 = BajajInterfaceConstants.GL_TRANSACTION_SUMMARY_EXPORT;
-			DataEngineStatus status3 = BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT;
-			status1.setStatus("I");
-			status2.setStatus("I");
-			status3.setStatus("I");
-
-			while ("I".equals(status1.getStatus()) || "I".equals(status2.getStatus())
-					|| "I".equals(status3.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String
-						.valueOf(status1.getTotalRecords() + status2.getTotalRecords() + status3.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(
-						status1.getProcessedRecords() + status2.getProcessedRecords() + status3.getProcessedRecords()));
+			new TrailBalanceProcessThread(new Long(1000)).start();
+			DataEngineStatus status = TrailBalanceEngine.TB_STATUS;
+			status.setStatus("I");
+		
+			while ("I".equals(status.getStatus())) {
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 				
-				if("F".equals(status1.getStatus()) || "F".equals(status2.getStatus())
-					|| "F".equals(status3.getStatus())) {
+				if("F".equals(status.getStatus())) {
 					throw new Exception();
 				}
 			}
@@ -114,18 +102,16 @@ public class TrailBalance implements Tasklet {
 
 	public class TrailBalanceProcessThread extends Thread {
 		private long userId;
-		private TrailBalanceReportService trailBalanceReportService;
 
-		public TrailBalanceProcessThread(long userId, TrailBalanceReportService trailBalanceReportService) {
+		public TrailBalanceProcessThread(long userId) {
 			this.userId = userId;
-			this.trailBalanceReportService = trailBalanceReportService;
 		}
 
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				this.trailBalanceReportService.generateReport(userId);
 				sleep(1000);
+				new TrailBalanceEngine(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

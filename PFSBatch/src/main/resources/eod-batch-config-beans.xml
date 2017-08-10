@@ -578,7 +578,6 @@
 	</bean>
 	
 	<bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestServiceImpl" scope="prototype" parent="bajajService"/>
-    <bean id="trailBalanceReportService" class=" com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl" scope="prototype" parent="bajajService"/> 
     <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl"  scope="prototype" parent="bajajService"/>
   
   	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">

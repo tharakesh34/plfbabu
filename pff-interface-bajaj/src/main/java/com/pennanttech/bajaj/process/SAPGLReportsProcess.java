@@ -3,14 +3,17 @@ package com.pennanttech.bajaj.process;
 import com.pennant.backend.model.finance.TrailBalance;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +50,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 
 		saveTransactionDetails(transactions.values());
 
+		groupTransactions();
 	}
 
 	private void initilize() throws Exception {
@@ -74,7 +78,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 	private Map<String, TrailBalance> getTransactions() throws Exception {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT DD.ENTITYCODE, AM.HOSTACCOUNT,S.BUSINESSAREA,");
+		sql.append(" SELECT DD.ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR  FROM POSTINGS P");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
@@ -84,10 +88,10 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
 		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
+		//sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" GROUP BY DD.ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR");
-		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
-
+		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
 		paramMap.addValue("MONTH_ENDDATE", endDate);
@@ -104,13 +108,28 @@ public class SAPGLReportsProcess extends DataEngineExport {
 
 						TrailBalance item = null;
 						String key = null;
+
+						String costCenter;
+						String profitCenter;
 						while (rs.next()) {
 							key = "";
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("ENTITYCODE")));
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("HOSTACCOUNT")));
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("BUSINESSAREA")));
-							key = key.concat(StringUtils.trimToEmpty(rs.getString("PROFITCENTERCODE")));
-							key = key.concat(StringUtils.trimToEmpty(rs.getString("COSTCENTERCODE")));
+
+							costCenter = StringUtils.trimToNull(rs.getString("COSTCENTERCODE"));
+							profitCenter = StringUtils.trimToNull(rs.getString("PROFITCENTERCODE"));
+
+							if (costCenter == null) {
+								costCenter = parameters.get("PRCTR");
+							}
+
+							if (profitCenter == null) {
+								profitCenter = parameters.get("KOSTL");
+							}
+
+							key = key.concat(costCenter);
+							key = key.concat(profitCenter);
 
 							item = map.get(key);
 
@@ -120,11 +139,11 @@ public class SAPGLReportsProcess extends DataEngineExport {
 								item.setEntity(rs.getString("ENTITYCODE"));
 								item.setLedgerAccount(rs.getString("HOSTACCOUNT"));
 								item.setBusinessArea(rs.getString("BUSINESSAREA"));
-								item.setProfitCenter(rs.getString("PROFITCENTERCODE"));
-								item.setCostCenter(rs.getString("COSTCENTERCODE"));
+								item.setProfitCenter(profitCenter);
+								item.setCostCenter(costCenter);
 
 								item.setUmskz(parameters.get("UMSKZ"));
-								item.setBusinessArea(parameters.get("GSBER"));
+								item.setBusinessUnit(parameters.get("GSBER"));
 								item.setNarration1(ZUONR);
 								item.setNarration2(SGTXT);
 
@@ -135,15 +154,6 @@ public class SAPGLReportsProcess extends DataEngineExport {
 								item.setCreditAmount(getAmount(rs, "POSTAMOUNT"));
 							} else {
 								item.setDebitAmount(getAmount(rs, "POSTAMOUNT"));
-							}
-
-							item.setTransactionAmount(item.getCreditAmount().subtract(item.getDebitAmount()));
-
-							if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
-								item.setTransactionAmount(BigDecimal.ZERO.subtract(item.getTransactionAmount()));
-								item.setTransactionAmountType("40");
-							} else {
-								item.setTransactionAmountType("50");
 							}
 						}
 						return map;
@@ -183,13 +193,45 @@ public class SAPGLReportsProcess extends DataEngineExport {
 	private void saveTransactionDetails(Collection<TrailBalance> list) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" insert into TRANSACTION_DETAIL_REPORT_TEMP(LINK, BSCHL, HKONT, UMSKZ,");
+		sql.append(" insert into TRANSACTION_DETAIL_REPORT_TEMP(ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ,");
 		sql.append(" WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT)");
-		sql.append(" values(:Link, :TransactionAmountType, :LedgerAccount, :Umskz,");
-		sql.append(" :TransactionAmount, BusinessArea, :BusinessUnit, :CostCenter, :ProfitCenter,");
+		sql.append(" VALUES(:Id, :Entity, :Link, :TransactionAmountType, :LedgerAccount, :Umskz,");
+		sql.append(" :TransactionAmount, :BusinessUnit, :BusinessArea, :CostCenter, :ProfitCenter,");
 		sql.append(" :Narration1, :Narration1)");
 
-		parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(list.toArray()));
+		Map<String, List<TrailBalance>> entityMap = new HashMap<>();
+		List<TrailBalance> transactions = null;
+		for (TrailBalance item : list) {
+			item.setTransactionAmount(item.getCreditAmount().subtract(item.getDebitAmount()));
+
+			if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
+				item.setTransactionAmount(BigDecimal.ZERO.subtract(item.getTransactionAmount()));
+				item.setTransactionAmountType("40");
+			} else {
+				item.setTransactionAmountType("50");
+			}
+
+			transactions = entityMap.get(item.getEntity());
+
+			if (transactions == null) {
+				transactions = new ArrayList<>();
+				entityMap.put(item.getEntity(), transactions);
+			}
+
+			transactions.add(item);
+		}
+
+		for (List<TrailBalance> trailBalances : entityMap.values()) {
+			int i= 0;
+			for (TrailBalance tb : trailBalances) {
+				tb.setId(++i);
+			}
+			
+			parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(trailBalances.toArray()));
+		}
+		
+		
+
 	}
 
 	private void clearTables() {
@@ -197,15 +239,195 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_SUMMARY_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
-		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_STGE");
-
-		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		jdbcTemplate
-				.execute("alter table TRANSACTION_DETAIL_REPORT_TEMP modify ID generated as identity (start with 1)");
-		jdbcTemplate
-				.execute("alter table TRANSACTION_DETAIL_REPORT_STGE modify ID generated as identity (start with 1)");
-
 	}
+	
+	private int saveTranactions(int fromRange, int toRange, String entity) {
+		MapSqlParameterSource parameterSource;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT (ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA,");
+		sql.append(" KOSTL, PRCTR, ZUONR, SGTXT)");
+		sql.append(" SELECT ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP");
+		sql.append(" WHERE ENTITY = :ENTITY AND ID >=:FROM_RANGE AND ID <=:TO_RANGE");
+
+		parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("ENTITY", entity);
+		parameterSource.addValue("FROM_RANGE", fromRange);
+		parameterSource.addValue("TO_RANGE", toRange);
+
+		try {
+			return parameterJdbcTemplate.update(sql.toString(), parameterSource);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return 0;
+	}
+	
+	private void update(int page, String entity) {
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" UPDATE TRANSACTION_DETAIL_REPORT SET LINK = :LINK");
+		sql.append(" WHERE ENTITY =:ENTITY AND LINK =:LINK");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("LINK", 0);
+		paramMap.addValue("ENTITY", entity);
+
+		try {
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+	
+	private void groupTransactions() throws Exception {
+		int pageSize = Integer.parseInt(parameters.get("SAPGL_TRAN_RECORD_COUNT"));
+
+		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
+
+		jdbcTemplate.query(query, new RowCallbackHandler() {
+
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				int totalTransactions = rs.getInt("count");
+
+				int pages = totalTransactions / pageSize;
+				if (pages == 0) {
+					pages = 1;
+				}
+
+				int fromRange = 1;
+				int toRange = pageSize;
+				int pageItr = 0;
+				int mainRecords = 0;
+				boolean pagesInserted = false;
+				for (int page = 1; page <= pages; page++) {
+					pageItr = page;
+					mainRecords = mainRecords + saveTranactions(fromRange, toRange, rs.getString("ENTITY"));
+					pagesInserted = true;
+					fromRange = toRange + 1;
+					toRange = toRange + pageSize;
+					update(pageItr, rs.getString("ENTITY"));
+
+					if (pagesInserted) {
+						saveTransactionSummary(pageItr, rs.getString("ENTITY"));
+						pagesInserted = false;
+					}
+				}
+
+				if (totalTransactions > mainRecords) {
+					mainRecords = mainRecords + saveTranactions(fromRange, toRange, rs.getString("ENTITY"));
+					pagesInserted = true;
+					fromRange = toRange + 1;
+					toRange = toRange + pageSize;
+					pageItr = pageItr + 1;
+					update(pageItr, rs.getString("ENTITY"));
+				}
+
+				if (pagesInserted) {
+					saveTransactionSummary(pageItr, rs.getString("ENTITY"));
+				}
+			}
+
+		});
+	}
+	
+	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr, String entity) {
+		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT BSCHL, SUM(WRBTR) WRBTR FROM TRANSACTION_DETAIL_REPORT");
+		sql.append(" WHERE ENTITY = ? AND LINK = ? GROUP BY BSCHL");
+
+		jdbcTemplate.query(sql.toString(), new Object[] { entity, pageItr }, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				map.put(rs.getInt("BSCHL"), rs.getBigDecimal("WRBTR"));
+			}
+
+		});
+
+		return map;
+	}
+
+	
+	private void saveTransactionSummary(int pageItr, String entity) throws SQLException {
+		Map<Integer, BigDecimal> map = getSummaryAmounts(pageItr, entity);
+
+		BigDecimal summaryAmount = BigDecimal.ZERO;
+		BigDecimal debitAmount = BigDecimal.ZERO;
+		BigDecimal creditAmount = BigDecimal.ZERO;
+
+		if (map.containsKey(40)) {
+			debitAmount = map.get(40);
+		}
+
+		if (map.containsKey(50)) {
+			creditAmount = map.get(50);
+		}
+
+		summaryAmount = debitAmount.subtract(creditAmount);
+
+		String BSCHL = "";
+		BigDecimal WRBTR = summaryAmount;
+
+		if (summaryAmount.compareTo(BigDecimal.ZERO) < 0) {
+			BSCHL = "40";
+			WRBTR = WRBTR.negate();
+		} else {
+			BSCHL = "50";
+		}
+
+		MapSqlParameterSource parameterSource;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TRANSACTION_DETAIL_REPORT(LINK, BSCHL, HKONT, UMSKZ, WRBTR, GSBER,");
+		sql.append(" BUPLA, KOSTL, PRCTR, ZUONR, SGTXT) SELECT");
+		sql.append(" :LINK,");
+		sql.append(" :BSCHL,");
+		sql.append(" :HKONT,");
+		sql.append(" :UMSKZ,");
+		sql.append(" :WRBTR,");
+		sql.append(" :GSBER,");
+		sql.append(" :BUPLA,");
+		sql.append(" :KOSTL,");
+		sql.append(" :PRCTR,");
+		sql.append(" ZUONR,");
+		sql.append(" SGTXT");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
+
+		parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("LINK", pageItr);
+		parameterSource.addValue("BSCHL", BSCHL);
+		parameterSource.addValue("HKONT", parameters.get("HKONT"));
+		parameterSource.addValue("UMSKZ", parameters.get("UMSKZ"));
+		parameterSource.addValue("WRBTR", WRBTR);
+		parameterSource.addValue("GSBER", parameters.get("GSBER"));
+		parameterSource.addValue("BUPLA", parameters.get("BUPLA"));
+		parameterSource.addValue("KOSTL", parameters.get("KOSTL"));
+		parameterSource.addValue("PRCTR", parameters.get("PRCTR"));
+		parameterSource.addValue("ROWNUM", 1);
+
+		try {
+			parameterJdbcTemplate.update(sql.toString(), parameterSource);
+
+			if ("40".equals(BSCHL)) {
+				BSCHL = "50";
+			} else {
+				BSCHL = "40";
+			}
+			parameterSource.addValue("BSCHL", BSCHL);
+			parameterSource.addValue("LINK", pageItr + 1);
+
+			parameterJdbcTemplate.update(sql.toString(), parameterSource);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new SQLException("Unable to insert the summary records for the page " + pageItr);
+		}
+	}
+	
 
 	private BigDecimal getAmount(ResultSet rs, String columnName) throws SQLException {
 		BigDecimal amount;

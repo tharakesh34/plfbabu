@@ -7,7 +7,6 @@ import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.services.ControlDumpRequestService;
-import com.pennanttech.pff.core.services.TrailBalanceReportService;
 import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
@@ -31,8 +30,6 @@ public class DataExtract implements Tasklet {
 	@Autowired
 	private ControlDumpRequestService controlDumpRequestService;
 	
-	@Autowired
-	private TrailBalanceReportService trailBalanceReportService;
 	@Autowired
 	private CIBILReport cibilReport;
 	@Autowired
@@ -77,7 +74,6 @@ public class DataExtract implements Tasklet {
 
 			}
 
-			new TrailBalanceReportThread(new Long(1000), trailBalanceReportService).start();
 			new ControlDumpRequestThread(new Long(1000), controlDumpRequestService).start();
 			new TaxDownlaodDetailThread(new Long(1000), taxDownlaodDetailService).start();
 			new CibilReportThread(cibilReport).start();
@@ -120,26 +116,6 @@ public class DataExtract implements Tasklet {
 
 				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
 						DateUtility.getAppDate(), monthStartDate, monthEndDate);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-	}
-
-	public class TrailBalanceReportThread extends Thread {
-		private long userId;
-		private TrailBalanceReportService trailBalanceReportService;
-
-		public TrailBalanceReportThread(long userId, TrailBalanceReportService trailBalanceReportService) {
-			this.userId = userId;
-			this.trailBalanceReportService = trailBalanceReportService;
-		}
-
-		public void run() {
-			try {
-				logger.debug("Trail Balance Request Service started...");
-				this.trailBalanceReportService.generateReport(userId);
-
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
