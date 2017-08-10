@@ -2546,8 +2546,9 @@ union all
 	<changeSet id="197" author="murthy.y">
 		<dropTable tableName="TRANSACTION_DETAIL_REPORT" />
 		<dropTable tableName="TRANSACTION_DETAIL_REPORT_TEMP" />
+		<dropTable tableName="TRANSACTION_DETAIL_REPORT_STGE" />
 	</changeSet>
-	
+		
 	<changeSet id="197.1" author="murthy.y">
 		<createTable tableName="TRANSACTION_DETAIL_REPORT_TEMP">
 			<column name="ID" type="decimal(10,0)">
@@ -2575,42 +2576,8 @@ union all
 	</changeSet>
 	<changeSet id="197.2" author="murthy.y">
 	    <addPrimaryKey columnNames="ID,ENTITY" constraintName="PK_TDRT_IE" tableName="TRANSACTION_DETAIL_REPORT_TEMP"/>
-	</changeSet>
+	</changeSet>	
 	<changeSet id="197.3" author="murthy.y">
-		<createTable tableName="TRANSACTION_DETAIL_REPORT">
-			<column name="ID" type="decimal(10,0)">
-				<constraints nullable="false" />
-			</column>
-			<column name="ENTITY" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="LINK" type="decimal(5,0)">
-				<constraints nullable="false" />
-			</column>
-			<column name="BSCHL" type="decimal(5,0)">
-				<constraints nullable="false" />
-			</column>
-			<column name="HKONT" type="varchar(20)" />
-			<column name="UMSKZ" type="varchar(20)" />
-			<column name="WRBTR" type="decimal(20,2)" />
-			<column name="GSBER" type="varchar(10)" />
-			<column name="BUPLA" type="varchar(10)" />
-			<column name="KOSTL" type="varchar(20)" />
-			<column name="PRCTR" type="varchar(20)" />
-			<column name="ZUONR" type="varchar(50)" />
-			<column name="SGTXT" type="varchar(50)" />
-		</createTable>
-	</changeSet>
-	<changeSet id="197.4" author="murthy.y">
-	    <addPrimaryKey columnNames="ID,ENTITY" constraintName="PK_TDR_IE" tableName="TRANSACTION_DETAIL_REPORT"/>
-	</changeSet>
-	<changeSet id="197.5" author="murthy.y">
-		<dropTable tableName="TRANSACTION_DETAIL_REPORT_STGE" />
-	</changeSet>
-	<changeSet id="197.6" author="murthy.y">
-		<dropTable tableName="TRANSACTION_DETAIL_REPORT" />
-	</changeSet>
-	<changeSet id="197.7" author="murthy.y">
 		<createTable tableName="TRANSACTION_DETAIL_REPORT">
 			<column name="ID" autoIncrement="true" type="decimal(10,0)">
 				<constraints nullable="false" />
@@ -2635,7 +2602,7 @@ union all
 			<column name="SGTXT" type="varchar(50)" />
 		</createTable>
 	</changeSet>
-	<changeSet id="197.8" author="murthy.y">
+	<changeSet id="197.4" author="murthy.y">
 	    <addPrimaryKey columnNames="ID, ENTITY" constraintName="PK_TDR_IE" tableName="TRANSACTION_DETAIL_REPORT"/>
 	</changeSet>
 </databaseChangeLog>
