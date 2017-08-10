@@ -84,14 +84,6 @@ public class StatementOfAccount {
 	private BigDecimal futurePri2 = BigDecimal.ZERO;
 	private BigDecimal futureRpyPft1 = BigDecimal.ZERO;
 	private BigDecimal futureRpyPft2 = BigDecimal.ZERO;
-	// private BigDecimal chargeCollCust = BigDecimal.ZERO;
-	// private BigDecimal upfrontIntCust = BigDecimal.ZERO;
-	// private int intPaidDealerUpfront = 0;
-	// private int preEmiIntPaid = 0;
-	// private String repoStatus;
-	// private String repoDate;
-	// private String saleDate;
-	// private String releaseDate;
 	private BigDecimal charge_coll_cust = BigDecimal.ZERO;
 	private BigDecimal upfront_int_cust = BigDecimal.ZERO;
 	private int int_paid_Dealer_upfront = 0;
@@ -105,8 +97,8 @@ public class StatementOfAccount {
 	private int ccyEditField;
 	
 	// Finance Profit Details
-	private String FinPurpose;
-	private Date FinStartDate;
+	private String finPurpose;
+	private Date finStartDate;
 	private BigDecimal linkedFinRef = BigDecimal.ZERO;
 	private BigDecimal closedlinkedFinRef = BigDecimal.ZERO;
 	private int activeCnt;
@@ -456,19 +448,19 @@ public class StatementOfAccount {
 	}
 
 	public String getFinPurpose() {
-		return FinPurpose;
+		return finPurpose;
 	}
 
 	public void setFinPurpose(String finPurpose) {
-		FinPurpose = finPurpose;
+		this.finPurpose = finPurpose;
 	}
 
 	public Date getFinStartDate() {
-		return FinStartDate;
+		return this.finStartDate;
 	}
 
 	public void setFinStartDate(Date finStartDate) {
-		FinStartDate = finStartDate;
+		this.finStartDate = finStartDate;
 	}
 
 	public BigDecimal getLinkedFinRef() {
