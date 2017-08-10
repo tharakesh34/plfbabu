@@ -839,7 +839,7 @@ public class ReceiptCalculator implements Serializable {
 					// Only For Partial Settlement
 					if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
 						isPartialPayNow = true;
-						partialSettleAmount = curSchd.getPartialPaidAmt();
+						partialSettleAmount = totalReceiptAmt;
 					}
 				}
 

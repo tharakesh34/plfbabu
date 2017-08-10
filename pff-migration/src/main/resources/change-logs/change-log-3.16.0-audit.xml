@@ -7,5 +7,9 @@
 	<property name="call.concatenate" value="||" dbms="oracle" />
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
+	
+	<changeSet author="Siva" id="1">
+		<modifyDataType tableName="ADTFINANCEMAIN" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
 
 </databaseChangeLog>

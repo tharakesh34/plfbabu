@@ -4930,6 +4930,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					tableName.append("_");
 					tableName.append(asset.getTypeCode());
 					tableName.append("_ED");
+					asset.setTableName(tableName.toString());
 
 					// Records Deletion from Table
 					getExtendedFieldRenderDAO()
@@ -4962,6 +4963,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					tableName.append("_");
 					tableName.append(vas.getTypeCode());
 					tableName.append("_ED");
+					vas.setTableName(tableName.toString());
 
 					// Records Deletion from Table
 					getExtendedFieldRenderDAO().deleteList(vas.getReference(), tableName.toString(), "_Temp");

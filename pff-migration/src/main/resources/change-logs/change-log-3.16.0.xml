@@ -2523,4 +2523,23 @@ union all
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where Debit!=0 or credit !=0]]>
     </createView>
 </changeSet>
+
+	<changeSet author="Siva" id="191">
+		<modifyDataType tableName="FINANCEMAIN" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet author="Siva" id="192">
+		<modifyDataType tableName="FINANCEMAIN_TEMP" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet author="Siva" id="193">
+		<modifyDataType tableName="WIFFINANCEMAIN_TEMP" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet author="Siva" id="194">
+		<modifyDataType tableName="WIFFINANCEMAIN" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet author="Siva" id="195">
+		<modifyDataType tableName="FINANCEMAIN_PA" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet author="Siva" id="196">
+		<modifyDataType tableName="REJECTFINANCEMAIN" columnName="CalRoundingMode" newDataType="varchar(10)"/>
+	</changeSet>
 </databaseChangeLog>
