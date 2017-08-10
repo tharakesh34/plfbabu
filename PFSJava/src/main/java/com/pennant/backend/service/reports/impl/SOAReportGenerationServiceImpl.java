@@ -47,10 +47,13 @@ import java.util.List;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -102,6 +105,36 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return this.soaReportGenerationDAO.getFinFeeScheduleDetails(finReference);
 	}
 
+	@Override
+	public List<SOATransactionReport> getManualAdviseMovements(String finReference) {
+		return this.soaReportGenerationDAO.getManualAdviseMovements(finReference);
+	}
+	
+	@Override
+	public List<PresentmentDetail> getPresentmentDetails(String finReference) {
+		return this.soaReportGenerationDAO.getPresentmentDetails(finReference);
+	}
+	
+	@Override
+	public List<Long> getPresentmentReceiptIds() {
+		return this.soaReportGenerationDAO.getPresentmentReceiptIds();
+	}
+	
+	@Override
+	public List<SOATransactionReport> getReceiptAllocationDetails(String finReference) {
+		return this.soaReportGenerationDAO.getReceiptAllocationDetails(finReference);
+	}
+	
+	@Override
+	public List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
+		return this.soaReportGenerationDAO.getFinReceiptHeaders(finReference);
+	}
+	
+	@Override
+	public List<FinReceiptDetail> getFinReceiptDetails(List<Long> finReceiptIds) {
+		return this.soaReportGenerationDAO.getFinReceiptDetails(finReceiptIds);
+	}
+	
 	@Override
 	public StatementOfAccount getSOALoanDetails(String finReference) {
 		return this.soaReportGenerationDAO.getSOALoanDetails(finReference);

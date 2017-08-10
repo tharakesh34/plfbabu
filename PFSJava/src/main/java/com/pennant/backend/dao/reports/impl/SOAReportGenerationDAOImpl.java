@@ -62,10 +62,13 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -244,7 +247,9 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" Select * FROM ManualAdvise");
+		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.WaivedAmount, T2.FeeTypeDesc ");
+		selectSql.append(" FROM ManualAdvise T1 Left Join");
+		selectSql.append(" FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId  ");
 		selectSql.append(" Where FinReference = :FinReference");
 		
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -270,7 +275,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT Schdate transactionDate,'FEESCH' event, SchAmount transactionAmount, 'Debit' drOrCr"); 
+		selectSql.append(" SELECT Schdate transactionDate,'FEESCH' event, SchAmount TransactionAmount, 'Debit' drOrCr"); 
 		selectSql.append(" FROM finfeescheduledetail T1 Inner Join");
 		selectSql.append(" FinFeeDetail T2 on T1.FeeID = T2.FeeID Inner Join");
 		selectSql.append(" FeeTypes T3 On T2.FeeTypeid = T3.FeeTypeId INNER JOIN"); 
@@ -287,6 +292,171 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<SOATransactionReport> getManualAdviseMovements(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT T1.Movementdate transactionDate, 'MNLAMV' event, T2.WaivedAmount TransactionAmount, 'Credit' drOrCr");
+		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
+		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
+		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
+		selectSql.append(" WHERE T2.WaivedAmount > 0 ");
+		selectSql.append(" And  T2.FinReference = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<PresentmentDetail> getPresentmentDetails(String finReference) {
+		PresentmentDetail manualAdvise = new PresentmentDetail();
+		manualAdvise.setFinReference(finReference);
+		List<PresentmentDetail> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" Select * FROM PRESENTMENTDETAILS");
+		selectSql.append(" Where FinReference = :FinReference");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<Long> getPresentmentReceiptIds() {
+		MapSqlParameterSource source = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT Distinct ReceiptId FROM PRESENTMENTDETAILS");
+
+		source = new MapSqlParameterSource();
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForList(sql.toString(), source, Long.class);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		return new ArrayList<Long>();
+	}
+	
+	@Override
+	public List<SOATransactionReport> getReceiptAllocationDetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT T2.Receiptdate TransactionDate,'RCPALW' event, T1.PaidAmount TransactionAmount,'Credit' drOrCr");
+		selectSql.append(" FROM ReceiptAllocationDetail T1 INNER JOIN");
+		selectSql.append(" FinReceiptHeader T2 on T2.ReceiptId  = T1.ReceiptId");
+		selectSql.append(" WHERE T1.AllocationType='TDS' And T2.ReceiptModeStatus Not IN ('C')");
+		selectSql.append(" And  T2.Reference = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
+		FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
+		finReceiptHeader.setReference(finReference);
+		List<FinReceiptHeader> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT * from FinReceiptHeader");
+		selectSql.append(" Where Reference = :Reference");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<FinReceiptDetail> getFinReceiptDetails(List<Long> finReceiptIds) {
+
+		List<FinReceiptDetail> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		MapSqlParameterSource paramMap = null;
+
+		selectSql.append(" SELECT * from FinReceiptDetail");
+		selectSql.append(" Where ReceiptId in (:List)");
+		
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("List", finReceiptIds);
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
+		
+		try {
+			list =  namedParameterJdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			list = new ArrayList<>();
 		}
 		

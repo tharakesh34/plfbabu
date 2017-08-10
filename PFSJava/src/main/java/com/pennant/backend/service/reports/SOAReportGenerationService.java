@@ -46,10 +46,13 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -77,4 +80,15 @@ public interface SOAReportGenerationService {
 	SOASummaryReport getFinExcessAmountOfSummaryReport(String finReference);
 
 	List<SOATransactionReport> getFinFeeScheduleDetails(String finReference);
+
+	List<SOATransactionReport> getManualAdviseMovements(String finReference);
+
+	List<PresentmentDetail> getPresentmentDetails(String finReference);
+
+	List<Long> getPresentmentReceiptIds();
+
+	List<SOATransactionReport> getReceiptAllocationDetails(String finReference);
+
+	List<FinReceiptHeader> getFinReceiptHeaders(String finReference);
+	List<FinReceiptDetail> getFinReceiptDetails(List<Long> finReceiptIds);
 }

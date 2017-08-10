@@ -68,15 +68,19 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -178,6 +182,13 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		
 		doShowDialogPage(this.statementOfAccount);
 		
+		try {
+			ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, new ArrayList<Object>(),
+					true, 1, getUserWorkspace().getLoggedInUser().getFullName(), window_SOAReportGenerationDialogCtrl);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 	
@@ -258,6 +269,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				statementOfAccount.setActiveCnt(activeCount);
 				statementOfAccount.setCloseCnt(closeCount);
 				statementOfAccount.setTot(activeCount + closeCount);
+				statementOfAccount.setFinStartDate(financeProfitDetail.getFinStartDate());
 
 				StatementOfAccount statementOfAccountCustDetails = this.soaReportGenerationService
 						.getSOACustomerDetails(custId);
@@ -290,6 +302,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			
 			statementOfAccount.setSoaSummaryReports(getSOASummaryDetails(finReference));
 			statementOfAccount.setTransactionReports(getTransactionDetails(finReference));
+			
+			setStatementOfAccount(statementOfAccount);
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -520,6 +534,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		String advancePayment = "ADVPAY";
 		String sattelment = "STLMNT";
 		String penality = "PANLTY";
+		String manualAdv = "MNLADV";
+		String receiptHeader = "RECHED";
 		
 		SOATransactionReport soaTransactionReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
@@ -533,6 +549,64 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			List<FinODDetails>  finODDetailsList = this.soaReportGenerationService.getFinODDetails(finReference);
 			List<ManualAdvise>  manualAdviseList = this.soaReportGenerationService.getManualAdvise(finReference);
 			List<SOATransactionReport> soaFinFeeScheduleReports = this.soaReportGenerationService.getFinFeeScheduleDetails(finReference);
+			List<SOATransactionReport> soaManualAdviseMovements = this.soaReportGenerationService.getManualAdviseMovements(finReference);
+			List<PresentmentDetail>  presentmentDetailsList = this.soaReportGenerationService.getPresentmentDetails(finReference);
+			List<Long> presentmentReceiptIds = this.soaReportGenerationService.getPresentmentReceiptIds();
+			List<SOATransactionReport> soaReceiptAllocationDetails = this.soaReportGenerationService.getReceiptAllocationDetails(finReference);
+			
+			List<FinReceiptHeader>  finReceiptHeadersList = this.soaReportGenerationService.getFinReceiptHeaders(finReference);
+			List<Long> finReceiptIds = new ArrayList<Long>();
+			
+			for (FinReceiptHeader finReceiptHeader : finReceiptHeadersList) {
+				if (!finReceiptIds.contains(finReceiptHeader.getReceiptID())) {
+					finReceiptIds.add(finReceiptHeader.getReceiptID());
+				}
+			}
+			List<FinReceiptDetail>  finReceiptDetailsList = this.soaReportGenerationService.getFinReceiptDetails(finReceiptIds);
+			
+			for (FinReceiptHeader finReceiptHeader : finReceiptHeadersList) {
+				
+				for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
+					
+					if (finReceiptDetail.getReceiptID()  == finReceiptHeader.getReceiptID()) {
+						
+						if (!StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "C")) {
+							soaTransactionReport = new SOATransactionReport();
+							soaTransactionReport.setEvent(receiptHeader);
+							soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
+							soaTransactionReport.setTransactionAmount(finReceiptDetail.getAmount());
+							
+							if (!StringUtils.equals(finReceiptDetail.getPaymentType(), "EXCESS")) {
+								soaTransactionReport.setDrOrCr("Debit");
+							} else {
+								soaTransactionReport.setDrOrCr("Credit");
+							}
+							
+							soaTransactionReports.add(soaTransactionReport);
+						}
+						
+						if (StringUtils.equals(finReceiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
+							for (ManualAdvise manualAdvise : manualAdviseList) {
+								if (finReceiptHeader.getReceiptID()  == manualAdvise.getReceiptID()) {
+									if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "B")
+											&& manualAdvise.getAdviseType() == 1
+											&& manualAdvise.getBounceID() > 0) {
+										
+										soaTransactionReport = new SOATransactionReport();
+										soaTransactionReport.setEvent(receiptHeader);
+										soaTransactionReport.setTransactionDate(finReceiptHeader.getBounceDate());
+										soaTransactionReport.setTransactionAmount(finReceiptDetail.getAmount());
+										soaTransactionReport.setDrOrCr("Debit");
+										
+										soaTransactionReports.add(soaTransactionReport);
+									}
+								}
+							}
+						}
+					}
+					
+				}
+			}
 			
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 				
@@ -621,10 +695,39 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			//FINFeeScheduleDetails
 			soaTransactionReports.addAll(soaFinFeeScheduleReports);
 			
+			//Manual Advise Movements
+			soaTransactionReports.addAll(soaManualAdviseMovements);
+			
+			//Receipt Allocation Details
+			soaTransactionReports.addAll(soaReceiptAllocationDetails);
+			
+			//Manual Advise
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				
-				if (manualAdvise.getAdviseType() != 2 && manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if ((manualAdvise.getFeeTypeID() != 0 || manualAdvise.getFeeTypeID() != Long.MIN_VALUE)
+						&& StringUtils.isNotBlank(manualAdvise.getFeeTypeDesc()) && manualAdvise.getAdviseType() == 2
+						&& manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
 					
+					soaTransactionReport = new SOATransactionReport();
+					soaTransactionReport.setEvent(manualAdv);
+					soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
+					soaTransactionReport.setTransactionAmount(manualAdvise.getAdviseAmount());
+					soaTransactionReport.setDrOrCr("Credit");
+
+					soaTransactionReports.add(soaTransactionReport);
+				}
+				
+				if (manualAdvise.getAdviseType() != 2 && manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0
+						&& !presentmentReceiptIds.contains(manualAdvise.getReceiptID())) {
+
+					soaTransactionReport = new SOATransactionReport();
+					soaTransactionReport.setEvent(manualAdv);
+					soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
+					soaTransactionReport.setTransactionAmount(manualAdvise.getAdviseAmount());
+					soaTransactionReport.setDrOrCr("Debit");
+
+					soaTransactionReports.add(soaTransactionReport);
+
 				}
 				
 				if (manualAdvise.getFeeTypeID() != 0 && manualAdvise.getFeeTypeID() != Long.MIN_VALUE) {
@@ -632,6 +735,11 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				}
 				
 			}
+			
+			for (PresentmentDetail presentmentDetail : presentmentDetailsList) {
+				
+			}
+			
 			System.out.println();
 			for (SOATransactionReport tranReport : soaTransactionReports) {
 				System.out.println();
