@@ -1782,13 +1782,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// validate Partial Settlement Amount
-			BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(
-					finServiceInstruction.getFinReference());
-			totOutstandingAmt = totOutstandingAmt == null ? BigDecimal.ZERO : totOutstandingAmt;
-			if (finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(totOutstandingAmt);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91127", "", valueParm)));
+			if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+				BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(
+						finServiceInstruction.getFinReference());
+				totOutstandingAmt = totOutstandingAmt == null ? BigDecimal.ZERO : totOutstandingAmt;
+				if (finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = String.valueOf(totOutstandingAmt);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91127", "", valueParm)));
+				}
 			}
 		} else {
 			// validate recalType
