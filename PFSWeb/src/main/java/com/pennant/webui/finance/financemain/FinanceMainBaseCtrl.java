@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.ws.rs.ProcessingException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
@@ -5998,12 +5997,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} catch (Exception ex) {
-
-				if (ex instanceof ProcessingException) {
-					MessageUtil.showError(Labels.getLabel("Dedupe_other_system_Process_Error"));
-				} else if (ex instanceof InterfaceException) {
-					MessageUtil.showError(ex);
-				}
+				MessageUtil.showError(ex);
 				return;
 			}
 		}

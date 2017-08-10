@@ -2799,11 +2799,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {
-			if(e instanceof ProcessingException){				
-				MessageUtil.showError(Labels.getLabel("Dedupe_other_system_Process_Error"));
-			}else{				
-				MessageUtil.showError(e);
-			}
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
