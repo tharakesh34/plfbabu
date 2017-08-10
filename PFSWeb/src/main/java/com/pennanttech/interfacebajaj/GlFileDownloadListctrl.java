@@ -101,6 +101,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 	private Button downlaod;
+	String module = "";
 	
 	protected AmazonS3Bucket bucket;
 	
@@ -117,6 +118,9 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.pageRightName = "FileDownload";
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
+		
+		this.module = getArgument("module");
+
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -168,10 +172,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		list.add("GL_TRAIL_BALANCE_EXPORT");
-		list.add("GL_TRANSACTION_EXPORT");
-		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
-
+		if ("TrailBalance".equals(module)) {
+			list.add("GL_TRAIL_BALANCE_EXPORT");
+		} else {
+			list.add("GL_TRANSACTION_EXPORT");
+			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
+		}
 		this.searchObject.addFilterIn("NAME", list);
 	}
 

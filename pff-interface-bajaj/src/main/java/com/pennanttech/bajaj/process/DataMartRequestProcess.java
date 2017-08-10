@@ -29,12 +29,14 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 	private long totalThreads;
 	private int btachSize = 10000;
 	private Date appDate;
-
+	public static boolean running = false;
+	
 	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
 
 		this.totalThreads = 0;
 		this.completedThreads = new AtomicLong(0L);
+		running = true;
 	}
 
 	@Override
@@ -220,6 +222,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		while (true) {
 			if (totalThreads == completedThreads.get()) {
 				updateHeader();
+				running = false;
 				break;
 			}
 		}

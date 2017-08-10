@@ -70,19 +70,20 @@ public class DataMart implements Tasklet {
 
 			}
 			
-			new DataMartProcessThread(new Long(1000)).start();
 			DataEngineStatus status = BajajInterfaceConstants.DATA_MART_STATUS;
-			status.setStatus("I");
+			DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, new Long(1000), DateUtility.getAppValueDate(), DateUtility.getAppDate());
+			requestProcess.process("DATA_MART_REQUEST");
 			
-			do {
+			while (DataMartRequestProcess.running) {
+				DataMartProcessThread.sleep(2000);
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 
 				if ("F".equals(status.getStatus())) {
 					throw new Exception(status.getRemarks());
 				}
-			} while(!"I".equals(status.getStatus()));
-						
+			}
+			
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -113,9 +114,9 @@ public class DataMart implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("DataMart Request Service started...");
+				sleep(5000);
 				DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 				requestProcess.process("DATA_MART_REQUEST");
-				sleep(1000);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
