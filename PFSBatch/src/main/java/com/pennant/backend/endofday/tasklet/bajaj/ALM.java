@@ -13,6 +13,7 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -73,7 +74,9 @@ public class ALM implements Tasklet {
 			DataEngineStatus status = BajajInterfaceConstants.ALM_EXTRACT_STATUS;
 			status.setStatus("I");
 			
-			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();
+			Thread thread = new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess));
+			Thread.sleep(1000);
+			thread.start();
 			
 			while("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -83,6 +86,9 @@ public class ALM implements Tasklet {
 					throw new Exception("Unable to process the ALM.");
 				}
 			}
+			
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -118,6 +124,9 @@ public class ALM implements Tasklet {
 				logger.debug("ALM Request Service started...");
 				ALMRequestProcess process = new ALMRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
 				process.process("ALM_REQUEST");
+				TimeUnit.SECONDS.sleep(1);
+				
+				System.out.println("");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

@@ -6,12 +6,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.services.ControlDumpRequestService;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -26,9 +27,6 @@ public class ControlDump implements Tasklet {
 	private DataSource dataSource;
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
-
-	@Autowired
-	private ControlDumpRequestService controlDumpRequestService;
 
 	public EODConfig getEodConfig() {
 		try {
@@ -72,8 +70,7 @@ public class ControlDump implements Tasklet {
 			DataEngineStatus status = BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS;
 			status.setStatus("I");
 			
-			new Thread(new ControlDumpProcessThread(new Long(1000), controlDumpRequestService)).start();
-			
+			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
 			
 			while("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -83,6 +80,11 @@ public class ControlDump implements Tasklet {
 					throw new Exception("Unable to process the ALM.");
 				}
 			}
+			
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+			
+			
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -106,18 +108,17 @@ public class ControlDump implements Tasklet {
 	
 	public class ControlDumpProcessThread implements Runnable {
 		private long userId;
-		private ControlDumpRequestService controlDumpRequestService;
 
-		public ControlDumpProcessThread(long userId, ControlDumpRequestService controlDumpRequestService) {
+		public ControlDumpProcessThread(long userId) {
 			this.userId = userId;
-			this.controlDumpRequestService = controlDumpRequestService;
 		}
 
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
-						DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
+				ControlDumpRequestProcess process = new ControlDumpRequestProcess(dataSource, userId,  DateUtility.getAppValueDate(), DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
+				process.process("CONTROL_DUMP_REQUEST");
+				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

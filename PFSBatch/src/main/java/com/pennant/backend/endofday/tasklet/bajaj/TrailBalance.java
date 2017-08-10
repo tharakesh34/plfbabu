@@ -11,6 +11,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -68,7 +69,7 @@ public class TrailBalance implements Tasklet {
 
 			DataEngineStatus status = TrailBalanceEngine.TB_STATUS;
 			status.setStatus("I");
-			new Thread(new TrailBalanceProcessThread(new Long(1000))).run();
+			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
 			
 		
 			while ("I".equals(status.getStatus())) {
@@ -112,6 +113,7 @@ public class TrailBalance implements Tasklet {
 			try {
 				logger.debug("Trail Balance Request Service started...");
 				new TrailBalanceEngine(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

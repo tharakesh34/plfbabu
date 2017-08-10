@@ -11,6 +11,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -65,10 +66,12 @@ public class SAPGL implements Tasklet {
 			if (monthEnd) {
 
 			}
-
-			new Thread(new SAPGLProcessThread(new Long(1000))).run();
+			
+			
 			DataEngineStatus status = SAPGLReportsProcess.SAP_GL_STATUS;
 			status.setStatus("I");
+			
+			new Thread(new SAPGLProcessThread(new Long(1000))).start();
 		
 			while ("I".equals(status.getStatus())) {
 				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
@@ -111,6 +114,7 @@ public class SAPGL implements Tasklet {
 			try {
 				logger.debug("SAP-GL Process initiated...");
 				new SAPGLReportsProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

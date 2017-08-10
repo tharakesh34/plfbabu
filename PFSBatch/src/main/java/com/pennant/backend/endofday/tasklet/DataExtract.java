@@ -6,7 +6,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.services.ControlDumpRequestService;
+
 import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
@@ -27,9 +27,6 @@ public class DataExtract implements Tasklet {
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
-	@Autowired
-	private ControlDumpRequestService controlDumpRequestService;
-	
 	@Autowired
 	private CIBILReport cibilReport;
 	@Autowired
@@ -74,7 +71,6 @@ public class DataExtract implements Tasklet {
 
 			}
 
-			new ControlDumpRequestThread(new Long(1000), controlDumpRequestService).start();
 			new TaxDownlaodDetailThread(new Long(1000), taxDownlaodDetailService).start();
 			new CibilReportThread(cibilReport).start();
 
@@ -96,30 +92,6 @@ public class DataExtract implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	public class ControlDumpRequestThread extends Thread {
-		private long userId;
-		private ControlDumpRequestService controlDumpRequestService;
-
-		public ControlDumpRequestThread(long userId, ControlDumpRequestService controlDumpRequestService) {
-			this.userId = userId;
-			this.controlDumpRequestService = controlDumpRequestService;
-		}
-
-		public void run() {
-			try {
-				logger.debug("Control Dump Request Service started...");
-
-				Date monthStartDate = DateUtility.getMonthStartDate(DateUtility.getAppValueDate());
-				Date monthEndDate = DateUtility.getMonthEnd(DateUtility.getAppValueDate());
-
-				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
-						DateUtility.getAppDate(), monthStartDate, monthEndDate);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
 	}
 
 	public class CibilReportThread extends Thread {

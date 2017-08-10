@@ -2,7 +2,7 @@ package com.pennant.backend.endofday.tasklet.bajaj;
 
 import java.util.Date;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -81,7 +81,10 @@ public class DataMart implements Tasklet {
 				if ("F".equals(status.getStatus())) {
 					throw new Exception(status.getRemarks());
 				}
-			}	
+			}
+			
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 			
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -103,6 +106,8 @@ public class DataMart implements Tasklet {
 		return dataSource;
 	}
 	
+	
+	
 	public class DataMartProcessThread implements Runnable {
 		private long userId;
 
@@ -115,6 +120,9 @@ public class DataMart implements Tasklet {
 				logger.debug("DataMart Request Service started...");
 				DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 				requestProcess.process("DATA_MART_REQUEST");
+				TimeUnit.SECONDS.sleep(1);
+				
+				System.out.println("");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

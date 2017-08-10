@@ -11,6 +11,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -72,6 +73,7 @@ public class Cibil implements Tasklet {
 			
 			DataEngineStatus status = CIBILReport.EXE_STATUS;
 			status.setStatus("I");
+			
 			new Thread(new CIBILProcessThread(cibilReport)).start();	
 
 			while ("I".equals(status.getStatus())) {
@@ -82,6 +84,9 @@ public class Cibil implements Tasklet {
 					throw new Exception("Unable to generate CIBIL Report.");
 				}
 			}
+			
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -114,6 +119,7 @@ public class Cibil implements Tasklet {
 			try {
 				logger.debug("Control Dump Request Service started...");
 				cibilReport.generateReport();
+				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
