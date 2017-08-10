@@ -2301,4 +2301,40 @@ union
 		
    </sql>
 </changeSet>
+<changeSet id="184" author="Jayant">
+    <sql>
+      Alter table Dm_Lea_Doc_Dtl drop constraint PK_DM_LDD_AGGID_BID;      
+    </sql>
+</changeSet>
+<changeSet id="185" author="Jayant">
+    <sql>
+        alter table Dm_Lea_Doc_Dtl add constraint PK_DM_LDD_AGGID_BID PRIMARY KEY (APPLID,PROPERTY_CODE,BATCH_ID);
+    </sql>
+</changeSet>
+<changeSet id="186" author="Prasad">
+    <createView viewName="DM_LEA_DOC_DTLE_VIEW" replaceIfExists="true">
+select substr(T1.FinReference,9,length(T1.FinReference))  AGREEMENTID,null APPLICABLE,
+		substr(T2.FinReference,9,length(T2.FinReference))  APPLID,null APPROVED_BY,null AUTHDATE,null AUTHID,null AWB_NO,null BRANCHSTATUS,
+		cast(null as numeric(8,0)) CONSTITUTION,null COURIER_NAME,'N' CRITICAL,'P' CUSTOMER_TYPE,
+		t1.custid  CUSTOMERID,null DATE_BRANCH_STATUS,null DATELASTUPDT,null DOC_CLASSFN,null DOC_RETRIEVAL_STATUS,
+		cast(null as numeric(8,0)) DOCID,null DOCTYPE,null FILE_BARCODE,null MAKERDATE,null MAKERID,null MC_STATUS,null NEW_FLAG,null ORIGINALS,
+		null PACKET_TRACKER_NO,null PROPERTY_ADDRESS,DocCategory PROPERTY_CODE,null REASON,
+    Case when DOCUMENT_STATUS='Completed' then 'Y' else 'N' end RECEIVED,null RECEIVEDDATE,null REJECTION_REASONS,
+		null RELEASED_DATE,null RELEASED_REMARKS,D.Description REMARKS,'PBD' STAGE,D.Receivabledate TARGETDATE,null TITLE_DOCUMENT,
+		cast(null as numeric(8,0)) TXNDOCID,null VALIDTILLDATE,null VAP_LOAN_FLAG,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		'N' PROCESSFLAG,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESSDATE,null SEGMENT,
+		null REVISED_TARGET_DATE,null BATCH_ID
+		from (Select T.FinReference,COVENANTTYPE DocCategory,(Case when Alwwaiver=1 then null else T.Receivabledate end) Receivabledate,
+          Case when Alwwaiver=1 then 'Waived' else 'Pending' end DOCUMENT_STATUS,Description from fincovenanttype T
+          where T.FinReference||COVENANTTYPE not in (Select referenceid||DOCCATEGORY  from DocumentDetails DD)                                            
+          union all
+          Select referenceid FinReference,DD.DOCCATEGORY,null,'Completed',Description
+          from DocumentDetails DD LEFT JOIN
+         fincovenanttype FC ON FC.FinReference=dd.referenceid AND fC.COVENANTTYPE = DD.DOCCATEGORY)D 
+         inner join Finpftdetails t1 on t1.finreference=D.finreference
+         inner join financemain t2 on t1.finreference=t2.finreference
+    where substr(T1.FinReference,9,length(T1.FinReference)) is not null
+	</createView>
+</changeSet>
 </databaseChangeLog>
