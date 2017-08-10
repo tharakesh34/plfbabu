@@ -2301,6 +2301,7 @@ union
 		
    </sql>
 </changeSet>
+
 <changeSet id="184" author="Jayant">
     <sql>
       Alter table Dm_Lea_Doc_Dtl drop constraint PK_DM_LDD_AGGID_BID;      
@@ -2337,4 +2338,9 @@ select substr(T1.FinReference,9,length(T1.FinReference))  AGREEMENTID,null APPLI
     where substr(T1.FinReference,9,length(T1.FinReference)) is not null
 	</createView>
 </changeSet>
+<changeSet id="187" author="pruthvi">
+   <sql>
+   update REPORTFILTERFIELDS set mandatory=0 where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_AccountMappingReport') and fieldid=1;
+   </sql>
+   </changeSet>
 </databaseChangeLog>
