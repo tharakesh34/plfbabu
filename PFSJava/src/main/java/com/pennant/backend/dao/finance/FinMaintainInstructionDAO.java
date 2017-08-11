@@ -52,7 +52,5 @@ public interface FinMaintainInstructionDAO extends BasicCrudDao<FinMaintainInstr
 
 	FinMaintainInstruction getFinMaintainInstructionById(long finmaintainId, String type);
 
-	FinMaintainInstruction getApprovedFinMaintainInstructionByFinReference(long finMaintainId);
-
 	FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event, String type);
 }

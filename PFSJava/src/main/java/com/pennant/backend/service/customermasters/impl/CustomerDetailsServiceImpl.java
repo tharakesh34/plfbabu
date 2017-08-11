@@ -648,6 +648,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
+	 * Get Customer and Customer Documents
+	 */
+	@Override
+	public CustomerDetails getCustomerAndCustomerDocsById(long id, String type) {
+
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustID(id);
+
+		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+
+		return customerDetails;
+	}
+	
+	/**
 	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Customers.
 	 * 

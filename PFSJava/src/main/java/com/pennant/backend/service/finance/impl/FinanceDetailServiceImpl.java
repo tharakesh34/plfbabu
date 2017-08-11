@@ -8384,6 +8384,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public int getProgressCountByCust(long custID) {
 		return getCustomerQueuingDAO().getProgressCountByCust(custID);
 	}
+	
+	@Override
+	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain, String procEdtEvent) {
+
+		// Finance Details
+		FinanceDetail financeDetail = new FinanceDetail();
+
+		// Customer and Customer Document Details
+		financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
+
+		// document details
+		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
+				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, procEdtEvent, ""));
+
+		return financeDetail;
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

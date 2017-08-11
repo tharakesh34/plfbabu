@@ -95,5 +95,7 @@ public interface CustomerDetailsService {
 	int updateCustCRCPR(String custDocTitle,long custID);
 	
 	Customer getCustomerShrtName(long id);
+	
+	CustomerDetails getCustomerAndCustomerDocsById(long id, String type);
 
 }

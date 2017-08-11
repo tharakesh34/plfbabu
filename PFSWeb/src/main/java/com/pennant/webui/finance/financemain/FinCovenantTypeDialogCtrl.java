@@ -920,10 +920,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 							finCovenantTypesDetails.add(afinCovenantTypes);
 						} else if (afinCovenantTypes.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getFinCovenantTypeListCtrl().getFinancedetail().getCovenantTypeList()
-									.size(); j++) {
-								FinCovenantType detail = getFinCovenantTypeListCtrl().getFinancedetail()
-										.getCovenantTypeList().get(j);
+							for (int j = 0; j < getFinancedetail().getCovenantTypeList().size(); j++) {
+								FinCovenantType detail = getFinancedetail().getCovenantTypeList().get(j);
 								if (detail.getFinReference() == afinCovenantTypes.getFinReference()
 										&& StringUtils.equals(detail.getCovenantType(),
 												afinCovenantTypes.getCovenantType())) {

@@ -63,11 +63,14 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
@@ -95,16 +98,17 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 	protected Groupbox finBasicdetails;
 
+	private FinanceDetail financeDetail;
 	private FinanceMain financeMain;
 	protected transient FinanceSelectCtrl financeSelectCtrl = null;
 	private FinMaintainInstruction finMaintainInstruction;
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
-	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 
 	private List<FinCovenantType> finCovenantTypesDetailList = new ArrayList<FinCovenantType>();
 
 	// private transient boolean recSave = false;
-	private String roleCode = "";
+	private boolean isEnquiry = false;
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
 	protected String menuItemRightName = null;
@@ -155,12 +159,13 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				eventCode = (String) arguments.get("eventCode");
 			}
 
-			if (arguments.containsKey("financeMain")) {
-				this.financeMain = (FinanceMain) arguments.get("financeMain");
+			if (arguments.containsKey("financeDetail")) {
+				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+				this.financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			}
 
-			if (arguments.containsKey("roleCode")) {
-				roleCode = (String) arguments.get("roleCode");
+			if (arguments.containsKey("isEnquiry")) {
+				isEnquiry = (Boolean) arguments.get("isEnquiry");
 			}
 
 			if (arguments.containsKey("finMaintainInstruction")) {
@@ -369,8 +374,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
 
-		this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 165 +"px");
-		
+		this.listBoxFinCovenantType.setHeight(borderLayoutHeight - 165 + "px");
+
 		appendFinBasicDetails(this.financeMain);
 
 		// fill the components with the data
@@ -710,6 +715,33 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 	/**
 	 * 
+	 */
+	public void onClick$btnNew_NewFinCovenantType(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		Clients.clearWrongValue(this.btnNew_NewFinCovenantType);
+
+		final FinCovenantType aFinCovenantType = new FinCovenantType();
+		aFinCovenantType.setFinReference(getFinanceDetail().getFinScheduleData().getFinReference());
+		aFinCovenantType.setNewRecord(true);
+		aFinCovenantType.setWorkflowId(0);
+
+		HashMap<String, Object> map = getDefaultArguments();
+		map.put("finCovenantTypes", aFinCovenantType);
+		map.put("newRecord", "true");
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * 
 	 * @param event
 	 * @throws InterruptedException
 	 */
@@ -726,17 +758,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 			} else {
 				aFinCovenantType.setNewRecord(false);
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				HashMap<String, Object> map = getDefaultArguments();
 				map.put("finCovenantTypes", aFinCovenantType);
-				map.put("finCovenantMaintanceDialogCtrl", this);
-				map.put("moduleDefiner", moduleDefiner);
-				map.put("roleCode", roleCode);
-				map.put("enqModule", false);
-
-				// map.put("ccyFormatter", ccyFormat);
-				// map.put("finCovenantTypesListCtrl", this); // FIXME
-				// map.put("allowedRoles", allowedRoles);
-				// map.put("financeDetail", getFinancedetail());
 
 				// call the ZUL-file with the parameters packed in a map
 				try {
@@ -751,6 +774,27 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public HashMap<String, Object> getDefaultArguments() {
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+
+		map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeMain.getFinCcy()));
+		map.put("finCovenantMaintanceDialogCtrl", this);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("enqModule", isEnquiry);
+		map.put("roleCode", getRole());
+		map.put("allowedRoles",
+				StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
+		map.put("financeDetail", getFinanceDetail());
+
+		return map;
+	}
+
+	/**
+	 * 
+	 * @param rcdType
+	 * @return
+	 */
 	private boolean isDeleteRecord(String rcdType) {
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)) {
@@ -805,9 +849,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	private ArrayList<Object> getHeaderBasicDetails(FinanceMain aFinanceMain) {
 
 		ArrayList<Object> arrayList = new ArrayList<Object>();
-		// Customer aCustomer= new Customer();
-		// aCustomer =
-		// getCustomerDetailsService().getCustomerShrtName(aFinanceMain.getCustID());
+		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
 		arrayList.add(0, aFinanceMain.getFinType());
 		arrayList.add(1, aFinanceMain.getFinCcy());
 		arrayList.add(2, aFinanceMain.getScheduleMethod());
@@ -817,7 +859,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		arrayList.add(6, false);
 		arrayList.add(7, false);
 		arrayList.add(8, null);
-		arrayList.add(9, ""); // FIXME
+		arrayList.add(9, customer == null ? "" : customer.getCustShrtName());
 		arrayList.add(10, true);
 		arrayList.add(11, null);
 		return arrayList;
@@ -875,4 +917,13 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
 }

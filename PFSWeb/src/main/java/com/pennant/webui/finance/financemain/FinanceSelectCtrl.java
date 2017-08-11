@@ -2377,8 +2377,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			FinMaintainInstruction finMaintainInstruction = finCovenantMaintanceService
-					.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+			// FinMaintainInstruction and Covenant list
+			FinMaintainInstruction finMaintainInstruction = finCovenantMaintanceService .getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+
+			// FinanceDetails 
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain, moduleDefiner);
+			financeDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+			financeDetail.setCovenantTypeList(finMaintainInstruction.getFinCovenantTypeList());
 
 			// Role Code State Checking
 			String nextroleCode = finMaintainInstruction.getNextRoleCode();
@@ -2423,12 +2428,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 							getUserWorkspace().getLoggedInUser().getLoginUsrID(), workflowCode, whereCond,
 							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
 					if (userAcces) {
-						showFinCovenantMaintanceView(finMaintainInstruction, aFinanceMain);
+						showFinCovenantMaintanceView(finMaintainInstruction, financeDetail);
 					} else {
 						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				} else {
-					showFinCovenantMaintanceView(finMaintainInstruction, aFinanceMain);
+					showFinCovenantMaintanceView(finMaintainInstruction, financeDetail);
 				}
 			}
 		}
@@ -2441,7 +2446,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param aFinanceMain
 	 * @throws Exception
 	 */
-	private void showFinCovenantMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceMain aFinanceMain)
+	private void showFinCovenantMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceDetail financeDetail)
 			throws Exception {
 		logger.debug("Entering");
 
@@ -2450,12 +2455,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		map.put("finMaintainInstruction", finMaintainInstruction);
 		map.put("financeSelectCtrl", this);
-		map.put("financeMain", aFinanceMain);
+		map.put("financeDetail", financeDetail);
 		map.put("moduleCode", moduleDefiner);
 		map.put("moduleDefiner", moduleDefiner);
 		map.put("menuItemRightName", menuItemRightName);
 		map.put("eventCode", eventCodeRef);
-		map.put("roleCode", getRole()); // FIXME
+		map.put("isEnquiry", false);
+		map.put("roleCode", getRole());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
