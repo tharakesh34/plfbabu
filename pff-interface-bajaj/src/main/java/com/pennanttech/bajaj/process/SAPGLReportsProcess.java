@@ -35,11 +35,17 @@ public class SAPGLReportsProcess extends DataEngineExport {
 	}
 
 	public void extractReport() throws Exception {
-		generate();
-		
-		exportSummaryReport();
-		
-		exportTransactionReport();
+
+		try {
+			generate();
+			exportSummaryReport();
+			exportTransactionReport();
+			SAP_GL_STATUS.setStatus("S");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			SAP_GL_STATUS.setStatus("F");
+		}
 	}
 	
 	public void extractReport(Date startDate, Date endDate) throws Exception {
@@ -55,12 +61,16 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		initilize();
 
 		Map<String, TrailBalance> transactions = getTransactions();
+		
+		SAP_GL_STATUS.setTotalRecords(transactions.size());
 
 		saveTransactionDetails(transactions.values());
-
+		
 		groupTransactions();
 
 		saveTransactionSummary();
+		
+		
 	}
 
 	private void initilize() throws Exception {
@@ -213,6 +223,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 		Map<String, List<TrailBalance>> entityMap = new HashMap<>();
 		List<TrailBalance> transactions = null;
 		for (TrailBalance item : list) {
+			SAP_GL_STATUS.setProcessedRecords(processedCount++);
 			item.setTransactionAmount(item.getCreditAmount().subtract(item.getDebitAmount()));
 
 			if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
@@ -298,8 +309,8 @@ public class SAPGLReportsProcess extends DataEngineExport {
 	
 	private void exportSummaryReport() throws Exception {
 		logger.info("Generating Transaction summary report ..");
-		SAP_GL_STATUS.setName("GL_TRANSACTION_SUMMARY_EXPORT");
-		exportData("GL_TRANSACTION_SUMMARY_EXPORT");
+		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
+		export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 	private void exportTransactionReport() {
 		logger.info("Generating Transaction detail report ..");
@@ -311,7 +322,7 @@ public class SAPGLReportsProcess extends DataEngineExport {
 			public void processRow(ResultSet rs) throws SQLException {
 				try {
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
-					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
 					parameterMap.put("ENTITY", rs.getString("ENTITY"));
 					filterMap.put("ENTITY", rs.getString("ENTITY"));
 					

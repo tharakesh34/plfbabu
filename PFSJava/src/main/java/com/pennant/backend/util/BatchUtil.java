@@ -82,7 +82,7 @@ public class BatchUtil {
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 
-		while ("I".equals(status.getStatus())) {
+		while ("I".equals(status.getStatus()) || "".equals(status.getStatus())) {
 			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 

@@ -95,8 +95,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 				trialBalance.setAccountTypeDes(group.getAccountTypeDes());
 			}
 			
-			EXTRACT_STATUS.setTotalRecords(processedCount++);
-			EXTRACT_STATUS.setTotalRecords(successCount++);
+			EXTRACT_STATUS.setProcessedRecords(processedCount++);
+			EXTRACT_STATUS.setSuccessRecords(successCount++);
 		}
 		groups = null;
 
