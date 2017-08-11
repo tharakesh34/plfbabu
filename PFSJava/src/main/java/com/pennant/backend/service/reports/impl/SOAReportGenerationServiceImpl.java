@@ -53,7 +53,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -111,7 +110,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 	
 	@Override
-	public List<PresentmentDetail> getPresentmentDetails(String finReference) {
+	public List<SOATransactionReport> getPresentmentDetails(String finReference) {
 		return this.soaReportGenerationDAO.getPresentmentDetails(finReference);
 	}
 	
@@ -165,8 +164,24 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return this.soaReportGenerationDAO.getFinExcessAmountOfSummaryReport(finReference);
 	}
 	
+	@Override
+	public List<SOATransactionReport> getFinRepayscheduledetails(String finReference) {
+		return this.soaReportGenerationDAO.getFinRepayscheduledetails(finReference);
+	}
+	
+	@Override
+	public List<SOATransactionReport> getOrgFinFeedetails(String finReference) {
+		return this.soaReportGenerationDAO.getOrgFinFeedetails(finReference);
+	}
+	
+	@Override
+	public List<SOATransactionReport> getFinFeedetails(String finReference) {
+		return this.soaReportGenerationDAO.getFinFeedetails(finReference);
+	}
+	
 	public void setSoaReportGenerationDAO(SOAReportGenerationDAO soaReportGenerationDAO) {
 		this.soaReportGenerationDAO = soaReportGenerationDAO;
 	}
+
 
 }

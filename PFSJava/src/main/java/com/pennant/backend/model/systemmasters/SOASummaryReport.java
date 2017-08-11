@@ -43,6 +43,9 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
+import com.pennant.app.util.DateUtility;
 
 /**
  * Model class for the <b>Academic table</b>.<br>
@@ -50,10 +53,22 @@ import java.math.BigDecimal;
  */
 public class SOASummaryReport {
 
+	private String finReference;
 	private String component;
 	private BigDecimal due;
 	private BigDecimal receipt;
 	private BigDecimal overDue;
+	
+	private BigDecimal ccyMinorCcyUnits;
+	
+	@SuppressWarnings("unused")
+	private Date appDate;
+	@SuppressWarnings("unused")
+	private BigDecimal calDue;
+	@SuppressWarnings("unused")
+	private BigDecimal calReceipt;
+	@SuppressWarnings("unused")
+	private BigDecimal calOverDue;
 	
 	public SOASummaryReport() {
 		super();
@@ -89,5 +104,55 @@ public class SOASummaryReport {
 
 	public void setOverDue(BigDecimal overDue) {
 		this.overDue = overDue;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public Date getAppDate() {
+		return DateUtility.getAppDate();
+	}
+
+	public BigDecimal getCalDue() {
+		BigDecimal calDue = BigDecimal.ZERO;
+
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.due != null) {
+			calDue = (this.due).divide(this.ccyMinorCcyUnits);
+		}
+
+		return calDue;
+	}
+
+	public BigDecimal getCalReceipt() {
+		BigDecimal calReceipt = BigDecimal.ZERO;
+
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.receipt != null) {
+			calReceipt = (this.receipt).divide(this.ccyMinorCcyUnits);
+		}
+
+		return calReceipt;
+	}
+
+	public BigDecimal getCalOverDue() {
+		BigDecimal calOverDue = BigDecimal.ZERO;
+
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.overDue != null) {
+			calOverDue = (this.overDue).divide(this.ccyMinorCcyUnits);
+		}
+
+		return calOverDue;
+	}
+
+	public BigDecimal getCcyMinorCcyUnits() {
+		return ccyMinorCcyUnits;
+	}
+
+	public void setCcyMinorCcyUnits(BigDecimal ccyMinorCcyUnits) {
+		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
 	}
 }

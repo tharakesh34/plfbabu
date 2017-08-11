@@ -68,7 +68,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -275,7 +274,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT Schdate transactionDate,'FEESCH' event, SchAmount TransactionAmount, 'Debit' drOrCr"); 
+		selectSql.append(" SELECT T2.FinReference, Schdate transactionDate,'FEESCH' event, SchAmount TransactionAmount, 'Debit' drOrCr"); 
 		selectSql.append(" FROM finfeescheduledetail T1 Inner Join");
 		selectSql.append(" FinFeeDetail T2 on T1.FeeID = T2.FeeID Inner Join");
 		selectSql.append(" FeeTypes T3 On T2.FeeTypeid = T3.FeeTypeId INNER JOIN"); 
@@ -307,7 +306,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT T1.Movementdate transactionDate, 'MNLAMV' event, T2.WaivedAmount TransactionAmount, 'Credit' drOrCr");
+		selectSql.append(" SELECT T2.FinReference, T1.Movementdate transactionDate, 'MNLAMV' event, T2.WaivedAmount TransactionAmount, 'Credit' drOrCr");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
@@ -331,19 +330,86 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 	}
 	
 	@Override
-	public List<PresentmentDetail> getPresentmentDetails(String finReference) {
-		PresentmentDetail manualAdvise = new PresentmentDetail();
-		manualAdvise.setFinReference(finReference);
-		List<PresentmentDetail> list;
+	public List<SOATransactionReport> getPresentmentDetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" Select * FROM PRESENTMENTDETAILS");
-		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" SELECT 	M.FINREFERENCE, M.POSTDATE transactionDate,'MNLPRS' event, M.ADVISEAMOUNT TransactionAmount, 'Debit' drOrCr");
+		selectSql.append(" FROM 	MANUALADVISE M INNER JOIN ");
+		selectSql.append(" PRESENTMENTDETAILS T4 on T4.ReceiptId = M.ReceiptId and M.ReceiptId !=0 and T4.ReceiptId !=0 INNER JOIN");
+		selectSql.append(" FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate");
+		selectSql.append(" WHERE M.AdviseType <> 2 and	M.ADVISEAMOUNT > 0 and FEETYPEID not in (SELECT FEETYPEID FROM FEETYPES)");
+		selectSql.append(" And M.FINREFERENCE = '" + finReference + "'");
 		
 		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<SOATransactionReport> getOrgFinFeedetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT 	T1.Finreference, T3.finstartdate transactionDate, 'FINFEE' event, RemainingFee + PaidAmount TransactionAmount,'Debit' drOrCr");
+		selectSql.append(" FROM 	FinFeedetail T1 Left JOIN");
+		selectSql.append(" Feetypes T2 on T1.Feetypeid = T2.Feetypeid INNER JOIN");
+		selectSql.append(" Financemain T3 on T3.Finreference = T1.Finreference Left JOIN");
+		selectSql.append(" VasRecording T4 on T1.VasReference = T4.VasReference Left JOIN");
+		selectSql.append(" VasStructure T5 on T4.ProductCode = T5.ProductCode");
+		selectSql.append(" WHERE Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and (T3.closingstatus!='C' or T3.closingstatus is null)");
+		selectSql.append(" And T1.FINREFERENCE = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
+	}
+	
+	@Override
+	public List<SOATransactionReport> getFinFeedetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT 	T1.Finreference, T3.finstartdate transactionDate, 'FINFEE' event, PaidAmount TransactionAmount,'Debit' drOrCr");
+		selectSql.append(" FROM 	FinFeedetail T1 Left JOIN");
+		selectSql.append(" Feetypes T2 on T1.Feetypeid = T2.Feetypeid INNER JOIN");
+		selectSql.append(" Financemain T3 on T3.Finreference = T1.Finreference Left JOIN");
+		selectSql.append(" VasRecording T4 on T1.VasReference = T4.VasReference Left JOIN");
+		selectSql.append(" VasStructure T5 on T4.ProductCode = T5.ProductCode");
+		selectSql.append(" WHERE FeeSchedulemethod not in ('DISB','POSP')  and (PaidAmount) != 0 and (T3.closingstatus != 'C' or T3.closingstatus is null)");
+		selectSql.append(" And T1.FINREFERENCE = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
 		
 		try {
 			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -386,7 +452,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		
 		StringBuilder selectSql = new StringBuilder();
 		
-		selectSql.append(" SELECT T2.Receiptdate TransactionDate,'RCPALW' event, T1.PaidAmount TransactionAmount,'Credit' drOrCr");
+		selectSql.append(" SELECT T2.Reference finReference, T2.Receiptdate TransactionDate,'RCPALW' event, T1.PaidAmount TransactionAmount,'Credit' drOrCr");
 		selectSql.append(" FROM ReceiptAllocationDetail T1 INNER JOIN");
 		selectSql.append(" FinReceiptHeader T2 on T2.ReceiptId  = T1.ReceiptId");
 		selectSql.append(" WHERE T1.AllocationType='TDS' And T2.ReceiptModeStatus Not IN ('C')");
@@ -622,7 +688,7 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		StringBuilder selectSql = new StringBuilder();
 		SOASummaryReport soaSummaryReport = new SOASummaryReport();
 		
-		selectSql.append(" Select 'Unadjusted Amount' Component, Coalesce(SUM(BalanceAmt),0) Due, 0 Receipt, Coalesce(SUM(BalanceAmt),0) OverDue");   
+		selectSql.append(" Select T1.FinReference, 'Unadjusted Amount' Component, Coalesce(SUM(BalanceAmt),0) Due, 0 Receipt, Coalesce(SUM(BalanceAmt),0) OverDue");   
 		selectSql.append(" From FinPftDetails t1 left join ");
 		selectSql.append(" Finexcessamount t2 on T1.finreference = T2.finreference");
 		selectSql.append(" Where T1.FinReference = '" + finReference + "'");
@@ -642,6 +708,37 @@ public class SOAReportGenerationDAOImpl extends BasisCodeDAO<StatementOfAccount>
 		logger.debug(Literal.LEAVING);
 		
 		return soaSummaryReport;
+	}
+
+	@Override
+	public List<SOATransactionReport> getFinRepayscheduledetails(String finReference) {
+		SOATransactionReport soaTransactionReport = new SOATransactionReport();
+		List<SOATransactionReport> list;
+		
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append(" SELECT 	distinct T2.Reference finReference, Bouncedate TransactionDate,'REPAYHD' Particulars, T5.TDSSCHDPAYNOW TransactionAmount, 'Debit' drOrCr");
+		selectSql.append(" FROM 	FinReceiptHeader T2 INNER JOIN");
+		selectSql.append(" 			FinReceiptDetail T3 on T3.ReceiptId = T2.ReceiptId INNER JOIN ");
+		selectSql.append(" 			FinRepayHeader T4 on T3.Receiptseqid = T4.Receiptseqid INNER JOIN");
+		selectSql.append(" (SELECT RepayId, sum(TDSSCHDPAYNOW) TDSSCHDPAYNOW  FROM FinRepayscheduledetail  WHERE TDSSCHDPAYNOW!=0  GROUP BY RepayId) T5 on T5.RepayId = T4.RepayId");
+		selectSql.append(" WHERE 	T3.Status ='B' ");
+		selectSql.append(" And  	T2.Reference = '" + finReference + "'");
+		
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(soaTransactionReport);
+		RowMapper<SOATransactionReport> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SOATransactionReport.class);
+		
+		try {
+			list = namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			list = new ArrayList<>();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return list;
 	}
 	
 }

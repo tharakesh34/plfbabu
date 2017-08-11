@@ -45,9 +45,7 @@ package com.pennant.webui.reports;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -74,7 +72,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
@@ -272,8 +269,10 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			statementOfAccount.setStartDate(startDate);
 			statementOfAccount.setEndDate(endDate);
 			
-			statementOfAccount.setSoaSummaryReports(getSOASummaryDetails(finReference));
-			statementOfAccount.setTransactionReports(getTransactionDetails(finReference));
+			BigDecimal ccyMinorCcyUnits = statementOfAccount.getCcyMinorCcyUnits();
+			
+			statementOfAccount.setSoaSummaryReports(getSOASummaryDetails(finReference, ccyMinorCcyUnits));
+			statementOfAccount.setTransactionReports(getTransactionDetails(finReference, statementOfAccount));
 			
 			setStatementOfAccount(statementOfAccount);
 		} else {
@@ -293,7 +292,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public List<SOASummaryReport> getSOASummaryDetails(String finReference) {
+	public List<SOASummaryReport> getSOASummaryDetails(String finReference, BigDecimal ccyMinorCcyUnits) {
 		logger.debug("Entering");
 		
 		SOASummaryReport soaSummaryReport = null;
@@ -343,6 +342,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 
 			due = totalPrincipalSchd;
@@ -358,6 +359,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 
 			due = totalProfitSchd;
@@ -373,6 +376,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 
 			if (financeProfitDetail.getPenaltyDue() == null) {
@@ -397,6 +402,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 			
 			BigDecimal adviseBalanceAmt = BigDecimal.ZERO;
@@ -446,6 +453,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 			
 			due = bounceZeroAdviseAmount;
@@ -461,6 +470,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 			
 			due = adviseBalanceAmt;
@@ -472,8 +483,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReport.setFinReference(finReference);
+			soaSummaryReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReport);
 			
+			soaSummaryReportOfExcessAmount.setFinReference(finReference);
+			soaSummaryReportOfExcessAmount.setCcyMinorCcyUnits(ccyMinorCcyUnits);
 			soaSummaryReportsList.add(soaSummaryReportOfExcessAmount);
 			
 			System.out.println();
@@ -484,6 +499,8 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				System.out.print("		" + soaSummary.getDue());
 				System.out.print("		" + soaSummary.getReceipt());
 				System.out.print("		" + soaSummary.getOverDue());
+				System.out.print("		" + soaSummary.getFinReference());
+				System.out.print("		" + soaSummary.getCcyMinorCcyUnits());
 			}
 			System.out.println();
 		}
@@ -499,7 +516,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public List<SOATransactionReport> getTransactionDetails(String finReference) {
+	public List<SOATransactionReport> getTransactionDetails(String finReference, StatementOfAccount statementOfAccount) {
 		logger.debug("Entering");
 		
 		String brokenPeriodEvent = "BKNPRD";
@@ -522,9 +539,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			List<ManualAdvise>  manualAdviseList = this.soaReportGenerationService.getManualAdvise(finReference);
 			List<SOATransactionReport> soaFinFeeScheduleReports = this.soaReportGenerationService.getFinFeeScheduleDetails(finReference);
 			List<SOATransactionReport> soaManualAdviseMovements = this.soaReportGenerationService.getManualAdviseMovements(finReference);
-			List<PresentmentDetail>  presentmentDetailsList = this.soaReportGenerationService.getPresentmentDetails(finReference);
+			List<SOATransactionReport>  presentmentDetailsList = this.soaReportGenerationService.getPresentmentDetails(finReference);
 			List<Long> presentmentReceiptIds = this.soaReportGenerationService.getPresentmentReceiptIds();
 			List<SOATransactionReport> soaReceiptAllocationDetails = this.soaReportGenerationService.getReceiptAllocationDetails(finReference);
+			List<SOATransactionReport> soaFinRepayscheduledetails = this.soaReportGenerationService.getFinRepayscheduledetails(finReference);
+			List<SOATransactionReport> soaOrgFinFeedetails = this.soaReportGenerationService.getOrgFinFeedetails(finReference);
+			List<SOATransactionReport> soaFinFeedetails = this.soaReportGenerationService.getFinFeedetails(finReference);
 			
 			List<FinReceiptHeader>  finReceiptHeadersList = this.soaReportGenerationService.getFinReceiptHeaders(finReference);
 			List<Long> finReceiptIds = new ArrayList<Long>();
@@ -545,6 +565,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 						if (!StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), "C")) {
 							soaTransactionReport = new SOATransactionReport();
 							soaTransactionReport.setEvent(receiptHeader);
+							soaTransactionReport.setFinReference(finReference);
 							soaTransactionReport.setTransactionDate(finReceiptHeader.getReceiptDate());
 							soaTransactionReport.setTransactionAmount(finReceiptDetail.getAmount());
 							
@@ -565,6 +586,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 											&& manualAdvise.getBounceID() > 0) {
 										
 										soaTransactionReport = new SOATransactionReport();
+										soaTransactionReport.setFinReference(finReference);
 										soaTransactionReport.setEvent(receiptHeader);
 										soaTransactionReport.setTransactionDate(finReceiptHeader.getBounceDate());
 										soaTransactionReport.setTransactionAmount(finReceiptDetail.getAmount());
@@ -579,6 +601,12 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 					
 				}
 			}
+			//Fin Repay Schedules
+			soaTransactionReports.addAll(soaFinRepayscheduledetails);
+			//Origination Fin Fee Details
+			soaTransactionReports.addAll(soaOrgFinFeedetails);
+			//Fin Fee Details
+			soaTransactionReports.addAll(soaFinFeedetails);
 			
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 				
@@ -587,6 +615,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 					if (finSchdDetail.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
 						
 						soaTransactionReport = new SOATransactionReport();
+						soaTransactionReport.setFinReference(finReference);
 						soaTransactionReport.setEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
 						soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
 						soaTransactionReport.setTransactionAmount(finSchdDetail.getRepayAmount());
@@ -604,6 +633,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 							
 							if (finSchdDetail.isDisbOnSchDate()) {
 								soaTransactionReport = new SOATransactionReport();
+								soaTransactionReport.setFinReference(finReference);
 								soaTransactionReport.setEvent(AccountEventConstants.ACCEVENT_ADDDBSP);
 								soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
 								soaTransactionReport.setTransactionAmount(finSchdDetail.getDisbAmount());
@@ -615,6 +645,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 						if (finSchdDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
 								&& StringUtils.equalsIgnoreCase(finSchdDetail.getBpiOrHoliday(), "B")) {
 							soaTransactionReport = new SOATransactionReport();
+							soaTransactionReport.setFinReference(finReference);
 							soaTransactionReport.setEvent(brokenPeriodEvent);
 							soaTransactionReport.setTransactionDate(finSchdDetail.getSchDate());
 							soaTransactionReport.setTransactionAmount(finSchdDetail.getRepayAmount());
@@ -631,6 +662,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				soaTransactionReport = new SOATransactionReport();
 				
 				soaTransactionReport.setEvent(advancePayment);
+				soaTransactionReport.setFinReference(finReference);
 				soaTransactionReport.setTransactionDate(finAdvancePayments.getLlDate());
 				soaTransactionReport.setTransactionAmount(finAdvancePayments.getAmtToBeReleased());
 				soaTransactionReport.setDrOrCr("Debit");
@@ -642,6 +674,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				soaTransactionReport = new SOATransactionReport();
 				
 				soaTransactionReport.setEvent(sattelment);
+				soaTransactionReport.setFinReference(finReference);
 				soaTransactionReport.setTransactionDate(paymentInstruction.getPostDate());
 				soaTransactionReport.setTransactionAmount(paymentInstruction.getPaymentAmount());
 				soaTransactionReport.setDrOrCr("Debit");
@@ -656,6 +689,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 					soaTransactionReport = new SOATransactionReport();
 					
 					soaTransactionReport.setEvent(penality);
+					soaTransactionReport.setFinReference(finReference);
 					soaTransactionReport.setTransactionDate(finODDetails.getFinODSchdDate());
 					soaTransactionReport.setTransactionAmount(finODDetails.getTotPenaltyAmt());
 					soaTransactionReport.setDrOrCr("Debit");
@@ -681,6 +715,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 						&& manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
 					
 					soaTransactionReport = new SOATransactionReport();
+					soaTransactionReport.setFinReference(finReference);
 					soaTransactionReport.setEvent(manualAdv);
 					soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
 					soaTransactionReport.setTransactionAmount(manualAdvise.getAdviseAmount());
@@ -693,6 +728,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 						&& !presentmentReceiptIds.contains(manualAdvise.getReceiptID())) {
 
 					soaTransactionReport = new SOATransactionReport();
+					soaTransactionReport.setFinReference(finReference);
 					soaTransactionReport.setEvent(manualAdv);
 					soaTransactionReport.setTransactionDate(manualAdvise.getPostDate());
 					soaTransactionReport.setTransactionAmount(manualAdvise.getAdviseAmount());
@@ -708,8 +744,15 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				
 			}
 			
-			for (PresentmentDetail presentmentDetail : presentmentDetailsList) {
-				
+			//Presentment Details
+			soaTransactionReports.addAll(presentmentDetailsList);
+			
+			for (SOATransactionReport tranReport : soaTransactionReports) {
+				tranReport.setFinReference(finReference);
+				tranReport.setCcyEditField(statementOfAccount.getCcyEditField());
+				tranReport.setFromDate(statementOfAccount.getStartDate());
+				tranReport.setToDate(statementOfAccount.getEndDate());
+				tranReport.setCcyMinorCcyUnits(statementOfAccount.getCcyMinorCcyUnits());
 			}
 			
 			System.out.println();
@@ -720,6 +763,10 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				System.out.print("		" + tranReport.getEvent());
 				System.out.print("		" + tranReport.getTransactionAmount());
 				System.out.print("		" + tranReport.getDrOrCr());
+				System.out.print("		" + tranReport.getCcyEditField());
+				System.out.print("		" + tranReport.getFromDate());
+				System.out.print("		" + tranReport.getToDate());
+				System.out.print("		" + tranReport.getCcyMinorCcyUnits());
 			}
 			System.out.println();
 		}

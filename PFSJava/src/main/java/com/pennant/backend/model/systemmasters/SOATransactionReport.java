@@ -51,10 +51,18 @@ import java.util.Date;
  */
 public class SOATransactionReport {
 
+	private String finReference;
 	private Date transactionDate;
 	private String event;
 	private BigDecimal transactionAmount;
 	private String drOrCr;
+	
+	private BigDecimal ccyMinorCcyUnits;
+	private Date fromDate;
+	private Date toDate;
+	private int ccyEditField;
+	@SuppressWarnings("unused")
+	private BigDecimal calTransactionAmount;
 
 	public SOATransactionReport() {
 		super();
@@ -86,5 +94,55 @@ public class SOATransactionReport {
 	}
 	public void setDrOrCr(String drOrCr) {
 		this.drOrCr = drOrCr;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public BigDecimal getCcyMinorCcyUnits() {
+		return ccyMinorCcyUnits;
+	}
+
+	public void setCcyMinorCcyUnits(BigDecimal ccyMinorCcyUnits) {
+		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public int getCcyEditField() {
+		return ccyEditField;
+	}
+
+	public void setCcyEditField(int ccyEditField) {
+		this.ccyEditField = ccyEditField;
+	}
+
+	public BigDecimal getCalTransactionAmount() {
+		BigDecimal calTransactionAmount = BigDecimal.ZERO;
+
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.transactionAmount != null) {
+			calTransactionAmount = (this.transactionAmount).divide(this.ccyMinorCcyUnits);
+		}
+		
+		return calTransactionAmount;
 	}
 }
