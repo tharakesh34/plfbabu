@@ -1959,6 +1959,12 @@
 		class="com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
 
+	<!--============ Postings Detail ============== -->
+
+	<bean id="postingDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.PostingDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+
 	<!--============ Document Detail ============== -->
 
 	<bean id="documentDetailDialogCtrl"

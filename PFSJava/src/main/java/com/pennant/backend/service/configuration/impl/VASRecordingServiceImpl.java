@@ -452,6 +452,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					vasRecording.setReturnDataSetList(list);
 				}
+			}else{
+				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE));
 			}
 		}
 		logger.debug("Leaving");

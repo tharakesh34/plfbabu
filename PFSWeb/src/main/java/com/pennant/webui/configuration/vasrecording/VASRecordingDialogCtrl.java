@@ -1449,6 +1449,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if(!enqiryModule && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())){
 				appendAccountingDetailTab(true);
 			}
+			
+			// Show Posting on Enquiry against Vas Reference
+			if(enqiryModule){
+				 appendPostingsTab();
+			}
 		}
 
 		logger.debug("Leaving");
@@ -1683,6 +1688,21 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				tab.setVisible(true);
 			}
 		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Document Details Data in finance
+	 */
+	private void appendPostingsTab() {
+		logger.debug("Entering");
+		
+		createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
+		
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("postingDetails", getVASRecording().getReturnDataSetList());
+		map.put("dialogCtrl", this);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
 		logger.debug("Leaving");
 	}
 
