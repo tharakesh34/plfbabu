@@ -2,6 +2,10 @@ package com.pennanttech.framework.component.dataengine;
 
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.bajaj.process.ALMRequestProcess;
+import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
+import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.bajaj.process.PosidexRequestProcess;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -33,9 +37,10 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	protected Timer timer;
 
 	protected DataEngineConfig dataEngineConfig;
-	
+
 	@Autowired
 	private CIBILService cibilService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -72,26 +77,26 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		for (Configuration config : configList) {
 			String configName = config.getName();
 			if (!("ALM_REQUEST".equals(configName) || "CONTROL_DUMP_REQUEST".equals(configName)
-					|| "POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName) || "DATA_MART_REQUEST".equals(configName) || "POSIDEX_CUSTOMER_UPDATE_RESPONSE"
-						.equals(configName) || "GL_TRAIL_BALANCE_EXPORT".equals(configName))) {
+					|| "POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName) || "DATA_MART_REQUEST".equals(configName)
+					|| "POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)
+					|| "GL_TRAIL_BALANCE_EXPORT".equals(configName))) {
 				continue;
 			}
 			if ("ALM_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.ALM_EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
+				ALMRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
+				doFillPanel(config, ALMRequestProcess.EXTRACT_STATUS);
 			}
 			if ("CONTROL_DUMP_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS = dataEngineConfig
-						.getLatestExecution("CONTROL_DUMP_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
+				ControlDumpRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("CONTROL_DUMP_REQUEST");
+				doFillPanel(config, ControlDumpRequestProcess.EXTRACT_STATUS);
 			}
 
 			if ("POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS = dataEngineConfig
+				PosidexRequestProcess.EXTRACT_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
+				doFillPanel(config, PosidexRequestProcess.EXTRACT_STATUS);
 			}
-			
+
 			if ("POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)) {
 				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
@@ -99,20 +104,21 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 
 			if ("DATA_MART_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.DATA_MART_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.DATA_MART_STATUS);
+				DataMartRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
+				doFillPanel(config, DataMartRequestProcess.EXTRACT_STATUS);
 			}
-			
+
 			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {
-				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
+				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT = dataEngineConfig
+						.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
 				doFillPanel(config, BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
 			}
-			
+
 		}
-		
-		CIBILReport.EXE_STATUS =cibilService.getLatestExecution();
-		CIBILReport.EXE_STATUS.setName("CIBIL_EXPORT_STATUS");
-		doFillPanel(null, CIBILReport.EXE_STATUS);
+
+		CIBILReport.EXTRACT_STATUS = cibilService.getLatestExecution();
+		CIBILReport.EXTRACT_STATUS.setName("CIBIL_EXPORT_STATUS");
+		doFillPanel(null, CIBILReport.EXTRACT_STATUS);
 		timer.start();
 		logger.debug(Literal.LEAVING);
 	}

@@ -9,11 +9,9 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.bajaj.process.ALMRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -71,24 +69,11 @@ public class ALM implements Tasklet {
 
 			}
 			
-			DataEngineStatus status = BajajInterfaceConstants.ALM_EXTRACT_STATUS;
+			DataEngineStatus status = ALMRequestProcess.EXTRACT_STATUS;
 			status.setStatus("I");
-			
-			Thread thread = new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess));
+			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();;
 			Thread.sleep(1000);
-			thread.start();
-			
-			while("I".equals(status.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-				
-				if ("F".equals(status.getStatus())) {
-					throw new Exception("Unable to process the ALM.");
-				}
-			}
-			
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+			BatchUtil.setExecutionStatus(context, status);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -121,12 +106,9 @@ public class ALM implements Tasklet {
 
 		public void run() {
 			try {
-				logger.debug("ALM Request Service started...");
+				logger.debug("ALM process started...");
 				ALMRequestProcess process = new ALMRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
 				process.process("ALM_REQUEST");
-				TimeUnit.SECONDS.sleep(1);
-				
-				System.out.println("");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

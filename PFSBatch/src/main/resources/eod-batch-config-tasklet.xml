@@ -46,11 +46,7 @@
 	<bean id="accountsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.AccountsUpdate">
 		<property name="customerAccountService" ref="customerAccountService" />
 	</bean>
-	
-	<bean id="dataExtractTaskLet" class="com.pennant.backend.endofday.tasklet.DataExtract">
-		<property name="dataSource" ref="pfsDatasource"/>
-	</bean>
-	
+		
 	<bean id="almTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ALM">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>

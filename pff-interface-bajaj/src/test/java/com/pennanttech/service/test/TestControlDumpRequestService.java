@@ -1,5 +1,6 @@
 package com.pennanttech.service.test;
 
+import javax.sql.DataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
@@ -7,7 +8,8 @@ import org.testng.annotations.Test;
 
 public class TestControlDumpRequestService {
 
-
+	DataSource dataSource;
+	
 	@BeforeTest
 	public void start() {
 		ApplicationContext context = null;

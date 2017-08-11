@@ -67,21 +67,12 @@ public class TrailBalance implements Tasklet {
 
 			}
 
-			DataEngineStatus status = TrailBalanceEngine.TB_STATUS;
+			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
-			
+			Thread.sleep(1000);
+			BatchUtil.setExecutionStatus(context, status);
 		
-			while ("I".equals(status.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-				
-				if("F".equals(status.getStatus())) {
-					throw new Exception();
-				}
-			}
-
-
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}

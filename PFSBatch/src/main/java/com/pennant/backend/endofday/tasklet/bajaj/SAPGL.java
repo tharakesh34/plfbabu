@@ -70,18 +70,9 @@ public class SAPGL implements Tasklet {
 			
 			DataEngineStatus status = SAPGLReportsProcess.SAP_GL_STATUS;
 			status.setStatus("I");
-			
 			new Thread(new SAPGLProcessThread(new Long(1000))).start();
-		
-			while ("I".equals(status.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-				
-				if("F".equals(status.getStatus())) {
-					throw new Exception();
-				}
-			}
-
+			Thread.sleep(1000);
+			BatchUtil.setExecutionStatus(context, status);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);

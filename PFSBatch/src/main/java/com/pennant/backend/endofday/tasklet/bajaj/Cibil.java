@@ -71,23 +71,12 @@ public class Cibil implements Tasklet {
 
 			}
 			
-			DataEngineStatus status = CIBILReport.EXE_STATUS;
+			DataEngineStatus status = CIBILReport.EXTRACT_STATUS;
 			status.setStatus("I");
+			new Thread(new CIBILProcessThread(cibilReport)).start();
+			Thread.sleep(1000);
+			BatchUtil.setExecutionStatus(context, status);
 			
-			new Thread(new CIBILProcessThread(cibilReport)).start();	
-
-			while ("I".equals(status.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-
-				if ("F".equals(status.getStatus())) {
-					throw new Exception("Unable to generate CIBIL Report.");
-				}
-			}
-			
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}

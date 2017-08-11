@@ -43,6 +43,7 @@ import com.pennanttech.service.AmazonS3Bucket;
 
 public class CIBILReport {
 	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
 	
 	private static final String DATE_FORMAT = "ddMMYYYY";
 	private String CBIL_REPORT_PATH;
@@ -59,7 +60,6 @@ public class CIBILReport {
 	private long successCount;
 	private long failedCount;
 	
-	public static DataEngineStatus EXE_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
 
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -92,7 +92,7 @@ public class CIBILReport {
 			cibilService.deleteDetails();
 
 			totalRecords = cibilService.extractCustomers();
-			EXE_STATUS.setTotalRecords(totalRecords);
+			EXTRACT_STATUS.setTotalRecords(totalRecords);
 
 			new CBILHeader(writer).write();
 
@@ -104,7 +104,7 @@ public class CIBILReport {
 
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					EXE_STATUS.setProcessedRecords(processedRecords++);
+					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
 
@@ -127,9 +127,9 @@ public class CIBILReport {
 						new AccountSegmentHistory(writer, list).write();
 						new EndofSubjectSegment(writer).write();
 
-						EXE_STATUS.setSuccessRecords(successCount++);
+						EXTRACT_STATUS.setSuccessRecords(successCount++);
 					} catch (Exception e) {
-						EXE_STATUS.setFailedRecords(failedCount++);
+						EXTRACT_STATUS.setFailedRecords(failedCount++);
 						failedCount++;
 						cibilService.logFileInfoException(headerId, finreference, e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
@@ -159,7 +159,7 @@ public class CIBILReport {
 			String remarks = updateRemarks();
 			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
 					remarks);
-			EXE_STATUS.setStatus(status);
+			EXTRACT_STATUS.setStatus(status);
 		}
 
 		logger.debug(Literal.LEAVING);

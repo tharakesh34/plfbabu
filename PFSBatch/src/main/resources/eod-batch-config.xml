@@ -44,11 +44,6 @@
 			<next on="*" to="alm" />
 			<fail on="FAILED" />
 		</step>
-	<!-- 	<step id="dataExtract">
-			<tasklet ref="dataExtractTaskLet" />
-			<next on="*" to="completeEOD" />
-			<fail on="FAILED" />
-		</step> -->
 		<step id="alm">
 			<tasklet ref="almTaskLet" />
 			<next on="*" to="controlDump" />

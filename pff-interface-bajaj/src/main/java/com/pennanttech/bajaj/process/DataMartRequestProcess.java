@@ -3,6 +3,7 @@ package com.pennanttech.bajaj.process;
 import com.pennanttech.bajaj.process.datamart.DataMartMapper;
 import com.pennanttech.bajaj.process.datamart.DataMartTable;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
@@ -22,7 +23,8 @@ import org.springframework.transaction.TransactionStatus;
 
 public class DataMartRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DataMartRequestProcess.class);
-
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("DATA_MART_REQUEST");
+	
 	private long batchID;
 	private String summary = null;
 	public AtomicLong completedThreads = null;
@@ -32,7 +34,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 	public static boolean running = false;
 	
 	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.DATA_MART_STATUS);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 
 		this.totalThreads = 0;
 		this.completedThreads = new AtomicLong(0L);

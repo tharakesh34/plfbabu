@@ -1,5 +1,14 @@
 package com.pennanttech.bajaj.process;
 
+import com.pennant.backend.model.finance.TaxDownload;
+import com.pennanttech.app.util.DateUtility;
+import com.pennanttech.bajaj.model.Branch;
+import com.pennanttech.bajaj.model.Province;
+import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -22,19 +29,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.model.finance.TaxDownload;
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.Branch;
-import com.pennanttech.bajaj.model.Province;
-import com.pennanttech.bajaj.model.TaxDetail;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
-import com.pennanttech.pff.core.App;
-
-public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(TaxDownlaodDetailProcess.class);
-
+public class TaxDownlaodProcess extends DatabaseDataEngine {
+	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
+	
 	private Date appDate;
 	private Date fromDate;
 	private Date toDate;
@@ -66,8 +64,8 @@ public class TaxDownlaodDetailProcess extends DatabaseDataEngine {
 	private static final String ADDR_DELIMITER = " ";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not 	Required
 
-	public TaxDownlaodDetailProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.GST_TAXDOWNLOAD_STATUS);
+	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.appDate = valueDate;

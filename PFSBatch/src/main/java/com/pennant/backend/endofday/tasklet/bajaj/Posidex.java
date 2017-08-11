@@ -9,7 +9,6 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.bajaj.process.PosidexRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -67,20 +66,12 @@ public class Posidex implements Tasklet {
 
 			}
 			
-			DataEngineStatus status = BajajInterfaceConstants.POSIDEX_REQUEST_STATUS;
+			DataEngineStatus status = PosidexRequestProcess.EXTRACT_STATUS;
 			status.setStatus("I");
-			
 			new Thread(new PosidexProcessThread(new Long(1000))).start();
+			Thread.sleep(1000);
+			BatchUtil.setExecutionStatus(context, status);
 			
-			while("I".equals(status.getStatus())) {
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
-				
-				if ("F".equals(status.getStatus())) {
-					throw new Exception("Unable to process the POSIDEX DATA UPDATE.");
-				}
-			}
-
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}

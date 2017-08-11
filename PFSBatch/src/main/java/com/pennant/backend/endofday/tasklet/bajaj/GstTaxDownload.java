@@ -1,10 +1,17 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.bajaj.process.TaxDownlaodProcess;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -13,22 +20,13 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennanttech.pff.core.taxdownload.TaxDownlaodDetailService;
-
 public class GstTaxDownload implements Tasklet {
 	private Logger						logger	= Logger.getLogger(GstTaxDownload.class);
 
 	private DataSource					dataSource;
+	
 	@Autowired
 	private EODConfigDAO				eodConfigDAO;
-
-	@Autowired
-	private TaxDownlaodDetailService	taxDownlaodDetailService;
 
 	public EODConfig getEodConfig() {
 		try {
@@ -69,17 +67,12 @@ public class GstTaxDownload implements Tasklet {
 
 			}
 
-			Date appDate = DateUtility.getAppDate();
-			Date monthEndDate = DateUtility.getMonthEndDate(appDate);
-			String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
+			DataEngineStatus status = TaxDownlaodProcess.EXTRACT_STATUS;
+			status.setStatus("I");
+			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
+			Thread.sleep(1000);
+			BatchUtil.setExecutionStatus(context, status);
 
-			Long userId = new Long(1000);
-			if (StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {
-				this.taxDownlaodDetailService.sendReqest(userId, appDate, appDate, appDate);
-			} else if (DateUtility.compare(appDate, monthEndDate) == 0) {
-				Date monthStartDate = DateUtility.getMonthEndDate(appDate);
-				this.taxDownlaodDetailService.sendReqest(userId, appDate, monthStartDate, monthEndDate);
-			}
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -99,6 +92,33 @@ public class GstTaxDownload implements Tasklet {
 
 	public DataSource getDataSource() {
 		return dataSource;
+	}
+	
+	public class GSTTaxProcessThread implements Runnable {
+		private long userId;
+
+		public GSTTaxProcessThread(long userId) {
+			this.userId = userId;
+		}
+
+		public void run() {
+			try {
+				Date appDate = DateUtility.getAppDate();
+				Date monthEndDate = DateUtility.getMonthEndDate(appDate);
+				String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
+				TaxDownlaodProcess process = null;
+				if (StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {
+					process = new TaxDownlaodProcess(dataSource, userId, appDate, appDate, appDate);
+				} else if (DateUtility.compare(appDate, monthEndDate) == 0) {
+					Date monthStartDate = DateUtility.getMonthEndDate(appDate);
+					process = new TaxDownlaodProcess(dataSource, userId, appDate, monthStartDate, monthEndDate);
+				}
+
+				process.process("GST_TAXDOWNLOAD_DETAILS");
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
 }

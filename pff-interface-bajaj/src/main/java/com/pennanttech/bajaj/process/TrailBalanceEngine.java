@@ -27,7 +27,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 public class TrailBalanceEngine extends DataEngineExport {
-	public static DataEngineStatus TB_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GL_TRAIL_BALANCE_EXPORT");
 
 	private int batchSize = 1000;
 	private Date appDate = null;
@@ -39,7 +39,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private Map<String, String> parameters = new HashMap<>();
 
 	public TrailBalanceEngine(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, userId, App.DATABASE.name(), true, valueDate, TB_STATUS);
+		super(dataSource, userId, App.DATABASE.name(), true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 	}
 
@@ -74,7 +74,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		Map<String, TrailBalance> accounts = getLedgerAccounts();
 		totalRecords = accounts.size();
-		TB_STATUS.setTotalRecords(totalRecords);
+		EXTRACT_STATUS.setTotalRecords(totalRecords);
 		// Get group code and description.
 		Map<String, TrailBalance> groups = getAccountDetails();
 		String key = null;
@@ -95,8 +95,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 				trialBalance.setAccountTypeDes(group.getAccountTypeDes());
 			}
 			
-			TB_STATUS.setTotalRecords(processedCount++);
-			TB_STATUS.setTotalRecords(successCount++);
+			EXTRACT_STATUS.setTotalRecords(processedCount++);
+			EXTRACT_STATUS.setTotalRecords(successCount++);
 		}
 		groups = null;
 

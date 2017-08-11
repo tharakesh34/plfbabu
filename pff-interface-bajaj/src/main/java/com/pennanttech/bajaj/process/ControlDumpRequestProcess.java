@@ -3,8 +3,8 @@ package com.pennanttech.bajaj.process;
 import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.model.ControlDump;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,6 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ControlDumpRequestProcess.class);
+	public static DataEngineStatus	EXTRACT_STATUS		= new DataEngineStatus("CONTROL_DUMP_REQUEST");
 
 	Date appDate = null;
 	Date monthStartDate = null;
@@ -34,7 +35,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	private MapSqlParameterSource filterMap;
 
 	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;

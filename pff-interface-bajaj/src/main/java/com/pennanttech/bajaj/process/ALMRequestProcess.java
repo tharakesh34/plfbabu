@@ -3,8 +3,8 @@ package com.pennanttech.bajaj.process;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennanttech.bajaj.model.alm.ALM;
 import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import java.math.BigDecimal;
@@ -23,13 +23,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
-
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("ALM_REQUEST");
+	
 	private Date appDate;
 	private ProjectedAccrualProcess projectedAccrualProcess;
 		
 	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
 			ProjectedAccrualProcess projectedAccrualProcess) {
-		super(dataSource, App.DATABASE.name(), userId, true, valueDate, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 		this.projectedAccrualProcess = projectedAccrualProcess;
 	}
