@@ -8388,13 +8388,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain, String procEdtEvent) {
 
-		// Finance Details
+		//Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(financeMain.getFinReference());
+		scheduleData.setFinanceMain(financeMain);	// FIXME
+
+		// Covenants List
+		financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
 
 		// Customer and Customer Document Details
 		financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
 
-		// document details
+		// Document details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
 				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, procEdtEvent, ""));
 

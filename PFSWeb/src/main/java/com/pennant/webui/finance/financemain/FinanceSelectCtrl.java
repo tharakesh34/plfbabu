@@ -2371,21 +2371,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			// String userRole = aFinanceMain.getNextRoleCode(); // FIXME
-			String userRole = "";
+			// FinMaintainInstruction
+			FinMaintainInstruction finMaintainInstruction = finCovenantMaintanceService.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+
+			// FinanceDetails
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain, moduleDefiner);
+
+			// Covenants List
+			finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
+
+			// Role Code State Checking
+			String userRole = finMaintainInstruction.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			// FinMaintainInstruction and Covenant list
-			FinMaintainInstruction finMaintainInstruction = finCovenantMaintanceService .getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
-
-			// FinanceDetails 
-			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain, moduleDefiner);
-			financeDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
-			financeDetail.setCovenantTypeList(finMaintainInstruction.getFinCovenantTypeList());
-
-			// Role Code State Checking
 			String nextroleCode = finMaintainInstruction.getNextRoleCode();
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
