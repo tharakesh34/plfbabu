@@ -170,7 +170,13 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("Insert into ").append(CUSTOMER_DETAILS);
 		sql.append(" values (");
 		sql.append(" :BatchID,");
-		sql.append(" :CustomerNo,");
+		
+		if (stage) {
+			sql.append(" :CustomerNo,");
+		} else {
+			sql.append(" :CustomerId,");
+		}
+		
 		sql.append(" :SourceSysId,");
 		sql.append(" :FirstName,");
 		sql.append(" :MiddleName,");
@@ -205,6 +211,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" :CaNumber,");
 		sql.append(" :Segment");
 		sql.append(")");
+		
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cusotemr);
 
@@ -224,7 +231,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" values (");
 		sql.append(" :BatchID,");
 		sql.append(" :SourceSysId,");
-		sql.append(" :CustomerNo,");
+		sql.append(" :CustomerId,");
 		sql.append(" :CustCoreBank");
 		sql.append(")");
 
@@ -289,6 +296,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("INSERT INTO ");
 		sql.append(CUSTOMER_ADDR_DETAILS).append("(");
 		sql.append(" BatchID,");
+		
 		sql.append(" CUSTOMER_NO,");
 		sql.append(" SOURCE_SYS_ID,");
 		sql.append(" SEGMENT,");
@@ -316,7 +324,13 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" EOD_BATCH_ID ");
 		sql.append(" ) VALUES (");
 		sql.append(" :BatchID,");
-		sql.append(" :CustomerNo,");
+		
+		if (stage) {
+			sql.append(" :CustomerNo,");
+		} else {
+			sql.append(" :CustomerId,");
+		}
+		
 		sql.append(" :SourceSysId,");
 		sql.append(" :Segment,");
 		sql.append(" :Addresstype,");
@@ -396,7 +410,11 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append("Insert into ").append(CUSTOMER_LOAN_DETAILS);
 		sql.append(" values (");
 		sql.append(" :BatchID,");
-		sql.append(" :CustomerNo,");
+		if (stage) {
+			sql.append(" :CustomerNo,");
+		} else {
+			sql.append(" :CustomerId,");
+		}
 		sql.append(" :SourceSysId,");
 		sql.append(" :Segment,");
 		sql.append(" :DealID,");
@@ -491,7 +509,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						customers.put(rs.getLong("CUSTID"), customer);
 					}
 					
-					customer.setCustomerNo(rs.getLong("CUSTID"));
+					customer.setCustomerNo(rs.getString("CUSTID"));
 					customer.setCustomerId(rs.getString("CUSTCIF"));
 					customer.setFirstName(rs.getString("CUSTFNAME"));
 					customer.setMiddleName(rs.getString("CUSTMNAME"));
