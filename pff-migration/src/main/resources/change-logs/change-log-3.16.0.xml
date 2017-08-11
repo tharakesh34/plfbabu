@@ -2660,4 +2660,130 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 	 	 <column name="ID" type="decimal(19,0)"/>
 	 </createIndex>
 </changeSet>
+
+<changeSet id="206" author="Veeravenkata">
+
+	<createTable tableName="FinMaintainInstructions">
+		<column name="FinMaintainId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Event" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+
+	<addPrimaryKey columnNames="FinMaintainId"
+		constraintName="PK_FinMaintainIns" tableName="FinMaintainInstructions" />
+		
+	<createTable tableName="FinMaintainInstructions_Temp">
+		<column name="FinMaintainId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Event" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+
+	<addPrimaryKey columnNames="FinMaintainId"
+		constraintName="PK_FinMaintainIns_Temp" tableName="FinMaintainInstructions_Temp" />
+		
+</changeSet>
+<changeSet id="207" author="Veeravenkata" dbms="oracle">
+	<sql splitStatements="false">
+		begin
+		execute immediate 'CREATE SEQUENCE
+		SeqFinMaintainInstructions START WITH 1 INCREMENT BY
+		1 MAXVALUE
+		9223372036854775807 NOCYCLE';
+		end;
+	</sql>
+</changeSet>
+
+<changeSet id="208" author="Veeravenkata">
+	<createView viewName="FinMaintainInstructions_AView" replaceIfExists="true">
+		
+			SELECT	    T1.FinMaintainId, T1.FinReference, T1.Event, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	                  	
+	      	FROM    	FinMaintainInstructions  T1
+	</createView>
+	
+	<createView viewName="FinMaintainInstructions_TView" replaceIfExists="true">
+		
+			SELECT	    T1.FinMaintainId, T1.FinReference, T1.Event, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	                  	
+	      	FROM    	FinMaintainInstructions_Temp  T1
+	</createView>
+	
+	<createView viewName="FinMaintainInstructions_View" replaceIfExists="true">
+		
+			SELECT	    T1.FinMaintainId, T1.FinReference, T1.Event, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	                  	
+	      	FROM    	FinMaintainInstructions_Temp  T1 
+	
+	     	UNION ALL
+	      
+	      	SELECT	    T1.FinMaintainId, T1.FinReference, T1.Event, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+	                  	
+	      	FROM    	FinMaintainInstructions  T1 
+
+	     	WHERE     (NOT EXISTS  (SELECT  1 FROM FinMaintainInstructions_Temp WHERE (FinMaintainId = T1.FinMaintainId)))
+	</createView>
+</changeSet>
+
+
+<changeSet id="209" author="Veeravenkata">
+	<sql>
+	 
+	INSERT INTO SecRights values ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_FinanceManagement_FinCovenants', 'MENU',0,1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecRights values ((Select MAX(RightID)+1 From SecRights), 2, 'button_FinCovenantMaintanceDialog_btnSave','FinCovenantMaintanceDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+	INSERT INTO SecRights values ((Select MAX(RightID)+1 From SecRights), 2, 'button_FinCovenantMaintanceDialog_btnEdit','FinCovenantMaintanceDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+ 	INSERT INTO SecRights values ((Select MAX(RightID)+1 From SecRights), 2, 'btnNew_FinCovenantMaintanceDialog_NewFinCovenantType','FinCovenantMaintanceDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+	 
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_MAKER'), (SELECT RightID FROM SecRights where RightName = 'menuItem_FinanceManagement_FinCovenants'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_MAKER'), (SELECT RightID FROM SecRights where RightName = 'btnNew_FinCovenantMaintanceDialog_NewFinCovenantType'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_APPROVER'), (SELECT RightID FROM SecRights where RightName = 'menuItem_FinanceManagement_FinCovenants'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'FinCovenantType_APPROVER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+	
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
