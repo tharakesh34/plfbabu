@@ -4695,10 +4695,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							continue;
 						}
 					}
-					
+					validFrom = DateUtility.addDays(validFrom, 1);
 					this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
 							.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, validFrom, appEndDate,
-							false));
+							true));
 				}
 			}
 
