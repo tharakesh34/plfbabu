@@ -12,4 +12,39 @@
 		<modifyDataType tableName="ADTFINANCEMAIN" columnName="CalRoundingMode" newDataType="varchar(10)"/>
 	</changeSet>
 
+	<changeSet id="2" author="Veeravenkata">
+		<createTable tableName="AdtFinMaintainInstructions">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinMaintainId" type="bigint"/>
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="Event" type="varchar(20)"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtFinMaintainIns" tableName="AdtFinMaintainInstructions" />
+	
+	</changeSet>
+
 </databaseChangeLog>
