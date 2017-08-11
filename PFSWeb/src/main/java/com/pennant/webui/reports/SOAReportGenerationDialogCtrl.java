@@ -180,43 +180,15 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		
 		doWriteComponentsToBean(this.statementOfAccount);
 		
-		doShowDialogPage(this.statementOfAccount);
-		
 		try {
 			ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, new ArrayList<Object>(),
-					true, 1, getUserWorkspace().getLoggedInUser().getFullName(), window_SOAReportGenerationDialogCtrl);
+					true, 1, getUserWorkspace().getLoggedInUser().getFullName(), this.window_SOAReportGenerationDialogCtrl);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);
 	}
-	
-	/**
-	 * Displays the dialog page with the required parameters as map.
-	 * 
-	 * @param aStatementOfAccount
-	 *            The entity that need to be passed to the dialog.
-	 */
-	private void doShowDialogPage(StatementOfAccount aStatementOfAccount) {
-		logger.debug("Entering");
-
-		Map<String, Object> aruments = new HashMap<String, Object>();
-
-		aruments.put("statementOfAccount", aStatementOfAccount);
-		aruments.put("moduleCode", moduleCode);
-		aruments.put("enqiryModule", enqiryModule);
-
-		try {
-			//Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, aruments);
-			//this.window_SOAReportGenerationDialogCtrl.onClose();
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-
-		logger.debug("Leaving");
-	}
-	
 	
 	/**
 	 * Writes the components values to the bean.<br>

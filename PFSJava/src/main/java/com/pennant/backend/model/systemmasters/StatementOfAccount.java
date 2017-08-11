@@ -136,6 +136,27 @@ public class StatementOfAccount {
 	//Customer E-mails
 	private String custEMail;
 	
+	@SuppressWarnings("unused")
+	private BigDecimal emiReceived = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal prvInstAmount = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal futureInstAmount = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal futurePriAmount = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal futureIntComponent = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal chargeCollectedFrom = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal upfrontIntFrom = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal intPaidByDealer = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal preEMIIntPaid = BigDecimal.ZERO;
+	@SuppressWarnings("unused")
+	private BigDecimal calcLoanAmount = BigDecimal.ZERO;
+	
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
 	private List<SOATransactionReport> transactionReports = new ArrayList<SOATransactionReport>();
 
@@ -661,5 +682,112 @@ public class StatementOfAccount {
 
 	public void setSoaSummaryReports(List<SOASummaryReport> soaSummaryReports) {
 		this.soaSummaryReports = soaSummaryReports;
+	}
+
+	public BigDecimal getEmiReceived() {
+		BigDecimal emiReceived = BigDecimal.ZERO;
+
+		if (!(this.emiReceivedPri.compareTo(BigDecimal.ZERO) == 0
+				&& this.emiReceivedPft.compareTo(BigDecimal.ZERO) == 0) && this.ccyMinorCcyUnits != null
+				&& this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0 && this.emiReceivedPri != null
+				&& this.emiReceivedPft != null) {
+			emiReceived = (this.emiReceivedPri.add(this.emiReceivedPft)).divide(this.ccyMinorCcyUnits);
+		}
+
+		return emiReceived;
+	}
+
+	public BigDecimal getPrvInstAmount() {
+		BigDecimal prvInstAmount = BigDecimal.ZERO;
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.prevInstAmtPri != null && this.prevInstAmtPft != null) {
+			prvInstAmount = (this.prevInstAmtPri.add(this.prevInstAmtPft)).divide(this.ccyMinorCcyUnits);
+		}
+
+		return prvInstAmount;
+	}
+
+	public BigDecimal getFutureInstAmount() {
+		BigDecimal futureInstAmount = BigDecimal.ZERO;
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.futurePri1 != null && this.futurePri2 != null
+			&& this.futureRpyPft1 != null && this.futureRpyPft2 != null) {
+			futureInstAmount = ((futurePri1.subtract(futurePri2)).add(this.futureRpyPft1.subtract(this.futureRpyPft2))).divide(this.ccyMinorCcyUnits);
+		}
+		return futureInstAmount;
+	}
+
+	public BigDecimal getFuturePriAmount() {
+		BigDecimal futurePriAmount = BigDecimal.ZERO;
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.futurePri1 != null && this.futurePri2 != null
+			) {
+			futurePriAmount = (futurePri1.subtract(futurePri2)).divide(this.ccyMinorCcyUnits);
+		}
+		return futurePriAmount;
+	}
+
+	public BigDecimal getFutureIntComponent() {
+		BigDecimal futureIntComponent = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.futureRpyPft1 != null && this.futureRpyPft2 != null) {
+			futureIntComponent = (this.futureRpyPft1.subtract(this.futureRpyPft2)).divide(this.ccyMinorCcyUnits);
+		}
+		
+		return futureIntComponent;
+	}
+
+	public BigDecimal getChargeCollectedFrom() {
+		BigDecimal chargeCollectedFrom = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.charge_coll_cust != null) {
+			chargeCollectedFrom = (this.charge_coll_cust).divide(this.ccyMinorCcyUnits);
+		}
+		
+		return chargeCollectedFrom;
+	}
+
+	public BigDecimal getUpfrontIntFrom() {
+		BigDecimal upfrontIntFrom = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.upfront_int_cust != null) {
+			upfrontIntFrom = (this.upfront_int_cust).divide(this.ccyMinorCcyUnits);
+		}
+		return upfrontIntFrom;
+	}
+
+	public BigDecimal getIntPaidByDealer() {
+		BigDecimal intPaidByDealer = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.int_paid_Dealer_upfront != 0) {
+			BigDecimal int_paid_Dealer_upfront = new BigDecimal(this.int_paid_Dealer_upfront);
+			intPaidByDealer = (int_paid_Dealer_upfront).divide(this.ccyMinorCcyUnits);
+		}
+		return intPaidByDealer;
+	}
+
+	public BigDecimal getPreEMIIntPaid() {
+		BigDecimal preEMIIntPaid = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.pre_emi_Int_Paid != 0) {
+			BigDecimal pre_emi_Int_Paid = new BigDecimal(this.pre_emi_Int_Paid);
+			preEMIIntPaid = (pre_emi_Int_Paid).divide(this.ccyMinorCcyUnits);
+		}
+		return preEMIIntPaid;
+	}
+
+	public BigDecimal getCalcLoanAmount() {
+		BigDecimal calcLoanAmount = BigDecimal.ZERO;
+		
+		if (this.ccyMinorCcyUnits != null && this.ccyMinorCcyUnits.compareTo(BigDecimal.ZERO) > 0
+				&& this.loanAmount != null) {
+			calcLoanAmount = (this.loanAmount).divide(this.ccyMinorCcyUnits);
+		}
+		return calcLoanAmount;
 	}
 }
