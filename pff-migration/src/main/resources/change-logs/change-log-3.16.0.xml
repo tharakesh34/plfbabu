@@ -2839,4 +2839,24 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			
 	</createView>
 </changeSet>
+	<changeSet id="211" author="murthy.y">
+		 <createIndex indexName ="IX_DE_DD_CID"  tableName="DATA_ENGINE_DB_DETAILS">
+		 	 <column name="CONFIGID" type="decimal(19,0)"/>
+		 </createIndex>
+	</changeSet>
+	<changeSet id="212" author="murthy.y">
+		 <createIndex indexName ="IX_DE_EP_CID"  tableName="DATA_ENGINE_EVENT_PROPERTIES">
+		 	 <column name="CONFIG_ID" type="decimal(19,0)"/>
+		 </createIndex>
+	</changeSet>
+	<changeSet id="213" author="murthy.y">
+		 <createIndex indexName ="IX_DE_T_CID"  tableName="DATA_ENGINE_TABLE">
+		 	 <column name="CONFIGID" type="decimal(19,0)"/>
+		 </createIndex>
+	</changeSet>
+	<changeSet id="214" author="murthy.y">
+		 <createIndex indexName ="IX_DE_C_TID"  tableName="DATA_ENGINE_COLUMN">
+		 	 <column name="TABLEID" type="decimal(19,0)"/>
+		 </createIndex>
+	</changeSet>
 </databaseChangeLog>
