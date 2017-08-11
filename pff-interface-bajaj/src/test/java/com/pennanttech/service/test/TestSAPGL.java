@@ -24,7 +24,7 @@ public class TestSAPGL {
 		}
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void process() {
 		try {
 			new SAPGLReportsProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();

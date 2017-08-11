@@ -26,7 +26,7 @@ public class TestDataMart {
 		} 
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void process() {
 		try {
 			DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
