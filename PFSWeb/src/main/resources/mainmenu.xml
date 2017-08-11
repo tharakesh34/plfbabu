@@ -365,7 +365,6 @@
 
 	<!-- Finance Management Details -->
 	 <menu id="menu_Category_FinanceManagement" rightName="menuCat_FinanceManagement"> 
-	  <menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  /><!-- rightName="menuItem_FinanceManagement_FinCovenants" -->
 	   <!-- <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_DatedSchedule"/> -->
 	   <menuItem id="menu_Item_AddDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_AddDisbursment"/>
 	   <menuItem id="menu_Item_AddRateChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_AddRateChange"/>
@@ -381,7 +380,6 @@
 	   <menuItem id="menu_Item_ChangeRepayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeRepayment"/>
 	   <menuItem id="menu_Item_RpyBasicDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_RpyBasicDetail"/>	
 	   <menuItem id="menu_Item_ChangeProfit" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ChangeProfit"/>
-	    <menuItem id="menu_Item_Covenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Covenants"/>
 	   <!-- <menuItem id="menu_Item_ChequePrinting" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingList.zul" rightName="menuItem_FinanceManagement_ChequePrinting"/> -->
        <menuItem id="menu_Item_CustSusp" zulNavigation="/WEB-INF/pages/FinanceManagement/Suspense/CustSuspenseList.zul"  rightName="menuItem_FinanceManagement_CustSuspense" />
 	   <!-- <menuItem id="menu_Item_EarlySettlement" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_EarlySettlement" /> -->
@@ -429,6 +427,8 @@
 	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
 	   <menuItem id="menu_Item_FinanceTaxDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>
 	   <menuItem id="menu_Item_FinanceTaxDetailUpload" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>  
+	   <menuItem id="menu_Item_Covenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Covenants"/>
+	   <menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  /><!-- rightName="menuItem_FinanceManagement_FinCovenants" --> 
  	</menu>
  
 	<!-- Finance Inquiry Details -->
