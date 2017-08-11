@@ -634,6 +634,7 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
+				detail.setFeeAccounting(vASConfiguration.getFeeAccounting());
 				int extendedDetailsCount = 0;
 				List<ExtendedFieldDetail> exdFldConfig = vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails();
 				if (exdFldConfig != null) {
