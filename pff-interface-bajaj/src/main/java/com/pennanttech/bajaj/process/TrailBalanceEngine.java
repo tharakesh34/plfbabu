@@ -310,6 +310,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 		
 		sql = new StringBuilder();
+		sql.append(" DELETE FROM TRAIL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN (");
+		sql.append(" SELECT ID FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE)");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
+		
+		sql = new StringBuilder();
 		sql = sql.append("DELETE FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 	}
