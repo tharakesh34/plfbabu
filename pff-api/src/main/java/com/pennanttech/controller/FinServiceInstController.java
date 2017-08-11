@@ -1257,33 +1257,34 @@ public class FinServiceInstController extends SummaryDetailService {
 				response.setReturnStatus(status);
 				return response;
 		}
-		
-		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
-		BigDecimal partPayment = new BigDecimal(returnMap.get("partPaidAmt"));
-		BigDecimal closingBal = null;
-		for (int i = 0; i < scheduleList.size(); i++) {
-			FinanceScheduleDetail curSchd = scheduleList.get(i);
-			if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) >= 0) {
-				closingBal = curSchd.getClosingBalance();
-				continue;
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
+			BigDecimal partPayment = new BigDecimal(returnMap.get("partPaidAmt"));
+			BigDecimal closingBal = null;
+			for (int i = 0; i < scheduleList.size(); i++) {
+				FinanceScheduleDetail curSchd = scheduleList.get(i);
+				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) >= 0) {
+					closingBal = curSchd.getClosingBalance();
+					continue;
+				}
+				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0
+						|| closingBal == null) {
+					closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
+					break;
+				}
 			}
-			if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
-				closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
-				break;
+
+			if (closingBal != null) {
+				if (partPayment.compareTo(closingBal) >= 0) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					String[] valueParm = new String[1];
+					valueParm[0] = String.valueOf(closingBal);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
+					return response;
+				}
 			}
 		}
-		
-		if (closingBal != null) {
-			if (partPayment.compareTo(closingBal) >= 0) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(closingBal);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127",valueParm));
-				return response;
-			}
-		} 
-		
 		Date curBussDate = DateUtility.getAppDate();
 		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
 			FinanceDetail response = new FinanceDetail();
