@@ -231,18 +231,19 @@ public class SAPGLReportsProcess extends DataEngineExport {
 
 			transactions.add(item);
 		}
-
+		
+		List<TrailBalance> nonZeorList = new ArrayList<>();
 		for (List<TrailBalance> trailBalances : entityMap.values()) {
 			int i= 0;
 			for (TrailBalance tb : trailBalances) {
-				tb.setId(++i);
+				if (BigDecimal.ZERO.compareTo(tb.getTransactionAmount()) < 0) {
+					tb.setId(++i);
+					nonZeorList.add(tb);
+				}
 			}
-			
-			parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(trailBalances.toArray()));
 		}
 		
-		
-
+		parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(nonZeorList.toArray()));
 	}
 
 	private void clearTables() {
@@ -310,14 +311,14 @@ public class SAPGLReportsProcess extends DataEngineExport {
 			public void processRow(ResultSet rs) throws SQLException {
 				try {
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
-					
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 					parameterMap.put("ENTITY", rs.getString("ENTITY"));
 					filterMap.put("ENTITY", rs.getString("ENTITY"));
 					
-					setParameterMap(parameterMap);
-					setFilterMap(filterMap);
+					export.setParameterMap(parameterMap);
+					export.setFilterMap(filterMap);
 					
-					exportData("GL_TRANSACTION_EXPORT");
+					export.exportData("GL_TRANSACTION_EXPORT");
 				} catch (Exception e) {
 					throw new SQLException();
 				}

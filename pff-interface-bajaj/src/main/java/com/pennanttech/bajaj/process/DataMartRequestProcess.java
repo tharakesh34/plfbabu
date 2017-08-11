@@ -5,7 +5,6 @@ import com.pennanttech.bajaj.process.datamart.DataMartTable;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil;
 import java.sql.ResultSet;
@@ -345,7 +344,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW ");
+			sql.append(" SELECT * from x ");
 
 			TransactionStatus txnStatus = null;
 			try {
