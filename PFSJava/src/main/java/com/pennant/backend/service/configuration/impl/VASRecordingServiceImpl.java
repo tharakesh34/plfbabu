@@ -2000,6 +2000,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
+			vasRecording.setFeeAccounting(vASConfiguration.getFeeAccounting());
 			if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 				for (DocumentDetails detail : vasRecording.getDocuments()) {
 					//validate Dates
