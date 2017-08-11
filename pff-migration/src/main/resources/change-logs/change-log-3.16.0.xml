@@ -2859,4 +2859,39 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 		 	 <column name="TABLEID" type="decimal(19,0)"/>
 		 </createIndex>
 	</changeSet>
+	
+	<changeSet id="215" author="Veeravenkata">
+		<sql>
+			INSERT INTO SecGroups values((SELECT MAX(GrpID)+1 from SecGroups), 'COVENANTSMAINTAIN_MAKER', 'WF Maker for Covenants Maintenance', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecGroups values((SELECT MAX(GrpID)+1 from SecGroups), 'COVENANTSMAINTAIN_APPROVER', 'WF Approver for Covenants Maintenance', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'menuItem_FinanceManagement_FinCovenants'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'btnNew_FinCovenantMaintanceDialog_NewFinCovenantType'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantTypeDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantTypeDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_covenantType'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_mandRole'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_description'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_alwWaiver'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_alwPostpone'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_MAKER'), (SELECT RightID FROM SecRights where RightName = 'FinCovenantTypeDialog_receivableDate'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_APPROVER'), (SELECT RightID FROM SecRights where RightName = 'menuItem_FinanceManagement_FinCovenants'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			INSERT INTO SecGroupRights values((SELECT MAX(GrpRightID) + 1 From SecGroupRights), (Select GrpId  From SecGroups Where GrpCode = 'COVENANTSMAINTAIN_APPROVER'), (SELECT RightID FROM SecRights where RightName = 'button_FinCovenantMaintanceDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ', 0);
+			
+			INSERT INTO SecRoleGroups values((SELECT MAX(RoleGrpID)+1 from SecRoleGroups), (select MAX(GrpId) from SecGroups WHERE  GrpCode='COVENANTSMAINTAIN_MAKER'),(select max(RoleID) from SecRoles WHERE RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((SELECT MAX(RoleGrpID)+1 from SecRoleGroups), (select MAX(GrpId) from SecGroups WHERE  GrpCode='COVENANTSMAINTAIN_APPROVER'),(select max(RoleID) from SecRoles WHERE RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO PTMenuDetails values((SELECT MAX(MenuID)+1 from PTMenuDetails), 1, 'Covenants','menu_Item_FinCovenants','/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_FinanceManagement_FinCovenants');
+			
+			UPDATE SeqPTMenuDetails set SeqNo = (select MAX(MenuID) from PTMenuDetails);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);	
+		</sql>
+	</changeSet>
 </databaseChangeLog>
