@@ -344,7 +344,7 @@ public class DataMartRequestProcess extends DatabaseDataEngine {
 		public void run() {
 			logger.debug(Literal.ENTERING);
 			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT * from x ");
+			sql.append(" SELECT * from DM_APPLICANT_DETAILS_VIEW ");
 
 			TransactionStatus txnStatus = null;
 			try {
