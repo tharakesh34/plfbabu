@@ -283,11 +283,25 @@ public class FinanceDataValidation {
 		int vasFeeCount = 0;
 		if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-				if (StringUtils.contains(feeDetail.getFeeTypeCode(), "{")) {
+				for(VASRecording vasRecording:finScheduleData.getVasRecordingList())
+				if (StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
 					feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 					vasFeeCount++;
 				}
 			}
+			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+				int count = 0;
+				for (FinFeeDetail detail : finScheduleData.getFinFeeDetailList()) {
+					if (StringUtils.contains(detail.getFeeTypeCode(), "{"))
+						if (StringUtils.equals(detail.getFeeTypeCode(), feeDetail.getFeeTypeCode())) {
+							count++;
+							if (count > 1) {
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90326", null)));
+							}
+						}
+				}
+			}
+			
 			if (finScheduleData.getVasRecordingList().size() > 0 && vasFeeCount <= 0) {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90326", null)));
 			} else if (finScheduleData.getVasRecordingList().size() <= 0 && vasFeeCount > 0) {
