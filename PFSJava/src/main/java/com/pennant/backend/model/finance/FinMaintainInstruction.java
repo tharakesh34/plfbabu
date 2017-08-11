@@ -13,7 +13,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
- * Model class for the <b>Collateral table</b>.<br>
+ * Model class for the <b>FinMaintainInstruction table</b>.<br>
  *
  */
 

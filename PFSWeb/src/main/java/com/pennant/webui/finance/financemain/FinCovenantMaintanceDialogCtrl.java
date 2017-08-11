@@ -72,7 +72,6 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -104,6 +103,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	private FinMaintainInstruction finMaintainInstruction;
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
+
+	private Object financeMainDialogCtrl;
 
 	private List<FinCovenantType> finCovenantTypesDetailList = new ArrayList<FinCovenantType>();
 
@@ -145,6 +146,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("financeSelectCtrl")) {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
+				this.financeMainDialogCtrl = (Object) arguments.get("financeSelectCtrl");
 			}
 
 			if (arguments.containsKey("moduleDefiner")) {
@@ -234,8 +236,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinCovenantMaintanceDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		this.btnNew_NewFinCovenantType
-				.setVisible(getUserWorkspace().isAllowed("btnNew_FinCovenantMaintanceDialog_NewFinCovenantType"));
+		this.btnNew_NewFinCovenantType.setVisible(getUserWorkspace().isAllowed("btnNew_FinCovenantMaintanceDialog_NewFinCovenantType"));
 
 		// Schedule related buttons
 		logger.debug("Leaving");
@@ -494,7 +495,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aFinMaintainInstruction
-	 *            (Academic)
+	 *            (FinMaintainInstruction)
 	 * 
 	 * @param tranType
 	 *            (String)
@@ -595,10 +596,11 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
-		Academic aFinMaintainInstruction = (Academic) aAuditHeader.getAuditDetail().getModelData();
+		FinMaintainInstruction aFinMaintainInstruction = (FinMaintainInstruction) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -780,6 +782,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 		map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeMain.getFinCcy()));
 		map.put("finCovenantMaintanceDialogCtrl", this);
+		map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 		map.put("moduleDefiner", moduleDefiner);
 		map.put("enqModule", isEnquiry);
 		map.put("roleCode", getRole());
@@ -926,4 +929,10 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		this.financeDetail = financeDetail;
 	}
 
+	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+		this.financeMainDialogCtrl = financeMainDialogCtrl;
+	}
+	public Object getFinanceMainDialogCtrl() {
+		return financeMainDialogCtrl;
+	}
 }

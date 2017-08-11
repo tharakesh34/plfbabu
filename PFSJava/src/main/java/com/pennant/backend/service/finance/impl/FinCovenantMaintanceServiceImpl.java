@@ -222,7 +222,14 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
 
-		return getFinMaintainInstructionDAO().getFinMaintainInstructionByFinRef(finreference, event, "_View");
+		FinMaintainInstruction finMaintainInstruction = getFinMaintainInstructionDAO()
+				.getFinMaintainInstructionByFinRef(finreference, event, "_View");
+
+		if (finMaintainInstruction != null) {
+			return finMaintainInstruction;
+		} else {
+			return new FinMaintainInstruction();
+		}
 	}
 
 	/**

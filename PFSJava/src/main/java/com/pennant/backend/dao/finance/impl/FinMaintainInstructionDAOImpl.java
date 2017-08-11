@@ -101,8 +101,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -144,8 +143,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append("");
 		}
@@ -214,15 +212,13 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" (FinMaintainId, FinReference, Event,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(:FinMaintainId, :FinReference, :Event,");
-		sql.append(
-				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (finMaintainInstruction.getFinMaintainId() == Long.MIN_VALUE) {
-			finMaintainInstruction.setFinMaintainId(getNextidviewDAO().getNextId("Seq"));
+			finMaintainInstruction.setFinMaintainId(getNextidviewDAO().getNextId("SeqFinMaintainInstructions"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -249,8 +245,7 @@ public class FinMaintainInstructionDAOImpl extends BasisNextidDaoImpl<FinMaintai
 		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event,");
-		sql.append(
-				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		sql.append(	" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		sql.append(" where FinMaintainId = :FinMaintainId");
