@@ -209,6 +209,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
+import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -1725,6 +1726,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinAssetEvaluation", new ModuleMapping("FinAssetEvaluation", FinAssetEvaluation.class,
 				new String[] { "FinAssetEvaluation", "FinAssetEvaluation_AView" }, masterWF, new String[] {
 						"FinReference", "TypeofValuation" }, null, 300));
+		
+		ModuleUtil.register("FinMaintainInstruction", new ModuleMapping("FinMaintainInstruction", FinMaintainInstruction.class,
+				new String[] { "FinMaintainInstructions", "FinMaintainInstruction_AView" }, masterWF, new String[] {
+						"FinReference", "Event" }, null, 300));
 
 		/************* Miscellaneous *************/
 

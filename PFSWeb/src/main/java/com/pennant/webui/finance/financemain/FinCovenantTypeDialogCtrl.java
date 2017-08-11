@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.search.Filter;
@@ -139,6 +140,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private FinanceDetail financedetail;
 	
 	protected  Label label_FinCovenantTypeDialog_RecvbleDate;
+	
+	protected String moduleDefiner = "";
+	private FinCovenantMaintanceDialogCtrl finCovenantMaintanceDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -197,6 +201,14 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (arguments.containsKey("finCovenantTypesListCtrl")) {
 				setFinCovenantTypeListCtrl((FinCovenantTypeListCtrl) arguments.get("finCovenantTypesListCtrl"));
 			}
+
+			if (arguments.containsKey("finCovenantMaintanceDialogCtrl")) {
+				setFinCovenantMaintanceDialogCtrl((FinCovenantMaintanceDialogCtrl) arguments.get("finCovenantMaintanceDialogCtrl"));
+			}
+			if (arguments.containsKey("moduleDefiner")) {
+				moduleDefiner = (String) arguments.get("moduleDefiner");
+			}
+			
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 
 				setFinanceMainDialogCtrl((Object) arguments.get("financeMainDialogCtrl"));
@@ -733,7 +745,12 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+						
+						if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+							getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+						} else {
+							getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+						}
 						closeDialog();
 					}
 				}
@@ -839,7 +856,12 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+					
+					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+						getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+					} else {
+						getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+					}
 					closeDialog();
 				}
 			}
@@ -865,18 +887,18 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		errParm[0] = PennantJavaUtil.getLabel("FinCovenantType_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("FinCovenantType_CovenantType") + ":" + valueParm[1];
 
-		if (getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList() != null
-				&& getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList().size() > 0) {
-			for (int i = 0; i < getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList().size(); i++) {
-				FinCovenantType loanDetail = getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList().get(i);
+		List<FinCovenantType> covenantsList = new ArrayList<FinCovenantType>();
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+			covenantsList = getFinCovenantMaintanceDialogCtrl().getFinCovenantTypesDetailList();
+		} else {
+			covenantsList = getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList();
+		}
+		
+		if (covenantsList != null && covenantsList.size() > 0) {
+			for (int i = 0; i < covenantsList.size(); i++) {
+				FinCovenantType loanDetail = covenantsList.get(i);
 
-				if (StringUtils.equals(afinCovenantTypes.getCovenantType(), loanDetail.getCovenantType())) { // Both
-																												// Current
-																												// and
-																												// Existing
-																												// list
-																												// rating
-																												// same
+				if (StringUtils.equals(afinCovenantTypes.getCovenantType(), loanDetail.getCovenantType())) {
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
@@ -1107,6 +1129,14 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	}
 	public FinanceDetail getFinancedetail() {
 		return financedetail;
+	}
+
+	public FinCovenantMaintanceDialogCtrl getFinCovenantMaintanceDialogCtrl() {
+		return finCovenantMaintanceDialogCtrl;
+	}
+
+	public void setFinCovenantMaintanceDialogCtrl(FinCovenantMaintanceDialogCtrl finCovenantMaintanceDialogCtrl) {
+		this.finCovenantMaintanceDialogCtrl = finCovenantMaintanceDialogCtrl;
 	}
 
 }

@@ -2047,6 +2047,7 @@
 		<property name="receiptService" ref="receiptService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
 		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -4887,6 +4888,13 @@
 	<bean id="auditErrorDetailListCtrl" 
 		class="com.pennant.webui.errordetail.errordetail.AuditErrorDetailsListCtrl"
 		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<!-- Finance CovenantS Detail  -->
+	<bean id="finCovenantMaintanceDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinCovenantMaintanceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
 	</bean>
 	
 	<!-- SOA -->

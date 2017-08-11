@@ -202,7 +202,7 @@ public class FinanceConstants {
 	public static final String	BULK_RATE_CHG					= "BulkRateChange";
 	public static final String	FINSER_EVENT_FEEPAYMENT			= "FeePayment";
 	public static final String	FINSER_EVENT_COVENANTS			= "Covenants";
-
+	public static final String	FINSER_EVENT_FINCOVENANTS		= "FinCovenants";
 	// Finance Collateral Details
 	public static final String	COLLATERAL_FIXEDDEPOSIT			= "FD";
 	public static final String	COLLATERAL_SECURITYCHEQUE		= "SC";

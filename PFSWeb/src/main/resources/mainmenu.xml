@@ -365,6 +365,7 @@
 
 	<!-- Finance Management Details -->
 	 <menu id="menu_Category_FinanceManagement" rightName="menuCat_FinanceManagement"> 
+	  <menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  /><!-- rightName="menuItem_FinanceManagement_FinCovenants" -->
 	   <!-- <menuItem id="menu_Item_DatedSchedule" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_DatedSchedule"/> -->
 	   <menuItem id="menu_Item_AddDisbursment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_AddDisbursment"/>
 	   <menuItem id="menu_Item_AddRateChange" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_AddRateChange"/>

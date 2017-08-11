@@ -1690,6 +1690,7 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_REAGING,Labels.getLabel("label_FinSerEvent_ReAging")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_HOLDEMI,Labels.getLabel("label_FinSerEvent_HoldEMI")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COVENANTS,Labels.getLabel("label_FinSerEvent_Covenants")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_FINCOVENANTS,Labels.getLabel("label_FinSerEvent_FinCovenants")));
 		}
 		return finServiceEvents;
 	}
