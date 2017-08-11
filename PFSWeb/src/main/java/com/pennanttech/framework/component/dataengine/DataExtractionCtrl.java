@@ -6,6 +6,7 @@ import com.pennanttech.bajaj.process.ALMRequestProcess;
 import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
 import com.pennanttech.bajaj.process.DataMartRequestProcess;
 import com.pennanttech.bajaj.process.PosidexRequestProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -109,9 +110,8 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 
 			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {
-				BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT = dataEngineConfig
-						.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
-				doFillPanel(config, BajajInterfaceConstants.GL_TRAIL_BALANCE_EXPORT);
+				TrailBalanceEngine.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
+				doFillPanel(config, TrailBalanceEngine.EXTRACT_STATUS);
 			}
 
 		}
