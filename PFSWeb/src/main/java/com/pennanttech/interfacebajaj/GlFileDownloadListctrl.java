@@ -47,6 +47,8 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
@@ -64,8 +66,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -178,6 +182,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			list.add("GL_TRANSACTION_EXPORT");
 			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
 		}
+		
 		this.searchObject.addFilterIn("NAME", list);
 	}
 
@@ -188,6 +193,18 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		refresh();
 	}
 	
+	/**
+	 * Call the FileDownload dialog with a new empty entry. <br>
+	 */
+	public void onClick$btnexecute(Event event) throws Exception {
+		
+		if ("TrailBalance".equals(module)) {
+			new TrailBalanceEngine((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+		} else {
+			new SAPGLProcess((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+		}
+	}
+
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {

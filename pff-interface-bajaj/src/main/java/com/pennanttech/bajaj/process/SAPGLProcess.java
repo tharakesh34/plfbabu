@@ -315,12 +315,13 @@ public class SAPGLProcess extends DataEngineExport {
 	private void exportTransactionReport() {
 		logger.info("Generating Transaction detail report ..");
 		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
-		Map<String, Object> filterMap = new HashMap<>();
-		Map<String, Object> parameterMap = new HashMap<>();
+		
 		jdbcTemplate.query(query, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				try {
+					Map<String, Object> filterMap = new HashMap<>();
+					Map<String, Object> parameterMap = new HashMap<>();
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
 					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
 					parameterMap.put("ENTITY", rs.getString("ENTITY"));
