@@ -23,8 +23,8 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class ControlDumpRequestProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(ControlDumpRequestProcess.class);
+public class ControlDumpProcess extends DatabaseDataEngine {
+	private static final Logger logger = Logger.getLogger(ControlDumpProcess.class);
 	public static DataEngineStatus	EXTRACT_STATUS		= new DataEngineStatus("CONTROL_DUMP_REQUEST");
 
 	Date appDate = null;
@@ -34,7 +34,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private MapSqlParameterSource filterMap;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
+	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;

@@ -1,6 +1,6 @@
 package com.pennanttech.service.test;
 
-import com.pennanttech.bajaj.process.SAPGLReportsProcess;
+import com.pennanttech.bajaj.process.SAPGLProcess;
 import com.pennanttech.dataengine.util.DateUtil;
 import javax.sql.DataSource;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
@@ -27,7 +27,7 @@ public class TestSAPGL {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new SAPGLReportsProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
+			new SAPGLProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

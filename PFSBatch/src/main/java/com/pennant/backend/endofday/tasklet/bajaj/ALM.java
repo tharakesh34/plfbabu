@@ -6,7 +6,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.ALMRequestProcess;
+import com.pennanttech.bajaj.process.ALMProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
@@ -69,7 +69,7 @@ public class ALM implements Tasklet {
 
 			}
 			
-			DataEngineStatus status = ALMRequestProcess.EXTRACT_STATUS;
+			DataEngineStatus status = ALMProcess.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();;
 			Thread.sleep(1000);
@@ -107,7 +107,7 @@ public class ALM implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("ALM process started...");
-				ALMRequestProcess process = new ALMRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
+				ALMProcess process = new ALMProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate(), projectedAccrualProcess);
 				process.process("ALM_REQUEST");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

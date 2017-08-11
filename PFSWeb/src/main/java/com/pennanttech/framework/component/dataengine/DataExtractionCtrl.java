@@ -2,9 +2,9 @@ package com.pennanttech.framework.component.dataengine;
 
 import com.pennant.backend.service.cibil.CIBILService;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.bajaj.process.ALMRequestProcess;
-import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
-import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.bajaj.process.ALMProcess;
+import com.pennanttech.bajaj.process.ControlDumpProcess;
+import com.pennanttech.bajaj.process.DataMartProcess;
 import com.pennanttech.bajaj.process.PosidexRequestProcess;
 import com.pennanttech.bajaj.process.TrailBalanceEngine;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -84,12 +84,12 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 				continue;
 			}
 			if ("ALM_REQUEST".equals(configName)) {
-				ALMRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
-				doFillPanel(config, ALMRequestProcess.EXTRACT_STATUS);
+				ALMProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
+				doFillPanel(config, ALMProcess.EXTRACT_STATUS);
 			}
 			if ("CONTROL_DUMP_REQUEST".equals(configName)) {
-				ControlDumpRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("CONTROL_DUMP_REQUEST");
-				doFillPanel(config, ControlDumpRequestProcess.EXTRACT_STATUS);
+				ControlDumpProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("CONTROL_DUMP_REQUEST");
+				doFillPanel(config, ControlDumpProcess.EXTRACT_STATUS);
 			}
 
 			if ("POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName)) {
@@ -105,8 +105,8 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 
 			if ("DATA_MART_REQUEST".equals(configName)) {
-				DataMartRequestProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
-				doFillPanel(config, DataMartRequestProcess.EXTRACT_STATUS);
+				DataMartProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
+				doFillPanel(config, DataMartProcess.EXTRACT_STATUS);
 			}
 
 			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {

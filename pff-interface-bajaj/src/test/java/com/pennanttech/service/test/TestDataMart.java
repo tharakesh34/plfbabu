@@ -8,7 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.bajaj.process.DataMartProcess;
 import com.pennanttech.dataengine.util.DateUtil;
 
 public class TestDataMart {
@@ -29,7 +29,7 @@ public class TestDataMart {
 	@Test(enabled=false)
 	public void process() {
 		try {
-			DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
+			DataMartProcess requestProcess = new DataMartProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
 			requestProcess.process("DATA_MART_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();

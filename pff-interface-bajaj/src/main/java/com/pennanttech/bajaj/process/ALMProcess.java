@@ -21,14 +21,14 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-public class ALMRequestProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
+public class ALMProcess extends DatabaseDataEngine {
+	private static final Logger logger = Logger.getLogger(ALMProcess.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("ALM_REQUEST");
 	
 	private Date appDate;
 	private ProjectedAccrualProcess projectedAccrualProcess;
 		
-	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
+	public ALMProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
 			ProjectedAccrualProcess projectedAccrualProcess) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;

@@ -23,14 +23,14 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-public class SAPGLReportsProcess extends DataEngineExport {
+public class SAPGLProcess extends DataEngineExport {
 	public static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRANSACTION_SUMMARY_EXPORT");
 
 	private Map<String, String> parameters = new HashMap<>();
 	private Date startDate;
 	private Date endDate;
 
-	public SAPGLReportsProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public SAPGLProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 	}
 

@@ -6,7 +6,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.ControlDumpRequestProcess;
+import com.pennanttech.bajaj.process.ControlDumpProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
@@ -67,7 +67,7 @@ public class ControlDump implements Tasklet {
 
 			}
 				
-			DataEngineStatus status = ControlDumpRequestProcess.EXTRACT_STATUS;
+			DataEngineStatus status = ControlDumpProcess.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
@@ -104,7 +104,7 @@ public class ControlDump implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				ControlDumpRequestProcess process = new ControlDumpRequestProcess(dataSource, userId,  DateUtility.getAppValueDate(), DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
+				ControlDumpProcess process = new ControlDumpProcess(dataSource, userId,  DateUtility.getAppValueDate(), DateUtility.getAppDate(), DateUtility.getMonthStartDate(DateUtility.getAppValueDate()), DateUtility.getMonthEnd(DateUtility.getAppValueDate()));
 				process.process("CONTROL_DUMP_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {

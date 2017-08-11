@@ -6,7 +6,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.bajaj.process.DataMartRequestProcess;
+import com.pennanttech.bajaj.process.DataMartProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
@@ -67,7 +67,7 @@ public class DataMart implements Tasklet {
 
 			}
 			
-			DataEngineStatus status = DataMartRequestProcess.EXTRACT_STATUS;
+			DataEngineStatus status = DataMartProcess.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new DataMartProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
@@ -105,7 +105,7 @@ public class DataMart implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("DataMart Request Service started...");
-				DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				DataMartProcess requestProcess = new DataMartProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 				requestProcess.process("DATA_MART_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 				

@@ -1,6 +1,6 @@
 package com.pennanttech.service.test;
 
-import com.pennanttech.bajaj.process.ALMRequestProcess;
+import com.pennanttech.bajaj.process.ALMProcess;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
 import com.pennanttech.pff.core.util.DateUtil;
 import javax.sql.DataSource;
@@ -32,41 +32,10 @@ public class TestAMLRequest {
 	@Test(enabled=true)
 	public void process() {
 		try {
-			System.out.println("1 "+System.currentTimeMillis());
-			new Thread(new ALMProcessThread(projectedAccrualProcess)).start();
-			Thread.sleep(1000);
-			System.out.println("5 " +System.currentTimeMillis());
-			
-			while("I".equals(ALMRequestProcess.EXTRACT_STATUS.getStatus())) {
-				System.out.println("Total Records :"+ ALMRequestProcess.EXTRACT_STATUS.getTotalRecords());
-				System.out.println("Total Processed :"+ ALMRequestProcess.EXTRACT_STATUS.getProcessedRecords());
-			}
-
-			System.out.println("Total Records :"+ ALMRequestProcess.EXTRACT_STATUS.getTotalRecords());
-			System.out.println("Total Processed :"+ ALMRequestProcess.EXTRACT_STATUS.getProcessedRecords());
+			ALMProcess process = new ALMProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), projectedAccrualProcess);
+			process.process("ALM_REQUEST");
  		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public class ALMProcessThread implements Runnable {
-		private ProjectedAccrualProcess projectedAccrualProcess;
-
-		public ALMProcessThread(ProjectedAccrualProcess projectedAccrualProcess) {
-			this.projectedAccrualProcess = projectedAccrualProcess;
-		}
-
-		public void run() {
-			try {
-				System.out.println("2 "+System.currentTimeMillis());
-				ALMRequestProcess process = new ALMRequestProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), projectedAccrualProcess);
-				System.out.println("3 "+System.currentTimeMillis());
-				process.process("ALM_REQUEST");
-				System.out.println("4 "+System.currentTimeMillis());
-				
-			} catch (Exception e) {
-			}
-		}
-	}
-
 }
