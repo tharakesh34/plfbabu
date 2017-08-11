@@ -7,7 +7,7 @@ public class Posidex implements Serializable {
 
 	private long batchID;
 	private String customerId;
-	private long customerNo;
+	private String customerNo;
 	private String sourceSysId;
 	private String processType;
 	private String processFlag = "N";
@@ -36,11 +36,11 @@ public class Posidex implements Serializable {
 		this.customerId = customerId;
 	}
 
-	public long getCustomerNo() {
+	public String getCustomerNo() {
 		return customerNo;
 	}
 
-	public void setCustomerNo(long customerNo) {
+	public void setCustomerNo(String customerNo) {
 		this.customerNo = customerNo;
 	}
 
