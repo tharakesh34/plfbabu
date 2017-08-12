@@ -2051,7 +2051,6 @@
 		<property name="repaymentCancellationService" ref="repaymentCancellationService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="receiptService" ref="receiptService" />
-		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
 		<property name="financeTypeService" ref="financeTypeService" />
 		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
 	</bean>
