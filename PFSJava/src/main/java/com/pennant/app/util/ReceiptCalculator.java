@@ -600,6 +600,7 @@ public class ReceiptCalculator implements Serializable {
 						}
 					}else{
 						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
 					}
 				}
 			}
