@@ -1,28 +1,5 @@
 package com.pennanttech.pff.reports.cibil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
@@ -40,6 +17,26 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.service.AmazonS3Bucket;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class CIBILReport {
 	protected static final Logger logger = LoggerFactory.getLogger(CIBILReport.class);
@@ -53,14 +50,12 @@ public class CIBILReport {
 	private String CBIL_REPORT_MEMBER_CODE;
 
 	private long headerId;
-	private String status = "S";
 
 	private long totalRecords;
 	private long processedRecords;
 	private long successCount;
 	private long failedCount;
 	
-
 	private DataSource dataSource;
 	private NamedParameterJdbcTemplate namedJdbcTemplate;
 
@@ -98,10 +93,9 @@ public class CIBILReport {
 
 			StringBuilder sql = new StringBuilder();
 
-			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP  From CIBIL_CUSTOMER_EXTRACT");
+			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
 
 			namedJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
-
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
@@ -133,34 +127,45 @@ public class CIBILReport {
 						failedCount++;
 						cibilService.logFileInfoException(headerId, finreference, e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
-					} finally {
-					}
+					} 
 				}
 			});
 
 			new TrailerSegment(writer).write();
 
 		} catch (Exception e) {
-			status = "F";
+			EXTRACT_STATUS.setStatus("F");
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			if (writer != null) {
 				writer.flush();
 				writer.close();
 			}
-
+		}
+		
+		if("F".equals(EXTRACT_STATUS.getStatus())) {
+			return;
+		}
+		
+		
+		// Move the File into S3 bucket
+		try {
 			Configuration config = cibilService.getConfigDetails("CIBIL_REPORT");
 			if (Event.MOVE_TO_S3_BUCKET.name().equals(config.getPostEvent())) {
 				AmazonS3Bucket bucket = new AmazonS3Bucket(config.getRegionName(), config.getBucketName(),
 						EncryptionUtil.decrypt(config.getAccessKey()), EncryptionUtil.decrypt(config.getSecretKey()));
 				bucket.putObject(reportName, config.getPrefix());
 			}
-			
-			String remarks = updateRemarks();
-			cibilService.updateFileStatus(headerId, status, totalRecords, processedRecords, successCount, failedCount,
-					remarks);
-			EXTRACT_STATUS.setStatus(status);
+
+			EXTRACT_STATUS.setStatus("S");
+		} catch (Exception e) {
+			EXTRACT_STATUS.setStatus("F");
 		}
+		
+		String remarks = updateRemarks();
+		cibilService.updateFileStatus(headerId, EXTRACT_STATUS.getStatus(), totalRecords, processedRecords, successCount, failedCount,
+				remarks);
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -560,6 +565,8 @@ public class CIBILReport {
 		processedRecords = 0;
 		successCount = 0;
 		failedCount = 0;
+		
+		EXTRACT_STATUS.reset();
 	}
 
 	private int getOdDays(int odDays) {
@@ -612,7 +619,7 @@ public class CIBILReport {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -625,14 +632,12 @@ public class CIBILReport {
 			remarks.append(successCount);
 			remarks.append(", Failure: ");
 			remarks.append(failedCount);
-		//	CIBIL_EXPORT_STATUS.setStatus(status);
 
 		} else {
 			remarks.append("Completed successfully, total Records: ");
 			remarks.append(totalRecords);
 			remarks.append(", Sucess: ");
 			remarks.append(successCount);
-			//CIBIL_EXPORT_STATUS.setStatus(status);
 		}
 		return remarks.toString();
 	}

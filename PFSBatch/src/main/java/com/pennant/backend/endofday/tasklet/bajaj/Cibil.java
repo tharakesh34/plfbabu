@@ -11,7 +11,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -108,7 +107,6 @@ public class Cibil implements Tasklet {
 			try {
 				logger.debug("Control Dump Request Service started...");
 				cibilReport.generateReport();
-				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
