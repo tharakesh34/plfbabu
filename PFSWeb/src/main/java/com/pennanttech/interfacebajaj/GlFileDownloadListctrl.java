@@ -105,8 +105,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 	private Button downlaod;
-	String module = "";
-	
+ 	
 	protected AmazonS3Bucket bucket;
 	
 	/**
@@ -122,9 +121,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.pageRightName = "FileDownload";
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
-		
-		this.module = getArgument("module");
-
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -176,13 +172,10 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		if ("TrailBalance".equals(module)) {
-			list.add("GL_TRAIL_BALANCE_EXPORT");
-		} else {
-			list.add("GL_TRANSACTION_EXPORT");
-			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
-		}
-		
+		list.add("GL_TRAIL_BALANCE_EXPORT");
+		list.add("GL_TRANSACTION_EXPORT");
+		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
+
 		this.searchObject.addFilterIn("NAME", list);
 	}
 
@@ -197,12 +190,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		
-		if ("TrailBalance".equals(module)) {
-			new TrailBalanceEngine((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
-		} else {
-			new SAPGLProcess((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
-		}
+
+		new TrailBalanceEngine((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), 
+				DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+		new SAPGLProcess((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(),
+				DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
+		refresh();
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {

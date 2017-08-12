@@ -312,6 +312,7 @@ public class SAPGLProcess extends DataEngineExport {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
 		export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
+	
 	private void exportTransactionReport() {
 		logger.info("Generating Transaction detail report ..");
 		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
@@ -382,9 +383,9 @@ public class SAPGLProcess extends DataEngineExport {
 					update(pageItr);
 				}
 
-				if (pagesInserted) {
+				/*if (pagesInserted) {
 					saveTransactionSummary(pageItr, rs.getString("ENTITY"));
-				}
+				}*/
 			}
 
 		});

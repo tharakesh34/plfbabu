@@ -302,7 +302,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("START_DATE", DateUtil.getMonthStart(appDate));
 		paramMap.addValue("END_DATE", DateUtil.getMonthEnd(appDate));
-		
+		paramMap.addValue("GL_TRAIL_BALANCE_EXPORT", "GL_TRAIL_BALANCE_EXPORT");
+		paramMap.addValue("GL_TRANSACTION_EXPORT", "GL_TRANSACTION_EXPORT");
+		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" DELETE FROM TRAIL_BALANCE_REPORT WHERE HEADERID IN (");
@@ -317,6 +319,19 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql = new StringBuilder();
 		sql = sql.append("DELETE FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
+		
+		sql = new StringBuilder();
+		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN ( ");
+		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where ValueDate BETWEEN :START_DATE AND :END_DATE AND ");
+		sql.append("NAME IN (:GL_TRAIL_BALANCE_EXPORT, :GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT))");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
+
+		sql = new StringBuilder();
+		sql = sql.append("Delete from DATA_ENGINE_STATUS ");
+		sql.append(" where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN (");
+		sql.append(" :GL_TRAIL_BALANCE_EXPORT, :GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT)");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
+ 
 	}
 
 	private void loadParameters() {
