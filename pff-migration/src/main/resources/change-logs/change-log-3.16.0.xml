@@ -2894,4 +2894,39 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);	
 		</sql>
 	</changeSet>
+	<changeSet id="216" author="murthy.y">
+		<dropTable tableName="TRANSACTION_SUMMARY_REPORT" />
+	</changeSet>
+	<changeSet id="216.1" author="murthy.y">
+		<createTable tableName="TRANSACTION_SUMMARY_REPORT">
+			<column name="ENTITY" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LINK" type="decimal(5,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BLDAT" type="datetime" />
+			<column name="BLART" type="varchar(10)" />
+			<column name="BUKRS" type="varchar(10)" />
+			<column name="BUDAT" type="datetime" />
+			<column name="MONAT" type="decimal(5,0)" />
+			<column name="CURRCY" type="varchar(20)" />
+			<column name="XBLNR" type="varchar(50)" />
+			<column name="BKTXT" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="216.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME = 'CF_SAP_GL_REPORT_HDR_', FILENAMEFORMAT = '${ENTITY}'  WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT';
+			]]>	
+		</sql>
+	</changeSet>
+	<changeSet id="216.3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_TABLE SET FILTER = 'ENTITY=:ENTITY' WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT');
+			]]>	
+		</sql>
+	</changeSet>
 </databaseChangeLog>

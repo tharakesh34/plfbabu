@@ -69,8 +69,6 @@ public class SAPGLProcess extends DataEngineExport {
 		groupTransactions();
 
 		saveTransactionSummary();
-		
-		
 	}
 
 	private void initilize() throws Exception {
@@ -306,12 +304,32 @@ public class SAPGLProcess extends DataEngineExport {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
-	private void exportSummaryReport() throws Exception {
+		
+	private void exportSummaryReport() {
 		logger.info("Generating Transaction summary report ..");
-		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
-		export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
+		String query = "select count(*) count, ENTITY from TRANSACTION_SUMMARY_REPORT GROUP BY ENTITY";
+		
+		jdbcTemplate.query(query, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				try {
+					Map<String, Object> filterMap = new HashMap<>();
+					Map<String, Object> parameterMap = new HashMap<>();
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
+					parameterMap.put("ENTITY", rs.getString("ENTITY"));
+					filterMap.put("ENTITY", rs.getString("ENTITY"));
+					
+					export.setParameterMap(parameterMap);
+					export.setFilterMap(filterMap);
+					
+					export.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
+				} catch (Exception e) {
+					throw new SQLException();
+				}
+			}
+		});
 	}
+	
 	
 	private void exportTransactionReport() {
 		logger.info("Generating Transaction detail report ..");
@@ -538,7 +556,7 @@ public class SAPGLProcess extends DataEngineExport {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO TRANSACTION_SUMMARY_REPORT SELECT");
-		sql.append("  DISTINCT LINK,");
+		sql.append("  DISTINCT ENTITY, LINK, ");
 		sql.append(" :BLDAT,");
 		sql.append(" :BLART,");
 		sql.append(" :BUKRS,");
