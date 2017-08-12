@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.receipts.impl;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -203,6 +204,24 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		logger.debug("Leaving");
 		
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);	
+	}
+
+	@Override
+	public Date getMaxReceivedDateByReference(String finReference) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select MAX(T2.receivedDate)" );
+		selectSql.append(" From FINRECEIPTHEADER T1 " );
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID" );
+		selectSql.append(" where T1.Reference = '" + finReference + "'" );
+		
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		
+		return  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);	
 	}
 
 }

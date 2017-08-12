@@ -164,7 +164,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			FinanceRepayments repayment = repayments.get(i);
 
 			//MAx OD amounts is same as repayments balance amounts
-			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
 				continue;
 			}
 

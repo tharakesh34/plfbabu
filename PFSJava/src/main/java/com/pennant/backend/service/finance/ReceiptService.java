@@ -28,4 +28,5 @@ public interface ReceiptService {
 	InvocationTargetException, InterfaceException;
 	List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal totReceiptAmount,
 			Date valueDate, List<FinanceRepayments> repayments, boolean resetReq);
+	Date getMaxReceiptDate(String finReference);
 }

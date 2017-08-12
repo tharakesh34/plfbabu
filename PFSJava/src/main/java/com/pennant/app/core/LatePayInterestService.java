@@ -93,7 +93,7 @@ public class LatePayInterestService extends ServiceHelper {
 			FinanceRepayments repayment = repayments.get(i);
 
 			//MAx OD amounts is same as repayment balance amounts
-			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
 				continue;
 			}
 

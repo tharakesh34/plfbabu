@@ -4059,8 +4059,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			if(!this.receivedDate.isDisabled()){
+				Date prvMaxReceivedDate = getReceiptService().getMaxReceiptDate(getFinanceMain().getFinReference());
+				if(prvMaxReceivedDate == null){
+					prvMaxReceivedDate = getFinanceMain().getFinStartDate();
+				}
 				this.receivedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"), true, 
-						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), true));
+						prvMaxReceivedDate, DateUtility.getAppDate(), true));
 			}
 		}
 		

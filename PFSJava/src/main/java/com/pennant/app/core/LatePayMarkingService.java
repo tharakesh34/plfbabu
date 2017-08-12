@@ -140,10 +140,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (totPaidBefSchDate.compareTo(totalDue) >= 0) {
 			fod.setFinCurODDays(0);
 			if (reset) {
-				fod.setTotPenaltyAmt(BigDecimal.ZERO);
-				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-				fod.setLPIAmt(BigDecimal.ZERO);
-				fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
+				fod.setTotPenaltyAmt(fod.getTotPenaltyPaid().add(fod.getTotWaived()));
+				fod.setTotPenaltyBal(BigDecimal.ZERO);
+				fod.setLPIAmt(fod.getLPIPaid().add(fod.getLPIWaived()));
+				fod.setLPIBal(BigDecimal.ZERO);
 			}
 		}
 
