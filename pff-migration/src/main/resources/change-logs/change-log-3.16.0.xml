@@ -2929,4 +2929,9 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			]]>	
 		</sql>
 	</changeSet>
+	<changeSet id="217" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('60211','EN','E','Earlier Receipt approved with valuedate:{0}. Future Receipts not allowed before the date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
