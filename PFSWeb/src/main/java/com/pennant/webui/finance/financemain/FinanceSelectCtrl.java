@@ -1123,9 +1123,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL) &&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)&&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS) &&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY) &&
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			
 			openFinanceMainDialog(item);
 			
@@ -1164,12 +1163,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 
-			openFinanceCovenantDialog(item);
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
-			
 			openFinCovenantMaintanceDialog(item);
-			
+
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
 				final Listitem li = this.getListBoxFinance().getSelectedItem();
@@ -1218,6 +1213,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	}
 	
+	@SuppressWarnings("unused")
 	private void openFinanceCovenantDialog(Listitem item) {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
@@ -2372,8 +2368,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			// FinMaintainInstruction
-			FinMaintainInstruction finMaintainInstruction = finCovenantMaintanceService.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
-
+			FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
+			if (StringUtils.equals(aFinanceMain.getRcdMaintainSts(), moduleDefiner)) {
+				finMaintainInstruction = finCovenantMaintanceService.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+			} else {
+				finMaintainInstruction.setNewRecord(true);
+			}
 			// FinanceDetails
 			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain, moduleDefiner);
 
@@ -2674,15 +2674,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_HOLDEMI;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_ROLLOVER;
 					workflowCode =  FinanceConstants.FINSER_EVENT_HOLDEMI;
-				}else if("tab_Covenants".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_COVENANTS;
-					eventCodeRef  = "";
-					workflowCode =  FinanceConstants.FINSER_EVENT_COVENANTS;
-				} else if("tab_FinCovenants".equals(tab.getId())) {
-					eventCodeRef  = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_FINCOVENANTS;
-					workflowCode =  FinanceConstants.FINSER_EVENT_FINCOVENANTS;
+				} else if ("tab_FinCovenants".equals(tab.getId())) {
+					eventCodeRef	= "";
+					moduleDefiner	= FinanceConstants.FINSER_EVENT_COVENANTS;
+					workflowCode	= FinanceConstants.FINSER_EVENT_COVENANTS;
 				}
+				
 				return;
 			}
 		}else{
@@ -2741,7 +2738,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		this.searchObject.addTabelName("FinanceMaintenance_View");
+		
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+			this.searchObject.addTabelName("CovenantsMaintenance_View");
+		} else {
+			this.searchObject.addTabelName("FinanceMaintenance_View");
+		}
+		
 		if(isDashboard){
 			this.searchObject.addFilterEqual("RcdMaintainSts", moduleDefiner);
 		}
@@ -2774,7 +2777,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)){
+		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)){
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 		

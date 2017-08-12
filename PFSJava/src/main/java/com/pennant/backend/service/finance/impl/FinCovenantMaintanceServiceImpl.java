@@ -160,7 +160,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		if (finMaintainInstruction.getFinCovenantTypeList() != null
 				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
 			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
-			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), tableType);
+			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "_Temp");
 			auditDetails.addAll(details);
 		}
 
@@ -222,14 +222,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
 
-		FinMaintainInstruction finMaintainInstruction = getFinMaintainInstructionDAO()
-				.getFinMaintainInstructionByFinRef(finreference, event, "_View");
-
-		if (finMaintainInstruction != null) {
-			return finMaintainInstruction;
-		} else {
-			return new FinMaintainInstruction();
-		}
+		return getFinMaintainInstructionDAO().getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
 	}
 
 	/**
@@ -305,7 +298,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		if (finMaintainInstruction.getFinCovenantTypeList() != null
 				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
 			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
-			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), TableType.MAIN_TAB);
+			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "");
 			auditDetails.addAll(details);
 		}
 
@@ -386,7 +379,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, false);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
@@ -425,20 +418,20 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @param usrLanguage
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean isUniqueCheckReq) {
 		logger.debug("Entering");
 
 		// Get the model object.
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (finMaintainInstruction.isNew() && finMaintainInstructionDAO.isDuplicateKey(
+		if (isUniqueCheckReq && finMaintainInstruction.isNew() && finMaintainInstructionDAO.isDuplicateKey(
 				finMaintainInstruction.getEvent(), finMaintainInstruction.getFinReference(),
 				finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstructionLevel") + ": "
+			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": "
 					+ finMaintainInstruction.getEvent();
-			parameters[1] = PennantJavaUtil.getLabel("label_FinMaintainInstructionDecipline") + ": "
+			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : "
 					+ finMaintainInstruction.getFinReference();
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
@@ -458,7 +451,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return
 	 */
 	private List<AuditDetail> processingFinCovenantsList(List<AuditDetail> auditDetails, String finReference,
-			TableType type) {
+			String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -478,7 +471,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			String rcdType = "";
 			String recordStatus = "";
 
-			if (StringUtils.isEmpty(type.toString())) {
+			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				finCovenantType.setRoleCode("");
 				finCovenantType.setNextRoleCode("");

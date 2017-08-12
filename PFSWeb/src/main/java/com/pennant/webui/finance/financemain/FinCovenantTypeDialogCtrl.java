@@ -239,8 +239,6 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (isWorkFlowEnabled() && !isNewFinance()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinCovenantTypeDialog");
-			}else{
-				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			/* set components visible dependent of the users rights */
@@ -393,8 +391,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinCovenantType);
 
-			this.window_FinCovenantTypeDialog.setHeight("45%");
-			this.window_FinCovenantTypeDialog.setWidth("75%");
+			this.window_FinCovenantTypeDialog.setHeight("35%");
+			this.window_FinCovenantTypeDialog.setWidth("80%");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinCovenantTypeDialog.doModal();
 
@@ -409,6 +407,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+		
 		if (getFinCovenantType().isNewRecord()) {
 			this.covenantType.setReadonly(isReadOnly("FinCovenantTypeDialog_covenantType"));
 			this.space_receivableDate.setSclass("");
@@ -417,11 +416,42 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		} else {
 			this.covenantType.setReadonly(true);
 		}
+		
 		this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
 		this.description.setReadonly(isReadOnly("FinCovenantTypeDialog_description"));
 		this.alwWaiver.setDisabled(isReadOnly("FinCovenantTypeDialog_alwWaiver"));
 		this.alwPostpone.setDisabled(isReadOnly("FinCovenantTypeDialog_alwPostpone"));
 		this.receivableDate.setDisabled(isReadOnly("FinCovenantTypeDialog_receivableDate"));
+		
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+
+			if (getFinCovenantType().isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			if (newCustomer) {
+				if (enqiryModule) {
+					this.btnCtrl.setBtnStatus_New();
+					this.btnSave.setVisible(false);
+					btnCancel.setVisible(false);
+				} else if (isNewRecord()) {
+					this.btnCtrl.setBtnStatus_Edit();
+					btnCancel.setVisible(false);
+				} else {
+					this.btnCtrl.setWFBtnStatus_Edit(newCustomer);
+				}
+			} else {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(true);
+			}
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -746,7 +776,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						
-						if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+						if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 							getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
 						} else {
 							getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
@@ -857,7 +887,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					
-					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 						getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
 					} else {
 						getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
@@ -888,7 +918,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		errParm[1] = PennantJavaUtil.getLabel("FinCovenantType_CovenantType") + ":" + valueParm[1];
 
 		List<FinCovenantType> covenantsList = new ArrayList<FinCovenantType>();
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINCOVENANTS)) {
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			covenantsList = getFinCovenantMaintanceDialogCtrl().getFinCovenantTypesDetailList();
 		} else {
 			covenantsList = getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList();
@@ -985,22 +1015,28 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (dcoType != null) {
 				this.covenantType.setValue(dcoType.getDocTypeCode());
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
-				validatewithCustDoc(dcoType.getDocTypeCode());
+				validatewithCustDoc(dcoType);
 			}
 		}
 
 		logger.debug("Leaving");
 	}
 
-	private void validatewithCustDoc(String docTypeCode) {
+	/**
+	 * 
+	 * @param dcoType
+	 */
+	private void validatewithCustDoc(DocumentType dcoType) {
 		logger.debug("Entering");
+
 		if (getFinancedetail().getCustomerDetails() != null
 				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+
 			for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails().getCustomerDocumentsList()) {
-				if (custdocument.getCustDocCategory().equals(docTypeCode)) {
+				if (custdocument.getCustDocCategory().equals(dcoType.getDocTypeCode())) {
 					this.covenantType.setValue("");
 					this.covenantType.setDescription("");
-					MessageUtil.showError(custdocument.getLovDescCustDocCategory() + " : is Already Captured.Please Check in Customer Documents");
+					MessageUtil.showError(dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Customer Documents");
 				}
 			}
 

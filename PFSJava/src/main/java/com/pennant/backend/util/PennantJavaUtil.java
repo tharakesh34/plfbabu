@@ -1391,6 +1391,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinTaxUploadDetail", new ModuleMapping("FinTaxUploadDetail", FinTaxUploadDetail.class, new String[] { "FinTaxUploadDetail",
 		"FinTaxUploadDetail_AView" }, gstFileUplod, new String[] {"batchReference","taxCode"},null, 300));
 		
+		ModuleUtil.register("FinMaintainInstruction", new ModuleMapping("FinMaintainInstruction", FinMaintainInstruction.class,
+				new String[] { "FinMaintainInstructions", "FinMaintainInstruction_AView" }, finMaintainWF, new String[] {
+						"FinReference", "Event" }, null, 300));
 		
 		/************ Finance Related Module Details *************/
 
@@ -1726,10 +1729,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinAssetEvaluation", new ModuleMapping("FinAssetEvaluation", FinAssetEvaluation.class,
 				new String[] { "FinAssetEvaluation", "FinAssetEvaluation_AView" }, masterWF, new String[] {
 						"FinReference", "TypeofValuation" }, null, 300));
-		
-		ModuleUtil.register("FinMaintainInstruction", new ModuleMapping("FinMaintainInstruction", FinMaintainInstruction.class,
-				new String[] { "FinMaintainInstructions", "FinMaintainInstruction_AView" }, masterWF, new String[] {
-						"FinReference", "Event" }, null, 300));
 
 		/************* Miscellaneous *************/
 
