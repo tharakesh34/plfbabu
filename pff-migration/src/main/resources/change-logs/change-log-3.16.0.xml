@@ -2934,4 +2934,44 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 	INSERT INTO ErrorDetails VALUES('60211','EN','E','Earlier Receipt approved with valuedate:{0}. Future Receipts not allowed before the date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="218" author="murthy.y">
+		<dropPrimaryKey constraintName="PK_DM_COA_APPID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
+	</changeSet>
+	<changeSet id="218.1" author="murthy.y">
+		<addPrimaryKey columnNames="APPLID, APPLICANT_TYPE, BATCH_ID" constraintName="PK_DM_COA_APPID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
+	</changeSet>
+	<changeSet id="219" author="murthy.y">
+		<dropPrimaryKey constraintName="PK_DM_LOANVOUC_AGGID_BID"  tableName="DM_LOAN_VOUCHER_DETAILS"/>
+	</changeSet>
+	<!-- <changeSet id="219.1" author="murthy.y">
+		<addPrimaryKey columnNames="LEA_VOUCHERID, BATCH_ID" constraintName="PK_DM_LOANVOUC_AGGID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
+	</changeSet> -->
+	<changeSet id="220" author="murthy.y">
+		<dropPrimaryKey constraintName="PK_DM_LWC_AGGID_BID"  tableName="DM_LOANWISE_CHARGE_DETAILS"/>
+	</changeSet>
+	<changeSet id="220.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DM_LOANWISE_CHARGE_DETAILS;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="220.2" author="murthy.y">
+		<addPrimaryKey columnNames="TXNADVICEID, BATCH_ID" constraintName="PK_DM_LWC_AGGID_BID"  tableName="DM_LOANWISE_CHARGE_DETAILS"/>
+	</changeSet>
+	<changeSet id="220.3" author="murthy.y">
+		<createView viewName="DM_LOANWISE_CHARGE_DTLS_VIEW" replaceIfExists="true">
+			  SELECT SUBSTR(T1.FINREFERENCE,9,LENGTH(T1.FINREFERENCE))  AGREEMENTID,M.ADVISEID TXNADVICEID,
+			  M.FEETYPEID CHARGEID,NULL CHARGECODEID,F.FEETYPEDESC CHARGEDESC,UDF_CONVERTCURRENCY(M.ADVISEAMOUNT,'INR','INR') CHARGEAMT,NULL STATUS,
+					NULL AMTINPROCESS,UDF_CONVERTCURRENCY(M.PAIDAMOUNT,'INR','INR') TXNADJUSTEDAMT,
+			    UDF_CONVERTCURRENCY(M.ADVISEAMOUNT,'INR','INR') ADVICEAMT,M.POSTDATE ADVICEDATE,(SELECT TO_DATE(SYSPARMVALUE, 'YYYY-MM-DD') SYSPARMVALUE 
+					FROM SMTPARAMETERS WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+					(SELECT TO_DATE(SYSPARMVALUE, 'YYYY-MM-DD')  SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE='VALUE_DATE')  PROCESSDATE,'N' PROCESSED_FLAG,'' SEGMENT,NULL BATCH_ID
+					FROM FINPFTDETAILS T1
+					INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
+			    INNER JOIN MANUALADVISE M ON M.FINREFERENCE=T1.FINREFERENCE
+			    LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+			    WHERE SUBSTR(T1.FINREFERENCE,9,LENGTH(T1.FINREFERENCE)) IS NOT NULL
+		</createView>
+	</changeSet>
 </databaseChangeLog>
