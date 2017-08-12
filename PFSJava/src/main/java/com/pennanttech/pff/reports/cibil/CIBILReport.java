@@ -76,12 +76,12 @@ public class CIBILReport {
 
 		initlize();
 
-		File reportName = createFile();
+		File cibilFile = createFile();
 
-		final BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile));
 		try {
 
-			headerId = cibilService.logFileInfo(reportName.getName(), CBIL_REPORT_MEMBER_ID,
+			headerId = cibilService.logFileInfo(cibilFile.getName(), CBIL_REPORT_MEMBER_ID,
 					CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD, CBIL_REPORT_PATH);
 
 			cibilService.deleteDetails();
@@ -154,7 +154,7 @@ public class CIBILReport {
 			if (Event.MOVE_TO_S3_BUCKET.name().equals(config.getPostEvent())) {
 				AmazonS3Bucket bucket = new AmazonS3Bucket(config.getRegionName(), config.getBucketName(),
 						EncryptionUtil.decrypt(config.getAccessKey()), EncryptionUtil.decrypt(config.getSecretKey()));
-				bucket.putObject(reportName, config.getPrefix());
+				bucket.putObject(cibilFile, config.getPrefix());
 			}
 
 			EXTRACT_STATUS.setStatus("S");
