@@ -743,6 +743,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
+		
 		final FinCovenantType aFinCovenantType = new FinCovenantType();
 		BeanUtils.copyProperties(getFinCovenantType(), aFinCovenantType);
 		String tranType = PennantConstants.TRAN_WF;
@@ -756,6 +757,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (StringUtils.isBlank(aFinCovenantType.getRecordType())) {
 				aFinCovenantType.setVersion(aFinCovenantType.getVersion() + 1);
 				aFinCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aFinCovenantType.setNewRecord(true);
 
 				if (isWorkFlowEnabled()) {
 					aFinCovenantType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -766,6 +768,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			} else if (StringUtils.trimToEmpty(aFinCovenantType.getRecordType()).equals(PennantConstants.RCD_UPD)) {
+				aFinCovenantType.setVersion(aFinCovenantType.getVersion() + 1);
+				aFinCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
 			try {
