@@ -46,5 +46,9 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtFinMaintainIns" tableName="AdtFinMaintainInstructions" />
 	
 	</changeSet>
-
+		<changeSet id="3" author="Chaitanya.ch">
+		<addColumn tableName="AdtFinFeeDetail" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
 </databaseChangeLog>
