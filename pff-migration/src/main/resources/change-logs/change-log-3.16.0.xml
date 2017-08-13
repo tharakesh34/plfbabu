@@ -2974,4 +2974,15 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			    WHERE SUBSTR(T1.FINREFERENCE,9,LENGTH(T1.FINREFERENCE)) IS NOT NULL
 		</createView>
 	</changeSet>
+	<changeSet id="221" author="Chaitanya.ch">
+		<addColumn tableName="FinFeeDetail" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+	<changeSet id="222" author="Chaitanya.ch">
+		<addColumn tableName="FinFeeDetail_Temp" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+
 </databaseChangeLog>
