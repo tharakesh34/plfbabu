@@ -2984,5 +2984,202 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 			<column name="PostDate" type="datetime" ></column>
 		</addColumn>
  	</changeSet>
+	<changeSet id="223" author="Prasad">
+    <createView viewName="DM_LOANWISE_REPAYSCHEDULE_VIEW" replaceIfExists="true">
+        <![CDATA[ select T1.FinReference AGREEMENTNO,substr(T1.FinReference,9,length(T1.FinReference)) AGREEMENTID,
+		t2.InstNumber PROPINSTLID,t2.InstNumber EMI_NO,t2.SchDate DUEDATE,
+		udf_convertcurrency(t2.BalanceForPftCal,T1.finccy,'INR')  OPENING_PRINCIPAL,
+		udf_convertcurrency(t2.RepayAmount,T1.finccy,'INR')  INSTALMENT_AMT,
+		udf_convertcurrency(t2.PrincipalSchd,T1.finccy,'INR')  PRINCIPAL_AMT,
+		udf_convertcurrency(t2.ProfitSchd,T1.finccy,'INR')  INTEREST_AMT,
+		udf_convertcurrency(t2.ClosingBalance,T1.finccy,'INR')  CLOSING_PRINCIPAL,t2.SchdMethod INSTAL_TYPE,
+		null TOTAL_AMOUNT_DUE,
+		udf_convertcurrency(t1.FinAssetvalue,T1.finccy,'INR') DROPLINE_LIMIT,
+		udf_convertcurrency((FinAssetvalue-fincurrassetvalue),T1.finccy,'INR') ACT_AVAILABLE_LIMIT,
+		udf_convertcurrency(FP.TOTALPRISCHD,T1.finccy,'INR') ACT_UTILISATION_LIMIT,case when BPIOrHoliday='H' then 'Y' else 'N' end EMI_HOLIDAY,
+		NULL BATCH_ID,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  BUSINESSDATE
+		from financemain t1
+		inner join FINPFTDETAILS FP on t1.finreference=FP.finreference
+		inner join FinScheduleDetails t2 on t1.finreference=t2.finreference
+    where DisbonSchdate=0]]>
+    </createView>
+</changeSet>
+<changeSet id="224" author="Prasad">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+        <![CDATA[SELECT NULL MODULEID,substr(P.FinEvent,1,1) STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+		substr(P.FinEvent,1,1) VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+		RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+		NULL SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTR(FM.FinReference,9,
+		LENGTH(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+		FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+		substr(P.Account,1,12) FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+		AM.CostCenterid COST_CENTRE,
+		coalesce(Case when P.Drorcr='D' then P.postamount end,0) DRAMT,
+		coalesce(Case when P.Drorcr='C' then P.postamount end,0) CRAMT,
+		P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+		NULL CHEQUEID,
+		(SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		(SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+		NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+		FROM Postings P 
+		Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+		Inner join FinPftDetails FP on FM.finreference=FP.finreference
+		Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+		Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+		INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+		INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+		Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+		Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE]]>
+    </createView>
+</changeSet>
+<changeSet id="225" author="Prasad">
+    <createView viewName="DM_LOANWISE_CHARGE_DTLS_VIEW" replaceIfExists="true">
+        <![CDATA[ select substr(T1.FinReference,9,length(T1.FinReference))  AGREEMENTID,m.adviseid TXNADVICEID,
+  m.Feetypeid CHARGEID,null CHARGECODEID,f.feetypedesc CHARGEDESC,udf_convertcurrency(m.Adviseamount,'INR','INR') CHARGEAMT,null STATUS,
+		null AMTINPROCESS,udf_convertcurrency(m.PaidAmount,'INR','INR') TXNADJUSTEDAMT,
+    udf_convertcurrency(m.Adviseamount,'INR','INR') ADVICEAMT,m.postdate ADVICEDATE,(Select to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue 
+		from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+		(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE')  PROCESSDATE,'N' PROCESSED_FLAG,'' SEGMENT,null BATCH_ID
+		from Finpftdetails t1
+		inner join financemain t2 on t1.finreference=t2.finreference
+    inner join ManualAdvise m on m.finreference=t1.finreference
+    LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+    where substr(T1.FinReference,9,length(T1.FinReference)) is not null]]>
+    </createView>
+</changeSet>
+<changeSet id="226" author="Prasad">
+    <createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+        <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+     Select T1.Finreference,Schdate,  'Amount Financed - Payable ('||T1.Finreference||')' Particulars,0  Debit,
+			 T1.DisbAmount+(CASE WHEN T1.Schdate = T2.FInStartDate Then T2.feechargeamt else 0 End ) Credit,1 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (t2.closingstatus!='C' or t2.closingstatus is null) and 	T1.Disbonschdate=1
+      union all
+      Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,2 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where (Status!='CANCELED' or Status is null)
+       union all
+		Select T1.Finreference,Schdate, 'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')'  Particulars,
+			  T1.Repayamount-T1.PartialPaidamt Debit, 0  Credit,3 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and (t2.closingstatus!='C' or t2.closingstatus is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') and 	T1.Disbonschdate=0  	
+  union all
+  Select t2.finreference,Schdate,FeeTypeDesc ||'- Due ('||T2.Finreference||')', SchAmount Debit, 0 credit,4 Ordby from finfeescheduledetail T1 
+  Inner Join FinFeeDetail T2 on T1.FeeID = T2.FeeID
+  Inner Join FeeTypes T3 On T2.FeeTypeid = T3.FeeTypeId 
+  inner join financemain t4 on t4.FINREFERENCE =t2.FINREFERENCE
+  where SchAmount!=0 and (t4.closingstatus!='C' or t4.closingstatus is null) 
+  and  schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+union all
+     Select T1.Finreference,Schdate,  'Part Prepayment Amount ('||T1.Finreference||')' Particulars,
+			T1.PartialPaidamt Debit,0 Credit,5 Ordby       
+	   from finscheduledetails T1 inner join
+          financemain t2 on t1.finreference = t2.finreference
+	   where T1.PartialPaidamt !=0 and  
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+      union all
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,6 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0 and (t2.closingstatus!='C' or t2.closingstatus is null)
+  union all
+    Select T.Finreference,T1.PostDate,'Amount Paid Vide '||T1.PaymentType||' :'|| (case when T1.PaymentType in ('CHEQUE','DD') then T1.Favournumber else T1.Transactionref end)||'('||T.Finreference||')' ,
+    T1.PaymentAmount Debit, 0 credit,7 Ordby
+    from paymentheader T inner join
+         paymentinstructions T1 on T1.Paymentid =T.Paymentid inner join
+         Financemain T2 on T2.Finreference = T.Finreference
+        where (T1.Status!='CANCELED' or T1.Status is null) 
+              and T1.PostDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+  union all
+	Select REFERENCE,T1.Receiptdate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||PAYMENTREF||' '||FavourNumber ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,8 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where (T1.ReceiptModeStatus Not IN ('C') or T1.ReceiptModeStatus is null)
+	union all 	
+       
+        Select REFERENCE,Bouncedate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Bounced For '||PAYMENTTYPE ||' No.:'||FavourNumber ||' ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash Bounced For Receipt No.'||PAYMENTREF ||'('||REFERENCE||')' end) Particulars,
+			   Amount debit, 0 credit,9 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID And T1.ReceiptMode = T2.PaymentType  inner join
+         ManualAdvise T3 on T3.RECEIPTID = T1.RECEIPTID 
+       Where T1.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
+  union all
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,10 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where (M.AdviseType <> 2 or M.AdviseType is null) and 	m.ADVISEAMOUNT >0 and RECEIPTID not in (Select RECEIPTID from PRESENTMENTDETAILS) 
+    union all   
+    SELECT M.FINREFERENCE,M.POSTDATE,'Bounce - Due for Installment:'||T5.InstNumber||' ('||M.Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,11 Ordby
+		FROM MANUALADVISE M
+    INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0
+    INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate
+		where (M.AdviseType <> 2 or M.AdviseType is null) and	m.ADVISEAMOUNT >0 and FEETYPEID not in (Select FEETYPEID from FEETYPES)
+  union all
+  	SELECT FINREFERENCE,M.POSTDATE, FEETYPEDESC  ||'- Payable ('||Finreference||')' ,0 Debit ,m.ADVISEAMOUNT Credit ,12 Ordby
+		FROM MANUALADVISE M
+		INNER JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		where M.AdviseType = 2 	and 	m.ADVISEAMOUNT >0  
+	union all	  
+  Select t2.Finreference,t1.Movementdate,
+'Waived Amount '|| (CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end)||'('||t2.Finreference||')' Particulars ,0,t2.WaivedAmount,13 Ordby
+from manualadvisemovements t1 
+inner join manualadvise t2 on t1.Adviseid = t2.Adviseid
+LEFT JOIN FEETYPES F ON F.FEETYPEID = t2.FEETYPEID 
+where t2.WaivedAmount>0
+union all
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', RemainingFee+PaidAmount Debit, 0 credit,14 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where Originationfee=1 and feeSchedulemethod in ('DISB','POSP') and (RemainingFee+PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
+union all
+    Select T1.Finreference,T3.finstartdate,
+    CASE WHEN Feetypedesc is not null Then FeeTypeDesc Else ProductDesc End  ||'- Due ('||T1.Finreference||')', PaidAmount Debit, 0 credit,15 Ordby
+    from finfeedetail T1 
+    Left join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    Left join VasRecording T4 on T1.VasReference = T4.VasReference
+    Left Join VasStructure T5 on T4.ProductCode = T5.ProductCode     
+    where  (feeSchedulemethod not in ('DISB','POSP') or feeSchedulemethod is null)   and (PaidAmount)!=0 and (t3.closingstatus!='C' or t3.closingstatus is null)
 
+	union all 	
+		Select t1.finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(t1.FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		t1.TotPenaltyAmt Debit, 0 credit,16 Ordby
+		From FinODDetails T1 inner join Financemain T2 on T1.Finreference = T2.Finreference where TOtPenaltyAmt > 0 and   (t2.closingstatus!='C' or t2.closingstatus is null)
+  union all
+  Select T2.Reference,T2.Receiptdate,'TDS Adjustment('||T2.Reference||')' Particulars,0 Debit,T1.PaidAmount credit,17 ordby
+  from RECEIPTALLOCATIONDETAIL T1
+  inner join FINRECEIPTHEADER T2 on T2.RECEIPTID  = T1.RECEIPTID where T1.ALLOCATIONTYPE='TDS'
+  and (T2.ReceiptModeStatus Not IN ('C') or T2.ReceiptModeStatus is null)
+  union all  
+  Select distinct T2.Reference,Bouncedate,'TDS Adjustment Reversal('||T2.Reference||')' Particulars,T5.TDSSCHDPAYNOW Debit,0 credit, 18 ordby
+  from FINRECEIPTHEADER T2
+  inner join FINRECEIPTDETAIL T3 on T3.RECEIPTID = T2.RECEIPTID
+  inner join finrepayheader T4 on T3.Receiptseqid = T4.Receiptseqid
+  inner join (Select repayid,sum(TDSSCHDPAYNOW) TDSSCHDPAYNOW from FinRepayscheduledetail
+  where TDSSCHDPAYNOW!=0
+  group by repayid) T5 on T5.repayid =T4.repayid
+  where T3.Status ='B' 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where (Debit!=0 or credit !=0)]]>
+    </createView>
+</changeSet>
 </databaseChangeLog>
