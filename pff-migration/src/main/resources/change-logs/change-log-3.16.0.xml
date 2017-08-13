@@ -2938,21 +2938,21 @@ where menuitemcode = 'menu_Item_LoanwiseVoucherDetail';
 		<dropPrimaryKey constraintName="PK_DM_COA_APPID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
 	</changeSet>
 	<changeSet id="218.1" author="murthy.y">
-		<addPrimaryKey columnNames="APPLID, APPLICANT_TYPE, BATCH_ID" constraintName="PK_DM_COA_APPID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
+		<addPrimaryKey columnNames="APPLID, APPLICANT_TYPE,CUSTOMERID, BATCH_ID" constraintName="PK_DM_COA_APPID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
 	</changeSet>
 	<changeSet id="219" author="murthy.y">
 		<dropPrimaryKey constraintName="PK_DM_LOANVOUC_AGGID_BID"  tableName="DM_LOAN_VOUCHER_DETAILS"/>
 	</changeSet>
-	<!-- <changeSet id="219.1" author="murthy.y">
-		<addPrimaryKey columnNames="LEA_VOUCHERID, BATCH_ID" constraintName="PK_DM_LOANVOUC_AGGID_BID"  tableName="DM_COAPPLICANT_DETAILS"/>
-	</changeSet> -->
+	 <changeSet id="219.1" author="murthy.y">
+		<addPrimaryKey columnNames="LEA_VOUCHERID, BATCH_ID" constraintName="PK_DM_LOANVOUC_AGGID_BID"  tableName="DM_LOAN_VOUCHER_DETAILS"/>
+	</changeSet> 
 	<changeSet id="220" author="murthy.y">
 		<dropPrimaryKey constraintName="PK_DM_LWC_AGGID_BID"  tableName="DM_LOANWISE_CHARGE_DETAILS"/>
 	</changeSet>
 	<changeSet id="220.1" author="murthy.y">
 		<sql>
 			<![CDATA[
-				DELETE FROM DM_LOANWISE_CHARGE_DETAILS;
+				Update DM_LOANWISE_CHARGE_DETAILS set TXNADVICEID=AGREEMENTID;
 			]]>
 		</sql>
 	</changeSet>
