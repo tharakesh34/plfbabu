@@ -731,6 +731,8 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		HashMap<String, Object> map = getDefaultArguments();
 		map.put("finCovenantTypes", aFinCovenantType);
 		map.put("newRecord", "true");
+		map.put("moduleDefiner", moduleDefiner);
+				
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -758,6 +760,11 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 			if (isDeleteRecord(aFinCovenantType.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
+				
+				if(!aFinCovenantType.isAlwPostpone() && aFinCovenantType.getMandRole()!=null){
+					MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+					return;
+				}
 				aFinCovenantType.setNewRecord(false);
 
 				HashMap<String, Object> map = getDefaultArguments();
@@ -772,6 +779,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				}
 			}
 		}
+		
 
 		logger.debug("Leaving" + event.toString());
 	}

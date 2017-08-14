@@ -987,14 +987,14 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if (dcoType != null) {
 				this.covenantType.setValue(dcoType.getDocTypeCode());
 				this.covenantType.setDescription(dcoType.getDocTypeDesc());
-				validatewithCustDoc(dcoType.getDocTypeCode());
+				validatewithCustDoc(dcoType.getDocTypeCode(),dcoType.getDocTypeDesc());
 			}
 		}
 
 		logger.debug("Leaving");
 	}
 
-	private void validatewithCustDoc(String docTypeCode) {
+	private void validatewithCustDoc(String docTypeCode,String docDesc) {
 		logger.debug("Entering");
 		if (getFinancedetail().getCustomerDetails() != null
 				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
@@ -1002,7 +1002,7 @@ public class CovenantDetailDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				if (custdocument.getCustDocCategory().equals(docTypeCode)) {
 					this.covenantType.setValue("");
 					this.covenantType.setDescription("");
-					MessageUtil.showError(custdocument.getLovDescCustDocCategory() + " : is Already Captured.Please Check in Customer Documents");
+					MessageUtil.showError(docDesc + " : is Already Captured.Please Check in Customer Documents");
 				}
 			}
 
