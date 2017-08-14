@@ -1700,6 +1700,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			setAutoAllocationPayments(true);
 		}else if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
 			doFillAllocationDetail(null, null, true, true);
+			resetFeeAmounts(true);
 		}else{
 			this.allocationDetailsTab.setDisabled(true);
 		}
