@@ -68,10 +68,13 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -760,8 +763,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 			if (isDeleteRecord(aFinCovenantType.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				
-				if(!aFinCovenantType.isAlwPostpone() && aFinCovenantType.getMandRole()!=null){
+				if (validateDocumentExistance(aFinCovenantType.getCovenantType())) {
 					MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 					return;
 				}
@@ -779,9 +781,41 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				}
 			}
 		}
-		
 
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	
+	/**
+	 * 
+	 * @param dcoType
+	 */
+	private boolean validateDocumentExistance(String docTypeCode) {
+		logger.debug("Entering");
+		//validate the document selected exists with the customer/Finance
+		if (getFinanceDetail().getCustomerDetails() != null
+				&& !getFinanceDetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+
+			for (CustomerDocument custdocument : getFinanceDetail().getCustomerDetails().getCustomerDocumentsList()) {
+				if (custdocument.getCustDocCategory().equals(docTypeCode)) {
+					return true;
+				}
+			}
+
+		}
+
+		if (getFinanceDetail().getDocumentDetailsList() != null
+				&& !getFinanceDetail().getDocumentDetailsList().isEmpty()) {
+			for (DocumentDetails documentdetail : getFinanceDetail().getDocumentDetailsList()) {
+				if (StringUtils.equals(documentdetail.getDocCategory(), docTypeCode)) {
+					return true;
+				}
+			}
+
+		}
+
+		logger.debug("Leaving");
+		return false;
 	}
 
 	public HashMap<String, Object> getDefaultArguments() {

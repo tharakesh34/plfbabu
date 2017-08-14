@@ -8386,7 +8386,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 	
 	@Override
-	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain, String procEdtEvent) {
+	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain) {
 
 		//Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -8402,7 +8402,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Document details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
-				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, procEdtEvent, ""));
+				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
 
 		return financeDetail;
 	}

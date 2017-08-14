@@ -182,6 +182,6 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMainForBatch(String finReference);
 	BigDecimal getOutStandingBalFromFees(String finReference);
 	
-	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain, String procEdtEvent);
+	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
 	
  }

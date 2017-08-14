@@ -2268,7 +2268,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				finMaintainInstruction.setNewRecord(true);
 			}
 			// FinanceDetails
-			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain, moduleDefiner);
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
 
 			// Covenants List
 			finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
