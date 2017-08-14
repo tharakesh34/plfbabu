@@ -2160,9 +2160,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			List<FinRepayHeader> rpyheaders = finReceiptDetail.getRepayHeaders();
 			for (FinRepayHeader finRepayHeader : rpyheaders) {
 				List<RepayScheduleDetail> repaysch = finRepayHeader.getRepayScheduleDetails();
-				for (RepayScheduleDetail repayScheduleDetail : repaysch) {
-					if (DateUtility.compare(repayScheduleDetail.getSchDate(), schDate)==0) {
-						penaltypaidNow=penaltypaidNow.add(repayScheduleDetail.getPenaltyPayNow());
+				if(repaysch != null) {
+					for (RepayScheduleDetail repayScheduleDetail : repaysch) {
+						if (DateUtility.compare(repayScheduleDetail.getSchDate(), schDate)==0) {
+							penaltypaidNow=penaltypaidNow.add(repayScheduleDetail.getPenaltyPayNow());
+						}
 					}
 				}
 			}
