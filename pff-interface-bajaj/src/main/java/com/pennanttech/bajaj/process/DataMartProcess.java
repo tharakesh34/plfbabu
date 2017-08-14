@@ -45,7 +45,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 		transDef.setTimeout(-1);
 
 		batchID = logHeader();
-
+		
 		try {
 			loadCount();
 		} catch (Exception e) {
@@ -908,7 +908,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
 						map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs, appDate);
-						map.addValue("BATCH_ID", executionStatus.getId());
+						map.addValue("BATCH_ID", batchID);
 						
 						save(map, DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), destinationJdbcTemplate);
 						executionStatus.setSuccessRecords(successCount++);
