@@ -3494,4 +3494,59 @@ union all
  )T inner join RMTCURRENCIES C on C.ccycode= T.finccy]]>
  </createView>
  </changeSet>
+ <changeSet id="229" author="Prasad">
+    <createView viewName="FORECLOSURECHARGES_VIEW" replaceIfExists="true">
+<![CDATA[ select 
+		substr(T1.FinReference,9,length(T1.FinReference)) AGREEMENTID,udf_convertcurrency(t4.BAL_PRINCIPAL,T1.finccy,'INR')  BAL_PRINCIPAL,
+    null RESEDUL_VALUE,T4.INSTALLMENTS INSTALLMENTS,T4.ADVICES ADVICES,
+    udf_convertcurrency(t4.PENALTY,T1.finccy,'INR')  PENALTY,
+    udf_convertcurrency(t4.INTREST_ON_TERMINATION,T1.finccy,'INR')  INTREST_ON_TERMINATION,null FLOATINTREST_ON_TERMINATION,
+		udf_convertcurrency(t4.OVER_DUES,T1.finccy,'INR') OVER_DUES,udf_convertcurrency(t4.OVER_DUES,T1.finccy,'INR') CURRENT_OVERDUES,
+    udf_convertcurrency(t4.CURRENT_WAVEOFFAMT,T1.finccy,'INR') CURRENT_WAVEOFFAMT,null OVER_DISTANCE_CHARGES,
+		0 INTREST_ON_TERMINATION_PER_DAY,udf_convertcurrency(t1.PFTACCRUED,T1.finccy,'INR') INTREST_ACCRUALS,
+    udf_convertcurrency(t4.EXCESS_AMOUNT,T1.finccy,'INR') EXCESS_AMOUNT,null EXCESS_REFUND,
+		null ADVICE,null REBATE,null ADVINSTL,null EXCESSPRINPMNT,null SDAMT,
+		null SDINT,null EXCESS_INTREST_RATE,null VAT_ON_FORECLOSURE,null UNDER_DISTANCE_CHARGES,
+		udf_convertcurrency(T3.NET_PAYBALE,T1.finccy,'INR') NET_PAYBALE,udf_convertcurrency(t3.TotalFeeAmount,T1.finccy,'INR')  WAIVEOFFAMOUNT,'Foreclosure' ACTIVITY,t3.AUTHORIZEDON AUTHORIZEDON,null COMMITMENT_FEE,null ORIGINATION_FEE,
+		null PRE_EMI,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESS_DATE,
+		null CHEQUEID,t1.CLOSINGSTATUS STATUS,
+    udf_convertcurrency(T4.INTEREST_WAIVE_OFF,T1.finccy,'INR')INTEREST_WAIVE_OFF,
+    udf_convertcurrency(T4.BALANCE_PRIN_WAIVE_OFF,T1.finccy,'INR') BALANCE_PRIN_WAIVE_OFF,
+		udf_convertcurrency(t4.INSTALLMET_INT_WAIVE_OFF,T1.finccy,'INR')  INSTALLMET_INT_WAIVE_OFF,
+    udf_convertcurrency(t4.INTEREST_WAIVE_OFF,T1.finccy,'INR')  WOFF_CURRMONTH_INT,
+    udf_convertcurrency(t4.WOFF_OVERDUE_CHARGE,T1.finccy,'INR')  WOFF_OVERDUE_CHARGE,
+    udf_convertcurrency(T4.WOFF_CHQBOUNCE_CHARGES,T1.finccy,'INR') WOFF_CHQBOUNCE_CHARGES,
+		udf_convertcurrency(T4.WOFF_OTHERS,T1.finccy,'INR') WOFF_OTHERS,
+    udf_convertcurrency(T4.BALANCE_PRIN_WAIVE_OFF,T1.finccy,'INR') INSTALLMENT_PRIN_WAIVE_OFF,
+    null WOFF_PARKING_CHARGES,null TOT_OTHER_REPO_CHARGES,
+		null WOFF_OTHER_REPO_CHARGES,null TOT_REPOSESSION_CHARGES,null WOFF_REPOSESSION_CHARGES,null TOT_PARKING_CHARGES,null BATCH_ID
+		from Finpftdetails t1
+		--inner join financemain t2 on t1.finreference=t2.finreference
+    inner join (Select reference,sum(TotFeeAmount)TotalFeeAmount,sum(ReceiptAmount-coalesce(WaviedAmt,0)) NET_PAYBALE,
+                MAX(Receiptdate) AUTHORIZEDON from FINRECEIPTHEADER 
+                where receiptpurpose = 'EarlySettlement' 
+                group by reference)T3 on T3.reference =T1.finreference
+    left join  ( Select T1.reference,Count( Case when T3.Finevent='SchdlRepayment' then  T4.Schdate end)INSTALLMENTS,
+                        SUM(PriAmount)BAL_PRINCIPAL,SUM(PFTAmount)INTREST_ON_TERMINATION,
+                         sum(Coalesce( Case when T3.Finevent='E' then  RepayAMount end,0))EXCESS_AMOUNT,
+                         Count( case when m.movementid is not null then m.movementid end)ADVICES,
+                         SUM(Case when RA.AllocationType='ODC' THEN RA.PaidAMount end)PENALTY,
+                         SUM(Case when RA.AllocationType='LPFT' THEN RA.PaidAMount end)OVER_DUES,
+                         SUM(Case when RA.AllocationType is not null THEN RA.WaivedAMount end)CURRENT_WAVEOFFAMT,
+                         SUM(Case when RA.AllocationType='PFT' THEN RA.WaivedAMount end)INTEREST_WAIVE_OFF,
+                         SUM(Case when RA.AllocationType='PRI' THEN RA.WaivedAMount end)BALANCE_PRIN_WAIVE_OFF,
+                         SUM(Case when RA.AllocationType='LPFT' THEN RA.WaivedAMount end)INSTALLMET_INT_WAIVE_OFF,
+                         SUM(Case when RA.AllocationType='ODC' THEN RA.WaivedAMount end)WOFF_OVERDUE_CHARGE,
+                         SUM(Case when RA.AllocationType='BOUNCE' THEN RA.WaivedAMount end)WOFF_CHQBOUNCE_CHARGES,
+                         SUM(Case when RA.AllocationType  not in ('BOUNCE','PFT','PRI','LPFT','ODC') THEN RA.WaivedAMount end)WOFF_OTHERS
+                  from FINRECEIPTHEADER T1 inner join 
+                         FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID inner join 
+                         Finrepayheader T3 on T3.Receiptseqid = T2.Receiptseqid  inner join 
+                         Finrepayscheduledetail T4 on T4.repayid = T3.repayid left join
+                         Manualadvisemovements M on M.Receiptseqid = T2.Receiptseqid left join
+                         Receiptallocationdetail RA on RA.RECEIPTID =T1.RECEIPTID
+                  where T1.receiptpurpose = 'EarlySettlement'
+                        group by T1.reference) T4 on T4.reference =T1.finreference]]>
+ </createView>
+ </changeSet>
 </databaseChangeLog>
