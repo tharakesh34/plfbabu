@@ -3553,4 +3553,22 @@ union all
                         group by T1.reference) T4 on T4.reference =T1.finreference]]>
  </createView>
  </changeSet>
+ <changeSet author="Madhubabu" id="230">
+	<createView viewName="POSTINGS_VIEW" replaceIfExists="true">
+			 SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode                     
+  union all
+  SELECT    T1.LinkedTranId, T1.Postref, T1.PostingId, T3.Primarylinkref, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+                     inner join vasrecording T3 on T3.vasreference=T1.finreference
+		</createView>
+</changeSet>
 </databaseChangeLog>
