@@ -1244,8 +1244,6 @@ public class FinServiceInstController extends SummaryDetailService {
 				totReceiptAmt, finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), false);
 		finReceiptData.setAllocationMap(allocationMap);
 
-		BigDecimal partialPaidAmt = BigDecimal.ZERO;
-		
 		// validate repayment amount
 		Map<String, String> returnMap = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
 		if(StringUtils.isNotBlank(returnMap.get("ReturnCode"))) {
@@ -1474,7 +1472,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
 				List<FinanceRepayments> repayments = getRepaymentDetails(aFinanceDetail.getFinScheduleData(), totReceiptAmt, valueDate);
 				finODDetailsList = receiptService.getValueDatePenalties(financeDetail.getFinScheduleData(),totReceiptAmt, 
-						valueDate, repayments, false);
+						valueDate, repayments, true);
 			}
 			
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
