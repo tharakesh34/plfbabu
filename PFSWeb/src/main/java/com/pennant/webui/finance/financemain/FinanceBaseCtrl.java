@@ -1807,9 +1807,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		List<DocumentDetails> documentDetails = getFinanceDetailService().getDocumentDetails(finReference,
 				FinanceConstants.FINSER_EVENT_ORG);
 		if (documentDetails != null && !documentDetails.isEmpty()) {
-			if (getDocumentDetailDialogCtrl() != null) {				
-				documentDetailDialogCtrl.doFillDocumentDetails(documentDetails);
-			}
+			getDocumentDetailDialogCtrl().doFillDocumentDetails(documentDetails);
 		}
 	}
 
