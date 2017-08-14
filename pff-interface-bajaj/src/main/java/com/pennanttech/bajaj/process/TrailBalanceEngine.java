@@ -44,7 +44,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	public void extractReport() throws Exception {
-		generate();
+		extractData();
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(startDate, "ddMMyyyy"));
@@ -68,7 +68,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		exportData("GL_TRAIL_BALANCE_EXPORT");
 	}
 
-	public void generate() throws Exception {
+	public void extractData() throws Exception {
 		logger.info("Extracting data...");
 		initilize();
 
@@ -284,9 +284,22 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	private void prepareTrialBalanceDate() throws Exception {
 		logger.info("Preparing Trailbalance Date..");
-		
-		startDate = DateUtil.getMonthStart(appDate);
-		endDate = appDate;
+		Date startDate = DateUtil.getMonthStart(appDate);
+		Date endDate = appDate;
+
+		if (startDate.compareTo(endDate) != 0) {
+			logger.info("Start Date: " + DateUtil.format(startDate, DateUtil.DateFormat.LONG_DATE));
+			logger.info("End Date: " + DateUtil.format(endDate, DateUtil.DateFormat.LONG_DATE));
+			return;
+		}
+
+		Date date = DateUtil.addMonths(startDate, -1);
+
+		startDate = DateUtil.getMonthStart(date);
+		endDate = DateUtil.getMonthEnd(date);
+
+		logger.info("Start Date: " + DateUtil.format(startDate, DateUtil.DateFormat.LONG_DATE));
+		logger.info("End Date: " + DateUtil.format(endDate, DateUtil.DateFormat.LONG_DATE));
 	}
 
 	private void initilize() throws Exception {
