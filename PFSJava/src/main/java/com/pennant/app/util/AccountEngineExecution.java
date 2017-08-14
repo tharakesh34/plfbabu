@@ -547,6 +547,9 @@ public class AccountEngineExecution implements Serializable {
 		accountsList = null;
 
 		ReturnDataSet returnDataSet;
+		//This is to maintain the multiple transactions with in the same linked train ID. 
+		//Late pay and Repay will be coming separately and will have same linked tranID.
+		int seq = aeEvent.getTransOrder();
 		for (TransactionEntry transactionEntry : transactionEntries) {
 
 			returnDataSet = new ReturnDataSet();
@@ -564,7 +567,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
-			returnDataSet.setTransOrder(transactionEntry.getTransOrder());
+			returnDataSet.setTransOrder(seq++);
 			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 					+ transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
@@ -662,7 +665,8 @@ public class AccountEngineExecution implements Serializable {
 				returnDataSets.addAll(newEntries);
 			}
 		}
-
+		aeEvent.setTransOrder(seq);
+		
 		accountsMap = null;
 		accountCcyMap = null;
 

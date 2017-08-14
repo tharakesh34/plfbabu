@@ -47,6 +47,7 @@ public class AEEvent {
 	//VAS
 	private String					vasPostAgainst;
 	private String					collateralRef;
+	private int						transOrder = 0;
 
 	public AEEvent() {
 
@@ -318,6 +319,14 @@ public class AEEvent {
 
 	public void setCustAppDate(Date custAppDate) {
 		this.custAppDate = custAppDate;
+	}
+
+	public int getTransOrder() {
+		return transOrder;
+	}
+
+	public void setTransOrder(int transOrder) {
+		this.transOrder = transOrder;
 	}
 
 }
