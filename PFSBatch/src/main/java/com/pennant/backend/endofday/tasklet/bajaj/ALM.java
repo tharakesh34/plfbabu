@@ -10,6 +10,8 @@ import com.pennanttech.bajaj.process.ALMProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.process.ProjectedAccrualProcess;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
@@ -46,7 +48,6 @@ public class ALM implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Data Extract Preparation On : " + valueDate);
 
 		try {
 			
@@ -64,22 +65,25 @@ public class ALM implements Tasklet {
 				}
 
 			}
+			
 			// if month end then only it should run
-			if (monthEnd) {
-
+			if (!monthEnd) {
+				return RepeatStatus.FINISHED;
 			}
 			
+			logger.debug("START: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			DataEngineStatus status = ALMProcess.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ALMProcessThread(new Long(1000), projectedAccrualProcess)).start();;
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
+			logger.debug("COMPLETED: ALM Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
-		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 

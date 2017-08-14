@@ -8,6 +8,8 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +49,7 @@ public class Cibil implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Data Extract Preparation On : " + valueDate);
-
+		
 		try {
 			
 			boolean monthEnd = false;
@@ -65,10 +66,13 @@ public class Cibil implements Tasklet {
 				}
 
 			}
-			// if month end then only it should run
-			if (monthEnd) {
 
+			// if month end then only it should run
+			if (!monthEnd) {
+				return RepeatStatus.FINISHED;
 			}
+			
+			logger.debug("START: CIBIL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = CIBILReport.EXTRACT_STATUS;
 			status.setStatus("I");
@@ -76,11 +80,12 @@ public class Cibil implements Tasklet {
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 			
+			logger.debug("COMPLETED: CIBIL Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
-		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 

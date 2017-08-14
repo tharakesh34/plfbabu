@@ -9,6 +9,8 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.bajaj.process.DataMartProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -62,10 +64,13 @@ public class DataMart implements Tasklet {
 				}
 
 			}
+			
 			// if month end then only it should run
-			if (monthEnd) {
-
+			if (!monthEnd) {
+				return RepeatStatus.FINISHED;
 			}
+			
+			logger.debug("START: Data-Mart Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = DataMartProcess.EXTRACT_STATUS;
 			status.setStatus("I");
@@ -73,11 +78,13 @@ public class DataMart implements Tasklet {
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 			
+			logger.debug("Eompleted: Data-Mart Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
-		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 

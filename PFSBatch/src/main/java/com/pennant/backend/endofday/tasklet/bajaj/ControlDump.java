@@ -9,7 +9,8 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.bajaj.process.ControlDumpProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +26,7 @@ public class ControlDump implements Tasklet {
 	private Logger logger = Logger.getLogger(ControlDump.class);
 
 	private DataSource dataSource;
+	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
@@ -62,22 +64,26 @@ public class ControlDump implements Tasklet {
 				}
 
 			}
+			
 			// if month end then only it should run
-			if (monthEnd) {
-
+			if (!monthEnd) {
+				return RepeatStatus.FINISHED;
 			}
-				
+			
+			logger.debug("START: Control-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			
 			DataEngineStatus status = ControlDumpProcess.EXTRACT_STATUS;
 			status.setStatus("I");
 			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
-					
+			
+			logger.debug("COMPLETED: ontrol-Dump Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
-		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 

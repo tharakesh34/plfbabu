@@ -1,14 +1,14 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.bajaj.process.PosidexRequestProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,28 +43,9 @@ public class Posidex implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Data Extract Preparation On : " + valueDate);
-
+		
 		try {
-			
-			boolean monthEnd = false;
-			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
-			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
-					monthEnd = true;
-				}
-			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
-					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
-						monthEnd = true;
-					}
-				}
-
-			}
-			// if month end then only it should run
-			if (monthEnd) {
-
-			}
+			logger.debug("START: Posidex data-extraction Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = PosidexRequestProcess.EXTRACT_STATUS;
 			status.setStatus("I");
@@ -72,8 +53,10 @@ public class Posidex implements Tasklet {
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 			
+			logger.debug("COMPLETED: Posidex data-extraction Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
 		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
