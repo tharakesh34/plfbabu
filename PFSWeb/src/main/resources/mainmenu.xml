@@ -427,7 +427,7 @@
 	   <menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul" rightName="menuItem_finance_ManualAdvise"/>
 	   <menuItem id="menu_Item_FinanceTaxDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>
 	   <menuItem id="menu_Item_FinanceTaxDetailUpload" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetail"/>  
-	   <!-- <menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FinCovenants"/> --> 
+	   <menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_FinCovenants"/> 
  	</menu>
  
 	<!-- Finance Inquiry Details -->
