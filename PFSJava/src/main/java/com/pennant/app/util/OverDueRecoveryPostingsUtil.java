@@ -129,6 +129,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
+			aeEvent.setLinkedTranId(linkedTranId);
 			amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 			amountCodes.setFinType(financeMain.getFinType());
