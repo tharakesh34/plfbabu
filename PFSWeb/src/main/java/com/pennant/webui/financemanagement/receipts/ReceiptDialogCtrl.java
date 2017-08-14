@@ -2661,6 +2661,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		Events.sendEvent("onFulfill", this.receiptAmount, null);
+		resetFeeAmounts(true);
 		
 		//feesRecalculation(true);
 		
