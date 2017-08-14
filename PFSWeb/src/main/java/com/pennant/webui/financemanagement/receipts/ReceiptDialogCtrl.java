@@ -2660,10 +2660,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
 		
-		Events.sendEvent("onFulfill", this.receiptAmount, null);
-		resetFeeAmounts(true);
+		if (this.receiptPurpose.getSelectedIndex() > 0) {
+			String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+			if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			}
+		}
 		
-		//feesRecalculation(true);
+		Events.sendEvent("onFulfill", this.receiptAmount, null);
 		
 		logger.debug("Leaving" + event.toString());
 	}
