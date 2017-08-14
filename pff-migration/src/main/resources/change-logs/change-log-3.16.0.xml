@@ -3118,6 +3118,10 @@ union all
 			<column name="PostDate" type="datetime" ></column>
 		</addColumn>
  	</changeSet>
+ 	<changeSet id="222.1" author="Prasad">
+		<sql>Update FinFeeDetail set PostDate=lastmnton;
+			 Update FinFeeDetail_temp set PostDate=lastmnton;</sql>
+ 	</changeSet>
 	<changeSet id="223" author="Prasad">
     <createView viewName="DM_LOANWISE_REPAYSCHEDULE_VIEW" replaceIfExists="true">
         <![CDATA[ select T1.FinReference AGREEMENTNO,substr(T1.FinReference,9,length(T1.FinReference)) AGREEMENTID,
