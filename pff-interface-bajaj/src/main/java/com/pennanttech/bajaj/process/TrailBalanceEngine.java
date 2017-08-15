@@ -39,7 +39,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private Map<String, String> parameters = new HashMap<>();
 
 	public TrailBalanceEngine(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, userId, App.DATABASE.name(), true, valueDate, EXTRACT_STATUS);
+		super(dataSource, userId, App.DATABASE.name(), true, appDate, EXTRACT_STATUS);
 		this.appDate = appDate;
 	}
 

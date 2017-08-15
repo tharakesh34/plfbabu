@@ -29,9 +29,11 @@ public class SAPGLProcess extends DataEngineExport {
 	private Map<String, String> parameters = new HashMap<>();
 	private Date startDate;
 	private Date endDate;
+	private Date appDate;
 
 	public SAPGLProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
+		this.appDate = appDate;
 	}
 
 	public void extractReport() throws Exception {
@@ -315,7 +317,7 @@ public class SAPGLProcess extends DataEngineExport {
 				try {
 					Map<String, Object> filterMap = new HashMap<>();
 					Map<String, Object> parameterMap = new HashMap<>();
-					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
 					parameterMap.put("ENTITY", rs.getString("ENTITY"));
 					filterMap.put("ENTITY", rs.getString("ENTITY"));
 					
@@ -342,7 +344,7 @@ public class SAPGLProcess extends DataEngineExport {
 					Map<String, Object> filterMap = new HashMap<>();
 					Map<String, Object> parameterMap = new HashMap<>();
 					SAP_GL_STATUS.setName("GL_TRANSACTION_EXPORT");
-					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, valueDate);
+					DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, appDate);
 					parameterMap.put("ENTITY", rs.getString("ENTITY"));
 					filterMap.put("ENTITY", rs.getString("ENTITY"));
 					

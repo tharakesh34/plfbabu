@@ -53,6 +53,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.service.AmazonS3Bucket;
@@ -136,14 +137,14 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
 		
-		registerField("Id");
+		registerField("Id", SortOrder.DESC);
 		registerField("Name");
 		registerField("Status");
 		registerField("CONFIGID");
 		registerField("POSTEVENT");
 		registerField("FileName");
 		registerField("FileLocation");
-		registerField("ValueDate");
+		registerField("ValueDate", SortOrder.DESC);
 		
 		doRenderPage();
 		search();
@@ -152,7 +153,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 	
 	public class FileDownloadComparator implements Comparator<Object>, Serializable {
-		
 		private static final long serialVersionUID = -8606975433219761922L;
 
 		public FileDownloadComparator() {
@@ -164,7 +164,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			FileDownlaod data = (FileDownlaod) o1;
 			FileDownlaod data2 = (FileDownlaod) o2;
 			return String.valueOf(data.getValueDate()).compareTo(String.valueOf(data2.getValueDate()));
-
 		}
 	}
 
