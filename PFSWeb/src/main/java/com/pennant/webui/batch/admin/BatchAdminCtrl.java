@@ -110,6 +110,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		microEODMonitor,
 		accountsUpdate,
 		snapShotPreparation,
+		datesUpdate,
 		dataExtract,
 		alm,
 		controlDump,

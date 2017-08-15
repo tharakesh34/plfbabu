@@ -567,7 +567,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
-			returnDataSet.setTransOrder(seq++);
+			returnDataSet.setTransOrder(++seq);
 			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 					+ transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);

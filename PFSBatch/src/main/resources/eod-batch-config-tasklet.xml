@@ -33,9 +33,6 @@
 	</bean>
 	
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="dateService" ref="dateService" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
@@ -72,6 +69,14 @@
 	<bean id="gstTaxDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.GstTaxDownload">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>
+
+	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dateService" ref="dateService" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<bean id="startOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.StartOfMonthDecider"/>
 
 
 	<!-- To be deleted -->
