@@ -3571,4 +3571,11 @@ union all
                      inner join vasrecording T3 on T3.vasreference=T1.finreference
 		</createView>
 </changeSet>
+<changeSet id="231" author="murthy.y">
+	<sql>
+		<![CDATA[
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'HOSTSTATUS_REQUIRED';
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>

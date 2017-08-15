@@ -67,8 +67,6 @@
 										</menu>
 									</menubar>
 								</hbox>
-								<timer id="hostStatusTimer"
-									repeats="true" />
 							</div>
 						</window>
 					</hbox>

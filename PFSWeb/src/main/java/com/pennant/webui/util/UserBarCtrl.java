@@ -42,9 +42,13 @@
 */
 package com.pennant.webui.util;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.service.MenuDetailsService;
+import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.io.IOException;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -56,22 +60,12 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Timer;
 import org.zkoss.zul.West;
 import org.zkoss.zul.Window;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.service.MenuDetailsService;
-import com.pennant.util.PennantAppUtil;
-import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;
@@ -98,7 +92,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 	protected Label label_currentDate; // autowired
 	protected Label label_currentTime; // autowired
-    protected Timer hostStatusTimer; // autowired
     protected Window outerIndexWindow; // autowired
     protected Menuitem menuitem_logout;
     protected Menuitem menuitem_changePasssword;
@@ -166,8 +159,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	 */
 	public void onCreate$winUserBar(Event event) {
 		this.winUserBar.setBorder("none");
-		this.hostStatusTimer.setDelay(60000);
-		this.hostStatusTimer.start();
 	}
  
 	/**
@@ -256,36 +247,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 		return builder.toString();
 	}
-
-	/**
-	 * this event will raise for every n seconds .
-	 * 
-	 * @param event
-	 */
-	public void onTimer$hostStatusTimer(Event event) {
-		Date date  = DateUtility.getAppDate();
-		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yyyy");
-		label_currentDate.setValue(dateFormat.format(date));
-		dateFormat = new java.text.SimpleDateFormat("HH:mm");
-		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
-		String hostStatusReq = SysParamUtil.getValueAsString("HOSTSTATUS_REQUIRED");
-		
-		//winUserBar
-		Window statusBar =  (Window) this.outerIndexWindow.getFellowIfAny("statusBar");
-		
-		if (statusBar.getFellowIfAny("hostStatus") != null) {
-			Image image = (Image) statusBar.getFellowIfAny("hostStatus");
-			if ("Y".equals(hostStatusReq)) {
-				image.setVisible(true);
-				if (com.pennant.app.util.HostStatusUtil.getHostStatus("PFF")) {
-					image.setSrc("//images//Pennant//HostUp.png");
-				} else {
-					image.setSrc("//images//Pennant//HostDown.png");
-				}
-			} 
-		}
-	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
