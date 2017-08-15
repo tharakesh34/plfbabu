@@ -6488,7 +6488,6 @@
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
-		<property name="financeCancellationProcess" ref="financeCancellationProcess" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
