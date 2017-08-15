@@ -284,8 +284,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	private void prepareTrialBalanceDate() throws Exception {
 		logger.info("Preparing Trailbalance Date..");
-		Date startDate = DateUtil.getMonthStart(appDate);
-		Date endDate = appDate;
+		startDate = DateUtil.getMonthStart(appDate);
+		endDate = appDate;
 
 		if (startDate.compareTo(endDate) != 0) {
 			logger.info("Start Date: " + DateUtil.format(startDate, DateUtil.DateFormat.LONG_DATE));
