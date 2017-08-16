@@ -1047,35 +1047,34 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private void validateDocumentExistance(DocumentType dcoType) {
 		logger.debug("Entering");
 		//validate the document selected exists with the customer/Finance
-		if (dcoType.isDocIsCustDoc()) {
-			if (getFinancedetail().getCustomerDetails() != null
-					&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
 
-				for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails()
-						.getCustomerDocumentsList()) {
-					if (custdocument.getCustDocCategory().equals(dcoType.getDocTypeCode())) {
-						this.covenantType.setValue("");
-						this.covenantType.setDescription("");
-						MessageUtil.showError(
-								dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Customer Documents");
-					}
+		if (getFinancedetail().getCustomerDetails() != null
+				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+
+			for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails().getCustomerDocumentsList()) {
+				if (custdocument.getCustDocCategory().equals(dcoType.getDocTypeCode())) {
+					this.covenantType.setValue("");
+					this.covenantType.setDescription("");
+					this.covenantType.setObject("");
+					MessageUtil.showError(
+							dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Customer Documents");
 				}
-
 			}
 
-		} else {
-			if (getFinancedetail().getDocumentDetailsList() != null
-					&& !getFinancedetail().getDocumentDetailsList().isEmpty()) {
-				for (DocumentDetails documentdetail : getFinancedetail().getDocumentDetailsList()) {
-					if (StringUtils.equals(documentdetail.getDocCategory(), dcoType.getDocTypeCode())) {
-						this.covenantType.setValue("");
-						this.covenantType.setDescription("");
-						MessageUtil.showError(
-								dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Documents");
-					}
-				}
+		}
 
+		if (getFinancedetail().getDocumentDetailsList() != null
+				&& !getFinancedetail().getDocumentDetailsList().isEmpty()) {
+			for (DocumentDetails documentdetail : getFinancedetail().getDocumentDetailsList()) {
+				if (StringUtils.equals(documentdetail.getDocCategory(), dcoType.getDocTypeCode())) {
+					this.covenantType.setValue("");
+					this.covenantType.setDescription("");
+					this.covenantType.setObject("");
+					MessageUtil
+							.showError(dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Documents");
+				}
 			}
+
 		}
 
 		logger.debug("Leaving");
