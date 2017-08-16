@@ -3578,7 +3578,7 @@ union all
 		]]>
 	</sql>
 </changeSet>
-<changeSet id="232" author="Chaitanya.ch">
+<!-- <changeSet id="232" author="Chaitanya.ch">
 		<addColumn tableName="REJECTFINFEEDETAIL" >
 			<column name="PostDate" type="datetime" ></column>
 		</addColumn>
@@ -3587,7 +3587,7 @@ union all
 		<addColumn tableName="FINFEEDETAIL_PA" >
 			<column name="PostDate" type="datetime" ></column>
 		</addColumn>
- 	</changeSet>
+ 	</changeSet> -->
 	<changeSet id="234" author="Chaitanya.ch">
 		<addColumn tableName="WIFFINFEEDETAIL" >
 			<column name="PostDate" type="datetime" ></column>
