@@ -97,23 +97,21 @@ public class SAPGLProcess extends DataEngineExport {
 	private Map<String, TrailBalance> getTransactions() throws Exception {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT DD.ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
+		sql.append(" SELECT :ENTITYCODE ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR  FROM POSTINGS P");
-		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN SMTDIVISIONDETAIL DD ON DD.DIVISIONCODE = FT.FINDIVISION");
-		sql.append(" INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = FM.FINBRANCH");
+		sql.append(" INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" INNER JOIN RMTCOUNTRYVSPROVINCE S ON S.CPPROVINCE = B.BRANCHPROVINCE");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
 		sql.append(" LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID");
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
-		sql.append(" GROUP BY DD.ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
+		sql.append(" GROUP BY :ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
 		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR");
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
 		paramMap.addValue("MONTH_ENDDATE", endDate);
+		paramMap.addValue("ENTITYCODE", "01");
 
 		return parameterJdbcTemplate.query(sql.toString(), paramMap,
 				new ResultSetExtractor<Map<String, TrailBalance>>() {
@@ -133,6 +131,13 @@ public class SAPGLProcess extends DataEngineExport {
 						while (rs.next()) {
 							key = "";
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("ENTITYCODE")));
+							
+							
+							// FIXME ENTITYCODE is hard coded other than loans.
+							if(StringUtils.equals("", key)) {
+								key = "01";
+							}
+							
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("HOSTACCOUNT")));
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("BUSINESSAREA")));
 
@@ -365,7 +370,6 @@ public class SAPGLProcess extends DataEngineExport {
 		String query = "select count(*) count, ENTITY from TRANSACTION_DETAIL_REPORT_TEMP GROUP BY ENTITY";
 
 		jdbcTemplate.query(query, new RowCallbackHandler() {
-
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				int totalTransactions = rs.getInt("count");
@@ -383,12 +387,12 @@ public class SAPGLProcess extends DataEngineExport {
 				for (int page = 1; page <= pages; page++) {
 					pageItr = page;
 					mainRecords = mainRecords + saveTranactions(fromRange, toRange, rs.getString("ENTITY"));
-					pagesInserted = true;
+ 					pagesInserted = true;
 					fromRange = toRange + 1;
 					toRange = toRange + pageSize;
 					update(pageItr);
 
-					if (pagesInserted) {
+					if (pagesInserted && pages > 1) {
 						saveTransactionSummary(pageItr, rs.getString("ENTITY"));
 						pagesInserted = false;
 					}

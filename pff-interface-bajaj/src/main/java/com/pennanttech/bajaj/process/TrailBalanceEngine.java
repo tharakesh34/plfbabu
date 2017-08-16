@@ -431,8 +431,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
 		sql.append(" from POSTINGS P");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
-		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
+		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
 		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
@@ -460,8 +459,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" select AM.HOSTACCOUNT ledgerAccount, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
 		sql.append(" from POSTINGS P");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = P.FINREFERENCE");
-		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = FM.FINBRANCH");
+		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" and P.DRORCR = :DRORCR");
 		sql.append(" group by AM.HOSTACCOUNT, RB.BRANCHPROVINCE");
