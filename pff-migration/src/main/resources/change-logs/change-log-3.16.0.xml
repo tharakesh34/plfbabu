@@ -3578,4 +3578,33 @@ union all
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="232" author="Chaitanya.ch">
+		<addColumn tableName="REJECTFINFEEDETAIL" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+	<changeSet id="233" author="Chaitanya.ch">
+		<addColumn tableName="FINFEEDETAIL_PA" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+	<changeSet id="234" author="Chaitanya.ch">
+		<addColumn tableName="WIFFINFEEDETAIL" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+	<changeSet id="235" author="Chaitanya.ch">
+		<addColumn tableName="WIFFINFEEDETAIL_TEMP" >
+			<column name="PostDate" type="datetime" ></column>
+		</addColumn>
+ 	</changeSet>
+	
+	 	<changeSet id="236" author="Prasad">
+		<sql>
+		Update REJECTFINFEEDETAIL set PostDate=lastmnton;
+		Update FINFEEDETAIL_PA set PostDate=lastmnton;
+		Update WIFFINFEEDETAIL set PostDate=lastmnton;
+		Update WIFFINFEEDETAIL_TEMP set PostDate=lastmnton;
+		</sql>
+ 	</changeSet>
 </databaseChangeLog>
