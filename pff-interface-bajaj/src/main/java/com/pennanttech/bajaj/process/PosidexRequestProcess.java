@@ -92,7 +92,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	public void extractData() throws SQLException {
-		Map<Long, PosidexCustomer> customers = getCustomers();
+		Map<String, PosidexCustomer> customers = getCustomers();
 		setAddresses(customers);
 		setLoans(customers);
 		
@@ -477,8 +477,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	}
 
-	private Map<Long, PosidexCustomer> getCustomers() throws SQLException {
-		Map<Long, PosidexCustomer> customers = new HashMap<>(batchSize);
+	private Map<String, PosidexCustomer> getCustomers() throws SQLException {
+		Map<String, PosidexCustomer> customers = new HashMap<>(batchSize);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select C.CUSTID, CUSTCIF, CUSTCOREBANK, CUSTFNAME, CUSTMNAME, CUSTLNAME, CUSTSHRTNAME, CUSTDOB,");
 		sql.append(" CUSTGENDERCODE, CUSTMOTHERMAIDEN, C.CUSTCTGCODE, CUSTDOCTITLE, CUSTDOCCATEGORY,");
@@ -495,18 +495,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		return extractCustomers(customers, sql);
 	}
 
-	private Map<Long, PosidexCustomer> extractCustomers(Map<Long, PosidexCustomer> customers, StringBuilder sql) {
-		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, PosidexCustomer>>() {
+	private Map<String, PosidexCustomer> extractCustomers(Map<String, PosidexCustomer> customers, StringBuilder sql) {
+		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<String, PosidexCustomer>>() {
 			PosidexCustomer customer = null;
 			@Override
-			public Map<Long, PosidexCustomer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Map<String, PosidexCustomer> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String docType = null;
 				while (rs.next()) {
 					
-					customer = customers.get(rs.getLong("CUSTID"));
+					customer = customers.get(rs.getString("CUSTID"));
 					if (customer == null) {
 						customer = new PosidexCustomer();
-						customers.put(rs.getLong("CUSTID"), customer);
+						customers.put(rs.getString("CUSTID"), customer);
 					}
 					
 					customer.setCustomerNo(rs.getString("CUSTID"));
@@ -575,7 +575,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		});
 	}
 
-	private void setAddresses(Map<Long, PosidexCustomer> customers) throws SQLException {
+	private void setAddresses(Map<String, PosidexCustomer> customers) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select");
 		sql.append(" CA.CUSTID,");
@@ -599,17 +599,17 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		extractAddresses(customers, sql);
 	}
 
-	private void extractAddresses(Map<Long, PosidexCustomer> customers, StringBuilder sql)
+	private void extractAddresses(Map<String, PosidexCustomer> customers, StringBuilder sql)
 			throws DataAccessException, SQLException {
 		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
-			Map<Long, List<CustomerPhoneNumber>> phoneNumbers = getPhoneNumbers();
-			Map<Long, List<CustomerEMail>> email = getEmail();
+			Map<String, List<CustomerPhoneNumber>> phoneNumbers = getPhoneNumbers();
+			Map<String, List<CustomerEMail>> email = getEmail();
 			PosidexCustomerAddress address = null;
 			PosidexCustomer customer = null;
 			
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				customer = customers.get(rs.getLong("CUSTID"));
+				customer = customers.get(rs.getString("CUSTID"));
 
 				address = new PosidexCustomerAddress();
 				address.setCustomerId(customer.getCustomerId());
@@ -627,6 +627,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				address.setState(rs.getString("CUSTADDRPROVINCE"));
 				address.setCity(rs.getString("CUSTADDRCITY"));
 				address.setPin(rs.getString("CUSTADDRZIP"));
+				
 				if (address.getPin() == null) {
 					address.setPin("0");
 				}
@@ -685,7 +686,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		});
 	}
 
-	private Map<Long, List<CustomerPhoneNumber>> getPhoneNumbers() throws SQLException {
+	private Map<String, List<CustomerPhoneNumber>> getPhoneNumbers() throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PHONECUSTID, PHONETYPECODE, PHONENUMBER, PHONETYPEPRIORITY");
 		sql.append(" from CUSTOMERPHONENUMBERS");
@@ -695,16 +696,16 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		return extractPhoneNumbers(sql);
 	}
 
-	private Map<Long, List<CustomerPhoneNumber>> extractPhoneNumbers(StringBuilder sql) {
+	private Map<String, List<CustomerPhoneNumber>> extractPhoneNumbers(StringBuilder sql) {
 		return parameterJdbcTemplate.query(sql.toString(), paramMa,
-				new ResultSetExtractor<Map<Long, List<CustomerPhoneNumber>>>() {
+				new ResultSetExtractor<Map<String, List<CustomerPhoneNumber>>>() {
 
 					@Override
-					public Map<Long, List<CustomerPhoneNumber>> extractData(ResultSet rs)
+					public Map<String, List<CustomerPhoneNumber>> extractData(ResultSet rs)
 							throws SQLException, DataAccessException {
 
 						CustomerPhoneNumber phoneNumber = null;
-						Map<Long, List<CustomerPhoneNumber>> phoneTypes = new ConcurrentHashMap<>();
+						Map<String, List<CustomerPhoneNumber>> phoneTypes = new ConcurrentHashMap<>();
 
 						List<CustomerPhoneNumber> list = new CopyOnWriteArrayList<>();
 
@@ -719,7 +720,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 							list = phoneTypes.get(phoneNumber.getPhoneCustID());
 							if (list == null) {
 								list = new ArrayList<>();
-								phoneTypes.put(phoneNumber.getPhoneCustID(), list);
+								phoneTypes.put(String.valueOf(phoneNumber.getPhoneCustID()), list);
 							} 
 							
 							list.add(phoneNumber);
@@ -730,7 +731,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				});
 	}
 
-	private Map<Long, List<CustomerEMail>> getEmail() throws SQLException {
+	private Map<String, List<CustomerEMail>> getEmail() throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CUSTID, CUSTEMAILTYPECODE, CUSTEMAIL, CUSTEMAILPRIORITY");
 		sql.append(" from CUSTOMEREMAILS");
@@ -740,14 +741,14 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		return extractEMails(sql);
 	}
 
-	private Map<Long, List<CustomerEMail>> extractEMails(StringBuilder sql) {
-		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<Long, List<CustomerEMail>>>() {
+	private Map<String, List<CustomerEMail>> extractEMails(StringBuilder sql) {
+		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<String, List<CustomerEMail>>>() {
 
 			@Override
-			public Map<Long, List<CustomerEMail>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Map<String, List<CustomerEMail>> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 				CustomerEMail eMail = null;
-				Map<Long, List<CustomerEMail>> emailTypes = new HashMap<>();
+				Map<String, List<CustomerEMail>> emailTypes = new HashMap<>();
 
 				List<CustomerEMail> list = null;
 
@@ -763,7 +764,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 					if (list == null) {
 						list = new ArrayList<>();
-						emailTypes.put(eMail.getCustID(), list);
+						emailTypes.put(String.valueOf(eMail.getCustID()), list);
 					}
 					list.add(eMail);
 				}
@@ -774,7 +775,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	}
 	
-	private void setLoans(Map<Long, PosidexCustomer> customers) throws SQLException {
+	private void setLoans(Map<String, PosidexCustomer> customers) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" select FM.CUSTID, FM.FINREFERENCE, FM.CUSTOMER_TYPE, FM.FINTYPE, PROCESS_TYPE");
@@ -797,14 +798,14 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	}
 
-	private void extractLoans(Map<Long, PosidexCustomer> customers, String sql) {
+	private void extractLoans(Map<String, PosidexCustomer> customers, String sql) {
 		parameterJdbcTemplate.query(sql.toString(), paramMa, new RowCallbackHandler() {
 			PosidexCustomerLoan loan = null;
 			PosidexCustomer customer = null;
 
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				customer = customers.get(rs.getLong("CUSTID"));
+				customer = customers.get(rs.getString("CUSTID"));
 
 				loan = new PosidexCustomerLoan();
 				loan.setCustomerId(customer.getCustomerId());
