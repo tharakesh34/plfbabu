@@ -3607,4 +3607,27 @@ union all
 		Update WIFFINFEEDETAIL_TEMP set PostDate=lastmnton;
 		</sql>
  	</changeSet>
+ 	<changeSet author="Madhubabu" id="237">
+	<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+			 SELECT             T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.CalTerms NumberOfTerms,
+				            T1.CustID, T1.FinAmount, T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,
+				            T1.DownPayment, T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate,T1.FinCurrAssetvalue, T1.Blacklisted, T1.FeeChargeAmt,
+				            T1.ClosingStatus, T1.GraceTerms, T1.AlwMultiDisb, T1.Defferments, T1.FinStatus ,T1.MandateID,T1.FinRepayMethod, T1.FINASSETVALUE, T1.InsuranceAmt,
+				            (T1.FinCurrAssetvalue+ T1.FeeChargeAmt+T1.InsuranceAmt) FinancingAmount,
+				            (T1.FinCurrAssetvalue- T1.FinRepaymentAmount+ T1.FeeChargeAmt+T1.InsuranceAmt) CurFinAmount,
+				            T2.FinTypeDesc LovDescFinTypeName, T2.FinScheduleOn LovDescFinScheduleOn, T2.FinDivision lovDescFinDivision, 
+				            T2.FinCategory lovDescProductCodeName,  T2.FinIsAlwDifferment lovDescFinAlwDeferment,
+				            T3.CustCIF LovDescCustCIF, T3.CustShrtName LovDescCustShrtName, 
+				            T4.BranchDesc LovDescFinBranchName, 
+				            T5.CustTypeCtg,coalesce(T9.NOINST,0) NOINST, T6.MaxInstAmount         
+				FROM        FinanceMain T1 INNER JOIN
+				            RMTFinanceTypes T2 ON T1.FinType = T2.FinType INNER JOIN
+				            Customers T3 ON T1.CustID = T3.CustID INNER JOIN
+				            RMTBranches T4 ON T1.FinBranch = T4.BranchCode INNER JOIN
+				            RMTCustTypes T5 ON T3.CustTypeCode = T5.CustTypeCode LEFT JOIN
+                    FinPftDetails T9 ON T1.FinReference = T9.FinReference LEFT JOIN
+                    (select FinReference,MAX(RepayAmount) MaxInstAmount from FinScheduleDetails 
+                     group by FinReference )T6 on T6.FinReference=T1.Finreference
+		</createView>
+</changeSet>
 </databaseChangeLog>
