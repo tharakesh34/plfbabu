@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -106,7 +107,7 @@ public class SAPGLProcess extends DataEngineExport {
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE");
 		sql.append(" GROUP BY :ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR");
+		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR ORDER BY S.BUSINESSAREA");
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
@@ -118,7 +119,7 @@ public class SAPGLProcess extends DataEngineExport {
 					@Override
 					public Map<String, TrailBalance> extractData(ResultSet rs)
 							throws SQLException, DataAccessException {
-						Map<String, TrailBalance> map = new HashMap<>();
+						Map<String, TrailBalance> map = new LinkedHashMap<>();
 
 						String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF");
 						String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF");
