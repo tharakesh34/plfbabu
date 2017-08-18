@@ -4191,4 +4191,9 @@ union all
 		INSERT INTO ErrorDetails VALUES('90348','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z and Spaces] and must starts with Characters only.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
+<changeSet id="243" author="pruthvi">
+	<sql>
+update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_LoanwiseVoucherDetail';
+</sql>
+</changeSet>
 </databaseChangeLog>
