@@ -700,7 +700,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		// execute fee charges
 		String finEvent = "";
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null);
 		
 		if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {

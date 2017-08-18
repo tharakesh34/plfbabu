@@ -31,7 +31,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -71,7 +71,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private ChangeProfitService			changeProfitService;
 	private AddDisbursementService		addDisbursementService;
 	private ChangeFrequencyService		changeFrequencyService;
-	private ManualPaymentService		manualPaymentService;
+	private ReceiptService				receiptService;
 	private ReScheduleService			reScheduleService;
 	private RecalculateService			recalService;
 	private RemoveTermsService			rmvTermsService;
@@ -609,8 +609,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
-
-		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction,eventCode);
+		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
 
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
@@ -923,75 +922,23 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, EarlySettlementGroup.class);
-		FinanceDetail financeDetail = null;
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+		String eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
-		
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		FinanceDetail financeDetail = null;
+
+		// validate instruction details
+		WSReturnStatus status = validateInstructions(finServiceInstruction, moduleDefiner, eventCode);
+		if(StringUtils.isNotBlank(status.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
+			financeDetail.setReturnStatus(status);
 			return financeDetail;
 		}
 
-		// validate maintained records.
-		int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
-		if (tempCount > 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getFinReference();
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
-			return financeDetail;
-		}
-		
-		// service level validations
-		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if (count <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getFinReference();
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-		}
-		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-						errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-						errorDetails.getError()));
-				return financeDetail;
-			}
-		}
-		// call change repay amount service
+		// execute Early settlement service
 		financeDetail = finServiceInstController.doEarlySettlement(finServiceInstruction, eventCode);
 
 		logger.debug("Leaving");
@@ -1001,75 +948,25 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Override
 	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
-
 		// bean validations
 		validationUtility.validate(finServiceInstruction, PartialSettlementGroup.class);
-		FinanceDetail financeDetail = null;
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
+		String eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
-		
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		
-		// validate maintained records.
-		int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
-		if (tempCount > 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getFinReference();
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
-			return financeDetail;
-		}
-		
-		// service level validations
-		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if (count <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getFinReference();
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-		}
+		FinanceDetail financeDetail = null;
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		// Method for validate instruction details
+		WSReturnStatus status = validateInstructions(finServiceInstruction, moduleDefiner, eventCode);
+		if(StringUtils.isNotBlank(status.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
+			financeDetail.setReturnStatus(status);
 			return financeDetail;
 		}
 
-		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
-		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-						errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-						errorDetails.getError()));
-				return financeDetail;
-			}
-		}
-		// call change repay amount service
+		// execute partial payment service
 		financeDetail = finServiceInstController.doPartialSettlement(finServiceInstruction, eventCode);
 
 		logger.debug("Leaving");
@@ -1086,79 +983,83 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
 		logger.debug("Entering");
 
-		// validate ReqType
-		FinanceDetail financeDetail = null;
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		String eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
+		FinanceDetail financeDetail = null;
 		
-		if(StringUtils.isBlank(finServiceInstruction.getFinReference())) {
+		// Method for validate instruction details
+		WSReturnStatus status = validateInstructions(finServiceInstruction, moduleDefiner, eventCode);
+		if(StringUtils.isNotBlank(status.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
-			String[] valueParm = new String[1];
-			valueParm[0] = "Loan Reference";
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			financeDetail.setReturnStatus(status);
 			return financeDetail;
-		} else {
-			// validate maintained records.
-			int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
-			if (tempCount > 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getFinReference();
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90248", valueParm));
-				return financeDetail;
-			}
-			
-			int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-			if (count <= 0) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getFinReference();
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-				return financeDetail;
-			}
 		}
-
-		// validate service instruction data
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
-		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-						errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_REPAY;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-						errorDetails.getError()));
-				return financeDetail;
-			}
-		}
-		// call change repay amount service
+		// execute manual payment service
 		financeDetail = finServiceInstController.doManualPayment(finServiceInstruction, eventCode);
 
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	/**
+	 * Method for validate instruction details
+	 * 
+	 * @param finServiceInstruction
+	 * @param moduleDefiner
+	 * @param eventCode
+	 * @return
+	 */
+	private WSReturnStatus validateInstructions(FinServiceInstruction finServiceInstruction, String moduleDefiner, String eventCode) {
+		logger.debug("Entering");
+		WSReturnStatus status = new WSReturnStatus();
+		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+		if(StringUtils.isBlank(finServiceInstruction.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Loan Reference";
+			status = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return status;
+		} else {
+			int tempCount = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "_Temp", false);
+			if (tempCount > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFinReference();
+				status = APIErrorHandlerService.getFailedStatus("90248", valueParm);
+				return status;
+			}
+			int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFinReference();
+				status = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				return status;
+			}
+		}
+		// validate service instruction data
+		AuditDetail auditDetail = receiptService.doValidations(finServiceInstruction, moduleDefiner);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				status = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
+				return status;
+			}
+		}
+		// validate fees
+		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
+				finServiceInstruction, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetails errorDetails : errors) {
+				status = APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(), errorDetails.getError());
+				return status;
+			}
+		}
+		logger.debug("Leaving");
+		return status;
 	}
 
 	private WSReturnStatus beanValidation(String valueParam) {
@@ -1384,82 +1285,62 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
 		this.finServiceInstController = finServiceInstController;
 	}
-
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 	@Autowired
 	public void setRateChangeService(RateChangeService rateChangeService) {
 		this.rateChangeService = rateChangeService;
 	}
-
 	@Autowired
 	public void setAddRepaymentService(AddRepaymentService addRepaymentService) {
 		this.addRepaymentService = addRepaymentService;
 	}
-
-	/*
-	 * @Autowired public void setDeffermentService(DeffermentService deffermentService) { this.deffermentService =
-	 * deffermentService; }
-	 */
-
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-
 	@Autowired
 	public void setRecalService(RecalculateService recalService) {
 		this.recalService = recalService;
 	}
-
 	@Autowired
 	public void setChangeProfitService(ChangeProfitService changeProfitService) {
 		this.changeProfitService = changeProfitService;
 	}
-
 	@Autowired
 	public void setAddDisbursementService(AddDisbursementService addDisbursementService) {
 		this.addDisbursementService = addDisbursementService;
 	}
-
 	@Autowired
 	public void setChangeFrequencyService(ChangeFrequencyService changeFrequencyService) {
 		this.changeFrequencyService = changeFrequencyService;
 	}
-
 	@Autowired
 	public void setReScheduleService(ReScheduleService reScheduleService) {
 		this.reScheduleService = reScheduleService;
 	}
-
 	@Autowired
 	public void setFinanceValidationService(FinanceValidationService financeValidationService) {
 		this.financeValidationService = financeValidationService;
 	}
-
 	@Autowired
-	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
-		this.manualPaymentService = manualPaymentService;
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
-
 	@Autowired
 	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
 		this.rmvTermsService = rmvTermsService;
 	}
-
 	@Autowired
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
 	}
-	
 	@Autowired
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
 	}
-	
 	@Autowired
 	public void setAddTermsService(AddTermsService addTermsService) {
 		this.addTermsService = addTermsService;

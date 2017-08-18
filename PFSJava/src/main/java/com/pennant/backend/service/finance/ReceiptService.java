@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -29,4 +30,5 @@ public interface ReceiptService {
 	List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal totReceiptAmount,
 			Date valueDate, List<FinanceRepayments> repayments, boolean resetReq);
 	Date getMaxReceiptDate(String finReference);
+	AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method);
 }

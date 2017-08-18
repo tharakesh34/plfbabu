@@ -33,6 +33,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -72,9 +73,11 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
@@ -2291,6 +2294,151 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		return financeScheduleDetail;
 	}
+	
+	/**
+	 * Method for validate Receipt details
+	 * 
+	 * @param finServiceInstruction
+	 * @param method
+	 * @return AuditDetail
+	 */
+	@Override
+	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method) {
+		logger.debug("Entering");
+
+		AuditDetail auditDetail = new AuditDetail();
+
+		// validate from date
+		Date fromDate = finServiceInstruction.getFromDate();
+		if(StringUtils.isBlank(finServiceInstruction.getPaymentMode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Payment mode";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+			return auditDetail;
+		} else if(!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)){
+			String[] valueParm = new String[2];
+			valueParm[0] = "Payment mode";
+			valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT+","
+					+DisbursementConstants.PAYMENT_TYPE_RTGS+","+DisbursementConstants.PAYMENT_TYPE_IMPS;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90281", "", valueParm)));
+			return auditDetail;
+		}
+
+		if(StringUtils.equals(finServiceInstruction.getReqType(), "Post") && finServiceInstruction.getReceiptDetail() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Receipt Details";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+			return auditDetail;
+		} else if(StringUtils.equals(finServiceInstruction.getReqType(), "Post")) {
+			FinReceiptDetail receiptDetail = finServiceInstruction.getReceiptDetail();
+			if(StringUtils.isBlank(receiptDetail.getTransactionRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Transaction Reference";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return auditDetail;
+			}
+			if(receiptDetail.getFundingAc() <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Funding Account";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return auditDetail;
+			}
+			if(receiptDetail.getReceivedDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Received Date";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+				return auditDetail;
+			}
+		}
+		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+				StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
+			if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_ADJMUR)
+					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_RECRPY)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Recal type code";
+				valueParm[1] = CalculationConstants.EARLYPAY_ADJMUR+","+CalculationConstants.EARLYPAY_RECRPY;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90281", "", valueParm)));
+				return auditDetail;
+			}
+		}
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			// It should be greater than or equals to application date
+			if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "FromDate " + DateUtility.formatToShortDate(fromDate);
+				valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+			}
+
+			if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToShortDate(fromDate);
+				valueParm[1] = DateUtility.formatToShortDate(DateUtility.getAppDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91126", "", valueParm)));
+			}
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			// It should be greater than or equals to application date
+			if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "FromDate " + DateUtility.formatToShortDate(fromDate);
+				valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+			}
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Amount:" + finServiceInstruction.getAmount();
+				valueParm[1] = "Zero";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+			}
+
+			// validate Partial Settlement Amount
+			if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+				BigDecimal totOutstandingAmt = getFinanceScheduleDetailDAO().getTotalRepayAmount(finServiceInstruction.getFinReference());
+				totOutstandingAmt = totOutstandingAmt == null ? BigDecimal.ZERO : totOutstandingAmt;
+				if (finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = String.valueOf(totOutstandingAmt);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91127", "", valueParm)));
+				}
+			}
+		} else {
+			// validate recalType
+			if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
+				List<ValueLabel> recalTypes = PennantStaticListUtil.getEarlyPayEffectOn();
+				boolean recalTypeSts = false;
+				for (ValueLabel value : recalTypes) {
+					if (StringUtils.equals(value.getValue(), finServiceInstruction.getRecalType())) {
+						recalTypeSts = true;
+						break;
+					}
+				}
+				if (!recalTypeSts) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finServiceInstruction.getRecalType();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", "", valueParm)));
+				}
+			}
+		}
+
+		if ((StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE))
+				&& StringUtils.isNotBlank(finServiceInstruction.getExcessAdjustTo())) {
+			if (!StringUtils.equals(finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)
+					&& !StringUtils.equals(finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ExcessAdjustTo:" + finServiceInstruction.getExcessAdjustTo();
+				valueParm[1] = RepayConstants.EXCESSADJUSTTO_EXCESS + "," + RepayConstants.EXCESSADJUSTTO_EMIINADV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90337", "", valueParm)));
+			}
+		}
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

@@ -129,7 +129,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceProfitDetailDAO		profitDetailsDAO;
 
 
-
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
@@ -216,7 +215,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				finFeeDetail.setFinEvent(eventCode);
 				financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
 			}
-			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode);
+			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
 		}
 	}
 
@@ -1038,11 +1037,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		// fetch finance data
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
-
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 			if (finServiceInst.getToDate() == null) {
 				finServiceInst.setToDate(finScheduleData.getFinanceMain().getMaturityDate());
 			}
@@ -1094,6 +1090,11 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		FinanceDetail response = null;
 		try {
+			
+			// calculate PartPayment amount
+			Map<String, String> responseMap = validateRepayAmount(financeDetail.getFinScheduleData(), finServiceInst, finServiceInst.getAmount());
+			finServiceInst.setRemPartPayAmt(new BigDecimal(responseMap.get("partPaidAmt")));
+			
 			// execute fee charges
 			executeFeeCharges(financeDetail, finServiceInst, eventCode);
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
@@ -1542,7 +1543,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		boolean partAccrualReq = true;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
-		WSReturnStatus returnStatus = new WSReturnStatus();
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		
 		if(totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
