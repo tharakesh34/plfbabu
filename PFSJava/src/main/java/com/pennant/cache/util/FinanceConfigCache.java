@@ -1,6 +1,7 @@
 package com.pennant.cache.util;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -120,14 +121,23 @@ public class FinanceConfigCache {
 	 * @return FinanceType
 	 */
 	public static FinanceType getFinanceType(String finType){
-//		FinanceType financeType=null;
-//		try {
-//			financeType =  financeTypeCache.get(finType);
-//		} catch (ExecutionException e) {
-//			logger.warn("Unable to load data from FinanceType cache: ", e);
-//			financeType =  getFinanceTypeByID(finType);
-//		}
 		return getFinanceTypeByID(finType);
+	}
+	
+	/**
+	 * It Fetches FinanceType Data from Cache
+	 * @param String finType
+	 * @return FinanceType
+	 */
+	public static FinanceType getCacheFinanceType(String finType){
+		FinanceType financeType=null;
+		try {
+			financeType =  financeTypeCache.get(finType);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from FinanceType cache: ", e);
+			financeType =  getFinanceTypeByID(finType);
+		}
+		return financeType;
 	}
 	
 	/**
@@ -148,16 +158,25 @@ public class FinanceConfigCache {
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucket(long bucketID){
-//		DPDBucket dpdBucket=null;
-//		
-//		try {
-//			dpdBucket =  dPDBucketCache.get(bucketID);
-//		} catch (ExecutionException e) {
-//			logger.warn("Unable to load data from DPDBucket cache: ", e);
-//			dpdBucket =  getDPDBucketByID(bucketID);
-//		}
-
 		return getDPDBucketByID(bucketID);
+	}
+	
+	/**
+	 * It Fetches DPDBucket Data from Cache
+	 * @param long bucketID
+	 * @return DPDBucket
+	 */
+	public static DPDBucket getCacheDPDBucket(long bucketID){
+		DPDBucket dpdBucket=null;
+		
+		try {
+			dpdBucket =  dPDBucketCache.get(bucketID);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from DPDBucket cache: ", e);
+			dpdBucket =  getDPDBucketByID(bucketID);
+		}
+		
+		return dpdBucket;
 	}
 	
 	/**
@@ -178,16 +197,25 @@ public class FinanceConfigCache {
 	 * @return DPDBucket
 	 */
 	public static DPDBucket getDPDBucketCode(String bucketCode){
-//		DPDBucket dpdBucket=null;
-//		
-//		try {
-//			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
-//		} catch (ExecutionException e) {
-//			logger.warn("Unable to load data from DPDBucket cache: ", e);
-//			dpdBucket =  getDPDBucketByCode(bucketCode);
-//		}
-		
 		return getDPDBucketByCode(bucketCode);
+	}
+	
+	/**
+	 * It Fetches DPDBucket Data from Cache
+	 * @param long bucketID
+	 * @return DPDBucket
+	 */
+	public static DPDBucket getCacheDPDBucketCode(String bucketCode){
+		DPDBucket dpdBucket=null;
+		
+		try {
+			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from DPDBucket cache: ", e);
+			dpdBucket =  getDPDBucketByCode(bucketCode);
+		}
+		
+		return dpdBucket;
 	}
 	
 	/**
@@ -209,15 +237,23 @@ public class FinanceConfigCache {
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<DPDBucketConfiguration> getDPDBucketConfiguration(String productCode){
-		
-//		try {
-//			return  dPDBucketConfigurationCache.get(productCode);
-//		} catch (ExecutionException e) {
-//			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
-//			return  getDPDBucketConfigurationById(productCode);
-//		}
 		return  getDPDBucketConfigurationById(productCode);
 
+	}
+	/**
+	 * It Fetches DPDBucketConfiguration Data from Cache
+	 * @param long configID
+	 * @return DPDBucketConfiguration
+	 */
+	public static List<DPDBucketConfiguration> getCacheDPDBucketConfiguration(String productCode){
+		
+		try {
+			return  dPDBucketConfigurationCache.get(productCode);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
+			return  getDPDBucketConfigurationById(productCode);
+		}
+		
 	}
 	
 	/**
@@ -270,13 +306,21 @@ public class FinanceConfigCache {
 	 * @return DPDBucketConfiguration
 	 */
 	public static List<NPABucketConfiguration> getNPABucketConfiguration(String productCode) {
-//		try {
-//			return nPABucketConfigurationCache.get(productCode);
-//		} catch (ExecutionException e) {
-//			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
-//			return getNPABucketConfigurationByCode(productCode);
-//		}
 		return getNPABucketConfigurationByCode(productCode);
+	}
+	
+	/**
+	 * It Fetches DPDBucketConfiguration Data from Cache
+	 * @param long configID
+	 * @return DPDBucketConfiguration
+	 */
+	public static List<NPABucketConfiguration> getCacheNPABucketConfiguration(String productCode) {
+		try {
+			return nPABucketConfigurationCache.get(productCode);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
+			return getNPABucketConfigurationByCode(productCode);
+		}
 	}
 
 	/**

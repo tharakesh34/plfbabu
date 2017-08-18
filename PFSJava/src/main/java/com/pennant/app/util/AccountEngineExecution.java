@@ -485,7 +485,11 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
 		for (int i = 0; i < acSetIDList.size(); i++) {
-			transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
+			if (aeEvent.isEOD()) {
+				transactionEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(acSetIDList.get(i)));
+			}else{
+				transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
+			}
 		}
 		
 		//FIXME CH To be discussed if this is required here
@@ -779,8 +783,16 @@ public class AccountEngineExecution implements Serializable {
 		newAccount.setAcType(txnEntry.getAccountType());
 		newAccount.setInternalAc(true);
 
-		Rule rule = AccountingConfigCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
-				RuleConstants.MODULE_SUBHEAD);
+		Rule rule =null;
+		if (aeEvent.isEOD()) {
+			rule = AccountingConfigCache.getCacheRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+					RuleConstants.MODULE_SUBHEAD);
+		}else{
+			rule = AccountingConfigCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+					RuleConstants.MODULE_SUBHEAD);
+		}
+		
+		
 		dataMap.put("acType", txnEntry.getAccountType());
 		if (rule != null) {
 			String accountNumber = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
