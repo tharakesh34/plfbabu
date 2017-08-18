@@ -203,7 +203,7 @@ public class PennantRegularExpressions {
 			put(REGEX_COMPANY_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\s]*");
 			put(REGEX_NAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPERCASENAME, "^[A-Za-z]+[A-Za-z.\\s]*");
-			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s]*");
+			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s\\/]*");
 			put(REGEX_CUST_NAME, "^[A-Za-z]+[A-Za-z.\\-\\'\\_\\/\\s]*");
 			put(REGEX_DESCRIPTION, "^[A-Za-z0-9]+[A-Za-z0-9\\.\\-\\s\\(\\)]*");
 			put(REGEX_ADDRESS, "[a-zA-Z0-9.\\>\\<\\,\\-\\/\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]*");
