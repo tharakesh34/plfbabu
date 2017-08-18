@@ -2187,7 +2187,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			if (!this.financeGrcBaseRate.getMarginComp().isReadonly()
+			if (!this.gracePeriod.isDisabled() && !this.financeGrcBaseRate.getMarginComp().isReadonly()
 					&& StringUtils.trimToNull(this.financeGrcBaseRate.getBaseValue()) == null
 					&& this.financeGrcBaseRate.getMarginValue() != null
 					&& this.financeGrcBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) != 0) {
