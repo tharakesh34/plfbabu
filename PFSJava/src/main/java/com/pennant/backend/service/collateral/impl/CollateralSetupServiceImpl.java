@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -110,6 +112,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.rits.cloning.Cloner;
 
 /**
@@ -2339,6 +2342,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					String[] valueParm = new String[1];
 					valueParm[0] = "collateralLoc";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm)));
+				} else {
+					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_NAME));
+					Matcher matcher = pattern.matcher(collateralSetup.getValuator());
+					if (matcher.matches() == false) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "collateralLoc";
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90348", "", valueParm)));
+					}
 				}
 			}
 
@@ -2348,6 +2359,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					String[] valueParm = new String[1];
 					valueParm[0] = "valuator";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm)));
+				} else {
+					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_NAME));
+					Matcher matcher = pattern.matcher(collateralSetup.getValuator());
+					if (matcher.matches() == false) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "valuator";
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90348", "", valueParm)));
+					}
 				}
 			}
 
