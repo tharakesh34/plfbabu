@@ -5589,5 +5589,4 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 	INSERT INTO ErrorDetails VALUES('90337','EN','E','{0} is invalid, applicable values are {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
->>>>>>> .r78821
 </databaseChangeLog>
