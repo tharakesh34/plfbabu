@@ -270,10 +270,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 
 			File file = new File(builder.toString());
 
-			if (!file.exists()) {
-				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("File not available.");
-			} else if (!"C".equals(fileDownlaod.getStatus())) {
+			 if (!"C".equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("CIBIL request for file generation failed.");
 			}
