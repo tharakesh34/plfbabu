@@ -14105,7 +14105,7 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 	</changeSet>
 	<changeSet id="675" author="Kesav" dbms="mssql">
 	<sql>
-		create table Promotions_Backup as Select * from Promotions;
+		Select * into Promotions_Backup from Promotions;
 	</sql>
 	</changeSet>
 	<changeSet id="676" author="Kesav">
