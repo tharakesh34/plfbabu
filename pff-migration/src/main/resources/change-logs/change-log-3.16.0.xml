@@ -4191,6 +4191,26 @@ union all
 		INSERT INTO ErrorDetails VALUES('90348','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z and Spaces] and must starts with Characters only.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
+<changeSet id="243" author="Siva">
+		<createView viewName="FinOverdueEnquiry_View" replaceIfExists="true">
+		SELECT     T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, 
+                      T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,T1.DownPayment, 
+                      T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate,
+                      T5.FinTypeDesc LovDescFinTypeName, T6.CustCIF LovDescCustCIF, T6.CustShrtName LovDescCustShrtName, T7.BranchDesc LovDescFinBranchName, 
+                      T1.Blacklisted, T5.FinScheduleOn LovDescFinScheduleOn, T1.FeeChargeAmt,T1.InsuranceAmt, T1.ClosingStatus, T8.CustTypeCtg, 
+                      T1.GraceTerms, T5.FinDivision lovDescFinDivision, T5.FinCategory lovDescProductCodeName, 
+                      T1.AlwMultiDisb, T5.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments,T1.FinCurrAssetValue,
+                     (T1.FinAmount-T1.DownPayment+ T1.FeeChargeAmt -  T1.FinRepaymentAmount) CurFinAmount,
+                     (T1.FinAmount- T1.DownPayment+ T1.FeeChargeAmt) FinancingAmount, T1.FinStatus 
+FROM          FinanceMain T1  INNER JOIN
+                       RMTFinanceTypes T5 ON T1.FinType = T5.FinType INNER JOIN
+                       Customers T6 ON T1.CustID = T6.CustID INNER JOIN
+                       RMTBranches T7 ON T1.FinBranch = T7.BranchCode INNER JOIN
+                       RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode
+                      Where FinReference in (Select FinReference From FinODDetails)
+					  
+		</createView>
+	</changeSet>
 <changeSet id="243" author="pruthvi">
 	<sql>
 update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_LoanwiseVoucherDetail';

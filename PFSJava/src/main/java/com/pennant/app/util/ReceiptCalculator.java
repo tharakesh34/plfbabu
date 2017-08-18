@@ -898,6 +898,9 @@ public class ReceiptCalculator implements Serializable {
 												}else{
 													balPft = totalReceiptAmt.multiply(tdsMultiplier);
 												}
+											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0  && totalReceiptAmt.compareTo(actPftAdjust) < 0){
+												balPft = totalReceiptAmt.multiply(tdsMultiplier);
+												actPftAdjust = totalReceiptAmt;
 											}
 											
 											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft, valueDate,null);
@@ -1182,8 +1185,9 @@ public class ReceiptCalculator implements Serializable {
 			
 			FinRepayHeader repayHeader = null;
 			BigDecimal balAmount = actualReceiptAmt.subtract(totalReceiptAmt);
-			if(actualReceiptAmt.compareTo(totalReceiptAmt) > 0 && 
-					actualReceiptAmt.compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
+			if(((actualReceiptAmt.compareTo(totalReceiptAmt) > 0  && balAmount.compareTo(advAmountPaid) != 0) || 
+					totalWaivedAmt.compareTo(BigDecimal.ZERO) > 0) && 
+					actualReceiptAmt.compareTo(partialSettleAmount) > 0 && isSchdPaid){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());

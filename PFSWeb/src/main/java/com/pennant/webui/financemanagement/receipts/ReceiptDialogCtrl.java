@@ -1147,7 +1147,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
 					}
 					
-					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC)){
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC) ||
+							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_LPFT)){
 						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 					}else{
 						waivedBox.setReadonly(true);
@@ -2624,7 +2625,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
 					}
 					
-					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC)){
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC) ||
+							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_LPFT)){
 						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 					}else{
 						waivedBox.setReadonly(true);
@@ -3529,6 +3531,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}else{
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV) ||
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC) ||
+							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_LPFT) ||
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_BOUNCE)){
 						allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 					}else{
@@ -3580,7 +3583,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
 						
-						// Nothing TODO
+						// Nothing TO DO
 					}else{
 						totalDueAmount = totalDueAmount.add(totalCalAmount);
 						totalPaidAmount = totalPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));

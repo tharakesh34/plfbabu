@@ -100,112 +100,104 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
+	public AEEvent recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, Date schDate, String finODFor,
 			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
-			long linkedTranId, boolean fullyPaidSchd, FinRepayQueueHeader rpyQueueHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
-
+			AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		boolean isPostingSuccess = true;
-		boolean isPaidClear = false;
-		String errorCode = null;
 
 		String finReference = financeMain.getFinReference();
-		//Calculate Pending Penalty Balance
 
-		if (penaltyPaidNow.add(penaltyWaived).compareTo(BigDecimal.ZERO) > 0) {
+		// AmountCodes Preparation
+		// EOD Repayments should pass the value date as schedule for which
+		// Repayment is processing
+		AEAmountCodes amountCodes = null;
+		if(aeEvent == null){
 
-			isPaidClear = true;
-
-			// AmountCodes Preparation
-			// EOD Repayments should pass the value date as schedule for which
-			// Repayment is processing
 			aeEvent = new AEEvent();
 			aeEvent.setAeAmountCodes(new AEAmountCodes());
-			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			amountCodes = aeEvent.getAeAmountCodes();
 			aeEvent.setFinReference(financeMain.getFinReference());
 			aeEvent.setCustID(financeMain.getCustID());
 			aeEvent.setFinType(financeMain.getFinType());
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
-			aeEvent.setLinkedTranId(linkedTranId);
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+			aeEvent.setValueDate(dateValueDate);
+			aeEvent.setPostDate(postDate);
+
 			amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 			amountCodes.setFinType(financeMain.getFinType());
 
-			if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
-				amountCodes.setExPenaltyPaid(penaltyPaidNow);
-				amountCodes.setExPenaltyWaived(penaltyWaived);
-			}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
-				amountCodes.setEAPenaltyPaid(penaltyPaidNow);
-				amountCodes.setEAPenaltyWaived(penaltyWaived);
-			}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
-				amountCodes.setPAPenaltyPaid(penaltyPaidNow);
-				amountCodes.setPAPenaltyWaived(penaltyWaived);
-			}else {
-				amountCodes.setPenaltyPaid(penaltyPaidNow);
-				amountCodes.setPenaltyWaived(penaltyWaived);
-			}
-
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-			aeEvent.setValueDate(dateValueDate);
-			aeEvent.setSchdDate(schdDate);
-			aeEvent.setEOD(false);
-
-			String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-
-			if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
-				aeEvent.setEOD(true);
-			}
-
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-			aeEvent.setDataMap(dataMap);
-
-			Date dateAppDate = DateUtility.getAppDate();
-			aeEvent.setPostDate(dateAppDate);
-			aeEvent.setValueDate(dateValueDate);
-
-			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
-						AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-			} else {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), 
-						AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-			}
-
-			// Posting details calling
-			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-
-			isPostingSuccess = aeEvent.isPostingSucess();
-			linkedTranId = aeEvent.getLinkedTranId();
-			errorCode = aeEvent.getErrorMessage();
-
-			//Overdue Details Updation for Paid Penalty
-			if (isPostingSuccess) {
-
-				//Overdue Details Updation for Totals
-				FinODDetails detail = new FinODDetails();
-				detail.setFinReference(finReference);
-				detail.setFinODSchdDate(schdDate);
-				detail.setFinODFor(finODFor);
-				detail.setTotPenaltyAmt(BigDecimal.ZERO);
-				detail.setTotPenaltyPaid(penaltyPaidNow);
-				detail.setTotPenaltyBal((penaltyPaidNow.add(penaltyWaived)).negate());
-				detail.setTotWaived(penaltyWaived);
-				getFinODDetailsDAO().updateTotals(detail);
-
-			}
+		}else{
+			amountCodes = aeEvent.getAeAmountCodes();
 		}
 
-		List<Object> returnList = new ArrayList<Object>(3);
-		returnList.add(isPostingSuccess);
-		returnList.add(linkedTranId);
-		returnList.add(errorCode);
-		returnList.add(isPaidClear);
+		amountCodes.setExPenaltyPaid(BigDecimal.ZERO);
+		amountCodes.setExPenaltyWaived(BigDecimal.ZERO);
+		amountCodes.setEAPenaltyPaid(BigDecimal.ZERO);
+		amountCodes.setEAPenaltyWaived(BigDecimal.ZERO);
+		amountCodes.setPAPenaltyPaid(BigDecimal.ZERO);
+		amountCodes.setPAPenaltyWaived(BigDecimal.ZERO);
+		amountCodes.setPenaltyPaid(BigDecimal.ZERO);
+		amountCodes.setPenaltyWaived(BigDecimal.ZERO);
+
+		if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
+			amountCodes.setExPenaltyPaid(penaltyPaidNow);
+			amountCodes.setExPenaltyWaived(penaltyWaived);
+		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
+			amountCodes.setEAPenaltyPaid(penaltyPaidNow);
+			amountCodes.setEAPenaltyWaived(penaltyWaived);
+		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
+			amountCodes.setPAPenaltyPaid(penaltyPaidNow);
+			amountCodes.setPAPenaltyWaived(penaltyWaived);
+		}else {
+			amountCodes.setPenaltyPaid(penaltyPaidNow);
+			amountCodes.setPenaltyWaived(penaltyWaived);
+		}
+
+		aeEvent.setSchdDate(schDate);
+		aeEvent.setEOD(false);
+
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+
+		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
+			aeEvent.setEOD(true);
+		}
+
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
+
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), 
+					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
+		} else {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), 
+					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+		}
+
+		// Posting details calling
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+		//Overdue Details Updation for Paid Penalty
+		if (aeEvent.isPostingSucess()) {
+
+			//Overdue Details Updation for Totals
+			FinODDetails detail = new FinODDetails();
+			detail.setFinReference(finReference);
+			detail.setFinODSchdDate(schDate);
+			detail.setFinODFor(finODFor);
+			detail.setTotPenaltyAmt(BigDecimal.ZERO);
+			detail.setTotPenaltyPaid(penaltyPaidNow);
+			detail.setTotPenaltyBal((penaltyPaidNow.add(penaltyWaived)).negate());
+			detail.setTotWaived(penaltyWaived);
+			getFinODDetailsDAO().updateTotals(detail);
+
+		}
 
 		logger.debug("Leaving");
-		return returnList;
+		return aeEvent;
 	}
 
 	/**
