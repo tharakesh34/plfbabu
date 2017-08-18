@@ -15626,7 +15626,7 @@ update Customers_temp set CUSTADDLDEC1 = null;
 	</createView> 
 
 </changeSet>
-<changeSet id="760" author="Prasad">
+<changeSet id="760" author="Prasad" dbms="oracle">
     <createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
         Select substr(T1.FinReference,7,length(T1.FinReference)) APPLID,FavourNumber CHEQUEID,T1.FinReference AGREEMENTNO,
         T3.Postdate BOUNCE_DATE,T4.Reason BOUNCE_REASON,T3.ADVISEAMOUNT BOUNCE_AMT,
@@ -15640,7 +15640,21 @@ update Customers_temp set CUSTADDLDEC1 = null;
    		Where T.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
 	</createView>
 </changeSet>
-<changeSet id="761" author="Prasad">
+<changeSet id="760" author="Prasad" dbms="mssql">
+    <createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+        Select substring(T1.FinReference,7,len(T1.FinReference)) APPLID,FavourNumber CHEQUEID,T1.FinReference AGREEMENTNO,
+        T3.Postdate BOUNCE_DATE,T4.Reason BOUNCE_REASON,T3.ADVISEAMOUNT BOUNCE_AMT,
+        (select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+        'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1 inner join 
+   		FINRECEIPTHEADER T on t.Reference = T1.FinReference inner join 
+    	FINRECEIPTDETAIL T2 on T.RECEIPTID =T2.RECEIPTID And T.ReceiptMode = T2.PaymentType  inner join
+     	ManualAdvise T3 on T3.RECEIPTID = T.RECEIPTID inner join
+     	Bouncereasons T4 on T4.Bounceid =T3.Bounceid
+   		Where T.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
+	</createView>
+</changeSet>
+<changeSet id="761" author="Prasad" dbms="oracle">
     <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
        SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
        P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
@@ -15655,6 +15669,33 @@ update Customers_temp set CUSTADDLDEC1 = null;
        NULL CHEQUEID,
        (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
        (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+	</createView>
+</changeSet>
+<changeSet id="761" author="Prasad" dbms="mssql">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+       SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId + '-'+TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTRING(FM.FinReference,7,
+       LEN(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       Case when P.Drorcr='D' then P.postamount else 0 end DRAMT,Case when P.Drorcr='C' then 0 else P.postamount end CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
        NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
 	   FROM Postings P 
        Inner join FINANCEMAIN FM on FM.finreference=P.finreference
@@ -15702,7 +15743,7 @@ update Customers_temp set CUSTADDLDEC1 = null;
 	<changeSet id="766" author="Manoj">
     	<addPrimaryKey columnNames="CUSTOMER_NO" constraintName="PK_CN" tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL"/>
 	</changeSet>
-	<changeSet id="767" author="Prasad">
+	<changeSet id="767" author="Prasad" dbms="oracle">
     <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
 	SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
        P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
@@ -15718,6 +15759,34 @@ update Customers_temp set CUSTADDLDEC1 = null;
        NULL CHEQUEID,
        (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
        (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+       </createView>
+       </changeSet>
+       	<changeSet id="767" author="Prasad" dbms="mssql">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+	SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId + '-'+TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTRING(FM.FinReference,7,
+       LEN(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       coalesce(Case when P.Drorcr='D' then P.postamount end,0) DRAMT,
+       coalesce(Case when P.Drorcr='C' then P.postamount end,0) CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
        NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
 	   FROM Postings P 
        Inner join FINANCEMAIN FM on FM.finreference=P.finreference
