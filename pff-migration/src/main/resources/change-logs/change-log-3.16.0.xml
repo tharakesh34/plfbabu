@@ -470,7 +470,7 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 	<changeSet id="04" author="murthy.y">
 			<dropPrimaryKey tableName="FORECLOSURECHARGES" constraintName="PK_DM_FCC_AGGID"/>
 	 </changeSet>   
-	 <changeSet  id="33" author="Prasad">
+	 <changeSet  id="33" author="Prasad" dbms="oracle">
 	<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
 		  <![CDATA[select  T2.FinApprovedDate AGREEMENTDATE,substr(T2.FinReference,7,length(T2.FinReference)) APPLID,T2.FinReference AGREEMENTNO,
           T3.DisbSeq DISBURSEMENTNO,T3.DisbDate DISBURSEMENTDATE,null PARENT_AGREEMENTNO,
@@ -519,7 +519,60 @@ left join (Select FA.FinReference,FA.BENEFICIARYACCNO,FA.LLREFERENCENO from (
            group by FinReference)T inner join FinAdvancepayments FA on FA.FinReference=T.FinReference and FA.paymentSeq = T.MAXpaymentSeq)FA on FA.FinReference=T2.FinReference]]>
 		</createView>
 	</changeSet> 
-<changeSet  id="34" author="Prasad">
+		 <changeSet  id="33" author="Prasad" dbms="mssql">
+	<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
+		  <![CDATA[select  T2.FinApprovedDate AGREEMENTDATE,substring(T2.FinReference,7,len(T2.FinReference)) APPLID,T2.FinReference AGREEMENTNO,
+          T3.DisbSeq DISBURSEMENTNO,T3.DisbDate DISBURSEMENTDATE,null PARENT_AGREEMENTNO,
+          dbo.udf_convertcurrency(t2.FinAmount,T2.finccy,'INR')  AMTFIN,
+          dbo.udf_convertcurrency((t2.FinAmount - t2.DownPayment + t2.FeeChargeAmt),T2.finccy,'INR')  NET_AMTFIN,
+          dbo.udf_convertcurrency(T7.DisbAmount,T2.finccy,'INR')  DISBURSEDAMT,
+          CASE When T2.FINASSETVALUE=T2.FINCURRASSETVALUE THEN 'Fully Disbursed' else 'Partially Disbursed' end DISB_STATUS,
+          T1.FirstRepayDate FIRST_DUE_DATE,round(DATEDIFF(month,T2.MaturityDate,T2.FinStartDate),2) GROSS_TENURE,T1.NOINST NET_TENURE,
+          T2.MaturityDate MATURITYDATE,T2.LastRepayDate EXPIRYDATE,null NO_OF_ADV_INSTL,
+          null ADV_EMI_AMT,T2.FirstRepay EMI,T2.FinRepayMethod REPAYMENT_MODE,
+          T2.FinType PRODUCTFLAG,P.PROMOTIONID PROMOTIONID,null ICICI_LOMBARD,
+          null BAGIC,null BALIC_CHARGES,
+          (Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+          'N' PROCESSED_FLAG,
+          (Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,
+          null SEGMENTS,
+          dbo.udf_convertcurrency(T9.TotalFEE,T2.finccy,'INR') FEE,null DEALER_SUBV,null MANU_SUBV_DED,null MANU_SUBV_NDED,
+          dbo.udf_convertcurrency(T2.BPIAMOUNT,T2.finccy,'INR') PREEMI,
+          null EXISTING_LANNO,null MORTGAGE_FEE,null COMMITMENT_FEE,
+          dbo.udf_convertcurrency(T10.PROCES_FEE,T2.finccy,'INR')  PROCESSING_FEE,
+          null PRE_EMI_RECEIVABLE,
+          dbo.udf_convertcurrency(T2.INSURANCEAMT,T2.finccy,'INR') INSURANCE,
+          T2.FinRepayMethod PAYMENTMODE,substring(T2.REPAYFRQ,1,1) FREQ,
+          FA.LLREFERENCENO CHEQUENUM,substring(FA.BENEFICIARYACCNO,1,16)  CUST_ACCT_NO,T5.BankName BANKNAME,t6.micr MICRCODE,null BUSINESS_YEAR,
+          null EMI_CHARGE,null PDC_CHARGE,CASE WHEN t2.EffectiveRateOfReturn>999 then 999 else t2.EffectiveRateOfReturn end IRR_PER,
+          dbo.udf_convertcurrency(T9.TotalFEE,T2.finccy,'INR') FEE_WL,
+          null ELC_CHARGE,null CREDIT_VIDYA_FEES,null BATCH_ID 
+from FinanceMain T2 
+Inner join FINPFTDETAILS T1 on T1.FinReference=T2.FinReference
+Inner join FinDisbursementDetails T3 on T3.FinReference=T2.FinReference
+Inner join rmtfinancetypes T4 on T4.FinType=T2.FinType
+left join bankbranches T6 on T6.Branchcode=T2.finbranch 
+LEFT JOIN BMTBANKDetail T5 on t5.bankcode=t6.bankcode
+left join promotions P on P.PROMOTIONCODE = T2.PROMOTIONCODE
+left join (Select Finreference,SUM(DisbAmount) DisbAmount
+          from FinDisbursementDetails
+          where DIsbDate<=(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')
+          group by Finreference)T7 on t7.FinReference=T2.FinReference
+left join (Select Finreference,SUM(BalanceAmt)BalanceAmt From FINEXCESSAMOUNT 
+          where AMOUNTTYPE = 'A' group by Finreference)T8 on T8.FinReference=T2.FinReference
+left join (select Finreference,sum(Actualamount-waivedamount)TotalFEE from FInFeeDetail
+           group by Finreference)T9 on T9.FinReference=T2.FinReference
+left join (select Finreference,sum(Actualamount-waivedamount)PROCES_FEE 
+           from FInFeeDetail F 
+           inner join Feetypes FT on F.Feetypeid = FT.Feetypeid
+           where FT.Feetypecode='PROCFEE'
+           group by Finreference)T10 on T10.FinReference=T2.FinReference
+left join (Select FA.FinReference,FA.BENEFICIARYACCNO,FA.LLREFERENCENO from (
+           Select FinReference,max(paymentSeq)MAXpaymentSeq from FinAdvancepayments
+           group by FinReference)T inner join FinAdvancepayments FA on FA.FinReference=T.FinReference and FA.paymentSeq = T.MAXpaymentSeq)FA on FA.FinReference=T2.FinReference]]>
+		</createView>
+	</changeSet> 
+<changeSet  id="34" author="Prasad" dbms="oracle">
 	<createView viewName="DM_LOAN_DETAILS_DAILY_VIEW" replaceIfExists="true">
 		  <![CDATA[select substr(T1.FinReference,7,length(T1.FinReference)) APPLID,t1.finreference AGREEMENTNO,t3.CustID CUSTOMERID,
   effectiveRateofReturn CUSTOMER_YIELD,
@@ -543,6 +596,47 @@ left join (Select FA.FinReference,FA.BENEFICIARYACCNO,FA.LLREFERENCENO from (
   udf_convertcurrency(t8.tot_fee,T2.finccy,'INR')  LOGIN_FEES,null VC_REFERRAL_CD,null  VC_REFERRAL_NAME,
   null PROC_FEES2,t1.FinRepayMethod  INSTRUMENT_TYPE,null LAN_BARCODE,T1.FinStartDate  INTSTART_DATE_REGULAR,
   udf_convertcurrency(t1.BPIAmount,T2.finccy,'INR')  BPI_RECEIVABLE,null BPI_PAYABLE,
+  Case when M.openmandate=1 then 'Y' else 'N' end  OPEN_FACILITY_FLAG,null BATCH_ID 
+  from FinanceMain T1
+  Inner join finpftdetails T2 on t1.finreference=t2.finreference
+  Inner join customers T3 on T3.Custid=t1.custid
+  left join Finprovisions T4 on T4.finreference=t1.finreference
+  left join Mandates M on M.OrgReference =t1.finreference and M.Mandateid = t1.Mandateid
+  left join (Select t1.finreference , SUM(RemainingFee)RemainingFee From Finfeedetail T1
+             WHERE FeeScheduleMethod = 'DISB'
+             group by t1.finreference) T6 on T1.finreference=t6.finreference
+  left join (Select t1.finreference , SUM(BalanceAmt)BalanceAmt From FinExcessAmount T1
+             WHERE AmountType = 'A' 
+             group by t1.finreference) T7 on T1.finreference=t7.finreference
+  left join (Select t1.finreference , SUM(Actualamount-waivedamount)tot_fee From Finfeedetail T1
+             group by t1.finreference) T8 on T1.finreference=t8.finreference]]>
+		</createView>
+	</changeSet> 
+	<changeSet  id="34" author="Prasad" dbms="mssql">
+	<createView viewName="DM_LOAN_DETAILS_DAILY_VIEW" replaceIfExists="true">
+		  <![CDATA[select substring(T1.FinReference,7,len(T1.FinReference)) APPLID,t1.finreference AGREEMENTNO,t3.CustID CUSTOMERID,
+  effectiveRateofReturn CUSTOMER_YIELD,
+  Case when t1.finisactive =1 then 'Active' when t1.CLOSINGSTATUS='C' 
+  then 'Cancelled' else 'Closed' end STATUS,T4.NPAbucketid NPA_STAGE,null LMS_BUCKET,
+  null COLL_BUCKET,null INSURANCE_APPLIED_FLG,
+  (Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
+  'N' PROCESSED_FLAG,(Select sysparmvalue  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') PROCESS_DATE,
+  'LMS-DII' SEGMENTS,T1.MaturityDate CLOSUREDATE,
+  null TOPUP_AMT,(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESS_YEAR,
+  M.Mandateid PDCID,null PCFLAG,
+  Case when T1.PRODUCTCATEGORY='ODFCLITY' then 'Y' else 'N' end OD_FLAG,
+  T1.RepayMargin MARGIN,T1.REPAYSPECIALRATE SPECIALMARGIN,null FIXEDTENOR,
+  Null CEEFFECTIVEDATE,T1.RepayProfitRate EFF_RATE,T2.CURREDUCINGRATE PLRRATE,null PARTY_CODE,
+  coalesce(T3.custFname,'')+' '+coalesce(T3.custMname,'')+' '+coalesce(T3.CustLname,'') PARTY_NAME,
+  NULL ZONE,NULL COLLECTION_CENTRE,null VIRTUAL_ACCOUNT_NUMBER,
+  null INSTALLMENT_TYPE,null COMPANYTYPE,
+  dbo.udf_convertcurrency(T1.TotalProfit,T2.finccy,'INR')  FIANANCE_CHARGES,T1.ApplicationNo FILENO,null NO_OF_PDCS,
+  null LIFEINSURANCE,
+  dbo.udf_convertcurrency(t6.RemainingFee,T2.finccy,'INR')  SHORTRECEIVED,t3.CustShrtName IN_FAVOUR_OFF,null MKTGID,  
+  dbo.udf_convertcurrency(t7.BalanceAmt,T2.finccy,'INR')  PRE_EMI_INT_500071,null LOAN_PURPOSE_DTL,null LOAN_PURPOSE_DESC,
+  dbo.udf_convertcurrency(t8.tot_fee,T2.finccy,'INR')  LOGIN_FEES,null VC_REFERRAL_CD,null  VC_REFERRAL_NAME,
+  null PROC_FEES2,t1.FinRepayMethod  INSTRUMENT_TYPE,null LAN_BARCODE,T1.FinStartDate  INTSTART_DATE_REGULAR,
+  dbo.udf_convertcurrency(t1.BPIAmount,T2.finccy,'INR')  BPI_RECEIVABLE,null BPI_PAYABLE,
   Case when M.openmandate=1 then 'Y' else 'N' end  OPEN_FACILITY_FLAG,null BATCH_ID 
   from FinanceMain T1
   Inner join finpftdetails T2 on t1.finreference=t2.finreference
