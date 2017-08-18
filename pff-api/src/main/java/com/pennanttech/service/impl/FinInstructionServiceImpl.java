@@ -608,9 +608,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
+		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
 
-		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction,
-				AccountEventConstants.ACCEVENT_SCDCHG);
+		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction,eventCode);
 
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
@@ -628,7 +628,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+		financeDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_ADDDBSN);
 		List<ErrorDetails> errorList = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
 				finServiceInstruction, eventCode);
 		if (!errorList.isEmpty()) {
