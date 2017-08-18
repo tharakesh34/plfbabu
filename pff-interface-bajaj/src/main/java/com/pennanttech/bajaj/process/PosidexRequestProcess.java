@@ -872,15 +872,24 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" FROM (select C.CUSTID, C.CUSTCIF, C.CUSTCTGCODE  from (");
 		sql.append(" select C.CUSTID from CUSTOMERS C");
 		sql.append(" LEFT JOIN FINANCEMAIN FM ON FM.CUSTID = C.CUSTID");
+		sql.append(" LEFT JOIN FINGUARANTORSDETAILS G ON G.GUARANTORCIF = C.CUSTCIF");
+		sql.append(" LEFT JOIN FINJOINTACCOUNTDETAILS J ON J.CUSTCIF = C.CUSTCIF");
 		
 		if (lastRunDate != null) {
 			sql.append(" WHERE (C.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T)");  
-			sql.append(" OR (FM.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T)))");
+			sql.append(" OR (FM.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
+			sql.append(" OR (G.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
+			sql.append(" OR (J.LASTMNTON > (select Max(INSERT_TIMESTAMP) from PUSH_PULL_CONTROL_T))");
+			sql.append(" )");
 		}
 		
 		sql.append(" UNION ALL"); 
-		sql.append(" select C.CUSTID from CUSTOMERS C");
-		sql.append(" WHERE C.CUSTID NOT IN (SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_DEMO_DTL)");
+		sql.append(" select DISTINCT C.CUSTID from CUSTOMERS C");
+		sql.append(" WHERE C.CUSTID NOT IN (");
+		sql.append(" SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_DEMO_DTL");
+		sql.append(" UNION ALL");
+		sql.append(" SELECT CUSTOMER_NO FROM PSX_DEDUP_EOD_CUST_LOAN_DTL");
+		sql.append(")");
 		sql.append(" ) T"); 
 		sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = T.CUSTID");
 		sql.append(" WHERE C.CUSTCOREBANK IS NOT NULL) T"); 
