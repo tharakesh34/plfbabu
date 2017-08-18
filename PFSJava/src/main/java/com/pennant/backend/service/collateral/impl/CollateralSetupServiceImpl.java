@@ -2344,7 +2344,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm)));
 				} else {
 					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_NAME));
-					Matcher matcher = pattern.matcher(collateralSetup.getValuator());
+					Matcher matcher = pattern.matcher(collateralSetup.getCollateralLoc());
 					if (matcher.matches() == false) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "collateralLoc";
