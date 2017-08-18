@@ -478,7 +478,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, FinStatus, FinStartDate,");
 		selectSql.append(" FinAmount, DownPayment, FeeChargeAmt, InsuranceAmt, NumberOfTerms, LovDescFinTypeName,MaxInstAmount");
-		selectSql.append(" from FinanceEnquiry_View ");
+		selectSql.append(" from MandateEnquiry_view ");
 		selectSql.append(" Where MandateID = :MandateID");
 		
 		logger.debug("selectSql: " + selectSql.toString());
