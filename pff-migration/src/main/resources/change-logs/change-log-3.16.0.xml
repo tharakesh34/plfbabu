@@ -3723,4 +3723,9 @@ union all
                      group by FinReference )T6 on T6.FinReference=T1.Finreference
 		</createView>
 </changeSet>
+<changeSet id="242" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90348','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z and Spaces] and must starts with Characters only.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
