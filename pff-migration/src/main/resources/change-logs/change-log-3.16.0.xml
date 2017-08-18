@@ -4536,7 +4536,7 @@ FROM          FinanceMain T1  INNER JOIN
 					  
 		</createView>
 	</changeSet>
-<changeSet id="243" author="pruthvi">
+<changeSet id="244" author="pruthvi">
 	<sql>
 update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_LoanwiseVoucherDetail';
 </sql>
