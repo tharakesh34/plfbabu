@@ -5589,4 +5589,29 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 	INSERT INTO ErrorDetails VALUES('90337','EN','E','{0} is invalid, applicable values are {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
+
+<changeSet id="248" author="murthy.y">
+	<addColumn tableName="DATA_ENGINE_EVENT_PROPERTIES">
+        <column name="HOST_NAME" type="varchar(255)"/>
+    </addColumn>
+    <addColumn tableName="DATA_ENGINE_EVENT_PROPERTIES">
+        <column name="PORT" type="smallint"/>
+    </addColumn>
+    <addColumn tableName="DATA_ENGINE_EVENT_PROPERTIES">
+        <column name="PRIVATE_KEY" type="varchar(255)"/>
+    </addColumn>
+</changeSet>
+<changeSet id="248.1" author="murthy.y" >
+	<addNotNullConstraint columnDataType="VARCHAR2(10)" columnName="STORAGE_TYPE" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
+</changeSet>
+<changeSet id="248.2" author="murthy.y">
+	 <addUniqueConstraint columnNames="CONFIG_ID, STORAGE_TYPE" constraintName="UK_DEEP_CID_ST" tableName="DATA_ENGINE_EVENT_PROPERTIES" />
+</changeSet>
+<changeSet id="248.3" author="murthy.y">
+	<sql>
+		<![CDATA[
+			insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_HDFC_EXPORT'), 'FTP', NULL, '/forward/tmp', 'snorkel', 'Pass@123', NULL, NULL, '10.128.1.146', '21', NULL);
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
