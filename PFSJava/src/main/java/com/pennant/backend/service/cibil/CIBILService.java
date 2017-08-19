@@ -1,8 +1,8 @@
 package com.pennant.backend.service.cibil;
 
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.model.EventProperties;
 
 public interface CIBILService {
 	CustomerDetails getCustomerDetails(String finreference, long customerId);
@@ -19,7 +19,5 @@ public interface CIBILService {
 	
 	DataEngineStatus getLatestExecution();
 
-	Configuration getConfigDetails(String configName);
-
-
+	EventProperties getEventProperties(String configName, String eventType);
 }

@@ -10,9 +10,8 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
-import com.pennanttech.dataengine.Event;
-import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -150,11 +149,13 @@ public class CIBILReport {
 		
 		// Move the File into S3 bucket
 		try {
-			Configuration config = cibilService.getConfigDetails("CIBIL_REPORT");
-			if (Event.MOVE_TO_S3_BUCKET.name().equals(config.getPostEvent())) {
-				AmazonS3Bucket bucket = new AmazonS3Bucket(config.getRegionName(), config.getBucketName(),
-						EncryptionUtil.decrypt(config.getAccessKey()), EncryptionUtil.decrypt(config.getSecretKey()));
-				bucket.putObject(cibilFile, config.getPrefix());
+			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
+			AmazonS3Bucket bucket = null;
+			if (properties != null && properties.getStorageType().equals("S3")) {
+				bucket = new AmazonS3Bucket(properties.getRegionName(), properties.getBucketName(),
+						EncryptionUtil.decrypt(properties.getAccessKey()),
+						EncryptionUtil.decrypt(properties.getSecretKey()));
+				bucket.putObject(cibilFile, properties.getPrefix());
 			}
 
 			EXTRACT_STATUS.setStatus("S");

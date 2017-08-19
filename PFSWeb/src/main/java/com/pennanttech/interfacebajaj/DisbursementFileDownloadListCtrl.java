@@ -207,7 +207,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	
 	private String loadS3Bucket(long configId) {
 
-		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId);
+		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
 
 		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
 				EncryptionUtil.decrypt(eventproperties.getAccessKey()),
