@@ -5614,4 +5614,11 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="248.4" author="murthy.y">
+	<sql>
+		<![CDATA[
+			update data_engine_config set POSTEVENT = 'MOVE_TO_S3_BUCKET,COPY_TO_FTP' where name = 'DISB_HDFC_EXPORT';
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
