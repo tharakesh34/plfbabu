@@ -1801,15 +1801,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	public void onSelectDocumentDetailTab(ForwardEvent event) {
-		getDocumentDetailDialogCtrl().doSetLabels(getFinBasicDetails());
-		String finReference = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference();
-		List<DocumentDetails> documentDetails = getFinanceDetailService().getDocumentDetails(finReference,
-				FinanceConstants.FINSER_EVENT_ORG);
-		if (documentDetails != null && !documentDetails.isEmpty()) {
-			getDocumentDetailDialogCtrl().doFillDocumentDetails(documentDetails);
-		}
-	}
 
 	public void onSelectEligibilityDetailsTab(ForwardEvent event) {
 		getEligibilityDetailDialogCtrl().doSetLabels(getFinBasicDetails());
@@ -1881,7 +1872,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setStyle("overflow:auto;");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
-		ComponentsCtrl.applyForward(tab, "onSelect=onSelectDocumentDetailTab");
+		
 
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("moduleDefiner", moduleDefiner);
