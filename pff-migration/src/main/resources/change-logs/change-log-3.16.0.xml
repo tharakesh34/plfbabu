@@ -6781,6 +6781,13 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 		   ) ORDER BY ID DESC
 	</createView>
 </changeSet>
+<changeSet id="248.9" author="murthy.y">
+	<sql>
+		<![CDATA[
+			update data_engine_config set POSTEVENT = 'COPY_TO_FTP,MOVE_TO_S3_BUCKET' where name = 'DISB_HDFC_EXPORT';
+		]]>
+	</sql>
+</changeSet>
 <changeSet id="249" author="Irfan">
 	<sql>
 		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
