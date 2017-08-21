@@ -1,5 +1,14 @@
 package com.pennanttech.bajaj.services;
 
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.DisbursementRequestService;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.QueryUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,7 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -16,15 +24,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-
-import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
-import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.services.DisbursementRequestService;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DisbursementRequestServiceImpl extends BajajService implements DisbursementRequestService {
 	private final Logger	logger	= Logger.getLogger(getClass());
@@ -270,6 +269,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 
 	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
 			String finType, long userId, String fileNamePrefix) {
+		DataEngineStatus status = null;
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
@@ -289,15 +289,19 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			export.setValueDate(getValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
-			export.exportData(configName);
+			status = export.exportData(configName);
+			
+			if (!"S".equals(status.getStatus())) {
+				System.out.println("Failed");
+			}
+			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
-			export = null;
-			parameterMap = null;
+			conclude(status, idList);
 		}
 	}
-
+		
 	private String getSTPFileSequence() {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
@@ -441,6 +445,16 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		}
 		return keyHolder.getKey().longValue();
 	}
+	
+	private void conclude(DataEngineStatus status, List<String> idList) {
+		if (status == null || !"S".equals(status.getStatus())) {
+			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("ID", idList);
+			
+			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", source);
+		}
+	}
+
 	
 	private boolean validateImpsRequest(ResultSet rs) throws Exception {
 
