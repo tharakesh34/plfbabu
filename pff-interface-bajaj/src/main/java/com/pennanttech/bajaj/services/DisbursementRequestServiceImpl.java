@@ -448,10 +448,13 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	
 	private void conclude(DataEngineStatus status, List<String> idList) {
 		if (status == null || !"S".equals(status.getStatus())) {
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("ID", idList);
+			MapSqlParameterSource paramMap = new MapSqlParameterSource();
+			paramMap.addValue("ID", idList);
+			paramMap.addValue("STATUS", "APPROVED");
 			
-			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", source);
+			namedJdbcTemplate.update("UPDATE FINADVANCEPAYMENTS SET STATUS = :STATUS where PAYMENTID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))", paramMap);
+			namedJdbcTemplate.update("UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS where PAYMENTINSTRUCTIONID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))", paramMap);
+			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
 		}
 	}
 
