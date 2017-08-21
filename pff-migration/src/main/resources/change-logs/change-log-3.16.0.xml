@@ -1744,7 +1744,7 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 		(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
 		'N' PROCESSED_FLAG,(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='VALUE_DATE') PROCESS_DATE,null SEGMENTS,
 		null  FEE,null  DEALER_SUBV,null  MANU_SUBV_DED,null  MANU_SUBV_NDED,null  PREEMI,null EXISTING_LANNO,null MORTGAGE_FEE,null COMMITMENT_FEE,
-		null PROCESSING_FEE,null PRE_EMI_RECEIVABLE,null INSURANCE,null PAYMENTMODE,substr(T2.REPAYFRQ,1,1) FREQ,null CHEQUENUM,null BATCH_ID 
+		null PROCESSING_FEE,null PRE_EMI_RECEIVABLE,null INSURANCE,null PAYMENTMODE,substring(T2.REPAYFRQ,1,1) FREQ,null CHEQUENUM,null BATCH_ID 
 		from  finpftdetails T1 Inner join Financemain T2 on T1.finreference=T2.finreference
     	Inner join FinDisbursementDetails T3 on T3.finreference=t1.finreference
 	</createView>
