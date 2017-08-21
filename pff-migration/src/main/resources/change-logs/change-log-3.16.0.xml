@@ -2041,7 +2041,7 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 <changeSet id="67" author="Prasad" dbms="mssql">
 	<createView viewName="DM_SEND_SOA_EMAIL_VIEW" replaceIfExists="true">
 		select T1.Finreference AGREEMENTNO,t1.custid CUSTOMERID,t4.CustEmail EMAILID,substring(T2.FinReference,9,len(T2.FinReference)) AGREEMENTID,
-		substr(T2.FinReference,9,length(T2.FinReference))PROCESSID,
+		substring(T2.FinReference,9,len(T2.FinReference))PROCESSID,
 		(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  GENERATION_DATE,
 		null PROCESSED,t1.fintype PRODUCTFLAG,null GROUPID,T5.ActiveCnt+T6.CloseCnt TOTAL_LAN,T6.CloseCnt TOTAL_CLOSED_LAN,T5.ActiveCnt TOTAL_ACTIVE_LAN,null SWIPE_FLAG,null 
 		EMI_CARD_NO,T1.latestDisbDate DISBURSEMENT_DATE,null SUPPLIERID,null SUPPLIERDESC,dbo.udf_convertcurrency(TotalPriSchd,T2.finccy,'INR')  AMT_FIN,
