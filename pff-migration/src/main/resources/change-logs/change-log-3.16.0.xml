@@ -1947,7 +1947,7 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 </changeSet>
 <changeSet id="63" author="Prasad" dbms="mssql">
 	<createView viewName="DM_LEA_DOC_DTLE_VIEW" replaceIfExists="true">
-		select substring(T1.FinReference,9,length(T1.FinReference))  AGREEMENTID,null APPLICABLE,
+		select substring(T1.FinReference,9,len(T1.FinReference))  AGREEMENTID,null APPLICABLE,
 		substring(T2.FinReference,9,len(T2.FinReference))  APPLID,null APPROVED_BY,null AUTHDATE,null AUTHID,null AWB_NO,null BRANCHSTATUS,
 		cast(null as numeric(8,0)) CONSTITUTION,null COURIER_NAME,'N' CRITICAL,null CUSTOMER_TYPE,
 		t1.custid  CUSTOMERID,null DATE_BRANCH_STATUS,null DATELASTUPDT,null DOC_CLASSFN,null DOC_RETRIEVAL_STATUS,
