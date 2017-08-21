@@ -280,7 +280,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 			File file = new File(builder.toString());
 			
-			if(fileDownlaod.getAlwFileDownload() != null && !Boolean.parseBoolean(fileDownlaod.getAlwFileDownload())) {
+			if(fileDownlaod.getAlwFileDownload() != null && !"1".equals(fileDownlaod.getAlwFileDownload())) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("Not allowed to download.");
 			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
