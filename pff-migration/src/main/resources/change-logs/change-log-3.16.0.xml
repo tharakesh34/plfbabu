@@ -1615,7 +1615,7 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 		inner join RMTBranches T3 on T3.branchcode=t1.finbranch
 		inner join customers C on C.custid = T2.custid
 		left join (select distinct custid,CustDocTitle from CUSTOMERDOCUMENTS where custdoccategory='03') CD on CD.Custid = C.custid
-		where substr(T2.FinReference,9,length(T2.FinReference)) is not null
+		where substring(T2.FinReference,9,len(T2.FinReference)) is not null
 	</createView>
  </changeSet>
 <changeSet id="54" author="Prasad" dbms="oracle">
