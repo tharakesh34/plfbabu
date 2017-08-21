@@ -2881,7 +2881,7 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 </changeSet>
 <changeSet id="174" author="Prasad" dbms="mssql">
 	<createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
-		SELECT NULL MODULEID,substring(P.FinEvent,1,1) STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+		SELECT NULL MODULEID,substring(P.FinEvent,1,1) STAGEID,P.LinkedTranId + '-'+TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
 		substring(P.FinEvent,1,1) VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
 		RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
 		PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,substring(FM.FinReference,9,
