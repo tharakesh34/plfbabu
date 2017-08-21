@@ -1696,8 +1696,8 @@ where reportid in (select reportid from reportconfiguration where menuitemcode='
 		custEMPType EMP_TYPE,(Select sysparmvalue sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') BUSINESSDATE,
 		dbo.udf_convertcurrency(CustTotalIncome,'INR','INR')  INCOME,APPLID APPLID,NULL BATCH_ID 
 		from customers T1 inner join 
-		(Select distinct 'Co Applicant' APPLICANT_TYPE,CUSTCIF,substring(FinReference,9,length(FinReference)) APPLID from FinJointAccountDetails union
-		Select distinct 'Guaranteer' APPLICANT_TYPE,Guarantorcif,substring(FinReference,9,length(FinReference)) APPLID from FinGuarantorsDetails) t on t.CUSTCIF =t1.CUSTCIF
+		(Select distinct 'Co Applicant' APPLICANT_TYPE,CUSTCIF,substring(FinReference,9,len(FinReference)) APPLID from FinJointAccountDetails union
+		Select distinct 'Guaranteer' APPLICANT_TYPE,Guarantorcif,substring(FinReference,9,len(FinReference)) APPLID from FinGuarantorsDetails) t on t.CUSTCIF =t1.CUSTCIF
 		Left join bmtgenders t2 on t2.gendercode=t1.custgendercode
 		left join RMTCustTypes T3 on T3.custtypecode=t1.custtypecode
 		left join CustomerEmpDetails t7 on t7.custid = t1.custid and CurrentEmployer=1
