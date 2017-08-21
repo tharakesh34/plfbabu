@@ -3105,7 +3105,7 @@ Insert into REPORTFILTERFIELDS values
 		null REVISED_TARGET_DATE,null BATCH_ID
 		from (Select T.FinReference,COVENANTTYPE DocCategory,(Case when Alwwaiver=1 then null else T.Receivabledate end) Receivabledate,
           Case when Alwwaiver=1 then 'Waived' else 'Pending' end DOCUMENT_STATUS,Description from fincovenanttype T
-          where T.FinReference||COVENANTTYPE not in (Select referenceid||DOCCATEGORY  from DocumentDetails DD)                                            
+          where T.FinReference+COVENANTTYPE not in (Select referenceid+DOCCATEGORY  from DocumentDetails DD)                                            
           union all
           Select referenceid FinReference,DD.DOCCATEGORY,null,'Completed',Description
           from DocumentDetails DD LEFT JOIN
