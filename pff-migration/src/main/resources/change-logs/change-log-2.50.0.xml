@@ -95,6 +95,16 @@
 	        drop view if exists customerfinances_iview;
 	    </sql>
 	</changeSet>
+		<changeSet id="13.01" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists int_cf_control_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="13.02" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists fincustinstdetails_iview;
+	    </sql>
+	</changeSet>
 	<changeSet id="13" author="Prasad">
 		<dropColumn columnName="ACRTILLNBD" tableName="FinPftDetails" />
 		<dropColumn columnName="ACRTODAYTONBD" tableName="FinPftDetails" />
