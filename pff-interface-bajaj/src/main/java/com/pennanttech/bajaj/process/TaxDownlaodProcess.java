@@ -41,7 +41,6 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private Map<String, TaxDetail> entityDetailMap = null;
  	private Map<String, String> cityMap = null;
 	private Map<String, String> countryMap = null;
-	private int recordCount = 0;
 	private int batchSize = 500;
 
 	// Constant values used in the interface
@@ -73,7 +72,6 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 
 	@Override
 	protected void processData() {
-		this.recordCount = 0;
 		boolean isError = false;
 		provinceMap = null;
 		try {
@@ -84,10 +82,10 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 				preparePosingsData();
 				long id = saveHeader();
 				processTaxDownloadData(id);
-				if (recordCount <= 0) {
+				if (processedCount <= 0) {
 					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
 				}
-				updateHeader(id, recordCount);
+				updateHeader(id, processedCount);
 			} catch (Exception e) {
 				isError = true;
 				logger.error(Literal.EXCEPTION, e);
@@ -101,6 +99,20 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
+	
+	private void setTotalRecords(final long id) {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("TAXAPPLICABLE", true);
+		
+		EXTRACT_STATUS.setTotalRecords(parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class));
+	}
+	
 
 	/**
 	 * Process Tax Download Data
@@ -132,7 +144,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
 				
-				recordCount++;
+				EXTRACT_STATUS.setProcessedRecords(processedCount++);
+				EXTRACT_STATUS.setSuccessRecords(successCount++);
 				taxDownload = mapTrnExtractionTypeData(rs, id);
 				list.add(taxDownload);
 
@@ -148,6 +161,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			saveTrnExtractDetails(list);
 			list.clear();
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -198,7 +212,6 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 				String ledgerCode = null;
 				BigDecimal postAmount = BigDecimal.ZERO;
 
-				recordCount++;
 				entityName = rs.getString("ENTITYDESC");//1
 				entityCode = rs.getString("ENTITYCODE");
 				Branch loanBranch = branchMap.get(rs.getString("FINBRANCH"));
@@ -971,7 +984,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	 * @param id
 	 * @param recordCnt
 	 */
-	private void updateHeader(long id, int recordCnt) {
+	private void updateHeader(long id, long recordCnt) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
