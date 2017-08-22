@@ -2,7 +2,9 @@ package com.pennanttech.bajaj.process;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
@@ -17,6 +19,7 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.bajaj.process.datamart.DataMartMapper;
 import com.pennanttech.bajaj.process.datamart.DataMartTable;
+import com.pennanttech.bajaj.process.datamart.DataMartView;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,8 +34,9 @@ public class DataMartProcess extends DatabaseDataEngine {
 	private String summary = null;
 	public AtomicLong completedThreads = null;
 	public long totalThreads;
-	private int btachSize = 10000;
+	private int btachSize = 5000;
 	private Date appDate;
+	private Date valueDate;
 	public static boolean running = false;
 	public AtomicLong processedRecords;
 
@@ -234,68 +238,20 @@ public class DataMartProcess extends DatabaseDataEngine {
 				break;
 			}
 		}
-
 	}
 
 	private void loadCount() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select sum(count) from (");
-		sql.append("select count(*) count from DM_APPLICANT_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_ADDRESS_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_APPLICATION_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_BOUNCE_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_COAPPLICANT_DTLS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_DISB_DETAILS_DAILY_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from FORECLOSURECHARGES_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_HTS_UNADJUSTED_AMT_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_INSURANCE_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_IVR_GATEWAY_FLEXI_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_LEA_DOC_DTLE_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_LOAN_DETAILS_DAILY_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_LOAN_VOUCHER_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_LOANWISE_CHARGE_DTLS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_LOANWISE_REPAYSCHEDULE_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_NOC_ELIGIBLE_LOANS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_OPENECS_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_PREPAYMENT_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_PRESENTATION_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_PROPERTY_DTL_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_RESCH_DETAILS_DAILY_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_SEND_SOA_EMAIL_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_SUBQ_DISB_DETAILS_VIEW");
-		sql.append(" union all ");
-		sql.append("select count(*) count from DM_WRITEOFF_DETAILS_VIEW");
-		sql.append(") T ");
-
-		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
-			executionStatus.setTotalRecords(totalRecords);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		List<DataMartView> enumValues = Arrays.asList(DataMartView.values());
+		System.out.println("startTime--> " + java.time.LocalTime.now());
+		for (DataMartView dataMartView : enumValues) {
+			StringBuilder sql = new StringBuilder();
+			sql.append("select count(*) count from " + dataMartView);
+			int count = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			totalRecords = totalRecords + count;
 		}
-
+		System.out.println("endTime--> " + java.time.LocalTime.now());
+		executionStatus.setTotalRecords(totalRecords);
+		System.out.println("Total Records--> " + totalRecords);
 	}
 
 	private long logHeader() {
@@ -357,6 +313,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -368,34 +325,26 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_APPLICANT_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_APPLICANT_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveApplicantDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_APPLICANT_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_APPLICANT_DETAILS.name(), rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -415,6 +364,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -428,37 +378,28 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						String[] keyFields = new String[] { "ADDRESSID", "CUSTOMERID" };
-
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_ADDRESS_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, "DM_ADDRESS_DETAILS", destinationJdbcTemplate);
+							DataMartMapper.saveAddressDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							logger.debug("Data " + map.toString());
-							String keyId = getKeyId("DM_ADDRESS_DETAILS", map, keyFields);
+							e.printStackTrace();
+							String keyId = getKeyId("DM_ADDRESS_DETAILS", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -484,6 +425,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -497,20 +439,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_APPLICATION_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_APPLICATION_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveApplicationDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -521,11 +458,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							logger.debug("Data " + map.toString());
-							String keyId = getKeyId(DataMartTable.DM_APPLICATION_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_APPLICATION_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -551,6 +485,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -562,20 +497,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_BOUNCE_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_BOUNCE_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveBounceDetailsMap(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -586,10 +517,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_BOUNCE_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_BOUNCE_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -615,6 +544,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -628,34 +558,27 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_COAPPLICANT_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_COAPPLICANT_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveCoApplicantDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
 								transManager.commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_COAPPLICANT_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_COAPPLICANT_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -681,6 +604,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -694,20 +618,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_DISB_DETAILS_DAILY, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_DISB_DETAILS_DAILY.name(), destinationJdbcTemplate);
+							DataMartMapper.saveDisbDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -717,11 +636,9 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_DISB_DETAILS_DAILY.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_DISB_DETAILS_DAILY.name(), rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -747,6 +664,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -760,20 +678,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.FORECLOSURECHARGES, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.FORECLOSURECHARGES.name(), destinationJdbcTemplate);
+							DataMartMapper.saveForeClosureChargesMap(rs, appDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -784,10 +697,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.FORECLOSURECHARGES.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.FORECLOSURECHARGES.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -813,6 +724,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -825,20 +737,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_HTS_UNADJUSTED_AMT, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
 
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_HTS_UNADJUSTED_AMT.name(), destinationJdbcTemplate);
+							DataMartMapper.saveHTSUnadjustedMap(rs, appDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -849,10 +757,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_HTS_UNADJUSTED_AMT.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_HTS_UNADJUSTED_AMT.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -878,6 +784,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -890,20 +797,17 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_INSURANCE_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
 
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_INSURANCE_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveInsuranceDetailsMap(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -914,10 +818,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_INSURANCE_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_INSURANCE_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -943,6 +845,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -953,7 +856,6 @@ public class DataMartProcess extends DatabaseDataEngine {
 		private TransactionStatus extract(StringBuilder sql) {
 			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
 				TransactionStatus txnStatus = null;
-				MapSqlParameterSource map = null;
 				int inserted = 0;
 
 				@Override
@@ -961,14 +863,12 @@ public class DataMartProcess extends DatabaseDataEngine {
 					executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 					while (rs.next()) {
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_IVR_GATEWAY_FLEXI, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
 
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), destinationJdbcTemplate);
+							DataMartMapper.saveIVRDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -979,10 +879,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_IVR_GATEWAY_FLEXI.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1009,6 +907,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1022,19 +921,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_LEA_DOC_DTL, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_LEA_DOC_DTL.name(), destinationJdbcTemplate);
+							DataMartMapper.saveLeaDocDtl(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1045,10 +940,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_LEA_DOC_DTL.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_LEA_DOC_DTL.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1074,6 +967,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1087,21 +981,17 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_LOAN_DETAILS_DAILY, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_LOAN_DETAILS_DAILY.name(), destinationJdbcTemplate);
+							DataMartMapper.saveLoanDetail(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1112,10 +1002,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_LOAN_DETAILS_DAILY.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_LOAN_DETAILS_DAILY.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1140,6 +1028,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 			TransactionStatus txnStatus = null;
 			try {
 				txnStatus = extract(sql);
+			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1152,19 +1042,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_LOAN_VOUCHER_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-							save(map, DataMartTable.DM_LOAN_VOUCHER_DETAILS.name(), destinationJdbcTemplate);
+
+							DataMartMapper.saveLoanVoucherDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1174,10 +1061,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_LOAN_VOUCHER_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_LOAN_VOUCHER_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 
@@ -1204,6 +1089,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1216,21 +1102,17 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_CHARGE_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_LOANWISE_CHARGE_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveLoanWiseChargeDetail(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1241,10 +1123,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_LOANWISE_CHARGE_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_LOANWISE_CHARGE_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1270,6 +1150,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1282,19 +1163,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
 
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveLoanWiseRepayScheduleDetailMap(rs, appDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1305,10 +1183,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_LOANWISE_REPAYSCHD_DTLS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1334,6 +1210,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1346,36 +1223,27 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_NOC_ELIGIBLE_LOANS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_NOC_ELIGIBLE_LOANS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveNoceligibleLoans(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_NOC_ELIGIBLE_LOANS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_NOC_ELIGIBLE_LOANS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1401,6 +1269,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1410,38 +1279,28 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 		private TransactionStatus extract(StringBuilder sql) {
 			return jdbcTemplate.query(sql.toString(), new ResultSetExtractor<TransactionStatus>() {
-
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-					MapSqlParameterSource map = null;
-					int inserted = 0;
+					int count = 0;
 					TransactionStatus txnStatus = null;
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_OPENECS_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
-							if (inserted == 0) {
+							if (count == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_OPENECS_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveOpenEcsDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-
-							if (inserted++ > btachSize) {
+							if (count++ > btachSize) {
 								commit(txnStatus);
-								inserted = 0;
+								count = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_OPENECS_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_OPENECS_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1467,6 +1326,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1481,34 +1341,26 @@ public class DataMartProcess extends DatabaseDataEngine {
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
 
 					TransactionStatus txnStatus = null;
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_PREPAYMENT_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_PREPAYMENT_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.savePrePaymentDetail(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_PREPAYMENT_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_PREPAYMENT_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1534,6 +1386,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1546,36 +1399,27 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
-
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_PRESENTATION_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_PRESENTATION_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.savePresentationDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_PRESENTATION_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_PRESENTATION_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
+
 						}
 					}
 					return txnStatus;
@@ -1601,6 +1445,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1613,20 +1458,15 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_PROPERTY_DTL, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_PROPERTY_DTL.name(), destinationJdbcTemplate);
+							DataMartMapper.savePropertyDetail(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1637,10 +1477,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_PROPERTY_DTL.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_PROPERTY_DTL.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1666,6 +1504,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1678,21 +1517,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_RESCH_DETAILS_DAILY, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_RESCH_DETAILS_DAILY.name(), destinationJdbcTemplate);
+							DataMartMapper.saveReschDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1703,10 +1537,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_RESCH_DETAILS_DAILY.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_RESCH_DETAILS_DAILY.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1733,6 +1565,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1745,35 +1578,26 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_SEND_SOA_EMAIL, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_SEND_SOA_EMAIL.name(), destinationJdbcTemplate);
+							DataMartMapper.saveSoaEmailDetails(rs, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
-
 							if (inserted++ > btachSize) {
 								commit(txnStatus);
 								inserted = 0;
 							}
-
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_SEND_SOA_EMAIL.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_SEND_SOA_EMAIL.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1799,6 +1623,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1811,21 +1636,16 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_SUBQ_DISB_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
-
-							save(map, DataMartTable.DM_SUBQ_DISB_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveSubQDisbDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1836,10 +1656,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_SUBQ_DISB_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_SUBQ_DISB_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1866,6 +1684,7 @@ public class DataMartProcess extends DatabaseDataEngine {
 			try {
 				txnStatus = extract(sql);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1878,21 +1697,17 @@ public class DataMartProcess extends DatabaseDataEngine {
 
 				@Override
 				public TransactionStatus extractData(ResultSet rs) throws SQLException, DataAccessException {
-					MapSqlParameterSource map = null;
 					int inserted = 0;
 					TransactionStatus txnStatus = null;
 
 					while (rs.next()) {
 						executionStatus.setProcessedRecords(processedRecords.getAndIncrement());
 						try {
-							map = DataMartMapper.mapData(DataMartTable.DM_WRITEOFF_DETAILS, rs, appDate);
-							map.addValue("BATCH_ID", batchID);
-
 							if (inserted == 0) {
 								txnStatus = transManager.getTransaction(transDef);
 							}
 
-							save(map, DataMartTable.DM_WRITEOFF_DETAILS.name(), destinationJdbcTemplate);
+							DataMartMapper.saveWriteOffDetails(rs, appDate, valueDate, batchID, jdbcTemplate);
 							executionStatus.setSuccessRecords(successCount++);
 
 							if (inserted++ > btachSize) {
@@ -1903,10 +1718,8 @@ public class DataMartProcess extends DatabaseDataEngine {
 						} catch (Exception e) {
 							executionStatus.setFailedRecords(failedCount++);
 							logger.error(Literal.EXCEPTION, e);
-							String keyId = getKeyId(DataMartTable.DM_WRITEOFF_DETAILS.name(), map, keyFields);
+							String keyId = getKeyId(DataMartTable.DM_WRITEOFF_DETAILS.name(), rs, keyFields);
 							saveBatchLog(keyId, "F", e.getMessage());
-						} finally {
-							map = null;
 						}
 					}
 					return txnStatus;
@@ -1915,14 +1728,24 @@ public class DataMartProcess extends DatabaseDataEngine {
 		}
 	}
 
-	private String getKeyId(String tableName, MapSqlParameterSource map, String[] ketFields) {
+	/*
+	 * private String getKeyId(String tableName, MapSqlParameterSource map, String[] ketFields) { StringBuilder builder
+	 * = new StringBuilder(); if (ketFields != null) { for (String key : ketFields) { if (builder.length() > 0) {
+	 * builder.append(","); } builder.append(map.getValue(key)); } } return tableName + ": " + builder.toString(); }
+	 */
+
+	private String getKeyId(String tableName, ResultSet rs, String[] ketFields) {
 		StringBuilder builder = new StringBuilder();
 		if (ketFields != null) {
 			for (String key : ketFields) {
 				if (builder.length() > 0) {
 					builder.append(",");
 				}
-				builder.append(map.getValue(key));
+				try {
+					builder.append(rs.getObject(key));
+				} catch (SQLException e) {
+
+				}
 			}
 		}
 		return tableName + ": " + builder.toString();
@@ -1937,9 +1760,11 @@ public class DataMartProcess extends DatabaseDataEngine {
 			}
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		} finally {
-			txnStatus.flush();
+			if (txnStatus != null) {
+				txnStatus.flush();
+			}
 		}
 	}
 

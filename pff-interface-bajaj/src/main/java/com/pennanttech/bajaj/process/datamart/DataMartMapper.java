@@ -3,1019 +3,2119 @@ package com.pennanttech.bajaj.process.datamart;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class DataMartMapper {
 
-	public static MapSqlParameterSource mapData(DataMartTable table, ResultSet rs, Date appDate) throws Exception {
-		switch (table) {
-		case DM_APPLICANT_DETAILS:
-			return getApplicantMap(rs, appDate);
-		case DM_ADDRESS_DETAILS:
-			return getAddressMap(rs, appDate);
-		case DM_APPLICATION_DETAILS:
-			return getApplicationDetails(rs, appDate);
-		case DM_BOUNCE_DETAILS:
-			return getBounceDetailsMap(rs, appDate);
-		case DM_COAPPLICANT_DETAILS:
-			return getCoApplicantDetailMap(rs, appDate);
-		case DM_DISB_DETAILS_DAILY:
-			return getDisbDetailsMap(rs, appDate);
-		case FORECLOSURECHARGES:
-			return getForeClosureChargesMap(rs, appDate);
-		case DM_HTS_UNADJUSTED_AMT:
-			return getHTSUnadjustedMap(rs, appDate);
-		case DM_INSURANCE_DETAILS:
-			return getInsuranceDetailsMap(rs, appDate);
-		case DM_IVR_GATEWAY_FLEXI:
-			return getIVRDetailsMap(rs, appDate);
-		case DM_LEA_DOC_DTL:
-			return getLeaDocDtlMap(rs, appDate);
-		case DM_LOAN_DETAILS_DAILY:
-			return getLoanDetailMap(rs, appDate);
-		case DM_LOAN_VOUCHER_DETAILS:
-			return getLoanVoucherMap(rs, appDate);
-		case DM_LOANWISE_CHARGE_DETAILS:
-			return getLoanWiseChargeDetailMap(rs, appDate);
-		case DM_LOANWISE_REPAYSCHD_DTLS:
-			return getLoanWiseRepayScheduleDetailMap(rs, appDate);
-		case DM_NOC_ELIGIBLE_LOANS:
-			return getNoceligibleLoans(rs, appDate);
-		case DM_OPENECS_DETAILS:
-			return getOpenEcsDetailsMap(rs, appDate);
-		case DM_PREPAYMENT_DETAILS:
-			return getPrePaymentDetailMap(rs, appDate);
-		case DM_PRESENTATION_DETAILS:
-			return getPresentationDetailsMap(rs, appDate);
-		case DM_PROPERTY_DTL:
-			return getPropertyDetailMap(rs, appDate);
-		case DM_RESCH_DETAILS_DAILY:
-			return getReschDetailMap(rs, appDate);
-		case DM_SEND_SOA_EMAIL:
-			return getSoaEmailDetailMap(rs, appDate);
-		case DM_SUBQ_DISB_DETAILS:
-			return getSubQDisbDetailMap(rs, appDate);
-		case DM_WRITEOFF_DETAILS:
-			return getWriteOffDetailsMap(rs, appDate);
-
-		default:
-			break;
-
-		}
-
+	public static MapSqlParameterSource mapData(DataMartTable table, ResultSet rs, Date appDate, Date valueDate)
+			throws Exception {
 		return null;
 	}
 
-	protected static MapSqlParameterSource getApplicantMap(ResultSet rs, Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveApplicantDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("CUST_TYPE", rs.getObject("CUST_TYPE"));
-		map.addValue("PANNO", rs.getObject("PANNO"));
-		map.addValue("ADDRESS1", rs.getObject("ADDRESS1"));
-		map.addValue("ADDRESS2", rs.getObject("ADDRESS2"));
-		map.addValue("ADDRESS3", rs.getObject("ADDRESS3"));
-		map.addValue("ADDRESS4", rs.getObject("ADDRESS4"));
-		map.addValue("CITY", rs.getObject("CITY"));
-		map.addValue("STATE", rs.getObject("STATE"));
-		map.addValue("COUNTRY", rs.getObject("COUNTRY"));
-		map.addValue("ZIPCODE", rs.getObject("ZIPCODE"));
-		map.addValue("ADDRESSTYPE", rs.getObject("ADDRESSTYPE"));
-		map.addValue("EMAIL", rs.getObject("EMAIL"));
-		map.addValue("PHONE1", rs.getObject("PHONE1"));
-		map.addValue("PHONE2", rs.getObject("PHONE2"));
-		map.addValue("MOBILE", rs.getObject("MOBILE"));
-		map.addValue("FAX", rs.getObject("FAX"));
-		map.addValue("EXISTING_CUST_FLAG", rs.getObject("EXISTING_CUST_FLAG"));
-		map.addValue("INDIV_CORP_FLAG", rs.getObject("INDIV_CORP_FLAG"));
-		map.addValue("AGE", rs.getObject("AGE"));
-		map.addValue("DOB", rs.getObject("DOB"));
-		map.addValue("FNAME", rs.getObject("FNAME"));
-		map.addValue("MNAME", rs.getObject("MNAME"));
-		map.addValue("LNAME", rs.getObject("LNAME"));
-		map.addValue("GENDER", rs.getObject("GENDER"));
-		map.addValue("MARITAL_STATUS", rs.getObject("MARITAL_STATUS"));
-		map.addValue("NO_OF_DEPENDENT", rs.getObject("NO_OF_DEPENDENT"));
-		map.addValue("YEARS_CURRENT_JOB", rs.getObject("YEARS_CURRENT_JOB"));
-		map.addValue("YEARS_PREV_JOB", rs.getObject("YEARS_PREV_JOB"));
-		map.addValue("QUALIFICATION", rs.getObject("QUALIFICATION"));
-		map.addValue("RESIDENCETYPE", rs.getObject("RESIDENCETYPE"));
-		map.addValue("YEARS_CURR_RESI", rs.getObject("YEARS_CURR_RESI"));
-		map.addValue("EMPLOYER_DESC", rs.getObject("EMPLOYER_DESC"));
-		map.addValue("COMPANY_TYPE", rs.getObject("COMPANY_TYPE"));
-		map.addValue("INDUSTRYID", rs.getObject("INDUSTRYID"));
-		map.addValue("NATURE_OF_BUSINESS", rs.getObject("NATURE_OF_BUSINESS"));
-		map.addValue("EMPLOYMENT_TYPE", rs.getObject("EMPLOYMENT_TYPE"));
-		map.addValue("EMPDESG", rs.getObject("EMPDESG"));
-		map.addValue("OCCUPATION", rs.getObject("OCCUPATION"));
-		map.addValue("ANNUAL_INCOME", rs.getObject("ANNUAL_INCOME"));
-		map.addValue("GUARDIAN", rs.getObject("GUARDIAN"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("CUSTOMERNAME", rs.getObject("CUSTOMERNAME"));
-		map.addValue("CONTACT_PERSON_NAME", rs.getObject("CONTACT_PERSON_NAME"));
-		map.addValue("CONSTITUTION", rs.getObject("CONSTITUTION"));
-		map.addValue("CUST_BANK_NAME", rs.getObject("CUST_BANK_NAME"));
-		map.addValue("CUST_BANK_BRANCH", rs.getObject("CUST_BANK_BRANCH"));
-		map.addValue("EMI_CARD_LIMIT", rs.getObject("EMI_CARD_LIMIT"));
-		map.addValue("EMI_CARD_ACCEPT_FLAG", rs.getObject("EMI_CARD_ACCEPT_FLAG"));
-		map.addValue("EMI_CARD_SWIPE_FLAG", rs.getObject("EMI_CARD_SWIPE_FLAG"));
-		map.addValue("EMI_CARD_ELIG", rs.getObject("EMI_CARD_ELIG"));
-		map.addValue("EMI_CARD_NO", rs.getObject("EMI_CARD_NO"));
-		map.addValue("BANK_ECS_MANDATE", rs.getObject("BANK_ECS_MANDATE"));
-		map.addValue("OPEN_ECS_AVLB", rs.getObject("OPEN_ECS_AVLB"));
-		map.addValue("OPEN_ECS_DATE", rs.getObject("OPEN_ECS_DATE"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("TITLE", rs.getObject("TITLE"));
-		map.addValue("COMP_NAME", rs.getObject("COMP_NAME"));
-		map.addValue("YEARS_CURR_JOB", rs.getObject("YEARS_CURR_JOB"));
-		map.addValue("GRADE", rs.getObject("GRADE"));
-		map.addValue("FAMILY_CODE", rs.getObject("FAMILY_CODE"));
-		map.addValue("MINOR", rs.getObject("MINOR"));
-		map.addValue("GUARDIAN_NEW", rs.getObject("GUARDIAN_NEW"));
-		map.addValue("UCIN_NO", rs.getObject("UCIN_NO"));
-		map.addValue("PREFERRED_ELIGIBILITY", rs.getObject("PREFERRED_ELIGIBILITY"));
-		map.addValue("PREFERRED_CARD_ACCEPTANCE", rs.getObject("PREFERRED_CARD_ACCEPTANCE"));
-		map.addValue("PREFERRED_CARD_LIMIT", rs.getObject("PREFERRED_CARD_LIMIT"));
-		map.addValue("CUST_BRANCHID", rs.getObject("CUST_BRANCHID"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_APPLICANT_DETAILS (");
+		sql.append("CUSTOMERID");
+		sql.append(", CUST_TYPE");
+		sql.append(", PANNO");
+		sql.append(", ADDRESS1");
+		sql.append(", ADDRESS2");
+		sql.append(", ADDRESS3");
+		sql.append(", ADDRESS4");
+		sql.append(", CITY");
+		sql.append(", STATE");
+		sql.append(", COUNTRY");
+		sql.append(", ZIPCODE");
+		sql.append(", ADDRESSTYPE");
+		sql.append(", EMAIL");
+		sql.append(", PHONE1");
+		sql.append(", PHONE2");
+		sql.append(", MOBILE");
+		sql.append(", FAX");
+		sql.append(", EXISTING_CUST_FLAG");
+		sql.append(", INDIV_CORP_FLAG");
+		sql.append(", AGE");
+		sql.append(", DOB");
+		sql.append(", FNAME");
+		sql.append(", MNAME");
+		sql.append(", LNAME");
+		sql.append(", GENDER");
+		sql.append(", MARITAL_STATUS");
+		sql.append(", NO_OF_DEPENDENT");
+		sql.append(", YEARS_CURRENT_JOB");
+		sql.append(", YEARS_PREV_JOB");
+		sql.append(", QUALIFICATION");
+		sql.append(", RESIDENCETYPE");
+		sql.append(", YEARS_CURR_RESI");
+		sql.append(", EMPLOYER_DESC");
+		sql.append(", COMPANY_TYPE");
+		sql.append(", INDUSTRYID");
+		sql.append(", NATURE_OF_BUSINESS");
+		sql.append(", EMPLOYMENT_TYPE");
+		sql.append(", EMPDESG");
+		sql.append(", OCCUPATION");
+		sql.append(", ANNUAL_INCOME");
+		sql.append(", GUARDIAN");
+		sql.append(", BUSINESSDATE");
+		sql.append(", PROCESSED_FLAG");
+		sql.append(", PROCESS_DATE");
+		sql.append(", SEGMENTS");
+		sql.append(", CUSTOMERNAME");
+		sql.append(", CONTACT_PERSON_NAME");
+		sql.append(", CONSTITUTION");
+		sql.append(", CUST_BANK_NAME");
+		sql.append(", CUST_BANK_BRANCH");
+		sql.append(", EMI_CARD_LIMIT");
+		sql.append(", EMI_CARD_ACCEPT_FLAG");
+		sql.append(", EMI_CARD_SWIPE_FLAG");
+		sql.append(", EMI_CARD_ELIG");
+		sql.append(", EMI_CARD_NO");
+		sql.append(", BANK_ECS_MANDATE");
+		sql.append(", OPEN_ECS_AVLB");
+		sql.append(", OPEN_ECS_DATE");
+		sql.append(", BUSINESS_YEAR");
+		sql.append(", TITLE");
+		sql.append(", COMP_NAME");
+		sql.append(", YEARS_CURR_JOB");
+		sql.append(", GRADE");
+		sql.append(", FAMILY_CODE");
+		sql.append(", MINOR");
+		sql.append(", GUARDIAN_NEW");
+		sql.append(", UCIN_NO");
+		sql.append(", PREFERRED_ELIGIBILITY");
+		sql.append(", PREFERRED_CARD_ACCEPTANCE");
+		sql.append(", PREFERRED_CARD_LIMIT");
+		sql.append(", CUST_BRANCHID");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-		return map;
-	}
-
-	protected static MapSqlParameterSource getAddressMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("ADDRESSID", rs.getObject("ADDRESSID"));
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("STATEID", rs.getObject("STATEID"));
-		map.addValue("REGIONID", rs.getObject("REGIONID"));
-		map.addValue("CITY", rs.getObject("CITY"));
-		map.addValue("STDISD", rs.getObject("STDISD"));
-		map.addValue("MAILINGADDRES", rs.getObject("MAILINGADDRESS"));
-		map.addValue("ADDRESS1", rs.getObject("ADDRESS1"));
-		map.addValue("ADDRESS2", rs.getObject("ADDRESS2"));
-		map.addValue("ADDRESS3", rs.getObject("ADDRESS3"));
-		map.addValue("ZIPCODE", rs.getObject("ZIPCODE"));
-		map.addValue("COUNTRY", rs.getObject("COUNTRY"));
-		map.addValue("ADDRESSTYPE", rs.getObject("ADDRESSTYPE"));
-		map.addValue("APPLICANT_TYPE", rs.getObject("APPLICANT_TYPE"));
-		map.addValue("PHONE1", rs.getObject("PHONE1"));
-		map.addValue("PHONE2", rs.getObject("PHONE2"));
-		map.addValue("MOBILE", rs.getObject("MOBILE"));
-		map.addValue("EMAIL", rs.getObject("EMAIL"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSFLAG", rs.getObject("PROCESSFLAG"));
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("AREA", rs.getObject("AREA"));
-		map.addValue("LANDMARK", rs.getObject("LANDMARK"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-	}
-
-	protected static MapSqlParameterSource getApplicationDetails(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("CRM_DEALID", rs.getObject("CRM_DEALID"));
-		map.addValue("CRSCOREDATE", rs.getObject("CRSCOREDATE"));
-		map.addValue("CIBILSCORE", rs.getObject("CIBILSCORE"));
-		map.addValue("APPSCORE", rs.getObject("APPSCORE"));
-		map.addValue("BEHSCORE", rs.getObject("BEHSCORE"));
-		map.addValue("DEVIATION_TYPE", rs.getObject("DEVIATION_TYPE"));
-		map.addValue("DEVIATION_FLAG", rs.getObject("DEVIATION_FLAG"));
-		map.addValue("DEVIATION_CODE", rs.getObject("DEVIATION_CODE"));
-		map.addValue("DEVIATION_NAME", rs.getObject("DEVIATION_NAME"));
-		map.addValue("REQ_TENURE", rs.getObject("REQ_TENURE"));
-		map.addValue("REQ_LOAN_AMT", rs.getObject("REQ_LOAN_AMT"));
-		map.addValue("LOAN_LIMIT", rs.getObject("LOAN_LIMIT"));
-		map.addValue("APPROVE_LOAN_AMT", rs.getObject("APPROVE_LOAN_AMT"));
-		map.addValue("LOAN_PURPOSE", rs.getObject("LOAN_PURPOSE"));
-		map.addValue("LOAN_TYPE", rs.getObject("LOAN_TYPE"));
-		map.addValue("CANCELLATIONDATE", rs.getObject("CANCELLATIONDATE"));
-		map.addValue("CANCEL_REASON", rs.getObject("CANCEL_REASON"));
-		map.addValue("FREQUENCY", rs.getObject("FREQUENCY"));
-		map.addValue("LOAN_APPROVAL_DATE", rs.getObject("LOAN_APPROVAL_DATE"));
-		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
-		map.addValue("INTRATE", rs.getObject("INTRATE"));
-		map.addValue("FLAT_RATE", rs.getObject("FLAT_RATE"));
-		map.addValue("IRR", rs.getObject("IRR"));
-		map.addValue("GROSS_LTV", rs.getObject("GROSS_LTV"));
-		map.addValue("NET_LTV", rs.getObject("NET_LTV"));
-		map.addValue("COF", rs.getObject("COF"));
-		map.addValue("DEBT_BURDEN_RATIO", rs.getObject("DEBT_BURDEN_RATIO"));
-		map.addValue("FOIR_DB", rs.getObject("FOIR_DB"));
-		map.addValue("SCHEMEID", rs.getObject("SCHEMEID"));
-		map.addValue("SCHEMEDESC", rs.getObject("SCHEMEDESC"));
-		map.addValue("SCHEMEGROUPID", rs.getObject("SCHEMEGROUPID"));
-		map.addValue("SCHEME_GROUPG_DESC", rs.getObject("SCHEME_GROUPG_DESC"));
-		map.addValue("PRODUCT_CATEGORY", rs.getObject("PRODUCT_CATEGORY"));
-		map.addValue("PROD_TYPE", rs.getObject("PROD_TYPE"));
-		map.addValue("PROMOTIONID", rs.getObject("PROMOTIONID"));
-		map.addValue("PROGRAMID", rs.getObject("PROGRAMID"));
-		map.addValue("SURROGATE_FLAG", rs.getObject("SURROGATE_FLAG"));
-		map.addValue("SOURCING_CHANNEL_TYPE", rs.getObject("SOURCING_CHANNEL_TYPE"));
-		map.addValue("SOURCING_CHANNEL_NAME", rs.getObject("SOURCING_CHANNEL_NAME"));
-		map.addValue("REFERAL_GROUP", rs.getObject("REFERAL_GROUP"));
-		map.addValue("REFERAL_NAME", rs.getObject("REFERAL_NAME"));
-		map.addValue("COUNTRYID", rs.getObject("COUNTRYID"));
-		map.addValue("COUNTRY", rs.getObject("COUNTRY"));
-		map.addValue("REGIONID", rs.getObject("REGIONID"));
-		map.addValue("REGION", rs.getObject("REGION"));
-		map.addValue("STATEID", rs.getObject("STATEID"));
-		map.addValue("STATE", rs.getObject("STATE"));
-		map.addValue("CITYID", rs.getObject("CITYID"));
-		map.addValue("CITY", rs.getObject("CITY"));
-		map.addValue("BRANCHID", rs.getObject("BRANCHID"));
-		map.addValue("BRANCHDESC", rs.getObject("BRANCHDESC"));
-		map.addValue("BROKER_NAME", rs.getObject("BROKER_NAME"));
-		map.addValue("DME_NAME", rs.getObject("DME_NAME"));
-		map.addValue("ASM_NAME", rs.getObject("ASM_NAME"));
-		map.addValue("RSM_NAME", rs.getObject("RSM_NAME"));
-		map.addValue("CRDT_MGR_NAME", rs.getObject("CRDT_MGR_NAME"));
-		map.addValue("ROID_NAME", rs.getObject("ROID_NAME"));
-		map.addValue("TLID_NAME", rs.getObject("TLID_NAME"));
-		map.addValue("BMID_NAME", rs.getObject("BMID_NAME"));
-		map.addValue("COID_NAME", rs.getObject("COID_NAME"));
-		map.addValue("SUPPLIERID", rs.getObject("SUPPLIERID"));
-		map.addValue("DLR_PARTICIPATION_RATE", rs.getObject("DLR_PARTICIPATION_RATE"));
-		map.addValue("LOCAL_OUTSTATION_FLG", rs.getObject("LOCAL_OUTSTATION_FLG"));
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("PRODUCT", rs.getObject("PRODUCT"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("CRM_STATUS", rs.getObject("CRM_STATUS"));
-		map.addValue("LOGINDATE", rs.getObject("LOGINDATE"));
-		map.addValue("APPR_REJ_DATE", rs.getObject("APPR_REJ_DATE"));
-		map.addValue("CANCEL_DATE", rs.getObject("CANCEL_DATE"));
-		map.addValue("FILE_STATUS", rs.getObject("FILE_STATUS"));
-		map.addValue("FILE_HOLD_REASON", rs.getObject("FILE_HOLD_REASON"));
-		map.addValue("QDPDONE", rs.getObject("QDPDONE"));
-		map.addValue("ISHOLD", rs.getObject("ISHOLD"));
-		map.addValue("BRANCH_INW_DATE", rs.getObject("BRANCH_INW_DATE"));
-		map.addValue("BRANCH_HOLD_DATE", rs.getObject("BRANCH_HOLD_DATE"));
-		map.addValue("CPU_INW_DATE", rs.getObject("CPU_INW_DATE"));
-		map.addValue("CPU_HOLD_DATE", rs.getObject("CPU_HOLD_DATE"));
-		map.addValue("SYSTEM_HOLD", rs.getObject("SYSTEM_HOLD"));
-		map.addValue("PSL_FLAG", rs.getObject("PSL_FLAG"));
-		map.addValue("DOC_WAVE_FLAG", rs.getObject("DOC_WAVE_FLAG"));
-		map.addValue("CUSTOMER_SWIPE", rs.getObject("CUSTOMER_SWIPE"));
-		map.addValue("CUSTOMER_ACCEPTANCE", rs.getObject("CUSTOMER_ACCEPTANCE"));
-		map.addValue("KYC_DOC_TYPE", rs.getObject("KYC_DOC_TYPE"));
-		map.addValue("KYC_DOC_ID", rs.getObject("KYC_DOC_ID"));
-		map.addValue("BUSINESS_IRR", rs.getObject("BUSINESS_IRR"));
-		map.addValue("INSPECTORNAME", rs.getObject("INSPECTORNAME"));
-		map.addValue("REGNUMBER", rs.getObject("REGNUMBER"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("DEALID", rs.getObject("DEALID"));
-		map.addValue("PRETAXIRR", rs.getObject("PRETAXIRR"));
-		map.addValue("ODM_FLAG", rs.getObject("ODM_FLAG"));
-		map.addValue("DI_DATE", rs.getObject("DI_DATE"));
-		map.addValue("LAA_QDP_FLAG", rs.getObject("LAA_QDP_FLAG"));
-		map.addValue("PREFERRED_CARD_ACCEPTANCE", rs.getObject("PREFERRED_CARD_ACCEPTANCE"));
-		map.addValue("ORIG_AMTFIN", rs.getObject("ORIG_AMTFIN"));
-		map.addValue("ELC_FLAG", rs.getObject("ELC_FLAG"));
-		map.addValue("ELC_LIMIT", rs.getObject("ELC_LIMIT"));
-		map.addValue("QDP_DONE_DATE", rs.getObject("QDP_DONE_DATE"));
-		map.addValue("LAA_DECENTRALIZED_FLAG", rs.getObject("LAA_DECENTRALIZED_FLAG"));
-		map.addValue("FCU_FLAG", rs.getObject("FCU_FLAG"));
-		map.addValue("MKTGID", rs.getObject("MKTGID"));
-		map.addValue("DM_MPID", rs.getObject("DM_MPID"));
-		map.addValue("SWIPE_CARD_CODE", rs.getObject("SWIPE_CARD_CODE"));
-		map.addValue("SOURCE_CARD_CODE", rs.getObject("SOURCE_CARD_CODE"));
-		map.addValue("DII_USER_ID", rs.getObject("DII_USER_ID"));
-		map.addValue("QDP_CHEQUE_ISSUE", rs.getObject("QDP_CHEQUE_ISSUE"));
-		map.addValue("INTEREST_TYPE", rs.getObject("INTEREST_TYPE"));
-		map.addValue("DII_DONE_DATE", rs.getObject("DII_DONE_DATE"));
-		map.addValue("FINISH_DATE", rs.getObject("FINISH_DATE"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-	}
-
-	protected static MapSqlParameterSource getBounceDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("CHEQUEID", rs.getObject("CHEQUEID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("BOUNCE_DATE", rs.getObject("BOUNCE_DATE"));
-		map.addValue("BOUNCE_REASON", rs.getObject("BOUNCE_REASON"));
-		map.addValue("BOUNCE_AMT", rs.getObject("BOUNCE_AMT"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("CHEQUEDATE", rs.getObject("CHEQUEDATE"));
-
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("CUSTOMERID"), rs.getObject("CUST_TYPE"),
+				rs.getObject("PANNO"), rs.getObject("ADDRESS1"), rs.getObject("ADDRESS2"), rs.getObject("ADDRESS3"),
+				rs.getObject("ADDRESS4"), rs.getObject("CITY"), rs.getObject("STATE"), rs.getObject("COUNTRY"),
+				rs.getObject("ZIPCODE"), rs.getObject("ADDRESSTYPE"), rs.getObject("EMAIL"), rs.getObject("PHONE1"),
+				rs.getObject("PHONE2"), rs.getObject("MOBILE"), rs.getObject("FAX"), rs.getObject("EXISTING_CUST_FLAG"),
+				rs.getObject("INDIV_CORP_FLAG"), rs.getObject("AGE"), rs.getObject("DOB"), rs.getObject("FNAME"),
+				rs.getObject("MNAME"), rs.getObject("LNAME"), rs.getObject("GENDER"), rs.getObject("MARITAL_STATUS"),
+				rs.getObject("NO_OF_DEPENDENT"), rs.getObject("YEARS_CURRENT_JOB"), rs.getObject("YEARS_PREV_JOB"),
+				rs.getObject("QUALIFICATION"), rs.getObject("RESIDENCETYPE"), rs.getObject("YEARS_CURR_RESI"),
+				rs.getObject("EMPLOYER_DESC"), rs.getObject("COMPANY_TYPE"), rs.getObject("INDUSTRYID"),
+				rs.getObject("NATURE_OF_BUSINESS"), rs.getObject("EMPLOYMENT_TYPE"), rs.getObject("EMPDESG"),
+				rs.getObject("OCCUPATION"), rs.getObject("ANNUAL_INCOME"), rs.getObject("GUARDIAN"), appDate,
+				rs.getObject("PROCESSED_FLAG"), valueDate, rs.getObject("SEGMENTS"), rs.getObject("CUSTOMERNAME"),
+				rs.getObject("CONTACT_PERSON_NAME"), rs.getObject("CONSTITUTION"), rs.getObject("CUST_BANK_NAME"),
+				rs.getObject("CUST_BANK_BRANCH"), rs.getObject("EMI_CARD_LIMIT"), rs.getObject("EMI_CARD_ACCEPT_FLAG"),
+				rs.getObject("EMI_CARD_SWIPE_FLAG"), rs.getObject("EMI_CARD_ELIG"), rs.getObject("EMI_CARD_NO"),
+				rs.getObject("BANK_ECS_MANDATE"), rs.getObject("OPEN_ECS_AVLB"), rs.getObject("OPEN_ECS_DATE"),
+				rs.getObject("BUSINESS_YEAR"), rs.getObject("TITLE"), rs.getObject("COMP_NAME"),
+				rs.getObject("YEARS_CURR_JOB"), rs.getObject("GRADE"), rs.getObject("FAMILY_CODE"),
+				rs.getObject("MINOR"), rs.getObject("GUARDIAN_NEW"), rs.getObject("UCIN_NO"),
+				rs.getObject("PREFERRED_ELIGIBILITY"), rs.getObject("PREFERRED_CARD_ACCEPTANCE"),
+				rs.getObject("PREFERRED_CARD_LIMIT"), rs.getObject("CUST_BRANCHID"), batchId);
 
 	}
 
-	private static MapSqlParameterSource getCoApplicantDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveAddressDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("APPLICANT_TYPE", rs.getObject("APPLICANT_TYPE"));
-		map.addValue("PAN_NO", rs.getObject("PAN_NO"));
-		map.addValue("CUST_RELATION", rs.getObject("CUST_RELATION"));
-		map.addValue("CUST_TYPE", rs.getObject("CUST_TYPE"));
-		map.addValue("AGE", rs.getObject("AGE"));
-		map.addValue("DOB", rs.getObject("DOB"));
-		map.addValue("FNAME", rs.getObject("FNAME"));
-		map.addValue("MNAME", rs.getObject("MNAME"));
-		map.addValue("LNAME", rs.getObject("LNAME"));
-		map.addValue("GENDER", rs.getObject("GENDER"));
-		map.addValue("MARITAL_STATUS", rs.getObject("MARITAL_STATUS"));
-		map.addValue("NO_OF_DEPENDENT", rs.getObject("NO_OF_DEPENDENT"));
-		map.addValue("YRS_CURRENTJOB", rs.getObject("YRS_CURRENTJOB"));
-		map.addValue("PREVIOUS_JOB_YEAR", rs.getObject("PREVIOUS_JOB_YEAR"));
-		map.addValue("QUALIFICATION", rs.getObject("QUALIFICATION"));
-		map.addValue("EMPLOYER_DESC", rs.getObject("EMPLOYER_DESC"));
-		map.addValue("COMPANY_TYPE", rs.getObject("COMPANY_TYPE"));
-		map.addValue("INDUSTRYID", rs.getObject("INDUSTRYID"));
-		map.addValue("BUSINESS_NATURE", rs.getObject("BUSINESS_NATURE"));
-		map.addValue("OCCUPATION_CODE", rs.getObject("OCCUPATION_CODE"));
-		map.addValue("GUARDIAN", rs.getObject("GUARDIAN"));
-		map.addValue("PROCESS_FLAG", rs.getObject("PROCESS_FLAG"));
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("EMP_TYPE", rs.getObject("EMP_TYPE"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("INCOME", rs.getObject("INCOME"));
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_ADDRESS_DETAILS (");
+		sql.append(" ADDRESSID");
+		sql.append(",CUSTOMERID");
+		sql.append(",STATEID");
+		sql.append(",REGIONID");
+		sql.append(",CITY");
+		sql.append(",STDISD");
+		sql.append(",MAILINGADDRES");
+		sql.append(",ADDRESS1");
+		sql.append(",ADDRESS2");
+		sql.append(",ADDRESS3");
+		sql.append(",ZIPCODE");
+		sql.append(",COUNTRY");
+		sql.append(",ADDRESSTYPE");
+		sql.append(",APPLICANT_TYPE");
+		sql.append(",PHONE1");
+		sql.append(",PHONE2");
+		sql.append(",MOBILE");
+		sql.append(",EMAIL");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSFLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",AREA");
+		sql.append(",LANDMARK");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("ADDRESSID"), rs.getObject("CUSTOMERID"),
+				rs.getObject("STATEID"), rs.getObject("REGIONID"), rs.getObject("CITY"), rs.getObject("STDISD"),
+				rs.getObject("MAILINGADDRESS"), rs.getObject("ADDRESS1"), rs.getObject("ADDRESS2"),
+				rs.getObject("ADDRESS3"), rs.getObject("ZIPCODE"), rs.getObject("COUNTRY"), rs.getObject("ADDRESSTYPE"),
+				rs.getObject("APPLICANT_TYPE"), rs.getObject("PHONE1"), rs.getObject("PHONE2"), rs.getObject("MOBILE"),
+				rs.getObject("EMAIL"), appDate, rs.getObject("PROCESSFLAG"), valueDate, rs.getObject("AREA"),
+				rs.getObject("LANDMARK"), rs.getObject("BUSINESS_YEAR"), batchId);
 	}
 
-	private static MapSqlParameterSource getDisbDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("DISBURSEMENTNO", rs.getObject("DISBURSEMENTNO"));
-		map.addValue("DISBURSEMENTDATE", rs.getObject("DISBURSEMENTDATE"));
-		map.addValue("PARENT_AGREEMENTNO", rs.getObject("PARENT_AGREEMENTNO"));
-		map.addValue("AMTFIN", rs.getObject("AMTFIN"));
-		map.addValue("NET_AMTFIN", rs.getObject("NET_AMTFIN"));
-		map.addValue("DISBURSEDAMT", rs.getObject("DISBURSEDAMT"));
-		map.addValue("DISB_STATUS", rs.getObject("DISB_STATUS"));
-		map.addValue("FIRST_DUE_DATE", rs.getObject("FIRST_DUE_DATE"));
-		map.addValue("GROSS_TENURE", rs.getObject("GROSS_TENURE"));
-		map.addValue("NET_TENURE", rs.getObject("NET_TENURE"));
-		map.addValue("MATURITYDATE", rs.getObject("MATURITYDATE"));
-		map.addValue("EXPIRYDATE", rs.getObject("EXPIRYDATE"));
-		map.addValue("NO_OF_ADV_INSTL", rs.getObject("NO_OF_ADV_INSTL"));
-		map.addValue("ADV_EMI_AMT", rs.getObject("ADV_EMI_AMT"));
-		map.addValue("EMI", rs.getObject("EMI"));
-		map.addValue("REPAYMENT_MODE", rs.getObject("REPAYMENT_MODE"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("PROMOTIONID", rs.getObject("PROMOTIONID"));
-		map.addValue("ICICI_LOMBARD", rs.getObject("ICICI_LOMBARD"));
-		map.addValue("BAGIC", rs.getObject("BAGIC"));
-		map.addValue("BALIC_CHARGES", rs.getObject("BALIC_CHARGES"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("FEE", rs.getObject("FEE"));
-		map.addValue("DEALER_SUBV", rs.getObject("DEALER_SUBV"));
-		map.addValue("MANU_SUBV_DED", rs.getObject("MANU_SUBV_DED"));
-		map.addValue("MANU_SUBV_NDED", rs.getObject("MANU_SUBV_NDED"));
-		map.addValue("PREEMI", rs.getObject("PREEMI"));
-		map.addValue("EXISTING_LANNO", rs.getObject("EXISTING_LANNO"));
-		map.addValue("MORTGAGE_FEE", rs.getObject("MORTGAGE_FEE"));
-		map.addValue("COMMITMENT_FEE", rs.getObject("COMMITMENT_FEE"));
-		map.addValue("PROCESSING_FEE", rs.getObject("PROCESSING_FEE"));
-		map.addValue("PRE_EMI_RECEIVABLE", rs.getObject("PRE_EMI_RECEIVABLE"));
-		map.addValue("INSURANCE", rs.getObject("INSURANCE"));
-		map.addValue("PAYMENTMODE", rs.getObject("PAYMENTMODE"));
-		map.addValue("FREQ", rs.getObject("FREQ"));
-		map.addValue("CHEQUENUM", rs.getObject("CHEQUENUM"));
-		map.addValue("CUST_ACCT_NO", rs.getObject("CUST_ACCT_NO"));
-		map.addValue("BANKNAME", rs.getObject("BANKNAME"));
-		map.addValue("MICRCODE", rs.getObject("MICRCODE"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("EMI_CHARGE", rs.getObject("EMI_CHARGE"));
-		map.addValue("PDC_CHARGE", rs.getObject("PDC_CHARGE"));
-		map.addValue("IRR_PER", rs.getObject("IRR_PER"));
-		map.addValue("FEE_WL", rs.getObject("FEE_WL"));
-		map.addValue("ELC_CHARGE", rs.getObject("ELC_CHARGE"));
-		map.addValue("CREDIT_VIDYA_FEES", rs.getObject("CREDIT_VIDYA_FEES"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+	public static void saveApplicationDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		return map;
-	}
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_APPLICATION_DETAILS (");
 
-	private static MapSqlParameterSource getForeClosureChargesMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+		sql.append("APPLID");
+		sql.append(",CRM_DEALID");
+		sql.append(",CRSCOREDATE");
+		sql.append(",CIBILSCORE");
+		sql.append(",APPSCORE");
+		sql.append(",BEHSCORE");
+		sql.append(",DEVIATION_TYPE");
+		sql.append(",DEVIATION_FLAG");
+		sql.append(",DEVIATION_CODE");
+		sql.append(",DEVIATION_NAME");
+		sql.append(",REQ_TENURE");
+		sql.append(",REQ_LOAN_AMT");
+		sql.append(",LOAN_LIMIT");
+		sql.append(",APPROVE_LOAN_AMT");
+		sql.append(",LOAN_PURPOSE");
+		sql.append(",LOAN_TYPE");
+		sql.append(",CANCELLATIONDATE");
+		sql.append(",CANCEL_REASON");
+		sql.append(",FREQUENCY");
+		sql.append(",LOAN_APPROVAL_DATE");
+		sql.append(",AGREEMENTDATE");
+		sql.append(",INTRATE");
+		sql.append(",FLAT_RATE");
+		sql.append(",IRR");
+		sql.append(",GROSS_LTV");
+		sql.append(",NET_LTV");
+		sql.append(",COF");
+		sql.append(",DEBT_BURDEN_RATIO");
+		sql.append(",FOIR_DB");
+		sql.append(",SCHEMEID");
+		sql.append(",SCHEMEDESC");
+		sql.append(",SCHEMEGROUPID");
+		sql.append(",SCHEME_GROUPG_DESC");
+		sql.append(",PRODUCT_CATEGORY");
+		sql.append(",PROD_TYPE");
+		sql.append(",PROMOTIONID");
+		sql.append(",PROGRAMID");
+		sql.append(",SURROGATE_FLAG");
+		sql.append(",SOURCING_CHANNEL_TYPE");
+		sql.append(",SOURCING_CHANNEL_NAME");
+		sql.append(",REFERAL_GROUP");
+		sql.append(",REFERAL_NAME");
+		sql.append(",COUNTRYID");
+		sql.append(",COUNTRY");
+		sql.append(",REGIONID");
+		sql.append(",REGION");
+		sql.append(",STATEID");
+		sql.append(",STATE");
+		sql.append(",CITYID");
+		sql.append(",CITY");
+		sql.append(",BRANCHID");
+		sql.append(",BRANCHDESC");
+		sql.append(",BROKER_NAME");
+		sql.append(",DME_NAME");
+		sql.append(",ASM_NAME");
+		sql.append(",RSM_NAME");
+		sql.append(",CRDT_MGR_NAME");
+		sql.append(",ROID_NAME");
+		sql.append(",TLID_NAME");
+		sql.append(",BMID_NAME");
+		sql.append(",COID_NAME");
+		sql.append(",SUPPLIERID");
+		sql.append(",DLR_PARTICIPATION_RATE");
+		sql.append(",LOCAL_OUTSTATION_FLG");
+		sql.append(",CUSTOMERID");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",PRODUCT");
+		sql.append(",SEGMENTS");
+		sql.append(",CRM_STATUS");
+		sql.append(",LOGINDATE");
+		sql.append(",APPR_REJ_DATE");
+		sql.append(",CANCEL_DATE");
+		sql.append(",FILE_STATUS");
+		sql.append(",FILE_HOLD_REASON");
+		sql.append(",QDPDONE");
+		sql.append(",ISHOLD");
+		sql.append(",BRANCH_INW_DATE");
+		sql.append(",BRANCH_HOLD_DATE");
+		sql.append(",CPU_INW_DATE");
+		sql.append(",CPU_HOLD_DATE");
+		sql.append(",SYSTEM_HOLD");
+		sql.append(",PSL_FLAG");
+		sql.append(",DOC_WAVE_FLAG");
+		sql.append(",CUSTOMER_SWIPE");
+		sql.append(",CUSTOMER_ACCEPTANCE");
+		sql.append(",KYC_DOC_TYPE");
+		sql.append(",KYC_DOC_ID");
+		sql.append(",BUSINESS_IRR");
+		sql.append(",INSPECTORNAME");
+		sql.append(",REGNUMBER");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",DEALID");
+		sql.append(",PRETAXIRR");
+		sql.append(",ODM_FLAG");
+		sql.append(",DI_DATE");
+		sql.append(",LAA_QDP_FLAG");
+		sql.append(",PREFERRED_CARD_ACCEPTANCE");
+		sql.append(",ORIG_AMTFIN");
+		sql.append(",ELC_FLAG");
+		sql.append(",ELC_LIMIT");
+		sql.append(",QDP_DONE_DATE");
+		sql.append(",LAA_DECENTRALIZED_FLAG");
+		sql.append(",FCU_FLAG");
+		sql.append(",MKTGID");
+		sql.append(",DM_MPID");
+		sql.append(",SWIPE_CARD_CODE");
+		sql.append(",SOURCE_CARD_CODE");
+		sql.append(",DII_USER_ID");
+		sql.append(",QDP_CHEQUE_ISSUE");
+		sql.append(",INTEREST_TYPE");
+		sql.append(",DII_DONE_DATE");
+		sql.append(",FINISH_DATE");
+		sql.append(",BATCH_ID");
 
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("BAL_PRINCIPAL", rs.getObject("BAL_PRINCIPAL"));
-		map.addValue("RESEDUL_VALUE", rs.getObject("RESEDUL_VALUE"));
-		map.addValue("INSTALLMENTS", rs.getObject("INSTALLMENTS"));
-		map.addValue("ADVICES", rs.getObject("ADVICES"));
-		map.addValue("PENALTY", rs.getObject("PENALTY"));
-		map.addValue("INTREST_ON_TERMINATION", rs.getObject("INTREST_ON_TERMINATION"));
-		map.addValue("FLOATINTREST_ON_TERMINATION", rs.getObject("FLOATINTREST_ON_TERMINATION"));
-		map.addValue("OVER_DUES", rs.getObject("OVER_DUES"));
-		map.addValue("CURRENT_OVERDUES", rs.getObject("CURRENT_OVERDUES"));
-		map.addValue("CURRENT_WAVEOFFAMT", rs.getObject("CURRENT_WAVEOFFAMT"));
-		map.addValue("OVER_DISTANCE_CHARGES", rs.getObject("OVER_DISTANCE_CHARGES"));
-		map.addValue("INTREST_ON_TERMINATION_PER_DAY", rs.getObject("INTREST_ON_TERMINATION_PER_DAY"));
-		map.addValue("INTREST_ACCRUALS", rs.getObject("INTREST_ACCRUALS"));
-		map.addValue("EXCESS_AMOUNT", rs.getObject("EXCESS_AMOUNT"));
-		map.addValue("EXCESS_REFUND", rs.getObject("EXCESS_REFUND"));
-		map.addValue("ADVICE", rs.getObject("ADVICE"));
-		map.addValue("REBATE", rs.getObject("REBATE"));
-		map.addValue("ADVINSTL", rs.getObject("ADVINSTL"));
-		map.addValue("EXCESSPRINPMNT", rs.getObject("EXCESSPRINPMNT"));
-		map.addValue("SDAMT", rs.getObject("SDAMT"));
-		map.addValue("SDINT", rs.getObject("SDINT"));
-		map.addValue("EXCESS_INTREST_RATE", rs.getObject("EXCESS_INTREST_RATE"));
-		map.addValue("VAT_ON_FORECLOSURE", rs.getObject("VAT_ON_FORECLOSURE"));
-		map.addValue("UNDER_DISTANCE_CHARGES", rs.getObject("UNDER_DISTANCE_CHARGES"));
-		map.addValue("NET_PAYBALE", rs.getObject("NET_PAYBALE"));
-		map.addValue("WAIVEOFFAMOUNT", rs.getObject("WAIVEOFFAMOUNT"));
-		map.addValue("ACTIVITY", rs.getObject("ACTIVITY"));
-		map.addValue("AUTHORIZEDON", rs.getObject("AUTHORIZEDON"));
-		map.addValue("COMMITMENT_FEE", rs.getObject("COMMITMENT_FEE"));
-		map.addValue("ORIGINATION_FEE", rs.getObject("ORIGINATION_FEE"));
-		map.addValue("PRE_EMI", rs.getObject("PRE_EMI"));
-		map.addValue("BUSINESS_DATE", rs.getObject("BUSINESS_DATE"));
-		map.addValue("CHEQUEID", rs.getObject("CHEQUEID"));
-		map.addValue("STATUS", rs.getObject("STATUS"));
-		map.addValue("INTEREST_WAIVE_OFF", rs.getObject("INTEREST_WAIVE_OFF"));
-		map.addValue("BALANCE_PRIN_WAIVE_OFF", rs.getObject("BALANCE_PRIN_WAIVE_OFF"));
-		map.addValue("INSTALLMET_INT_WAIVE_OFF", rs.getObject("INSTALLMET_INT_WAIVE_OFF"));
-		map.addValue("WOFF_CURRMONTH_INT", rs.getObject("WOFF_CURRMONTH_INT"));
-		map.addValue("WOFF_OVERDUE_CHARGE", rs.getObject("WOFF_OVERDUE_CHARGE"));
-		map.addValue("WOFF_CHQBOUNCE_CHARGES", rs.getObject("WOFF_CHQBOUNCE_CHARGES"));
-		map.addValue("WOFF_OTHERS", rs.getObject("WOFF_OTHERS"));
-		map.addValue("INSTALLMENT_PRIN_WAIVE_OFF", rs.getObject("INSTALLMENT_PRIN_WAIVE_OFF"));
-		map.addValue("WOFF_PARKING_CHARGES", rs.getObject("WOFF_PARKING_CHARGES"));
-		map.addValue("TOT_OTHER_REPO_CHARGES", rs.getObject("TOT_OTHER_REPO_CHARGES"));
-		map.addValue("WOFF_OTHER_REPO_CHARGES", rs.getObject("WOFF_OTHER_REPO_CHARGES"));
-		map.addValue("TOT_REPOSESSION_CHARGES", rs.getObject("TOT_REPOSESSION_CHARGES"));
-		map.addValue("WOFF_REPOSESSION_CHARGES", rs.getObject("WOFF_REPOSESSION_CHARGES"));
-		map.addValue("TOT_PARKING_CHARGES", rs.getObject("TOT_PARKING_CHARGES"));
-		return map;
+		sql.append(") VALUES(");
 
-	}
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-	private static MapSqlParameterSource getHTSUnadjustedMap(ResultSet rs,  Date appDate) throws Exception {
-
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("UNADJUSTED_AMOUNT", rs.getObject("UNADJUSTED_AMOUNT"));
-		map.addValue("BUSINESSDATE", appDate);
-
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getInsuranceDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("ASSETID", rs.getObject("ASSETID"));
-		map.addValue("INSURANCE_TYPE", rs.getObject("INSURANCE_TYPE"));
-		map.addValue("INSUR_PREMIUM", rs.getObject("INSUR_PREMIUM"));
-		map.addValue("INSURANCE_RENEWAL_DATE", rs.getObject("INSURANCE_RENEWAL_DATE"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("POLICY_TENURE", rs.getObject("POLICY_TENURE"));
-		map.addValue("SUM_ASSURED", rs.getObject("SUM_ASSURED"));
-		map.addValue("NOMINEE_NAME", rs.getObject("NOMINEE_NAME"));
-		map.addValue("GOOD_HEALTH", rs.getObject("GOOD_HEALTH"));
-		map.addValue("CRITICAL_ILLNESS_FLAG", rs.getObject("CRITICAL_ILLNESS_FLAG"));
-		map.addValue("RELATIONSHIP", rs.getObject("RELATIONSHIP"));
-		map.addValue("NOMINEE_ADDRESS", rs.getObject("NOMINEE_ADDRESS"));
-		map.addValue("NOMINEE_RELATION", rs.getObject("NOMINEE_RELATION"));
-		map.addValue("NOMINEE_DOB", rs.getObject("NOMINEE_DOB"));
-		map.addValue("NOMINEE_AGE", rs.getObject("NOMINEE_AGE"));
-		map.addValue("NOMINEE_CONTACTNO", rs.getObject("NOMINEE_CONTACTNO"));
-		map.addValue("NOMINEE_NAME2", rs.getObject("NOMINEE_NAME2"));
-		map.addValue("NOMINEE_ADDRESS2", rs.getObject("NOMINEE_ADDRESS2"));
-		map.addValue("NOMINEE_RELATION2", rs.getObject("NOMINEE_RELATION2"));
-		map.addValue("NOMINEE_DOB2", rs.getObject("NOMINEE_DOB2"));
-		map.addValue("NOMINEE_AGE2", rs.getObject("NOMINEE_AGE2"));
-		map.addValue("NOMINEE_CONTACTNO2", rs.getObject("NOMINEE_CONTACTNO2"));
-		map.addValue("DFGH", rs.getObject("DFGH"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-	}
-
-	private static MapSqlParameterSource getIVRDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("DROP_LINE_LIMIT", rs.getObject("DROP_LINE_LIMIT"));
-		map.addValue("AMOUNT_DRAWN_LIMIT", rs.getObject("AMOUNT_DRAWN_LIMIT"));
-		map.addValue("UTLIZED_BALANCE_LIMIT", rs.getObject("UTLIZED_BALANCE_LIMIT"));
-		map.addValue("PRINCIPLE_AMOUNT_PAID", rs.getObject("PRINCIPLE_AMOUNT_PAID"));
-		map.addValue("BALANCE_PRINCIPAL_OUTSTANDING", rs.getObject("BALANCE_PRINCIPAL_OUTSTANDING"));
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getLeaDocDtlMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("APPLICABLE", rs.getObject("APPLICABLE"));
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("APPROVED_BY", rs.getObject("APPROVED_BY"));
-		map.addValue("AUTHDATE", rs.getObject("AUTHDATE"));
-		map.addValue("AUTHID", rs.getObject("AUTHID"));
-		map.addValue("AWB_NO", rs.getObject("AWB_NO"));
-		map.addValue("BRANCHSTATUS", rs.getObject("BRANCHSTATUS"));
-		map.addValue("CONSTITUTION", rs.getObject("CONSTITUTION"));
-		map.addValue("COURIER_NAME", rs.getObject("COURIER_NAME"));
-		map.addValue("CRITICAL", rs.getObject("CRITICAL"));
-		map.addValue("CUSTOMER_TYPE", rs.getObject("CUSTOMER_TYPE"));
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("DATE_BRANCH_STATUS", rs.getObject("DATE_BRANCH_STATUS"));
-		map.addValue("DATELASTUPDT", rs.getObject("DATELASTUPDT"));
-		map.addValue("DOC_CLASSFN", rs.getObject("DOC_CLASSFN"));
-		map.addValue("DOC_RETRIEVAL_STATUS", rs.getObject("DOC_RETRIEVAL_STATUS"));
-		map.addValue("DOCID", rs.getObject("DOCID"));
-		map.addValue("DOCTYPE", rs.getObject("DOCTYPE"));
-		map.addValue("FILE_BARCODE", rs.getObject("FILE_BARCODE"));
-		map.addValue("MAKERDATE", rs.getObject("MAKERDATE"));
-		map.addValue("MAKERID", rs.getObject("MAKERID"));
-		map.addValue("MC_STATUS", rs.getObject("MC_STATUS"));
-		map.addValue("NEW_FLAG", rs.getObject("NEW_FLAG"));
-		map.addValue("ORIGINALS", rs.getObject("ORIGINALS"));
-		map.addValue("PACKET_TRACKER_NO", rs.getObject("PACKET_TRACKER_NO"));
-		map.addValue("PROPERTY_ADDRESS", rs.getObject("PROPERTY_ADDRESS"));
-		map.addValue("PROPERTY_CODE", rs.getObject("PROPERTY_CODE"));
-		map.addValue("REASON", rs.getObject("REASON"));
-		map.addValue("RECEIVED", rs.getObject("RECEIVED"));
-		map.addValue("RECEIVEDDATE", rs.getObject("RECEIVEDDATE"));
-		map.addValue("REJECTION_REASONS", rs.getObject("REJECTION_REASONS"));
-		map.addValue("RELEASED_DATE", rs.getObject("RELEASED_DATE"));
-		map.addValue("RELEASED_REMARKS", rs.getObject("RELEASED_REMARKS"));
-		map.addValue("REMARKS", rs.getObject("REMARKS"));
-		map.addValue("STAGE", rs.getObject("STAGE"));
-		map.addValue("TARGETDATE", rs.getObject("TARGETDATE"));
-		map.addValue("TITLE_DOCUMENT", rs.getObject("TITLE_DOCUMENT"));
-		map.addValue("TXNDOCID", rs.getObject("TXNDOCID"));
-		map.addValue("VALIDTILLDATE", rs.getObject("VALIDTILLDATE"));
-		map.addValue("VAP_LOAN_FLAG", rs.getObject("VAP_LOAN_FLAG"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSFLAG", rs.getObject("PROCESSFLAG"));
-		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
-		map.addValue("REVISED_TARGET_DATE", rs.getObject("REVISED_TARGET_DATE"));
-
-		
-		
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getLoanDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("CUSTOMER_YIELD", rs.getObject("CUSTOMER_YIELD"));
-		map.addValue("STATUS", rs.getObject("STATUS"));
-		map.addValue("NPA_STAGE", rs.getObject("NPA_STAGE"));
-		map.addValue("LMS_BUCKET", rs.getObject("LMS_BUCKET"));
-		map.addValue("COLL_BUCKET", rs.getObject("COLL_BUCKET"));
-		map.addValue("INSURANCE_APPLIED_FLG", rs.getObject("INSURANCE_APPLIED_FLG"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("CLOSUREDATE", rs.getDate("CLOSUREDATE"));
-		map.addValue("TOPUP_AMT", rs.getObject("TOPUP_AMT"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("PDCID", rs.getObject("PDCID"));
-		map.addValue("PDCFLAG", rs.getObject("PCFLAG"));
-		map.addValue("OD_FLAG", rs.getObject("OD_FLAG"));
-		map.addValue("MARGIN", rs.getObject("MARGIN"));
-		map.addValue("SPECIALMARGIN", rs.getObject("SPECIALMARGIN"));
-		map.addValue("FIXEDTENOR", rs.getObject("FIXEDTENOR"));
-		map.addValue("CEEFFECTIVEDATE", rs.getObject("CEEFFECTIVEDATE"));
-		map.addValue("EFF_RATE", rs.getObject("EFF_RATE"));
-		map.addValue("PLRRATE", rs.getObject("PLRRATE"));
-		map.addValue("PARTY_CODE", rs.getObject("PARTY_CODE"));
-		map.addValue("PARTY_NAME", rs.getObject("PARTY_NAME"));
-		map.addValue("ZONE", rs.getObject("ZONE"));
-		map.addValue("COLLECTION_CENTRE", rs.getObject("COLLECTION_CENTRE"));
-		map.addValue("VIRTUAL_ACCOUNT_NUMBER", rs.getObject("VIRTUAL_ACCOUNT_NUMBER"));
-		map.addValue("INSTALLMENT_TYPE", rs.getObject("INSTALLMENT_TYPE"));
-		map.addValue("COMPANYTYPE", rs.getObject("COMPANYTYPE"));
-		map.addValue("FIANANCE_CHARGES", rs.getObject("FIANANCE_CHARGES"));
-		map.addValue("FILENO", rs.getObject("FILENO"));
-		map.addValue("NO_OF_PDCS", rs.getObject("NO_OF_PDCS"));
-		map.addValue("LIFEINSURANCE", rs.getObject("LIFEINSURANCE"));
-		map.addValue("SHORTRECEIVED", rs.getObject("SHORTRECEIVED"));
-		map.addValue("IN_FAVOUR_OFF", rs.getObject("IN_FAVOUR_OFF"));
-		map.addValue("MKTGID", rs.getObject("MKTGID"));
-		map.addValue("PRE_EMI_INT_500071", rs.getObject("PRE_EMI_INT_500071"));
-		map.addValue("LOAN_PURPOSE_DTL", rs.getObject("LOAN_PURPOSE_DTL"));
-		map.addValue("LOAN_PURPOSE_DESC", rs.getObject("LOAN_PURPOSE_DESC"));
-		map.addValue("LOGIN_FEES", rs.getObject("LOGIN_FEES"));
-		map.addValue("VC_REFERRAL_CD", rs.getObject("VC_REFERRAL_CD"));
-		map.addValue("VC_REFERRAL_NAME", rs.getObject("VC_REFERRAL_NAME"));
-		map.addValue("PROC_FEES2", rs.getObject("PROC_FEES2"));
-		map.addValue("INSTRUMENT_TYPE", rs.getObject("INSTRUMENT_TYPE"));
-		map.addValue("LAN_BARCODE", rs.getObject("LAN_BARCODE"));
-		map.addValue("INTSTART_DATE_REGULAR", rs.getObject("INTSTART_DATE_REGULAR"));
-		map.addValue("BPI_RECEIVABLE", rs.getObject("BPI_RECEIVABLE"));
-		map.addValue("BPI_PAYABLE", rs.getObject("BPI_PAYABLE"));
-		map.addValue("OPEN_FACILITY_FLAG", rs.getObject("OPEN_FACILITY_FLAG"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getLoanVoucherMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("MODULEID", rs.getObject("MODULEID"));
-		map.addValue("STAGEID", rs.getObject("STAGEID"));
-		map.addValue("LEA_VOUCHERID", rs.getObject("LEA_VOUCHERID"));
-		map.addValue("FA_VOUCHERID", rs.getObject("FA_VOUCHERID"));
-		map.addValue("VOUCHERTYPE", rs.getObject("VOUCHERTYPE"));
-		map.addValue("VOUCHERDATE", rs.getObject("VOUCHERDATE"));
-		map.addValue("VALUEDATE", rs.getObject("VALUEDATE"));
-		map.addValue("BRANCHID", rs.getObject("BRANCHID"));
-		map.addValue("BRANCH_CODE", rs.getObject("BRANCH_CODE"));
-		map.addValue("BRANCHDESC", rs.getObject("BRANCHDESC"));
-		map.addValue("BUSINESS_AREA", rs.getObject("BUSINESS_AREA"));
-		map.addValue("PROFIT_CENTRE", rs.getObject("PROFIT_CENTRE"));
-		map.addValue("PRODUCT_FLAG", rs.getObject("PRODUCT_FLAG"));
-		map.addValue("SCHEMEID", rs.getObject("SCHEMEID"));
-		map.addValue("SCHEMEDESC", rs.getObject("SCHEMEDESC"));
-		map.addValue("ASSIGNMENT", rs.getObject("ASSIGNMENT"));
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
-		map.addValue("DISBURSALDATE", rs.getObject("DISBURSALDATE"));
-		map.addValue("LOAN_STATUS", rs.getObject("LOAN_STATUS"));
-		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
-		map.addValue("FINNONE_GLID", rs.getObject("FINNONE_GLID"));
-		map.addValue("GROUPGLDESC", rs.getObject("GROUPGLDESC"));
-		map.addValue("SAPGL_CODE", rs.getObject("SAPGL_CODE"));
-		map.addValue("COST_CENTRE", rs.getObject("COST_CENTRE"));
-		map.addValue("DRAMT", rs.getObject("DRAMT"));
-		map.addValue("CRAMT", rs.getObject("CRAMT"));
-		map.addValue("DRCR_FLAG", rs.getObject("DRCR_FLAG"));
-		map.addValue("DRCR_AMT", rs.getObject("DRCR_AMT"));
-		map.addValue("NARRATION", rs.getObject("NARRATION"));
-		map.addValue("CHEQUEID", rs.getObject("CHEQUEID"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
-		map.addValue("PROCESSED_FLAG","N");
-
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("CRM_DEALID"),
+				rs.getObject("CRSCOREDATE"), rs.getObject("CIBILSCORE"), rs.getObject("APPSCORE"),
+				rs.getObject("BEHSCORE"), rs.getObject("DEVIATION_TYPE"), rs.getObject("DEVIATION_FLAG"),
+				rs.getObject("DEVIATION_CODE"), rs.getObject("DEVIATION_NAME"), rs.getObject("REQ_TENURE"),
+				rs.getObject("REQ_LOAN_AMT"), rs.getObject("LOAN_LIMIT"), rs.getObject("APPROVE_LOAN_AMT"),
+				rs.getObject("LOAN_PURPOSE"), rs.getObject("LOAN_TYPE"), rs.getObject("CANCELLATIONDATE"),
+				rs.getObject("CANCEL_REASON"), rs.getObject("FREQUENCY"), rs.getObject("LOAN_APPROVAL_DATE"),
+				rs.getObject("AGREEMENTDATE"), rs.getObject("INTRATE"), rs.getObject("FLAT_RATE"), rs.getObject("IRR"),
+				rs.getObject("GROSS_LTV"), rs.getObject("NET_LTV"), rs.getObject("COF"),
+				rs.getObject("DEBT_BURDEN_RATIO"), rs.getObject("FOIR_DB"), rs.getObject("SCHEMEID"),
+				rs.getObject("SCHEMEDESC"), rs.getObject("SCHEMEGROUPID"), rs.getObject("SCHEME_GROUPG_DESC"),
+				rs.getObject("PRODUCT_CATEGORY"), rs.getObject("PROD_TYPE"), rs.getObject("PROMOTIONID"),
+				rs.getObject("PROGRAMID"), rs.getObject("SURROGATE_FLAG"), rs.getObject("SOURCING_CHANNEL_TYPE"),
+				rs.getObject("SOURCING_CHANNEL_NAME"), rs.getObject("REFERAL_GROUP"), rs.getObject("REFERAL_NAME"),
+				rs.getObject("COUNTRYID"), rs.getObject("COUNTRY"), rs.getObject("REGIONID"), rs.getObject("REGION"),
+				rs.getObject("STATEID"), rs.getObject("STATE"), rs.getObject("CITYID"), rs.getObject("CITY"),
+				rs.getObject("BRANCHID"), rs.getObject("BRANCHDESC"), rs.getObject("BROKER_NAME"),
+				rs.getObject("DME_NAME"), rs.getObject("ASM_NAME"), rs.getObject("RSM_NAME"),
+				rs.getObject("CRDT_MGR_NAME"), rs.getObject("ROID_NAME"), rs.getObject("TLID_NAME"),
+				rs.getObject("BMID_NAME"), rs.getObject("COID_NAME"), rs.getObject("SUPPLIERID"),
+				rs.getObject("DLR_PARTICIPATION_RATE"), rs.getObject("LOCAL_OUTSTATION_FLG"),
+				rs.getObject("CUSTOMERID"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate, rs.getObject("PRODUCT"),
+				rs.getObject("SEGMENTS"), rs.getObject("CRM_STATUS"), rs.getObject("LOGINDATE"),
+				rs.getObject("APPR_REJ_DATE"), rs.getObject("CANCEL_DATE"), rs.getObject("FILE_STATUS"),
+				rs.getObject("FILE_HOLD_REASON"), rs.getObject("QDPDONE"), rs.getObject("ISHOLD"),
+				rs.getObject("BRANCH_INW_DATE"), rs.getObject("BRANCH_HOLD_DATE"), rs.getObject("CPU_INW_DATE"),
+				rs.getObject("CPU_HOLD_DATE"), rs.getObject("SYSTEM_HOLD"), rs.getObject("PSL_FLAG"),
+				rs.getObject("DOC_WAVE_FLAG"), rs.getObject("CUSTOMER_SWIPE"), rs.getObject("CUSTOMER_ACCEPTANCE"),
+				rs.getObject("KYC_DOC_TYPE"), rs.getObject("KYC_DOC_ID"), rs.getObject("BUSINESS_IRR"),
+				rs.getObject("INSPECTORNAME"), rs.getObject("REGNUMBER"), rs.getObject("BUSINESS_YEAR"),
+				rs.getObject("DEALID"), rs.getObject("PRETAXIRR"), rs.getObject("ODM_FLAG"), rs.getObject("DI_DATE"),
+				rs.getObject("LAA_QDP_FLAG"), rs.getObject("PREFERRED_CARD_ACCEPTANCE"), rs.getObject("ORIG_AMTFIN"),
+				rs.getObject("ELC_FLAG"), rs.getObject("ELC_LIMIT"), rs.getObject("QDP_DONE_DATE"),
+				rs.getObject("LAA_DECENTRALIZED_FLAG"), rs.getObject("FCU_FLAG"), rs.getObject("MKTGID"),
+				rs.getObject("DM_MPID"), rs.getObject("SWIPE_CARD_CODE"), rs.getObject("SOURCE_CARD_CODE"),
+				rs.getObject("DII_USER_ID"), rs.getObject("QDP_CHEQUE_ISSUE"), rs.getObject("INTEREST_TYPE"),
+				rs.getObject("DII_DONE_DATE"), rs.getObject("FINISH_DATE"), batchId);
 
 	}
 
-	private static MapSqlParameterSource getLoanWiseChargeDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveBounceDetailsMap(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("TXNADVICEID", rs.getObject("TXNADVICEID"));
-		map.addValue("CHARGEID", rs.getObject("CHARGEID"));
-		map.addValue("CHARGECODEID", rs.getObject("CHARGECODEID"));
-		map.addValue("CHARGEDESC", rs.getObject("CHARGEDESC"));
-		map.addValue("CHARGEAMT", rs.getObject("CHARGEAMT"));
-		map.addValue("STATUS", rs.getObject("STATUS"));
-		map.addValue("AMTINPROCESS", rs.getObject("AMTINPROCESS"));
-		map.addValue("TXNADJUSTEDAMT", rs.getObject("TXNADJUSTEDAMT"));
-		map.addValue("ADVICEAMT", rs.getObject("ADVICEAMT"));
-		map.addValue("ADVICEDATE", rs.getObject("ADVICEDATE"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("SEGMENT", rs.getObject("SEGMENT"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_BOUNCE_DETAILS (");
 
-		return map;
+		sql.append("APPLID");
+		sql.append(",CHEQUEID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",BOUNCE_DATE");
+		sql.append(",BOUNCE_REASON");
+		sql.append(",BOUNCE_AMT");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",CHEQUEDATE");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
 
-	}
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-	private static MapSqlParameterSource getLoanWiseRepayScheduleDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("PROPINSTLID", rs.getObject("PROPINSTLID"));
-		map.addValue("EMI_NO", rs.getObject("EMI_NO"));
-		map.addValue("DUEDATE", rs.getObject("DUEDATE"));
-		map.addValue("OPENING_PRINCIPAL", rs.getObject("OPENING_PRINCIPAL"));
-		map.addValue("INSTALMENT_AMT", rs.getObject("INSTALMENT_AMT"));
-		map.addValue("PRINCIPAL_AMT", rs.getObject("PRINCIPAL_AMT"));
-		map.addValue("INTEREST_AMT", rs.getObject("INTEREST_AMT"));
-		map.addValue("CLOSING_PRINCIPAL", rs.getObject("CLOSING_PRINCIPAL"));
-		map.addValue("INSTAL_TYPE", rs.getObject("INSTAL_TYPE"));
-		map.addValue("TOTAL_AMOUNT_DUE", rs.getObject("TOTAL_AMOUNT_DUE"));
-		map.addValue("DROPLINE_LIMIT", rs.getObject("DROPLINE_LIMIT"));
-		map.addValue("ACT_AVAILABLE_LIMIT", rs.getObject("ACT_AVAILABLE_LIMIT"));
-		map.addValue("ACT_UTILISATION_LIMIT", rs.getObject("ACT_UTILISATION_LIMIT"));
-		map.addValue("EMI_HOLIDAY", rs.getObject("EMI_HOLIDAY"));
-		map.addValue("BUSINESSDATE", appDate);
-
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("CHEQUEID"),
+				rs.getObject("AGREEMENTNO"), rs.getObject("BOUNCE_DATE"), rs.getObject("BOUNCE_REASON"),
+				rs.getObject("BOUNCE_AMT"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getObject("BUSINESS_YEAR"), rs.getObject("CHEQUEDATE"), batchId);
 
 	}
 
-	private static MapSqlParameterSource getNoceligibleLoans(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveCoApplicantDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("LOANACCTNUM", rs.getObject("LOANACCTNUM"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("EMAIL", rs.getObject("EMAIL"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("PROCESSED_FLAG","N");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_COAPPLICANT_DETAILS (");
+		sql.append("CUSTOMERID");
+		sql.append(",APPLICANT_TYPE");
+		sql.append(",PAN_NO");
+		sql.append(",CUST_RELATION");
+		sql.append(",CUST_TYPE");
+		sql.append(",AGE");
+		sql.append(",DOB");
+		sql.append(",FNAME");
+		sql.append(",MNAME");
+		sql.append(",LNAME");
+		sql.append(",GENDER");
+		sql.append(",MARITAL_STATUS");
+		sql.append(",NO_OF_DEPENDENT");
+		sql.append(",YRS_CURRENTJOB");
+		sql.append(",PREVIOUS_JOB_YEAR");
+		sql.append(",QUALIFICATION");
+		sql.append(",EMPLOYER_DESC");
+		sql.append(",COMPANY_TYPE");
+		sql.append(",INDUSTRYID");
+		sql.append(",BUSINESS_NATURE");
+		sql.append(",OCCUPATION_CODE");
+		sql.append(",GUARDIAN");
+		sql.append(",PROCESS_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",EMP_TYPE");
+		sql.append(",BUSINESSDATE");
+		sql.append(",INCOME");
+		sql.append(",APPLID");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
 
-		return map;
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("CUSTOMERID"), rs.getObject("APPLICANT_TYPE"),
+				rs.getObject("PAN_NO"), rs.getObject("CUST_RELATION"), rs.getObject("CUST_TYPE"), rs.getObject("AGE"),
+				rs.getObject("DOB"), rs.getObject("FNAME"), rs.getObject("MNAME"), rs.getObject("LNAME"),
+				rs.getObject("GENDER"), rs.getObject("MARITAL_STATUS"), rs.getObject("NO_OF_DEPENDENT"),
+				rs.getObject("YRS_CURRENTJOB"), rs.getObject("PREVIOUS_JOB_YEAR"), rs.getObject("QUALIFICATION"),
+				rs.getObject("EMPLOYER_DESC"), rs.getObject("COMPANY_TYPE"), rs.getObject("INDUSTRYID"),
+				rs.getObject("BUSINESS_NATURE"), rs.getObject("OCCUPATION_CODE"), rs.getObject("GUARDIAN"),
+				rs.getObject("PROCESS_FLAG"), valueDate, rs.getObject("EMP_TYPE"), appDate, rs.getObject("INCOME"),
+				rs.getObject("APPLID"), batchId);
+	}
+
+	public static void saveDisbDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_DISB_DETAILS_DAILY (");
+		sql.append("AGREEMENTDATE");
+		sql.append(",APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",DISBURSEMENTNO");
+		sql.append(",DISBURSEMENTDATE");
+		sql.append(",PARENT_AGREEMENTNO");
+		sql.append(",AMTFIN");
+		sql.append(",NET_AMTFIN");
+		sql.append(",DISBURSEDAMT");
+		sql.append(",DISB_STATUS");
+		sql.append(",FIRST_DUE_DATE");
+		sql.append(",GROSS_TENURE");
+		sql.append(",NET_TENURE");
+		sql.append(",MATURITYDATE");
+		sql.append(",EXPIRYDATE");
+		sql.append(",NO_OF_ADV_INSTL");
+		sql.append(",ADV_EMI_AMT");
+		sql.append(",EMI");
+		sql.append(",REPAYMENT_MODE");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",PROMOTIONID");
+		sql.append(",ICICI_LOMBARD");
+		sql.append(",BAGIC");
+		sql.append(",BALIC_CHARGES");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",FEE");
+		sql.append(",DEALER_SUBV");
+		sql.append(",MANU_SUBV_DED");
+		sql.append(",MANU_SUBV_NDED");
+		sql.append(",PREEMI");
+		sql.append(",EXISTING_LANNO");
+		sql.append(",MORTGAGE_FEE");
+		sql.append(",COMMITMENT_FEE");
+		sql.append(",PROCESSING_FEE");
+		sql.append(",PRE_EMI_RECEIVABLE");
+		sql.append(",INSURANCE");
+		sql.append(",PAYMENTMODE");
+		sql.append(",FREQ");
+		sql.append(",CHEQUENUM");
+		sql.append(",CUST_ACCT_NO");
+		sql.append(",BANKNAME");
+		sql.append(",MICRCODE");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",EMI_CHARGE");
+		sql.append(",PDC_CHARGE");
+		sql.append(",IRR_PER");
+		sql.append(",FEE_WL");
+		sql.append(",ELC_CHARGE");
+		sql.append(",CREDIT_VIDYA_FEES");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTDATE"), rs.getObject("APPLID"),
+				rs.getObject("AGREEMENTNO"), rs.getObject("DISBURSEMENTNO"), rs.getObject("DISBURSEMENTDATE"),
+				rs.getObject("PARENT_AGREEMENTNO"), rs.getObject("AMTFIN"), rs.getObject("NET_AMTFIN"),
+				rs.getObject("DISBURSEDAMT"), rs.getObject("DISB_STATUS"), rs.getObject("FIRST_DUE_DATE"),
+				rs.getObject("GROSS_TENURE"), rs.getObject("NET_TENURE"), rs.getObject("MATURITYDATE"),
+				rs.getObject("EXPIRYDATE"), rs.getObject("NO_OF_ADV_INSTL"), rs.getObject("ADV_EMI_AMT"),
+				rs.getObject("EMI"), rs.getObject("REPAYMENT_MODE"), rs.getObject("PRODUCTFLAG"),
+				rs.getObject("PROMOTIONID"), rs.getObject("ICICI_LOMBARD"), rs.getObject("BAGIC"),
+				rs.getObject("BALIC_CHARGES"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getObject("FEE"), rs.getObject("DEALER_SUBV"),
+				rs.getObject("MANU_SUBV_DED"), rs.getObject("MANU_SUBV_NDED"), rs.getObject("PREEMI"),
+				rs.getObject("EXISTING_LANNO"), rs.getObject("MORTGAGE_FEE"), rs.getObject("COMMITMENT_FEE"),
+				rs.getObject("PROCESSING_FEE"), rs.getObject("PRE_EMI_RECEIVABLE"), rs.getObject("INSURANCE"),
+				rs.getObject("PAYMENTMODE"), rs.getObject("FREQ"), rs.getObject("CHEQUENUM"),
+				rs.getObject("CUST_ACCT_NO"), rs.getObject("BANKNAME"), rs.getObject("MICRCODE"),
+				rs.getObject("BUSINESS_YEAR"), rs.getObject("EMI_CHARGE"), rs.getObject("PDC_CHARGE"),
+				rs.getObject("IRR_PER"), rs.getObject("FEE_WL"), rs.getObject("ELC_CHARGE"),
+				rs.getObject("CREDIT_VIDYA_FEES"), batchId);
+	}
+
+	public static void saveForeClosureChargesMap(ResultSet rs, Date appDate, long batchId, JdbcTemplate jdbcTemplate)
+			throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO FORECLOSURECHARGES (");
+
+		sql.append("AGREEMENTID");
+		sql.append(",BAL_PRINCIPAL");
+		sql.append(",RESEDUL_VALUE");
+		sql.append(",INSTALLMENTS");
+		sql.append(",ADVICES");
+		sql.append(",PENALTY");
+		sql.append(",INTREST_ON_TERMINATION");
+		sql.append(",FLOATINTREST_ON_TERMINATION");
+		sql.append(",OVER_DUES");
+		sql.append(",CURRENT_OVERDUES");
+		sql.append(",CURRENT_WAVEOFFAMT");
+		sql.append(",OVER_DISTANCE_CHARGES");
+		sql.append(",INTREST_ON_TERMINATION_PER_DAY");
+		sql.append(",INTREST_ACCRUALS");
+		sql.append(",EXCESS_AMOUNT");
+		sql.append(",EXCESS_REFUND");
+		sql.append(",ADVICE");
+		sql.append(",REBATE");
+		sql.append(",ADVINSTL");
+		sql.append(",EXCESSPRINPMNT");
+		sql.append(",SDAMT");
+		sql.append(",SDINT");
+		sql.append(",EXCESS_INTREST_RATE");
+		sql.append(",VAT_ON_FORECLOSURE");
+		sql.append(",UNDER_DISTANCE_CHARGES");
+		sql.append(",NET_PAYBALE");
+		sql.append(",WAIVEOFFAMOUNT");
+		sql.append(",ACTIVITY");
+		sql.append(",AUTHORIZEDON");
+		sql.append(",COMMITMENT_FEE");
+		sql.append(",ORIGINATION_FEE");
+		sql.append(",PRE_EMI");
+		sql.append(",BUSINESS_DATE");
+		sql.append(",CHEQUEID");
+		sql.append(",STATUS");
+		sql.append(",INTEREST_WAIVE_OFF");
+		sql.append(",BALANCE_PRIN_WAIVE_OFF");
+		sql.append(",INSTALLMET_INT_WAIVE_OFF");
+		sql.append(",WOFF_CURRMONTH_INT");
+		sql.append(",WOFF_OVERDUE_CHARGE");
+		sql.append(",WOFF_CHQBOUNCE_CHARGES");
+		sql.append(",WOFF_OTHERS");
+		sql.append(",INSTALLMENT_PRIN_WAIVE_OFF");
+		sql.append(",WOFF_PARKING_CHARGES");
+		sql.append(",TOT_OTHER_REPO_CHARGES");
+		sql.append(",WOFF_OTHER_REPO_CHARGES");
+		sql.append(",TOT_REPOSESSION_CHARGES");
+		sql.append(",WOFF_REPOSESSION_CHARGES");
+		sql.append(",TOT_PARKING_CHARGES");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTID"), rs.getObject("BAL_PRINCIPAL"),
+				rs.getObject("RESEDUL_VALUE"), rs.getObject("INSTALLMENTS"), rs.getObject("ADVICES"),
+				rs.getObject("PENALTY"), rs.getObject("INTREST_ON_TERMINATION"),
+				rs.getObject("FLOATINTREST_ON_TERMINATION"), rs.getObject("OVER_DUES"),
+				rs.getObject("CURRENT_OVERDUES"), rs.getObject("CURRENT_WAVEOFFAMT"),
+				rs.getObject("OVER_DISTANCE_CHARGES"), rs.getObject("INTREST_ON_TERMINATION_PER_DAY"),
+				rs.getObject("INTREST_ACCRUALS"), rs.getObject("EXCESS_AMOUNT"), rs.getObject("EXCESS_REFUND"),
+				rs.getObject("ADVICE"), rs.getObject("REBATE"), rs.getObject("ADVINSTL"),
+				rs.getObject("EXCESSPRINPMNT"), rs.getObject("SDAMT"), rs.getObject("SDINT"),
+				rs.getObject("EXCESS_INTREST_RATE"), rs.getObject("VAT_ON_FORECLOSURE"),
+				rs.getObject("UNDER_DISTANCE_CHARGES"), rs.getObject("NET_PAYBALE"), rs.getObject("WAIVEOFFAMOUNT"),
+				rs.getObject("ACTIVITY"), rs.getObject("AUTHORIZEDON"), rs.getObject("COMMITMENT_FEE"),
+				rs.getObject("ORIGINATION_FEE"), rs.getObject("PRE_EMI"), appDate, rs.getObject("CHEQUEID"),
+				rs.getObject("STATUS"), rs.getObject("INTEREST_WAIVE_OFF"), rs.getObject("BALANCE_PRIN_WAIVE_OFF"),
+				rs.getObject("INSTALLMET_INT_WAIVE_OFF"), rs.getObject("WOFF_CURRMONTH_INT"),
+				rs.getObject("WOFF_OVERDUE_CHARGE"), rs.getObject("WOFF_CHQBOUNCE_CHARGES"),
+				rs.getObject("WOFF_OTHERS"), rs.getObject("INSTALLMENT_PRIN_WAIVE_OFF"),
+				rs.getObject("WOFF_PARKING_CHARGES"), rs.getObject("TOT_OTHER_REPO_CHARGES"),
+				rs.getObject("WOFF_OTHER_REPO_CHARGES"), rs.getObject("TOT_REPOSESSION_CHARGES"),
+				rs.getObject("WOFF_REPOSESSION_CHARGES"), rs.getObject("TOT_PARKING_CHARGES"), batchId);
 
 	}
 
-	private static MapSqlParameterSource getOpenEcsDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveHTSUnadjustedMap(ResultSet rs, Date appDate, long batchId, JdbcTemplate jdbcTemplate)
+			throws Exception {
 
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("ECS_ID", rs.getObject("ECS_ID"));
-		map.addValue("BANK_ID", rs.getObject("BANK_ID"));
-		map.addValue("BANK_NAME", rs.getObject("BANK_NAME"));
-		map.addValue("BANKBRANCHID", rs.getObject("BANKBRANCHID"));
-		map.addValue("BANKID", rs.getObject("BANKID"));
-		map.addValue("BANK_BRANCH_NAME", rs.getObject("BANK_BRANCH_NAME"));
-		map.addValue("CITY", rs.getObject("CITY"));
-		map.addValue("ACCTYPE", rs.getObject("ACCTYPE"));
-		map.addValue("ACCNO", rs.getObject("ACCNO"));
-		map.addValue("MAXLIMIT", rs.getObject("MAXLIMIT"));
-		map.addValue("BALLIMIT", rs.getObject("BALLIMIT"));
-		map.addValue("UTIL_LIMIT", rs.getObject("UTIL_LIMIT"));
-		map.addValue("VALID_LIMIT", rs.getObject("VALID_LIMIT"));
-		map.addValue("REPAY_MODE", rs.getObject("REPAY_MODE"));
-		map.addValue("MICRCODE", rs.getObject("MICRCODE"));
-		map.addValue("ACTIVE_FLAG", rs.getObject("ACTIVE_FLAG"));
-		map.addValue("CITYID", rs.getObject("CITYID"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_HTS_UNADJUSTED_AMT (");
+		sql.append("APPLID");
+		sql.append(",UNADJUSTED_AMOUNT");
+		sql.append(",BUSINESSDATE");
+		sql.append(",BATCH_ID");
 
-		return map;
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("UNADJUSTED_AMOUNT"), appDate,
+				batchId);
 
 	}
 
-	private static MapSqlParameterSource getPrePaymentDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveInsuranceDetailsMap(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("PREPAYMENTID", rs.getObject("PREPAYMENTID"));
-		map.addValue("PREPAYMENT_RATE", rs.getObject("PREPAYMENT_RATE"));
-		map.addValue("PREPAYMENT_TYPE", rs.getObject("PREPAYMENT_TYPE"));
-		map.addValue("PREPAYMENT_PENALTY_DUE", rs.getObject("PREPAYMENT_PENALTY_DUE"));
-		map.addValue("PREPAYMENT_PENALTY_PAID", rs.getObject("PREPAYMENT_PENALTY_PAID"));
-		map.addValue("PREPAYMENT_AMT", rs.getObject("PREPAYMENT_AMT"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("PREPAYMENT_DATE", rs.getObject("PREPAYMENT_DATE"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_INSURANCE_DETAILS (");
 
-		return map;
+		sql.append("APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",ASSETID");
+		sql.append(",INSURANCE_TYPE");
+		sql.append(",INSUR_PREMIUM");
+		sql.append(",INSURANCE_RENEWAL_DATE");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",POLICY_TENURE");
+		sql.append(",SUM_ASSURED");
+		sql.append(",NOMINEE_NAME");
+		sql.append(",GOOD_HEALTH");
+		sql.append(",CRITICAL_ILLNESS_FLAG");
+		sql.append(",RELATIONSHIP");
+		sql.append(",NOMINEE_ADDRESS");
+		sql.append(",NOMINEE_RELATION");
+		sql.append(",NOMINEE_DOB");
+		sql.append(",NOMINEE_AGE");
+		sql.append(",NOMINEE_CONTACTNO");
+		sql.append(",NOMINEE_NAME2");
+		sql.append(",NOMINEE_ADDRESS2");
+		sql.append(",NOMINEE_RELATION2");
+		sql.append(",NOMINEE_DOB2");
+		sql.append(",NOMINEE_AGE2");
+		sql.append(",NOMINEE_CONTACTNO2");
+		sql.append(",DFGH");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
 
-	}
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-	private static MapSqlParameterSource getPresentationDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("EMI", rs.getObject("EMI"));
-		map.addValue("REPAY_TYPE", rs.getObject("REPAY_TYPE"));
-		map.addValue("DEPOSITED_DATE", rs.getObject("DEPOSITED_DATE"));
-		map.addValue("CREDIT_STATUS", rs.getObject("CREDIT_STATUS"));
-		map.addValue("RETURN_CODE", rs.getObject("RETURN_CODE"));
-		map.addValue("RETURN_REASON", rs.getObject("RETURN_REASON"));
-		map.addValue("REMARKS", rs.getObject("REMARKS"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("PROCESSDATE", rs.getObject("PROCESSDATE"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("EMI_NO", rs.getObject("EMI_NO"));
-		map.addValue("CUSTOMER_BANK_NAME", rs.getObject("CUSTOMER_BANK_NAME"));
-		map.addValue("BOM_BOUNCE_BUCKET", rs.getObject("BOM_BOUNCE_BUCKET"));
-		map.addValue("MICR_CODE", rs.getObject("MICR_CODE"));
-		map.addValue("STATUS_UPDT_DATE", rs.getObject("STATUS_UPDT_DATE"));
-		map.addValue("CUST_BANK_AC_NO", rs.getObject("CUST_BANK_AC_NO"));
-		map.addValue("CUSTOMER_BANK_BRANCH", rs.getObject("CUSTOMER_BANK_BRANCH"));
-		map.addValue("CHEQUESNO", rs.getObject("CHEQUESNO"));
-		map.addValue("CHEQUEDATE", rs.getObject("CHEQUEDATE"));
-		map.addValue("FEMI_FLAG", rs.getObject("FEMI_FLAG"));
-		map.addValue("HOLD_IGNORE_CODE", rs.getObject("HOLD_IGNORE_CODE"));
-		map.addValue("HOLD_IGNORE_REASON", rs.getObject("HOLD_IGNORE_REASON"));
-		map.addValue("DEST_ACC_HOLDER", rs.getObject("DEST_ACC_HOLDER"));
-		map.addValue("PDCID", rs.getObject("PDCID"));
-		map.addValue("BBRANCHID", rs.getObject("BBRANCHID"));
-
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getPropertyDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("PROPERTYID", rs.getObject("PROPERTYID"));
-		map.addValue("APPLICATIONID", rs.getObject("APPLICATIONID"));
-
-		map.addValue("ADDRESS1", rs.getObject("ADDRESS1"));
-		map.addValue("ADDRESS2", rs.getObject("ADDRESS2"));
-		map.addValue("ADDRESS3", rs.getObject("ADDRESS3"));
-		map.addValue("CITY", rs.getObject("CITY"));
-		map.addValue("STATE", rs.getObject("STATE"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROPERTY_TYPE", rs.getObject("PROPERTY_TYPE"));
-		map.addValue("PROPERTY_DESC", rs.getObject("PROPERTY_DESC"));
-		map.addValue("PROPERTY_VALUE", rs.getObject("PROPERTY_VALUE"));
-		map.addValue("ZIPCODE", rs.getObject("ZIPCODE"));
-		map.addValue("PROCESSFLAG", rs.getObject("PROCESSFLAG"));
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getReschDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("DISB_STATUS", rs.getObject("DISB_STATUS"));
-		map.addValue("GROSS_TENURE", rs.getObject("GROSS_TENURE"));
-		map.addValue("NET_TENURE", rs.getObject("NET_TENURE"));
-		map.addValue("MATURITYDATE", rs.getObject("MATURITYDATE"));
-		map.addValue("EXPIRYDATE", rs.getObject("EXPIRYDATE"));
-		map.addValue("EMI", rs.getObject("EMI"));
-		map.addValue("REPAYMENT_MODE", rs.getObject("REPAYMENT_MODE"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("FREQ", rs.getObject("FREQ"));
-		map.addValue("LOAN_STATUS", rs.getObject("LOAN_STATUS"));
-		map.addValue("CLOSUREDATE", rs.getObject("CLOSUREDATE"));
-		map.addValue("CUST_ACCT_NO", rs.getObject("CUST_ACCT_NO"));
-		map.addValue("BANKNAME", rs.getObject("BANKNAME"));
-		map.addValue("MICRCODE", rs.getObject("MICRCODE"));
-		map.addValue("CUST_BANK_BRANCH", rs.getObject("CUST_BANK_BRANCH"));
-		map.addValue("CUST_BANK_CITY", rs.getObject("CUST_BANK_CITY"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("PDCID", rs.getObject("PDCID"));
-		map.addValue("PCFLAG", rs.getObject("PCFLAG"));
-		map.addValue("TIE_UP", rs.getObject("TIE_UP"));
-		map.addValue("MARGIN", rs.getObject("MARGIN"));
-		map.addValue("SPECIALMARGIN", rs.getObject("SPECIALMARGIN"));
-		map.addValue("FIXEDTENOR", rs.getObject("FIXEDTENOR"));
-		map.addValue("CEEFFECTIVEDATE", rs.getObject("CEEFFECTIVEDATE"));
-		map.addValue("EFF_RATE", rs.getObject("EFF_RATE"));
-		map.addValue("PLRRATE", rs.getObject("PLRRATE"));
-		map.addValue("TIE_UP_WITH", rs.getObject("TIE_UP_WITH"));
-		map.addValue("DATE_OF_CLOSURE", rs.getObject("DATE_OF_CLOSURE"));
-		map.addValue("PDCMS_SEQ_GENERATED_DATE", rs.getObject("PDCMS_SEQ_GENERATED_DATE"));
-		map.addValue("INSTRUMENT_DATA_ENTRY_DATE", rs.getObject("INSTRUMENT_DATA_ENTRY_DATE"));
-		map.addValue("PAYMENT_AUTHORIZATION_DATE", rs.getObject("PAYMENT_AUTHORIZATION_DATE"));
-
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("AGREEMENTNO"),
+				rs.getObject("ASSETID"), rs.getObject("INSURANCE_TYPE"), rs.getObject("INSUR_PREMIUM"),
+				rs.getObject("INSURANCE_RENEWAL_DATE"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getObject("BUSINESS_YEAR"), rs.getObject("POLICY_TENURE"),
+				rs.getObject("SUM_ASSURED"), rs.getObject("NOMINEE_NAME"), rs.getObject("GOOD_HEALTH"),
+				rs.getObject("CRITICAL_ILLNESS_FLAG"), rs.getObject("RELATIONSHIP"), rs.getObject("NOMINEE_ADDRESS"),
+				rs.getObject("NOMINEE_RELATION"), rs.getObject("NOMINEE_DOB"), rs.getObject("NOMINEE_AGE"),
+				rs.getObject("NOMINEE_CONTACTNO"), rs.getObject("NOMINEE_NAME2"), rs.getObject("NOMINEE_ADDRESS2"),
+				rs.getObject("NOMINEE_RELATION2"), rs.getObject("NOMINEE_DOB2"), rs.getObject("NOMINEE_AGE2"),
+				rs.getObject("NOMINEE_CONTACTNO2"), rs.getObject("DFGH"), batchId);
 
 	}
 
-	private static MapSqlParameterSource getSoaEmailDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveIVRDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("CUSTOMERID", rs.getObject("CUSTOMERID"));
-		map.addValue("EMAILID", rs.getObject("EMAILID"));
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("PROCESSID", rs.getObject("PROCESSID"));
-		map.addValue("GENERATION_DATE", rs.getObject("GENERATION_DATE"));
-		map.addValue("PROCESSED", rs.getObject("PROCESSED"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("GROUPID", rs.getObject("GROUPID"));
-		map.addValue("TOTAL_LAN", rs.getObject("TOTAL_LAN"));
-		map.addValue("TOTAL_CLOSED_LAN", rs.getObject("TOTAL_CLOSED_LAN"));
-		map.addValue("TOTAL_ACTIVE_LAN", rs.getObject("TOTAL_ACTIVE_LAN"));
-		map.addValue("SWIPE_FLAG", rs.getObject("SWIPE_FLAG"));
-		map.addValue("EMI_CARD_NO", rs.getObject("EMI_CARD_NO"));
-		map.addValue("DISBURSEMENT_DATE", rs.getObject("DISBURSEMENT_DATE"));
-		map.addValue("SUPPLIERID", rs.getObject("SUPPLIERID"));
-		map.addValue("SUPPLIERDESC", rs.getObject("SUPPLIERDESC"));
-		map.addValue("AMT_FIN", rs.getObject("AMT_FIN"));
-		map.addValue("EMI", rs.getObject("EMI"));
-		map.addValue("NEXT_EMI_DUE_DATE", rs.getObject("NEXT_EMI_DUE_DATE"));
-		map.addValue("CHEQUE_BOUNCE_CHARGE", rs.getObject("CHEQUE_BOUNCE_CHARGE"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_IVR_GATEWAY_FLEXI (");
+		sql.append("AGREEMENTNO");
+		sql.append(",DROP_LINE_LIMIT");
+		sql.append(",AMOUNT_DRAWN_LIMIT");
+		sql.append(",UTLIZED_BALANCE_LIMIT");
+		sql.append(",PRINCIPLE_AMOUNT_PAID");
+		sql.append(",BALANCE_PRINCIPAL_OUTSTANDING");
+		sql.append(",PROCESS_DATE");
+		sql.append(",BUSINESSDATE");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
 
-		return map;
-
-	}
-
-	private static MapSqlParameterSource getSubQDisbDetailMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-
-		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("DISBURSEMENTNO", rs.getObject("DISBURSEMENTNO"));
-		map.addValue("DISBURSEMENTDATE", rs.getObject("DISBURSEMENTDATE"));
-		map.addValue("PARENT_AGREEMENTNO", rs.getObject("PARENT_AGREEMENTNO"));
-		map.addValue("AMTFIN", rs.getObject("AMTFIN"));
-		map.addValue("NET_AMTFIN", rs.getObject("NET_AMTFIN"));
-		map.addValue("DISBURSEDAMT", rs.getObject("DISBURSEDAMT"));
-		map.addValue("DISB_STATUS", rs.getObject("DISB_STATUS"));
-		map.addValue("FIRST_DUE_DATE", rs.getObject("FIRST_DUE_DATE"));
-		map.addValue("GROSS_TENURE", rs.getObject("GROSS_TENURE"));
-		map.addValue("NET_TENURE", rs.getObject("NET_TENURE"));
-		map.addValue("MATURITYDATE", rs.getObject("MATURITYDATE"));
-		map.addValue("EXPIRYDATE", rs.getObject("EXPIRYDATE"));
-		map.addValue("NO_OF_ADV_INSTL", rs.getObject("NO_OF_ADV_INSTL"));
-		map.addValue("ADV_EMI_AMT", rs.getObject("ADV_EMI_AMT"));
-		map.addValue("EMI", rs.getObject("EMI"));
-		map.addValue("REPAYMENT_MODE", rs.getObject("REPAYMENT_MODE"));
-		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("PROMOTIONID", rs.getObject("PROMOTIONID"));
-		map.addValue("ICICI_LOMBARD", rs.getObject("ICICI_LOMBARD"));
-		map.addValue("BAGIC", rs.getObject("BAGIC"));
-		map.addValue("BALIC_CHARGES", rs.getObject("BALIC_CHARGES"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("FEE", rs.getObject("FEE"));
-		map.addValue("DEALER_SUBV", rs.getObject("DEALER_SUBV"));
-		map.addValue("MANU_SUBV_DED", rs.getObject("MANU_SUBV_DED"));
-		map.addValue("MANU_SUBV_NDED", rs.getObject("MANU_SUBV_NDED"));
-		map.addValue("PREEMI", rs.getObject("PREEMI"));
-		map.addValue("EXISTING_LANNO", rs.getObject("EXISTING_LANNO"));
-		map.addValue("MORTGAGE_FEE", rs.getObject("MORTGAGE_FEE"));
-		map.addValue("COMMITMENT_FEE", rs.getObject("COMMITMENT_FEE"));
-		map.addValue("PROCESSING_FEE", rs.getObject("PROCESSING_FEE"));
-		map.addValue("PRE_EMI_RECEIVABLE", rs.getObject("PRE_EMI_RECEIVABLE"));
-		map.addValue("INSURANCE", rs.getObject("INSURANCE"));
-		map.addValue("PAYMENTMODE", rs.getObject("PAYMENTMODE"));
-		map.addValue("FREQ", rs.getObject("FREQ"));
-		map.addValue("CHEQUENUM", rs.getObject("CHEQUENUM"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
-
-		return map;
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTNO"), rs.getObject("DROP_LINE_LIMIT"),
+				rs.getObject("AMOUNT_DRAWN_LIMIT"), rs.getObject("UTLIZED_BALANCE_LIMIT"),
+				rs.getObject("PRINCIPLE_AMOUNT_PAID"), rs.getObject("BALANCE_PRINCIPAL_OUTSTANDING"), valueDate,
+				appDate, batchId);
 
 	}
 
-	private static MapSqlParameterSource getWriteOffDetailsMap(ResultSet rs,  Date appDate) throws Exception {
-		MapSqlParameterSource map = new MapSqlParameterSource();
+	public static void saveLeaDocDtl(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
 
-		map.addValue("APPLID", rs.getObject("APPLID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
-		map.addValue("CHARGEOFF_DT", rs.getObject("CHARGEOFF_DT"));
-		map.addValue("CHARGEOFF_FLG", rs.getObject("CHARGEOFF_FLG"));
-		map.addValue("CHARGEOFF_REASON", rs.getObject("CHARGEOFF_REASON"));
-		map.addValue("SETTLEMENT_LOSS", rs.getObject("SETTLEMENT_LOSS"));
-		map.addValue("GROSS_WRITEOFF_AMT", rs.getObject("GROSS_WRITEOFF_AMT"));
-		map.addValue("NET_WRITEOFF_AMT", rs.getObject("NET_WRITEOFF_AMT"));
-		map.addValue("BUSINESSDATE", appDate);
-		map.addValue("PROCESSED_FLAG", "N");
-		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
-		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("RECEIPT_ON_CHARGEOFF", rs.getObject("RECEIPT_ON_CHARGEOFF"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_LEA_DOC_DTL (");
+		sql.append("AGREEMENTID");
+		sql.append(",APPLICABLE");
+		sql.append(",APPLID");
+		sql.append(",APPROVED_BY");
+		sql.append(",AUTHDATE");
+		sql.append(",AUTHID");
+		sql.append(",AWB_NO");
+		sql.append(",BRANCHSTATUS");
+		sql.append(",CONSTITUTION");
+		sql.append(",COURIER_NAME");
+		sql.append(",CRITICAL");
+		sql.append(",CUSTOMER_TYPE");
+		sql.append(",CUSTOMERID");
+		sql.append(",DATE_BRANCH_STATUS");
+		sql.append(",DATELASTUPDT");
+		sql.append(",DOC_CLASSFN");
+		sql.append(",DOC_RETRIEVAL_STATUS");
+		sql.append(",DOCID");
+		sql.append(",DOCTYPE");
+		sql.append(",FILE_BARCODE");
+		sql.append(",MAKERDATE");
+		sql.append(",MAKERID");
+		sql.append(",MC_STATUS");
+		sql.append(",NEW_FLAG");
+		sql.append(",ORIGINALS");
+		sql.append(",PACKET_TRACKER_NO");
+		sql.append(",PROPERTY_ADDRESS");
+		sql.append(",PROPERTY_CODE");
+		sql.append(",REASON");
+		sql.append(",RECEIVED");
+		sql.append(",RECEIVEDDATE");
+		sql.append(",REJECTION_REASONS");
+		sql.append(",RELEASED_DATE");
+		sql.append(",RELEASED_REMARKS");
+		sql.append(",REMARKS");
+		sql.append(",STAGE");
+		sql.append(",TARGETDATE");
+		sql.append(",TITLE_DOCUMENT");
+		sql.append(",TXNDOCID");
+		sql.append(",VALIDTILLDATE");
+		sql.append(",VAP_LOAN_FLAG");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSFLAG");
+		sql.append(",PROCESSDATE");
+		sql.append(",SEGMENT");
+		sql.append(",REVISED_TARGET_DATE");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
 
-		return map;
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTID"), rs.getObject("APPLICABLE"),
+				rs.getObject("APPLID"), rs.getObject("APPROVED_BY"), rs.getObject("AUTHDATE"), rs.getObject("AUTHID"),
+				rs.getObject("AWB_NO"), rs.getObject("BRANCHSTATUS"), rs.getObject("CONSTITUTION"),
+				rs.getObject("COURIER_NAME"), rs.getObject("CRITICAL"), rs.getObject("CUSTOMER_TYPE"),
+				rs.getObject("CUSTOMERID"), rs.getObject("DATE_BRANCH_STATUS"), rs.getObject("DATELASTUPDT"),
+				rs.getObject("DOC_CLASSFN"), rs.getObject("DOC_RETRIEVAL_STATUS"), rs.getObject("DOCID"),
+				rs.getObject("DOCTYPE"), rs.getObject("FILE_BARCODE"), rs.getObject("MAKERDATE"),
+				rs.getObject("MAKERID"), rs.getObject("MC_STATUS"), rs.getObject("NEW_FLAG"), rs.getObject("ORIGINALS"),
+				rs.getObject("PACKET_TRACKER_NO"), rs.getObject("PROPERTY_ADDRESS"), rs.getObject("PROPERTY_CODE"),
+				rs.getObject("REASON"), rs.getObject("RECEIVED"), rs.getObject("RECEIVEDDATE"),
+				rs.getObject("REJECTION_REASONS"), rs.getObject("RELEASED_DATE"), rs.getObject("RELEASED_REMARKS"),
+				rs.getObject("REMARKS"), rs.getObject("STAGE"), rs.getObject("TARGETDATE"),
+				rs.getObject("TITLE_DOCUMENT"), rs.getObject("TXNDOCID"), rs.getObject("VALIDTILLDATE"),
+				rs.getObject("VAP_LOAN_FLAG"), appDate, rs.getObject("PROCESSFLAG"), valueDate, rs.getObject("SEGMENT"),
+				rs.getObject("REVISED_TARGET_DATE"), batchId);
+
+	}
+
+	public static void saveLoanDetail(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_LOAN_DETAILS_DAILY (");
+
+		sql.append("APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",CUSTOMERID");
+		sql.append(",CUSTOMER_YIELD");
+		sql.append(",STATUS");
+		sql.append(",NPA_STAGE");
+		sql.append(",LMS_BUCKET");
+		sql.append(",COLL_BUCKET");
+		sql.append(",INSURANCE_APPLIED_FLG");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",CLOSUREDATE");
+		sql.append(",TOPUP_AMT");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",PDCID");
+		sql.append(",PDCFLAG");
+		sql.append(",OD_FLAG");
+		sql.append(",MARGIN");
+		sql.append(",SPECIALMARGIN");
+		sql.append(",FIXEDTENOR");
+		sql.append(",CEEFFECTIVEDATE");
+		sql.append(",EFF_RATE");
+		sql.append(",PLRRATE");
+		sql.append(",PARTY_CODE");
+		sql.append(",PARTY_NAME");
+		sql.append(",ZONE");
+		sql.append(",COLLECTION_CENTRE");
+		sql.append(",VIRTUAL_ACCOUNT_NUMBER");
+		sql.append(",INSTALLMENT_TYPE");
+		sql.append(",COMPANYTYPE");
+		sql.append(",FIANANCE_CHARGES");
+		sql.append(",FILENO");
+		sql.append(",NO_OF_PDCS");
+		sql.append(",LIFEINSURANCE");
+		sql.append(",SHORTRECEIVED");
+		sql.append(",IN_FAVOUR_OFF");
+		sql.append(",MKTGID");
+		sql.append(",PRE_EMI_INT_500071");
+		sql.append(",LOAN_PURPOSE_DTL");
+		sql.append(",LOAN_PURPOSE_DESC");
+		sql.append(",LOGIN_FEES");
+		sql.append(",VC_REFERRAL_CD");
+		sql.append(",VC_REFERRAL_NAME");
+		sql.append(",PROC_FEES2");
+		sql.append(",INSTRUMENT_TYPE");
+		sql.append(",LAN_BARCODE");
+		sql.append(",INTSTART_DATE_REGULAR");
+		sql.append(",BPI_RECEIVABLE");
+		sql.append(",BPI_PAYABLE");
+		sql.append(",OPEN_FACILITY_FLAG");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("AGREEMENTNO"),
+				rs.getObject("CUSTOMERID"), rs.getObject("CUSTOMER_YIELD"), rs.getObject("STATUS"),
+				rs.getObject("NPA_STAGE"), rs.getObject("LMS_BUCKET"), rs.getObject("COLL_BUCKET"),
+				rs.getObject("INSURANCE_APPLIED_FLG"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getDate("CLOSUREDATE"), rs.getObject("TOPUP_AMT"),
+				rs.getObject("BUSINESS_YEAR"), rs.getObject("PDCID"), rs.getObject("PCFLAG"), rs.getObject("OD_FLAG"),
+				rs.getObject("MARGIN"), rs.getObject("SPECIALMARGIN"), rs.getObject("FIXEDTENOR"),
+				rs.getObject("CEEFFECTIVEDATE"), rs.getObject("EFF_RATE"), rs.getObject("PLRRATE"),
+				rs.getObject("PARTY_CODE"), rs.getObject("PARTY_NAME"), rs.getObject("ZONE"),
+				rs.getObject("COLLECTION_CENTRE"), rs.getObject("VIRTUAL_ACCOUNT_NUMBER"),
+				rs.getObject("INSTALLMENT_TYPE"), rs.getObject("COMPANYTYPE"), rs.getObject("FIANANCE_CHARGES"),
+				rs.getObject("FILENO"), rs.getObject("NO_OF_PDCS"), rs.getObject("LIFEINSURANCE"),
+				rs.getObject("SHORTRECEIVED"), rs.getObject("IN_FAVOUR_OFF"), rs.getObject("MKTGID"),
+				rs.getObject("PRE_EMI_INT_500071"), rs.getObject("LOAN_PURPOSE_DTL"), rs.getObject("LOAN_PURPOSE_DESC"),
+				rs.getObject("LOGIN_FEES"), rs.getObject("VC_REFERRAL_CD"), rs.getObject("VC_REFERRAL_NAME"),
+				rs.getObject("PROC_FEES2"), rs.getObject("INSTRUMENT_TYPE"), rs.getObject("LAN_BARCODE"),
+				rs.getObject("INTSTART_DATE_REGULAR"), rs.getObject("BPI_RECEIVABLE"), rs.getObject("BPI_PAYABLE"),
+				rs.getObject("OPEN_FACILITY_FLAG"), batchId);
+
+	}
+
+	public static void saveLoanVoucherDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_LOAN_VOUCHER_DETAILS (");
+
+		sql.append("MODULEID");
+		sql.append(",STAGEID");
+		sql.append(",LEA_VOUCHERID");
+		sql.append(",FA_VOUCHERID");
+		sql.append(",VOUCHERTYPE");
+		sql.append(",VOUCHERDATE");
+		sql.append(",VALUEDATE");
+		sql.append(",BRANCHID");
+		sql.append(",BRANCH_CODE");
+		sql.append(",BRANCHDESC");
+		sql.append(",BUSINESS_AREA");
+		sql.append(",PROFIT_CENTRE");
+		sql.append(",PRODUCT_FLAG");
+		sql.append(",SCHEMEID");
+		sql.append(",SCHEMEDESC");
+		sql.append(",ASSIGNMENT");
+		sql.append(",AGREEMENTID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",AGREEMENTDATE");
+		sql.append(",DISBURSALDATE");
+		sql.append(",LOAN_STATUS");
+		sql.append(",NPA_STAGEID");
+		sql.append(",FINNONE_GLID");
+		sql.append(",GROUPGLDESC");
+		sql.append(",SAPGL_CODE");
+		sql.append(",COST_CENTRE");
+		sql.append(",DRAMT");
+		sql.append(",CRAMT");
+		sql.append(",DRCR_FLAG");
+		sql.append(",DRCR_AMT");
+		sql.append(",NARRATION");
+		sql.append(",CHEQUEID");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSDATE");
+		sql.append(",SEGMENT");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("MODULEID"), rs.getObject("STAGEID"),
+				rs.getObject("LEA_VOUCHERID"), rs.getObject("FA_VOUCHERID"), rs.getObject("VOUCHERTYPE"),
+				rs.getObject("VOUCHERDATE"), rs.getObject("VALUEDATE"), rs.getObject("BRANCHID"),
+				rs.getObject("BRANCH_CODE"), rs.getObject("BRANCHDESC"), rs.getObject("BUSINESS_AREA"),
+				rs.getObject("PROFIT_CENTRE"), rs.getObject("PRODUCT_FLAG"), rs.getObject("SCHEMEID"),
+				rs.getObject("SCHEMEDESC"), rs.getObject("ASSIGNMENT"), rs.getObject("AGREEMENTID"),
+				rs.getObject("AGREEMENTNO"), rs.getObject("AGREEMENTDATE"), rs.getObject("DISBURSALDATE"),
+				rs.getObject("LOAN_STATUS"), rs.getObject("NPA_STAGEID"), rs.getObject("FINNONE_GLID"),
+				rs.getObject("GROUPGLDESC"), rs.getObject("SAPGL_CODE"), rs.getObject("COST_CENTRE"),
+				rs.getObject("DRAMT"), rs.getObject("CRAMT"), rs.getObject("DRCR_FLAG"), rs.getObject("DRCR_AMT"),
+				rs.getObject("NARRATION"), rs.getObject("CHEQUEID"), appDate, valueDate, rs.getObject("SEGMENT"),
+				rs.getObject("PROCESSED_FLAG"), batchId);
+
+	}
+
+	public static void saveLoanWiseChargeDetail(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_LOANWISE_CHARGE_DETAILS (");
+
+		sql.append("AGREEMENTID");
+		sql.append(",TXNADVICEID");
+		sql.append(",CHARGEID");
+		sql.append(",CHARGECODEID");
+		sql.append(",CHARGEDESC");
+		sql.append(",CHARGEAMT");
+		sql.append(",STATUS");
+		sql.append(",AMTINPROCESS");
+		sql.append(",TXNADJUSTEDAMT");
+		sql.append(",ADVICEAMT");
+		sql.append(",ADVICEDATE");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",SEGMENT");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTID"), rs.getObject("TXNADVICEID"),
+				rs.getObject("CHARGEID"), rs.getObject("CHARGECODEID"), rs.getObject("CHARGEDESC"),
+				rs.getObject("CHARGEAMT"), rs.getObject("STATUS"), rs.getObject("AMTINPROCESS"),
+				rs.getObject("TXNADJUSTEDAMT"), rs.getObject("ADVICEAMT"), rs.getObject("ADVICEDATE"), appDate,
+				rs.getObject("PROCESSDATE"), rs.getObject("PROCESSED_FLAG"), rs.getObject("SEGMENT"), batchId);
+
+	}
+
+	public static void saveLoanWiseRepayScheduleDetailMap(ResultSet rs, Date appDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_LOANWISE_REPAYSCHD_DTLS (");
+		sql.append("AGREEMENTNO");
+		sql.append(",AGREEMENTID");
+		sql.append(",PROPINSTLID");
+		sql.append(",EMI_NO");
+		sql.append(",DUEDATE");
+		sql.append(",OPENING_PRINCIPAL");
+		sql.append(",INSTALMENT_AMT");
+		sql.append(",PRINCIPAL_AMT");
+		sql.append(",INTEREST_AMT");
+		sql.append(",CLOSING_PRINCIPAL");
+		sql.append(",INSTAL_TYPE");
+		sql.append(",TOTAL_AMOUNT_DUE");
+		sql.append(",DROPLINE_LIMIT");
+		sql.append(",ACT_AVAILABLE_LIMIT");
+		sql.append(",ACT_UTILISATION_LIMIT");
+		sql.append(",EMI_HOLIDAY");
+		sql.append(",BATCH_ID");
+		sql.append(",BUSINESSDATE");
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTNO"), rs.getObject("AGREEMENTID"),
+				rs.getObject("PROPINSTLID"), rs.getObject("EMI_NO"), rs.getObject("DUEDATE"),
+				rs.getObject("OPENING_PRINCIPAL"), rs.getObject("INSTALMENT_AMT"), rs.getObject("PRINCIPAL_AMT"),
+				rs.getObject("INTEREST_AMT"), rs.getObject("CLOSING_PRINCIPAL"), rs.getObject("INSTAL_TYPE"),
+				rs.getObject("TOTAL_AMOUNT_DUE"), rs.getObject("DROPLINE_LIMIT"), rs.getObject("ACT_AVAILABLE_LIMIT"),
+				rs.getObject("ACT_UTILISATION_LIMIT"), rs.getObject("EMI_HOLIDAY"), batchId, appDate);
+
+	}
+
+	public static void saveNoceligibleLoans(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_NOC_ELIGIBLE_LOANS (");
+		sql.append("AGREEMENTNO");
+		sql.append(",LOANACCTNUM");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",EMAIL");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESS_DATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTNO"), rs.getObject("LOANACCTNUM"),
+				rs.getObject("PRODUCTFLAG"), rs.getObject("EMAIL"), appDate, valueDate, rs.getObject("PROCESSED_FLAG"),
+				batchId);
+
+	}
+
+	public static void saveOpenEcsDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_OPENECS_DETAILS (");
+		sql.append("CUSTOMERID");
+		sql.append(", ECS_ID");
+		sql.append(", BANK_ID");
+		sql.append(", BANK_NAME");
+		sql.append(", BANKBRANCHID");
+		sql.append(", BANKID");
+		sql.append(", BANK_BRANCH_NAME");
+		sql.append(", CITY");
+		sql.append(", ACCTYPE");
+		sql.append(", ACCNO");
+		sql.append(", MAXLIMIT");
+		sql.append(", BALLIMIT");
+		sql.append(", UTIL_LIMIT");
+		sql.append(", VALID_LIMIT");
+		sql.append(", REPAY_MODE");
+		sql.append(", MICRCODE");
+		sql.append(", ACTIVE_FLAG");
+		sql.append(", CITYID");
+		sql.append(", SEGMENTS");
+		sql.append(", BUSINESSDATE");
+		sql.append(", PROCESS_DATE");
+		sql.append(", BATCH_ID");
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("CUSTOMERID"), rs.getObject("ECS_ID"), rs.getObject("BANK_ID"),
+				rs.getObject("BANK_NAME"), rs.getObject("BANKBRANCHID"), rs.getObject("BANKID"),
+				rs.getObject("BANK_BRANCH_NAME"), rs.getObject("CITY"), rs.getObject("ACCTYPE"), rs.getObject("ACCNO"),
+				rs.getObject("MAXLIMIT"), rs.getObject("BALLIMIT"), rs.getObject("UTIL_LIMIT"),
+				rs.getObject("VALID_LIMIT"), rs.getObject("REPAY_MODE"), rs.getObject("MICRCODE"),
+				rs.getObject("ACTIVE_FLAG"), rs.getObject("CITYID"), rs.getObject("SEGMENTS"), appDate, valueDate,
+				batchId);
+	}
+
+	public static void savePrePaymentDetail(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PREPAYMENT_DETAILS (");
+		sql.append("APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",PREPAYMENTID");
+		sql.append(",PREPAYMENT_RATE");
+		sql.append(",PREPAYMENT_TYPE");
+		sql.append(",PREPAYMENT_PENALTY_DUE");
+		sql.append(",PREPAYMENT_PENALTY_PAID");
+		sql.append(",PREPAYMENT_AMT");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",PREPAYMENT_DATE");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("AGREEMENTNO"),
+				rs.getObject("PREPAYMENTID"), rs.getObject("PREPAYMENT_RATE"), rs.getObject("PREPAYMENT_TYPE"),
+				rs.getObject("PREPAYMENT_PENALTY_DUE"), rs.getObject("PREPAYMENT_PENALTY_PAID"),
+				rs.getObject("PREPAYMENT_AMT"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getObject("PREPAYMENT_DATE"), rs.getObject("BUSINESS_YEAR"), batchId);
+	}
+
+	public static void savePresentationDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PRESENTATION_DETAILS (");
+
+		sql.append("AGREEMENTNO");
+		sql.append(",EMI");
+		sql.append(",REPAY_TYPE");
+		sql.append(",DEPOSITED_DATE");
+		sql.append(",CREDIT_STATUS");
+		sql.append(",RETURN_CODE");
+		sql.append(",RETURN_REASON");
+		sql.append(",REMARKS");
+		sql.append(",SEGMENTS");
+		sql.append(",PROCESSDATE");
+		sql.append(",BUSINESSDATE");
+		sql.append(",EMI_NO");
+		sql.append(",CUSTOMER_BANK_NAME");
+		sql.append(",BOM_BOUNCE_BUCKET");
+		sql.append(",MICR_CODE");
+		sql.append(",STATUS_UPDT_DATE");
+		sql.append(",CUST_BANK_AC_NO");
+		sql.append(",CUSTOMER_BANK_BRANCH");
+		sql.append(",CHEQUESNO");
+		sql.append(",CHEQUEDATE");
+		sql.append(",FEMI_FLAG");
+		sql.append(",HOLD_IGNORE_CODE");
+		sql.append(",HOLD_IGNORE_REASON");
+		sql.append(",DEST_ACC_HOLDER");
+		sql.append(",PDCID");
+		sql.append(",BBRANCHID");
+		sql.append(",BATCH_ID");
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTNO"), rs.getObject("EMI"),
+				rs.getObject("REPAY_TYPE"), rs.getObject("DEPOSITED_DATE"), rs.getObject("CREDIT_STATUS"),
+				rs.getObject("RETURN_CODE"), rs.getObject("RETURN_REASON"), rs.getObject("REMARKS"),
+				rs.getObject("SEGMENTS"), valueDate, appDate, rs.getObject("EMI_NO"),
+				rs.getObject("CUSTOMER_BANK_NAME"), rs.getObject("BOM_BOUNCE_BUCKET"), rs.getObject("MICR_CODE"),
+				rs.getObject("STATUS_UPDT_DATE"), rs.getObject("CUST_BANK_AC_NO"), rs.getObject("CUSTOMER_BANK_BRANCH"),
+				rs.getObject("CHEQUESNO"), rs.getObject("CHEQUEDATE"), rs.getObject("FEMI_FLAG"),
+				rs.getObject("HOLD_IGNORE_CODE"), rs.getObject("HOLD_IGNORE_REASON"), rs.getObject("DEST_ACC_HOLDER"),
+				rs.getObject("PDCID"), rs.getObject("BBRANCHID"), batchId);
+
+	}
+
+	public static void savePropertyDetail(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_PROPERTY_DTL (");
+
+		sql.append("PROPERTYID");
+		sql.append(",APPLICATIONID");
+		sql.append(",ADDRESS1");
+		sql.append(",ADDRESS2");
+		sql.append(",ADDRESS3");
+		sql.append(",CITY");
+		sql.append(",STATE");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROPERTY_TYPE");
+		sql.append(",PROPERTY_DESC");
+		sql.append(",PROPERTY_VALUE");
+		sql.append(",ZIPCODE");
+		sql.append(",PROCESSFLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("PROPERTYID"), rs.getObject("APPLICATIONID"),
+				rs.getObject("ADDRESS1"), rs.getObject("ADDRESS2"), rs.getObject("ADDRESS3"), rs.getObject("CITY"),
+				rs.getObject("STATE"), rs.getObject("PRODUCTFLAG"), appDate, rs.getObject("PROPERTY_TYPE"),
+				rs.getObject("PROPERTY_DESC"), rs.getObject("PROPERTY_VALUE"), rs.getObject("ZIPCODE"),
+				rs.getObject("PROCESSFLAG"), valueDate, batchId);
+	}
+
+	public static void saveReschDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_RESCH_DETAILS_DAILY (");
+
+		sql.append("APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",DISB_STATUS");
+		sql.append(",GROSS_TENURE");
+		sql.append(",NET_TENURE");
+		sql.append(",MATURITYDATE");
+		sql.append(",EXPIRYDATE");
+		sql.append(",EMI");
+		sql.append(",REPAYMENT_MODE");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",FREQ");
+		sql.append(",LOAN_STATUS");
+		sql.append(",CLOSUREDATE");
+		sql.append(",CUST_ACCT_NO");
+		sql.append(",BANKNAME");
+		sql.append(",MICRCODE");
+		sql.append(",CUST_BANK_BRANCH");
+		sql.append(",CUST_BANK_CITY");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",PDCID");
+		sql.append(",PCFLAG");
+		sql.append(",TIE_UP");
+		sql.append(",MARGIN");
+		sql.append(",SPECIALMARGIN");
+		sql.append(",FIXEDTENOR");
+		sql.append(",CEEFFECTIVEDATE");
+		sql.append(",EFF_RATE");
+		sql.append(",PLRRATE");
+		sql.append(",TIE_UP_WITH");
+		sql.append(",DATE_OF_CLOSURE");
+		sql.append(",PDCMS_SEQ_GENERATED_DATE");
+		sql.append(",INSTRUMENT_DATA_ENTRY_DATE");
+		sql.append(",PAYMENT_AUTHORIZATION_DATE");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("AGREEMENTNO"),
+				rs.getObject("DISB_STATUS"), rs.getObject("GROSS_TENURE"), rs.getObject("NET_TENURE"),
+				rs.getObject("MATURITYDATE"), rs.getObject("EXPIRYDATE"), rs.getObject("EMI"),
+				rs.getObject("REPAYMENT_MODE"), rs.getObject("PRODUCTFLAG"), appDate, rs.getObject("PROCESSED_FLAG"),
+				valueDate, rs.getObject("SEGMENTS"), rs.getObject("FREQ"), rs.getObject("LOAN_STATUS"),
+				rs.getObject("CLOSUREDATE"), rs.getObject("CUST_ACCT_NO"), rs.getObject("BANKNAME"),
+				rs.getObject("MICRCODE"), rs.getObject("CUST_BANK_BRANCH"), rs.getObject("CUST_BANK_CITY"),
+				rs.getObject("BUSINESS_YEAR"), rs.getObject("PDCID"), rs.getObject("PCFLAG"), rs.getObject("TIE_UP"),
+				rs.getObject("MARGIN"), rs.getObject("SPECIALMARGIN"), rs.getObject("FIXEDTENOR"),
+				rs.getObject("CEEFFECTIVEDATE"), rs.getObject("EFF_RATE"), rs.getObject("PLRRATE"),
+				rs.getObject("TIE_UP_WITH"), rs.getObject("DATE_OF_CLOSURE"), rs.getObject("PDCMS_SEQ_GENERATED_DATE"),
+				rs.getObject("INSTRUMENT_DATA_ENTRY_DATE"), rs.getObject("PAYMENT_AUTHORIZATION_DATE"), batchId);
+
+	}
+
+	public static void saveSoaEmailDetails(ResultSet rs, long batchId, JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_SEND_SOA_EMAIL (");
+		sql.append("AGREEMENTNO");
+		sql.append(",CUSTOMERID");
+		sql.append(",EMAILID");
+		sql.append(",AGREEMENTID");
+		sql.append(",PROCESSID");
+		sql.append(",GENERATION_DATE");
+		sql.append(",PROCESSED");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",GROUPID");
+		sql.append(",TOTAL_LAN");
+		sql.append(",TOTAL_CLOSED_LAN");
+		sql.append(",TOTAL_ACTIVE_LAN");
+		sql.append(",SWIPE_FLAG");
+		sql.append(",EMI_CARD_NO");
+		sql.append(",DISBURSEMENT_DATE");
+		sql.append(",SUPPLIERID");
+		sql.append(",SUPPLIERDESC");
+		sql.append(",AMT_FIN");
+		sql.append(",EMI");
+		sql.append(",NEXT_EMI_DUE_DATE");
+		sql.append(",CHEQUE_BOUNCE_CHARGE");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTNO"), rs.getObject("CUSTOMERID"),
+				rs.getObject("EMAILID"), rs.getObject("AGREEMENTID"), rs.getObject("PROCESSID"),
+				rs.getObject("GENERATION_DATE"), rs.getObject("PROCESSED"), rs.getObject("PRODUCTFLAG"),
+				rs.getObject("GROUPID"), rs.getObject("TOTAL_LAN"), rs.getObject("TOTAL_CLOSED_LAN"),
+				rs.getObject("TOTAL_ACTIVE_LAN"), rs.getObject("SWIPE_FLAG"), rs.getObject("EMI_CARD_NO"),
+				rs.getObject("DISBURSEMENT_DATE"), rs.getObject("SUPPLIERID"), rs.getObject("SUPPLIERDESC"),
+				rs.getObject("AMT_FIN"), rs.getObject("EMI"), rs.getObject("NEXT_EMI_DUE_DATE"),
+				rs.getObject("CHEQUE_BOUNCE_CHARGE"), batchId);
+
+	}
+
+	public static void saveSubQDisbDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_SUBQ_DISB_DETAILS (");
+
+		sql.append("AGREEMENTDATE");
+		sql.append(",APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",DISBURSEMENTNO");
+		sql.append(",DISBURSEMENTDATE");
+		sql.append(",PARENT_AGREEMENTNO");
+		sql.append(",AMTFIN");
+		sql.append(",NET_AMTFIN");
+		sql.append(",DISBURSEDAMT");
+		sql.append(",DISB_STATUS");
+		sql.append(",FIRST_DUE_DATE");
+		sql.append(",GROSS_TENURE");
+		sql.append(",NET_TENURE");
+		sql.append(",MATURITYDATE");
+		sql.append(",EXPIRYDATE");
+		sql.append(",NO_OF_ADV_INSTL");
+		sql.append(",ADV_EMI_AMT");
+		sql.append(",EMI");
+		sql.append(",REPAYMENT_MODE");
+		sql.append(",PRODUCTFLAG");
+		sql.append(",PROMOTIONID");
+		sql.append(",ICICI_LOMBARD");
+		sql.append(",BAGIC");
+		sql.append(",BALIC_CHARGES");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",FEE");
+		sql.append(",DEALER_SUBV");
+		sql.append(",MANU_SUBV_DED");
+		sql.append(",MANU_SUBV_NDED");
+		sql.append(",PREEMI");
+		sql.append(",EXISTING_LANNO");
+		sql.append(",MORTGAGE_FEE");
+		sql.append(",COMMITMENT_FEE");
+		sql.append(",PROCESSING_FEE");
+		sql.append(",PRE_EMI_RECEIVABLE");
+		sql.append(",INSURANCE");
+		sql.append(",PAYMENTMODE");
+		sql.append(",FREQ");
+		sql.append(",CHEQUENUM");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("AGREEMENTDATE"), rs.getObject("APPLID"),
+				rs.getObject("AGREEMENTNO"), rs.getObject("DISBURSEMENTNO"), rs.getObject("DISBURSEMENTDATE"),
+				rs.getObject("PARENT_AGREEMENTNO"), rs.getObject("AMTFIN"), rs.getObject("NET_AMTFIN"),
+				rs.getObject("DISBURSEDAMT"), rs.getObject("DISB_STATUS"), rs.getObject("FIRST_DUE_DATE"),
+				rs.getObject("GROSS_TENURE"), rs.getObject("NET_TENURE"), rs.getObject("MATURITYDATE"),
+				rs.getObject("EXPIRYDATE"), rs.getObject("NO_OF_ADV_INSTL"), rs.getObject("ADV_EMI_AMT"),
+				rs.getObject("EMI"), rs.getObject("REPAYMENT_MODE"), rs.getObject("PRODUCTFLAG"),
+				rs.getObject("PROMOTIONID"), rs.getObject("ICICI_LOMBARD"), rs.getObject("BAGIC"),
+				rs.getObject("BALIC_CHARGES"), appDate, rs.getObject("PROCESSED_FLAG"), valueDate,
+				rs.getObject("SEGMENTS"), rs.getObject("FEE"), rs.getObject("DEALER_SUBV"),
+				rs.getObject("MANU_SUBV_DED"), rs.getObject("MANU_SUBV_NDED"), rs.getObject("PREEMI"),
+				rs.getObject("EXISTING_LANNO"), rs.getObject("MORTGAGE_FEE"), rs.getObject("COMMITMENT_FEE"),
+				rs.getObject("PROCESSING_FEE"), rs.getObject("PRE_EMI_RECEIVABLE"), rs.getObject("INSURANCE"),
+				rs.getObject("PAYMENTMODE"), rs.getObject("FREQ"), rs.getObject("CHEQUENUM"), batchId);
+
+	}
+
+
+
+	public static void saveWriteOffDetails(ResultSet rs, Date appDate, Date valueDate, long batchId,
+			JdbcTemplate jdbcTemplate) throws Exception {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DM_WRITEOFF_DETAILS (");
+
+		sql.append("APPLID");
+		sql.append(",AGREEMENTNO");
+		sql.append(",CHARGEOFF_DT");
+		sql.append(",CHARGEOFF_FLG");
+		sql.append(",CHARGEOFF_REASON");
+		sql.append(",SETTLEMENT_LOSS");
+		sql.append(",GROSS_WRITEOFF_AMT");
+		sql.append(",NET_WRITEOFF_AMT");
+		sql.append(",BUSINESSDATE");
+		sql.append(",PROCESSED_FLAG");
+		sql.append(",PROCESS_DATE");
+		sql.append(",SEGMENTS");
+		sql.append(",RECEIPT_ON_CHARGEOFF");
+		sql.append(",BUSINESS_YEAR");
+		sql.append(",BATCH_ID");
+
+		sql.append(") VALUES(");
+
+		sql.append("?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(",?");
+		sql.append(")");
+
+		jdbcTemplate.update(sql.toString(), rs.getObject("APPLID"), rs.getObject("AGREEMENTNO"),
+				rs.getObject("CHARGEOFF_DT"), rs.getObject("CHARGEOFF_FLG"), rs.getObject("CHARGEOFF_REASON"),
+				rs.getObject("SETTLEMENT_LOSS"), rs.getObject("GROSS_WRITEOFF_AMT"), rs.getObject("NET_WRITEOFF_AMT"),
+				appDate, rs.getObject("PROCESSED_FLAG"), valueDate, rs.getObject("SEGMENTS"),
+				rs.getObject("RECEIPT_ON_CHARGEOFF"), rs.getObject("BUSINESS_YEAR"), batchId);
 
 	}
 }
