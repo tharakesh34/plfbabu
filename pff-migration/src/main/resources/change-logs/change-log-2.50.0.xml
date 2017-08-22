@@ -90,6 +90,11 @@
 		<renameColumn newColumnName="PFTAMZPD" oldColumnName="TDPFTAMORTIZEDPD"
 			tableName="FinPftDetails" />
 	</changeSet>
+	<changeSet id="13.0" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists customerfinances_iview;
+	    </sql>
+	</changeSet>
 	<changeSet id="13" author="Prasad">
 		<dropColumn columnName="ACRTILLNBD" tableName="FinPftDetails" />
 		<dropColumn columnName="ACRTODAYTONBD" tableName="FinPftDetails" />
