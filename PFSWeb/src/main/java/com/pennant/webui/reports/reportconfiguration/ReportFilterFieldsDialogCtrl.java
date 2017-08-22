@@ -1729,7 +1729,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	}
 
 	private String getFilterString() {
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder stringBuilder = new StringBuilder();
 		List<Component> items = listBox.getChildren();
 
 		for (Component component : items) {
@@ -1750,17 +1750,17 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 
 					if (component1 instanceof Textbox) {
 						Textbox textbox = (Textbox) component1;
-						if (i == 1 && stringBuffer.length() > 0) {
-							stringBuffer.append("|");
+						if (i == 1 && stringBuilder.length() > 0) {
+							stringBuilder.append("|");
 						} else if (i == 2) {
-							stringBuffer.append("@");
+							stringBuilder.append("@");
 						}
-						stringBuffer.append(textbox.getText());
+						stringBuilder.append(textbox.getText());
 					}
 				}
 			}
 		}
-		return stringBuffer.toString();
+		return stringBuilder.toString();
 	}
 
 	private void setEnableListBox_OnEdit() {

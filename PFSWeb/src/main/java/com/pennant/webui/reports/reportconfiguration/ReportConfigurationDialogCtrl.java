@@ -1064,12 +1064,12 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		ReportFilterFields  reportFilterFields = new ReportFilterFields();
 		reportFilterFields.setNewRecord(true);
 		reportFilterFields.setWorkflowId(0);
-		/*if(getReportConfiguration().getListReportFieldsDetails()!=null){
+		if(getReportConfiguration().getListReportFieldsDetails()!=null){
 		long fieldID =  getReportConfiguration().getListReportFieldsDetails().size();
 		reportFilterFields.setFieldID(fieldID+1);
 		}else{
 			reportFilterFields.setFieldID(1);
-		}*/
+		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("reportConfigurationDialogCtrl", this);
 		map.put("reportFilterFields",reportFilterFields);

@@ -190,7 +190,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private Map<String, Object> valueMap = new HashMap<String, Object>();
 	private Map<String, Object> valueLabelMap = new HashMap<String, Object>();
 	private Map<String, Object> renderMap= new HashMap<String, Object>();
-
+	private List<String> myLableList = new ArrayList<String>();
+	private Map<Long, List<String>> myOrderedLableMap = new HashMap<>();
+	
 	public ReportGenerationPromptDialogCtrl() {
 		super();
 	}
@@ -321,6 +323,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 */
 	private void doRenderComponents() throws Exception {
 		logger.debug("Entering");
+		int j =0;
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 
 			FIELDTYPE fieldValueType = FIELDTYPE
@@ -374,7 +377,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				break;
 
 			case LOVSEARCH:
-				renderLovSearchField(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderLovSearchField(reportConfiguration.getListReportFieldsDetails().get(i), j);
+				j++;
 				break;
 
 			case MULTISELANDLIST:
@@ -396,7 +400,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			}
 		}
-
+		
+		if (myLableList.size()>0 && !myLableList.isEmpty()) {
+			myOrderedLableMap.put((long) j, myLableList);
+			myLableList = new ArrayList<String>();
+		}
 		/* Calculate and compare height of all rows and set height of window against components height */
 		int dialogHeight = dymanicFieldsGrid.getRows().getVisibleItemCount() * 25 + 150;
 		if (borderLayoutHeight > dialogHeight) {
@@ -466,9 +474,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	/**
 	 * Render LovSearch Field
+	 * @param j 
 	 */
-	private void renderLovSearchField(ReportFilterFields aReportFieldsDetails) {
+	private void renderLovSearchField(ReportFilterFields aReportFieldsDetails, int j) {
 		logger.debug("Entering");
+		
+		if (aReportFieldsDetails.getFilterFileds() == null) {
+			if (j > 0) {
+				myOrderedLableMap.put(aReportFieldsDetails.getFieldID() - 1, myLableList);
+			}
+			myLableList = new ArrayList<String>();
+		}
+		myLableList.add(aReportFieldsDetails.getFilterFileds());
 		Textbox textbox = new Textbox();
 		Textbox textboxhidden = new Textbox();
 		Hbox hbox;
@@ -1829,6 +1846,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			doSetSearchTemplate(fieldsMap);
 		}
+		renderMap.clear();
+		valueMap.clear();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -2314,7 +2333,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings("unchecked")
 	public void onLovButtonClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		
@@ -2386,11 +2405,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					valuestextBox.setValue("");
 				}
 				  Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,  button.getId(),  valuestextBox.getValue(), filters, searchValue);
-				
-				 if (dataObject instanceof String) {
+				  
+				  if (dataObject instanceof String) {
 					valuestextBox.setValue(dataObject.toString());
 					labelstextBox.setValue("");
-					doClearFields();
+					doClearFields(aReportFieldsDetails);
 				} else {
 					Object details = (Object) dataObject;
 
@@ -2423,7 +2442,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Entering");
 		
 		Filter[] filters = null;
-		StringBuffer errBuffer = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		renderMap.putAll(valueMap);
 		renderMap.putAll(valueLabelMap);
 		if (StringUtils.trimToNull(aReportFieldsDetails.getFilterFileds()) != null) {
@@ -2434,10 +2453,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				Object valueObject = renderMap.get(fieldStr[0]);
 
 				if (valueObject == null || valueObject.equals("") || valueObject.equals("#")) {
-					if (StringUtils.trimToNull(errBuffer.toString()) != null) {
-						errBuffer.append("\n");
-					}
-					errBuffer.append("Please Select " + fieldStr[0]);
+					message.append("\n- ");
+					message.append(fieldStr[0]);
 				}
 				if (valueObject != null) {
 					if (valueObject instanceof String) {
@@ -2447,8 +2464,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 		}
 
-		if (StringUtils.trimToNull(errBuffer.toString()) != null) {
-			throw new Exception(errBuffer.toString());
+		if (StringUtils.trimToNull(message.toString()) != null) {
+			throw new Exception(message.insert(0, "Please select the below fields:").toString());
 		}
 
 		logger.debug("Leaving");
@@ -2608,20 +2625,39 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * 
 	 * @throws Exception
 	 */
-	private void doClearFields() throws Exception {
-		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
-			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
+	private void doClearFields(ReportFilterFields aReportFieldsDetails) throws Exception {
+		logger.debug("Entering");
+		long fieldID = aReportFieldsDetails.getFieldID();
 
-			if (aReportFieldsDetails.getFilterFileds() != null) {
-				String filedId = Long.toString(aReportFieldsDetails.getFieldID());
-				Component component = dymanicFieldsRows.getFellow(filedId);
-				Textbox textbox = (Textbox) component;
-				textbox.setValue("");
-				Textbox lovDisplayText = (Textbox) component.getNextSibling();
-				lovDisplayText.setValue("");
-				renderMap.clear();
+		if (myOrderedLableMap.containsKey(fieldID) && myOrderedLableMap.get(fieldID).size() == 1
+				&& myOrderedLableMap.get(fieldID).get(0) == null) {
+			return;
+		}
+		
+		mapRenderer: for (Map.Entry<Long, List<String>> entry : myOrderedLableMap.entrySet()) {
+			Long key = entry.getKey();
+			List<String> value = entry.getValue();
+			if (fieldID < key) {
+				// finding group for the clicked(clear button) one. 
+				long index = 0;
+				
+				if (aReportFieldsDetails.getFilterFileds() != null) { // checking whether clicked one is parent or child  
+					index = key - fieldID;
+				}
+				
+				for (long i = index; i < value.size(); i++) { // clearing corresponding child in particular group.
+					Component component = dymanicFieldsRows.getFellow(Long.toString(fieldID));
+					Textbox textbox = (Textbox) component;
+					textbox.setValue("");
+					Textbox lovDisplayText = (Textbox) component.getNextSibling();
+					lovDisplayText.setValue("");
+					fieldID++;
+				}
+				break mapRenderer;
 			}
 		}
+		renderMap.clear();
+		logger.debug("Entering");
 	}
 	
 	
