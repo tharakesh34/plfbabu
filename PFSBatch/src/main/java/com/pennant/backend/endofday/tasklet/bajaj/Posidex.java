@@ -1,6 +1,5 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
@@ -23,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class Posidex implements Tasklet {
 	private Logger logger = Logger.getLogger(Posidex.class);
 
+	private Date valueDate;
+	private Date appDate;
 	private DataSource dataSource;
+	
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
@@ -42,7 +44,8 @@ public class Posidex implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
+		valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
+		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 		
 		try {
 			logger.debug("START: Posidex data-extraction Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
@@ -59,7 +62,6 @@ public class Posidex implements Tasklet {
 			throw e;
 		}
 
-		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
@@ -85,7 +87,7 @@ public class Posidex implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				PosidexRequestProcess process = new PosidexRequestProcess(dataSource, userId, valueDate, appDate);
 				process.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {

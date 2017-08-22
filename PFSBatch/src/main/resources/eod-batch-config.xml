@@ -56,14 +56,14 @@
 			<tasklet ref="posidexTaskLet">
 				<transaction-attributes propagation="NEVER" />
 			</tasklet>
-			<next on="*" to="startOfMonthDecider" />
+			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
 		
-		<!-- End Of Month Decision For Month End Download -->
-		<decision id="startOfMonthDecider" decider="startOfMonthDecider">
-			<next on="StartOfMonth" to="alm" />
-			<end on="NotStartOfMonth" exit-code="COMPLETED" />
+		<!-- End Of Month Decision For Month End process -->
+		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="alm" />
+			<end on="NotEndOfMonth" exit-code="COMPLETED" />
 			<fail on="FAILED" />
 		</decision>
 		

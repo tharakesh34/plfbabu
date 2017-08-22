@@ -1,8 +1,5 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
@@ -25,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DataMart implements Tasklet {
 	private Logger logger = Logger.getLogger(DataMart.class);
 
+	private Date valueDate;
+	private Date appDate;
 	private DataSource dataSource;
 	
 	@Autowired
@@ -45,31 +44,10 @@ public class DataMart implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Data Extract Preparation On : " + valueDate);
+		valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
+		appDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_DATE");
 
-		try {
-			
-			boolean monthEnd = false;
-			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
-			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
-					monthEnd = true;
-				}
-			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
-					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
-						monthEnd = true;
-					}
-				}
-
-			}
-			
-			// if month end then only it should run
-			if (!monthEnd) {
-				return RepeatStatus.FINISHED;
-			}
-			
+		try {			
 			logger.debug("START: Data-Mart Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = DataMartProcess.EXTRACT_STATUS;
@@ -112,7 +90,7 @@ public class DataMart implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("DataMart Request Service started...");
-				DataMartProcess requestProcess = new DataMartProcess(dataSource, userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+				DataMartProcess requestProcess = new DataMartProcess(dataSource, userId, valueDate, appDate);
 				requestProcess.process("DATA_MART_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 				

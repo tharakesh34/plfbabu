@@ -79,6 +79,11 @@ public class BatchUtil {
 	
 	
 	public static void setExecutionStatus(ChunkContext context, DataEngineStatus status) throws Exception {
+		
+		if (status == null) {
+			return;
+		}
+		
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
 		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 

@@ -317,10 +317,9 @@
 	</bean>
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 	</bean>
-	<!-- End Of Month Decider -->
+
 	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider" />
-	<!-- End Of Month Decider -->
-	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
+	
 	<!-- Audit data Purging -->
 	<bean id="dataPurgingProcess" class="com.pennant.eod.util.DataPurgingProcess">
 		<property name="dataSource" ref="pfsDatasource" />

@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  EndOfMonthDecider.java													*                           
+ * FileName    		:  StartOfMonthDecider.java													*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -42,36 +42,69 @@
  */
 package com.pennant.backend.endofday.limitdecider;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
-
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class StartOfMonthDecider implements JobExecutionDecider {
 	private static final Logger logger = Logger.getLogger(StartOfMonthDecider.class);
 
-	private Date dateValueDate = null;
-	private Date monthStartDate = null;
+	@Autowired
+	private EODConfigDAO eodConfigDAO;
+
+	public StartOfMonthDecider() {
+
+	}
+
+	public EODConfig getEodConfig() {
+		try {
+			List<EODConfig> list = eodConfigDAO.getEODConfig();
+			if (!list.isEmpty()) {
+				return list.get(0);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return null;
+	}
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug(Literal.ENTERING);
+		Date valueDate = (Date) jobExecution.getExecutionContext().get("APP_VALUEDATE");
 		try {
-			dateValueDate = DateUtility.getAppDate();
-			monthStartDate = DateUtility.getMonthStartDate(dateValueDate);
-			String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
 
-			if (dateValueDate.compareTo(monthStartDate) == 0 || StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {
+			boolean monthStart = false;
+			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
+				if (valueDate.compareTo(DateUtility.getMonthStart(valueDate)) == 0) {
+					monthStart = true;
+				}
+			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
+				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
+					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
+						monthStart = true;
+					}
+				}
+			}
+
+			// if month start date then only it should run
+			if (monthStart || StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("SOM_ON_EOD"))) {
 				return new FlowExecutionStatus("StartOfMonth");
 			}
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -79,5 +112,4 @@ public class StartOfMonthDecider implements JobExecutionDecider {
 		logger.debug(Literal.LEAVING);
 		return new FlowExecutionStatus("NotStartOfMonth");
 	}
-
 }

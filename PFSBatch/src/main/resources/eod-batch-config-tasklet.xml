@@ -76,7 +76,10 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
+	<!-- Start of the month Decider -->
 	<bean id="startOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.StartOfMonthDecider"/>
+	<!-- End Of Month Decider -->
+	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
 
 
 	<!-- To be deleted -->

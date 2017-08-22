@@ -42,37 +42,75 @@
  */
 package com.pennant.backend.endofday.limitdecider;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.eod.EODConfig;
+import com.pennanttech.pennapps.core.resource.Literal;
 import java.util.Date;
-
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
-
-import com.pennant.app.util.DateUtility;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class EndOfMonthDecider implements JobExecutionDecider {
-	private Logger	logger	= Logger.getLogger(EndOfMonthDecider.class);
+	private static final Logger logger = Logger.getLogger(EndOfMonthDecider.class);
+
+	@Autowired
+	private EODConfigDAO eodConfigDAO;
 
 	public EndOfMonthDecider() {
-		//
+
+	}
+
+	public EODConfig getEodConfig() {
+		try {
+			List<EODConfig> list = eodConfigDAO.getEODConfig();
+			if (!list.isEmpty()) {
+				return list.get(0);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return null;
 	}
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		Date valueDate = (Date) jobExecution.getExecutionContext().get("APP_VALUEDATE");
 		try {
-			Date dateValueDate = DateUtility.getAppValueDate();
-			Date monthEndDate = DateUtility.getMonthEndDate(dateValueDate);
-			if (dateValueDate.compareTo(monthEndDate) == 0) {
+
+			boolean monthEnd = false;
+			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
+			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
+				if (valueDate.compareTo(DateUtility.getMonthStart(valueDate)) == 0) {
+					monthEnd = true;
+				}
+			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
+				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
+					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
+						monthEnd = true;
+					}
+				}
+
+			}
+
+			// if month start date then only it should run
+			if (monthEnd || StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
 				return new FlowExecutionStatus("EndOfMonth");
 			}
+
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return new FlowExecutionStatus("NotEndOfMonth");
-
 	}
-
 }
