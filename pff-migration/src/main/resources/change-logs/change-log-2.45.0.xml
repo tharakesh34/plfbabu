@@ -130,7 +130,7 @@ alter table RejectFinScheduledetails alter column SchPriPaid SET NOT NULL;
                        T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
                        T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount,
                        T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate
-FROM         FinScheduleDetails  T1
+FROM         FinScheduleDetails  T1;
                       
      Create or replace view FinScheduleDetails_View AS                 
 		SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
@@ -175,15 +175,8 @@ WHERE     NOT EXISTS
                        T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
                        T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount,
                        T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate
-				FROM         FinScheduleDetails_Temp  T1
-                
-                
-                
-                        
-            update adtFinScheduleDetails set SchPriPaid = 0 where SchPriPaid is null;
-			alter table adtFinScheduleDetails alter column SchPriPaid DROP DEFAULT;
-			alter table adtFinScheduleDetails alter column SchPriPaid type smallint using SchPriPaid::smallint ;
-			alter table adtFinScheduleDetails alter column SchPriPaid SET NOT NULL;
+				FROM         FinScheduleDetails_Temp  T1;
+
 		]]>
 		</sql>
 	</changeSet>
