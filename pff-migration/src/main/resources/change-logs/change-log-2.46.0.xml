@@ -412,8 +412,12 @@ Update finadvancepayments set paymentid = row_num from (
 	Update finadvancepayments set paymentid = row_num from (	
 	Select ROW_NUMBER () over(order by finreference,Paymentseq)row_num,finreference,Paymentseq from finadvancepayments)T
 	where T.finreference = finadvancepayments.finreference and T.Paymentseq=finadvancepayments.Paymentseq;
-	
-	alter table finadvancepayments alter column paymentid bigint not null;
+		</sql>
+	</changeSet>
+	<changeSet id="07.01" author="Madhubabu" dbms="postgresql">
+		<sql>
+
+	alter table finadvancepayments alter column paymentid set not null;
 		</sql>
 	</changeSet>
 		<changeSet id="07.1" author="Madhubabu" dbms="postgresql">	
