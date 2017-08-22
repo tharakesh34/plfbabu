@@ -195,7 +195,17 @@
 			<column name="PromotionCode" type="varchar(8)"/>
 		</addColumn>
 	</changeSet>
-
+<changeSet id="15.0" author="Irfan" dbms="postgresql">
+    <sql>
+        drop view if exists finadvancepayments_tview;
+        drop view if exists finadvancepayments_aview;
+    </sql>
+</changeSet>
+<changeSet id="15.01" author="Irfan" dbms="postgresql">
+    <sql>
+        drop view if exists finadvancepayments_view;
+    </sql>
+</changeSet>
 <changeSet id="15" author="Irfan"> 
 <dropForeignKeyConstraint constraintName="FK_FINADVPAYMENT_PARTNERBNKID" baseTableName="FinAdvancePayments" />
 <dropPrimaryKey tableName="PartnerBank" constraintName="PK_PARTNERBANK"/>
