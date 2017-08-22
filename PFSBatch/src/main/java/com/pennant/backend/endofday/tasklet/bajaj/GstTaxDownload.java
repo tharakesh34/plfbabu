@@ -1,6 +1,5 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
@@ -38,7 +37,7 @@ public class GstTaxDownload implements Tasklet {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return null;
 	}
@@ -46,30 +45,7 @@ public class GstTaxDownload implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Data Extract Preparation On : " + valueDate);
-
 		try {
-
-			boolean monthEnd = false;
-			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
-			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
-					monthEnd = true;
-				}
-			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-				if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
-					if (getEodConfig().getMnthExtTo().compareTo(valueDate) == 0) {
-						monthEnd = true;
-					}
-				}
-
-			}
-			
-			// if month end then only it should run
-			if (!monthEnd) {
-				return RepeatStatus.FINISHED;
-			}
-
 			logger.debug("START: GST-TAX Download Process for the value date: ".concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
 			
 			DataEngineStatus status = TaxDownlaodProcess.EXTRACT_STATUS;
@@ -110,6 +86,7 @@ public class GstTaxDownload implements Tasklet {
 			try {
 				Date appDate = DateUtility.getAppDate();
 				Date monthEndDate = DateUtility.getMonthEndDate(appDate);
+				
 				String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
 				TaxDownlaodProcess process = null;
 				if (StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {

@@ -53,31 +53,31 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class StartOfMonthDecider implements JobExecutionDecider {
-	
-	private Logger logger = Logger.getLogger(StartOfMonthDecider.class);
+	private static final Logger logger = Logger.getLogger(StartOfMonthDecider.class);
 
 	private Date dateValueDate = null;
 	private Date monthStartDate = null;
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		logger.debug("Entering");
-		try{
+		logger.debug(Literal.ENTERING);
+		try {
 			dateValueDate = DateUtility.getAppDate();
-			monthStartDate  = DateUtility.getMonthStartDate(dateValueDate);
+			monthStartDate = DateUtility.getMonthStartDate(dateValueDate);
 			String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
 
-			if(dateValueDate.compareTo(monthStartDate) == 0 || StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)){
+			if (dateValueDate.compareTo(monthStartDate) == 0 || StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)) {
 				return new FlowExecutionStatus("StartOfMonth");
 			}
-		}catch(Exception e){
-			logger.error(e);
-			e.printStackTrace();
+			
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return new FlowExecutionStatus("NotStartOfMonth");
 
-	} 
-	
+		logger.debug(Literal.LEAVING);
+		return new FlowExecutionStatus("NotStartOfMonth");
+	}
+
 }
