@@ -44,6 +44,7 @@ package com.pennant.backend.endofday.limitdecider;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -51,11 +52,11 @@ import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 
 public class StartOfMonthDecider implements JobExecutionDecider {
 	
 	private Logger logger = Logger.getLogger(StartOfMonthDecider.class);
-
 
 	private Date dateValueDate = null;
 	private Date monthStartDate = null;
@@ -65,7 +66,9 @@ public class StartOfMonthDecider implements JobExecutionDecider {
 		try{
 			dateValueDate = DateUtility.getAppDate();
 			monthStartDate  = DateUtility.getMonthStartDate(dateValueDate);
-			if(dateValueDate.compareTo(monthStartDate) == 0){
+			String isDailyDownlaod = SysParamUtil.getValueAsString("GST_TAXDETAIL_DOWNLOAD");
+
+			if(dateValueDate.compareTo(monthStartDate) == 0 || StringUtils.equalsIgnoreCase("Y", isDailyDownlaod)){
 				return new FlowExecutionStatus("StartOfMonth");
 			}
 		}catch(Exception e){

@@ -520,6 +520,15 @@ public class AccountEngineExecution implements Serializable {
 						dataMap.put(feeCode + "_SCH", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_AF", BigDecimal.ZERO);
 					}
+					String [] payTypes = {"EX_","EA_","PA_","PB_"};
+					String key;
+					for (String payType : payTypes) {
+						key = payType + feeCode + "_P";
+						if(!dataMap.containsKey(key)){
+							dataMap.put(key, BigDecimal.ZERO);
+						}
+					}
+					
 				}
 			}
 		}
@@ -587,11 +596,10 @@ public class AccountEngineExecution implements Serializable {
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			
-			if ((acc == null ||  StringUtils.isBlank(acc.getAccountId())) && BigDecimal.ZERO.compareTo(postAmt) != 0) {
-				throw new FactoryException("Invalid accounting configuration, please contact administrator");
-			} 
-			
-			if (acc == null) {
+			if (acc == null ||  StringUtils.isBlank(acc.getAccountId())) {
+				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
+					throw new FactoryException("Invalid accounting configuration, please contact administrator");
+				} 
 				continue;
 			}
 			returnDataSet.setTranOrderId(acc.getTransOrder());
