@@ -610,7 +610,7 @@ Select '' BATCHID, C.CustCIF CUSTOMER_NO,'' SOURCE_SYS_ID,
 	   Case when C.CustCtgCode='RETAIL' then CDPAN.CustDocTitle else null end PAN,
 	   Case when C.CustCtgCode='RETAIL' then CDDLN.CustDocTitle else null end DRIVING_LICENSE_NUMBER,
 	   Case when C.CustCtgCode='RETAIL' then CDVTR.CustDocTitle else null end VOTER_ID,
-	   Case when C.CustCtgCode='CORP' then CustDOB else '' end DATE_OF_INCORPORATION,
+	   Case when C.CustCtgCode='CORP' then CustDOB else null end DATE_OF_INCORPORATION,
 	   Case when C.CustCtgCode='CORP' then CDTAN.CustDocTitle else null end TAN_NO,
 	   '' PROCESS_TYPE,Case when C.CustCtgCode='RETAIL' then 'I' else 'C' end APPLICANT_TYPE,
 	   Case when C.CustCtgCode='RETAIL' then EmpName else null end EMPOYER_NAME,
@@ -628,9 +628,9 @@ Select '' BATCHID, C.CustCIF CUSTOMER_NO,'' SOURCE_SYS_ID,
 	   'CF' SEGMENT,'' BATCHID_2, C.CustCIF CUSTOMER_NO_2,'' SOURCE_SYS_ID_2,'CF' SEGMENT_2,
 	   '' ADDRESS_TYPE, CA.CustAddrHNbr  ADDRESS_1,CA.CustFlatNbr ADDRESS_2,CA.CustAddrLine1 ADDRESS_3,
 	   CA.CUSTADDRPROVINCE STATE, CA.CUSTADDRCITY CITY, CA.CUSTADDRZIP PIN,
-	   CPLND1.PhoneCountryCode+CPLND1.PhoneAreaCode+CPLND1.PhoneNumber LANDLINE_1,
-	   CPLND2.PhoneCountryCode+CPLND2.PhoneAreaCode+CPLND2.PhoneNumber LANDLINE_2,
-	   CPMOB.PhoneCountryCode+CPMOB.PhoneAreaCode+CPMOB.PhoneNumber MOBILE,
+	   CPLND1.PhoneCountryCode||CPLND1.PhoneAreaCode||CPLND1.PhoneNumber LANDLINE_1,
+	   CPLND2.PhoneCountryCode||CPLND2.PhoneAreaCode||CPLND2.PhoneNumber LANDLINE_2,
+	   CPMOB.PhoneCountryCode||CPMOB.PhoneAreaCode||CPMOB.PhoneNumber MOBILE,
 	   CA.CustAddrStreet AREA, CA.CustAddrLine1 LANDMARK,'' STD,'' PROCESS_TYPE_2,
 	   CEM.custEmail, 'N' PROCESS_FLAG_2,'' ERROR_CODE_2,'' ERROR_DESC_2,
 	   C.custcif CUSTOMER_ID_2, '' SOURCE_SYSTEM_2,'' PSX_BATCH_ID_2,'' EOD_BATCH_ID_2,
@@ -1191,7 +1191,7 @@ SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndD
 					  RMTGenDepartments T10 ON T1.SalesDepartment = T10.GenDepartment
 	</createView>
 </changeSet>
-<changeSet author="Irfan" id="54">
+<changeSet author="Irfan" id="54" dbms="oracle">
 	<createView viewName="FinanceMain_AView" replaceIfExists="true">
 	SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
                       T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
@@ -1241,6 +1241,58 @@ SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndD
 					  RMTGENDEPARTMENTS T35 ON T1.SalesDepartment = T35.GENDEPARTMENT  INNER JOIN  
                       BMTProduct T32 ON T7.FinCategory = T32.ProductCode
 	</createView>
+</changeSet>
+<changeSet author="Irfan" id="54" dbms="postgresql">
+	    <sql>
+	create or replace view FinanceMain_AView as
+	SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, 
+                      T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, 
+                      T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment  lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T7.FinTypeDesc  lovDescFinTypeName, T7.FinMaxAmount  lovDescFinMaxAmt, T7.FinMinAmount  lovDescFinMinAmount, 
+                      T1.MinDownpayPerc, T7.FinIsAlwDifferment  lovDescFinAlwDeferment, T7.FinIsDwPayRequired  lovDescDwnPayReq, 
+                      T7.FinMaxDifferment  lovDescFinMaxDifferment,T12.BranchDesc  lovDescFinBranchName, T1.LastRepayDate, T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, 
+                       T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef, T1.DepreciationFrq, T1.FinContractDate, 
+                      T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,   T17.AcrTillLBD  lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T7.FinGrcRvwRateApplFor, T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, 
+                      T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose, 
+                     T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.bankName, T1.iban, T1.accountType, T1.DdaReferenceNo, 
+                      T7.FinScheduleOn  LovDescFinScheduleOn, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, T1.SecurityCollateral, 
+                       T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.InvestmentRef, T1.GraceTerms, 
+                      T7.FinDivision  lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps,  T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc  LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                    T1.SupplementRent, T1.IncreasedCost, T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FINPREAPPROVEDREF, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId,T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T29.AgreeName,T29.MMAReference LovDescMMAReference,
+					  T1.DSACode,T30.ROfficerDesc DSACodeDesc,T1.TDSApplicable,  T32.ProductCategory,T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes  T7 ON T1.FinType = T7.FinType  LEFT OUTER JOIN
+                      RMTBranches  T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FinPftDetails  T17 ON T17.FinReference = T1.FinReference LEFT OUTER JOIN
+                      StepPolicyHeader  T24 ON T1.StepPolicy = T24.PolicyCode  LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN 
+					  RMTGENDEPARTMENTS T28 ON T1.ACCOUNTSOFFICER = T28.GENDEPARTMENT LEFT OUTER JOIN
+					  MMAgreements T29 ON T1.MMAId = T29.MMAId LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGENDEPARTMENTS T35 ON T1.SalesDepartment = T35.GENDEPARTMENT  INNER JOIN  
+                      BMTProduct T32 ON T7.FinCategory = T32.ProductCode
+     </sql>
 </changeSet>
 
 <changeSet author="Irfan" id="55">
@@ -1589,7 +1641,7 @@ FROM          Customers_Temp T1 LEFT OUTER JOIN
                        TargetDetails T31 ON T1.CustAddlVar82 = T31.TargetCode
 		</createView>
 	</changeSet>
-		<changeSet id="87" author="pruthvi">
+		<changeSet id="87" author="pruthvi" dbms="oracle">
 		<createView replaceIfExists="true" viewName="INT_POSIDEX_UPDATE_EOD_VIEW">
 		 Select cast(null as numeric(12,0)) BATCHID, C.custid CUSTOMER_NO,'' SOURCE_SYS_ID,
 	   C.CustFName FIRST_NAME, C.CustMName MIDDLE_NAME, C.CustLName LAST_NAME,
@@ -1648,7 +1700,65 @@ from Customers C
 	 where C.custAddlvar1 is null
 	 </createView>
 	 </changeSet>
-		
+	<changeSet id="87" author="pruthvi" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="INT_POSIDEX_UPDATE_EOD_VIEW">
+		 Select cast(null as numeric(12,0)) BATCHID, C.custid CUSTOMER_NO,'' SOURCE_SYS_ID,
+	   C.CustFName FIRST_NAME, C.CustMName MIDDLE_NAME, C.CustLName LAST_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CustDOB else Null end DOB,
+	   Case when C.CustCtgCode='RETAIL' then CDPAN.CustDocTitle else '' end PAN,
+	   Case when C.CustCtgCode='RETAIL' then CDDLN.CustDocTitle else '' end DRIVING_LICENSE_NUMBER,
+	   Case when C.CustCtgCode='RETAIL' then CDVTR.CustDocTitle else '' end VOTER_ID,
+	   Case when C.CustCtgCode='CORP' then CustDOB else null end DATE_OF_INCORPORATION,
+	   Case when C.CustCtgCode='CORP' then CDTAN.CustDocTitle else '' end TAN_NO,
+	   '' PROCESS_TYPE,Case when C.CustCtgCode='RETAIL' then 'I' else 'C' end APPLICANT_TYPE,
+	   Case when C.CustCtgCode='RETAIL' then cast(EmpName as varchar(105)) else null end EMPOYER_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CustMotherMaiden else '' end FATHER_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CDPPT.CustDocTitle else '' end PASSPORT_NO,
+	   '' ACCOUNT_NUMBER, '' CREDIT_CARD_NUMBER, 'N' PROCESS_FLAG,'' ERROR_CODE, '' ERROR_DESC,
+	   C.CustCIF CUSTOMER_ID, '' SOURCE_SYSTEM, cast(null as numeric(18,0)) PSX_BATCH_ID, '' UCIN_FLAG,cast(null as numeric(18,0)) EOD_BATCH_ID,
+	   ${call.date} INSERT_TS,
+	   Case when C.CustCtgCode='RETAIL' then CustGenderCode else '' end GENDER,
+	   Case when C.CustCtgCode='RETAIL' then CDADR.CustDocTitle else '' end AADHAR_NO,
+	   Case when C.CustCtgCode='CORP' then CDCIN.CustDocTitle else '' end CIN,
+	   Case when C.CustCtgCode='CORP' then CDDIN.CustDocTitle else '' end DIN,
+	   Case when C.CustCtgCode='CORP' then CDRGNO.CustDocTitle else '' end REGISTRATION_NO,
+	   Case when C.CustCtgCode='CORP' then CDCANO.CustDocTitle else '' end CA_NUMBER,
+	   'CF' SEGMENT,cast(null as numeric(12,0)) BATCHID_2, C.custid CUSTOMER_NO_2,'' SOURCE_SYS_ID_2,'CF' SEGMENT_2,
+	   '' ADDRESS_TYPE, CA.CustAddrHNbr  ADDRESS_1,CA.CustFlatNbr ADDRESS_2,CA.CustAddrLine1 ADDRESS_3,
+	   CA.CUSTADDRPROVINCE STATE, CA.CUSTADDRCITY CITY, CA.CUSTADDRZIP PIN,
+	   cast(CPLND1.PhoneCountryCode||CPLND1.PhoneAreaCode||CPLND1.PhoneNumber as varchar(48)) LANDLINE_1,
+	   cast(CPLND2.PhoneCountryCode||CPLND2.PhoneAreaCode||CPLND2.PhoneNumber as varchar(48)) LANDLINE_2,
+	   cast(CPMOB.PhoneCountryCode||CPMOB.PhoneAreaCode||CPMOB.PhoneNumber as varchar(105)) MOBILE,
+	   CA.CustAddrStreet AREA, CA.CustAddrLine1 LANDMARK,'' STD,'' PROCESS_TYPE_2,
+	   CEM.custEmail, 'N' PROCESS_FLAG_2,'' ERROR_CODE_2,'' ERROR_DESC_2,
+	   C.custcif CUSTOMER_ID_2, '' SOURCE_SYSTEM_2,cast(null as numeric(18,0)) PSX_BATCH_ID_2,cast(null as numeric(18,0)) EOD_BATCH_ID_2,
+	   cast(null as numeric(12,0)) BATCHID_3,'' STATUS,${call.date} INSERT_TIMESTAMP,${call.date} COMPLETION_TIMESTAMP,'' ERR_DESCRIPTION,
+	   '' ERROR_CODE_3,cast(null as numeric(12,0)) BATCHID_4,C.CustID CUSTOMER_NO_3,'' SOURCE_SYS_ID_3,'CF' SEGMENT_3,
+	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, cast(null as numeric(10,0)) APPLN_NO,
+	   FM.FinType PRODUCT_CODE, '' PROCESS_TYPE_3,'N' PROCESS_FLAG_3,'' ERROR_CODE_4,
+	   '' ERROR_DESC_3,cast(null as numeric(18,0)) PSX_BATCH_ID_3, cast(null as numeric(12,0)) PSX_ID, c.CustCIF CUSTOMER_ID_3,
+	   '' SOURCE_SYSTEM_3,cast(null as numeric(18,0)) EOD_BATCH_ID_3,C.LastMntOn	   
+from Customers C 
+	 left join CustomerDocuments CDPAN on CDPAN.CustID = C.CustID and CDPAN.CustDocCategory='03'
+	 left join CustomerDocuments CDDLN on CDDLN.CustID = C.CustID and CDDLN.CustDocCategory='04'
+	 left join CustomerDocuments CDVTR on CDVTR.CustID = C.CustID and CDVTR.CustDocCategory='05'
+	 left join CustomerDocuments CDTAN on CDTAN.CustID = C.CustID and CDTAN.CustDocCategory='15'
+	 left join CustomerDocuments CDPPT on CDPPT.CustID = C.CustID and CDPPT.CustDocCategory='02'
+	 left join CustomerDocuments CDADR on CDADR.CustID = C.CustID and CDADR.CustDocCategory='01'
+	 left join CustomerDocuments CDCIN on CDCIN.CustID = C.CustID and CDCIN.CustDocCategory='16'
+	 left join CustomerDocuments CDDIN on CDDIN.CustID = C.CustID and CDDIN.CustDocCategory='17'
+	 left join CustomerDocuments CDRGNO on CDRGNO.CustID = C.CustID and CDRGNO.CustDocCategory='18'
+	 left join CustomerDocuments CDCANO on CDCANO.CustID = C.CustID and CDCANO.CustDocCategory='19'
+	 left join CustEmployeeDetail CE on CE.CustID = C.CustID 
+	 left join CustomerAddresses CA on CA.CustID = C.CustID and custAddrPriority=5
+	 left join CustomerPhoneNumbers CPLND1 on CPLND1.PhoneCustID = C.CustID and CPLND1.PhoneTypeCode='HOME'
+	 left join CustomerPhoneNumbers CPLND2 on CPLND2.PhoneCustID = C.CustID and CPLND2.PhoneTypeCode='MOBILE2'
+	 left join CustomerPhoneNumbers CPMOB on CPMOB.PhoneCustID = C.CustID and CPMOB.PhoneTypeCode='MOBILE1'
+	 left join CustomerEMails CEM on CEM.CustID = C.CustID and CEM.CustEmailPriority=5
+	 left join FinanceMain FM on FM.custid = C.CustID
+	 where C.custAddlvar1 is null
+	 </createView>
+	 </changeSet>	
 
 	<changeSet  id="88" author="DurgaPrasad G" dbms="mssql">
 
@@ -1778,7 +1888,7 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 	</createView>
 	</changeSet>
 	
-	<changeSet id="97" author="pruthvi">
+	<changeSet id="97" author="pruthvi" dbms="oracle">
 	<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
 	select  ApplicationNo AGREEMENTNO,cast(null as numeric(8,0)) AGREEMENTID,T2.FinType PRODUCTFLAG,
 		cast(T10.PromotionCode as numeric(8,0)) SCHEMEID,cast(T2.FinBranch as numeric(8,0)) BRANCHID,'' NPA_STAGEID,cast(T2.FinIsActive as varchar(1)) LOAN_STATUS,
@@ -1836,7 +1946,64 @@ FROM        PayOrderIssueHeader  T1  INNER JOIN
 		where T11.NextRpySchDate=T12.SchDate) T13 on T1.FinReference=T13.FinReference
 	</createView>
 	</changeSet>
-	
+	<changeSet id="97" author="pruthvi" dbms="postgresql">
+	<createView viewName="INT_CF_CONTROL_VIEW" replaceIfExists="true">
+	select  ApplicationNo AGREEMENTNO,cast(null as numeric(8,0)) AGREEMENTID,T2.FinType PRODUCTFLAG,
+		cast(T10.PromotionCode as numeric(8,0)) SCHEMEID,cast(T2.FinBranch as numeric(8,0)) BRANCHID,'' NPA_STAGEID,cast(T2.FinIsActive as varchar(1)) LOAN_STATUS,
+		case when FinCurrAssetValue>0 then 'PD' else 'FD' end DISB_STATUS,
+		FirstRepayDate FIRST_DUE_DATE,T2.MaturityDate MATURITY_DATE,T1.FinAmount/CcyMinorCcyUnits AMTFIN,cast(null as numeric(8,0))  DISBURSED_AMOUNT,
+		(T2.ODPrincipal+T2.ODProfit)/CcyMinorCcyUnits EMI_DUE,
+		T2.ODPrincipal/CcyMinorCcyUnits PRINCIPAL_DUE,T2.ODProfit/CcyMinorCcyUnits INTEREST_DUE,
+		(T2.TotalPriPaid+T2.TotalPftPaid)/CcyMinorCcyUnits  EMI_RECEIVED,
+		T2.TotalPriPaid/CcyMinorCcyUnits PRINCIPAL_RECEIVED,T2.TotalPftPaid/CcyMinorCcyUnits INTEREST_RECEIVED,
+		(T2.TotalPriBal+T2.TotalPftBal)/CcyMinorCcyUnits EMI_OS,
+		T2.TotalPriBal/CcyMinorCcyUnits PRINCIPAL_OS,T2.TotalPftBal/CcyMinorCcyUnits INTEREST_OS,
+		cast(null as numeric(8,0))  BULK_REFUND,cast(null as numeric(8,0))  PRINCIPAL_WAIVED,cast(null as numeric(8,0))  EMI_PRINCIPAL_WAIVED,cast(null as numeric(8,0))  EMI_INTEREST_WAIVED,
+		cast(null as numeric(8,0))  PRINCIPAL_AT_TERM,cast(null as numeric(8,0))  ADVANCE_EMI,cast(null as numeric(8,0))  ADVANCE_EMI_BILLED,cast(null as numeric(8,0))  MIGRATED_ADVANCE_EMI,
+		cast(null as numeric(8,0))  MIGR_ADV_EMI_BILLED,cast(null as numeric(8,0))  MIGRATED_ADVANCE_EMI_UNBILLED,cast(null as numeric(8,0))  CLOSED_CAN_ADV_EMI,
+		T2.TotalPriBal/CcyMinorCcyUnits PRINCIPAL_BALANCE,T2.TotalPftBal/CcyMinorCcyUnits INTEREST_BALANCE,
+		(T2.TotalPriBal+T2.TotalPftBal)/CcyMinorCcyUnits SOH_BALANCE,(NOInst-NOPaidInst) NO_OF_UNBILLED_EMI,
+		T2.TotalPftSchd/CcyMinorCcyUnits TOTAL_INTEREST,T2.TdPftAccrued/CcyMinorCcyUnits ACCRUED_AMOUNT,Unearned/CcyMinorCcyUnits BALANCE_UMFC,
+		cast(null as numeric(8,0))  EMI_IN_ADV_RCVD_MAKER,cast(null as numeric(8,0))  EMI_IN_ADVANCE_BILLED,cast(null as numeric(8,0)) EMI_IN_ADVANCE_UNBILLED,
+		cast(null as numeric(8,0))  MIG_ADV_EMI_BILLED_PRINCOMP,cast(null as numeric(8,0))  MIG_ADV_EMI_BILLED_INTCOMP,cast(null as numeric(8,0))  MIG_ADV_EMI_UNBILLED_PRINCOMP,
+		cast(null as numeric(8,0))  MIG_ADV_EMI_UNBILLED_INTCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_BILLED_PRINCOMP,
+		cast(null as numeric(8,0)) EMI_IN_ADV_BILLED_INTCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_UNBILLED_PRINCOMP,cast(null as numeric(8,0)) EMI_IN_ADV_UNBILLED_INTCOMP,
+		cast(null as numeric(8,0)) CLOS_CAN_ADV_EMI_PRINCOMP,cast(null as numeric(8,0)) CLOS_CAN_ADV_EMI_INTCOMP,cast(null as numeric(8,0)) SECURITY_DEPOSIT,
+		cast(null as numeric(8,0)) SECURITY_DEPOSIT_ADJUSTED,cast(null as numeric(8,0)) ROUNDING_DIFF_RECEIVABLE,cast(null as numeric(8,0)) ROUNDING_DIFF_RECEIVED,
+		cast(null as numeric(8,0)) MIG_DIFFERENCE_RECEIVABLE,cast(null as numeric(8,0)) MIG_DIFFERENCE_RECEIVED,cast(null as numeric(8,0)) MIG_DIFFERENCE_PAYABLE,cast(null as numeric(8,0)) MIG_DIFFERENCE_PAID,
+		(UnPaidSchdPri+UnPaidSchdPft)/CcyMinorCcyUnits WRITEOFF_DUE,
+		 ((WriteoffPrincipal+WriteoffProfit)-(UnPaidSchdPri+UnPaidSchdPft))/CcyMinorCcyUnits WRITEOFF_RECEIVED,
+		cast(null as numeric(8,0)) SOLD_SEIZE_RECEIVABLE,cast(null as numeric(8,0)) SOLD_SEIZE_RECEIVED,cast(null as numeric(8,0)) SOLD_SEIZE_PAYABLE,cast(null as numeric(8,0)) SOLD_SEIZE_PAID,
+		cast(null as numeric(8,0)) NET_EXCESS_RECEIVED,cast(null as numeric(8,0)) NET_EXCESS_ADJUSTED,PenaltyBal/CcyMinorCcyUnits LPP_CHARGES_RECEIVABLE,
+		T4.PenaltyPaid/CcyMinorCcyUnits LPP_CHARGES_RECEIVED,cast(null as numeric(8,0)) PDC_SWAP_CHARGES_RECEIVABLE,cast(null as numeric(8,0)) PDC_SWAP_CHARGES_RECEIVED,
+		cast(null as numeric(8,0)) REPO_CHARGES_RECEIVABLE,cast(null as numeric(8,0)) REPO_CHARGES_RECEIVED,cast(null as numeric(8,0)) FORECLOSURE_CHARGES_DUE,cast(null as numeric(8,0)) FORECLOSURE_CHARGES_RCVD,
+		cast(null as numeric(8,0)) BOUNCE_CHARGES_DUE,cast(null as numeric(8,0)) BOUNCE_CHARGES_RCVD,cast(null as numeric(8,0)) INSUR_RENEW_CHARGE,cast(null as numeric(8,0)) INSUR_RENEW_CHARGE_RECD,
+		cast(null as numeric(8,0)) INSUR_RECEIVABLE,cast(null as numeric(8,0)) INSUR_RECEIVED,cast(null as numeric(8,0)) INSUR_PAYABLE,cast(null as numeric(8,0)) INSUR_PAID,
+		T5.CustID CUSTOMERID,(coalesce(CustFName,'')||coalesce(CustMName,'')||coalesce(CustLName,'')) CUSTOMERNAME,
+		T2.NOInst SANCTIONED_TENURE,T13.RepayAmount LOAN_EMI,RepayBaseRate FLAT_RATE,
+		T1.EffectiveRateOfReturn EFFECTIVE_RATE,T1.FinContractDate AGREEMENTDATE,T6.DisbDate DISBURSALDATE,
+		(select LatestRpyDate from FinPftDetails where FinIsActive='0') CLOSUREDATE,cast(null as numeric(8,0)) NO_OF_ADVANCE_EMIS,cast(null as numeric(8,0)) ASSETCOST,
+		(NOInst-NOPaidInst) NO_OF_EMI_OS,T2.ODDays DPD,cast(null as numeric(3,0)) CURRENT_BUCKET,
+		T2.FinBranch BRANCH_NAME,FinTypeDesc SCHEME_NAME,cast(null as numeric(3,0)) DERIVED_BUCKET,'' ASSETDESC,
+		'' MAKE,'' CHASISNUM,'' REGDNUM,'' ENGINENUM,cast(null as numeric(16,2)) INVOICEAMT,'' SUPPLIERDESC,
+		'' INSTRUMENT,'' REPO_DATE,'' LOCAL_OUTSTATION_FLAG,
+		T2.FirstODDate FIRST_REPAYDUE_DATE
+ from   FinanceMain T1 Inner join
+		FinPftDetails T2 on T2.FinReference=T1.FinReference Inner join
+		FinWriteoffDetail T3 on T3.FinReference=T1.FinReference Inner join
+		FinODCRecovery T4 on T4.FinReference=T1.Finreference Inner join
+		Customers T5 on T5.CustID=T1.CustID Inner jOin
+		(select FinReference,MIN(DisbDate) DisbDate from FinDisbursementDetails
+		 group by FinReference)T6 on T6.FinReference=T1.FinReference Inner Join
+		FinStatusDetail T7 on T7.FinReference=T1.FinReference Inner Join
+		RMTFinanceTypes T8 on T8.FinType=T1.FinType Inner join
+		RMTCurrencies T9 on T9.CcyCode=T1.FinCcy Left Join 
+		Promotions T10 On t10.FinType=T2.FinType Inner join
+		(select T11.FinReference,RepayAmount from FinPftDetails T11 
+		Inner Join FinScheduleDetails T12 on T11.FinReference=T12.FinReference
+		where T11.NextRpySchDate=T12.SchDate) T13 on T1.FinReference=T13.FinReference
+	</createView>
+	</changeSet>
 	<changeSet id="98" author="SreeRavali">
 		<sql>
 		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
@@ -2166,7 +2333,7 @@ alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
 <changeSet id="104.2" author="Irfan" dbms="postgresql">
 		<sql>
 			 alter table PartnerBank add PartnerBankId bigint;
-			 alter table PartnerBank alter column PartnerBankId bigint not null;
+			 alter table PartnerBank alter column PartnerBankId set not null;
 		</sql>
 	</changeSet>
 <changeSet id="104.1" author="Irfan" dbms="postgresql">	
@@ -2174,9 +2341,7 @@ alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
    			do $$
 			 declare ex integer;
 			 begin
-			
-			  Select MAX(PartnerBankId)+1 from PartnerBank into ex;
-			 execute 'CREATE SEQUENCE SEQPartnerBank START  ' || ex || ' INCREMENT BY 1 ';  
+				execute 'CREATE SEQUENCE SEQPartnerBank START  1 INCREMENT BY 1 ';   
 			 end;  
 			$$;
      	</sql>
@@ -2201,7 +2366,11 @@ alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
 			alter table PartnerBank_Temp modify PartnerBankId not null;	
      	</sql>
      	</changeSet>
-
+<changeSet id="104.3" author="Irfan" dbms="postgresql">
+		<sql>
+			 alter table PartnerBank_Temp add PartnerBankId bigint;
+		</sql>
+</changeSet>
 <changeSet author="Irfan" id="110">
 	<createView replaceIfExists="true" viewName="PartnerBank_View">
 		SELECT T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, T1.AccountNo, T1.Usage, T1.AcType, T1.AlwFileDownload, T1.DisbDownload, T1.InFavourLength, T1.AccountCategory, T1.Active	
@@ -2567,7 +2736,7 @@ alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_AcctTypeLevel'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_GroupId'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_GroupDescription'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
-	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_ParentGroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountT	ypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AccountTypeGroupDialog_ParentGroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_accounttypeGroup_AccountTypegroup'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
 	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AccountTypeGroup_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountTypeGroupDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																		
 	INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='AccountTypeGroup_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 			
