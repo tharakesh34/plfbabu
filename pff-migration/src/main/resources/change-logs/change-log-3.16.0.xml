@@ -6868,6 +6868,14 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="274.1" author="murthy.y">
+	<sql>
+		<![CDATA[
+			INSERT INTO SMTPARAMETERS VALUES ('SOM_ON_EOD', 'Start of the month processes on EOD', 'String', 1, 'Y', '1', 0, NULL, NULL, 'Start of the month processes on EOD', 1, 1000,	CURRENT_TIMESTAMP, 'Approved' ,NULL, NULL, NULL, NULL, NULL, 0);
+			UPDATE SMTPARAMETERS set SYSPARMDESC= 'End of the month Processes on EOD', SYSPARMDESCRIPTION = 'End of the month processes on EOD' where SYSPARMCODE = 'EOM_ON_EOD' ;
+		]]>
+	</sql>
+</changeSet>
 <changeSet id="275" author="Prasad" dbms="oracle">
 	<createView viewName="DM_BOUNCE_DETAILS_VIEW " replaceIfExists="true">
 	SELECT ${call.substr}(T1.FINREFERENCE,9,LENGTH(T1.FINREFERENCE)) APPLID,FAVOURNUMBER CHEQUEID,T1.FINREFERENCE AGREEMENTNO,
