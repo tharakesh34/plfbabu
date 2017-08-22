@@ -543,7 +543,7 @@ FROM    	Mandates  T1 INNER JOIN
 </changeSet>
 
 
-<changeSet  id="21" author="DurgaPrasad G" >
+<changeSet  id="21" author="DurgaPrasad G" dbms="oracle">
 <createView viewName="INT_POSIDEX_UPDATE_EOD_VIEW" replaceIfExists="true">
 Select '' BATCHID, C.CustCIF CUSTOMER_NO,'' SOURCE_SYS_ID,
 	   C.CustFName FIRST_NAME, C.CustMName MIDDLE_NAME, C.CustLName LAST_NAME,
@@ -602,7 +602,65 @@ from Customers C
 	 where C.custAddlvar1 is null
 </createView>
 </changeSet>
-
+<changeSet  id="21" author="DurgaPrasad G" dbms="postgresql">
+<createView viewName="INT_POSIDEX_UPDATE_EOD_VIEW" replaceIfExists="true">
+Select '' BATCHID, C.CustCIF CUSTOMER_NO,'' SOURCE_SYS_ID,
+	   C.CustFName FIRST_NAME, C.CustMName MIDDLE_NAME, C.CustLName LAST_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CustDOB else '' end DOB,
+	   Case when C.CustCtgCode='RETAIL' then CDPAN.CustDocTitle else '' end PAN,
+	   Case when C.CustCtgCode='RETAIL' then CDDLN.CustDocTitle else '' end DRIVING_LICENSE_NUMBER,
+	   Case when C.CustCtgCode='RETAIL' then CDVTR.CustDocTitle else '' end VOTER_ID,
+	   Case when C.CustCtgCode='CORP' then CustDOB else '' end DATE_OF_INCORPORATION,
+	   Case when C.CustCtgCode='CORP' then CDTAN.CustDocTitle else '' end TAN_NO,
+	   '' PROCESS_TYPE,Case when C.CustCtgCode='RETAIL' then 'I' else 'C' end APPLICANT_TYPE,
+	   Case when C.CustCtgCode='RETAIL' then EmpName else '' end EMPOYER_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CustMotherMaiden else '' end FATHER_NAME,
+	   Case when C.CustCtgCode='RETAIL' then CDPPT.CustDocTitle else '' end PASSPORT_NO,
+	   '' ACCOUNT_NUMBER, '' CREDIT_CARD_NUMBER, 'N' PROCESS_FLAG,'' ERROR_CODE, '' ERROR_DESC,
+	   C.CustCIF CUSTOMER_ID, '' SOURCE_SYSTEM, ''PSX_BATCH_ID, '' UCIN_FLAG,'' EOD_BATCH_ID,
+	   CURRENT_TIMESTAMP INSERT_TS,
+	   Case when C.CustCtgCode='RETAIL' then CustGenderCode else '' end GENDER,
+	   Case when C.CustCtgCode='RETAIL' then CDADR.CustDocTitle else '' end AADHAR_NO,
+	   Case when C.CustCtgCode='CORP' then CDCIN.CustDocTitle else '' end CIN,
+	   Case when C.CustCtgCode='CORP' then CDDIN.CustDocTitle else '' end DIN,
+	   Case when C.CustCtgCode='CORP' then CDRGNO.CustDocTitle else '' end REGISTRATION_NO,
+	   Case when C.CustCtgCode='CORP' then CDCANO.CustDocTitle else '' end CA_NUMBER,
+	   'CF' SEGMENT,'' BATCHID_2, C.CustCIF CUSTOMER_NO_2,'' SOURCE_SYS_ID_2,'CF' SEGMENT_2,
+	   '' ADDRESS_TYPE, CA.CustAddrHNbr  ADDRESS_1,CA.CustFlatNbr ADDRESS_2,CA.CustAddrLine1 ADDRESS_3,
+	   CA.CUSTADDRPROVINCE STATE, CA.CUSTADDRCITY CITY, CA.CUSTADDRZIP PIN,
+	   CPLND1.PhoneCountryCode+CPLND1.PhoneAreaCode+CPLND1.PhoneNumber LANDLINE_1,
+	   CPLND2.PhoneCountryCode+CPLND2.PhoneAreaCode+CPLND2.PhoneNumber LANDLINE_2,
+	   CPMOB.PhoneCountryCode+CPMOB.PhoneAreaCode+CPMOB.PhoneNumber MOBILE,
+	   CA.CustAddrStreet AREA, CA.CustAddrLine1 LANDMARK,'' STD,'' PROCESS_TYPE_2,
+	   CEM.custEmail, 'N' PROCESS_FLAG_2,'' ERROR_CODE_2,'' ERROR_DESC_2,
+	   C.custcif CUSTOMER_ID_2, '' SOURCE_SYSTEM_2,'' PSX_BATCH_ID_2,'' EOD_BATCH_ID_2,
+	   '' BATCHID_3,'' STATUS,'' INSERT_TIMESTAMP,'' COMPLETION_TIMESTAMP,'' ERR_DESCRIPTION,
+	   '' ERROR_CODE_3,'' BATCHID_4,C.CustCIF CUSTOMER_NO_3,'' SOURCE_SYS_ID_3,'CF' SEGMENT_3,
+	   FM.FinReference DEAL_ID,FM.FinReference LAN_NO,'' CUSTOMER_TYPE, FM.FinReference APPLN_NO,
+	   FM.FinType PRODUCT_CODE, '' PROCESS_TYPE_3,'N' PROCESS_FLAG_3,'' ERROR_CODE_4,
+	   '' ERROR_DESC_3,'' PSX_BATCH_ID_3, '' PSX_ID, c.CustCIF CUSTOMER_ID_3,
+	   '' SOURCE_SYSTEM_3,'' EOD_BATCH_ID_3,C.LastMntOn	   
+from Customers C 
+	 left join CustomerDocuments CDPAN on CDPAN.CustID = C.CustID and CDPAN.CustDocCategory='03'
+	 left join CustomerDocuments CDDLN on CDDLN.CustID = C.CustID and CDDLN.CustDocCategory='04'
+	 left join CustomerDocuments CDVTR on CDVTR.CustID = C.CustID and CDVTR.CustDocCategory='05'
+	 left join CustomerDocuments CDTAN on CDTAN.CustID = C.CustID and CDTAN.CustDocCategory='15'
+	 left join CustomerDocuments CDPPT on CDPPT.CustID = C.CustID and CDPPT.CustDocCategory='02'
+	 left join CustomerDocuments CDADR on CDADR.CustID = C.CustID and CDADR.CustDocCategory='01'
+	 left join CustomerDocuments CDCIN on CDCIN.CustID = C.CustID and CDCIN.CustDocCategory='16'
+	 left join CustomerDocuments CDDIN on CDDIN.CustID = C.CustID and CDDIN.CustDocCategory='17'
+	 left join CustomerDocuments CDRGNO on CDRGNO.CustID = C.CustID and CDRGNO.CustDocCategory='18'
+	 left join CustomerDocuments CDCANO on CDCANO.CustID = C.CustID and CDCANO.CustDocCategory='19'
+	 left join CustEmployeeDetail CE on CE.CustID = C.CustID 
+	 left join CustomerAddresses CA on CA.CustID = C.CustID and custAddrPriority=5
+	 left join CustomerPhoneNumbers CPLND1 on CPLND1.PhoneCustID = C.CustID and CPLND1.PhoneTypeCode='HOME'
+	 left join CustomerPhoneNumbers CPLND2 on CPLND2.PhoneCustID = C.CustID and CPLND2.PhoneTypeCode='MOBILE2'
+	 left join CustomerPhoneNumbers CPMOB on CPMOB.PhoneCustID = C.CustID and CPMOB.PhoneTypeCode='MOBILE1'
+	 left join CustomerEMails CEM on CEM.CustID = C.CustID and CEM.CustEmailPriority=5
+	 left join FinanceMain FM on FM.custid = C.CustID
+	 where C.custAddlvar1 is null
+</createView>
+</changeSet>
 <changeSet  id="22" author="DurgaPrasad G" >
 <sql>
 	Update SecRights set RightName = 'DISB_HDFC_EXPORT' Where RightName = 'DISB_HDFC_CHQ_EXPORT';
