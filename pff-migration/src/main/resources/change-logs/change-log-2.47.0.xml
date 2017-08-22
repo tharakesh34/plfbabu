@@ -3864,6 +3864,12 @@ SELECT T1.FinType , T1.FinType TypeCode, T4.FinTypeDesc lovDescFinTypeName  ,
 			           
 </createView>
 </changeSet>
+<changeSet id="151.0" author="Irfan" dbms="postgresql">
+    <sql>
+        drop view if exists PartnerBank_View;
+        drop view if exists PartnerBank_AView;
+    </sql>
+</changeSet>
  <changeSet author="Irfan" id="151">
  <dropColumn tableName="PartnerBank" columnName="usage"/>
 <dropColumn tableName="PartnerBank" columnName="DisbDownload"/>
