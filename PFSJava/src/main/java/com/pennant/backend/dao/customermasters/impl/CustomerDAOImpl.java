@@ -1265,10 +1265,10 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustID", custId);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, FinStatus, FinStartDate,FinCcy, ");
-		selectSql.append(" FinAmount, DownPayment,FeeChargeAmt, InsuranceAmt, FinRepaymentAmount, NumberOfTerms "); 
-		//selectSql.append(" from FinanceEnquiry_View ");
-		selectSql.append(" from FinanceMain ");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.FinType, FM.FinStatus, FM.FinStartDate,FM.FinCcy, FM.FinAmount, FM.DownPayment,FM.FeeChargeAmt,");
+		selectSql.append("FM.InsuranceAmt, FM.FinRepaymentAmount, FM.NumberOfTerms, FT.FintypeDesc As lovDescFinTypeName , T6.MaxinstAmount from FinanceMain FM "); 
+		selectSql.append("INNER JOIN RMTfinanceTypes FT ON FT.Fintype=FM.FinType "); 
+		selectSql.append("LEFT JOIN (select FinReference,(NSchdPri+NSchdPft) MaxInstAmount from FinPftdetails)T6 on T6.FinReference=FM.Finreference"); 
  		selectSql.append(" Where CustId = :CustID");
  		
 		logger.debug("selectSql: " + selectSql.toString());
