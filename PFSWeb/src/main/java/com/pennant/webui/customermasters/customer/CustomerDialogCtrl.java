@@ -5131,16 +5131,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-
-				BigDecimal instAmt = BigDecimal.ZERO;
-				if (finEnquiry.getNumberOfTerms() > 0) {
-					instAmt = totAmt.divide(new BigDecimal(finEnquiry.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
-				}
-				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(instAmt, format));
+			
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+				BigDecimal outStAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment())
+						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
+				lc = new Listcell(PennantAppUtil.amountFormate(outStAmt.subtract(finEnquiry.getFinRepaymentAmount()),
 						format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
