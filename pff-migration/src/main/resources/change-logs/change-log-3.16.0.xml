@@ -6861,4 +6861,11 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
 	</createView>
 </changeSet>
+<changeSet id="274" author="murthy.y">
+	<sql>
+		<![CDATA[
+			UPDATE SMTPARAMETERS set SYSPARMCODE = 'EOM_ON_EOD' where SYSPARMCODE = 'GST_TAXDETAIL_DOWNLOAD';
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
