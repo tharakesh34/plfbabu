@@ -6834,4 +6834,31 @@ INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE=T2.FINREFERENCE
 	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
 	</createView>
 </changeSet>
+<changeSet id="273" author="Prasad">
+	<createView viewName="RPT_SOA_CUSTOMER_VIEW" replaceIfExists="true">
+		Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t4.branchdesc FinBranch,productdesc FinType,'' Interest_Type,T1.LinkedFinRef Linked_Agreement_No,
+		T1.ClosedLinkedFinRef Closed_Linked_Agree_No,T.CustShrtname,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,
+    CustAddrStreet||' '||coalesce(custaddrline1,'')||' '||coalesce(custaddrline2,'')||' '||coalesce(CustPOBox,'') CustAddrStreet,
+		custAddrZip as CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+		PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+		Select CustShrtname,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,custaddrline1,custaddrline2,
+		CustPOBox,custAddrZip,RC.PCCityName CustAddrCity, Rp.cpprovincename CustAddrProvince, BC.CountryDesc CustAddrCountry,PhoneCountryCode,
+		PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+		from Customers T1 Left join
+		CustomerAddresses T2 ON t1.CustID =T2.CustID and t2.custAddrPriority=5 
+    left join Rmtprovincevscity RC on RC.Pccity = T2.CustAddrCity  
+    left join Rmtcountryvsprovince Rp on Rp.cpprovince = T2.custAddrProvince
+    left join Bmtcountries BC on BC.countrycode = T2.CustAddrCountry Left join
+		CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  and PHONETYPEPRIORITY=5 Left join
+		CustomerEMails T4 on T4.CustID =T1.CustID and CustEmailPriority=5 Left join
+		(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+		where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+		(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+		where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+		finpftdetails T1 on T.CustID=T1.CustID inner join
+		RMTFinanceTypes T2 on T1.FinType =T2.FinType inner join
+	  BMTProduct T3 on T3.ProductCode =T2.FinCategory inner join
+	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
+	</createView>
+</changeSet>
 </databaseChangeLog>
