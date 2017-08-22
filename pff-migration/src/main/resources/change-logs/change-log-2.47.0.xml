@@ -2105,7 +2105,7 @@ alter table PartnerBank_Temp add PartnerBankId bigint;
 alter table PartnerBank_Temp alter column PartnerBankId bigint not null;
 </sql>
 </changeSet>
-<changeSet id="104" author="Irfan" dbms="postgresql">
+<changeSet id="104.2" author="Irfan" dbms="postgresql">
 		<sql>
 			 alter table PartnerBank add PartnerBankId bigint;
 			 alter table PartnerBank alter column PartnerBankId bigint not null;
