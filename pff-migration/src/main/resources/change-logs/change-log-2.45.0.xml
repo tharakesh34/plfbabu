@@ -1999,10 +1999,23 @@ values ((select max(reportid)from REPORTCONFIGURATION),1,'FinReference','LOVSEAR
 			</column>
 			</createTable>
 	</changeSet>
-	<changeSet id="62" author="Pruthvi">
+	<changeSet id="62" author="Pruthvi" dbms="mssql">
 		<createView viewName="INT_DISB_IMPS_VIEW" replaceIfExists="true">
 		select '' CHANNELPARTNERID,'' BCAGENTID,'' SENDERID ,BeneficiaryName RECEIVERNAME,
 (COALESCE(PhoneCountryCode,'')+COALESCE(PhoneAreaCode,'')+COALESCE(PhoneNumber,'')) RECEIVER_MOBILE_NO,
+IFSC  IFSCODE,BankName BANK,City RECEVIER_BANK_CITY,Branchcode RECEVIER_BANK_BRANCH,BeneficiaryAccNo RECEVIERACCOUNTNUMBER,
+(AmtTobereleased/CcyMinorCcyUnits) AMOUNT,Remarks REMARKS,PaymentSeq CHANNELPARTNERREFNO,'' PICKUP_FLAG,FinReference AGREEMENTID,'' RECEIVEREMAILID
+from FinAdvancePayments F Inner join
+BANKBRANCHES B on F.BankCode=B.BankCode Inner Join
+BMTBANKDETAIL BB on BB.BankCode=F.BankCode Inner jOin
+RMTCurrencies RC on Rc.CcyCode=F.DisbCCy Left Join
+RMTProvinceVsCity RPC on RPC.PCCity=B.City WHERE F.PAYMENTTYPE='IMPS' AND F.Status='APPROVED'
+										</createView>
+	</changeSet>
+		<changeSet id="62" author="Pruthvi">
+		<createView viewName="INT_DISB_IMPS_VIEW" replaceIfExists="true">
+		select '' CHANNELPARTNERID,'' BCAGENTID,'' SENDERID ,BeneficiaryName RECEIVERNAME,
+(COALESCE(PhoneCountryCode,'')||COALESCE(PhoneAreaCode,'')||COALESCE(PhoneNumber,'')) RECEIVER_MOBILE_NO,
 IFSC  IFSCODE,BankName BANK,City RECEVIER_BANK_CITY,Branchcode RECEVIER_BANK_BRANCH,BeneficiaryAccNo RECEVIERACCOUNTNUMBER,
 (AmtTobereleased/CcyMinorCcyUnits) AMOUNT,Remarks REMARKS,PaymentSeq CHANNELPARTNERREFNO,'' PICKUP_FLAG,FinReference AGREEMENTID,'' RECEIVEREMAILID
 from FinAdvancePayments F Inner join
