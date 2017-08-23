@@ -52,5 +52,5 @@
 	<include file="change-logs/change-log-3.14.0-audit.xml" />
 	<include file="change-logs/change-log-3.15.0-audit.xml" />
 	<include file="change-logs/change-log-3.16.0-audit.xml" />
-	
+	<include file="change-logs/change-log-3.16.8-audit.xml" />
 </databaseChangeLog>
