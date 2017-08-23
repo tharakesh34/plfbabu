@@ -7142,19 +7142,4 @@ Insert into BMTAmountCodes Values('EARLYSTL', '0', 'ae_pftWaived' , 'Principal W
 Update BMTAmountCodes set AMOUNTCODEDESC = 'Profit Waived Off ' where AmountCode = 'ae_pftWaived';
 </sql>
 </changeSet>
-<changeSet id="292" author="murthy.y">
-	<dropView viewName="INT_ALM_VIEW"/>
-</changeSet>
-<changeSet id="292.1" author="murthy.y">
-	<dropView viewName="INT_CF_CONTROL_VIEW"/>
-</changeSet>
-<changeSet id="292.2" author="murthy.y">
-	<dropView viewName="INT_DISBURSEMENT_EXPORT_VIEW"/>
-</changeSet>
-<changeSet id="292.3" author="murthy.y">
-	<dropView viewName="INT_POSIDEX_UPDATE_EOD_VIEW"/>
-</changeSet>
-<changeSet id="292.4" author="murthy.y">
-	<dropView viewName="INTERFACE_MANDATE_REG_VIEW"/>
-</changeSet>
 </databaseChangeLog>
