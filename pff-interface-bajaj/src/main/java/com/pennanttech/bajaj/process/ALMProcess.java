@@ -13,10 +13,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -27,6 +31,7 @@ public class ALMProcess extends DatabaseDataEngine {
 	
 	private Date appDate;
 	private ProjectedAccrualProcess projectedAccrualProcess;
+	private MapSqlParameterSource paramMap = null;
 		
 	public ALMProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,
 			ProjectedAccrualProcess projectedAccrualProcess) {
@@ -39,45 +44,91 @@ public class ALMProcess extends DatabaseDataEngine {
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 		
-		// Handle retry case.
-		delete();
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FINISACTIVE", 1);
+		paramMap.addValue("PAYMENTTYPE", "EMIINADV");
+		paramMap.addValue("ACCRUEDON", appDate);
+		
+		try {
+			// Handle retry case.
+			delete();
 
-		loadCount();
+			loadCount();
 
-		extractData();
+			extractData();
+		} catch (Exception e) {
+			EXTRACT_STATUS.setStatus("F");
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void extractData() {
+	private void extractData() throws SQLException {
+		Map<String, Integer> advanceEmis = getadvanceEmis();
+		
 		StringBuilder sql = new StringBuilder();
-		sql.append("select * from INT_ALM_VIEW");
+		sql.append(" SELECT FINREFERENCE, FINTYPE, FINSTARTDATE, MATURITYDATE,");
+		sql.append(" CLOSINGSTATUS, CCYMINORCCYUNITS, CCYEDITFIELD FROM FINANCEMAIN FM"); 
+		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
+		sql.append(" WHERE FINISACTIVE=:FINISACTIVE");
 
-		extract(sql);
+		extract(sql, advanceEmis);
 	}
 
-	private void extract(StringBuilder sql) {
-		jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
-			List<ALM> list = null;
-			ALM alm = null;
-			String finReference = null;
-			String agreementId = null;
+	
+	
+	private Map<String, Integer> getadvanceEmis() throws SQLException {
+		Map<String, Integer> advanceEmis = new HashMap<>();
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FM.FINREFERENCE, COUNT(RH.REFERENCE) EMIADV");
+		sql.append(" FROM FINRECEIPTDETAIL RD");
+		sql.append(" INNER JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID=RH.RECEIPTID");
+		sql.append(" INNER JOIN FINANCEMAIN FM ON RH.REFERENCE = FM.FINREFERENCE");
+		sql.append(" WHERE PAYMENTTYPE=:PAYMENTTYPE AND FINISACTIVE=:FINISACTIVE");
+		sql.append(" GROUP BY FM.FINREFERENCE");
 
+		return extractCustomers(advanceEmis, sql);
+	}
+
+	private Map<String, Integer> extractCustomers(Map<String, Integer> advanceEmis, StringBuilder sql) {
+		return parameterJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
+			@Override
+			public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				while (rs.next()) {
+					advanceEmis.put(rs.getString("FINREFERENCE"), rs.getInt("EMIADV"));
+				}
+				return advanceEmis;
+			}
+		});
+	}
+	
+
+	private void extract(StringBuilder sql, Map<String, Integer> advanceEmis) {
+		parameterJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				executionStatus.setProcessedRecords(processedCount++);
 				try {
-					alm = new ALM();
+					ALM	alm = new ALM();
 
-					finReference = rs.getString("FINREFERENCE");
-					agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+					String finReference = rs.getString("FINREFERENCE");
+					String agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
 
 					alm.setAgreementNo(finReference);
 					alm.setAgreementId(Long.parseLong(agreementId));
 					alm.setProductFlag(rs.getString("FINTYPE"));
 					alm.setNpaStageId(rs.getString("CLOSINGSTATUS"));
-					alm.setAdvFlag(rs.getString("ADVFLAG"));
-
-					list = getAccruedAmounts(alm, rs.getDate("FINSTARTDATE"), rs.getDate("MATURITYDATE"),
+					
+					Integer advanceEmi = advanceEmis.get(finReference);
+					
+					if (advanceEmi != null && advanceEmi.intValue() > 0) {
+						alm.setAdvFlag("Y");
+					} else {
+						alm.setAdvFlag("N");
+					}
+					
+					List<ALM> list = getAccruedAmounts(alm, rs.getDate("FINSTARTDATE"), rs.getDate("MATURITYDATE"),
 							rs.getBigDecimal("CCYMINORCCYUNITS"), rs.getInt("CCYEDITFIELD"));
 
 					if (!list.isEmpty()) {
@@ -89,7 +140,7 @@ public class ALMProcess extends DatabaseDataEngine {
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 					executionStatus.setFailedRecords(failedCount++);
-					String keyId = finReference;
+					String keyId = rs.getString("FINREFERENCE");
 
 					if (StringUtils.trimToNull(keyId) == null) {
 						keyId = String.valueOf(processedCount);
@@ -101,19 +152,16 @@ public class ALMProcess extends DatabaseDataEngine {
 		});
 	}
 	
-	
 	private void delete() {
-		MapSqlParameterSource paramMap =  new MapSqlParameterSource();
-		paramMap.addValue("ACCRUEDON", appDate);
-		delete(paramMap, "ALM", destinationJdbcTemplate, " where ACCRUEDON >=  :ACCRUEDON");
+		delete(paramMap, "ALM", destinationJdbcTemplate, " WHERE ACCRUEDON >= :ACCRUEDON");
 	}
 
 	private void loadCount() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select count(*) from INT_ALM_VIEW");
+		sql.append(" select count(*) from FINANCEMAIN WHERE FINISACTIVE=:FINISACTIVE ");
 
 		try {
-			totalRecords = jdbcTemplate.queryForObject(sql.toString(), Integer.class);
+			totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
 			executionStatus.setTotalRecords(totalRecords);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -134,6 +182,7 @@ public class ALMProcess extends DatabaseDataEngine {
 			item.setAgreementNo(alm.getAgreementNo());
 			item.setAgreementId(alm.getAgreementId());
 			item.setProductFlag(alm.getProductFlag());
+			item.setAdvFlag(alm.getAdvFlag());
 			item.setInstallment(getAmount(accrual.getSchdTot(), minorCcyUnits, editField));
 			item.setPrinComp(getAmount(accrual.getSchdPri(), minorCcyUnits, editField));
 			item.setIntComp(getAmount(accrual.getSchdPft(), minorCcyUnits, editField));
@@ -181,5 +230,4 @@ public class ALMProcess extends DatabaseDataEngine {
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		return null;
 	}
-
 }

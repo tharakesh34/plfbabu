@@ -29,7 +29,7 @@ public class TestAMLRequest {
 		}
 	}
 
-	@Test(enabled=true)
+	@Test(enabled=false)
 	public void process() {
 		try {
 			ALMProcess process = new ALMProcess(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate(), projectedAccrualProcess);

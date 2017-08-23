@@ -45,10 +45,9 @@ public class SAPGLProcess extends DataEngineExport {
 			exportTransactionReport();
 			SAP_GL_STATUS.setStatus("S");
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
 			SAP_GL_STATUS.setStatus("F");
-		}
+			logger.error(Literal.EXCEPTION, e);
+		} 
 	}
 	
 	public void extractReport(Date startDate, Date endDate) throws Exception {
