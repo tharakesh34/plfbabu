@@ -64,4 +64,19 @@
          end;
 	    </createProcedure>
 	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<dropView viewName="INT_ALM_VIEW"/>
+	</changeSet>
+	<changeSet id="3.2" author="murthy.y">
+		<dropView viewName="INT_CF_CONTROL_VIEW"/>
+	</changeSet>
+	<changeSet id="3.3" author="murthy.y">
+		<dropView viewName="INT_DISBURSEMENT_EXPORT_VIEW"/>
+	</changeSet>
+	<changeSet id="3.4" author="murthy.y">
+		<dropView viewName="INT_POSIDEX_UPDATE_EOD_VIEW"/>
+	</changeSet>
+	<changeSet id="3.5" author="murthy.y">
+		<dropView viewName="INTERFACE_MANDATE_REG_VIEW"/>
+	</changeSet>
 </databaseChangeLog>
