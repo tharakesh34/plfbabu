@@ -1598,6 +1598,73 @@ FROM FinanceMain_AView T1 INNER JOIN
 			Fee','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	<changeSet id="67.0" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists partnerbanks_aview;
+	        drop view if exists partnerbanks_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.01" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtaccounttypes_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.02" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtaccounttypes_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.03" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtfinancetypes_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.041" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists lmtfinanceworkflowdef_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.042" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists financecreationaccess_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.043" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists systeminternalaccountdef_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.044" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists systeminternalaccountdef_aview
+	    </sql>
+	</changeSet>
+	<changeSet id="67.045" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rpt_emrassetagingoddtl_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.046" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmttransactionentry_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.047" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmttransactionentry_aview
+	    </sql>
+	</changeSet>
+	<changeSet id="67.04" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtfinancetypes_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.05" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists accounts_view;
+	        drop view if exists accounts_aview;
+	    </sql>
+	</changeSet>
 	<changeSet id="67" author="Irfan">
 		<modifyDataType tableName="RMTACCOUNTTYPES" columnName="ACTYPE"
 			newDataType="varchar(15)" />
