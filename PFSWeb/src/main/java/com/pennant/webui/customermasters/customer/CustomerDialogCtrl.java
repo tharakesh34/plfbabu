@@ -5126,8 +5126,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
 
-				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
+						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -5135,9 +5135,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				BigDecimal outStAmt = finEnquiry.getFinCurrAssetValue()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
-				lc = new Listcell(PennantAppUtil.amountFormate(outStAmt.subtract(finEnquiry.getFinRepaymentAmount()),
+				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),
 						format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
