@@ -37,4 +37,6 @@ public interface LimitHeaderDAO {
 	
 	List<LimitHeader> getLimitHeaders(String type);
 
+	int getLimitHeaderAndCustGrpCountById(long headerId, long CustGrpID);
+
 }

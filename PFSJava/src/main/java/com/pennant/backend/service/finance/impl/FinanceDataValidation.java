@@ -2048,7 +2048,14 @@ public class FinanceDataValidation {
 			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(minReqFinStartDate, 1), PennantConstants.XMLDateFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90134", valueParm)));
 		}
-
+		
+		Date maxReqFinStartDate = DateUtility.addDays(appDate, +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
+		if (finMain.getFinStartDate().compareTo(maxReqFinStartDate) > 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Loan Start Date";
+			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(maxReqFinStartDate, 1), PennantConstants.XMLDateFormat);
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
+		}
 		String IDB = finMain.getProfitDaysBasis();
 		//Validate Interest Days Basis
 		if (!StringUtils.equals(IDB, CalculationConstants.IDB_30E360)

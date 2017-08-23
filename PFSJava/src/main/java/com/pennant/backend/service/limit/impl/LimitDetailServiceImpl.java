@@ -1348,6 +1348,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm)));
 				return auditDetail;
 			} else {
+				if (!limitHeader.isNew()) {
+					int count = getLimitHeaderDAO().getLimitHeaderAndCustGrpCountById(limitHeader.getHeaderId(),
+							customerGroup.getCustGrpID());
+					if (count <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "customerGroup :" + custCIF + " And LimitId: " + limitHeader.getHeaderId();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
+					}
+				}
 				if (limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(
 							customerGroup.getCustGrpID(), "_AView");
@@ -1356,7 +1365,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						valueParm[0] = custGrpCode;
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90805", "", valueParm)));
 					}
-				}
+				} 
 			}
 		}
 
