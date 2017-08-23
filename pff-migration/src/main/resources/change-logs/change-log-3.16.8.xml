@@ -43,5 +43,25 @@
     WHERE DISBONSCHDATE=0 and repayamount>0
 	</createView>
 	</changeSet>
-	
+	<changeSet id="2" author="Jayant">
+	    <createProcedure>
+	        CREATE OR REPLACE PROCEDURE SP_INVALIDVIEWS IS
+	        begin 
+         FOR cur IN (SELECT OBJECT_NAME, OBJECT_TYPE
+         			 FROM USER_OBJECTS
+         			 WHERE object_type in ('PACKAGE','FUNCTION','PROCEDURE','TRIGGER','VIEW','SYNONYM')
+         			 AND status = 'INVALID' ) LOOP 
+         	BEGIN
+		         if cur.OBJECT_TYPE = 'PACKAGE BODY' then 
+		         	EXECUTE IMMEDIATE 'alter ' || cur.OBJECT_TYPE || ' "' || cur.OBJECT_NAME || '" compile body'; 
+		         else 
+		         	EXECUTE IMMEDIATE 'alter ' || cur.OBJECT_TYPE || ' "' || cur.OBJECT_NAME || '" compile'; 
+		         end if; 
+			EXCEPTION
+  				WHEN OTHERS THEN NULL; 
+			END;
+         end loop; 
+         end;
+	    </createProcedure>
+	</changeSet>
 </databaseChangeLog>
