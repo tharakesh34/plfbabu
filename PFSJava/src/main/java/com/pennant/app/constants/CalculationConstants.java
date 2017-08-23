@@ -100,6 +100,7 @@ public class CalculationConstants {
 	public static final String	RPYCHG_ADDTERM						= "ADDTERM";
 	public static final String	RPYCHG_ADJTERMS						= "ADJTERMS";
 	public static final String	RPYCHG_ADDRECAL						= "ADDRECAL";
+	public static final String	RPYCHG_STEPPOS						= "STEPPOS";
 
 	// Schedule Date Event Flags
 	public static final int		SCHDFLAG_PFT						= 0;

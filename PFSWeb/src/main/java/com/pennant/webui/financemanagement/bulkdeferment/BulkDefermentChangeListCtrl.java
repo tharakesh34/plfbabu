@@ -144,7 +144,7 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 				sortOperator_reCalFromDate, Operators.STRING);
 		registerField("ReCalToDate", listheader_reCalToDate, SortOrder.NONE, reCalToDate, sortOperator_reCalToDate,
 				Operators.STRING);
-		fillComboBox(this.reCalculationType, "", listRecalType, "");
+		fillComboBox(this.reCalculationType, "", listRecalType, ",STEPPOS,");
 		registerField("ReCalType", listheader_reCalculationType, SortOrder.NONE, reCalculationType,
 				sortOperator_reCalculationType, Operators.STRING);
 		registerField("ExcludeDeferement");

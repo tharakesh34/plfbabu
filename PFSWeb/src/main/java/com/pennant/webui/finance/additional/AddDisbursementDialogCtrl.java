@@ -307,12 +307,21 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.fromDateRow.setVisible(false);
 			this.schdMthdRow.setVisible(false);
 		}else{
-			if (aFinSchData.getFinanceMain() != null) {
-				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),",CURPRD,ADJTERMS,ADDLAST,");
-			} else {
-				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),",CURPRD,ADJTERMS,ADDLAST,");
+			
+			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+			boolean isStepPOS = false;
+			if(aFinSchData.getFinanceMain().isStepFinance() && aFinSchData.getFinanceMain().isAllowGrcPeriod() && 
+					StringUtils.equals(aFinSchData.getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)){
+				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
+				isStepPOS = true;
 			}
-
+			
+			if(isStepPOS){
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+			}else{
+				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+			}
+			
 			if (StringUtils.equals(getFinScheduleData().getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
 				
 				fillSchDates(this.cbFromDate, aFinSchData, null);
@@ -332,6 +341,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				fillSchDates(this.cbFromDate, aFinSchData, null);
 			}
 			this.disbAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinSchData.getFinanceMain().getDisbAccountId()));
+			changeRecalType();
 		}
 		
 		logger.debug("Leaving");
@@ -807,7 +817,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
-		
+		changeRecalType();		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	private void changeRecalType(){
 		this.numOfTermsRow.setVisible(false);
 		this.tillDateRow.setVisible(false);
 		this.fromDateRow.setVisible(false);
@@ -835,15 +849,15 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.cbFromDate.setSelectedIndex(0);
 			}
 			
-		} else if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADJMDT)) {
-
+		} else if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADJMDT) ||
+				StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(),CalculationConstants.RPYCHG_STEPPOS)) {
+			// Nothing TO DO
 		} else if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT)) {
 			fillSchDates(cbFromDate, getFinScheduleData(), null);
 			this.label_AddDisbursementDialog_TillFromDate.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
 			this.fromDateRow.setVisible(true);
 			this.cbFromDate.setSelectedIndex(0);
-		} 		
-		logger.debug("Leaving" + event.toString());
+		} 	
 	}
 	
 
@@ -899,8 +913,33 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.cbSchdMthd.setDisabled(true);
 		}
 		
+		// STEP POS Recalculation Type Addition Check
+		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(), 
+				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
+			
+			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+			boolean isStepPOS = false;
+			if(getFinScheduleData().getFinanceMain().isStepFinance() && 
+					StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)){
+				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
+				isStepPOS = true;
+			}
+			
+			if(isStepPOS){
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS, PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+			}else{
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+			}
+
+		}else{
+			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+			fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(),exclRecalTypes);
+		}
+		
 		fillSchDates(cbFromDate, getFinScheduleData(), null);
-		fillSchDates(cbTillDate, getFinScheduleData(), null);		
+		fillSchDates(cbTillDate, getFinScheduleData(), null);	
+		
+		changeRecalType();
 		logger.debug("Leaving" + event.toString());
 	}
 	

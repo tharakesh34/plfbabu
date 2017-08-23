@@ -245,7 +245,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.btnAddRmvTerms.setTooltiptext(Labels.getLabel("btnRmvTerms.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
 
-			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,";
+			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 					PennantStaticListUtil.getSchCalCodes(), excldValues);
 			

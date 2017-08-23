@@ -225,9 +225,9 @@ public class BulkRateChangeCtrl extends GFCBaseCtrl<BulkRateChangeHeader> {
 		logger.debug("Entering");
 
 		if(StringUtils.isBlank(getBulkRateChangeHeader().getReCalType())) {
-			fillComboBox(this.reCalType, "TILLMDT", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			fillComboBox(this.reCalType, "TILLMDT", recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		} else {
-			fillComboBox(this.reCalType, getBulkRateChangeHeader().getReCalType(), recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			fillComboBox(this.reCalType, getBulkRateChangeHeader().getReCalType(), recalTypes, ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		}
 		this.reference.setValue(aBulkRateChangeHeader.getBulkRateChangeRef());
 		this.fromDate.setValue(getBulkRateChangeHeader().getFromDate());

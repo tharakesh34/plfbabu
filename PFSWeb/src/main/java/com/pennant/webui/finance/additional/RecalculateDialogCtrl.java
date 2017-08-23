@@ -227,9 +227,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		if (aFinSchData.getFinanceMain() != null) {
 
-			String excldValues = ",CURPRD,ADJMDT,ADDTERM,";
+			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,";
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
-				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,";
+				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
 			}
 			
 			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)){

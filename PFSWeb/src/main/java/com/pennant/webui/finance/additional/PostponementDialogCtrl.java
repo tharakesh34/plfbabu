@@ -275,7 +275,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			fillSchDates(this.cbRecalFromDate,aFinSchData,  aFinSchData.getFinanceMain().getFinStartDate(), false);
 			fillSchDates(this.cbRecalToDate,aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), true);
 		}
-		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,");
+		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,STEPPOS,");
 		
 		if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) &&
 			!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){

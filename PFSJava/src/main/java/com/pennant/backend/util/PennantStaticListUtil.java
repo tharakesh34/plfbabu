@@ -727,6 +727,7 @@ public class PennantStaticListUtil {
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_TILLDATE, Labels.getLabel("label_Till_Date")));
 			//schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDTERM, Labels.getLabel("label_Add_Terms")));
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
+			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 			/*schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));*/
 		}

@@ -285,7 +285,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinanceType aFinType = aFinSchData.getFinanceType();
 
 		this.reviewDatesRow.setVisible(true);
-		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		if(aFinType.isRateChgAnyDay()){
 			this.anyDate.setDisabled(false);
 			this.anyDate.setVisible(true);
@@ -1302,7 +1302,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.anyDateFromDateRow.setVisible(false);
 		this.anyDateToDateRow.setVisible(false);
 		
-		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
 		
@@ -1331,7 +1331,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.anyDateRateChangeToDate.setVisible(true);
 		this.anyDateToDateRow.setVisible(true);
 		
-		StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+		StringBuilder excludeFileds=new StringBuilder(",CURPRD,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,STEPPOS,");
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
 		
@@ -1363,7 +1363,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setBaseValue("");
 		this.rate.setSpecialValue("");
 		this.rate.setEffRateValue(BigDecimal.ZERO);
-		StringBuilder excludeFileds=new StringBuilder();
+		StringBuilder excludeFileds=new StringBuilder(",STEPPOS,");
 		
 		if(!getFinScheduleData().getFinanceMain().isAllowGrcPftRvw() && !getFinScheduleData().getFinanceMain().isAllowRepayRvw()){
 			excludeFileds.append(",TILLDATE");

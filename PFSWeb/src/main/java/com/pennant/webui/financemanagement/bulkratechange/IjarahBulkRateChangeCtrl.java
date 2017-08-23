@@ -139,7 +139,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		
 		doRemoveValidation();
 		doClearMessage();
-		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
+		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,");
 		
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);

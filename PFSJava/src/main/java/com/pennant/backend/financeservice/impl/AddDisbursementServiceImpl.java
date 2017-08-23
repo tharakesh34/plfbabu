@@ -12,6 +12,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -31,6 +32,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private FinanceDataValidation		financeDataValidation;
 
 	/**
@@ -53,6 +55,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			for(FinanceScheduleDetail finSchd:finScheduleData.getFinanceScheduleDetails()){
 				finSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
 			}
+		}
+		
+		// Step POS Case , setting Step Details to Object
+		if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finScheduleData.getFinReference(),
+					"", false));
 		}
 		
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
@@ -355,6 +363,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
+	}
+
+	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
+		return financeStepDetailDAO;
+	}
+
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
 	}
 
 }

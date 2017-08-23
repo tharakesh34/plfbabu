@@ -1212,7 +1212,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			schCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 		}
 		fillComboBox(this.cbfinSchCalCodeOnRvw, schCalRvwOn, PennantStaticListUtil.getSchCalCodes(),
-				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,CURPRD,");
+				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,CURPRD,STEPPOS,");
 		this.applyRpyPricing.setChecked(aFinanceType.isApplyRpyPricing());
 		if (aFinanceType.isApplyRpyPricing()) {
 			this.rpyPricingMethod.setButtonDisabled(isCompReadonly);
@@ -2462,7 +2462,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				if (this.finIsRvwAlw.isChecked()) {
 					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_ADJMDT,
-							PennantStaticListUtil.getSchCalCodes(), "");
+							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 				}
 			}
 			aFinanceType.setFinSchCalCodeOnRvw(getComboboxValue(this.cbfinSchCalCodeOnRvw));
@@ -5260,7 +5260,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)) {
 					// Schedule Calculation Codes
 					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
-							PennantStaticListUtil.getSchCalCodes(), "");
+							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 				} else {
 					// Schedule Calculation Codes
@@ -5311,7 +5311,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					if (isOverdraft) {
 						schdCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 					}
-					fillComboBox(this.cbfinSchCalCodeOnRvw, schdCalRvwOn, PennantStaticListUtil.getSchCalCodes(), "");
+					fillComboBox(this.cbfinSchCalCodeOnRvw, schdCalRvwOn, PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
