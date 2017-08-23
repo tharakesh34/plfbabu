@@ -85,4 +85,14 @@
         	<column name="CONSTRAINTTYPE" type="varchar(100)" defaultValue="O"/>
     	</addColumn>
 	</changeSet>
+	<changeSet id="4.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update DATA_ENGINE_COLUMN set CONSTRAINTTYPE = 'M' 
+				where TABLEID IN (select ID from DATA_ENGINE_TABLE 
+				where CONFIGID IN (select ID from data_engine_config 
+				where Name = 'DISB_HDFC_IMPORT')) and Name = 'STATUS';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
