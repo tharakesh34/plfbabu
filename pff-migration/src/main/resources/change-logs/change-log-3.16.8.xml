@@ -79,4 +79,10 @@
 	<changeSet id="3.5" author="murthy.y">
 		<dropView viewName="INTERFACE_MANDATE_REG_VIEW"/>
 	</changeSet>
+	
+	<changeSet id="4.1" author="murthy.y">
+		<addColumn tableName="DATA_ENGINE_COLUMN">
+        	<column name="CONSTRAINTTYPE" type="varchar(100)" defaultValue="O"/>
+    	</addColumn>
+	</changeSet>
 </databaseChangeLog>
