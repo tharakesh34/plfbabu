@@ -1353,7 +1353,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 							customerGroup.getCustGrpID());
 					if (count <= 0) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "customerGroup :" + custCIF + " And LimitId: " + limitHeader.getHeaderId();
+						valueParm[0] = "customerGroup :" + custGrpCode + " And LimitId: " + limitHeader.getHeaderId();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
 					}
 				}
