@@ -484,7 +484,7 @@ public class RepaymentProcessUtil {
 						HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 						if(!feesExecuted && StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
 							feesExecuted = true;
-							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList);
+							prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, receiptDetail.getPaymentType());
 						}
 						aeEvent.setDataMap(dataMap);
 
@@ -649,11 +649,20 @@ public class RepaymentProcessUtil {
 			}else{
 				payType = "PB_";
 			}
+			
+			// Paid Amounts
 			amount = BigDecimal.ZERO;
 			if(movementMap.containsKey(payType+movement.getFeeTypeCode() + "_P")){
 				amount = movementMap.get(payType+movement.getFeeTypeCode() + "_P");
 			}
 			movementMap.put(payType+movement.getFeeTypeCode() + "_P",  amount.add(movement.getPaidAmount()));
+			
+			// Waiver Amounts
+			amount = BigDecimal.ZERO;
+			if(movementMap.containsKey(payType + movement.getFeeTypeCode() + "_W")){
+				amount = movementMap.get(payType + movement.getFeeTypeCode() + "_W");
+			}
+			movementMap.put(payType + movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 		}
 
 		// Accounting Postings Process Execution
@@ -703,7 +712,8 @@ public class RepaymentProcessUtil {
 	 * @param finFeeDetailList
 	 * @return
 	 */
-	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList) {
+	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, 
+			List<FinFeeDetail> finFeeDetailList, String payType) {
 		logger.debug("Entering");
 
 		if (finFeeDetailList != null) {
@@ -714,6 +724,17 @@ public class RepaymentProcessUtil {
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
 				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EXCESS)){
+					payType = "EX_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_EMIINADV)){
+					payType = "EA_";
+				}else if(StringUtils.equals(payType, RepayConstants.PAYTYPE_PAYABLE)){
+					payType = "PA_";
+				}else{
+					payType = "PB_";
+				}
+				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 			}
 		}
 

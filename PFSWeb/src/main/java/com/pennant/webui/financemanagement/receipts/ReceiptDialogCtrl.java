@@ -266,7 +266,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Datebox										bounceDate;
 	protected Row											row_CancelReason;
 	protected ExtendedCombobox								cancelReason;
-	
+
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
 	protected Label											label_ReceiptDialog_favourNo;
@@ -282,7 +282,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
 	protected Textbox										remarks;
-	
+
 	protected Row											row_favourNo;	
 	protected Row											row_BankCode;	
 	protected Row											row_DepositDate;	
@@ -303,7 +303,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	protected Listbox										listBoxPastdues;
 	protected Listbox										listBoxManualAdvises;
-	
+
 	// Payment Schedule Details
 	protected Textbox										payment_finType;
 	protected Textbox										payment_finReference;
@@ -321,7 +321,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Listheader									listheader_SchdFee;
 	protected Listheader									listheader_SuplRent;
 	protected Listheader									listheader_IncrCost;
-	
+
 	// Overdraft Details Headers
 	protected Listheader 									listheader_LimitChange;
 	protected Listheader 									listheader_AvailableLimit;
@@ -406,7 +406,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private String recordType = "";
 	private int version = 0;
 	private FinanceMain befImage;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -437,21 +437,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		try {
 			if (arguments.containsKey("repayData")) {
-				
+
 				setReceiptData((FinReceiptData) arguments.get("repayData"));
 				financeDetail = getReceiptData().getFinanceDetail();
 				financeType = financeDetail.getFinScheduleData().getFinanceType();
 				setFinanceDetail(financeDetail);
 				receiptHeader = getReceiptData().getReceiptHeader();
-				
+
 				// Excess Amounts
 				setExcessList(receiptHeader.getExcessAmounts());
 				setExcessReserveList(receiptHeader.getExcessReserves());
-				
+
 				// Payable Amounts
 				setPayableList(receiptHeader.getPayableAdvises());
 				setPayableReserveList(receiptHeader.getPayableReserves());
-				
+
 				recordType = financeDetail.getFinScheduleData().getFinanceMain().getRecordType();
 				version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 
@@ -497,7 +497,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// set Field Properties
 			doSetFieldProperties();
 			doStoreServiceIds(getFinanceDetail().getFinScheduleData().getFinanceMain());
-			
+
 			Date valueDate = DateUtility.getAppDate();
 			if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
 				for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
@@ -611,7 +611,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.receiptAmount.setProperties(true , formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		this.cancelReason.setModuleName("RejectDetail");
 		this.cancelReason.setMandatoryStyle(true);
 		this.cancelReason.setValueColumn("RejectCode");
@@ -619,30 +619,30 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.cancelReason.setDisplayStyle(2);
 		this.cancelReason.setValidateColumns(new String[] { "RejectCode" });
 		this.cancelReason.setFilters(new Filter[] { new Filter("RejectType", PennantConstants.Reject_Payment, Filter.OP_EQUAL) });
-		
+
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
 		this.bounceCode.setValueColumn("BounceID");
 		this.bounceCode.setDescColumn("BounceCode");
 		this.bounceCode.setDisplayStyle(2);
 		this.bounceCode.setValidateColumns(new String[] { "BounceID" , "BounceCode", "Category", "Reason" });
-		
+
 		this.bounceCharge.setProperties(false , formatter);
 		this.bounceRemarks.setMaxlength(100);
 		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
 		this.fundingAccount.setValueColumn("PartnerBankID");
 		this.fundingAccount.setDescColumn("PartnerBankCode");
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
-		
+
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
 		this.chequeAcNo.setTextBoxWidth(180);
-		
+
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
 		this.favourName.setMaxlength(50);
@@ -652,7 +652,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.depositNo.setMaxlength(50);
 		this.paymentRef.setMaxlength(50);
 		this.transactionRef.setMaxlength(50);
-		
+
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
 		this.bankCode.setValueColumn("BankCode");
@@ -684,7 +684,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 		readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
 		readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
-		
+
 		// Bounce/Realization/Cancel Reason Fields
 		readOnlyComponent(isReadOnly("ReceiptDialog_realizationDate"), this.realizationDate);
 		readOnlyComponent(isReadOnly("ReceiptDialog_bounceCode"), this.bounceCode);
@@ -693,7 +693,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_bounceDate"), this.bounceDate);
 		readOnlyComponent(isReadOnly("ReceiptDialog_cancelReason"), this.cancelReason);
 		readOnlyComponent(isReadOnly("ReceiptDialog_receiptModeStatus"), this.receiptModeStatus);
-		
+
 		//Receipt Details
 		readOnlyComponent(isReadOnly("ReceiptDialog_favourNo"), this.favourNo);
 		readOnlyComponent(isReadOnly("ReceiptDialog_valueDate"), this.valueDate);
@@ -709,13 +709,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	public void doReadonly(boolean isUserAction) {
 		logger.debug("Entering");
-		
+
 		// Receipt Details
 		readOnlyComponent(true, this.receiptPurpose);
 		readOnlyComponent(true, this.excessAdjustTo);
@@ -723,7 +723,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.receiptAmount);
 		readOnlyComponent(true, this.allocationMethod);
 		readOnlyComponent(true, this.effScheduleMethod);
-		
+
 		//Receipt Details
 		if(isUserAction){
 			readOnlyComponent(true, this.favourNo);
@@ -738,7 +738,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.transactionRef);
 			readOnlyComponent(true, this.receivedDate);
 			readOnlyComponent(true, this.remarks);
-			
+
 			// Bounce/Realization/Cancel Reason Fields
 			readOnlyComponent(true, this.realizationDate);
 			readOnlyComponent(true, this.bounceCode);
@@ -747,9 +747,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.bounceDate);
 			readOnlyComponent(true, this.cancelReason);
 			readOnlyComponent(true, this.receiptModeStatus);
-			
+
 		}else{
-			
+
 			// Bounce/Realization/Cancel Reason Fields
 			readOnlyComponent(isReadOnly("ReceiptDialog_realizationDate"), this.realizationDate);
 			readOnlyComponent(isReadOnly("ReceiptDialog_bounceCode"), this.bounceCode);
@@ -758,7 +758,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("ReceiptDialog_bounceDate"), this.bounceDate);
 			readOnlyComponent(isReadOnly("ReceiptDialog_cancelReason"), this.cancelReason);
 			readOnlyComponent(isReadOnly("ReceiptDialog_receiptModeStatus"), this.receiptModeStatus);
-			
+
 			//Receipt Details
 			readOnlyComponent(isReadOnly("ReceiptDialog_favourNo"), this.favourNo);
 			readOnlyComponent(isReadOnly("ReceiptDialog_valueDate"), this.valueDate);
@@ -785,7 +785,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			emiInAdvBox.setReadonly(true);
 		}
-		
+
 		// Payable Amounts
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -795,7 +795,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				payableAmount.setReadonly(true);
 			}
 		}
-		
+
 		// Pastdue Allocations
 		List<Listitem> pastdueItems = this.listBoxPastdues.getItems();
 		for (int i = 0; i < pastdueItems.size(); i++) {
@@ -807,7 +807,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				waivedBox.setReadonly(true);
 			}
 		}
-		
+
 		// Manual Advise Allocations
 		List<Listitem> advises = this.listBoxManualAdvises.getItems();
 		for (int i = 0; i < advises.size(); i++) {
@@ -819,7 +819,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				waivedBox.setReadonly(true);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -859,15 +859,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		receiptData.setAccruedTillLBD(aFinScheduleData.getFinanceMain().getLovDescAccruedTillLBD());
 		receiptData.setFinanceDetail(getFinanceDetail());
-		
+
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(true);
 		if (isChgReceipt) {
 			receiptData.setTotReceiptAmount(totReceiptAmount);
 		}else{
 			receiptData.setTotReceiptAmount(getReceiptHeader().getReceiptAmount().subtract(getReceiptHeader().getTotFeeAmount()));
 		}
-		
-		
+
+
 		receiptData = getReceiptCalculator().initiateReceipt(receiptData, aFinScheduleData, valueDate, getReceiptHeader().getReceiptPurpose(), false);
 		if(StringUtils.isEmpty(financeMain.getRcdMaintainSts())){
 			setReceiptData(receiptData);
@@ -1031,10 +1031,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 			setReceiptData(receiptData);
 		}
-		
+
 		// Do readonly to all components
 		doReadonly(true);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1045,18 +1045,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnReceipt.setDisabled(true);
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
-		
+
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
 		percentageFees(false); 
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Processing Calculation button visible , if Value Date modified
 	 * @param event
@@ -1066,25 +1066,25 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnReceipt.setDisabled(true);
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
-		
+
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		
+
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 		fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
-		
+
 		// Check Auto Allocation Process existence
 		setAutoAllocationPayments(true);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Resetting amounts and allocations based on changing Fee amount
 	 */
 	public void onFeeAmountChange(){
 		logger.debug("Entering");
-		
+
 		this.btnReceipt.setDisabled(true);
 		this.btnChangeReceipt.setDisabled(true);
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
@@ -1097,12 +1097,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (tabsIndexCenter.getFellowIfAny("dashboardTab") != null) {
 			tabsIndexCenter.removeChild(tabsIndexCenter.getFellowIfAny("dashboardTab"));
 		}
-		
+
 		doEdit();
 		String rcptPurpose = getComboboxValue(this.receiptPurpose);
 		checkByReceiptPurpose(rcptPurpose, false);
 		checkByReceiptMode(getComboboxValue(this.receiptMode), false);
-		
+
 		// Excess amount set to readonly
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
 			CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_E");
@@ -1114,7 +1114,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			emiInAdvBox.setReadonly(isReadOnly("ReceiptDialog_ExcessAmount"));
 		}
-		
+
 		// Payable Amounts
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -1141,12 +1141,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}else{
-					
+
 					String allocationType = waivedBox.getId().replace("", "");
 					if(allocationType.contains("_")){
 						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
 					}
-					
+
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC) ||
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_LPFT)){
 						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
@@ -1171,7 +1171,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 			}
 		}
-		
+
 		// Checking Allocation method read only case
 		if(!isAllocateAllowed){
 			readOnlyComponent(true, this.allocationMethod);
@@ -1183,28 +1183,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}else{
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
-		
+
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		
+
 		// Check Auto Allocation Process existence
 		setAutoAllocationPayments(true);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Resetting totals based on Modifications in Screen
 	 */
 	public void resetFeeAmounts(Boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
-		
+
 		BigDecimal feeToBePaid = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		if(getFinFeeDetailListCtrl() != null){
 			feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
 		}
-		
+
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(isFeeConsiderOnAmount);
 		BigDecimal totReceivable = BigDecimal.ZERO;
 		if(totReceiptAmount.compareTo(BigDecimal.ZERO) > 0){
@@ -1213,7 +1213,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
 		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
 		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
-		
+
 		BigDecimal totalDue = BigDecimal.ZERO;
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		// Past due Details
@@ -1221,12 +1221,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Label due = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalDue");
 			totalDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
 		}
-		
+
 		if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
 			Label paid = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalPaid");
 			totalPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
 		}
-		
+
 		BigDecimal totalAdvDue = BigDecimal.ZERO;
 		BigDecimal totalAdvPaid = BigDecimal.ZERO;
 		// Manual Advises
@@ -1234,22 +1234,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Label due = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue");
 			totalAdvDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
 		}
-		
+
 		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid") != null){
 			Label paid = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid");
 			totalAdvPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
 		}
-		
+
 		// User entered Receipt amounts and paid on manual Allocation validation
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid); 
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
 		}
-		
+
 		this.custPaid.setValue(PennantApplicationUtil.formateAmount(totalDue.add(totalAdvDue).add(feeToBePaid), formatter));
 		resetCustpaid(getComboboxValue(this.receiptPurpose), totalDue.add(totalAdvDue).add(feeToBePaid), formatter);
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, formatter));
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1268,7 +1268,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onFulfill$bounceCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -1307,7 +1307,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method for Processing Captured details based on Receipt Purpose
 	 * @param event
@@ -1315,13 +1315,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onChange$receiptPurpose(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		
+
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose, true);
-		
+
 		boolean makeFeeRender = false;
 		eventCode = "";
-		
+
 		if (this.receiptPurpose.getSelectedIndex() > 0) {
 			if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
@@ -1336,10 +1336,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		paidAllocationMap = new HashMap<>();
 		waivedAllocationMap = new HashMap<>();
 		feesRecalculation(makeFeeRender, false);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Method for Excess Amount Adjustments when Early settlement Selected on default
 	 * @param recPurpose
@@ -1351,7 +1351,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		BigDecimal totalDue = BigDecimal.ZERO;
 		// Past due Details
 		if(this.listBoxPastdues.getFellowIfAny("allocation_totalDue") != null){
@@ -1363,7 +1363,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Label due = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue");
 			totalDue = totalDue.add(PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter));
 		}
-		
+
 		// Fee Amounts including
 		BigDecimal feeToBePaid = BigDecimal.ZERO;
 		if(getFinFeeDetailListCtrl() != null){
@@ -1374,7 +1374,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<FinExcessAmount> excessAmountList = getExcessList();
 		if(excessAmountList != null && !excessAmountList.isEmpty()){
 			for (FinExcessAmount excess : excessAmountList) {
-				
+
 				if(totalDue.compareTo(BigDecimal.ZERO) == 0){
 					break;
 				}
@@ -1391,20 +1391,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							}
 						}
 					}
-					
+
 					// Paid Amount Setting
 					if(totalDue.compareTo(balAmount) < 0){
 						balAmount = totalDue;
 					}
 					excessBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
 					totalDue = totalDue.subtract(balAmount);
-					
+
 					// Balance amount Setting
 					if(listBoxExcess.getFellowIfAny("ExcessBal_"+excess.getAmountType()) != null){
 						Label label = (Label) listBoxExcess.getFellowIfAny("ExcessBal_"+excess.getAmountType());
 						label.setValue(PennantApplicationUtil.amountFormate(excess.getBalanceAmt().subtract(balAmount), formatter));
 					}
-					
+
 				}
 			}
 		}
@@ -1413,7 +1413,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<ManualAdvise> payableList = getPayableList();
 		if(payableList != null && !payableList.isEmpty()){
 			for (ManualAdvise payable : payableList) {
-				
+
 				if(totalDue.compareTo(BigDecimal.ZERO) == 0){
 					break;
 				}
@@ -1435,7 +1435,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 					payableBox.setValue(PennantApplicationUtil.formateAmount(balAmount, formatter));
 					totalDue = totalDue.subtract(balAmount);
-					
+
 					// Balance amount Setting
 					if(listBoxExcess.getFellowIfAny("PayableBal_"+payable.getAdviseID()) != null){
 						Label label = (Label) listBoxExcess.getFellowIfAny("PayableBal_"+payable.getAdviseID());
@@ -1448,12 +1448,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private void feesRecalculation(boolean makeFeeRender, boolean isFeeConsiderOnAmount) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		List<FinTypeFees> finTypeFeesList = null;
 		if (StringUtils.isNotEmpty(eventCode)) {
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int moduleID = FinanceConstants.MODULEID_FINTYPE;
-			
+
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				moduleID = FinanceConstants.MODULEID_PROMOTION;
 			}
@@ -1461,11 +1461,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finance Type Fee details based on Selected Receipt Purpose Event
 			finTypeFeesList = this.financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false, moduleID);
 		}
-		
+
 		// Existing Fee Details maintenance
 		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
 		for (FinFeeDetail fee : getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
-			
+
 			// If Origination Fees, just make the record is set to Invisible
 			if (fee.isOriginationFee()) {
 				fee.setRcdVisible(false);
@@ -1480,18 +1480,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 						fee.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 						fee.setRcdVisible(false);
-						
-					// If Fee available and is in cancel state, should be reverted back to Original State
+
+						// If Fee available and is in cancel state, should be reverted back to Original State
 					} else if (StringUtils.equals(fee.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 
 						if(finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
 							for (FinTypeFees finTypeFee : finTypeFeesList) {
 								if(finTypeFee.getFeeTypeID() == fee.getFeeTypeID() &&
 										StringUtils.equals(finTypeFee.getFinEvent(), fee.getFinEvent())) {
-									
+
 									fee.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 									fee.setRcdVisible(true);
-									
+
 									// Based on FinType Fees, new list will be added in the FinFeeListCtrl,
 									// So if already exists in available list it should be removed from FinTypeFees
 									finTypeFeesList.remove(0);
@@ -1501,39 +1501,39 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-			
+
 			// Fee Details List Preparation for Rendering
 			finFeeDetails.add(fee);
 		}
-		
+
 		getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
 		getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetails);
-		
+
 		// To set Payment details by default using Auto Allocation mode , if exists
 		setAutoAllocationPayments(isFeeConsiderOnAmount);
-		
+
 		//Fee Details Tab Addition
 		appendFeeDetailTab(makeFeeRender);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Setting Fields based on Receipt Purpose selected
 	 * @param recPurpose
 	 */
 	private void checkByReceiptPurpose(String recPurpose, boolean isUserAction) {
 		logger.debug("Entering");
-		
+
 		readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
 		readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
-		
+
 		if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) ||
 				StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			readOnlyComponent(true, this.effScheduleMethod);
 			this.effScheduleMethod.setSelectedIndex(0);
-			
+
 			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) && this.allocationMethod.getSelectedIndex() == 0){
 				fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
 			}
@@ -1560,7 +1560,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1579,7 +1579,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
 		logger.debug("Entering");
-		
+
 		if(isUserAction){
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
@@ -1598,21 +1598,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.fundingAccount.setObject(null);
 			this.receivedDate.setValue(DateUtility.getAppDate());
 		}
-		
+
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
 				StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_EXCESS)) {
 			this.gb_ReceiptDetails.setVisible(false);
 			this.receiptAmount.setMandatory(false);
 			this.receiptAmount.setReadonly(true);
 			this.receiptAmount.setValue(BigDecimal.ZERO);
-			
+
 		} else{
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
 			this.receiptAmount.setMandatory(true);
 			readOnlyComponent(isReadOnly("ReceiptDialog_receiptAmount"), this.receiptAmount);
-			
+
 			Filter fundingAcFilters[] = new Filter[3];
 			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
 			fundingAcFilters[1] = new Filter("FinType", financeType.getFinType(), Filter.OP_EQUAL);
@@ -1621,53 +1621,53 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.fundingAccount.setFilters(fundingAcFilters);
 			this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
-			
+
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
-				
+
 				this.row_favourNo.setVisible(true);
 				this.row_BankCode.setVisible(true);
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
-				
+
 				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_ChequeFavourNo.value"));
-					
+
 					if(isUserAction){
 						this.depositDate.setValue(DateUtility.getAppDate());
 						this.receivedDate.setValue(DateUtility.getAppDate());
 						this.valueDate.setValue(DateUtility.getAppDate());
 					}
-					
+
 				}else{
 					this.row_ChequeAcNo.setVisible(false);
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
-					
+
 					if(isUserAction){
 						this.depositDate.setValue(DateUtility.getAppDate());
 						this.valueDate.setValue(DateUtility.getAppDate());
 					}
 				}
-				
+
 				if(isUserAction){
 					this.favourName.setValue(Labels.getLabel("label_ClientName"));
 				}
-				
+
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
-				
+
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
 				this.bankCode.setMandatoryStyle(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				
+
 				if(isUserAction){
 					this.receivedDate.setValue(DateUtility.getAppDate());
 				}
-				
+
 			} else {
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
@@ -1684,14 +1684,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
 	 * @param event
 	 */
 	public void onChange$allocationMethod(Event event) {
 		logger.debug("Entering");
-		
+
 		this.allocationMethod.setConstraint("");
 		this.allocationMethod.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
@@ -1707,7 +1707,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
 	 * @param event
@@ -1720,7 +1720,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		resetModeStatus(status);
 		logger.debug("Leaving");
 	}
-	
+
 	private void resetModeStatus(String status){
 		readOnlyComponent(true, this.bounceCode);
 		readOnlyComponent(true, this.bounceCharge);
@@ -1728,17 +1728,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.bounceDate);
 		readOnlyComponent(true, this.cancelReason);
 		readOnlyComponent(true, this.realizationDate);
-		
+
 		this.row_CancelReason.setVisible(false);
 		this.row_BounceReason.setVisible(false);
 		this.row_BounceRemarks.setVisible(false);
 		this.row_RealizationDate.setVisible(false);
-		
+
 		if(StringUtils.equals(status, RepayConstants.PAYSTATUS_BOUNCE)){
 
 			this.row_BounceReason.setVisible(true);
 			this.row_BounceRemarks.setVisible(true);
-			
+
 			readOnlyComponent(isReadOnly("ReceiptDialog_bounceCode"), this.bounceCode);
 			readOnlyComponent(true, this.bounceCharge);
 			readOnlyComponent(isReadOnly("ReceiptDialog_bounceRemarks"), this.bounceRemarks);
@@ -1753,35 +1753,35 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			this.row_RealizationDate.setVisible(true);
 			readOnlyComponent(isReadOnly("ReceiptDialog_realizationDate"), this.realizationDate);
-			
+
 		}
 	}
-	
+
 	/**
 	 * Method for Allocation Details recalculation
 	 */
 	private void setAutoAllocationPayments(boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
-		
+
 		this.allocationMethod.setConstraint("");
 		this.allocationMethod.setErrorMessage("");
 		this.receiptPurpose.setConstraint("");
 		this.receiptPurpose.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
-		
+
 		Date valueDate = DateUtility.getAppDate();
 		if(this.receivedDate.getValue() != null){
 			valueDate = this.receivedDate.getValue();
 		}
-		
+
 		// Set total , If Receipt Purpose is Early settlement
 		FinReceiptData receiptData = new FinReceiptData();
 		receiptData.setBuildProcess("I");
 		FinScheduleData schData = new FinScheduleData();
 		Cloner cloner = new Cloner();
 		schData = cloner.deepClone(getFinanceDetail().getFinScheduleData());
-		
+
 		// Excess Adjustments After calculation of Total Paid's
 		doExcessAdjustments(tempReceiptPurpose);
 
@@ -1792,19 +1792,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, valueDate, tempReceiptPurpose, false));
 
 		doFillAllocationDetail(null, null, false, isFeeConsiderOnAmount);
-		
+
 		// Allocation Process start
 		if(!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
 			resetFeeAmounts(isFeeConsiderOnAmount);
 			logger.debug("Leaving");
 			return;
 		}
-		
+
 		// Calling for Past due Amount Auto Calculation Process
 		FinScheduleData aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView");
 		Map<String, BigDecimal> paidAllocatedMap = getReceiptCalculator().recalAutoAllocation(aFinScheduleData, 
 				totReceiptAmount, valueDate, tempReceiptPurpose, false);
-		
+
 		// Render Allocation Details & Manual Advises
 		if(paidAllocatedMap != null && !paidAllocatedMap.isEmpty()){
 			List<String> paidMapKeys = new ArrayList<>(paidAllocatedMap.keySet());
@@ -1816,34 +1816,34 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		doFillAllocationDetail(null, paidAllocatedMap, true, isFeeConsiderOnAmount);
 		resetFeeAmounts(isFeeConsiderOnAmount);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for fetch sum of Total user entered Receipts amounts
 	 * @return
 	 */
 	public BigDecimal getTotalReceiptAmount(boolean feeTobeConsider){
-		
+
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		BigDecimal totalReceiptAmount = BigDecimal.ZERO;
-		
+
 		// Fetch Receipt Mode related Amount
 		totalReceiptAmount = PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), formatter);
-		
+
 		// Fetch Excess Amounts
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
 			CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_E");
 			totalReceiptAmount = totalReceiptAmount.add(PennantApplicationUtil.unFormateAmount(excessBox.getActualValue(), formatter));
 		}
-		
+
 		// Fetch EMI in Advance Amount
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_A") != null){
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			totalReceiptAmount = totalReceiptAmount.add(PennantApplicationUtil.unFormateAmount(emiInAdvBox.getActualValue(), formatter));
 		}
-		
+
 		// Payable Amounts
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -1853,20 +1853,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				totalReceiptAmount = totalReceiptAmount.add(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), formatter));
 			}
 		}
-		
+
 		if (feeTobeConsider) {
 			// Fee Details
 			if(getFinFeeDetailListCtrl() != null){
 				BigDecimal feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
 				totalReceiptAmount = totalReceiptAmount.subtract(feeToBePaid);
-				
+
 				// Actual Fee Paid Amount is more than Receipt Amount then Make Zero
 				if(totalReceiptAmount.compareTo(BigDecimal.ZERO) < 0){
 					totalReceiptAmount = BigDecimal.ZERO;
 				}
 			}
 		}
-		
+
 		return totalReceiptAmount;
 	}
 
@@ -1878,14 +1878,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void recalEarlyPaySchd(FinReceiptData receiptData, String recptPurpose) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		financeDetail.setFinScheduleData(getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView"));
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
 		if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
@@ -1893,10 +1893,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 			method = CalculationConstants.EARLYPAY_ADJMUR;
 		}
-		
+
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
-			
+
 			// Setting Early Payment Amount for Calculation, 
 			//Not required to Set in case of Early settlement(Already calculated in ReceiptCaculator)
 			if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
@@ -1941,7 +1941,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			finScheduleData.setFinanceType(getFinanceType());
-			
+
 			// Finding Next Repay Schedule on date
 			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
 			if(nextRepaySchDate == null){
@@ -2007,7 +2007,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceMain.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
 			setFinanceDetail(financeDetail);//Object Setting for Future save purpose
 			receiptData.setFinanceDetail(financeDetail);
-			
+
 			// Fee Details Setting from Recalculation process of Schedule
 			if(getFinFeeDetailListCtrl() != null){
 				List<FinFeeDetail> eventFees = getFinFeeDetailListCtrl().getFinFeeDetailList();
@@ -2072,7 +2072,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.listheader_AvailableLimit.setVisible(true);
 			this.listheader_ODLimit.setVisible(true);
 			this.listheader_LimitChange.setVisible(true);
-			
+
 			listheader_LimitChange.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_LimitChange"));
 			listheader_ODLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ODLimit"));
 			listheader_AvailableLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AvailableLimit"));
@@ -2120,7 +2120,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-			
+
 			//Schedule Fee Column Visibility Check
 			boolean isSchdFee = false;
 			List<FinanceScheduleDetail> schdList = aFinScheduleData.getFinanceScheduleDetails();
@@ -2162,7 +2162,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
 				map.put("window", this.window_ReceiptDialog);
-				
+
 				finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate, false);
 				if (i == sdSize - 1) {
 					finRender.render(map, prvSchDetail, true, true, true, aFinScheduleData.getFinFeeDetailList(), showRate, false);
@@ -2189,7 +2189,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getReceiptData().getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
 		getReceiptData().getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
 		getReceiptData().getRepayMain().setProfitPayNow(BigDecimal.ZERO);
-		
+
 		// Prepare Receipt Details Data
 		doClearMessage();
 		doSetValidation();
@@ -2202,12 +2202,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		receiptHeader.setTotFeeAmount(feeAmount);
 		receiptHeader.getAllocations().clear();
-		
+
 		// Basic Receipt Mode Details
 		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
 		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
 		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
-		
+
 		// Excess Amounts
 		Map<String, FinExcessAmount> excessMap = new HashMap<>();
 		if(getExcessList() != null && !getExcessList().isEmpty()){
@@ -2215,7 +2215,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				excessMap.put(getExcessList().get(i).getAmountType(), getExcessList().get(i));
 			}
 		}
-		
+
 		// Payable Amounts
 		Map<Long, ManualAdvise> payableMap = new HashMap<>();
 		if(getPayableList() != null && !getPayableList().isEmpty()){
@@ -2223,14 +2223,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				payableMap.put(getPayableList().get(i).getAdviseID(), getPayableList().get(i));
 			}
 		}
-		
+
 		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
 		int payOrder = 1;
 		// EMI In Advance Receipt Mode
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV) != null){
 			FinReceiptDetail receiptDetail = null;
 			CurrencyBox emiAdvance = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV);
-			
+
 			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)){
 				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV, 
 						excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
@@ -2261,11 +2261,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Excess Amount Receipt Detail
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS) != null){
 			CurrencyBox excessAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS);
-			
+
 			FinReceiptDetail receiptDetail = null;
 			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)){
 				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS, 
@@ -2297,7 +2297,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Payable Advise Receipt Modes 
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -2334,7 +2334,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Receipt Mode case
 		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, "", 0);
 		if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())){
@@ -2371,57 +2371,57 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptDetailList.add(receiptDetail);
 			}
 		}
-		
+
 		receiptHeader.setReceiptDetails(receiptDetailList);
 		receiptHeader.setRemarks(this.remarks.getValue());
-		
+
 		// Prepare Allocation Details
 		List<String> allocateTypes = new ArrayList<>(getReceiptData().getAllocationMap().keySet());
 		ReceiptAllocationDetail allocationDetail = null;
 		for (int i = 0; i < allocateTypes.size(); i++) {
 			allocationDetail = new ReceiptAllocationDetail();
-			
+
 			String allocationType = allocateTypes.get(i);
 			long allocateTo = 0;
 			if(allocateTypes.get(i).contains("_")){
 				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
 				allocateTo = Long.valueOf(allocateTypes.get(i).substring(allocateTypes.get(i).indexOf("_")+1));
 			}
-			
+
 			allocationDetail.setAllocationID(i+1);
 			allocationDetail.setAllocationType(allocationType);
 			allocationDetail.setAllocationTo(allocateTo);
 			if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV) ||
 					StringUtils.equals(allocationType, RepayConstants.ALLOCATION_BOUNCE)){
-				
+
 				if(this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i)) != null){
 					CurrencyBox paidAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i));
 					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
 				}
-				
+
 				if(this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i)) != null){
 					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i));
 					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
 				}
 			}else{
-				
+
 				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i)) != null){
 					CurrencyBox paidAllocate = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i));
 					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
 				}
-				
+
 				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i)) != null){
 					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i));
 					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
 				}
 			}
-			
+
 			if(allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
 					allocationDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
 				receiptHeader.getAllocations().add(allocationDetail);
 			}
 		}
-		
+
 		// Setting Extra amount for Partial Settlement case
 		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
 			boolean isPriRcdFound = false;
@@ -2442,10 +2442,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptHeader.getAllocations().add(allocationDetail);
 			}
 		}
-		
+
 		excessMap = null;
 		getReceiptData().setReceiptHeader(receiptHeader);
-		
+
 		Date valueDate = DateUtility.getAppDate();
 		if(this.receivedDate.getValue() != null){
 			valueDate = this.receivedDate.getValue();
@@ -2456,7 +2456,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 		return receiptData;
 	}
-	
+
 	/**
 	 * Method for identifying the existing record
 	 * @param header
@@ -2493,25 +2493,25 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Making Single Set of Repay Schedule Details and sent to Rendering
 		Cloner cloner = new Cloner();
 		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
 		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
-			
+
 			RepayScheduleDetail curRpySchd = null;
 			if(rpySchdMap.containsKey(rpySchd.getSchDate())){
 				curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
-				
+
 				if(curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0){
 					curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
 				}
-				
+
 				if(curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0){
 					curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
 				}
-				
+
 				curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
 				curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
 				curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
@@ -2523,11 +2523,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}else{
 				curRpySchd = rpySchd;
 			}
-			
+
 			// Adding New Repay Schedule Object to Map after Summing data
 			rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
 		}
-		
+
 		doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
 		if(rpySchdMap.isEmpty()){
 			this.repaymentDetailsTab.setVisible(false);
@@ -2536,7 +2536,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.repaymentDetailsTab.setVisible(true);
 			this.repaymentDetailsTab.setSelected(true);
 		}
-		
+
 		this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
 		this.btnChangeReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
 		this.btnCalcReceipts.setDisabled(true);
@@ -2555,7 +2555,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onClick$btnChangeReceipt(Event event) throws InterruptedException, IllegalAccessException,
 	InvocationTargetException {
 		logger.debug("Entering" + event.toString());
-		
+
 		Date valueDate = DateUtility.getAppDate();
 		if(this.receivedDate.getValue() != null){
 			valueDate = this.receivedDate.getValue();
@@ -2575,12 +2575,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (tabsIndexCenter.getFellowIfAny("dashboardTab") != null) {
 			tabsIndexCenter.removeChild(tabsIndexCenter.getFellowIfAny("dashboardTab"));
 		}
-		
+
 		doEdit();
 		String rcptPurpose = getComboboxValue(this.receiptPurpose);
 		checkByReceiptPurpose(rcptPurpose, false);
 		checkByReceiptMode(getComboboxValue(this.receiptMode), false);
-		
+
 		// Excess amount set to readonly
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
 			CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_E");
@@ -2592,7 +2592,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			emiInAdvBox.setReadonly(isReadOnly("ReceiptDialog_ExcessAmount"));
 		}
-		
+
 		// Payable Amounts
 		List<Listitem> payableItems = this.listBoxExcess.getItems();
 		for (int i = 0; i < payableItems.size(); i++) {
@@ -2619,12 +2619,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}else{
-					
+
 					String allocationType = waivedBox.getId().replace("", "");
 					if(allocationType.contains("_")){
 						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
 					}
-					
+
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC) ||
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_LPFT)){
 						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
@@ -2649,7 +2649,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 			}
 		}
-		
+
 		// Checking Allocation method read only case
 		if(!isAllocateAllowed){
 			readOnlyComponent(true, this.allocationMethod);
@@ -2661,7 +2661,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
-		
+
 		if (this.receiptPurpose.getSelectedIndex() > 0) {
 			String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 			if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
@@ -2672,9 +2672,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 			}
 		}
-		
+
 		Events.sendEvent("onFulfill", this.receiptAmount, null);
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -2710,15 +2710,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 						getFinanceDetail().getFinanceCheckList(), true);
 			}
-			
+
 			if(!recReject){
 				doClearMessage();
 				doSetValidation();
 				doWriteComponentsToBean();
-				
+
 				FinReceiptData data = getReceiptData();
 				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
-				
+
 				int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 				BigDecimal totReceiptAmt = getTotalReceiptAmount(true);
 				BigDecimal feeAmount = BigDecimal.ZERO;
@@ -2728,7 +2728,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				totReceiptAmt = totReceiptAmt.add(feeAmount);
 				data.getReceiptHeader().setTotFeeAmount(feeAmount);
 				data.getReceiptHeader().setReceiptAmount(totReceiptAmt);
-				
+
 				for (FinReceiptDetail receiptDetail : receiptDetails) {
 					if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, data.getReceiptHeader().getReceiptMode()) && 
 							StringUtils.equals(receiptDetail.getPaymentType(), data.getReceiptHeader().getReceiptMode())){
@@ -2784,7 +2784,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				recSave = true;
 			}
 		}
-		
+
 		FinanceMain aFinanceMain = data.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		//Resetting Service Task ID's from Original State
 		aFinanceMain .setRoleCode(this.curRoleCode);
@@ -2795,7 +2795,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceMain.setRecordType(recordType);
 		aFinanceMain.setVersion(version);
 		aFinanceMain.setBefImage(befImage);
-		
+
 		// Receipt Header Details workflow fields
 		FinReceiptHeader receiptHeader = data.getReceiptHeader();
 		receiptHeader.setReference(aFinanceMain.getFinReference());
@@ -2804,13 +2804,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		receiptHeader.setRecordStatus(aFinanceMain.getRecordStatus());
 		receiptHeader.setWorkflowId(aFinanceMain.getWorkflowId());
-		
+
 		// Check Accounting Verification Required or not
 		boolean isAccVerificationReq = false;
 		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
 			for (int j = 0; j < receiptDetail.getRepayHeaders().size(); j++) {
-				
+
 				FinRepayHeader repayHeader = receiptDetail.getRepayHeaders().get(j);
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
 						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
@@ -2832,7 +2832,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aFinanceMain.setVersion(aFinanceMain.getVersion() + 1);
 				aFinanceMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				aFinanceMain.setNewRecord(true);
-				
+
 				aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				aReceiptData.getReceiptHeader().setVersion(1);
 				aReceiptData.getReceiptHeader().setNewRecord(true);
@@ -2893,16 +2893,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// save it to database
 		try {
-			
+
 			aFinanceMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
 			aReceiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(aFinanceMain);
-			
+
 			// Setting Receipt Mode to FinanceMain Object for Workflow Process
 			aFinanceMain.setReceiptMode(aReceiptData.getReceiptHeader().getReceiptMode());
 			aFinanceMain.setReceiptPurpose(aReceiptData.getReceiptHeader().getReceiptPurpose());
 			aFinanceMain.setReceiptModeStatus(aReceiptData.getReceiptHeader().getReceiptModeStatus());
 			aFinanceMain.setWaivedAmt(aReceiptData.getReceiptHeader().getWaviedAmt());
-			
+
 			if (doProcess(aReceiptData, tranType)) {
 
 				if (getFinanceSelectCtrl() != null) {
@@ -3022,7 +3022,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
 		}
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
-		
+
 		List<ValueLabel> epyMethodList = new ArrayList<>();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
@@ -3036,38 +3036,38 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), epyMethodList, "");
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		fillComboBox(this.receiptModeStatus, header.getReceiptModeStatus(), PennantStaticListUtil.getReceiptModeStatus(), "");
-		
+
 		// Receipt Mode Status Details
 		if(!isReadOnly("ReceiptDialog_receiptModeStatus") || this.receiptModeStatus.getSelectedIndex() > 0){
 			this.label_ReceiptDialog_ReceiptModeStatus.setVisible(true);
 			this.hbox_ReceiptModeStatus.setVisible(true);
 		}
-		
+
 		// Based on Status of Mode Details will be set to Visible
 		if(StringUtils.equals(header.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
-			
+
 			this.bounceDate.setValue(header.getBounceDate());
 			if(header.getBounceDate() == null){
 				this.bounceDate.setValue(DateUtility.getAppDate());
 			}
-			
+
 			ManualAdvise bounceReason = header.getManualAdvise();
 			if(bounceReason != null){
 				this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
 				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(),finFormatter));
 				this.bounceRemarks.setValue(bounceReason.getRemarks());
 			}
-			
+
 		} else if(StringUtils.equals(header.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)){
 			this.cancelReason.setValue(header.getCancelReason(), header.getCancelReasonDesc());
 		} else if(StringUtils.equals(header.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)){
 			this.realizationDate.setValue(header.getRealizationDate());
 		}
-		
+
 		resetModeStatus(header.getReceiptModeStatus());
 
 		// Receipt Mode Details , if FinReceiptDetails Exists
@@ -3076,7 +3076,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 		checkByReceiptPurpose(header.getReceiptPurpose() , false);
 		checkByReceiptMode(header.getReceiptMode(), false);
-		
+
 		// Separating Receipt Amounts based on user entry, if exists
 		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
@@ -3107,7 +3107,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Render Excess Amount Details
 		doFillExcessAmounts(receiptAmountsMap);
 		doFillPayableAmounts(receiptAmountsMap);
@@ -3157,7 +3157,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			visibleSchdTab = false;
 
 		}
-		
+
 		// On Loading Data Render for Schedule
 		if (getReceiptHeader() != null && getReceiptHeader().getReceiptDetails() != null
 				&& !getReceiptHeader().getReceiptDetails().isEmpty()) {
@@ -3202,12 +3202,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(true);
 		}
-		
+
 		this.recordStatus.setValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus());
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Excess Amount Details
 	 */
@@ -3268,7 +3268,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_EMIINADV)){
 				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_EMIINADV);
 			}
-			
+
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
 			CurrencyBox excessAmount = new CurrencyBox();
@@ -3301,7 +3301,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Payable Amount Details
 	 */
@@ -3353,7 +3353,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if(receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID())){
 				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID());
 			}
-			
+
 			lc = new Listcell();
 			lc.setStyle("text-align:right;");
 			CurrencyBox payableAmt = new CurrencyBox();
@@ -3386,7 +3386,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
 	 * @param header
@@ -3394,7 +3394,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	private void doFillAllocationDetail(List<ReceiptAllocationDetail> allocations, Map<String, BigDecimal> allocatePaidMap, boolean isUserAction, boolean isFeeConsiderOnAmount){
 		logger.debug("Entering");
-		
+
 		// Allocation Details & Manual Advises
 		Map<String, ReceiptAllocationDetail> allocationMap = new HashMap<>();
 		if(allocations != null && !allocations.isEmpty()){
@@ -3406,13 +3406,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		ReceiptAllocationDetail allocation = null;
 		List<String> allocateTypes = new ArrayList<>(getReceiptData().getAllocationMap().keySet());
 		Listitem item = null;
 		Listcell lc = null;
-		
+
 		// Get Receipt Purpose to Make Waiver amount Editable
 		doRemoveValidation();
 		doClearMessage();
@@ -3420,14 +3420,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String allocateMthd  = getComboboxValue(this.allocationMethod);
 		this.listBoxManualAdvises.getItems().clear();
 		this.listBoxPastdues.getItems().clear();
-		
+
 		BigDecimal totalDueAmount = BigDecimal.ZERO;
 		BigDecimal totalPaidAmount = BigDecimal.ZERO;
 		BigDecimal totalWaivedAmount = BigDecimal.ZERO;
 		BigDecimal totalAdvDueAmount = BigDecimal.ZERO;
 		BigDecimal totalAdvPaidAmount = BigDecimal.ZERO;
 		BigDecimal totalAdvWaivedAmount = BigDecimal.ZERO;
-		
+
 		if(allocateTypes != null && !allocateTypes.isEmpty()){
 
 			for (int i = 0; i < allocateTypes.size(); i++) {
@@ -3442,7 +3442,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(allocateTypes.get(i).contains("_")){
 					allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
 				}
-				
+
 				BigDecimal totalCalAmount = getReceiptData().getAllocationMap().get(allocateTypes.get(i));
 
 				item = new Listitem();
@@ -3500,7 +3500,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}else{
 					allocationPaid.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
-				
+
 				lc.appendChild(allocationPaid);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -3516,7 +3516,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}else{
 					allocationWaived.setId("AllocateWaived_"+allocateTypes.get(i));
 				}
-				
+
 				// Amount Setting
 				if(waivedAllocationMap != null && waivedAllocationMap.containsKey("AllocateWaived_"+allocateTypes.get(i))){
 					allocationWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocationMap.get("AllocateWaived_"+allocateTypes.get(i)), finFormatter));
@@ -3559,7 +3559,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				// Set ID to Item
 				item.setId("AllocateItem_"+allocateTypes.get(i));
-				
+
 				// Not editable for TDS Amount
 				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
 						StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
@@ -3582,7 +3582,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.listBoxPastdues.appendChild(item);
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS) || 
 							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)){
-						
+
 						// Nothing TO DO
 					}else{
 						totalDueAmount = totalDueAmount.add(totalCalAmount);
@@ -3595,17 +3595,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.allocationMethod);
 			this.allocationMethod.setSelectedIndex(0);
 		}
-		
+
 		// Creating Pastdue Totals to verify against calculations & for validation
 		if(totalDueAmount.compareTo(BigDecimal.ZERO) > 0){
 			addFooter(totalDueAmount, totalPaidAmount, totalWaivedAmount, finFormatter, true);
 		}
-		
+
 		// Creating Manual Advise Totals to verify against calculations & for validation
 		if(totalAdvDueAmount.compareTo(BigDecimal.ZERO) > 0){
 			addFooter(totalAdvDueAmount, totalAdvPaidAmount, totalAdvWaivedAmount, finFormatter, false);
 		}
-		
+
 		// Setting Valid Components to open based upon Remaining Balance
 		BigDecimal totReceiptAmount = getTotalReceiptAmount(isFeeConsiderOnAmount);
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaidAmount).subtract(totalAdvPaidAmount);
@@ -3615,9 +3615,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, finFormatter));
 		this.custPaid.setValue(PennantApplicationUtil.formateAmount(totalDueAmount.add(totalAdvDueAmount), finFormatter));
 		resetCustpaid(tempReceiptPurpose, totalDueAmount.add(totalAdvDueAmount), finFormatter);
-		
+
 		if(this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0){
-			
+
 			if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
 				readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
 				if(isUserAction){
@@ -3631,7 +3631,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS, PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 				}
 			}
-			
+
 		}else{
 			readOnlyComponent(true, this.excessAdjustTo);
 			readOnlyComponent(true, this.effScheduleMethod);
@@ -3640,10 +3640,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.effScheduleMethod.setSelectedIndex(0);
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Adding footer to show Totals
 	 * @param dueAmount
@@ -3653,7 +3653,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param isPastDue
 	 */
 	private void addFooter(BigDecimal dueAmount,BigDecimal paidAmount,BigDecimal waivedAmount, int formatter, boolean isPastDue){
-		
+
 		String compId = "allocation_"; 
 		if(!isPastDue){
 			compId = "manAdvise_"; 
@@ -3686,36 +3686,36 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		if(isPastDue){
 			this.listBoxPastdues.appendChild(item);
 		}else{
 			this.listBoxManualAdvises.appendChild(item);
 		}
 	}
-	
+
 	/**
 	 * Method for Resetting value of Customer To be Paid 
 	 * @param purpose
 	 * @param totCustPaid
 	 */
 	private void resetCustpaid(String purpose, BigDecimal totCustPaid, int formatter){
-		
+
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			
+
 			// Fetch Excess Amounts
 			BigDecimal totExAutoPaid = BigDecimal.ZERO;
 			if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
 				CurrencyBox excessBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_E");
 				totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(excessBox.getActualValue(), formatter));
 			}
-			
+
 			// Fetch EMI in Advance Amount
 			if(listBoxExcess.getFellowIfAny("ExcessAmount_A") != null){
 				CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 				totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(emiInAdvBox.getActualValue(), formatter));
 			}
-			
+
 			// Payable Amounts
 			List<Listitem> payableItems = this.listBoxExcess.getItems();
 			for (int i = 0; i < payableItems.size(); i++) {
@@ -3725,11 +3725,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					totExAutoPaid = totExAutoPaid.add(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), formatter));
 				}
 			}
-			
+
 			this.custPaid.setValue(PennantApplicationUtil.formateAmount(totCustPaid.subtract(totExAutoPaid), formatter));
 		}
 	}
-	
+
 	/**
 	 * Method for action Event of Changing Profit Amount/Schedule Profit on Schedule term
 	 * @param event
@@ -3738,47 +3738,47 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unchecked")
 	public void onExcessPayableAmountChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
-		
+
 		percentageFees(false);
-		
+
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		waivedAllocationMap = new HashMap<>();
 		paidAllocationMap = new HashMap<>();
-		
+
 		List<Object> list = (List<Object>) event.getData();
 		BigDecimal excessAmount = (BigDecimal) list.get(0);
 		CurrencyBox excessPaid = (CurrencyBox) list.get(1);
 		Label excessBal =  (Label) list.get(2);
-		
+
 		BigDecimal paidExcessAmt = PennantApplicationUtil.unFormateAmount(excessPaid.getActualValue(), finFormatter);
 		if(paidExcessAmt.compareTo(excessAmount) > 0){
 			paidExcessAmt = excessAmount;
 			excessPaid.setValue(PennantApplicationUtil.formateAmount(paidExcessAmt, finFormatter));
 		}
-		
+
 		BigDecimal bal = excessAmount.subtract(paidExcessAmt);
 		excessBal.setValue(PennantApplicationUtil.amountFormate(bal, finFormatter));
-		
+
 		// Setting Auto Allocation Process
 		setAutoAllocationPayments(true);
-		
+
 		logger.debug("Leaving");
 	}
 
 	private void percentageFees(boolean isFeeConsiderOnAmount) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		List<FinFeeDetail> finFeeDetails = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
 			feesRecalculation(true, isFeeConsiderOnAmount);
 		}else{
 			setAutoAllocationPayments(false);
 		}
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * @param event
@@ -3787,63 +3787,71 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unchecked")
 	public void onAllocatePaidChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
-		
+
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		List<Object> list = (List<Object>) event.getData();
 		BigDecimal pastdueAmt = (BigDecimal) list.get(0);
 		CurrencyBox allocatePaid = (CurrencyBox) list.get(1);
 		CurrencyBox allocateWaived = (CurrencyBox) list.get(2);
-		
+
 		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
 		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
 		if(paidAllocateAmt.compareTo(pastdueAmt.subtract(waivedAllocateAmt)) > 0){
 			paidAllocateAmt = pastdueAmt.subtract(waivedAllocateAmt);
 			allocatePaid.setValue(PennantApplicationUtil.formateAmount(paidAllocateAmt, finFormatter));
 		}
-		
+
 		BigDecimal tdsCalculated = BigDecimal.ZERO;
 		if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_NPFT)){
-			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 
-				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
-					BigDecimal tdsMultiplier = BigDecimal.ONE;
-					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-					/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			BigDecimal tdsMultiplier = BigDecimal.ONE;
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
-					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
-					}
+			if (getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
 
-					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
-					BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
-					if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
-						BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
-						if(actPftAdjust.compareTo(balPft) > 0){
-							actPftAdjust = balPft;
-						}
-					}
-					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
-					allocateTDSPaid.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
-					
-					CurrencyBox allocatePFTPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_PFT);
-					allocatePFTPaid.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
-
-					if(paidAllocationMap != null){ 
-						if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
-							paidAllocationMap.remove(allocateTDSPaid.getId());
-						}
-						if(paidAllocationMap.containsKey(allocatePFTPaid.getId())){
-							paidAllocationMap.remove(allocatePFTPaid.getId());
-						}
-						paidAllocationMap.put(allocateTDSPaid.getId(), tdsCalculated);
-						paidAllocationMap.put(allocatePFTPaid.getId(), actPftAdjust);
-					}
+			BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
+			if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
+				BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
+				if(actPftAdjust.compareTo(balPft) > 0){
+					actPftAdjust = balPft;
 				}
 			}
+
+			// TDS Allocation Components
+			CurrencyBox allocateTDSPaid = null;
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
+				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
+					allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
+					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
+					allocateTDSPaid.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
+				}
+			}
+
+			// Profit Allocation Components
+			CurrencyBox allocatePFTPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_PFT);
+			allocatePFTPaid.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
+
+			if(paidAllocationMap != null){ 
+
+				if(allocateTDSPaid != null){
+					if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
+						paidAllocationMap.remove(allocateTDSPaid.getId());
+					}
+					paidAllocationMap.put(allocateTDSPaid.getId(), tdsCalculated);
+				}
+
+				if(paidAllocationMap.containsKey(allocatePFTPaid.getId())){
+					paidAllocationMap.remove(allocatePFTPaid.getId());
+				}
+				paidAllocationMap.put(allocatePFTPaid.getId(), actPftAdjust);
+			}
 		}
-		
+
 		// Setting to Map for future usage on Rendering
 		Map<String, BigDecimal> allocateTypePaidMap = null;
 		if(paidAllocationMap != null){ 
@@ -3857,13 +3865,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				allocateTypePaidMap.put(keys.get(i).replace("AllocatePaid_", ""), paidAllocationMap.get(keys.get(i)));
 			}
 		}
-		
+
 		// Render total List box on Change of Amounts
 		doFillAllocationDetail(null, allocateTypePaidMap, true, true);
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * @param event
@@ -3872,21 +3880,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unchecked")
 	public void onAllocateWaivedChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
-		
+
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		List<Object> list = (List<Object>) event.getData();
 		BigDecimal pastdueAmt = (BigDecimal) list.get(0);
 		CurrencyBox allocatePaid = (CurrencyBox) list.get(1);
 		CurrencyBox allocateWaived = (CurrencyBox) list.get(2);
-		
+
 		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
 		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
 		if(waivedAllocateAmt.compareTo(pastdueAmt.subtract(paidAllocateAmt)) > 0){
 			waivedAllocateAmt = pastdueAmt.subtract(paidAllocateAmt);
 			allocateWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocateAmt, finFormatter));
 		}
-		
+
 		// Setting to Map for future usage on Rendering
 		if(waivedAllocationMap != null){ 
 			if(waivedAllocationMap.containsKey(allocateWaived.getId())){
@@ -3894,104 +3902,95 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 			waivedAllocationMap.put(allocateWaived.getId(), waivedAllocateAmt);
 		}
-		
+
 		BigDecimal tdsCalculated = BigDecimal.ZERO;
 		if(StringUtils.equals(allocateWaived.getId(), "AllocateWaived_"+RepayConstants.ALLOCATION_NPFT)){
-			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 
-				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS) != null){
-					BigDecimal tdsMultiplier = BigDecimal.ONE;
-					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-					/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			BigDecimal tdsMultiplier = BigDecimal.ONE;
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
-					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
-					}
+			if (getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
 
-					CurrencyBox allocateTDSWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS);
-					BigDecimal actPftAdjust = waivedAllocateAmt.multiply(tdsMultiplier);
-					if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
-						BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
-						if(paidAllocationMap.containsKey("AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
-							balPft = balPft.subtract(paidAllocationMap.get("AllocatePaid_"+RepayConstants.ALLOCATION_PFT));
-						}
-						if(actPftAdjust.compareTo(balPft) > 0){
-							actPftAdjust = balPft;
-						}
-					}
-					tdsCalculated = actPftAdjust.subtract(waivedAllocateAmt);
-					allocateTDSWaived.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
-					
-					CurrencyBox allocatePFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_PFT);
-					allocatePFTWaived.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
-
-					if(waivedAllocationMap != null){ 
-						if(waivedAllocationMap.containsKey(allocateTDSWaived.getId())){
-							waivedAllocationMap.remove(allocateTDSWaived.getId());
-						}
-						if(waivedAllocationMap.containsKey(allocatePFTWaived.getId())){
-							waivedAllocationMap.remove(allocatePFTWaived.getId());
-						}
-						waivedAllocationMap.put(allocateTDSWaived.getId(), tdsCalculated);
-						waivedAllocationMap.put(allocatePFTWaived.getId(), actPftAdjust);
-					}
-				}
-			}else{
-				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_PFT) != null){
-					CurrencyBox allocatePFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_PFT);
-					allocatePFTWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocateAmt, finFormatter));
+			BigDecimal actPftAdjust = waivedAllocateAmt.multiply(tdsMultiplier);
+			if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
+				BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
+				if(actPftAdjust.compareTo(balPft) > 0 || (balPft.subtract(actPftAdjust)).compareTo(BigDecimal.ONE) <= 1){
+					actPftAdjust = balPft;
 				}
 			}
-		}
-		
-		if(StringUtils.equals(allocateWaived.getId(), "AllocateWaived_"+RepayConstants.ALLOCATION_PFT)){
-			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 
+			CurrencyBox allocateTDSWaived = null;
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS) != null){
-					BigDecimal tdsMultiplier = BigDecimal.ONE;
-					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-					/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+					allocateTDSWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS);
+				}
+				tdsCalculated = actPftAdjust.subtract(waivedAllocateAmt);
+				allocateTDSWaived.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
+			}
+
+			CurrencyBox allocatePFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_PFT);
+			allocatePFTWaived.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
+
+			if(waivedAllocationMap != null){ 
+				if(allocateTDSWaived != null){
+					if(waivedAllocationMap.containsKey(allocateTDSWaived.getId())){
+						waivedAllocationMap.remove(allocateTDSWaived.getId());
+					}
+					waivedAllocationMap.put(allocateTDSWaived.getId(), tdsCalculated);
+				}
+				if(waivedAllocationMap.containsKey(allocatePFTWaived.getId())){
+					waivedAllocationMap.remove(allocatePFTWaived.getId());
+				}
+				waivedAllocationMap.put(allocatePFTWaived.getId(), actPftAdjust);
+			}
+		}
+
+		if(StringUtils.equals(allocateWaived.getId(), "AllocateWaived_"+RepayConstants.ALLOCATION_PFT)){
+
+			BigDecimal tdsMultiplier = BigDecimal.ONE;
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
-					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
-					}
+			if (getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
 
-					CurrencyBox allocateTDSWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS);
-					BigDecimal actPftAdjust = waivedAllocateAmt.divide(tdsMultiplier , 0, RoundingMode.HALF_DOWN);
-					if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_NPFT) != null){
-						BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_NPFT);
-						if(paidAllocationMap.containsKey("AllocatePaid_"+RepayConstants.ALLOCATION_NPFT)){
-							balPft = balPft.subtract(paidAllocationMap.get("AllocatePaid_"+RepayConstants.ALLOCATION_NPFT));
-						}
-						if(actPftAdjust.compareTo(balPft) > 0){
-							actPftAdjust = balPft;
-						}
-					}
-					tdsCalculated = waivedAllocateAmt.subtract(actPftAdjust);
-					allocateTDSWaived.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
-					
-					CurrencyBox allocateNPFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_NPFT);
-					allocateNPFTWaived.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
+			BigDecimal actPftAdjust = waivedAllocateAmt.divide(tdsMultiplier , 0, RoundingMode.HALF_DOWN);
+			if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_NPFT) != null){
+				BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_NPFT);
+				if(actPftAdjust.compareTo(balPft) > 0){
+					actPftAdjust = balPft;
+				}
+			}
 
-					if(waivedAllocationMap != null){ 
-						if(waivedAllocationMap.containsKey(allocateTDSWaived.getId())){
-							waivedAllocationMap.remove(allocateTDSWaived.getId());
-						}
-						if(waivedAllocationMap.containsKey(allocateNPFTWaived.getId())){
-							waivedAllocationMap.remove(allocateNPFTWaived.getId());
-						}
-						waivedAllocationMap.put(allocateTDSWaived.getId(), tdsCalculated);
-						waivedAllocationMap.put(allocateNPFTWaived.getId(), actPftAdjust);
+			CurrencyBox allocateTDSWaived = null;
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
+				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS) != null){
+					allocateTDSWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_TDS);
+				}
+				tdsCalculated = waivedAllocateAmt.subtract(actPftAdjust);
+				allocateTDSWaived.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
+			}
+
+			CurrencyBox allocateNPFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_NPFT);
+			allocateNPFTWaived.setValue(PennantApplicationUtil.formateAmount(actPftAdjust, finFormatter));
+
+			if(waivedAllocationMap != null){ 
+				if(allocateTDSWaived != null){
+					if(waivedAllocationMap.containsKey(allocateTDSWaived.getId())){
+						waivedAllocationMap.remove(allocateTDSWaived.getId());
 					}
+					waivedAllocationMap.put(allocateTDSWaived.getId(), tdsCalculated);
 				}
-			}else{
-				
-				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_NPFT) != null){
-					CurrencyBox allocateNPFTWaived = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+RepayConstants.ALLOCATION_NPFT);
-					allocateNPFTWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocateAmt, finFormatter));
+				if(waivedAllocationMap.containsKey(allocateNPFTWaived.getId())){
+					waivedAllocationMap.remove(allocateNPFTWaived.getId());
 				}
+				waivedAllocationMap.put(allocateNPFTWaived.getId(), actPftAdjust);
 			}
 		}
 		
@@ -4079,8 +4078,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(prvMaxReceivedDate == null){
 					prvMaxReceivedDate = getFinanceMain().getFinStartDate();
 				}
+				Date curBussDate = DateUtility.getAppDate();
+				if(DateUtility.compare(prvMaxReceivedDate, curBussDate) > 0){
+					curBussDate = prvMaxReceivedDate;
+				}
 				this.receivedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"), true, 
-						prvMaxReceivedDate, DateUtility.getAppDate(), true));
+						prvMaxReceivedDate, curBussDate, true));
 			}
 		}
 		
@@ -4579,6 +4582,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
+				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
+				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				for (RepayScheduleDetail rsd : repaySchdList) {
 
 					//Set Repay Amount Codes
@@ -4586,7 +4591,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
-					amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
 
 					// Penalties
@@ -4756,11 +4760,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}else{
 						payType = "PB_";
 					}
+					//Paid Amounts
 					amount = BigDecimal.ZERO;
 					if(movementMap.containsKey(payType + movement.getFeeTypeCode() + "_P")){
 						amount = movementMap.get(payType + movement.getFeeTypeCode() + "_P");
 					}
 					movementMap.put(payType + movement.getFeeTypeCode() + "_P",  amount.add(movement.getPaidAmount()));
+					
+					// Waiver Amounts
+					amount = BigDecimal.ZERO;
+					if(movementMap.containsKey(payType + movement.getFeeTypeCode() + "_W")){
+						amount = movementMap.get(payType + movement.getFeeTypeCode() + "_W");
+					}
+					movementMap.put(payType + movement.getFeeTypeCode() + "_W",  amount.add(movement.getWaivedAmount()));
 				}
 
 				// Accounting Postings Process Execution

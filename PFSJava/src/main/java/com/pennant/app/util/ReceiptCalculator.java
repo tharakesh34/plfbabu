@@ -685,7 +685,11 @@ public class ReceiptCalculator implements Serializable {
 					}
 					waivedAllocationMap.put(allocate.getAllocationType(), waivedAmount.add(allocate.getWaivedAmount()));
 				}
-				totalWaivedAmt = totalWaivedAmt.add(allocate.getWaivedAmount());
+				
+				if(!(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS) || 
+						StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PFT))){
+					totalWaivedAmt = totalWaivedAmt.add(allocate.getWaivedAmount());
+				}
 			}
 			
 			// Setting Total Waived amount to Header details for Information Only
@@ -725,14 +729,16 @@ public class ReceiptCalculator implements Serializable {
 			
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
 			BigDecimal actualReceiptAmt = receiptDetail.getAmount();
-			if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
-				if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
-					eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
-					totalReceiptAmt = BigDecimal.ZERO;
-				}else{
-					totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
-					actualReceiptAmt = actualReceiptAmt.subtract(eventFeeBal);
-					eventFeeBal = BigDecimal.ZERO;
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+				if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
+					if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
+						eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
+						totalReceiptAmt = BigDecimal.ZERO;
+					}else{
+						totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
+						actualReceiptAmt = actualReceiptAmt.subtract(eventFeeBal);
+						eventFeeBal = BigDecimal.ZERO;
+					}
 				}
 			}
 
@@ -796,14 +802,14 @@ public class ReceiptCalculator implements Serializable {
 
 								ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
 								if(advise != null){
-									
+
 									String allocateType = "";
 									if(advise.getBounceID() > 0){
 										allocateType = RepayConstants.ALLOCATION_BOUNCE;
 									}else{
 										allocateType = RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID();
 									}
-									
+
 									if(paidAllocationMap.containsKey(allocateType)){
 										BigDecimal advAllocateBal = paidAllocationMap.get(allocateType);
 										if(advAllocateBal.compareTo(BigDecimal.ZERO) > 0){
@@ -819,7 +825,7 @@ public class ReceiptCalculator implements Serializable {
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 												advAmountPaid = advAmountPaid.add(balAdvise);
 												paidAllocationMap.put(allocateType, advAllocateBal.subtract(balAdvise));
-												
+
 												// Save Movements for Manual Advise
 												ManualAdviseMovements movement = new ManualAdviseMovements();
 												movement.setAdviseID(advise.getAdviseID());
@@ -833,6 +839,18 @@ public class ReceiptCalculator implements Serializable {
 										}
 									}
 								}
+							}
+						}
+
+						// Event Action Fee Deduction from 
+						if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
+							if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
+								eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
+								totalReceiptAmt = BigDecimal.ZERO;
+							}else{
+								totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
+								actualReceiptAmt = actualReceiptAmt.subtract(eventFeeBal);
+								eventFeeBal = BigDecimal.ZERO;
 							}
 						}
 					}
