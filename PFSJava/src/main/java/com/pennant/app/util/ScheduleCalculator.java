@@ -2885,8 +2885,11 @@ public class ScheduleCalculator {
 		 * BigDecimal(termsPerYear));
 		 */
 
-		cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-		cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
+		// In OD Facility cases, schedule may not exists before disbursements
+		if(!repayDateList.isEmpty()){
+			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
+		}
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
