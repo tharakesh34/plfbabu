@@ -375,7 +375,7 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(), custHeader.getHeaderId());
 
 			if (mapping != null) {
 				if (mapping.isNewRecord()) {
@@ -404,7 +404,7 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(), groupHeader.getHeaderId());
 			if (mapping != null) {
 
 				if (mapping.isNewRecord()) {
@@ -601,7 +601,7 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(), custHeader.getHeaderId());
 
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
@@ -620,7 +620,7 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finMain.getFinReference(), groupHeader.getHeaderId());
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
