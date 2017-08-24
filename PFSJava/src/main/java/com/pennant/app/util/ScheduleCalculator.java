@@ -4686,7 +4686,7 @@ public class ScheduleCalculator {
 
 			if (!isRateStepOnly) {
 				closeBalPercentage = closeBalPercentage
-						.subtract(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100)));
+						.subtract(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100), 0 , RoundingMode.HALF_DOWN));
 				finMain.setCompareExpectedResult(round(openPrincipal.multiply(closeBalPercentage)));
 			}
 			stepIntRate = stepDetail.getRateMargin();
@@ -4780,7 +4780,7 @@ public class ScheduleCalculator {
 		BigDecimal adjAmount = BigDecimal.ZERO;
 		BigDecimal adjAmountAbsolute = BigDecimal.ZERO;
 		BigDecimal maxAlwDif = new BigDecimal(iTerms);
-		maxAlwDif = maxAlwDif.divide(new BigDecimal(2)).subtract(BigDecimal.ONE);
+		maxAlwDif = maxAlwDif.divide(new BigDecimal(2),0, RoundingMode.HALF_DOWN).subtract(BigDecimal.ONE);
 		maxAlwDif = roundCeiling(maxAlwDif);
 
 		// It is rare case and happen only when last step size is 1
@@ -4946,7 +4946,7 @@ public class ScheduleCalculator {
 
 				if (isSetRepayIntructions) {
 					if (!isRateStepOnly) {
-						stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100)));
+						stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100), 0 , RoundingMode.HALF_DOWN));
 						stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
 								finMain.getRoundingTarget());
 						setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), finMain.getMaturityDate(), stepEMI,
@@ -6246,7 +6246,7 @@ public class ScheduleCalculator {
 		for (int i = 0; i < stepSize; i++) {
 			FinanceStepPolicyDetail stepDetail = stepPolicyDetails.get(i);
 
-			closeBalPercentage = closeBalPercentage.subtract(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100)));
+			closeBalPercentage = closeBalPercentage.subtract(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100), 0 , RoundingMode.HALF_DOWN));
 			finMain.setCompareExpectedResult(round(openPrincipal.multiply(closeBalPercentage)));
 
 			iTerms = 0;

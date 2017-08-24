@@ -3918,7 +3918,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			BigDecimal actPftAdjust = waivedAllocateAmt.multiply(tdsMultiplier);
 			if(getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT) != null){
 				BigDecimal balPft = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_PFT);
-				if(actPftAdjust.compareTo(balPft) > 0 || (balPft.subtract(actPftAdjust)).compareTo(BigDecimal.ONE) <= 1){
+				if(actPftAdjust.compareTo(balPft) > 0 || (balPft.subtract(actPftAdjust)).compareTo(BigDecimal.ONE) <= -1){
 					actPftAdjust = balPft;
 				}
 			}
