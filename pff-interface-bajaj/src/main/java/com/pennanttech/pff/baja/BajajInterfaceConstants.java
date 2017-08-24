@@ -20,8 +20,6 @@ public class BajajInterfaceConstants {
 	public static String			autoDisbFileLoaction;
 	public static boolean			autoMandateResFileJob;
 
-	public static DataEngineStatus	DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_HDFC_IMPORT");
-	public static DataEngineStatus	DISB_OTHER_IMPORT_STATUS	= new DataEngineStatus("DISB_OTHER_IMPORT");
 	public static DataEngineStatus	MANDATE_INMPORT_STATUS		= new DataEngineStatus("MANDATES_IMPORT");
 	
 

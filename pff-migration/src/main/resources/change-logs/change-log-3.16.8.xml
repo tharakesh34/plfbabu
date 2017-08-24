@@ -96,7 +96,20 @@
 			]]>
 		</sql>
 	</changeSet>
-		<changeSet id="4" author="Jayant"  dbms="oracle">
+	<changeSet id="4.3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update DATA_ENGINE_COLUMN set CONSTRAINTTYPE = 'CHECK:E,R' 
+				where TABLEID IN (select ID from DATA_ENGINE_TABLE 
+				where CONFIGID IN (select ID from data_engine_config 
+				where Name IN('DISB_HDFC_IMPORT', 'DISB_OTHER_IMPORT'))) and Name = 'STATUS';
+				
+				update DATA_ENGINE_TABLE set FILTER = 'STATUS=:AC' where CONFIGID IN (select ID from data_engine_config where Name = 'DISB_HDFC_IMPORT');
+				update DATA_ENGINE_TABLE set FILTER = 'STATUS=:AC' where CONFIGID IN (select ID from data_engine_config where Name = 'DISB_OTHER_IMPORT');
+			]]>
+		</sql>
+	</changeSet>	
+	<changeSet id="4" author="Jayant"  dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
@@ -105,12 +118,11 @@
 	    </sql>
 	</changeSet>
 
-
-<changeSet id="5" author="Prakash">
-		<addColumn tableName="ReportFilterFields">
-			<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
-		</addColumn>
-</changeSet>
+	<changeSet id="5" author="Prakash">
+			<addColumn tableName="ReportFilterFields">
+				<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
+			</addColumn>
+	</changeSet>
 
 	<changeSet id="6" author="Prakash">
 		<createView replaceIfExists="true" viewName="ReportFilterFields_View">

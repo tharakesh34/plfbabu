@@ -1,9 +1,21 @@
 package com.pennanttech.interfacebajaj;
 
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.bajaj.services.DisbursementResponseFileService;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +30,6 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
-
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.bajaj.services.DisbursementResponseFileService;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.excecution.ProcessExecution;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.ConfigUtil;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 
 public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger logger = Logger.getLogger(DisbursementDataImportCtrl.class);
@@ -58,6 +55,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
+	private DataEngineStatus	DISB_OTHER_IMPORT_STATUS	= new DataEngineStatus("DISB_OTHER_IMPORT");
+	private DataEngineStatus	DISB_STP_IMPORT_STATUS		= new DataEngineStatus("DISB_HDFC_IMPORT");
 	
 	@Autowired
 	private DisbursementResponseFileService disbursementResponseFileService;
@@ -103,14 +102,14 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			String configName = config.getName();
 			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
 				if ("DISB_HDFC_IMPORT".equals(configName)) {
-					BajajInterfaceConstants.DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
+					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
 					valueLabel = new ValueLabel(configName, "HDFC Bank Disbursement Response");
-					doFillPanel(config, BajajInterfaceConstants.DISB_STP_IMPORT_STATUS);
+					doFillPanel(config, DISB_STP_IMPORT_STATUS);
 					menuList.add(valueLabel);
 				} else {
-					BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
+					DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
 					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
-					doFillPanel(config, BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS);
+					doFillPanel(config, DISB_OTHER_IMPORT_STATUS);
 					menuList.add(valueLabel);
 				}
 			}
@@ -215,9 +214,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			try {
 				Thread thread = null;
 				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-					thread = new Thread(new ProcessData(userId, BajajInterfaceConstants.DISB_STP_IMPORT_STATUS));
+					thread = new Thread(new ProcessData(userId, DISB_STP_IMPORT_STATUS));
 				} else {
-					thread = new Thread(new ProcessData(userId, BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS));
+					thread = new Thread(new ProcessData(userId, DISB_OTHER_IMPORT_STATUS));
 				}
 
 				thread.start();
