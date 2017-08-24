@@ -1075,8 +1075,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
 
-		valueParm[0] = String.valueOf(aVASRecording.getVasReference());
-		errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":"+ valueParm[0];
+		valueParm[0] = String.valueOf(aVASRecording.getProductCode());
+		errParm[0] = PennantJavaUtil.getLabel("label_VASCode") + ":"+ valueParm[0];
 
 		if(getFinVasRecordingDialogCtrl().getVasRecordings() != null && !getFinVasRecordingDialogCtrl().getVasRecordings().isEmpty()){
 			for (int i = 0; i < getFinVasRecordingDialogCtrl().getVasRecordings().size(); i++) {
