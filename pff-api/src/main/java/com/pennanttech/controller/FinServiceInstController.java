@@ -709,7 +709,8 @@ public class FinServiceInstController extends SummaryDetailService {
 
 				// Call Schedule calculator for add disbursement
 				if(finScheduleData.getErrorDetails() == null || finScheduleData.getErrorDetails().isEmpty()) {
-					finScheduleData = addDisbursementService.getAddDisbDetails(finScheduleData, amount, BigDecimal.ZERO, false);
+					finScheduleData = addDisbursementService.getAddDisbDetails(finScheduleData, amount, BigDecimal.ZERO, false,
+							FinanceConstants.FINSER_EVENT_ADDDISB);
 				}
 
 				if (finScheduleData.getErrorDetails() != null) {
