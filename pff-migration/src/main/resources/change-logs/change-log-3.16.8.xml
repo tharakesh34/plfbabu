@@ -19,7 +19,8 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
+
 	<changeSet id="1" author="Prasad">
 	<comment>Data mart Loan wise repayment scheudle view</comment>
 	<createView viewName="DM_LOANWISE_REPAYSCHEDULE_VIEW  " replaceIfExists="true">	 
@@ -104,4 +105,23 @@
 	    </sql>
 	</changeSet>
 
+
+<changeSet id="5" author="Prakash">
+		<addColumn tableName="ReportFilterFields">
+			<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
+		</addColumn>
+</changeSet>
+
+	<changeSet id="6" author="Prakash">
+		<createView replaceIfExists="true" viewName="ReportFilterFields_View">
+	           SELECT     T1.ReportId, T1.FieldID, T1.FieldName, T1.FieldType, T1.FieldLabel, T1.FieldDBName, T1.AppUtilMethodName, 
+                      T1.ModuleName, T1.LovHiddenFieldMethod, T1.LovTextFieldMethod, T1.MultiSelectSearch, 
+                      T1.FieldLength, T1.FieldMaxValue, T1.FieldMinValue, T1.SeqOrder, T1.Mandatory, 
+                      T1.FieldConstraint, T1.FieldErrorMessage, T1.WhereCondition, T1.StaticValue, T1.FieldWidth,
+                       T1.FilterRequired, T1.DefaultFilter, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+                        T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.filterFileds
+				FROM         ReportFilterFields T1
+	      
+</createView>
+</changeSet>
 </databaseChangeLog>
