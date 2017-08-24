@@ -8,4 +8,10 @@
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 	
+<changeSet id="1" author="Prakash">
+	<addColumn tableName="AdtReportFilterFields">
+		<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
+	</addColumn>
+</changeSet>
+	
 </databaseChangeLog>
