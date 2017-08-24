@@ -10,7 +10,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 public interface AddDisbursementService {
 
 	FinScheduleData getAddDisbDetails(FinScheduleData finScheduleData, BigDecimal amount, BigDecimal addFeeFinance,
-			boolean alwAssetUtilize);
+			boolean alwAssetUtilize, String moduleDefiner);
 
 	AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction);
 }

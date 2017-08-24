@@ -14866,12 +14866,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 
 				//Setting Finance Step Policy Details to Finance Schedule Data Object
-				if (getStepDetailDialogCtrl() != null) {
-					validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
-					this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
-				}
-
-				//Setting Finance Step Policy Details to Finance Schedule Data Object
 				if (stepDetailDialogCtrl != null) {
 					validFinScheduleData.setStepPolicyDetails(stepDetailDialogCtrl.getFinStepPoliciesList());
 					this.oldVar_finStepPolicyList = stepDetailDialogCtrl.getFinStepPoliciesList();

@@ -1832,6 +1832,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("isWIF", isWIF);
+		map.put("moduleDefiner", moduleDefiner);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDisbursementDialog.zul",

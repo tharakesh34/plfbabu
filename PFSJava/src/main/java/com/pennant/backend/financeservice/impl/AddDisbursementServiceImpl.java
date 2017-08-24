@@ -46,7 +46,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	 *@return FinScheduleData 
 	 */
 	public FinScheduleData getAddDisbDetails(FinScheduleData finScheduleData, BigDecimal amount,
-			BigDecimal addFeeFinance, boolean alwAssetUtilize) {
+			BigDecimal addFeeFinance, boolean alwAssetUtilize, String moduleDefiner) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = null;
@@ -58,7 +58,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		}
 		
 		// Step POS Case , setting Step Details to Object
-		if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+		if(StringUtils.isNotEmpty(moduleDefiner) && 
+				StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finScheduleData.getFinReference(),
 					"", false));
 		}

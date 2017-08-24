@@ -135,6 +135,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	
 	private Date lastPaidDate = null;
 	private BigDecimal grcEndDisbAmount = BigDecimal.ZERO;
+	private String moduleDefiner = "";
 
 	// not auto wired vars
 	private FinScheduleData finScheduleData; // overhanded per param
@@ -194,6 +195,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (arguments.containsKey("isWIF")) {
 				this.disbursementAccount.setVisible(false);
+			}
+			if (arguments.containsKey("moduleDefiner")) {
+				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			// READ OVERHANDED params !
@@ -692,7 +696,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		// Service details calling for Schedule calculation
 		aFinScheduleData = addDisbursementService.getAddDisbDetails(aFinScheduleData,
-				finServiceInstruction.getAmount(), addingFeeToFinance, this.alwAssetUtilize.isChecked());		
+				finServiceInstruction.getAmount(), addingFeeToFinance, this.alwAssetUtilize.isChecked(), moduleDefiner);		
 		aFinScheduleData.getFinanceMain().resetRecalculationFields();	
 		
 		// Show Error Details in Schedule Maintenance
