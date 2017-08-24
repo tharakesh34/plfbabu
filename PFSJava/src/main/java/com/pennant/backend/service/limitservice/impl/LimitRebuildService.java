@@ -110,7 +110,7 @@ public class LimitRebuildService implements LimitRebuild {
 	public void processCustomerRebuild(long custID) {
 
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custID, "");
-		if (limitHeader != null) {
+		if (limitHeader != null && limitHeader.isActive()) {
 			//get the limit details
 			long headerId = limitHeader.getHeaderId();
 			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
@@ -151,7 +151,7 @@ public class LimitRebuildService implements LimitRebuild {
 	public void processCustomerGroupRebuild(long rebuildGroupID, boolean removedFromGroup, boolean addedNewlyToGroup) {
 
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(rebuildGroupID, "");
-		if (limitHeader != null) {
+		if (limitHeader != null && limitHeader.isActive()) {
 			//get the limit details
 			long headerId = limitHeader.getHeaderId();
 			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
@@ -241,7 +241,7 @@ public class LimitRebuildService implements LimitRebuild {
 			prvLimitHeaderID = prvlimitHeader.getHeaderId();
 		}
 
-		if (limitHeader != null) {
+		if (limitHeader != null && limitHeader.isActive()) {
 			//get the limit details
 			long headerId = limitHeader.getHeaderId();
 			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
