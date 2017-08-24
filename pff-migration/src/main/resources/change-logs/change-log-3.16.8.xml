@@ -43,7 +43,7 @@
     WHERE DISBONSCHDATE=0 and repayamount>0
 	</createView>
 	</changeSet>
-	<changeSet id="2" author="Jayant">
+	<changeSet id="2" author="Jayant" dbms="oracle">
 	    <createProcedure>
 	        CREATE OR REPLACE PROCEDURE SP_INVALIDVIEWS IS
 	        begin 
@@ -95,4 +95,13 @@
 			]]>
 		</sql>
 	</changeSet>
+		<changeSet id="4" author="Jayant"  dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
+
 </databaseChangeLog>
