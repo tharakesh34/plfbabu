@@ -10,7 +10,7 @@
 	
 <changeSet id="1" author="Prakash">
 	<addColumn tableName="AdtReportFilterFields">
-		<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
+		<column name="FilterFileds" type="VARCHAR(300)" />
 	</addColumn>
 </changeSet>
 	

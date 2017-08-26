@@ -120,7 +120,7 @@
 
 	<changeSet id="5" author="Prakash">
 			<addColumn tableName="ReportFilterFields">
-				<column name="FilterFileds" type="VARCHAR2(300 BYTE)" />
+				<column name="FilterFileds" type="VARCHAR(300)" />
 			</addColumn>
 	</changeSet>
 
@@ -150,4 +150,12 @@
 	</sql>
 
 </changeSet>
+<changeSet id="8" author="Jayant"  dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
