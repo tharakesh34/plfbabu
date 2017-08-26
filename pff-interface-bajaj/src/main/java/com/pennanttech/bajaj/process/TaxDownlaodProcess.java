@@ -364,8 +364,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setCompanyCode(entityCode);
 
 		customerGSTIN = rs.getString("CUSTOMERGSTIN");
-		String taxCustCif = rs.getString("TAXCUSTCIF");
-		if (StringUtils.trimToNull(taxCustCif) != null) {
+		if (StringUtils.trimToNull(customerGSTIN) != null) {
 			taxDownload.setRegisteredCustomer(CON_YES);
 			taxDownload.setCustomerId(rs.getLong("TAXCUSTCIF"));
 			taxDownload.setCustomerName(rs.getString("TAXCUSTSHRTNAME"));
