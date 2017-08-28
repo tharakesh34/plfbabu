@@ -214,9 +214,16 @@ public class FinServiceInstController extends SummaryDetailService {
 			for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
 				finFeeDetail.setFinEvent(eventCode);
 				financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
+				finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
 			}
 			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
-		}
+
+			if(financeDetail.isStp()) {
+				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					feeDetail.setWorkflowId(0);
+				}
+			}
+		}	
 	}
 
 	/**

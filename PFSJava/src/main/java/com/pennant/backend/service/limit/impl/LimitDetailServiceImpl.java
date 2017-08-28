@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -1402,11 +1403,17 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
 		Date lineMaxExpDate = DateUtility.getAppDate();
+		Map<Long, Long> structureMap = new HashMap<Long, Long>();
 		if (limitDetails != null) {
 			for (LimitDetails detail : limitDetails) {
-
-				// validate structureDetailId from LimitDetails
 				long structureId = detail.getLimitStructureDetailsID();
+				if(!structureMap.containsKey(structureId)) {
+					structureMap.put(structureId, structureId);
+				} else {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", null)));
+					return auditDetail;
+				}
+				// validate structureDetailId from LimitDetails
 				int count = getLimitDetailDAO().getLimitDetailByStructureId(structureId, "");
 				if (count <= 0) {
 					String[] valueParm = new String[1];
@@ -1453,6 +1460,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			}
 		}
+		
+		// For Garbage collection
+		structureMap = null;
 
 		// validate Limit Structure details
 		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO().getLimitStructureDetailById(
