@@ -57,7 +57,7 @@ public class EodService {
 			getReceiptPaymentService().processrReceipts(custEODEvent);
 		}
 		
-		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID());
+		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(),true);
 		//customer Date update
 		String newCustStatus = null;
 		if (custEODEvent.isUpdCustomer()) {

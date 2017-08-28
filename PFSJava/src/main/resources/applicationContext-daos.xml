@@ -7825,6 +7825,7 @@
 		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
 		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="limitTransactionDetailDAO"

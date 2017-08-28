@@ -69,6 +69,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
@@ -118,6 +119,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private LimitReferenceMappingDAO limitReferenceMappingDAO; 
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	private LimitRebuild limitRebuild;
+	private FinanceMainDAO financeMainDAO; 
 
 	protected long userID;
 	private String userLangauge;
@@ -396,6 +398,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (rebuild) {
 			if (limitHeader.getCustomerGroup() != 0 && limitHeader.getCustomerGroup() != Long.MIN_VALUE) {
 				limitRebuild.processCustomerGroupRebuild(limitHeader.getCustomerGroup(), false, true);
+			}
+			
+			if (limitHeader.getCustomerId() != 0 && limitHeader.getCustomerId() != Long.MIN_VALUE) {
+				//check customer active finance before calling the rebuild
+			
+				int count = getFinanceMainDAO().getFinCountByCustId(limitHeader.getCustomerId());
+				if (count >0 ) {
+					limitRebuild.processCustomerRebuild(limitHeader.getCustomerId(), false);
+				}
 			}
 		}
 		
@@ -1621,6 +1632,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	public void setLimitRebuild(LimitRebuild limitRebuild) {
 		this.limitRebuild = limitRebuild;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 
