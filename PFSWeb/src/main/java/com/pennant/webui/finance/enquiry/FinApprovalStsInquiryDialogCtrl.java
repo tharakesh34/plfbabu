@@ -67,6 +67,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Notes;
@@ -432,9 +433,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			btn_Notes.setAttribute("data", auditTransaction);
 			ComponentsCtrl.applyForward(btn_Notes, "onClick=onNotesItemClicked");
-			this.listBoxFinApprovalStsInquiry.appendChild(item);
-
-			
+			if(!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				this.listBoxFinApprovalStsInquiry.appendChild(item);
+			}
 		}
 	}
  
