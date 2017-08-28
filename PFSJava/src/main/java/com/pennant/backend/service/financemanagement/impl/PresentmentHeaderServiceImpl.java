@@ -485,7 +485,19 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			for (PresentmentDetail detail : detailList) {
 				if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
 					try {
-						long receiptId = doCreateReceipts(detail, userDetails, header);
+						AuditHeader auditHeader = doCreateReceipts(detail, userDetails, header);
+
+						FinReceiptData finReceipt = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+						long receiptId = finReceipt.getReceiptHeader().getReceiptID();
+						if (receiptId == 0 || receiptId == Long.MIN_VALUE) {
+							if (!auditHeader.isNextProcess()) {
+								String errMsg = getErrorMsg(auditHeader);
+								throw new Exception(errMsg);
+							} else {
+								throw new Exception(PennantJavaUtil.getLabel("label_FinReceiptHeader_Not_Created"));
+							}
+						}
+
 						presentmentHeaderDAO.updateReceptId(detail.getId(), receiptId);
 						idList.add(detail.getId());
 					} catch (Exception e) {
@@ -510,7 +522,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 	// Creating the receipts If Schedule data is lessthan or equal to Application date.
-	private long doCreateReceipts(PresentmentDetail detail, LoggedInUser userDetails, PresentmentHeader header) throws Exception {
+	private AuditHeader doCreateReceipts(PresentmentDetail detail, LoggedInUser userDetails, PresentmentHeader header) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -572,13 +584,34 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			finReceiptData = receiptService.calculateRepayments(finReceiptData, true);
 			AuditHeader auditHeader = getAuditHeader(finReceiptData, PennantConstants.TRAN_WF);
 			auditHeader = receiptService.doApprove(auditHeader);
-			FinReceiptData finReceipt = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			logger.debug(Literal.LEAVING);
-			return finReceipt.getReceiptHeader().getReceiptID();
+			
+			return auditHeader;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
+	}
+
+	private String getErrorMsg(AuditHeader auditHeader) {
+		String msg = "";
+		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+			for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+
+		if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+			for (ErrorDetails errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+		return msg;
 	}
 
 	private AuditHeader getAuditHeader(FinReceiptData repayData, String tranType) {
