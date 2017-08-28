@@ -476,7 +476,8 @@ public class SAPGLProcess extends DataEngineExport {
 		sql.append(" :PRCTR,");
 		sql.append(" ZUONR,");
 		sql.append(" SGTXT");
-		sql.append(" FROM TRANSACTION_DETAIL_REPORT_TEMP WHERE ROWNUM =:ROWNUM");
+		sql.append(" FROM TRANSACTION_DETAIL_REPORT");
+		sql.append(" WHERE ID = (select MAX(ID) from TRANSACTION_DETAIL_REPORT)");
 
 		parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("ENTITY", entity);
@@ -489,7 +490,6 @@ public class SAPGLProcess extends DataEngineExport {
 		//parameterSource.addValue("BUPLA", parameters.get("BUPLA"));
 		parameterSource.addValue("KOSTL", parameters.get("KOSTL"));
 		parameterSource.addValue("PRCTR", parameters.get("PRCTR"));
-		parameterSource.addValue("ROWNUM", 1);
 
 		try {
 			parameterJdbcTemplate.update(sql.toString(), parameterSource);
