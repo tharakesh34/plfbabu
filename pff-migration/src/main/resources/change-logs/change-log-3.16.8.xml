@@ -472,7 +472,70 @@ Insert into REPORTFILTERFIELDS values
 ((select reportid from reportconfiguration where menuitemcode='menu_Item_TransactionEntryReport'),1,'Transaction Date','DATE','Transaction Date','txndate','---Select----',null,null,null,0,0,0,0,1,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,'');
 	</sql>
 	</changeSet>
-	<changeSet id="19" author="Jayant"  dbms="oracle">
+	<changeSet id="19" author="Prasad">
+	    <createView viewName="RPT_TRANSACTIONENTRY_REPORT" replaceIfExists="true">
+	        Select Loan_Ref,TxnDate,Particlulars,TxnAmount,Event,Ordby,ccyMinorccyunits,ccyEditField from (
+  Select finreference Loan_Ref, finApprovedDate TxnDate,'Disbursed Amount' Particlulars,finamount TxnAmount,'ADDDISB' Event,1 Ordby
+  from financemain T1 where finamount!=0
+  union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Deduct from Disbursement Amount', ActualAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where ActualAmount!=0 and FeeSchedulemethod='DISB'
+   union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Add to Loan Amount ', ActualAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where ActualAmount!=0 and FeeSchedulemethod='POSP'
+      union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Schedule to First Installment Amount', ActualAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where ActualAmount!=0 and FeeSchedulemethod='STFI'
+       union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Schedule to Entire Tenor', ActualAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where ActualAmount!=0 and FeeSchedulemethod='STET'
+        union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Schedule to N Terms', ActualAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where ActualAmount!=0 and FeeSchedulemethod='STNI'
+          union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Paid Amount', PaidAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where PaidAmount!=0 and FeeSchedulemethod='PBCU'
+                union all
+  Select T2.finreference, T2.lastmnton,feetypedesc${call.concatenate}' Waived', WaivedAmount, Finevent,2 Ordby
+  from financemain T1 inner join 
+       finfeedetail T2 on T1.finreference =T2.Finreference
+       inner join feetypes T3 on T2.Feetypeid = T3.Feetypeid
+      where WaivedAmount!=0 and FeeSchedulemethod='WVEB'   
+  
+  union all
+   Select T1.Finreference,T1.lastmnton,'Payment to customer vide '${call.concatenate}PaymentType,
+    AmtToBeReleased,'DISBINS' Event,3 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where (Status!='CANCELED' or Status is null) and AmtToBeReleased!=0
+  union all
+  Select REFERENCE,T1.lastmnton,'Receipt',Amount,'REPAY' Event,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID 	
+       Where (T1.ReceiptModeStatus Not IN ('C') or T1.ReceiptModeStatus is null)
+       and PAYMENTTYPE NOT in ('EXCESS') and T1.lastmnton is not null and Amount!=0
+       	)T1  inner join finpftdetails t2 on t2.Finreference=t1.Loan_Ref
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where (TxnAmount!=0 )
+	    </createView>
+	</changeSet>
+	<changeSet id="20" author="Jayant"  dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
