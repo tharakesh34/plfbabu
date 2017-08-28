@@ -465,4 +465,18 @@ Insert into DATAMART_STAGE_MAPPING (FIELDTYPE,FIELDCODE,FIELDCODEVALUE_CHAR,FIEL
 	        end;
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="18" author="pruthvi" >
+	<sql>	
+	delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_TransactionEntryReport');
+delete from reportconfiguration where menuitemcode='menu_Item_TransactionEntryReport';
+
+ 
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from reportconfiguration),'Transaction Entry','Transaction Entry',1,'TransactionEntryReport','pfsDatasource',1,'menu_Item_TransactionEntryReport',4,1000,null,null,null,null,null,null,0,current_timestamp,1,1);
+
+Insert into REPORTFILTERFIELDS values 
+((select reportid from reportconfiguration where menuitemcode='menu_Item_TransactionEntryReport'),1,'Transaction Date','DATE','Transaction Date','txndate','---Select----',null,null,null,0,0,0,0,1,1,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,'');
+	</sql>
+	</changeSet>
 </databaseChangeLog>
