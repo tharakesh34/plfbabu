@@ -2285,6 +2285,30 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 			return 0;
 		}
 	}
+	
+	@Override
+	public int getFinCountByCustId(long custID) {
+		logger.debug("Entering");
+		
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setCustID(custID);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+		
+		selectSql.append(" From FinanceMain");
+		
+		selectSql.append(" Where CustID =:CustID AND FinIsActive = 1");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
 
 	@Override
 	public int getFinanceCountByMandateId(long mandateID) {
