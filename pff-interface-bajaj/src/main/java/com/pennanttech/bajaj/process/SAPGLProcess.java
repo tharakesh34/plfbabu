@@ -471,7 +471,7 @@ public class SAPGLProcess extends DataEngineExport {
 		sql.append(" :UMSKZ,");
 		sql.append(" :WRBTR,");
 		sql.append(" :GSBER,");
-		sql.append(" :BUPLA,");
+		sql.append(" BUPLA,");
 		sql.append(" :KOSTL,");
 		sql.append(" :PRCTR,");
 		sql.append(" ZUONR,");
@@ -486,7 +486,7 @@ public class SAPGLProcess extends DataEngineExport {
 		parameterSource.addValue("UMSKZ", parameters.get("UMSKZ"));
 		parameterSource.addValue("WRBTR", WRBTR);
 		parameterSource.addValue("GSBER", parameters.get("GSBER"));
-		parameterSource.addValue("BUPLA", parameters.get("BUPLA"));
+		//parameterSource.addValue("BUPLA", parameters.get("BUPLA"));
 		parameterSource.addValue("KOSTL", parameters.get("KOSTL"));
 		parameterSource.addValue("PRCTR", parameters.get("PRCTR"));
 		parameterSource.addValue("ROWNUM", 1);
