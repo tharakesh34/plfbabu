@@ -2268,6 +2268,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customer.setRecordType("");
+				customer.setVersion(getCustomerDAO().getCustomerByCIF(customer.getCustCIF(),"").getVersion()+1);
 				getCustomerDAO().update(customer, "");
 			}
 
