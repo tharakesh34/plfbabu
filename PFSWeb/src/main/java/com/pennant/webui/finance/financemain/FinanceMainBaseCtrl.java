@@ -2603,16 +2603,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accountingDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			}
 			break;
-		case AssetConstants.UNIQUE_ID_DOCUMENTDETAIL:
-			documentDetailDialogCtrl.doSetLabels(getFinBasicDetails());
-			String finReference = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference();
-			List<DocumentDetails> documentDetails = getFinanceDetailService().getDocumentDetails(finReference,
-					FinanceConstants.FINSER_EVENT_ORG);
-			if (documentDetails != null && !documentDetails.isEmpty()) {
-				documentDetailDialogCtrl.doFillDocumentDetails(documentDetails);
-			}
-
-			break;
 		case AssetConstants.UNIQUE_ID_AGREEMENT:
 			this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 			if (customerDialogCtrl != null && customerDialogCtrl.getCustomerDetails() != null) {

@@ -279,9 +279,9 @@ public class DocumentDetailsDAOImpl extends BasisNextidDaoImpl<DocumentDetails> 
 		sql.append(" from DocumentDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where ReferenceId = :ReferenceId AND DocModule =:DocModule ");
-		if(StringUtils.isNotBlank(finEvent)){
+		/*if(StringUtils.isNotBlank(finEvent)){
 			sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )");
-		}
+		}*/
 		logger.debug("selectSql: " + sql.toString());
 
 		DocumentDetails documentDetails = new DocumentDetails();
