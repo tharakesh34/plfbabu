@@ -136,10 +136,8 @@
 											<row id="row_Vasfee">
 												<label id="label_Fee"
 													value="${c:l('label_VASRecordingDialog_Fee.value')}" />
-												<hbox>
-													<currencyBox
-														id="fee" width="120px" />
-												</hbox>
+												<currencyBox id="fee"
+													width="120px" />
 												<label
 													id="label_FeePaymentMode"
 													value="${c:l('label_VASRecordingDialog_FeePaymentMode.value')}" />

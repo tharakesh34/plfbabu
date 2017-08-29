@@ -716,7 +716,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setCalculateOn(PennantConstants.List_Select);
 						finFeeDetail.setAlwDeviation(true);
 						finFeeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
-						finFeeDetail.setAlwModifyFee(vASConfiguration.isAllowFeeToModify());
+						finFeeDetail.setAlwModifyFee(false);
 						finFeeDetail.setAlwModifyFeeSchdMthd(true);
 						
 						if(!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)){
@@ -1258,7 +1258,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (!this.fee.isReadonly()) {
 			this.fee.setConstraint(new PTDecimalValidator(Labels.getLabel("label_VASRecordingDialog_Fee.value"), 2,
-					true, false));
+					false, false));
 		}
 
 		if (!this.renewalFee.isReadonly()) {
@@ -2248,7 +2248,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.fulfilOfficerId.setTextBoxWidth(145);
 		this.referralId.setTextBoxWidth(145);
 		this.postingAgainst.setDisabled(true);
-		this.fee.setProperties(true, getCcyFormat());
+		this.fee.setProperties(false, getCcyFormat());
 		this.renewalFee.setProperties(false, getCcyFormat());
 		this.renewalFee.setWidth("100px");
 		logger.debug("Leaving");
