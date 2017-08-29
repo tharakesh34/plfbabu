@@ -74,7 +74,6 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -764,7 +763,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				if (validateDocumentExistance(aFinCovenantType.getCovenantType())) {
-					MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+					MessageUtil.showError(Labels.getLabel("document_AlreadyCaptured"));
 					return;
 				}
 				aFinCovenantType.setNewRecord(false);
