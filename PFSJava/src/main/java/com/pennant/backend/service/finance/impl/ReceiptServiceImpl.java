@@ -1535,26 +1535,34 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
-		if(eodProgressCount > 0){
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+		if (eodProgressCount > 0) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetails(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
+		
+		boolean isPresentment = false;
 		List<FinReceiptDetail> ReceiptDetailList = repayData.getReceiptHeader().getReceiptDetails();
 		Date receivedDate = DateUtility.getAppDate();
 		for (FinReceiptDetail receiptDetail : ReceiptDetailList) {
 			if (StringUtils.equals(repayData.getReceiptHeader().getReceiptMode(), receiptDetail.getPaymentType())) {
+				if (RepayConstants.PAYTYPE_PRESENTMENT.equals(receiptDetail.getPaymentType())) {
+					isPresentment = true;
+				}
 				receivedDate = receiptDetail.getReceivedDate();
 			}
 		}
-		Date prvMaxReceivedDate = getMaxReceiptDate(financeMain.getFinReference());
-		if (prvMaxReceivedDate != null && receivedDate != null) {
-			if (DateUtility.compare(prvMaxReceivedDate, receivedDate) > 0) {
-				valueParm[0] = DateUtil.formatToLongDate(prvMaxReceivedDate);
-				errParm[0] = valueParm[0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						PennantConstants.KEY_FIELD, "60211", errParm, valueParm), usrLanguage));
+
+		if (!isPresentment) {
+			Date prvMaxReceivedDate = getMaxReceiptDate(financeMain.getFinReference());
+			if (prvMaxReceivedDate != null && receivedDate != null) {
+				if (DateUtility.compare(prvMaxReceivedDate, receivedDate) > 0) {
+					valueParm[0] = DateUtil.formatToLongDate(prvMaxReceivedDate);
+					errParm[0] = valueParm[0];
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60211", errParm, valueParm), usrLanguage));
+				}
 			}
 		}
+		
 		//Checking For Commitment , Is it In Maintenance Or not
 		if (StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)
 				&& "doApprove".equals(method) && StringUtils.isNotEmpty(financeMain.getFinCommitmentRef())) {
