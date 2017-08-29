@@ -60,12 +60,13 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-@XmlType(propOrder = { "feeTypeCode", "feeTypeDesc", "alwDeviation", "maxWaiverPerc" })
+@XmlType(propOrder = { "feeTypeCode", "feeTypeDesc", "finEvent", "alwDeviation", "maxWaiverPerc" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeFees extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private String finType = null;
 	private boolean originationFee;
+	@XmlElement(name="feeEvent")
 	private String finEvent;
 	private String finEventDesc;
 	private long feeTypeID = Long.MIN_VALUE;

@@ -1096,6 +1096,17 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
 
+		FinReceiptDetail finReceiptDetail = finServiceInst.getReceiptDetail();
+		if (finReceiptDetail == null) {
+			finReceiptDetail = new FinReceiptDetail();
+			finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			finServiceInst.setReceiptDetail(finReceiptDetail);
+		} else {
+			if(finReceiptDetail.getReceivedDate() == null) {
+				finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+			}
+		}
+		
 		FinanceDetail response = null;
 		try {
 			
