@@ -311,7 +311,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-		customerDetails.setCustID(customer.getCustID());
+		customerDetails.getCustomer().setCustID(customer.getCustID());
+		customerDetails.getCustomer().setCustCtgCode(customer.getCustCtgCode());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 
 		AuditDetail auditDetail = customerService.doCustomerValidations(auditHeader);

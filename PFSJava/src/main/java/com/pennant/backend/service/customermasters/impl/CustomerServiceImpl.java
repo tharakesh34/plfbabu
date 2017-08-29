@@ -550,13 +550,6 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			}
 		}
 
-		Customer customer = customerDetails.getCustomer();
-		customer.setCustCtgCode(customerDetails.getCustCtgCode());
-		customer.setCustDftBranch(customerDetails.getCustDftBranch());
-		customer.setCustCoreBank(customerDetails.getCustCoreBank());
-		customer.setCustBaseCcy(customerDetails.getCustBaseCcy());
-		customer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
-		customer.setCustID(customerDetails.getCustID());
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 

@@ -481,7 +481,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		customer.setCustCIF(cifId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
-		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId");
+		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
 		if(type.contains("View")){
 			selectSql.append(" ,LovDescCustStsName");
 		}

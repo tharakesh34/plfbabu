@@ -785,11 +785,27 @@ public class CustomerController {
 		Customer prvCustomer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
 		Customer curCustomer = customerDetails.getCustomer();
 		curCustomer.setCustCIF(customerDetails.getCustCIF());
-		curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
-		curCustomer.setCustCtgCode(customerDetails.getCustCtgCode());
-		curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
-		curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
-		curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+		if (StringUtils.isNotBlank(customerDetails.getCustCoreBank())) {
+			curCustomer.setCustCoreBank(customerDetails.getCustCoreBank());
+		} else {
+			curCustomer.setCustCoreBank(prvCustomer.getCustCoreBank());
+		}
+		if (StringUtils.isNotBlank(customerDetails.getCustDftBranch())) {
+			curCustomer.setCustDftBranch(customerDetails.getCustDftBranch());
+		} else {
+			curCustomer.setCustDftBranch(prvCustomer.getCustDftBranch());
+		}
+		if (StringUtils.isNotBlank(customerDetails.getCustBaseCcy())) {
+			curCustomer.setCustBaseCcy(customerDetails.getCustBaseCcy());
+		} else {
+			curCustomer.setCustBaseCcy(prvCustomer.getCustBaseCcy());
+		}
+		if (StringUtils.isNotBlank(customerDetails.getPrimaryRelationOfficer())) {
+			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+		} else {
+			curCustomer.setCustRO1(prvCustomer.getCustRO1());
+		}
+		curCustomer.setCustCtgCode(prvCustomer.getCustCtgCode());
 		curCustomer.setCustID(prvCustomer.getCustID());
 		curCustomer.setCustCRCPR(prvCustomer.getCustCRCPR());
 		curCustomer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
