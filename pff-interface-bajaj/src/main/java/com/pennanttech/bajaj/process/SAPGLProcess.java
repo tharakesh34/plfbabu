@@ -392,7 +392,7 @@ public class SAPGLProcess extends DataEngineExport {
 					toRange = toRange + pageSize;
 					update(pageItr);
 
-					if (pagesInserted && pages > 1) {
+					if (pagesInserted && totalTransactions > mainRecords) {
 						saveTransactionSummary(pageItr, rs.getString("ENTITY"));
 						pagesInserted = false;
 					}
@@ -415,6 +415,7 @@ public class SAPGLProcess extends DataEngineExport {
 		});
 	}
 	
+	@SuppressWarnings("unused")
 	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr, String entity) {
 		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
 
@@ -431,24 +432,18 @@ public class SAPGLProcess extends DataEngineExport {
 
 		return map;
 	}
+	
+	private BigDecimal getSummaryByLink(int pageItr) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select SUM(CASE WHEN BSCHL= 40 THEN -1*WRBTR ELSE WRBTR END) from TRANSACTION_DETAIL_REPORT");
+		sql.append(" WHERE LINK = ?");
+
+		return jdbcTemplate.queryForObject(sql.toString(), new Object[] { pageItr }, BigDecimal.class);
+	}
 
 	
 	private void saveTransactionSummary(int pageItr, String entity) throws SQLException {
-		Map<Integer, BigDecimal> map = getSummaryAmounts(pageItr, entity);
-
-		BigDecimal summaryAmount = BigDecimal.ZERO;
-		BigDecimal debitAmount = BigDecimal.ZERO;
-		BigDecimal creditAmount = BigDecimal.ZERO;
-
-		if (map.containsKey(40)) {
-			debitAmount = map.get(40);
-		}
-
-		if (map.containsKey(50)) {
-			creditAmount = map.get(50);
-		}
-
-		summaryAmount = debitAmount.subtract(creditAmount);
+		BigDecimal summaryAmount = getSummaryByLink(pageItr);
 
 		String BSCHL = "";
 		BigDecimal WRBTR = summaryAmount;
@@ -487,7 +482,6 @@ public class SAPGLProcess extends DataEngineExport {
 		parameterSource.addValue("UMSKZ", parameters.get("UMSKZ"));
 		parameterSource.addValue("WRBTR", WRBTR);
 		parameterSource.addValue("GSBER", parameters.get("GSBER"));
-		//parameterSource.addValue("BUPLA", parameters.get("BUPLA"));
 		parameterSource.addValue("KOSTL", parameters.get("KOSTL"));
 		parameterSource.addValue("PRCTR", parameters.get("PRCTR"));
 
