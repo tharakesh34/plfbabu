@@ -745,4 +745,12 @@ PREFERRED_ELIGIBILITY,NULL PREFERRED_CARD_ACCEPTANCE,NULL PREFERRED_CARD_LIMIT,C
 			INNER JOIN BMTBANKDETAIL T7 ON T7.BANKCODE=T6.BANKCODE
 	    </createView>
 </changeSet>
+<changeSet id="23" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
