@@ -1410,7 +1410,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				if(!structureMap.containsKey(structureId)) {
 					structureMap.put(structureId, structureId);
 				} else {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", null)));
+					String[] valueParm = new String[1];
+					valueParm[0] = limitHeader.getLimitStructureCode();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", valueParm)));
 					return auditDetail;
 				}
 				// validate structureDetailId from LimitDetails
