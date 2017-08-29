@@ -2255,7 +2255,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceMainExtService().saveFinanceMainExtDetails(financeMainExt);
 		}
 
-		if (isFeeReExecute) {
+		if (isFeeReExecute && !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) && 
+				!this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 			String message = Labels.getLabel("label_FeeExecute");
 			MessageUtil.showMessage(message);
 		}
