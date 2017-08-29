@@ -539,6 +539,7 @@
 		<menuItem id="menu_Item_CustomerCreationInFinOneStatus" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DAILYDISBURSALREPORT"/>
 		<menuItem id="menu_Item_PresentationDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DAILYDISBURSALREPORT"/>
 		<menuItem id="menu_Item_AccountMappingReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DAILYDISBURSALREPORT"/>
+		<menuItem id="menu_Item_TransactionEntryReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_DAILYDISBURSALREPORT"/>
 		  
 		<!-- <menu id="menu_Category_AdminReports" rightName="menuCat_AdminReports">
 			<menuItem id="menu_Item_RoleGroups" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_RoleGroups" />
