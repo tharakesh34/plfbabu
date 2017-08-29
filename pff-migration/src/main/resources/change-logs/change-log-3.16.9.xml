@@ -511,7 +511,7 @@ PREFERRED_ELIGIBILITY,NULL PREFERRED_CARD_ACCEPTANCE,NULL PREFERRED_CARD_LIMIT,C
 	</changeSet>
 	<changeSet id="13" author="Prasad">
 	    <sql>
-			Update DM_INSURANCE_DETAILS set INSURANCE_TYPE=(select hostfeetypecode from feetypes where hostfeetypecode is not null and rownum=1 ) where INSURANCE_TYPE is null;
+			Update DM_INSURANCE_DETAILS set INSURANCE_TYPE=(select SUBSTR(hostfeetypecode,1,15) from feetypes where hostfeetypecode is not null and rownum=1 ) where INSURANCE_TYPE is null;
 	    </sql>
 	</changeSet>
 	<changeSet id="14" author="Prasad">
