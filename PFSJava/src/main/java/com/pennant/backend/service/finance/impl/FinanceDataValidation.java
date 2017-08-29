@@ -508,11 +508,11 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
 						return errorDetails;
 					}
-				} else if (detail.getFee().compareTo(BigDecimal.ZERO) < 1) {
+				} else if (detail.getFee().compareTo(BigDecimal.ZERO) < 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "Fee";
+					valueParm[0] = "VAS Fee";
 					valueParm[1] = "Zero";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 					return errorDetails;
 				}
 

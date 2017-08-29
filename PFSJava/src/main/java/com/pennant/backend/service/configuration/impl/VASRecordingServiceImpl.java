@@ -1848,11 +1848,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-			} else if (vasRecording.getFee().compareTo(BigDecimal.ZERO) < 1) {
+			} else if (vasRecording.getFee().compareTo(BigDecimal.ZERO) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Fee";
 				valueParm[1] = "Zero";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
