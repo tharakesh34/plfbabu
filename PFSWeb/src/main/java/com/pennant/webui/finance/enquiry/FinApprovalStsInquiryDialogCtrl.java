@@ -328,13 +328,19 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		long diffInMilliseconds = 0;
 		Listitem item;
 		AuditTransaction auditTransaction = null;
-		
+		String prvUsrName = null;
+		String prvRoleCode = null;
 		for (int i = 0; i < auditTransactionsList.size(); i++) {
 			auditTransaction = auditTransactionsList.get(i);
-			if("Saved".equals(auditTransaction.getRecordStatus()) 
-					&& i < auditTransactionsList.size()-1){
-				continue;
-			} 
+			
+			if(auditTransaction.getUsrName().equals(prvUsrName) && 
+					auditTransaction.getRoleCode().equals(prvRoleCode)) {
+				continue; 
+			}
+			prvUsrName = auditTransaction.getUsrName();
+			prvRoleCode = auditTransaction.getRoleCode();
+			
+			
 			item = new Listitem();
 			Listcell lc;
 			date1 = auditTransaction.getAuditDate().toString();
