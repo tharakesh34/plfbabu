@@ -105,7 +105,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" SELECT FINREFERENCE,");
 		sql.append(" FM.FINTYPE,");
 		sql.append(" FINBRANCH,");
-		sql.append(" FINAPPROVEDDATE,");
+		sql.append(" FINCONTRACTDATE,");
 		sql.append(" FINAMOUNT,");
 		sql.append(" FINASSETVALUE,");
 		sql.append(" DUEBUCKET,");
@@ -118,7 +118,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" MATURITYDATE,");
 		sql.append(" CLOSINGSTATUS,");
 		sql.append(" FINSTARTDATE,");
-		sql.append(" FM.CUSTID,");
+		sql.append(" LC.CUSTCIF,");
 		sql.append(" CUSTSHRTNAME,");
 		sql.append(" BANKREFNO,");
 		sql.append(" BRANCHDESC,");
@@ -128,7 +128,6 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" PM.PROMOTIONDESC,");
 		sql.append(" M.MANDATETYPE");
 		sql.append(" FROM FINANCEMAIN FM");
-		
 		sql.append(" INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
@@ -163,30 +162,30 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 						cd.setAgreementId(Long.parseLong("0"));
 					}
 
-					cd.setAgreementDate(rs.getDate("FINAPPROVEDDATE"));
+					cd.setAgreementDate(rs.getDate("FINCONTRACTDATE"));
 					cd.setProductFlag(rs.getString("FINTYPE"));
 					cd.setAmtFin(getAmount(rs, "FINASSETVALUE"));
 					cd.setAssetCost(getAmount(rs, "FINASSETVALUE"));
 					cd.setClosureDate(rs.getDate("MATURITYDATE"));
 					cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
 					cd.setDerivedBucket(rs.getInt("DUEBUCKET"));
-					cd.setCustomerId(rs.getLong("CUSTID"));
+					cd.setCustomerId(rs.getLong("CUSTCIF"));  
 					cd.setCustomerName(rs.getString("CUSTSHRTNAME"));
 					cd.setMaturityDate(rs.getDate("MATURITYDATE"));
 					cd.setLoanEmi(getAmount(rs, "FIRSTREPAY"));
 
-					int monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"));
+					int monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"), true);
 					cd.setSanctionedTenure(monts);
 
 					cd.setSchemeId(rs.getInt("PROMOTIONID"));
 					cd.setSchemeName(rs.getString("PROMOTIONDESC"));
 
-					cd.setFlatRate(getAmount(rs, "EFFECTIVERATEOFRETURN"));
+					cd.setFlatRate(getAmount(rs, "REPAYPROFITRATE"));
 					if (cd.getFlatRate().compareTo(new BigDecimal(999)) > 0) {
 						cd.setFlatRate(new BigDecimal(999));
 					}
 					
-					cd.setEffectiveRate(getAmount(rs, "REPAYPROFITRATE"));
+					cd.setEffectiveRate(getAmount(rs, "EFFECTIVERATEOFRETURN"));
 					if (cd.getEffectiveRate().compareTo(new BigDecimal(999)) > 0) {
 						cd.setEffectiveRate(new BigDecimal(999));
 					}
@@ -778,13 +777,13 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setInterestReceived(getAmount(rs, "TOTALPFTPAID"));
 					cd.setPrincipalDue(getAmount(rs, "ODPRINCIPAL"));
 					cd.setPrincipalReceived(getAmount(rs, "TOTALPRIPAID"));
-					cd.setTotalInterest(getAmount(rs, "TOTALPFTBAL"));
+					cd.setTotalInterest(getAmount(rs, "TOTALPFTSCHD"));
 					cd.setSohBalance(getAmount(rs, "TOTALPRIBAL").add(getAmount(rs, "TOTALPFTBAL")));
 					cd.setNoOfEmiOs(rs.getInt("NOINST") - rs.getInt("NOPAIDINST"));
 					cd.setNoOfUnbilledEmi(rs.getInt("FUTUREINST"));
 					cd.setBalanceUmfc(getAmount(rs, "TOTALPFTSCHD"));
 					cd.setBalanceUmfc(cd.getBalanceUmfc().subtract(getAmount(rs, "TOTALPFTPAID")));
-					cd.setBalanceUmfc(cd.getBalanceUmfc().subtract(getAmount(rs, "ACRTILLLBD")));
+					//cd.setBalanceUmfc(cd.getBalanceUmfc().subtract(getAmount(rs, "ACRTILLLBD")));
 
 					map.put(rs.getString("FINREFERENCE"), cd);
 				}
