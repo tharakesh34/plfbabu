@@ -1109,6 +1109,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			doStoreServiceIds(afinanceDetail.getFinScheduleData().getFinanceMain());
+			doStoreInitValues();
+			
 			setDialog(DialogType.EMBEDDED);
 
 		} catch (UiException e) {
@@ -1118,6 +1120,18 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			throw e;
 		}
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Stores the initial values in memory variables. <br>
+	 */
+	private void doStoreInitValues() {
+		logger.debug("Entering");
+
+		this.oldVar_finRepayMethod = this.finRepayMethod.getSelectedIndex();
+		
+		logger.debug("Leaving");
+		
 	}
 
 	/**
@@ -2255,8 +2269,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceMainExtService().saveFinanceMainExtDetails(financeMainExt);
 		}
 
-		if (isFeeReExecute && !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) && 
-				!this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
 			MessageUtil.showMessage(message);
 		}
