@@ -569,7 +569,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			receiptHeader.getReceiptDetails().add(finReceiptDetail);
 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			Date receivedDate = DateUtility.getDBDate(DateUtility.formatDate(detail.getSchDate(), PennantConstants.DBDateFormat));
 
 			finReceiptData.setReceiptHeader(receiptHeader);
 			finReceiptData.setFinanceDetail(financeDetail);
@@ -578,7 +577,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 			// calculate allocations
 			Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(
-					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), receivedDate, receiptHeader.getReceiptPurpose(), true);
+					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), detail.getSchDate(), receiptHeader.getReceiptPurpose(), true);
 			finReceiptData.setAllocationMap(allocationMap);
 
 			finReceiptData = receiptService.calculateRepayments(finReceiptData, true);

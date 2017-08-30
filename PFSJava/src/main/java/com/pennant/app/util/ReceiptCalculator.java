@@ -781,9 +781,13 @@ public class ReceiptCalculator implements Serializable {
 				}
 
 				// Skip if repayment date after Current Business date
-				if (schdDate.compareTo(valueDate) > 0 && 
-						!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				if (schdDate.compareTo(valueDate) > 0 &&  !StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 					break;
+				}
+			 
+				// If Presentment Process, only Presentment Date schedule should be effected.
+				if (isPresentment && (DateUtility.compare(valueDate, schdDate) != 0)) {
+					continue;
 				}
 				
 				// Find out early payment/ partial Settlement schedule term and amount
@@ -1625,13 +1629,18 @@ public class ReceiptCalculator implements Serializable {
 			FinanceScheduleDetail prvSchd = scheduleDetails.get(i-1);
 			Date schdDate = curSchd.getSchDate();
 
-			// Skip if repayment date after Current Business date
+			// Skip if repayments date after Current Business date
 			if (schdDate.compareTo(valueDate) > 0 && 
 					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
 			}
 			
 			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) &&  curSchd.getPresentmentId() > 0 && !isPresentment){
+				continue;
+			}
+			
+			// If Presentment Process, only Presentment Date schedule should be effected.
+			if (isPresentment && (DateUtility.compare(valueDate, schdDate) != 0)) {
 				continue;
 			}
 			
