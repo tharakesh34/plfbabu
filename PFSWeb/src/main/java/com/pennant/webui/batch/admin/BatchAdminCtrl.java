@@ -1,11 +1,25 @@
 package com.pennant.webui.batch.admin;
 
+import com.pennant.ProcessExecution;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.endofday.main.BatchMonitor;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
+import com.pennant.backend.model.ExecutionStatus;
+import com.pennant.backend.util.BatchUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.eod.process.EODHealthCheck;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
@@ -37,19 +51,6 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
-
-import com.pennant.ProcessExecution;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.endofday.main.BatchMonitor;
-import com.pennant.backend.endofday.main.PFSBatchAdmin;
-import com.pennant.backend.model.ExecutionStatus;
-import com.pennant.backend.util.BatchUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
@@ -101,6 +102,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
 	private JobExecution			jobExecution;
+	private DataSource dataSource;
 
 	public enum PFSBatchProcessess {
 		beforeEOD,
@@ -209,6 +211,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
 		lable_LastBusiness_Date
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		estimatedTime.setValue(BatchMonitor.getEstimateTime());
 	}
 
 	private void setRunningStatus() {
@@ -224,8 +227,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			logger.error("Exception: ", e);
 		}
 		completedTime.setValue(BatchMonitor.getProcessingTime());
-		estimatedTime.setValue(BatchMonitor.getEstimateTime());
-
+		
 		if ("FAILED".equals(jobStatus) || "STOPPED".equals(jobStatus)) {
 			status.setStyle("color:red;");
 			this.btnStartJob.setLabel("Restart");
@@ -270,7 +272,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onClick$btnStartJob(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
+
+		try {
+			new EODHealthCheck(dataSource).doHealthCheck();
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
 
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
@@ -316,11 +325,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		// Event for Recreation Of Window
 		Events.postEvent("onCreate", this.window_BatchAdmin, event);
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnStaleJob(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		PFSBatchAdmin.getInstance();
 		String msg = Labels.getLabel("labe_terminate_job");
 
@@ -337,7 +346,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onTimer$timer(Event event) {
@@ -598,7 +607,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onClickError(ForwardEvent event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		StepExecution stepExecution = (StepExecution) batchStatus.getAttribute("data");
 
 		if (stepExecution != null) {
@@ -606,11 +615,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					stepExecution.getStepName());
 		}
 
-		logger.debug("Leacing" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$lock(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		if (this.lock.isChecked()) {
 			islock = true;
 			resetPanels();
@@ -620,7 +629,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			islock = false;
 			lable_current_step.setVisible(true);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//
@@ -704,6 +713,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listBoxThread.appendChild(listitem);
 
 		}
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }

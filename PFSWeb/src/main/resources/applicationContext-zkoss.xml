@@ -3573,8 +3573,8 @@
 	<!-- Batch Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 

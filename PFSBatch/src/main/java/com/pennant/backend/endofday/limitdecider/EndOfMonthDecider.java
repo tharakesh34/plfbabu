@@ -98,7 +98,6 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 						monthEnd = true;
 					}
 				}
-
 			}
 
 			// if month start date then only it should run

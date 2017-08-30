@@ -22,6 +22,5 @@ public class EodJobListener implements JobExecutionListener {
 			arg0.getExecutionContext().put("APP_VALUEDATE", DateUtility.getAppValueDate());
 			arg0.getExecutionContext().put("APP_DATE", DateUtility.getAppDate());
 		}
-		
 	}
 }

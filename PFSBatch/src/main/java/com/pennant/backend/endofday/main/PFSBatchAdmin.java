@@ -57,9 +57,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.app.util.DateUtility;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PFSBatchAdmin implements Serializable {
-
 	private static final long serialVersionUID = -1648550888126596125L;
 	private static final Logger logger = Logger.getLogger(PFSBatchAdmin.class);
 	
@@ -78,7 +78,7 @@ public class PFSBatchAdmin implements Serializable {
 	private static String runType = "";
 
 	private PFSBatchAdmin() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		
 		//Application Context For END OF DAY job initiation
 		PFS_JOB_CONTEXT = new ClassPathXmlApplicationContext("eod-batch-config.xml");	
@@ -89,7 +89,7 @@ public class PFSBatchAdmin implements Serializable {
 		job 			= (Job) PFS_JOB_CONTEXT.getBean("plfEodJob");
 		
 		builder = new JobParametersBuilder();		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public static PFSBatchAdmin getInstance() {
@@ -100,17 +100,17 @@ public class PFSBatchAdmin implements Serializable {
 	}
 
 	public static boolean resetStaleJob(JobExecution jobExecution) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (jobExecution == null) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return false;
 		}
 		
 		try {
 			jobOperator.stop(jobExecution.getId());
 		} catch (Exception e) {	
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 		}
 		
 		jobExecution = getJobExecution();
@@ -119,12 +119,12 @@ public class PFSBatchAdmin implements Serializable {
 		jobExecution.setEndTime(DateUtility.getSysDate());
 		jobRepository.update(jobExecution);
 		
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
 	public static void statrJob() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if ("START".equals(runType)) {
 				builder.addString("Date", (String) args[0]);				
@@ -135,9 +135,9 @@ public class PFSBatchAdmin implements Serializable {
 				jobOperator.restart(getJobExecution().getId());
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public static JobExecution getJobExecution() {

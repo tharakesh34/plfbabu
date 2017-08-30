@@ -189,12 +189,17 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-
-		new TrailBalanceEngine((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(), 
-				DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
-		new SAPGLProcess((DataSource)SpringUtil.getBean("pfsDatasource"), getUserWorkspace().getUserDetails().getUserId(),
-				DateUtility.getAppValueDate(), DateUtility.getAppDate()).extractReport();
-		refresh();
+		try {
+			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
+					DateUtility.getAppDate()).extractReport();
+			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
+					DateUtility.getAppDate()).extractReport();
+			refresh();
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {

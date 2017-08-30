@@ -3,9 +3,11 @@ package com.pennanttech.bajaj.process;
 import com.pennant.backend.model.finance.TrailBalance;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +45,44 @@ public class TrailBalanceEngine extends DataEngineExport {
 		this.appDate = appDate;
 	}
 
+	public void doHealthCheck() throws Exception {
+		validateAccountMapping();
+		vlidatePostings();
+	}
+
+	private void validateAccountMapping() throws Exception {
+		String sql = "Select count (*) from Accounts where accountId not in( select account from AccountMapping)";
+
+		if (jdbcTemplate.queryForObject(sql, Integer.class) > 0) {
+			throw new AppException(
+					"Account Mapping is not configured, please check the Account Mapping report and map the missing accounts.");
+		}
+	}
+
+	private void vlidatePostings() throws Exception {
+		prepareTrialBalanceDate();
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("START_DATE", startDate);
+		paramMap.addValue("END_DATE", endDate);
+		paramMap.addValue("DRORCR", "C");
+
+		String sql = "select SUM(POSTAMOUNT) from POSTINGS where POSTDATE BETWEEN :START_DATE AND :END_DATE AND DRORCR = :DRORCR";
+
+		BigDecimal creditAmount = parameterJdbcTemplate.queryForObject(sql, paramMap, BigDecimal.class);
+		paramMap.addValue("DRORCR", "D");
+		BigDecimal debitAmount = parameterJdbcTemplate.queryForObject(sql, paramMap, BigDecimal.class);
+
+		if (creditAmount.compareTo(debitAmount) != 0) {
+			throw new AppException("Credit and Debit amounts not matched for the transactions between "
+					.concat(DateUtil.format(startDate, DateFormat.LONG_DATE)).concat(" and ")
+					.concat(DateUtil.format(endDate, DateFormat.LONG_DATE)));
+		}
+	}
+
 	public void extractReport() throws Exception {
+		doHealthCheck();
+
 		extractData();
 
 		Map<String, Object> parameterMap = new HashMap<>();
@@ -62,13 +101,14 @@ public class TrailBalanceEngine extends DataEngineExport {
 		builder.append(DateUtil.format(endDate, "dd-MMM-yy").toUpperCase());
 
 		parameterMap.put("TRANSACTION_DURATION", builder.toString());
-		parameterMap.put("CURRENCY", parameters.get("APP_DFT_CURR").concat(" - ".concat(parameters.get("APP_DFT_CURR"))));
+		parameterMap.put("CURRENCY",
+				parameters.get("APP_DFT_CURR").concat(" - ".concat(parameters.get("APP_DFT_CURR"))));
 
 		setParameterMap(parameterMap);
 		exportData("GL_TRAIL_BALANCE_EXPORT");
 	}
 
-	public void extractData() throws Exception {
+	private void extractData() throws Exception {
 		logger.info("Extracting data...");
 		initilize();
 
@@ -94,7 +134,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 				trialBalance.setAccountType(group.getAccountType());
 				trialBalance.setAccountTypeDes(group.getAccountTypeDes());
 			}
-			
+
 			EXTRACT_STATUS.setProcessedRecords(processedCount++);
 			EXTRACT_STATUS.setSuccessRecords(successCount++);
 		}
@@ -305,11 +345,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private void initilize() throws Exception {
 		loadParameters();
 		clearTables();
-		prepareTrialBalanceDate();
 	}
 
 	private void clearTables() {
-		logger.info("Clearing staging tables..");	
+		logger.info("Clearing staging tables..");
 		jdbcTemplate.execute("DELETE FROM TRAIL_BALANCE_REPORT_FILE");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -318,21 +357,21 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("GL_TRAIL_BALANCE_EXPORT", "GL_TRAIL_BALANCE_EXPORT");
 		paramMap.addValue("GL_TRANSACTION_EXPORT", "GL_TRANSACTION_EXPORT");
 		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" DELETE FROM TRAIL_BALANCE_REPORT WHERE HEADERID IN (");
 		sql.append(" SELECT ID FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
-		
+
 		sql = new StringBuilder();
 		sql.append(" DELETE FROM TRAIL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN (");
 		sql.append(" SELECT ID FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
-		
+
 		sql = new StringBuilder();
 		sql = sql.append("DELETE FROM TRAIL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
-		
+
 		sql = new StringBuilder();
 		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN ( ");
 		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where ValueDate BETWEEN :START_DATE AND :END_DATE AND ");
@@ -344,7 +383,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN (");
 		sql.append(" :GL_TRAIL_BALANCE_EXPORT, :GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
- 
+
 	}
 
 	private void loadParameters() {
