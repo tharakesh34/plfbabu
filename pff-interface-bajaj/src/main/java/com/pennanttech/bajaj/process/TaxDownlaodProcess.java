@@ -1,27 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.model.finance.TaxDownload;
 import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.model.Branch;
@@ -31,6 +9,25 @@ import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
@@ -113,7 +110,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		parmMap.addValue("TODATE", toDate);
 		parmMap.addValue("TAXAPPLICABLE", true);
 		
-		EXTRACT_STATUS.setTotalRecords(parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Integer.class));
+		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
+		EXTRACT_STATUS.setTotalRecords(totalRecords);
 	}
 	
 
@@ -363,6 +361,11 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		entityCode = rs.getString("ENTITYCODE");
 		taxDownload.setCompanyCode(entityCode);
 
+		if(rs.getString("FINREFERENCE").equals("6R80PO00003949")){
+			System.out.println("");
+		}
+
+		
 		customerGSTIN = rs.getString("CUSTOMERGSTIN");
 		if (StringUtils.trimToNull(customerGSTIN) != null) {
 			taxDownload.setRegisteredCustomer(CON_YES);
