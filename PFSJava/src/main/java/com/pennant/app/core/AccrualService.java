@@ -510,7 +510,7 @@ public class AccrualService extends ServiceHelper {
 
 		//NEXT Schedule Details
 		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())){
-			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
+			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) || curSchd.getSchDate().compareTo(pftDetail.getMaturityDate())==0) {
 				if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 					pftDetail.setNSchdDate(curSchd.getSchDate());
 					pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
