@@ -360,11 +360,6 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setSourceSystem(CON_SOURCE_SYSTEM);
 		entityCode = rs.getString("ENTITYCODE");
 		taxDownload.setCompanyCode(entityCode);
-
-		if(rs.getString("FINREFERENCE").equals("6R80PO00003949")){
-			System.out.println("");
-		}
-
 		
 		customerGSTIN = rs.getString("CUSTOMERGSTIN");
 		if (StringUtils.trimToNull(customerGSTIN) != null) {
