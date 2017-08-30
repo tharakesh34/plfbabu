@@ -805,6 +805,10 @@ public class CustomerController {
 		} else {
 			curCustomer.setCustRO1(prvCustomer.getCustRO1());
 		}
+		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
+					curCustomer.getCustMName(), curCustomer.getCustLName()));
+		}
 		curCustomer.setCustCtgCode(prvCustomer.getCustCtgCode());
 		curCustomer.setCustID(prvCustomer.getCustID());
 		curCustomer.setCustCRCPR(prvCustomer.getCustCRCPR());
@@ -817,7 +821,7 @@ public class CustomerController {
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(curCustomer, PennantConstants.TRAN_WF);
 		auditHeader.setApiHeader(reqHeaderDetails);
-		auditHeader = customerService.saveOrUpdate(auditHeader);
+		auditHeader = customerService.doApprove(auditHeader);
 		WSReturnStatus response = new WSReturnStatus();
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {

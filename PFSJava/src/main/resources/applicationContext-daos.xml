@@ -2631,6 +2631,7 @@
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
 		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
