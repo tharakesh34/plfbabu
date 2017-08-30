@@ -50,7 +50,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private String summary = null;
 	private Map<String, String> parameterCodes = new HashMap<>();
 
-	private int batchSize = 50000;
+	private int batchSize = 5000;
+	int chunckSize = 100;
 	private MapSqlParameterSource paramMa = null;
 	private boolean localUpdate = true;
 
@@ -95,15 +96,21 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		Map<String, PosidexCustomer> customers = getCustomers();
 		setAddresses(customers);
 		setLoans(customers);
-		
+		int count = 0;
+
 		TransactionStatus txnStatus = null;
 		transDef.setTimeout(180);
 		for (PosidexCustomer customer : customers.values()) {
-			txnStatus = transManager.getTransaction(transDef);
+			if (count == 0) {
+				txnStatus = transManager.getTransaction(transDef);
+			}
 			try {
 				saveOrUpdate(customer);
 				EXTRACT_STATUS.setSuccessRecords(successCount++);
-				transManager.commit(txnStatus);
+				if (count++ >= chunckSize) {
+					transManager.commit(txnStatus);
+					count = 0;
+				}
 			} catch (Exception e) {
 				transManager.rollback(txnStatus);
 				saveBatchLog(String.valueOf(customer.getCustomerNo()), "F", e.getMessage());
@@ -111,8 +118,10 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				EXTRACT_STATUS.setProcessedRecords(processedCount++);
-				txnStatus.flush();
-				txnStatus = null;
+				if (txnStatus != null) {
+					txnStatus.flush();
+					txnStatus = null;
+				}
 			}
 		}
 	}
@@ -636,10 +645,10 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 				if (list != null) {
 					for (CustomerPhoneNumber phoneNumber : list) {
-						if(phoneNumber == null) {
+						if (phoneNumber == null) {
 							continue;
 						}
-						
+
 						if (phoneNumber.getPhoneNumber().length() > 10) {
 							if (address.getLandline1() == null) {
 								address.setLandline1(phoneNumber.getPhoneNumber());
@@ -661,7 +670,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 				if (eMaillist != null) {
 					for (CustomerEMail eMail : eMaillist) {
-						if(eMail == null) {
+						if (eMail == null) {
 							continue;
 						}
 						if (address.getEmail() == null) {
@@ -721,8 +730,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 							if (list == null) {
 								list = new ArrayList<>();
 								phoneTypes.put(String.valueOf(phoneNumber.getPhoneCustID()), list);
-							} 
-							
+							}
+
 							list.add(phoneNumber);
 						}
 						return phoneTypes;
@@ -742,39 +751,41 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	}
 
 	private Map<String, List<CustomerEMail>> extractEMails(StringBuilder sql) {
-		return parameterJdbcTemplate.query(sql.toString(), paramMa, new ResultSetExtractor<Map<String, List<CustomerEMail>>>() {
+		return parameterJdbcTemplate.query(sql.toString(), paramMa,
+				new ResultSetExtractor<Map<String, List<CustomerEMail>>>() {
 
-			@Override
-			public Map<String, List<CustomerEMail>> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					@Override
+					public Map<String, List<CustomerEMail>> extractData(ResultSet rs)
+							throws SQLException, DataAccessException {
 
-				CustomerEMail eMail = null;
-				Map<String, List<CustomerEMail>> emailTypes = new HashMap<>();
+						CustomerEMail eMail = null;
+						Map<String, List<CustomerEMail>> emailTypes = new HashMap<>();
 
-				List<CustomerEMail> list = null;
+						List<CustomerEMail> list = null;
 
-				while (rs.next()) {
-					eMail = new CustomerEMail();
+						while (rs.next()) {
+							eMail = new CustomerEMail();
 
-					eMail.setCustID(rs.getLong("CUSTID"));
-					eMail.setCustEMailTypeCode(rs.getString("CUSTEMAILTYPECODE"));
-					eMail.setCustEMail(rs.getString("CUSTEMAIL"));
-					eMail.setCustEMailPriority(rs.getInt("CUSTEMAILPRIORITY"));
+							eMail.setCustID(rs.getLong("CUSTID"));
+							eMail.setCustEMailTypeCode(rs.getString("CUSTEMAILTYPECODE"));
+							eMail.setCustEMail(rs.getString("CUSTEMAIL"));
+							eMail.setCustEMailPriority(rs.getInt("CUSTEMAILPRIORITY"));
 
-					list = emailTypes.get(eMail.getCustID());
+							list = emailTypes.get(eMail.getCustID());
 
-					if (list == null) {
-						list = new ArrayList<>();
-						emailTypes.put(String.valueOf(eMail.getCustID()), list);
+							if (list == null) {
+								list = new ArrayList<>();
+								emailTypes.put(String.valueOf(eMail.getCustID()), list);
+							}
+							list.add(eMail);
+						}
+						return emailTypes;
 					}
-					list.add(eMail);
-				}
-				return emailTypes;
-			}
 
-		});
+				});
 
 	}
-	
+
 	private void setLoans(Map<String, PosidexCustomer> customers) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
@@ -790,7 +801,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = J.FINREFERENCE");
 		sql.append(" INNER JOIN CUSTOMERS C ON  C.CUSTCIF = J.CUSTCIF");
 		sql.append(" )FM ");
-		sql.append(" LEFT JOIN PSX_DEDUP_EOD_CUST_LOAN_DTL PCL ON PCL.CUSTOMER_NO = FM.CUSTID AND PCL.LAN_NO = FM.FINREFERENCE");
+		sql.append(
+				" LEFT JOIN PSX_DEDUP_EOD_CUST_LOAN_DTL PCL ON PCL.CUSTOMER_NO = FM.CUSTID AND PCL.LAN_NO = FM.FINREFERENCE");
 		sql.append(" AND PCL.CUSTOMER_TYPE = FM.CUSTOMER_TYPE ");
 		sql.append(" WHERE FM.CUSTID IN (select CUST_ID FROM POSIDEX_CUSTOMERS WHERE ROWNUM <= :ROWNUM)");
 
