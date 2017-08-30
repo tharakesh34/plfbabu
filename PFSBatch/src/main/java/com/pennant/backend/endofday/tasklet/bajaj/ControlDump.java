@@ -89,7 +89,7 @@ public class ControlDump implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				ControlDumpProcess process = new ControlDumpProcess(dataSource, userId, valueDate, appDate, DateUtility.getMonthStartDate(valueDate), DateUtility.getMonthEnd(valueDate));
+				ControlDumpProcess process = new ControlDumpProcess(dataSource, userId, valueDate, appDate);
 				process.process("CONTROL_DUMP_REQUEST");
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {

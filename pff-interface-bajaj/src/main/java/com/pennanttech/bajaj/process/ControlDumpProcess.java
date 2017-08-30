@@ -28,18 +28,13 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 	public static DataEngineStatus	EXTRACT_STATUS		= new DataEngineStatus("CONTROL_DUMP_REQUEST");
 
 	Date appDate = null;
-	Date monthStartDate = null;
-	Date monthEndDate = null;
 	private int batchSize = 1000;
 
 	private MapSqlParameterSource filterMap;
 
-	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date monthStartDate, Date monthEndDate) {
+	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
 		this.appDate = appDate;
-		this.monthStartDate = monthStartDate;
-		this.monthEndDate = monthEndDate;
-
 	}
 
 	@Override
@@ -109,10 +104,10 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" FINAMOUNT,");
 		sql.append(" FINASSETVALUE,");
 		sql.append(" DUEBUCKET,");
+		sql.append(" COALESCE(DPDC.DUEDAYS, 0) DUEDAYS,");
 		sql.append(" FINCURRASSETVALUE,");
 		sql.append(" EFFECTIVERATEOFRETURN,");
 		sql.append(" REPAYPROFITRATE,");
-		sql.append(" FIRSTREPAY,");
 		sql.append(" FM.FINISACTIVE,");
 		sql.append(" LASTREPAYDATE,");
 		sql.append(" MATURITYDATE,");
@@ -128,11 +123,14 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" PM.PROMOTIONDESC,");
 		sql.append(" M.MANDATETYPE");
 		sql.append(" FROM FINANCEMAIN FM");
+		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
 		sql.append(" INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
 		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
 		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
+		sql.append(" LEFT JOIN DPDBUCKETS DPD ON DPD.BUCKETCODE = FM.FINSTATUS");
+		sql.append(" LEFT JOIN DPDBUCKETSCONFIG DPDC ON DPDC.BUCKETID = DPD.BUCKETID AND FT.FINCATEGORY = DPDC.PRODUCTCODE");
 		sql.append(" WHERE COALESCE(FM.CLOSINGSTATUS, 'A') != :CLOSINGSTATUS");
 
 		List<ControlDump> list = new ArrayList<>();
@@ -168,11 +166,10 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setAssetCost(getAmount(rs, "FINASSETVALUE"));
 					cd.setClosureDate(rs.getDate("MATURITYDATE"));
 					cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
-					cd.setDerivedBucket(rs.getInt("DUEBUCKET"));
+					cd.setDerivedBucket(rs.getInt("DUEDAYS"));
 					cd.setCustomerId(rs.getLong("CUSTCIF"));  
 					cd.setCustomerName(rs.getString("CUSTSHRTNAME"));
 					cd.setMaturityDate(rs.getDate("MATURITYDATE"));
-					cd.setLoanEmi(getAmount(rs, "FIRSTREPAY"));
 
 					int monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"), true);
 					cd.setSanctionedTenure(monts);
@@ -250,7 +247,6 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 						cd.setEmiInAdvanceUnbilled(obj.getEmiInAdvanceUnbilled());
 						cd.setNetExcessAdjusted(obj.getNetExcessAdjusted());
 						cd.setNetExcessReceived(obj.getNetExcessReceived());
-
 						obj = null;
 					}
 
@@ -341,6 +337,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
+					saveBatchLog(finReference, "F", e.getMessage());
 				} finally {
 					profitDetails.remove(finReference);
 					disbursements.remove(finReference);
@@ -723,6 +720,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" select");
 		sql.append(" FM.FINREFERENCE,");
 		sql.append(" FIRSTREPAYDATE,");
+		sql.append(" FIRSTREPAYAMT,");
 		sql.append(" PFTACCRUED,");
 		sql.append(" CURODDAYS,");
 		sql.append(" ODPRINCIPAL,");
@@ -784,6 +782,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setBalanceUmfc(getAmount(rs, "TOTALPFTSCHD"));
 					cd.setBalanceUmfc(cd.getBalanceUmfc().subtract(getAmount(rs, "TOTALPFTPAID")));
 					//cd.setBalanceUmfc(cd.getBalanceUmfc().subtract(getAmount(rs, "ACRTILLLBD")));
+					cd.setLoanEmi(getAmount(rs, "FIRSTREPAYAMT"));
 
 					map.put(rs.getString("FINREFERENCE"), cd);
 				}

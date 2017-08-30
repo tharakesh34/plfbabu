@@ -1,6 +1,10 @@
 package com.pennanttech.service.test;
 
+import com.pennanttech.bajaj.process.ControlDumpProcess;
+import com.pennanttech.pff.core.util.DateUtil;
+import java.util.Date;
 import javax.sql.DataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
@@ -15,6 +19,7 @@ public class TestControlDumpRequestService {
 		ApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -24,17 +29,10 @@ public class TestControlDumpRequestService {
 	public void process() {
 		try {
 			
-/*			Date date = DateUtil.getDate(2017, 01, 01);
-			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
+			Date date = DateUtil.getDate(2017, 01, 01);
 			
-			date = DateUtil.addMonths(date, 1);
-			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
-			
-			date = DateUtil.addMonths(date, 1);
-			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));
-			
-			date = DateUtil.addMonths(date, 1);
-			controlDumpRequestService.sendReqest(new Long(1000), date, date, DateUtil.getMonthStart(date), DateUtil.getMonthEnd(date));*/
+			new ControlDumpProcess(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
