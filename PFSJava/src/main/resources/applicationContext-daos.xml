@@ -4187,6 +4187,7 @@
 		<property name="finMandateService" ref="finMandateService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="installmentDueService" ref="installmentDueService" />
 
 		<!-- GCDCustomers -->
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
@@ -9489,6 +9490,9 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
+	</bean>
+	
+	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
 
 	<!-- Late Pay Buckets -->

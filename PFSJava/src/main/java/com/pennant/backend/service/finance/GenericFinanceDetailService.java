@@ -22,6 +22,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
@@ -214,6 +215,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetTypesValidation			finAssetTypesValidation;
 	private FinAssetTypeDAO					finAssetTypeDAO;
 	private DisbursementPostings			disbursementPostings;
+	private InstallmentDueService 			installmentDueService;
 
 	// EOD Process Checking
 	private CustomerQueuingDAO				customerQueuingDAO;
@@ -1521,6 +1523,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
 				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
 			}
+			getInstallmentDueService().processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),true);
 		}
 
 		doSave_PftDetails(pftDetail, isNew);
@@ -2784,6 +2787,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+	
+	public InstallmentDueService getInstallmentDueService() {
+		return installmentDueService;
+	}
+
+	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
+		this.installmentDueService = installmentDueService;
 	}
 
 }

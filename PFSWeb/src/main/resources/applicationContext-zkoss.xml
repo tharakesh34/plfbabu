@@ -1845,6 +1845,7 @@
 		<property name="reScheduleService" ref="reScheduleService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="installmentDueService" ref="installmentDueService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

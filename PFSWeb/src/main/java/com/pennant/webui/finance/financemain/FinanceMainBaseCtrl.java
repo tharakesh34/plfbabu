@@ -131,6 +131,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
@@ -761,6 +762,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private NotificationsService							notificationsService;
 	private DedupValidation									dedupValidation;
 	private DisbursementPostings 							disbursementPostings;
+	private InstallmentDueService							installmentDueService;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -11379,6 +11381,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					!finVasRecordingDialogCtrl.getVasRecordings().isEmpty()){
 				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent, finVasRecordingDialogCtrl.getVasRecordings()));
 			}
+			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(), profitDetail, DateUtility.getAppDate(),false));
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
@@ -16114,6 +16117,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceTaxDetailDialogCtrl(FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl) {
 		this.financeTaxDetailDialogCtrl = financeTaxDetailDialogCtrl;
+	}
+
+	public InstallmentDueService getInstallmentDueService() {
+		return installmentDueService;
+	}
+
+	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
+		this.installmentDueService = installmentDueService;
 	}
 
 }
