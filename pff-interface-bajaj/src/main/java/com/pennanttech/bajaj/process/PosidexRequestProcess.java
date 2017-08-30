@@ -118,10 +118,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				EXTRACT_STATUS.setProcessedRecords(processedCount++);
-				if (txnStatus != null) {
-					txnStatus.flush();
-					txnStatus = null;
-				}
 			}
 		}
 	}
