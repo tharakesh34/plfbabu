@@ -664,9 +664,9 @@ public class AccrualService extends ServiceHelper {
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
 		Date mointhStart = DateUtility.getMonthStart(monthEnd);
 
-		if (finMain.getFinStartDate().compareTo(mointhStart) < 0) {
-			return list;
-		}
+//		if (finMain.getFinStartDate().compareTo(mointhStart) < 0) {
+//			return list;
+//		}
 
 		List<Date> months = new ArrayList<Date>();
 		Date newMonth = new Date(monthEnd.getTime());

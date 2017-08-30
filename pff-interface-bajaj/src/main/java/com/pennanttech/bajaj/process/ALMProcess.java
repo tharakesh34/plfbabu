@@ -74,8 +74,6 @@ public class ALMProcess extends DatabaseDataEngine {
 
 		extract(sql, advanceEmis);
 	}
-
-	
 	
 	private Map<String, Integer> getadvanceEmis() throws SQLException {
 		Map<String, Integer> advanceEmis = new HashMap<>();
