@@ -893,4 +893,17 @@ PREFERRED_ELIGIBILITY,NULL PREFERRED_CARD_ACCEPTANCE,NULL PREFERRED_CARD_LIMIT,C
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy where (TxnAmount!=0 )]]>
 		</createView>
 	</changeSet>
+	<changeSet id="26" author="murthy.y">
+		<comment>
+			<![CDATA[
+				Change with the ticket ID 17555, Addressed.
+			]]>
+		</comment>
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG set FILEPREFIXNAME = 'CF_SAP_GL_REPORT_LINE_PA' WHERE NAME = 'GL_TRANSACTION_EXPORT'; 
+				UPDATE DATA_ENGINE_CONFIG set FILEPREFIXNAME = 'CF_SAP_GL_REPORT_HDR_PA' WHERE NAME = 'GL_TRANSACTION_SUMMARY_EXPORT'; 
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
