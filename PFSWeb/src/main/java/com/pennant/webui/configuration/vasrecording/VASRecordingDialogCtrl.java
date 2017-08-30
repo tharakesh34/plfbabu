@@ -1345,7 +1345,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		//Vas fee
 		if(isFinanceVas()){
-			if(isFeeEditable()){
+			if(isFeeEditable() && vASConfiguration.isAllowFeeToModify()){
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 			}else{
 				this.fee.setReadonly(true);

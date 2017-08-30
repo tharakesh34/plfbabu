@@ -311,7 +311,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		// Set Workflow Details
 		String userRole = vasRecording.getNextRoleCode();
-		if (StringUtils.isEmpty(vasRecording.getRecordType())) {
+		if (StringUtils.isEmpty(vasRecording.getRecordType()) && !enqiryModule) {
 			setWorkflowDetails(vasRecording.getProductCode());
 			if (workFlowDetails == null) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
