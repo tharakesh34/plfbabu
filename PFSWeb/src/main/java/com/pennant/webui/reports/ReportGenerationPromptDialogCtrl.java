@@ -1030,6 +1030,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						if (!excludeDates) {
 							if (StringUtils.isNotEmpty(filter)) {
 								if (isWhereCondition) {// Prepare Where Condition
+									Datebox datebox = (Datebox) component;
+									if (datebox.getValue() == null && aReportFieldsDetails.isMandatory()) {
+										throw new WrongValueException(datebox, Labels.getLabel("FIELD_NO_EMPTY",
+												new String[] { aReportFieldsDetails.getFieldLabel() }));
+									} 
 									whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
 											aReportFieldsDetails, component, filter + " ");
 
