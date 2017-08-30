@@ -906,4 +906,12 @@ PREFERRED_ELIGIBILITY,NULL PREFERRED_CARD_ACCEPTANCE,NULL PREFERRED_CARD_LIMIT,C
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="27" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
