@@ -423,23 +423,23 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalRbtSchd(pftDetail.getTotalRbtSchd().add(curSchd.getRebate()));
 
 		//Schedule Information
-		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())
-				&& (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
-			//Installments, Paid and OD
-			pftDetail.setNOInst(pftDetail.getNOInst() + 1);
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
+			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday())) || curSchd.getSchDate().compareTo(pftDetail.getMaturityDate())==0) {
+				//Installments, Paid and OD
+				pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
-			if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
-				pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
-			}
+				if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
+					pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
+				}
 
-			//First Repayments Date and Amount
-			if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
-				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
-					pftDetail.setFirstRepayDate(curSchd.getSchDate());
-					pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+				//First Repayments Date and Amount
+				if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
+					if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+						pftDetail.setFirstRepayDate(curSchd.getSchDate());
+						pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+					}
 				}
 			}
-
 		}
 
 		//Final Repayments Amount
@@ -509,17 +509,17 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalPriPaidInAdv(pftDetail.getTotalPriPaidInAdv().add(curSchd.getSchdPriPaid()));
 
 		//NEXT Schedule Details
-		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())
-				&& (curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
-			if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
-				pftDetail.setNSchdDate(curSchd.getSchDate());
-				pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
-				pftDetail.setNSchdPft(curSchd.getProfitSchd());
-				pftDetail.setNSchdPriDue(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-				pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())){
+			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))) {
+				if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+					pftDetail.setNSchdDate(curSchd.getSchDate());
+					pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
+					pftDetail.setNSchdPft(curSchd.getProfitSchd());
+					pftDetail.setNSchdPriDue(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+					pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+				}
+				pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
 			}
-
-			pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
 		}
 
 		if (curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0
