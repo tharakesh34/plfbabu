@@ -412,11 +412,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						} else {
 							linkedTranId = set.getLinkedTranId();
 							set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
+							set.setTransOrder(i);
 						}
 					}
 					// save to postings table.
 					for (ReturnDataSet set : list) {
-						set.setFinReference(String.valueOf(jVPosting.getBatchReference()));
+						set.setFinReference(String.valueOf(jVPosting.getReference()));
 					}
 					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
