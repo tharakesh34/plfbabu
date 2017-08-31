@@ -89,7 +89,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 			boolean monthEnd = false;
 			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthStart(valueDate)) == 0) {
+				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
 					monthEnd = true;
 				}
 			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
