@@ -20,5 +20,10 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	
+	<changeSet id="01" author="Madhubabu" >
+		<sql>
+	Delete from BMTAEEvents where AEEventCode='JVPOST';
+	insert into BMTAEEvents values ('JVPOST','Miscellaneous Postings',1,1007,current_timestamp,'Aproved','','','','','',0,1,1,1);
+</sql>
+</changeSet>
 </databaseChangeLog>
