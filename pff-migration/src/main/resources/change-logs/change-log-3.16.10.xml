@@ -344,4 +344,11 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 				(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_TransactionEntryReport');
 		    </sql>
 		</changeSet>
+		
+	<changeSet id="12" author="Kesav">
+	    <sql>
+	       update ErrorDetails set ERRORMESSAGE = '{0} should after {1} and before {2}.' where ErrorCode = '90318';
+	    </sql>
+	</changeSet>
+	
 </databaseChangeLog>
