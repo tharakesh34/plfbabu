@@ -7259,13 +7259,24 @@ where code='MandateEnquiry';
 	</createView>
 	</changeSet>
 	
-	<changeSet id="291" author="Prasad" >
+	<changeSet id="291" author="Prasad" dbms="oracle">
 		<sql>
 delete from BMTAmountCodes where allowedevent ='EARLYSTL' and amountcode='ae_priWaived';
 delete from BMTAmountCodes where allowedevent ='EARLYSTL' and amountcode='ae_pftWaived';
 
 Insert into BMTAmountCodes Values('EARLYSTL', '0', 'ae_priWaived' , 'Principal Waived off', '1', '1', 1000, SYSDATE, 'Approved', null, null, null,null,null,0);
 Insert into BMTAmountCodes Values('EARLYSTL', '0', 'ae_pftWaived' , 'Principal Waived off', '1', '1', 1000, SYSDATE, 'Approved', null, null, null,null,null,0);
+
+Update BMTAmountCodes set AMOUNTCODEDESC = 'Profit Waived Off ' where AmountCode = 'ae_pftWaived';
+</sql>
+</changeSet>
+<changeSet id="291" author="Prasad" dbms="mssql">
+		<sql>
+delete from BMTAmountCodes where allowedevent ='EARLYSTL' and amountcode='ae_priWaived';
+delete from BMTAmountCodes where allowedevent ='EARLYSTL' and amountcode='ae_pftWaived';
+
+Insert into BMTAmountCodes Values('EARLYSTL', '0', 'ae_priWaived' , 'Principal Waived off', '1', '1', 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null,null,null,0);
+Insert into BMTAmountCodes Values('EARLYSTL', '0', 'ae_pftWaived' , 'Principal Waived off', '1', '1', 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null,null,null,0);
 
 Update BMTAmountCodes set AMOUNTCODEDESC = 'Profit Waived Off ' where AmountCode = 'ae_pftWaived';
 </sql>
