@@ -8,6 +8,11 @@
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 	
-
+<changeSet id="01" author="Irfan">
+		<addColumn tableName="ADTVASRECORDING">
+			<column name="PaidAmt" type="decimal(18,0)"/>
+			<column name="WaivedAmt" type="decimal(18,0)"/>
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
