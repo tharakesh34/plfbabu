@@ -338,4 +338,10 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 			</sql>
 		
 		</changeSet>
+		<changeSet id="11" author="Pruthvi">
+		    <sql>
+		        update REPORTFILTERFIELDS set fieldtype='DATE' where reportid in 
+				(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_TransactionEntryReport');
+		    </sql>
+		</changeSet>
 </databaseChangeLog>
