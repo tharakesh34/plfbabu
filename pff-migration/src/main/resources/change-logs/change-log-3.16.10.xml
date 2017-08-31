@@ -338,12 +338,4 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 			</sql>
 		
 		</changeSet>
-		<changeSet id="35" author="Jayant">
-	    <sql splitStatements="false">
-	        begin
-	        	SP_INVALIDVIEWS;
-	        	RESEED_SEQUENCE_TABLES;
-	        end;
-	    </sql>
-	</changeSet>
 </databaseChangeLog>
