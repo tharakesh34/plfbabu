@@ -25,11 +25,11 @@ public class TestControlDumpRequestService {
 		}
 	}
 
-	@Test(enabled=false)
+	@Test(enabled=true)
 	public void process() {
 		try {
 			
-			Date date = DateUtil.getDate(2017, 01, 01);
+			Date date = DateUtil.getDate(2017, 9, 1);
 			
 			new ControlDumpProcess(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
 
