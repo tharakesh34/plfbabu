@@ -567,4 +567,12 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="15" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
