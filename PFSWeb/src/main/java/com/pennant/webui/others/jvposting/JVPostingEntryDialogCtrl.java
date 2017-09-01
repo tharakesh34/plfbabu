@@ -1491,6 +1491,15 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingEntryDialog, auditHeader);
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue==PennantConstants.porcessCONTINUE || retValue==PennantConstants.porcessOVERIDE){
+				for (JVPostingEntry entry : jvPostingEntryList) {
+					if(entry.isNew()){
+						if(StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)){						
+							entry.setAccount(entry.getDebitAccount());
+						}else{
+							entry.setAccount(entry.getAccount());
+						}	
+					}
+				}
 				getJVPostingDialogCtrl().doFillJVPostingEntryDetails(this.jvPostingEntryList);
 				// send the data back to main screen
 				getJVPostingDialogCtrl().setProceed(false);
@@ -1591,6 +1600,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				}else{
 						jvPostingEntryList.add(jvPostingEntry);
 						JVPostingEntry otherentry = doCheckAndPrepareOtherLeg(jvPostingEntry, list);
+						if(StringUtils.equals(otherentry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)){						
+							otherentry.setAccount(otherentry.getDebitAccount());
+						}else{
+							otherentry.setAccount(otherentry.getAccount());
+						}	
 						if (otherentry!=null) {
 							jvPostingEntryList.add(otherentry);
 						}
