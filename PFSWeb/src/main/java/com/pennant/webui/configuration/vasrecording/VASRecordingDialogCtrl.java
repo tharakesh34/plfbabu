@@ -454,7 +454,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if(isWaivedFlag()){
 			this.row_VASPaid.setVisible(false);
 		}else{
-			this.row_VASPaid.setVisible(true);
+			this.row_VASPaid.setVisible(false);
 		}
 		this.productCode.setReadonly(true);
 		this.postingAgainst.setDisabled(true);
@@ -1376,9 +1376,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setReadonly(true);
 			}
 		}
-		if(isWaivedFlag()==false){
+		/*if(isWaivedFlag()==false){
 			this.fee.addForward("onFulfill", this.window_VASRecordingDialog, "onFeeAmountChange");
-		}
+		}*/
 		this.fee.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
 		this.waivedAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getWaivedAmt(), getCcyFormat()));
 		
