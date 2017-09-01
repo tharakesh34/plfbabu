@@ -51,7 +51,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private void validateAccountMapping() throws Exception {
-		String sql = "Select count (*) from Postings where account not in(select account from AccountMapping)";
+		String sql = "Select count (*) from Postings where account not in(select account from AccountMapping) and POSTAMOUNT <>0";
 
 		if (jdbcTemplate.queryForObject(sql, Integer.class) > 0) {
 			throw new AppException(
