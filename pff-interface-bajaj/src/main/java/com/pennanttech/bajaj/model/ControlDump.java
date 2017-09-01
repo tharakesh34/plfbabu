@@ -93,7 +93,7 @@ public class ControlDump implements Serializable {
 	private BigDecimal insurReceived = BigDecimal.ZERO;
 	private BigDecimal insurPayable = BigDecimal.ZERO;
 	private BigDecimal insurPaid = BigDecimal.ZERO;
-	private long customerId;
+	private String customerId;
 	private String customerName;
 	private long sanctionedTenure;
 	private BigDecimal loanEmi = BigDecimal.ZERO;
@@ -801,11 +801,11 @@ public class ControlDump implements Serializable {
 		this.insurPaid = insurPaid;
 	}
 
-	public long getCustomerId() {
+	public String getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(long customerId) {
+	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
 

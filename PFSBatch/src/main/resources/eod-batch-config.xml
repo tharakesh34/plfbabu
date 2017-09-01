@@ -74,7 +74,9 @@
 		</step>
 		
 		<step id="controlDump">
-			<tasklet ref="controlDumpTaskLet" />
+			<tasklet ref="controlDumpTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
 			<next on="*" to="trailBalance" />
 			<fail on="FAILED" />
 		</step>

@@ -112,13 +112,18 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 					count = 0;
 				}
 			} catch (Exception e) {
+				count = 0;
+				logger.error(Literal.EXCEPTION, e);
 				transManager.rollback(txnStatus);
 				saveBatchLog(String.valueOf(customer.getCustomerNo()), "F", e.getMessage());
 				EXTRACT_STATUS.setFailedRecords(failedCount++);
-				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				EXTRACT_STATUS.setProcessedRecords(processedCount++);
 			}
+		}
+		
+		if (count > 0 && !txnStatus.isCompleted()) {
+			transManager.commit(txnStatus);
 		}
 	}
 

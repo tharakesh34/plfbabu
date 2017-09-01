@@ -22,15 +22,16 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.transaction.TransactionStatus;
 
 public class ControlDumpProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ControlDumpProcess.class);
 	public static DataEngineStatus	EXTRACT_STATUS		= new DataEngineStatus("CONTROL_DUMP_REQUEST");
 
 	Date appDate = null;
-	private int batchSize = 1000;
-
 	private MapSqlParameterSource filterMap;
+	private int batchSize = 5000;
+	int chunckSize = 1000;
 
 	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
@@ -63,6 +64,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
+
 	private void loadcount() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT count(*) FROM FINANCEMAIN FM");
@@ -79,10 +81,45 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 	}
 
+
 	private void execute() throws Exception {
+		List<ControlDump> list = getList();
+		
+		TransactionStatus txnStatus = null;
+		transDef.setTimeout(180);
+		int count = 0;
+		
+		for (ControlDump item : list) {
+			try {
+				if (count == 0) {
+					txnStatus = transManager.getTransaction(transDef);
+				}
+				
+				validateData(item.getAgreementNo(), item);
+				saveControlDump(item);
+				EXTRACT_STATUS.setSuccessRecords(successCount++);
+				
+				if (count++ >= chunckSize) {
+					transManager.commit(txnStatus);
+					count = 0;
+				}
+			} catch (Exception e) {
+				saveBatchLog(item.getAgreementNo(), "F", e.getMessage());
+				EXTRACT_STATUS.setFailedRecords(failedCount++);
+			} finally {
+				EXTRACT_STATUS.setProcessedRecords(processedCount++);
+			}
+		}	
+		
+		if (count > 0 && !txnStatus.isCompleted()) {
+			transManager.commit(txnStatus);
+		}
+	}
+	
+
+	private List<ControlDump> getList() throws Exception {
 		// Saving the data into main table.
 
 		Map<String, ControlDump> profitDetails = getProfitDetails();
@@ -138,8 +175,6 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		parameterJdbcTemplate.query(sql.toString(), filterMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				executionStatus.setProcessedRecords(processedCount++);
-
 				ControlDump obj = null;
 				String finReference = null;
 				ControlDump cd = null;
@@ -167,7 +202,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					cd.setClosureDate(rs.getDate("MATURITYDATE"));
 					cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
 					cd.setDerivedBucket(rs.getInt("DUEDAYS"));
-					cd.setCustomerId(rs.getLong("CUSTCIF"));  
+					cd.setCustomerId(rs.getString("CUSTCIF"));  
 					cd.setCustomerName(rs.getString("CUSTSHRTNAME"));
 					cd.setMaturityDate(rs.getDate("MATURITYDATE"));
 
@@ -322,22 +357,12 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 						cd.setInstrument("C");
 					}
 					
-					
-					if (isValidData(finReference, cd)) {
-						list.add(cd);
-						successCount++;
-					} else {
-						failedCount++;
-					}
-
-					if (list.size() >= batchSize) {
-						saveControlDump(list);
-						list.clear();
-					}
-
+					list.add(cd);
+	
 				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					saveBatchLog(finReference, "F", e.getMessage());
+					saveBatchLog(cd.getAgreementNo(), "F", e.getMessage());
+					EXTRACT_STATUS.setFailedRecords(failedCount++);
+					EXTRACT_STATUS.setProcessedRecords(processedCount++);
 				} finally {
 					profitDetails.remove(finReference);
 					disbursements.remove(finReference);
@@ -357,19 +382,17 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 			
 		});
 
-		if (!list.isEmpty()) {
-			saveControlDump(list);
-			list.clear();
-		}
+		return list;
 	}
 	
-	private boolean isValidData(String finReference, ControlDump cd) {
+	private void validateData(String finReference, ControlDump cd) throws Exception{
 		if (cd.getFirstDueDate() == null) {
-			saveBatchLog(finReference, "F", "First Due date is null.");
-			return false;
+			throw new Exception("First Due date is null");
 		}
-
-		return true;
+		
+		if (StringUtils.isNumeric(cd.getCustomerId())) {
+			throw new Exception("Customer CIF not numeric.");
+		}
 	}
 	
 
@@ -865,7 +888,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		});
 	}
 
-	private void saveControlDump(List<ControlDump> list) throws SQLException {
+	private void saveControlDump(ControlDump item) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("insert into CF_CONTROL_DUMP values(");
@@ -883,46 +906,45 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append("?,?,?)");
 
 		List<Object[]> inputList = new ArrayList<Object[]>();
-		for (ControlDump item : list) {
 
-			formatAmounts(item);
+		formatAmounts(item);
 
-			Object[] object = { item.getAgreementNo(), item.getAgreementId(), item.getProductFlag(), item.getSchemeId(),
-					item.getBranchId(), item.getNpaStageId(), item.getLoanStatus(), item.getDisbStatus(),
-					item.getFirstDueDate(), item.getMaturityDate(), item.getAmtFin(), item.getDisbursedAmount(),
-					item.getEmiDue(), item.getPrincipalDue(), item.getInterestDue(), item.getEmiReceived(),
-					item.getPrincipalReceived(), item.getInterestReceived(), item.getEmiOs(), item.getPrincipalOs(),
-					item.getInterestOs(), item.getBulkRefund(), item.getPrincipalWaived(), item.getEmiPrincipalWaived(),
-					item.getEmiInterestWaived(), item.getPrincipalAtTerm(), item.getAdvanceEmi(),
-					item.getAdvanceEmiBilled(), item.getMigratedAdvanceEmi(), item.getMigratedAdvanceEmiBilled(),
-					item.getMigratedAdvanceEmiUnbilled(), item.getClosedCanAdvEmi(), item.getPrincipalBalance(),
-					item.getInterestBalance(), item.getSohBalance(), item.getNoOfUnbilledEmi(), item.getTotalInterest(),
-					item.getAccruedAmount(), item.getBalanceUmfc(), item.getEmiInAdvanceReceivedMaker(),
-					item.getEmiInAdvanceBilled(), item.getEmiInAdvanceUnbilled(), item.getMigAdvEmiBilledPrincomp(),
-					item.getMigAdvEmiBilledIntcomp(), item.getMigAdvEmiUnbilledPrincomp(),
-					item.getMigAdvEmiUnbilledIntcomp(), item.getEmiInAdvBilledPrincomp(),
-					item.getEmiInAdvBilledIntcomp(), item.getEmiInAdvUnbilledPrincomp(),
-					item.getEmiInAdvUnbilledIntcomp(), item.getClosCanAdvEmiPrincomp(), item.getClosCanAdvEmiIntcomp(),
-					item.getSecurityDeposit(), item.getSecurityDepositAdjusted(), item.getRoundingDiffReceivable(),
-					item.getRoundingDiffReceived(), item.getMigDifferenceReceivable(), item.getMigDifferenceReceived(),
-					item.getMigDifferencePayable(), item.getMigDifferencePaid(), item.getWriteoffDue(),
-					item.getWriteoffReceived(), item.getSoldSeizeReceivable(), item.getSoldSeizeReceived(),
-					item.getSoldSeizePayable(), item.getSoldSeizePaid(), item.getNetExcessReceived(),
-					item.getNetExcessAdjusted(), item.getLppChargesReceivable(), item.getLppChargesReceived(),
-					item.getPdcSwapChargesReceivable(), item.getPdcSwapChargesReceived(),
-					item.getRepoChargesReceivable(), item.getRepoChargesReceived(), item.getForeClosureChargesDue(),
-					item.getForeClosureChargesReceived(), item.getBounceChargesDue(), item.getBounceChargesReceived(),
-					item.getInsurRenewCharge(), item.getInsurRenewChargeRecd(), item.getInsurReceivable(),
-					item.getInsurReceived(), item.getInsurPayable(), item.getInsurPaid(), item.getCustomerId(),
-					item.getCustomerName(), item.getSanctionedTenure(), item.getLoanEmi(), item.getFlatRate(),
-					item.getEffectiveRate(), item.getAgreementDate(), item.getDisbursalDate(), item.getClosureDate(),
-					item.getNoOfAdvanceEmis(), item.getAssetCost(), item.getNoOfEmiOs(), item.getDpd(),
-					item.getCurrentBucket(), item.getBranchName(), item.getSchemeName(), item.getDerivedBucket(),
-					item.getAssetDesc(), item.getMake(), item.getChasisNum(), item.getRegdNum(), item.getEngineNum(),
-					item.getInvoiceAmt(), item.getSupplierDesc(), item.getInstrument(), item.getRepoDate(),
-					item.getLocalOutStationFlag(), item.getFirstRepaydueDate(), item.getCreatedOn() };
-			inputList.add(object);
-		}
+		Object[] object = { item.getAgreementNo(), item.getAgreementId(), item.getProductFlag(), item.getSchemeId(),
+				item.getBranchId(), item.getNpaStageId(), item.getLoanStatus(), item.getDisbStatus(),
+				item.getFirstDueDate(), item.getMaturityDate(), item.getAmtFin(), item.getDisbursedAmount(),
+				item.getEmiDue(), item.getPrincipalDue(), item.getInterestDue(), item.getEmiReceived(),
+				item.getPrincipalReceived(), item.getInterestReceived(), item.getEmiOs(), item.getPrincipalOs(),
+				item.getInterestOs(), item.getBulkRefund(), item.getPrincipalWaived(), item.getEmiPrincipalWaived(),
+				item.getEmiInterestWaived(), item.getPrincipalAtTerm(), item.getAdvanceEmi(),
+				item.getAdvanceEmiBilled(), item.getMigratedAdvanceEmi(), item.getMigratedAdvanceEmiBilled(),
+				item.getMigratedAdvanceEmiUnbilled(), item.getClosedCanAdvEmi(), item.getPrincipalBalance(),
+				item.getInterestBalance(), item.getSohBalance(), item.getNoOfUnbilledEmi(), item.getTotalInterest(),
+				item.getAccruedAmount(), item.getBalanceUmfc(), item.getEmiInAdvanceReceivedMaker(),
+				item.getEmiInAdvanceBilled(), item.getEmiInAdvanceUnbilled(), item.getMigAdvEmiBilledPrincomp(),
+				item.getMigAdvEmiBilledIntcomp(), item.getMigAdvEmiUnbilledPrincomp(),
+				item.getMigAdvEmiUnbilledIntcomp(), item.getEmiInAdvBilledPrincomp(),
+				item.getEmiInAdvBilledIntcomp(), item.getEmiInAdvUnbilledPrincomp(),
+				item.getEmiInAdvUnbilledIntcomp(), item.getClosCanAdvEmiPrincomp(), item.getClosCanAdvEmiIntcomp(),
+				item.getSecurityDeposit(), item.getSecurityDepositAdjusted(), item.getRoundingDiffReceivable(),
+				item.getRoundingDiffReceived(), item.getMigDifferenceReceivable(), item.getMigDifferenceReceived(),
+				item.getMigDifferencePayable(), item.getMigDifferencePaid(), item.getWriteoffDue(),
+				item.getWriteoffReceived(), item.getSoldSeizeReceivable(), item.getSoldSeizeReceived(),
+				item.getSoldSeizePayable(), item.getSoldSeizePaid(), item.getNetExcessReceived(),
+				item.getNetExcessAdjusted(), item.getLppChargesReceivable(), item.getLppChargesReceived(),
+				item.getPdcSwapChargesReceivable(), item.getPdcSwapChargesReceived(),
+				item.getRepoChargesReceivable(), item.getRepoChargesReceived(), item.getForeClosureChargesDue(),
+				item.getForeClosureChargesReceived(), item.getBounceChargesDue(), item.getBounceChargesReceived(),
+				item.getInsurRenewCharge(), item.getInsurRenewChargeRecd(), item.getInsurReceivable(),
+				item.getInsurReceived(), item.getInsurPayable(), item.getInsurPaid(), item.getCustomerId(),
+				item.getCustomerName(), item.getSanctionedTenure(), item.getLoanEmi(), item.getFlatRate(),
+				item.getEffectiveRate(), item.getAgreementDate(), item.getDisbursalDate(), item.getClosureDate(),
+				item.getNoOfAdvanceEmis(), item.getAssetCost(), item.getNoOfEmiOs(), item.getDpd(),
+				item.getCurrentBucket(), item.getBranchName(), item.getSchemeName(), item.getDerivedBucket(),
+				item.getAssetDesc(), item.getMake(), item.getChasisNum(), item.getRegdNum(), item.getEngineNum(),
+				item.getInvoiceAmt(), item.getSupplierDesc(), item.getInstrument(), item.getRepoDate(),
+				item.getLocalOutStationFlag(), item.getFirstRepaydueDate(), item.getCreatedOn() };
+		inputList.add(object);
+	
 
 		destinationJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), inputList);
 
