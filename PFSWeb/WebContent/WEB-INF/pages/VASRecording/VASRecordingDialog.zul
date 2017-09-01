@@ -149,6 +149,20 @@
 														id="feePaymentMode" width="175px" />
 												</hbox>
 											</row>
+											<row id="row_VASPaid">
+												<label id="label_Paid"
+													value="${c:l('label_VASRecordingDialog_Paid.value')}" />
+												<hbox>
+													<currencyBox
+														id="paidAmt" width="120px" />
+												</hbox>
+												<label id="label_Waived"
+													value="${c:l('label_VASRecordingDialog_Waived.value')}" />
+												<hbox>
+													<currencyBox
+														id="waivedAmt" width="120px" />
+												</hbox>
+											</row>
 											<row id="row3">
 												<label
 													id="label_ValueDate"

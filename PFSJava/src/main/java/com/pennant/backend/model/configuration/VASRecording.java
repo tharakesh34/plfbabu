@@ -163,6 +163,9 @@ public class VASRecording extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	
+	private BigDecimal paidAmt;
+	private BigDecimal waivedAmt=BigDecimal.ZERO;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -610,6 +613,22 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
+	}
+
+	public BigDecimal getPaidAmt() {
+		return paidAmt;
+	}
+
+	public void setPaidAmt(BigDecimal paidAmt) {
+		this.paidAmt = paidAmt;
+	}
+
+	public BigDecimal getWaivedAmt() {
+		return waivedAmt;
+	}
+
+	public void setWaivedAmt(BigDecimal waivedAmt) {
+		this.waivedAmt = waivedAmt;
 	}
 
 }

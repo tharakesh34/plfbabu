@@ -240,6 +240,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		map.put("finVasRecordingDialogCtrl", this);
 		map.put("vASRecording", recording);
 		map.put("newRecord", true);
+		map.put("waivedFlag", true);
 		
 		List<String> roles = new ArrayList<>();
 		roles.add(roleCode);
@@ -337,7 +338,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				if(StringUtils.isEmpty(recording.getVasReference())){
 					map.put("feeEditable", true);
 				}
-				
+				map.put("waivedFlag", true);
 				map.put("finVasRecordingDialogCtrl", this);
 				map.put("roleCode", this.roleCode);
 				map.put("vASRecording", recording);
