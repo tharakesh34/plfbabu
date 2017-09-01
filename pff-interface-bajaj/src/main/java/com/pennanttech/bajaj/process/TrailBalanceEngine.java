@@ -51,11 +51,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private void validateAccountMapping() throws Exception {
-		String sql = "Select count (*) from Accounts where accountId not in( select account from AccountMapping)";
+		String sql = "Select count (*) from Postings where account not in(select account from AccountMapping)";
 
 		if (jdbcTemplate.queryForObject(sql, Integer.class) > 0) {
 			throw new AppException(
-					"Account Mapping is not configured, please check the Account Mapping report and map the missing accounts.");
+					"Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
 		}
 	}
 
