@@ -546,7 +546,7 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 	       update ErrorDetails set ERRORMESSAGE = '{0} should after {1} and before {2}.' where ErrorCode = '90318';
 	    </sql>
 	</changeSet>
-	<changeSet id="13" author="Jayant">
+	<changeSet id="13" author="Jayant" dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
