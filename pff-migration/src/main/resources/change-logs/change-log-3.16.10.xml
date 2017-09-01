@@ -554,4 +554,17 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 	        end;
 	    </sql>
 	</changeSet>
+	<changeSet id="14" author="murthy.y">
+		<comment>
+			<![CDATA[
+				Update File Extensions into lower case
+			]]>
+		</comment>
+		<sql>
+			<![CDATA[
+				update data_engine_config set FILEEXTENSION = '.csv' where FILEEXTENSION = '.CSV';
+				update data_engine_config set FILEEXTENSION = '.xlsx' where FILEEXTENSION = '.XLSX';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
