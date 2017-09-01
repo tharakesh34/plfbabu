@@ -1,6 +1,5 @@
 package com.pennant.backend.endofday.tasklet.bajaj;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
