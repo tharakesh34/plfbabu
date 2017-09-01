@@ -1,14 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import com.pennant.backend.model.finance.TaxDownload;
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.Branch;
-import com.pennanttech.bajaj.model.Province;
-import com.pennanttech.bajaj.model.TaxDetail;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -29,17 +22,27 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.backend.model.finance.TaxDownload;
+import com.pennanttech.app.util.DateUtility;
+import com.pennanttech.bajaj.model.Branch;
+import com.pennanttech.bajaj.model.Province;
+import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+
 public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
-	
+
 	private Date appDate;
 	private Date fromDate;
 	private Date toDate;
 	private Map<String, Province> provinceMap = null;
 	private Map<String, Branch> branchMap = null;
 	private Map<String, TaxDetail> entityDetailMap = null;
- 	private Map<String, String> cityMap = null;
+	private Map<String, String> cityMap = null;
 	private Map<String, String> countryMap = null;
 	private int batchSize = 500;
 
@@ -56,12 +59,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final String CON_UNREGISTERED = "UNREGISTERED";
 	private static final String CON_INTER = "INTER";
 	private static final String CON_INTRA = "INTRA";
-	private static final String REG_INTRA = "1";
-	private static final String REG_INTER = "2";
-	private static final String UNREG_INTRA = "3";	
-	private static final String UNREG_INTER = "4";
 	private static final String ADDR_DELIMITER = " ";
-	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not 	Required
+	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
 
 	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
@@ -99,7 +98,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	private void setTotalRecords() {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
@@ -109,11 +108,10 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		parmMap.addValue("FROMDATE", fromDate);
 		parmMap.addValue("TODATE", toDate);
 		parmMap.addValue("TAXAPPLICABLE", true);
-		
+
 		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
 		EXTRACT_STATUS.setTotalRecords(totalRecords);
 	}
-	
 
 	/**
 	 * Process Tax Download Data
@@ -128,7 +126,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 
 	private void processTrnExtractionTypeData(final long id) {
 		logger.debug(Literal.ENTERING);
-		
+
 		setTotalRecords();
 
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
@@ -146,7 +144,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
-				
+
 				EXTRACT_STATUS.setProcessedRecords(processedCount++);
 				EXTRACT_STATUS.setSuccessRecords(successCount++);
 				taxDownload = mapTrnExtractionTypeData(rs, id);
@@ -156,7 +154,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 					saveTrnExtractDetails(list);
 					list.clear();
 				}
-			
+
 			}
 		});
 
@@ -164,7 +162,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			saveTrnExtractDetails(list);
 			list.clear();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -187,12 +185,11 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE  ");
 		sql.append(" INNER JOIN RMTBranches T10 ON T10.BranchCode = T2.FinBranch  ");
 		sql.append(" WHERE T9.ExtractionType = :EXTRACTIONTYPE AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
-		sql.append(" ORDER BY T1.FINREFERENCE, T4.EntityCode, T1.Account, T10.BRANCHPROVINCE ");
 
 		parmMap.addValue("FROMDATE", fromDate);
 		parmMap.addValue("TODATE", toDate);
-		parmMap.addValue("EXTRACTIONTYPE", EXTRACTION_TYPE_SUMMARY);	
-		
+		parmMap.addValue("EXTRACTIONTYPE", EXTRACTION_TYPE_SUMMARY);
+
 		List<TaxDownload> list = new ArrayList<TaxDownload>();
 		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			@SuppressWarnings("unused")
@@ -200,85 +197,78 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			public void processRow(ResultSet rs) throws SQLException {
 				TaxDownload taxDownload = null;
 				Map<String, TaxDownload> map = new HashMap<String, TaxDownload>();
-				
-				String finBranch = null;
-				String entityCode = null;
+
 				String loanProvince = null;
-				String customerProvince = null;
-			    TaxDetail entityDetail = null;
-			    String key = null;
-			    String finReference = null;
-			    String branchProvince = null;
-				
+				String custAddressProvince = null;
 				String entityName = null;
 				String bflGSTIN = null;
 				String ledgerCode = null;
-				BigDecimal postAmount = BigDecimal.ZERO;
 
-				entityName = rs.getString("ENTITYDESC");//1
-				entityCode = rs.getString("ENTITYCODE");
+				entityName = rs.getString("ENTITYDESC");// 1
+				
+				String entityCode = rs.getString("ENTITYCODE");
+				// loan branch state
+				
+				loanProvince = rs.getString("BRANCHPROVINCE");
+				// Customer GSTIN State
+				
+				String gstinProvince = rs.getString("TAXPROVINCE");
+				
+				// Customer Very High Priority address state
+				custAddressProvince = rs.getString("CUSTADDRPROVINCE");
+
 				Branch loanBranch = branchMap.get(rs.getString("FINBRANCH"));
-				loanProvince = loanBranch.getBranchProvince();
-				entityDetail = entityDetailMap.get(loanProvince + "_" + entityCode);
+
+				TaxDetail entityDetail = entityDetailMap.get(loanProvince + "_" + entityCode);
 				if (entityDetail != null) {
-					bflGSTIN = entityDetail.getTaxCode();//2
-				}  
-				ledgerCode = rs.getString("ACCOUNT");//3
-				finBranch = rs.getString("FINBRANCH");//4
-				postAmount = rs.getBigDecimal("POSTAMOUNT");//6
-				finReference = rs.getString("FINREFERENCE");
-				branchProvince = rs.getString("BRANCHPROVINCE");
-				
-				customerProvince = rs.getString("TAXPROVINCE");
+					bflGSTIN = entityDetail.getTaxCode();// 2
+				}
+				ledgerCode = rs.getString("ACCOUNT");// 3
+				String finBranch = rs.getString("FINBRANCH");// 4
+				BigDecimal postAmount = rs.getBigDecimal("POSTAMOUNT");// 6
+				String finReference = rs.getString("FINREFERENCE");
+
 				boolean registered = false;
-				boolean inter = false;
-			
-				if (StringUtils.trimToNull(customerProvince) != null) {
+				boolean intra = false;
+
+				if (StringUtils.equals(loanProvince, gstinProvince) || StringUtils.equals(loanProvince, custAddressProvince)) {
+					intra = true;
+				}
+
+				if (StringUtils.trimToNull(gstinProvince) != null) {
 					registered = true;
-				} else {
-					customerProvince = rs.getString("CUSTADDRPROVINCE");
 				}
 
-				if (StringUtils.equals(customerProvince, loanProvince)) {
-					inter = true;
+				// data setting
+				taxDownload = new TaxDownload();
+				taxDownload.setHeaderId(id);
+				taxDownload.setTransactionDate(rs.getDate("POSTDATE"));
+				taxDownload.setEntityCode(entityCode);
+				taxDownload.setFinReference(finReference);
+
+				taxDownload.setEntityName(entityName);
+				taxDownload.setEntityGSTIN(bflGSTIN);
+				taxDownload.setLedgerCode(ledgerCode);
+				taxDownload.setFinBranchId(finBranch);
+				taxDownload.setAmount(postAmount);
+
+				if (registered) {
+					taxDownload.setRegisteredCustomer(CON_REGISTERED);
+				} else {
+					taxDownload.setRegisteredCustomer(CON_UNREGISTERED);
 				}
 
-				 if (registered) {
-					if (inter) {
-						key = REG_INTER;
-					} else {
-						key = REG_INTRA;
-					}
+				if (intra) {
+					taxDownload.setInterIntraState(CON_INTER);
 				} else {
-					if (inter) {
-						key = UNREG_INTER;
-					} else {
-						key = UNREG_INTRA;
-					}
-				}  
-				
-				if (taxDownload != null && (taxDownload.getFinReference().equals(finReference) 
-						&& taxDownload.getBranchProvince().equals(branchProvince) && taxDownload.getEntityCode().equals(entityCode) && taxDownload.getLedgerCode().equals(ledgerCode))) {
-					if (map.containsKey(key)) {
-						TaxDownload download = map.get(key);
-						download.setAmount(download.getAmount().add(taxDownload.getAmount()));
-					} else {
-						taxDownload = getTaxDetails(id, rs, finBranch, entityCode, finReference, branchProvince, entityName, bflGSTIN, ledgerCode, postAmount, registered, inter);
-						map.put(key, taxDownload);
-					}
+					taxDownload.setInterIntraState(CON_INTRA);
+				}
+
+				TaxDownload taxDwl = isExists(list, taxDownload);
+				if (taxDwl != null) {
+					taxDwl.getAmount().add(taxDownload.getAmount());
 				} else {
-					for (TaxDownload item : map.values()) {
-						list.add(item);
-					}
-					map.clear();
-					
-					taxDownload = getTaxDetails(id, rs, finBranch, entityCode, finReference, branchProvince, entityName, bflGSTIN, ledgerCode, postAmount, registered, inter);
-					map.put(key, taxDownload);
-				}  
-				 
-				if (list.size() >= batchSize) {
-					saveSumExtractDetails(list);
-					list.clear();
+					list.add(taxDownload);
 				}
 			}
 		});
@@ -290,34 +280,20 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	private TaxDownload getTaxDetails(long id, ResultSet rs, String finBranch, String entityCode, String finReference, String branchProvince, String entityName, String bflGSTIN, String ledgerCode,
-			BigDecimal postAmount, boolean registered, boolean inter) throws SQLException {
-		TaxDownload taxDownload;
-		taxDownload = new TaxDownload();
-		taxDownload.setHeaderId(id);
-		taxDownload.setEntityName(entityName);
-		taxDownload.setEntityGSTIN(bflGSTIN);
-		taxDownload.setLedgerCode(ledgerCode);
-		taxDownload.setFinBranchId(finBranch);
-		taxDownload.setAmount(postAmount);
-		taxDownload.setEntityCode(entityCode);
-		taxDownload.setTransactionDate(rs.getDate("POSTDATE"));
-		taxDownload.setFinReference(finReference);
-		taxDownload.setBranchProvince(branchProvince);
-		if(registered){
-			taxDownload.setRegisteredCustomer(CON_REGISTERED);
-		} else {
-			taxDownload.setRegisteredCustomer(CON_UNREGISTERED);
+	private TaxDownload isExists(List<TaxDownload> list, TaxDownload taxDownload) {
+		for (TaxDownload txDownload : list) {
+			if (StringUtils.equals(taxDownload.getEntityCode(), txDownload.getEntityCode())
+					&& StringUtils.equals(taxDownload.getEntityGSTIN(), txDownload.getEntityGSTIN())
+					&& StringUtils.equals(taxDownload.getLedgerCode(), txDownload.getLedgerCode())
+					&& StringUtils.equals(taxDownload.getFinBranchId(), txDownload.getFinBranchId())
+					&& StringUtils.equals(taxDownload.getRegisteredCustomer(), txDownload.getRegisteredCustomer())
+					&& StringUtils.equals(taxDownload.getInterIntraState(), txDownload.getInterIntraState())) {
+				return txDownload;
+			}
 		}
-		
-		if(inter){
-			taxDownload.setInterIntraState(CON_INTER);
-		} else {
-			taxDownload.setInterIntraState(CON_INTRA);
-		}
-		return taxDownload;
+		return null;
 	}
+
 	/**
 	 * TaxDownload
 	 * 
@@ -352,7 +328,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setBusinessDatetime(taxDownload.getTransactionDate());
 		taxDownload.setProcessDatetime(new Timestamp(System.currentTimeMillis()));
 		taxDownload.setProcessedFlag(CON_NO);
-		
+
 		hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANSORDER"));
 		taxDownload.setHostSystemTransactionId(hostSystemTransactionID);
 		taxDownload.setTransactionType(rs.getString("FINEVENT"));
@@ -360,7 +336,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setSourceSystem(CON_SOURCE_SYSTEM);
 		entityCode = rs.getString("ENTITYCODE");
 		taxDownload.setCompanyCode(entityCode);
-		
+
 		customerGSTIN = rs.getString("CUSTOMERGSTIN");
 		if (StringUtils.trimToNull(customerGSTIN) != null) {
 			taxDownload.setRegisteredCustomer(CON_YES);
@@ -368,7 +344,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			taxDownload.setCustomerName(rs.getString("TAXCUSTSHRTNAME"));
 			taxDownload.setCustomerGstin(customerGSTIN);
 			boolean taxExempted = rs.getBoolean("TAXEXEMPTED");
-			taxDownload.setExemptedCustomer(taxExempted? CON_YES : CON_NO);
+			taxDownload.setExemptedCustomer(taxExempted ? CON_YES : CON_NO);
 			taxDownload.setPanNo(rs.getString("TAXCUSTCRCPR"));
 			// Address Details
 			customerAddress = new StringBuilder();
@@ -377,43 +353,43 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 				customerAddress.append(addrLine1);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addrLine2 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2"));
 			if (!addrLine2.isEmpty()) {
 				customerAddress.append(addrLine2);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addrLine3 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3"));
 			if (!addrLine3.isEmpty()) {
 				customerAddress.append(addrLine3);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addrLine4 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4"));
 			if (!addrLine4.isEmpty()) {
 				customerAddress.append(addrLine4);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-		
+
 			String pincode = StringUtils.trimToEmpty(rs.getString("TAXPINCODE"));
 			if (!pincode.isEmpty()) {
 				customerAddress.append(pincode);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String city = StringUtils.trimToEmpty(rs.getString("TAXCITY"));
 			if (!city.isEmpty()) {
 				customerAddress.append(cityMap.get(city));
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			province = StringUtils.trimToEmpty(rs.getString("TAXPROVINCE"));
 			if (!province.isEmpty()) {
 				customerAddress.append(provinceMap.get(province).getCPProvinceName());
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String country = StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"));
 			if (!country.isEmpty()) {
 				customerAddress.append(countryMap.get(country));
@@ -434,63 +410,63 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 
 			// Address Details
 			customerAddress = new StringBuilder();
-			
+
 			String custAddRhnbr = StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR"));
 			if (!custAddRhnbr.isEmpty()) {
 				customerAddress.append(custAddRhnbr);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custFlatNbr = StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR"));
 			if (!custFlatNbr.isEmpty()) {
 				customerAddress.append(custFlatNbr);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrStreet = StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET"));
 			if (!custAddrStreet.isEmpty()) {
 				customerAddress.append(custAddrStreet);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrLine1 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1"));
 			if (!custAddrLine1.isEmpty()) {
 				customerAddress.append(custAddrLine1);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrLine2 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2"));
 			if (!custAddrLine2.isEmpty()) {
 				customerAddress.append(custAddrLine2);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custPoBox = StringUtils.trimToEmpty(rs.getString("CUSTPOBOX"));
 			if (!custPoBox.isEmpty()) {
 				customerAddress.append(custPoBox);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrZip = StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP"));
 			if (!custAddrZip.isEmpty()) {
 				customerAddress.append(custAddrZip);
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrCity = StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"));
 			if (!custAddrCity.isEmpty()) {
 				customerAddress.append(cityMap.get(custAddrCity));
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			province = rs.getString("CUSTADDRPROVINCE");
-			if(!StringUtils.trimToEmpty(province).isEmpty()){
+			if (!StringUtils.trimToEmpty(province).isEmpty()) {
 				customerAddress.append(provinceMap.get(province).getCPProvinceName());
 				customerAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String custAddrCtry = StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"));
-			if(!custAddrCtry.isEmpty()){
+			if (!custAddrCtry.isEmpty()) {
 				customerAddress.append(countryMap.get(custAddrCtry));
 			}
 			lastMntOn = rs.getDate("CUSTADDRLASTMNTON");
@@ -503,7 +479,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 
 		taxDownload.setToState(taxStateCode);
 
-		// Only changes after the loan approval should be shown in the Address Change Date
+		// Only changes after the loan approval should be shown in the Address
+		// Change Date
 		if (DateUtility.compare(lastMntOn, finApprovalDate) > 0) {
 			lastMntOn = DateUtility.getDBDate(DateUtility.formatDate(lastMntOn, "yyyy-MM-dd"));
 			taxDownload.setAddressChangeDate(lastMntOn);
@@ -515,21 +492,21 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setHsnSacCode(rs.getString("HSNSACCODE"));
 		taxDownload.setNatureOfService(rs.getString("NATUREOFSERVICE"));
 		taxDownload.setLoanAccountNo(rs.getString("FINREFERENCE"));
-		taxDownload.setAgreementId(Long.parseLong(StringUtils.substring(taxDownload.getLoanAccountNo(), 
-				taxDownload.getLoanAccountNo().length()-8)));
+		taxDownload.setAgreementId(Long.parseLong(
+				StringUtils.substring(taxDownload.getLoanAccountNo(), taxDownload.getLoanAccountNo().length() - 8)));
 		taxDownload.setConsiderForGst(CON_YES);
-		
+
 		taxDownload.setProductCode(rs.getString("FINTYPE"));
 		taxDownload.setChargeCode(0);
 
 		loanBranch = branchMap.get(rs.getObject("FINBRANCH"));
 		taxDownload.setLoanBranch(Long.valueOf(loanBranch.getBankRefNo()));
 		taxDownload.setLoanBranchAddress(getBranchAddress(loanBranch));
-		
-		Province loanProvince =  getProvince(loanBranch.getBranchProvince());
-		taxDownload.setExemptedState(loanProvince.isTaxExempted()? CON_YES : CON_NO);
-		
-		loanBranchState =loanProvince.getTaxStateCode();
+
+		Province loanProvince = getProvince(loanBranch.getBranchProvince());
+		taxDownload.setExemptedState(loanProvince.isTaxExempted() ? CON_YES : CON_NO);
+
+		loanBranchState = loanProvince.getTaxStateCode();
 		taxDownload.setLoanBranchState(loanBranchState);
 		taxDownload.setFromState(loanBranchState);
 		userBranchCode = rs.getString("USERBRANCH");
@@ -539,60 +516,60 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			userBranch = branchMap.get(userBranchCode);
 		}
 		taxDownload.setLoanServicingBranch(userBranch.getBranchCode());
-		
+
 		entityDetail = entityDetailMap.get(loanBranch.getBranchProvince() + "_" + entityCode);
 		if (entityDetail != null) {
 			taxDownload.setBflGstinNo(entityDetail.getTaxCode());
 
 			StringBuilder gstAddress = new StringBuilder();
-			
+
 			String addLine1 = StringUtils.trimToEmpty(entityDetail.getAddressLine1());
 			if (!addLine1.isEmpty()) {
 				gstAddress.append(addLine1);
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addLine2 = StringUtils.trimToEmpty(entityDetail.getAddressLine2());
 			if (!addLine2.isEmpty()) {
 				gstAddress.append(addLine2);
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addLine3 = StringUtils.trimToEmpty(entityDetail.getAddressLine3());
 			if (!addLine3.isEmpty()) {
 				gstAddress.append(addLine3);
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String addLine4 = StringUtils.trimToEmpty(entityDetail.getAddressLine4());
 			if (!addLine4.isEmpty()) {
 				gstAddress.append(addLine4);
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String pinCode = StringUtils.trimToEmpty(entityDetail.getPinCode());
 			if (!pinCode.isEmpty()) {
 				gstAddress.append(pinCode);
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String cityCode = StringUtils.trimToEmpty(entityDetail.getCityCode());
 			if (!cityCode.isEmpty()) {
 				gstAddress.append(cityMap.get(cityCode));
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String stateCode = StringUtils.trimToEmpty(entityDetail.getStateCode());
 			if (!stateCode.isEmpty()) {
 				gstAddress.append(provinceMap.get(stateCode).getCPProvinceName());
 				gstAddress.append(ADDR_DELIMITER);
 			}
-			
+
 			String country = StringUtils.trimToEmpty(entityDetail.getCountry());
 			if (!country.isEmpty()) {
 				gstAddress.append(countryMap.get(country));
 			}
-			
+
 			txnBranchAddress = gstAddress.toString();
 			txnBranchStateCode = entityDetail.getStateCode();
 		} else {
@@ -609,13 +586,14 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		BigDecimal transactionAmt = postAmount.divide(new BigDecimal(ccyMinorUnits));
 		taxDownload.setTransactionAmount(transactionAmt);
 		boolean revChargeApplicable = rs.getBoolean("REVERSECHARGEAPPLICABLE");
-		
-		taxDownload.setReverseChargeApplicable(revChargeApplicable? CON_YES : CON_NO);
+
+		taxDownload.setReverseChargeApplicable(revChargeApplicable ? CON_YES : CON_NO);
 		// InvoiceType
 		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
 		if (oldTransactionID != 0) {
 			taxDownload.setInvoiceType(CON_C);
-			taxDownload.setOriginalInvoiceNo(String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
+			taxDownload.setOriginalInvoiceNo(
+					String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
 		} else {
 			taxDownload.setInvoiceType(CON_I);
 			taxDownload.setOriginalInvoiceNo(null);
@@ -634,7 +612,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		provinceMap = getProvinceDetails();
 		branchMap = getBranchDetails();
 		entityDetailMap = setEntityDetails();
- 		cityMap = setCityMap();
+		cityMap = setCityMap();
 		countryMap = setCountryMap();
 		logger.debug(Literal.LEAVING);
 	}
@@ -706,7 +684,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 		return map;
 	}
-	
+
 	/**
 	 * Get Branch Address, Branch State and Host Branch code
 	 * 
@@ -719,14 +697,14 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		}
 		final Map<String, Province> map = new HashMap<String, Province>();
 		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,");
-		selectSql.append(" BankRefNo,CPIsActive," );
-		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea " );		
+		selectSql.append(" BankRefNo,CPIsActive,");
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea ");
 		selectSql.append(" FROM  RMTCountryVsProvince");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
-		
+
 		List<Province> provinces = this.parameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		for (Province province : provinces) {
 			map.put(province.getCPProvince(), province);
@@ -934,8 +912,10 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PROCESSDATE_FROM", fromDate);
 		source.addValue("PROCESSDATE_TO", toDate);
-		
-		parameterJdbcTemplate.update("DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO", source);
+
+		parameterJdbcTemplate.update(
+				"DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO",
+				source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -976,7 +956,9 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FROMDATE", fromDate);
 		source.addValue("TODATE", toDate);
-		parameterJdbcTemplate.update( "INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE", source);
+		parameterJdbcTemplate.update(
+				"INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
+				source);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1012,7 +994,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
 		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
 		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE,");
-		sql.append(" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
+		sql.append(
+				" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
 		sql.append(" PROCESSED_FLAG, AGREEMENTID, CONSIDER_FOR_GST, EXEMPTED_STATE, EXEMPTED_CUSTOMER )");
 		sql.append(" values(");
 		sql.append(" :HeaderId, :TransactionDate, :HostSystemTransactionId, :TransactionType, :BusinessArea,");
@@ -1021,7 +1004,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		sql.append(" :LedgerCode, :HsnSacCode, :NatureOfService, :LoanAccountNo, :ProductCode, :ChargeCode,");
 		sql.append(" :LoanBranch, :LoanBranchState, :LoanServicingBranch, :BflGstinNo, :TxnBranchAddress,");
 		sql.append(" :TxnBranchStateCode, :TransactionAmount, :ReverseChargeApplicable, :InvoiceType,");
-		sql.append(" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
+		sql.append(
+				" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
 		sql.append(" :ProcessedFlag, :AgreementId, :ConsiderForGst, :ExemptedState, :ExemptedCustomer )");
 		return sql;
 	}
@@ -1040,7 +1024,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
 		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
 		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE,");
-		sql.append(" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
+		sql.append(
+				" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
 		sql.append(" PROCESSED_FLAG, AGREEMENTID, CONSIDER_FOR_GST, EXEMPTED_STATE, EXEMPTED_CUSTOMER )");
 		sql.append(" values(");
 		sql.append(" :TransactionDate, :HostSystemTransactionId, :TransactionType, :BusinessArea,");
@@ -1049,7 +1034,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		sql.append(" :LedgerCode, :HsnSacCode, :NatureOfService, :LoanAccountNo, :ProductCode, :ChargeCode,");
 		sql.append(" :LoanBranch, :LoanBranchState, :LoanServicingBranch, :BflGstinNo, :TxnBranchAddress,");
 		sql.append(" :TxnBranchStateCode, :TransactionAmount, :ReverseChargeApplicable, :InvoiceType,");
-		sql.append(" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
+		sql.append(
+				" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
 		sql.append(" :ProcessedFlag, :AgreementId, :ConsiderForGst, :ExemptedState, :ExemptedCustomer )");
 		return sql;
 	}
