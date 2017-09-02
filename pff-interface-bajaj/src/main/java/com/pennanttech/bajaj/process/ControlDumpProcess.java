@@ -106,6 +106,11 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 					count = 0;
 				}
 			} catch (Exception e) {
+				if(!txnStatus.isCompleted()) {
+					transManager.commit(txnStatus);
+					count = 0;
+				}
+				
 				saveBatchLog(item.getAgreementNo(), "F", e.getMessage());
 				EXTRACT_STATUS.setFailedRecords(failedCount++);
 			} finally {
