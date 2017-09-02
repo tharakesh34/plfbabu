@@ -395,7 +395,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 			throw new Exception("First Due date is null");
 		}
 		
-		if (StringUtils.isNumeric(cd.getCustomerId())) {
+		if (!StringUtils.isNumeric(cd.getCustomerId())) {
 			throw new Exception("Customer CIF not numeric.");
 		}
 	}
