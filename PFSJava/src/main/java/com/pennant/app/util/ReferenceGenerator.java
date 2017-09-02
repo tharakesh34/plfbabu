@@ -86,7 +86,7 @@ public class ReferenceGenerator implements Serializable {
 
 		// Get the sequence number.
 		long referenceSeqNumber = nextidviewDAO.getNextId("SeqFinReference");
-		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 8, '0');
+		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 7, '0');
 
 		logger.debug("Leaving");
 		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("LOAN_REFERENCE_IDENTIFIER"))) {
