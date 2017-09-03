@@ -233,9 +233,9 @@ public class SAPGLProcess extends DataEngineExport {
 
 			if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
 				item.setTransactionAmount(BigDecimal.ZERO.subtract(item.getTransactionAmount()));
-				item.setTransactionAmountType("40");
-			} else {
 				item.setTransactionAmountType("50");
+			} else {
+				item.setTransactionAmountType("40");
 			}
 
 			transactions = entityMap.get(item.getEntity());
@@ -449,10 +449,10 @@ public class SAPGLProcess extends DataEngineExport {
 		BigDecimal WRBTR = summaryAmount;
 
 		if (summaryAmount.compareTo(BigDecimal.ZERO) < 0) {
-			BSCHL = "40";
+			BSCHL = "50";
 			WRBTR = WRBTR.negate();
 		} else {
-			BSCHL = "50";
+			BSCHL = "40";
 		}
 
 		MapSqlParameterSource parameterSource;
