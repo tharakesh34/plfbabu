@@ -20,5 +20,10 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
+	<changeSet id="1" author="Durga Prasad D">
+		<addColumn tableName="ApilogDetails">
+        	<column name="ErrorDesc" type="varchar2(2000)"/>
+    	</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
