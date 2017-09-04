@@ -277,7 +277,7 @@ public class ReferenceUtil implements Serializable {
 			
 			while (status) {
 				generatedSeqNo = Long.parseLong(String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
-				boolean isExist = getvASRecordingDAO().isVasReferenceExists(String.valueOf(generatedSeqNo), "_View");
+				boolean isExist = getvASRecordingDAO().isVasReferenceExists(String.valueOf(VASConsatnts.VAS_DIVISION+generatedSeqNo), "_View");
 				if (isExist) {
 					seqNumber = seqNumber + 1;
 				} else {

@@ -5821,11 +5821,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			List<VASRecording> vasRecordings = finVasRecordingDialogCtrl.getVasRecordings();
 			for (VASRecording recording : vasRecordings) {
-				if(StringUtils.isEmpty(recording.getVasReference())){
+				if (StringUtils.isEmpty(recording.getVasReference())) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_MandatoryVAS_Update"));
 					return;
 				}
+
+				if (aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList() != null
+						&& !aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
+
+					for (FinFeeDetail feeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+
+						if (StringUtils.equals(feeDetail.getVasReference(), recording.getVasReference())) {
+
+							recording.setFee(feeDetail.getActualAmount());
+							recording.setPaidAmt(feeDetail.getPaidAmount());
+							recording.setWaivedAmt(feeDetail.getWaivedAmount());
+						}
+					}
+				}
 			}
+			
 			aFinanceDetail.getFinScheduleData().setVasRecordingList(vasRecordings);
 		}
 

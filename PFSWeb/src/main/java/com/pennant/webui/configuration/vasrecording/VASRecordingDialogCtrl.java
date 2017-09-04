@@ -247,7 +247,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Row 											row_VASPaid;
 	protected CurrencyBox									paidAmt;
 	protected CurrencyBox									waivedAmt;
-	private boolean                                       waivedFlag=false;
 	
 	/**
 	 * default constructor.<br>
@@ -314,11 +313,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					setFeeEditable(true);
 				}else{
 					setNewRecord(false);
-				}
-				if(arguments.containsKey("waivedFlag")){
-					setWaivedFlag(true);
-				}else{
-					setWaivedFlag(false);
 				}
 				this.vASRecording.setWorkflowId(0);
 				if(arguments.containsKey("roleCode")){
@@ -451,10 +445,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnCancel.setVisible(true);
 			this.btnSearchSelection.setDisabled(true);
 		}
-		if(isWaivedFlag()){
+		if(isFinanceVas()){
 			this.row_VASPaid.setVisible(false);
 		}else{
-			this.row_VASPaid.setVisible(false);
+			this.row_VASPaid.setVisible(true);
 		}
 		this.productCode.setReadonly(true);
 		this.postingAgainst.setDisabled(true);
@@ -1376,9 +1370,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setReadonly(true);
 			}
 		}
-		/*if(isWaivedFlag()==false){
+		if(!isFinanceVas()){
 			this.fee.addForward("onFulfill", this.window_VASRecordingDialog, "onFeeAmountChange");
-		}*/
+		}
 		this.fee.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
 		this.waivedAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getWaivedAmt(), getCcyFormat()));
 		
@@ -2860,12 +2854,5 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public boolean isWaivedFlag() {
-		return waivedFlag;
-	}
-
-	public void setWaivedFlag(boolean waivedFlag) {
-		this.waivedFlag = waivedFlag;
-	}
 
 }

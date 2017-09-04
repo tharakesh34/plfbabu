@@ -1687,6 +1687,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			aeEvent.setFinReference(vASRecording.getVasReference());
+			aeEvent.setValueDate(curBDay);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			if(amountCodes == null){
 				amountCodes = new AEAmountCodes();
