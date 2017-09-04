@@ -381,4 +381,12 @@
 	        end;
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="32" author="Kesav">
+		<sql>
+		 	Delete from RBFIELDDETAILS where RBMODULE = 'BOUNCE' and RBEVENT ='BOUNCE' and RBFLDNAME = 'br_finType';
+			Insert into RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('BOUNCE', 'BOUNCE', 'br_finType', 'Loan Type', 'nvarchar', 8, '0', '1', ' ', 'static,global', ' ');     
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
