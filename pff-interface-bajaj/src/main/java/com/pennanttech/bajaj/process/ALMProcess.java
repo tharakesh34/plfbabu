@@ -118,6 +118,12 @@ public class ALMProcess extends DatabaseDataEngine {
 					alm.setProductFlag(rs.getString("FINTYPE"));
 					alm.setNpaStageId(rs.getString("CLOSINGSTATUS"));
 					
+					if ("W".equals(alm.getNpaStageId())) {
+						alm.setNpaStageId("WRITEOFF");
+					} else {
+						alm.setNpaStageId("REGULAR");
+					}
+					
 					Integer advanceEmi = advanceEmis.get(finReference);
 					
 					if (advanceEmi != null && advanceEmi.intValue() > 0) {
@@ -188,6 +194,7 @@ public class ALMProcess extends DatabaseDataEngine {
 			item.setCumulativeAccrualAmt(getAmount(accrual.getCumulativeAccrued(), minorCcyUnits, editField));
 			item.setDueDate(accrual.getSchdDate());
 			item.setAccruedOn(accrual.getAccruedOn());
+			item.setNpaStageId(alm.getNpaStageId());
 
 			list.add(item);
 		}

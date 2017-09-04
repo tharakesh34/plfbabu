@@ -662,11 +662,6 @@ public class AccrualService extends ServiceHelper {
 
 		// build month end till the maturity
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
-		Date mointhStart = DateUtility.getMonthStart(monthEnd);
-
-//		if (finMain.getFinStartDate().compareTo(mointhStart) < 0) {
-//			return list;
-//		}
 
 		List<Date> months = new ArrayList<Date>();
 		Date newMonth = new Date(monthEnd.getTime());
@@ -742,8 +737,7 @@ public class AccrualService extends ServiceHelper {
 			}
 			prjAcc.setCumulativeAccrued(cummAccAmt);
 			prjAcc.setSchdTot(prjAcc.getSchdPri().add(prjAcc.getSchdPft()));
-//			System.out.println(DateUtility.formatToShortDate(prjAcc.getAccruedOn())
-//					 + " ," + prjAcc.getPftAccrued() + "," + prjAcc.getCumulativeAccrued());
+
 			list.add(prjAcc);
 			cummAccAmt = cummAccAmt.add(prjAcc.getPftAccrued());
 
