@@ -173,5 +173,12 @@
 	</sql>
 
 </changeSet>
-
+<changeSet id="8" author="Jayant"  dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
