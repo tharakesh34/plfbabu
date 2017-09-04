@@ -1298,6 +1298,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 				if (rule != null) {
+					executeMap.put("br_finType", getReceiptHeader().getFinType());
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
 							getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
 					// unFormating BounceAmt

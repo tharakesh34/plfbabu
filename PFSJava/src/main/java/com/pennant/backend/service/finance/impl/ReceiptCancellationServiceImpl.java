@@ -605,6 +605,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		bounceReason.getDeclaredFieldValues(fieldsAndValues);
 		
 		if (rule != null) {
+			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
 			bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 		}
 		
