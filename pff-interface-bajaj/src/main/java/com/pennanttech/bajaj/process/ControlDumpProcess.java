@@ -202,7 +202,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 
 					cd.setAgreementDate(rs.getDate("FINCONTRACTDATE"));
 					cd.setProductFlag(rs.getString("FINTYPE"));
-					cd.setAmtFin(getAmount(rs, "FINAMOUNT"));
+					cd.setAmtFin(getAmount(rs, "FINASSETVALUE"));
 					cd.setAssetCost(getAmount(rs, "FINASSETVALUE"));
 					cd.setClosureDate(rs.getDate("MATURITYDATE"));
 					cd.setCurrentBucket(rs.getInt("DUEBUCKET"));
