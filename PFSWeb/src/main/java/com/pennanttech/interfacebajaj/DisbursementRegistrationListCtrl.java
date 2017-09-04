@@ -73,14 +73,15 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -92,6 +93,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -133,10 +135,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected ExtendedCombobox partnerBank;
 	protected Datebox fromDate;
 	protected Datebox toDate;
-	protected ExtendedCombobox finType;
+	protected Uppercasebox finType;
+	protected Space space_finType;
 	protected ExtendedCombobox branch;
 	protected Checkbox qdp;
 	protected Combobox channelTypes;
+	protected Textbox  finRef;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -145,6 +149,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_FinType;
 	protected Listbox sortOperator_Branch;
 	protected Listbox sortOperator_Channel;
+	protected Listbox sortOperator_FinRef;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -154,6 +159,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	protected Button button_Search;
 	protected Button btnDownload;
+	protected Button btnbranchDetails;
+	protected int oldVar_sortOperator_finType;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
@@ -212,7 +219,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		setPageComponents(window_DisbursementRegistrationList, borderLayout_DisbursementList,
 				listBoxDisbursementRegistration, pagingDisbursementList);
 		setItemRender(new DisbursementListModelItemRenderer());
-		
+
 		// Register buttons and fields.
 		registerButton(button_Search);
 		registerField("paymentId");
@@ -223,17 +230,18 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("partnerbankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("paymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
 				sortOperator_DisbType, Operators.STRING);
-		registerField("finReference", listheader_Disbursement_FinRef, SortOrder.NONE);
-		registerField("finType", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,
+		registerField("finReference", listheader_Disbursement_FinRef, SortOrder.NONE, finRef, sortOperator_FinRef,
 				Operators.STRING);
+		registerField("finType", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,
+				Operators.MULTISELECT);
 		registerField("custShrtName", listheader_Disbursement_Custname, SortOrder.NONE);
 		registerField("beneficiaryName", listheader_Disbursement_BenName, SortOrder.NONE);
 		registerField("beneficiaryAccNo", listheader_Disbursement_BenAcctno, SortOrder.NONE);
 		registerField("branchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
 				Operators.STRING);
 		registerField("AMTTOBERELEASED");
-		registerField("channel", listheader_Disbursement_Channel, SortOrder.NONE, channelTypes,
-				sortOperator_Channel, Operators.STRING);
+		registerField("channel", listheader_Disbursement_Channel, SortOrder.NONE, channelTypes, sortOperator_Channel,
+				Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
@@ -266,7 +274,46 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		//doRemoveValidation();
 		this.toDate.getValue();
 	}
+	
+	
+	public void onSelect$sortOperator_FinType(Event event) {
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FinType, oldVar_sortOperator_finType,
+				this.finType);
+	}
 
+	/**
+	 * On Change Search Operators resetting Data entered by User
+	 * 
+	 * @param listbox
+	 * @param oldOperator
+	 * @param textbox
+	 * @return
+	 */
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
+
+		final Listitem item = listbox.getSelectedItem();
+		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
+
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
+				textbox.setValue("");
+			}
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
+				textbox.setValue("");
+			}
+		}
+		return searchOpId;
+
+	}
+	
+	public void onClick$btnbranchDetails(Event event) {
+		logger.debug("Entering  " + event.toString());
+		setSearchValue(sortOperator_FinType, this.finType, "FinanceType");
+		logger.debug("Leaving" + event.toString());
+		
+	}
+	
 
 	private void doSetFieldProperties() {
 
@@ -282,12 +329,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 
-		this.finType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("FinType");
-		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setValidateColumns(new String[] { "FinType" });
-		this.finType.setMandatoryStyle(true);
+		this.space_finType.setSclass(PennantConstants.mandateSclass);
 
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(false), "");
 		fillComboBox(this.channelTypes, "",channelTypesList, "");
