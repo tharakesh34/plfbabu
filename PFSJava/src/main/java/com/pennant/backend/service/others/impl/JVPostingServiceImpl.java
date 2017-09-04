@@ -314,14 +314,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public JVPosting getJVPostingById(long id) {
 		JVPosting jvPosting = getJVPostingDAO().getJVPostingById(id, "_View");
 		if (jvPosting != null) {
-			String debitAc=null;
-			List<JVPostingEntry> entries = getjVPostingEntryDAO().getJVPostingEntryListById(
-					jvPosting.getBatchReference(), "_View");
-			
-			for (int i = 0; i < entries.size(); i++) {
-				if(entries.get(i).getDerivedTxnRef()==0){
-					debitAc=entries.get(i+1).getAccount();
-					entries.get(i).setDebitAccount(debitAc);
+			String debitAc = null;
+			List<JVPostingEntry> entries = getjVPostingEntryDAO()
+					.getJVPostingEntryListById(jvPosting.getBatchReference(), "_View");
+			if (entries != null && !entries.isEmpty()) {
+				for (int i = 0; i < entries.size(); i++) {
+					if (entries.get(i).getDerivedTxnRef() == 0) {
+						debitAc = entries.get(i + 1).getAccount();
+						entries.get(i).setDebitAccount(debitAc);
+					}
 				}
 			}
 			jvPosting.setJVPostingEntrysList(entries);
