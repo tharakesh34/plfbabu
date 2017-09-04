@@ -125,6 +125,26 @@
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
+		<profile>
+			<id>local</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@localhost:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>plfpro</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>localaudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@localhost:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>plfproaudit</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
