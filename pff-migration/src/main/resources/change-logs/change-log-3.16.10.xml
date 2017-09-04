@@ -567,7 +567,7 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="15" author="Jayant">
+	<changeSet id="15" author="Jayant" dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
