@@ -278,6 +278,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 						cd.setSohBalance(obj.getSohBalance());
 						cd.setNoOfUnbilledEmi(obj.getNoOfUnbilledEmi());
 						cd.setBalanceUmfc(obj.getBalanceUmfc());
+						cd.setLoanEmi(obj.getLoanEmi());
 						obj = null;
 					}
 
