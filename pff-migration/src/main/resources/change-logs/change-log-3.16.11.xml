@@ -27,11 +27,18 @@
 	</changeSet>
 	<changeSet id="2" author="Madhubabu">
 	    <sql>
-  		 delete from BMTAmountCodes where AllowedEvent='VASFEE' and amountcode='vr_paidAmt'
+  		 delete from BMTAmountCodes where AllowedEvent='VASFEE' and amountcode='vr_paidAmt';
 		 INSERT INTO BMTAmountCodes VALUES ('VASFEE', '0', 'vr_paidAmt', 'Accounting on VAS Fee Paid Amount', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
-		 delete from BMTAmountCodes where AllowedEvent='VASFEE' and amountcode='vr_waivedAmt'
+		 delete from BMTAmountCodes where AllowedEvent='VASFEE' and amountcode='vr_waivedAmt';
 		 INSERT INTO BMTAmountCodes VALUES ('VASFEE', '0', 'vr_waivedAmt', 'Accounting on VAS Fee Waived Amount', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
 	  </sql>
+	  </changeSet>
+	
+	<changeSet id="3" author="Kesav">
+	    <sql>
+	  		 update FinTypeFees set FINEVENT = 'ADDDBSN' where FINEVENT = 'ADDDBSP' and ORIGINATIONFEE = 0;
+	  		 update FinTypeFees_Temp set FINEVENT = 'ADDDBSN' where FINEVENT = 'ADDDBSP' and ORIGINATIONFEE = 0;
+	 	</sql>
 	  </changeSet>
 	
 </databaseChangeLog>
