@@ -834,7 +834,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 				loan.setCustomerType(rs.getString("CUSTOMER_TYPE"));
 
 				try {
-					loan.setApplnNo(StringUtils.substring(loan.getLanNo(), loan.getLanNo().length() - 8,
+					loan.setApplnNo(StringUtils.substring(loan.getLanNo(), loan.getLanNo().length() - 7,
 							loan.getLanNo().length()));
 				} catch (Exception e) {
 					// TODO: handle exception

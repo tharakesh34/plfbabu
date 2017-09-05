@@ -485,8 +485,8 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		taxDownload.setHsnSacCode(rs.getString("HSNSACCODE"));
 		taxDownload.setNatureOfService(rs.getString("NATUREOFSERVICE"));
 		taxDownload.setLoanAccountNo(rs.getString("FINREFERENCE"));
-		taxDownload.setAgreementId(Long.parseLong(
-				StringUtils.substring(taxDownload.getLoanAccountNo(), taxDownload.getLoanAccountNo().length() - 8)));
+		taxDownload.setAgreementId(Long.parseLong(StringUtils.substring(taxDownload.getLoanAccountNo(),
+				taxDownload.getLoanAccountNo().length() - 7, taxDownload.getLoanAccountNo().length())));
 		taxDownload.setConsiderForGst(CON_YES);
 
 		taxDownload.setProductCode(rs.getString("FINTYPE"));

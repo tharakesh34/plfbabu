@@ -186,7 +186,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 				String agreementId = null;
 				try {
 					finReference = rs.getString("FINREFERENCE");
-					agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+					agreementId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
 					
 					cd = new ControlDump();
 					cd.setCreatedOn(appDate);

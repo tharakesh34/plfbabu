@@ -111,7 +111,7 @@ public class ALMProcess extends DatabaseDataEngine {
 					ALM	alm = new ALM();
 
 					String finReference = rs.getString("FINREFERENCE");
-					String agreementId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+					String agreementId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
 
 					alm.setAgreementNo(finReference);
 					alm.setAgreementId(Long.parseLong(agreementId));
