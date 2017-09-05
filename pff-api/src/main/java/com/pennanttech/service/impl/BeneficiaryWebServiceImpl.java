@@ -9,7 +9,6 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -33,7 +32,6 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	private CustomerDetailsService customerDetailsService;
 	private BankBranchService bankBranchService;
 	private BeneficiaryService beneficiaryService;
-	private BankDetailService bankDetailService;
 
 	/**
 	 * Method for create Beneficiary in PLF system.
@@ -216,7 +214,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 			}
 		}
 		//validate AccNumber length
-				if(StringUtils.isNotBlank(beneficiary.getBankCode())){
+		/*if(StringUtils.isNotBlank(beneficiary.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());
 					if(beneficiary.getAccNumber().length()!=accNoLength){
 						String[] valueParm = new String[2];
@@ -224,7 +222,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 						valueParm[1] = String.valueOf(accNoLength)+" characters";
 						return getErrorDetails("30570", valueParm);
 					}
-				}
+				}*/
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -270,10 +268,6 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 	@Autowired
 	public void setBeneficiaryService(BeneficiaryService beneficiaryService) {
 		this.beneficiaryService = beneficiaryService;
-	}
-	@Autowired
-	public void setBankDetailService(BankDetailService bankDetailService) {
-		this.bankDetailService = bankDetailService;
 	}
 
 	

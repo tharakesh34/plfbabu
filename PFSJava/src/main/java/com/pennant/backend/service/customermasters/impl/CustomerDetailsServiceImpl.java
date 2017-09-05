@@ -96,7 +96,6 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
@@ -185,7 +184,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerChequeInfoValidation customerChequeInfoValidation;
 	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
 	private LovFieldDetailService lovFieldDetailService;
-	private BankDetailService	bankDetailService;
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
 	private LimitRebuild limitRebuild;
 	private GCDCustomerService gCDCustomerService;
@@ -1879,7 +1877,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				//validate AccNumber length
-				if(StringUtils.isNotBlank(custBankInfo.getBankName())){
+				/*if(StringUtils.isNotBlank(custBankInfo.getBankName())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(custBankInfo.getBankName());
 					if(custBankInfo.getAccountNumber().length()!=accNoLength){
 						String[] valueParm = new String[2];
@@ -1889,7 +1887,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
-				}
+				}*/
 			}
 			
 		}
@@ -5202,9 +5200,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
-	}
-	public void setBankDetailService(BankDetailService bankDetailService) {
-		this.bankDetailService = bankDetailService;
 	}
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;

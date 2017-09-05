@@ -2583,7 +2583,6 @@
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
-		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="limitRebuild" ref="limitRebuild" />
 		<property name="gCDCustomerService" ref="gCDCustomerService" />
@@ -9169,7 +9168,6 @@
 		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
-		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 	<!--============ Customer ChequeInfo Details ============== -->
 

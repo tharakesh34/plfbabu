@@ -1911,7 +1911,7 @@ public class FinanceDataValidation {
 						valueParm[0] = "accountNo";
 						valueParm[1] = advPayment.getBeneficiaryAccNo();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90217", valueParm)));
-					} else {
+					} /*else {
 						//validate AccNumber length
 						int accNoLength = bankDetailService.getAccNoLengthByCode(advPayment.getBankCode());
 						if (advPayment.getBeneficiaryAccNo().length() != accNoLength) {
@@ -1921,7 +1921,7 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
 							return errorDetails;
 						}
-					}
+					}*/
 					// Account holder name
 					if (StringUtils.isBlank(advPayment.getBeneficiaryName())) {
 						String[] valueParm = new String[2];
