@@ -533,7 +533,7 @@ SELECT    T1.ProductCode, T1.PostingAgainst, T1.PrimaryLinkRef, T1.VasReference,
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			</sql>
 		
-		</changeSet>
+		</changeSet> 
 		<changeSet id="11" author="Pruthvi">
 		    <sql>
 		        update REPORTFILTERFIELDS set fieldtype='DATE' where reportid in 
