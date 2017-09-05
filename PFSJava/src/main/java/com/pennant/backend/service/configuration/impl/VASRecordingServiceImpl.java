@@ -1782,7 +1782,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
-			
+			if (vasRecording.getWaivedAmt() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "WaivedAmt";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90242", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
 			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
 					.getProductCode());
 			if (vASConfiguration == null || !vASConfiguration.isActive()) {
