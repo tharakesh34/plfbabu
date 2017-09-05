@@ -10,7 +10,6 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
@@ -89,8 +88,8 @@ public class TrailBalance implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport();
-				TimeUnit.SECONDS.sleep(1);
+				new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimention.STATE);
+				new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

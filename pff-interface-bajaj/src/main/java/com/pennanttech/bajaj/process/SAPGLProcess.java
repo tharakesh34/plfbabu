@@ -89,9 +89,8 @@ public class SAPGLProcess extends DataEngineExport {
 	}
 
 	private Date getCurrentTrialBalanceStartDate() throws Exception {
-		String query = "SELECT STARTDATE from TRAIL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRAIL_BALANCE_HEADER)";
-
-		return jdbcTemplate.queryForObject(query, Date.class);
+		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER) AND DIMENSION = ?";
+		return jdbcTemplate.queryForObject(query, new Object[]{"STATE"}, Date.class);
 	}
 
 	private Map<String, TrailBalance> getTransactions() throws Exception {
@@ -269,6 +268,25 @@ public class SAPGLProcess extends DataEngineExport {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
 		
 		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
+		
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("START_DATE", DateUtil.getMonthStart(appDate));
+		paramMap.addValue("END_DATE", DateUtil.getMonthEnd(appDate));
+		paramMap.addValue("GL_TRANSACTION_EXPORT", "GL_TRANSACTION_EXPORT");
+		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
+		
+		
+		StringBuilder sql = new StringBuilder();
+		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN (");
+		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN(");
+		sql.append(":GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT))");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
+
+		sql = new StringBuilder();
+		sql = sql.append("Delete from DATA_ENGINE_STATUS");
+		sql.append(" where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN(");
+		sql.append(":GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT)");
+		parameterJdbcTemplate.update(sql.toString(), paramMap);
 	}
 	
 	private int saveTranactions(int fromRange, int toRange, String entity) {
@@ -435,7 +453,7 @@ public class SAPGLProcess extends DataEngineExport {
 	
 	private BigDecimal getSummaryByLink(int pageItr) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select SUM(CASE WHEN BSCHL= 40 THEN -1*WRBTR ELSE WRBTR END) from TRANSACTION_DETAIL_REPORT");
+		sql.append(" select SUM(CASE WHEN BSCHL= 50 THEN -1*WRBTR ELSE WRBTR END) from TRANSACTION_DETAIL_REPORT");
 		sql.append(" WHERE LINK = ?");
 
 		return jdbcTemplate.queryForObject(sql.toString(), new Object[] { pageItr }, BigDecimal.class);

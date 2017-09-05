@@ -171,7 +171,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		list.add("GL_TRAIL_BALANCE_EXPORT");
+		list.add("TRIAL_BALANCE_EXPORT_STATE");
+		list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
 		list.add("GL_TRANSACTION_EXPORT");
 		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
 
@@ -192,7 +193,10 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		try {
 			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
 					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-					DateUtility.getAppDate()).extractReport();
+					DateUtility.getAppDate()).extractReport(TrailBalanceEngine.Dimention.STATE);
+			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
+					DateUtility.getAppDate()).extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
 					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
 					DateUtility.getAppDate()).extractReport();

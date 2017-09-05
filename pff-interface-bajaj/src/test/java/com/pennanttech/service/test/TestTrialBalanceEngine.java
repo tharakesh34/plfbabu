@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.pennanttech.bajaj.process.TrailBalanceEngine;
+import com.pennanttech.bajaj.process.TrailBalanceEngine.Dimention;
 import com.pennanttech.dataengine.util.DateUtil;
 
 public class TestTrialBalanceEngine {
@@ -28,7 +29,7 @@ public class TestTrialBalanceEngine {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new TrailBalanceEngine(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport();
+			new TrailBalanceEngine(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport(Dimention.CONSOLIDATE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

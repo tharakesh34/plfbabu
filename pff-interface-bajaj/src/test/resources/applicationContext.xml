@@ -10,7 +10,7 @@
 	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@192.168.1.19:1521:orcl" />
-		<property name="username" value="Plf" />
+		<property name="username" value="Plfdev" />
 		<property name="password" value="pff123" />
 		<property name="maxTotal" value="100" />
 	</bean>

@@ -211,7 +211,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
 		lable_LastBusiness_Date
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
-		estimatedTime.setValue(BatchMonitor.getEstimateTime());
 	}
 
 	private void setRunningStatus() {
@@ -292,6 +291,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			closeOtherTabs();
 			PFSBatchAdmin.getInstance();
+			estimatedTime.setValue(BatchMonitor.getEstimateTime());
 			timer.start();
 
 			this.btnStartJob.setDisabled(true);
