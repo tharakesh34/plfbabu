@@ -63,6 +63,7 @@ public class VASController {
 					.getProductCode());
 			vasRecording.setVasConfiguration(vasConfiguration);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
+			vasRecording.setPaidAmt(vasRecording.getFee().subtract(vasRecording.getWaivedAmt()));
 			if(vasRecording.getDocuments() != null){
 			for (DocumentDetails detail : vasRecording.getDocuments()) {
 				detail.setRecordType(PennantConstants.RCD_ADD);

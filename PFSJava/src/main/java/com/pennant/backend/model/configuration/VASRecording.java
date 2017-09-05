@@ -78,7 +78,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 @XmlType(propOrder = { "cif","finReference","collateralRef","productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
 		"feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId", "fulfilOfficerId",
-		"referralId","renewalFee","vasStatus","extendedDetails", "documents","returnStatus" })
+		"referralId","renewalFee","vasStatus","extendedDetails", "documents","waivedAmt","returnStatus" })
 @XmlRootElement(name = "vasDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class VASRecording extends AbstractWorkflowEntity {
@@ -94,9 +94,9 @@ public class VASRecording extends AbstractWorkflowEntity {
 	@XmlElement
 	private String vasReference;
 	@XmlElement
-	private BigDecimal fee;
+	private BigDecimal fee = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal renewalFee;
+	private BigDecimal renewalFee = BigDecimal.ZERO;
 	@XmlElement
 	private String feePaymentMode;
 	@XmlElement
@@ -162,9 +162,9 @@ public class VASRecording extends AbstractWorkflowEntity {
     private String collateralRef;
 	@XmlElement
 	private WSReturnStatus returnStatus;
-	
-	private BigDecimal paidAmt;
-	private BigDecimal waivedAmt=BigDecimal.ZERO;
+	private BigDecimal paidAmt = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
 	
 	public boolean isNew() {
 		return isNewRecord();

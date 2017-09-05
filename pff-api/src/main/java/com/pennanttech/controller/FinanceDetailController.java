@@ -312,6 +312,9 @@ public class FinanceDetailController extends SummaryDetailService {
 					//feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					//Fee Details set to the VasRecording
+					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
+					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
 			}
 		}

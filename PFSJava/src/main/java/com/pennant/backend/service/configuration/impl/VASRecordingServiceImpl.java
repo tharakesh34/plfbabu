@@ -1741,14 +1741,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if (StringUtils.isBlank(vasRecording.getProductCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "product";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 			if (StringUtils.isBlank(vasRecording.getPostingAgainst())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "postingAgainst";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			} else {
@@ -1763,7 +1763,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				String[] valueParm = new String[2];
 				valueParm[0] = "postingAgainst";
 				valueParm[1] = vasRecording.getPostingAgainst();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 
@@ -1771,14 +1771,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if (StringUtils.isBlank(vasRecording.getPrimaryLinkRef())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "primaryLinkRef";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 			if (vasRecording.getFee() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Fee";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -1789,7 +1789,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				String[] valueParm = new String[2];
 				valueParm[0] = "Product";
 				valueParm[1] = vasRecording.getProductCode();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -1799,7 +1799,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				String[] valueParm = new String[2];
 				valueParm[0] = vasRecording.getProductCode();
 				valueParm[1] = "workflow";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90339", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -1807,7 +1807,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				String[] valueParm = new String[2];
 				valueParm[0] = "PostingAgainst";
 				valueParm[1] = vasRecording.getPostingAgainst();
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -1816,7 +1816,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (customer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1825,7 +1825,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90201", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90201", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1835,7 +1835,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1845,7 +1845,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					String[] valueParm = new String[2];
 					valueParm[0] = "Fee:" + vasRecording.getFee();
 					valueParm[1] = "VasConfig Fee:" + vASConfiguration.getVasFee();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1853,11 +1853,19 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				String[] valueParm = new String[2];
 				valueParm[0] = "Fee";
 				valueParm[1] = "Zero";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
 
+			if (vasRecording.getWaivedAmt().compareTo(vasRecording.getFee()) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Waived Amount:" + vasRecording.getWaivedAmt();
+				valueParm[1] = "Fee:" + vasRecording.getFee();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
 			// validate FeePaymentMode
 			if (StringUtils.isNotBlank(vasRecording.getFeePaymentMode())) {
 				List<ValueLabel> paymentModes = PennantStaticListUtil.getFeeTypes();
@@ -1873,14 +1881,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					valueParm[0] = "paymentMode";
 					valueParm[1] = "paymentModes";
 					valueParm[2] = FinanceConstants.RECFEETYPE_CASH + "," + FinanceConstants.RECFEETYPE_CHEQUE;
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90264", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90264", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = "feePaymentMode";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
@@ -1901,7 +1909,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (vasRecording.getAccrualTillDate() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "accrualTillDate";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
@@ -1921,7 +1929,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					String[] valueParm = new String[2];
 					valueParm[0] = "accrualTillDate";
 					valueParm[1] = "FeeAccrued";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1931,7 +1939,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (vasRecording.getRecurringDate() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "recurringDate";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
@@ -1950,7 +1958,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					String[] valueParm = new String[2];
 					valueParm[0] = "RecurringDate";
 					valueParm[1] = "RecurringType is Active";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1963,7 +1971,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (relationshipOfficer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDsaId();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1974,7 +1982,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (dmaCode == null ) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDmaId();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1985,7 +1993,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (dmaCode == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getFulfilOfficerId();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -1996,7 +2004,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (referralId == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getReferralId();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -2012,7 +2020,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 									PennantConstants.XMLDateFormat);
 							valueParm[1] = DateUtility.formatDate(detail.getCustDocExpDate(),
 									PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -2021,7 +2029,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (StringUtils.isBlank(detail.getCustDocIssuedCountry())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "CustDocIssuedCountry";
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -2031,7 +2039,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						String[] valueParm = new String[2];
 						valueParm[0] = "custDocIssuedCountry";
 						valueParm[1] = detail.getCustDocIssuedCountry();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
 
@@ -2042,7 +2050,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							Matcher matcher = pattern.matcher(detail.getCustDocTitle());
 							if(matcher.find() == false ){
 								String[] valueParm = new String[0];
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm));
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
@@ -2053,7 +2061,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							String[] valueParm = new String[2];
 							valueParm[0] = "docContent";
 							valueParm[1] = "docRefId";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90123", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -2062,7 +2070,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (docType == null || docType.isDocIsCustDoc()) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
@@ -2072,7 +2080,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_IMAGE))){
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDoctype();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
 					String docFormate = detail.getDocName()
@@ -2080,7 +2088,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (StringUtils.equals(detail.getDocName(), docFormate)) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "docName: " + docFormate;
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
 					boolean isImage = false;
@@ -2095,7 +2103,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							String[] valueParm = new String[2];
 							valueParm[0] = "document type: " + detail.getDocName();
 							valueParm[1] = detail.getDoctype();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 						}
 					}
@@ -2125,14 +2133,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldName";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
 						if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}
@@ -2153,7 +2161,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							if (!isFeild) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "vas setup";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm));
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
