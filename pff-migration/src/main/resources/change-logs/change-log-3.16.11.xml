@@ -1056,4 +1056,9 @@ PLRRATE,
                      inner join vasrecording T3 on T3.vasreference=T1.finreference
 					</createView>
 		</changeSet>
+	<changeSet id="52" author="Durga Prasad D">
+		<sql>
+			update bmtaeevents set mandatory = 0 where aeeventcode = 'JVPOST';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
