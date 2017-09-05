@@ -1061,4 +1061,12 @@ PLRRATE,
 			update bmtaeevents set mandatory = 0 where aeeventcode = 'JVPOST';
 		</sql>
 	</changeSet>
+	<changeSet id="53" author="pruthvi raj">
+		<sql>
+	Update reportfilterfields set fielddbname='F.FinBranch' where reportid in (Select reportid from reportconfiguration  where reportjaspername='AccrualPostings')
+and fielddbname='B.BranchCode';
+Update reportfilterfields set fielddbname='P.ValueDate' where reportid in (Select reportid from reportconfiguration  where reportjaspername='AccrualPostings')
+and fielddbname='ValueDate';
+</sql>
+	</changeSet>
 </databaseChangeLog>
