@@ -389,8 +389,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		jdbcTemplate.execute("alter table TRIAL_BALANCE_REPORT_FILE modify ID generated as identity (start with 1)");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("START_DATE", DateUtil.getMonthStart(appDate));
-		paramMap.addValue("END_DATE", DateUtil.getMonthEnd(appDate));
+		paramMap.addValue("START_DATE", startDate);
+		paramMap.addValue("END_DATE", endDate);
 		paramMap.addValue("DIMENSION", dimention.name());
 		
 		if (dimention == Dimention.STATE) {
@@ -400,15 +400,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 		}
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID IN (");
-		sql.append(" SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
-		sql.append(" AND DIMENSION = :DIMENSION)");
+		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID = ");
+		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
+		sql.append(" AND  DIMENSION = :DIMENSION");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
-		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN (");
-		sql.append(" SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
-		sql.append(" AND DIMENSION = :DIMENSION)");
+		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
+		sql.append(
+				" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
+		sql.append(" AND DIMENSION = :DIMENSION");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
@@ -496,8 +497,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" LR.CLOSINGBAL openingBalance, LR.CLOSINGBALTYPE openingBalanceType");
 		sql.append(" from ACCOUNTMAPPING AM");
 		sql.append(" INNER JOIN TRIAL_BALANCE_REPORT_LAST_RUN LR ON LR.HOSTACCOUNT = AM.HOSTACCOUNT");
-		sql.append(" INNER JOIN TRIAL_BALANCE_HEADER TH ON TH.ID = LR.HEADERID");
-		sql.append(" WHERE TH.DIMENSION = :DIMENSION");
+		sql.append(" WHERE LR.DIMENSION = :DIMENSION");
 		
 		paramMap.addValue("DIMENSION", dimention.name());
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
@@ -637,7 +637,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("DIMENSION", dimention.name());
 
 		try {
-			jdbcTemplate.execute("DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN");
+			parameterJdbcTemplate.update("DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE DIMENSION =:DIMENSION", paramMap);
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

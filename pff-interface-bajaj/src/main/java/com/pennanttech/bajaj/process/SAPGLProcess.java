@@ -75,22 +75,22 @@ public class SAPGLProcess extends DataEngineExport {
 
 	private void initilize() throws Exception {
 		loadParameters();
-		clearTables();
 
 		if (startDate == null || endDate == null) {
 			prepareDates();
 		}
+
+		clearTables();
 	}
 
 	private void prepareDates() throws Exception {
 		startDate = getCurrentTrialBalanceStartDate();
-
 		endDate = DateUtil.getMonthEnd(startDate);
 	}
 
 	private Date getCurrentTrialBalanceStartDate() throws Exception {
-		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER) AND DIMENSION = ?";
-		return jdbcTemplate.queryForObject(query, new Object[]{"STATE"}, Date.class);
+		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER WHERE DIMENSION = ?) AND DIMENSION = ?";
+		return jdbcTemplate.queryForObject(query, new Object[]{"STATE", "STATE"}, Date.class);
 	}
 
 	private Map<String, TrailBalance> getTransactions() throws Exception {
@@ -270,8 +270,8 @@ public class SAPGLProcess extends DataEngineExport {
 		jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
 		
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("START_DATE", DateUtil.getMonthStart(appDate));
-		paramMap.addValue("END_DATE", DateUtil.getMonthEnd(appDate));
+		paramMap.addValue("START_DATE", startDate);
+		paramMap.addValue("END_DATE", endDate);
 		paramMap.addValue("GL_TRANSACTION_EXPORT", "GL_TRANSACTION_EXPORT");
 		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
 		
