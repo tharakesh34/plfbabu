@@ -194,7 +194,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		Filter[] filter = new Filter[1];
 		java.util.Date date = DateUtility.getAppDate();
 		date = DateUtil.addDays(date,futureDays);
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_THAN);
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
 		this.searchObject.addFilters(filter);
 
 		if (fromDate.getValue() != null) {
@@ -559,7 +559,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				throw new WrongValueException(this.toDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
 						new String[] { "To Date", DateUtility.formatToLongDate(date) }));
 			}
-			this.toDate.getValue();
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
