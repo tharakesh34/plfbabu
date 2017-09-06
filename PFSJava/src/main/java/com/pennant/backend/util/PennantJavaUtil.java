@@ -888,7 +888,7 @@ public class PennantJavaUtil {
 			"FinFeeDetail", "FinFeeDetail_AView" }, null, new String[] {"FinReference","FinEvent" }, null, 600));
 
 		ModuleUtil.register("Rule", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
-				masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
+				limitconfigWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail", new ModuleMapping("CorpScoreGroupDetail",
 				CorpScoreGroupDetail.class, new String[] { "CorpScoringGroupDetail", "CorpScoringGroupDetail" }, null,
