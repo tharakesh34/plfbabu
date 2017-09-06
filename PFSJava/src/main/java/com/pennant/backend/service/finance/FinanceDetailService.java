@@ -86,7 +86,7 @@ public interface FinanceDetailService {
 	
 	FinanceDetail getFinanceDetail(boolean isWIF);
 	FinanceDetail getNewFinanceDetail(boolean isWIF);
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) ;
 	FinanceDetail getOriginationFinance(String financeReference,String nextRoleCode,String procEdtEvent,String userrole);
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent,String userrole);
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
@@ -94,7 +94,7 @@ public interface FinanceDetailService {
 	FinanceDetail getApprovedFinanceDetailById(String financeReference,boolean isWIF);
 	AuditHeader delete(AuditHeader auditHeader,boolean isWIF);
 	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, JaxenException;
-	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) ;
 	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,String screenCode, String eventCode, String procEdtEvent, boolean extFieldsReq);
 	boolean isFinReferenceExits(String financeReference, String tableType, boolean isWIF);
 	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);

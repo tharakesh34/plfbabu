@@ -82,7 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -374,8 +374,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap){
 
 		logger.debug("Entering");
 		//Accounting Set Details
@@ -598,7 +597,7 @@ public class AccountEngineExecution implements Serializable {
 			
 			if (acc == null ||  StringUtils.isBlank(acc.getAccountId())) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
-					throw new FactoryException("Invalid accounting configuration, please contact administrator");
+					throw new AppException("Invalid accounting configuration, please contact administrator");
 				} 
 				continue;
 			}

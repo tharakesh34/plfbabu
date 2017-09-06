@@ -725,7 +725,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference)  {
 		logger.debug("Entering");
 		
 		
@@ -795,7 +795,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
 		
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();

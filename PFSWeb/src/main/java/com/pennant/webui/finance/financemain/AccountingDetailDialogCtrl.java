@@ -88,6 +88,7 @@ import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.AppException;
 
 /**
  * This is the controller class for the
@@ -267,7 +268,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						executeAccounting(true);
 						executed = true;
 					} catch (Exception e) {
-						if(e.getCause().getClass().equals(WrongValuesException.class)){
+						if(e.getCause() instanceof AppException){
+							wvea = e;
+						}else if(e.getCause().getClass().equals(WrongValuesException.class)){
 							wvea = e;
 						}
 						logger.error("Exception: ", e);
@@ -301,7 +304,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 								executeAccounting(true);
 								executed = true;
 							} catch (Exception e) {
-								if(e.getCause().getClass().equals(WrongValuesException.class)){
+								if(e.getCause() instanceof AppException){
+									wvea = e;
+								}else if(e.getCause().getClass().equals(WrongValuesException.class)){
 									wvea = e;
 								}
 								logger.error("Exception: ", e);
@@ -321,16 +326,21 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			this.window_AccountingDetailDialog.setHeight((this.borderLayoutHeight-80)+"px");
 
 			if(wvea != null){
-				if(wvea.getCause().getClass().equals(WrongValuesException.class)){
+				if(wvea.getCause() instanceof AppException){
 					throw wvea;
-				}
+				}else if(wvea.getCause().getClass().equals(WrongValuesException.class)){
+					throw wvea;
+				} 
 			}
 
 		} catch (Exception e) {
-			if(e.getCause().getClass().equals(WrongValuesException.class)){
+			if(e.getCause() instanceof AppException){
+				MessageUtil.showError((AppException)e.getCause());
+			}else if(e.getCause().getClass().equals(WrongValuesException.class)){
 				throw e;	
+			}else{
+				MessageUtil.showError(e);
 			}
-			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -839,7 +849,16 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	public void onClick$btnAccounting(Event event) throws Exception { 
 		logger.debug("Entering" + event.toString());
-		executeAccounting(true);
+		try {
+			executeAccounting(true);
+		} catch (Exception e) {
+			if(e.getCause() instanceof AppException){
+				MessageUtil.showError((AppException)e.getCause());
+			}else{
+				MessageUtil.showError(e);
+			}
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -857,7 +876,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				logger.error("Exception: ", e);
 				if(e.getCause().getClass().equals(WrongValuesException.class)){
 					throw e;	
-
+				}else if(e.getCause() instanceof AppException){
+					throw e;	
 				}
 			}	
 		}else{
@@ -868,7 +888,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				logger.error("Exception: ", e);
 				if(e.getCause().getClass().equals(WrongValuesException.class)){
 					throw e;	
-
+				}else if(e.getCause() instanceof AppException){
+					throw e;	
 				}
 			}	
 		}

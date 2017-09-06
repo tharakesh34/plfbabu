@@ -1812,7 +1812,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	protected void cancelStageAccounting(String finReference, String finEvent) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	protected void cancelStageAccounting(String finReference, String finEvent) {
 
 		List<Long> excdTranIdList = getFinStageAccountingLogDAO().getLinkedTranIdList(finReference, finEvent);
 		if (excdTranIdList != null && !excdTranIdList.isEmpty()) {

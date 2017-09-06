@@ -505,7 +505,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -1675,7 +1675,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException, IllegalAccessException, InvocationTargetException{
+	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
 		logger.debug("Entering");
 
 		VASRecording vASRecording = new VASRecording("");

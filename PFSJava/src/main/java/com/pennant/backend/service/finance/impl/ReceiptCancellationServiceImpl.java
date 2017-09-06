@@ -200,8 +200,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -305,8 +304,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader){
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -530,7 +528,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @return errorMsg
 	 */
 	@Override
-	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
@@ -636,8 +634,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws InterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	private String procReceiptCancellation(FinReceiptHeader receiptHeader) {
 		logger.debug("Entering");
 		
 		boolean alwSchdReversalByLog = false;
@@ -1064,7 +1061,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) {
 		logger.debug("Entering");
 		
 		long linkedTranId = 0;

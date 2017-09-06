@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.financemanagement.receipts;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -1509,9 +1508,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			logger.error("Exception: ", e);
-		}
+		} 
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");

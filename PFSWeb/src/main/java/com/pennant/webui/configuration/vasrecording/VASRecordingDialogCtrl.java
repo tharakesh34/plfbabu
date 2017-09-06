@@ -154,6 +154,7 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -831,6 +832,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		} catch (DataAccessException e) {
 			MessageUtil.showError(e);
+		} catch (AppException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -851,7 +854,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1014,7 +1017,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

@@ -30,7 +30,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
 
 	@Override
-	public void process(FinAdvancePayments disbursement) throws Exception {
+	public void process(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
 		
 		FinanceMain financeMain = null;

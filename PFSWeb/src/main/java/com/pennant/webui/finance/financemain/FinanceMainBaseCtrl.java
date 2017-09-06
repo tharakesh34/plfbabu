@@ -1437,7 +1437,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 */
 	@SuppressWarnings("unused")
-	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad) throws ParseException, InterruptedException {
+	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad) throws ParseException, InterruptedException {
 		logger.debug("Entering");
 
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
@@ -1575,7 +1575,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
-		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
+		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && isReqToLoad && 
+				!StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(onLoad);
 		}
@@ -3620,7 +3621,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Filling Child Window Details Tabs
 		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
 				: moduleDefiner);
-		doFillTabs(aFinanceDetail, true);
+		doFillTabs(aFinanceDetail, true, true);
 
 		// Setting Utilized Amoun for Collateral Assignment purpose calculations
 		this.oldVar_utilizedAmount = this.finAmount.getActualValue();
@@ -3908,7 +3909,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onPostWinCreation(Event event) throws ParseException, InterruptedException {
-		doFillTabs(getFinanceDetail(), false);
+		doFillTabs(getFinanceDetail(), false, false);
 	}
 
 	private void doVisibleODFacilityFields() {

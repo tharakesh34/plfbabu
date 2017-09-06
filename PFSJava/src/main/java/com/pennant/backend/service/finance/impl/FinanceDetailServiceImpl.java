@@ -1693,7 +1693,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -4642,7 +4642,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
