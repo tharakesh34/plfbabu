@@ -1515,6 +1515,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		//Fee Details Tab Addition
 		appendFeeDetailTab(makeFeeRender);
+		
+		// To set Payment details by default using Auto Allocation mode , if exists
+		setAutoAllocationPayments(true);
 
 		logger.debug("Leaving");
 	}
