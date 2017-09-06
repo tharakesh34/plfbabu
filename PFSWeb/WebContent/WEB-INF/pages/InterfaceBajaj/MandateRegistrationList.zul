@@ -120,7 +120,7 @@
 								<listheader id="listheader_CustCIF"
 									label="${c:l('listheader_CustCIF.label')}" hflex="min" />
 								<listheader id="listheader_CustName"
-									label="${c:l('listheader_CustName.label')}" hflex="min" />	
+									label="${c:l('listheader_CustName.label')}" hflex="min"/>	
 								<listheader id="listheader_BankName"
 									label="${c:l('listheader_Mandate_BankName.label')}" hflex="min" />
 								<listheader id="listheader_AccNumber"
