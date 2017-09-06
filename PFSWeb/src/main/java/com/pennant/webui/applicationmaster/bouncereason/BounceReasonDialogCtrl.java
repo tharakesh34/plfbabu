@@ -436,10 +436,11 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		//Return Code
+		// Return Code
 		try {
-		    aBounceReason.setReturnCode(this.returnCode.getValue());
-			}catch (WrongValueException we ) {
+			String retCode = this.returnCode.getValue();
+			aBounceReason.setReturnCode(retCode);
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Active
@@ -646,10 +647,11 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 		if (this.bounceReason.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.bounceCode);
+			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.bounceCode);
-			
+			readOnlyComponent(true, this.returnCode);
 		}
 	
 			readOnlyComponent(isReadOnly("BounceReasonDialog_ReasonType"), this.reasonType);
@@ -657,7 +659,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Reason"), this.reason);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Action"), this.action);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_FeeID"), this.ruleID);
-			readOnlyComponent(isReadOnly("BounceReasonDialog_ReturnCode"), this.returnCode);
 			readOnlyComponent(isReadOnly("BounceReasonDialog_Active"), this.active);
 			
 			if (isWorkFlowEnabled()) {

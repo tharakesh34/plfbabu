@@ -345,7 +345,6 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 		 * @param usrLanguage
 		 * @return
 		 */
-		
 		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 			logger.debug(Literal.ENTERING);
 			
@@ -361,11 +360,20 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			
+			if (bounceReason.isNew() && bounceReasonDAO.isDuplicateReturnCode(bounceReason.getBounceID(), bounceReason.getReturnCode(),
+					bounceReason.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+				
+				parameters[0] = PennantJavaUtil.getLabel("label_ReturnCode") + ": " + bounceReason.getReturnCode();
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
+			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);
+			
 			return auditDetail;
 		}
-
 }
