@@ -1,16 +1,16 @@
 package com.pennanttech.service.test;
 
+import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
+import com.pennanttech.bajaj.process.TrailBalanceEngine.Dimention;
+import com.pennanttech.pff.core.util.DateUtil;
+import java.util.Date;
 import javax.sql.DataSource;
-
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.pennanttech.bajaj.process.TrailBalanceEngine;
-import com.pennanttech.bajaj.process.TrailBalanceEngine.Dimention;
-import com.pennanttech.dataengine.util.DateUtil;
 
 public class TestTrialBalanceEngine {
 	private DataSource dataSource;
@@ -29,7 +29,27 @@ public class TestTrialBalanceEngine {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new TrailBalanceEngine(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).extractReport(Dimention.CONSOLIDATE);
+			Date date = DateUtil.getDate(2017, 6, 31);
+			date = DateUtil.getDatePart(date);
+			
+			/*new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE);
+			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE);
+			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();*/
+			
+			date = DateUtil.getDate(2017, 7, 31);
+			date = DateUtil.getDatePart(date);
+			
+			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE);
+			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE);
+			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();
+			
+			/*date = DateUtil.getDate(2017, 8, 30);
+			date = DateUtil.getDatePart(date);
+			
+			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.STATE);
+			new TrailBalanceEngine(dataSource, new Long(1000), date, date).extractReport(Dimention.CONSOLIDATE);
+			new SAPGLProcess(dataSource, new Long(1000), date, date).extractReport();*/
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

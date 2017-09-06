@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,6 +35,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private Date startDate = null;
 	private Date endDate = null;
 	private long headerId = 0;
+	private long seqNo = 0;
 	private Dimention dimention = null;
 	
 	private static final String QUERY_CONSOLIDATE = "select distinct HOSTACCOUNT from ACCOUNTMAPPING";
@@ -99,13 +99,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("START_DATE", DateUtil.format(startDate, "ddMMyyyy"));
 		parameterMap.put("END_DATE", DateUtil.format(endDate, "ddMMyyyy"));
-		parameterMap.put("HEADER_ID", headerId);
+		parameterMap.put("HEADER_ID", seqNo);
 		parameterMap.put("DIMENSION", dimention.name());
 		parameterMap.put("COMPANY_NAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
 		parameterMap.put("REPORT_NAME", "Consolidated Trial Balance - Ledger A/C wise");
 		
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("HEADER_ID", headerId);
+		filterMap.put("HEADER_ID", seqNo);
 		filterMap.put("DIMENSION", dimention.name());
 
 		StringBuilder builder = new StringBuilder();
@@ -271,14 +271,14 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("DIMENSION", dimention.name());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT COALESCE(MAX(ID), 0) + 1");
+		sql.append(" SELECT COALESCE(MAX(SEQNO), 0) + 1");
 		sql.append(" FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION");
-
-		try {
-			this.headerId = this.parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		this.seqNo = this.parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+		
+		sql = new StringBuilder();
+		sql.append(" SELECT COALESCE(MAX(ID), 0) + 1");
+		sql.append(" FROM TRIAL_BALANCE_HEADER");
+		this.headerId = this.jdbcTemplate.queryForObject(sql.toString(), Long.class);
 	}
 
 	private long createHeader() throws Exception {
@@ -287,19 +287,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		MapSqlParameterSource paramMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRIAL_BALANCE_HEADER VALUES(");
-		sql.append(" :ID,");
-		sql.append(" :DIMENSION,");
-		sql.append(" :FILENAME,");
-		sql.append(" :COMPANYNAME,");
-		sql.append(" :REPORTNAME,");
-		sql.append(" :STARTDATE,");
-		sql.append(" :ENDDATE,");
-		sql.append(" :CURRENCY");
-		sql.append(")");
+		sql.append(" INSERT INTO TRIAL_BALANCE_HEADER(");
+		sql.append(" ID, SEQNO, DIMENSION, COMPANYNAME, REPORTNAME, STARTDATE, ENDDATE, CURRENCY) VALUES (");
+		sql.append(" :ID, :SEQNO, :DIMENSION, :COMPANYNAME, :REPORTNAME, :STARTDATE, :ENDDATE, :CURRENCY)");
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ID", headerId);
+		paramMap.addValue("SEQNO", seqNo);
 		paramMap.addValue("DIMENSION", dimention.name());
 		paramMap.addValue("COMPANYNAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
 		paramMap.addValue("REPORTNAME", "Trial Balance Report");
@@ -307,7 +301,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("ENDDATE", endDate);
 		paramMap.addValue("CURRENCY", parameters.get("APP_DFT_CURR"));
 		paramMap.addValue("DIMENSION", dimention.name());
-		paramMap.addValue("FILENAME", dimention.name());
 
 		try {
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
@@ -316,7 +309,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			throw new Exception("Unable to insert trail balance header.");
 		}
 
-		return headerId;
+		return seqNo;
 	}
 
 	private Map<String, TrailBalance> getLedgerAccounts() throws Exception {
@@ -398,18 +391,17 @@ public class TrailBalanceEngine extends DataEngineExport {
 		} else {
 			paramMap.addValue("NAME", "TRIAL_BALANCE_EXPORT_CONSOLIDATE");
 		}
-
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID = ");
-		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
-		sql.append(" AND  DIMENSION = :DIMENSION");
+		sql.append(" (SELECT HEADERID FROM TRIAL_BALANCE_HEADER");
+		sql.append(" WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
-		sql.append(
-				" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
-		sql.append(" AND DIMENSION = :DIMENSION");
+		sql.append(" (SELECT HEADERID FROM TRIAL_BALANCE_HEADER");
+		sql.append(" WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE AND DIMENSION = :DIMENSION)");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
@@ -497,7 +489,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" LR.CLOSINGBAL openingBalance, LR.CLOSINGBALTYPE openingBalanceType");
 		sql.append(" from ACCOUNTMAPPING AM");
 		sql.append(" INNER JOIN TRIAL_BALANCE_REPORT_LAST_RUN LR ON LR.HOSTACCOUNT = AM.HOSTACCOUNT");
-		sql.append(" WHERE LR.DIMENSION = :DIMENSION");
+		sql.append(" INNER JOIN TRIAL_BALANCE_HEADER TH ON TH.ID = LR.HEADERID");
+		sql.append(" WHERE TH.DIMENSION = :DIMENSION");
 		
 		paramMap.addValue("DIMENSION", dimention.name());
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
@@ -610,7 +603,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		sql.append("INSERT INTO TRIAL_BALANCE_REPORT VALUES(");
 		sql.append(" :HeaderId,");
-		sql.append(" :Dimention,");
 		sql.append(" :AccountType,");
 		sql.append(" :CountryCode,");
 		sql.append(" :StateCode,");
@@ -627,18 +619,21 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private void logTrialBalace() throws Exception {
-		MapSqlParameterSource paramMap;
-		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_LAST_RUN");
-		sql.append(" SELECT * FROM TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID AND DIMENSION = :DIMENSION");
-
-		paramMap = new MapSqlParameterSource();
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
 		paramMap.addValue("DIMENSION", dimention.name());
 
 		try {
-			parameterJdbcTemplate.update("DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE DIMENSION =:DIMENSION", paramMap);
+			StringBuilder sql = new StringBuilder();
+			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
+			sql.append(" (SELECT MAX(HEADERID) FROM TRIAL_BALANCE_HEADER");
+			sql.append(" WHERE DIMENSION = :DIMENSION)");
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
+			
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_LAST_RUN");
+			sql.append(" SELECT * FROM TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID");
+			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("Unable to insert current month trail balance.");

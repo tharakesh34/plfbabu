@@ -7,6 +7,7 @@ public class TrailBalance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long headerId;
+	private long seqNo;
 	private String dimention;
 	private int id;
 	private long link;
@@ -230,6 +231,14 @@ public class TrailBalance implements Serializable {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public long getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(long seqNo) {
+		this.seqNo = seqNo;
 	}
 
 }
