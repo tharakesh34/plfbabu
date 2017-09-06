@@ -30,7 +30,7 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 
 	Date appDate = null;
 	private MapSqlParameterSource filterMap;
-	private int batchSize = 5000;
+	//private int batchSize = 5000;
 	int chunckSize = 1000;
 
 	public ControlDumpProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
@@ -169,7 +169,8 @@ public class ControlDumpProcess extends DatabaseDataEngine {
 		sql.append(" INNER JOIN CUSTOMERS LC ON LC.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FM.FINBRANCH");
 		sql.append(" INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FM.FINCCY");
-		sql.append(" LEFT JOIN MANDATES M ON M.ORGREFERENCE = FM.FINREFERENCE");
+		sql.append(" LEFT JOIN MANDATES M ON M.MANDATEID = FM.MANDATEID");
+		 // From front end not allow duplicate promotion code.
 		sql.append(" LEFT JOIN PROMOTIONS PM ON PM.PromotionCode  = FM.PromotionCode");
 		sql.append(" LEFT JOIN DPDBUCKETS DPD ON DPD.BUCKETCODE = FM.FINSTATUS");
 		sql.append(" LEFT JOIN DPDBUCKETSCONFIG DPDC ON DPDC.BUCKETID = DPD.BUCKETID AND FT.FINCATEGORY = DPDC.PRODUCTCODE");
