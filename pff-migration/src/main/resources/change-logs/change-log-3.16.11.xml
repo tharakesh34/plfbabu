@@ -914,4 +914,11 @@ and fielddbname='ValueDate';
 		</sql>
 	</changeSet>
 	
+	<changeSet id="57" author="Siva">
+		<sql>
+			DELETE FROM ErrorDetails WHERE ERRORCODE = '60212';
+			INSERT INTO ErrorDetails VALUES('60212','EN','E','Configured Fee Details in Accounting Set not matching with Processed Fees.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
