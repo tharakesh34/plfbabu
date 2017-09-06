@@ -59,6 +59,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class AccrualService extends ServiceHelper {
 
@@ -665,10 +666,13 @@ public class AccrualService extends ServiceHelper {
 
 		List<Date> months = new ArrayList<Date>();
 		Date newMonth = new Date(monthEnd.getTime());
+		newMonth = DateUtil.getDatePart(newMonth);
 
 		while (finMain.getMaturityDate().compareTo(newMonth) > 0) {
 			months.add((Date) newMonth.clone());
 			newMonth = DateUtility.addMonths(newMonth, 1);
+			newMonth = DateUtility.getMonthEnd(newMonth);
+			newMonth = DateUtil.getDatePart(newMonth);
 		}
 
 		if (!months.contains(finMain.getMaturityDate())) {
@@ -723,6 +727,7 @@ public class AccrualService extends ServiceHelper {
 				prjAcc.setPftAccrued(prjAcc.getPftAccrued().add(acrNormal));
 				//due date
 				Date accMonthStart = DateUtility.getMonthStart(monthEndDate);
+				accMonthStart = DateUtil.getDatePart(accMonthStart);
 				if (curSchdDate.compareTo(accMonthStart) >= 0 && curSchdDate.compareTo(monthEndDate) <= 0) {
 					if (prjAcc.getSchdDate() == null) {
 						prjAcc.setSchdDate(curSchdDate);

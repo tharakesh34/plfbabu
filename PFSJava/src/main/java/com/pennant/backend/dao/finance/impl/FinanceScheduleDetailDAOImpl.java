@@ -678,7 +678,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 				.append(" CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, FeeChargeAmt, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier ");
 		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference =:FinReference");
+		selectSql.append(" Where FinReference =:FinReference order by SchDate asc");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(schdDetail);
