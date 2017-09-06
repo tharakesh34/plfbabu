@@ -907,4 +907,11 @@ and fielddbname='ValueDate';
 		</sql>
 	</changeSet>
 	
+	<changeSet id="56" author="Kesav">
+		<sql>
+		 	Delete from RBFIELDDETAILS where RBMODULE = 'BOUNCE' and RBEVENT ='BOUNCE' and RBFLDNAME = 'br_finType';
+			Insert into RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('BOUNCE', 'BOUNCE', 'br_finType', 'Loan Type', 'nvarchar', 8, '0', '1', 'FinanceType', 'static,global,dbvalue', 'FinanceType');     
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
