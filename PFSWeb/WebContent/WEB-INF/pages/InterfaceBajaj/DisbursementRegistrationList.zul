@@ -117,7 +117,7 @@
 										width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
 										<space spacing="3px"></space>
-										<datebox id="fromDate"
+										<datebox id="fromDate" format="dd/MM/yyyy"
 											width="171px" />
 									</hbox>
 									<label
@@ -126,7 +126,7 @@
 										width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
 										<space spacing="2px"></space>
-										<datebox id="toDate"
+										<datebox id="toDate" format="dd/MM/yyyy"
 											width="171px" />
 									</hbox>
 								</row>

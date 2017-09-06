@@ -96,7 +96,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -105,6 +104,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.services.DisbursementRequestService;
+import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * ************************************************************<br>
@@ -164,6 +164,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
+	private int futureDays =  0;;
 
 	@Autowired
 	private DisbursementRequestService disbursementRequestService;
@@ -181,16 +182,19 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		super.pageRightName = "DisbursementRegistration";
 		super.tableName = "INT_DISBURSEMENT_REQUEST_VIEW";
 		super.queueTableName = "INT_DISBURSEMENT_REQUEST_VIEW";
+		futureDays = Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
+		
+		// Future day's including current date
+		futureDays = futureDays - 1;
 	}
 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		int futureDays =  Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
 		Filter[] filter = new Filter[1];
 		java.util.Date date = DateUtility.getAppDate();
-		date = DateUtility.addDays(date,futureDays);
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		date = DateUtil.addDays(date,futureDays);
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_THAN);
 		this.searchObject.addFilters(filter);
 
 		if (fromDate.getValue() != null) {
@@ -255,25 +259,19 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 	
 	
-	public void onChange$toDate(Event event) {
-		int futureDays =  Integer.valueOf((SysParamUtil.getValue("NO_FUTURE_DAYS_DISB_DOWNLOAD").toString()));
+	/*public void onChange$toDate(Event event) {
 		
-		if(this.fromDate.getValue()==null){
-			MessageUtil.showError("Please enter from date");
-			this.toDate.setValue(null);
-			return;
-		}
 		
-		Date date = DateUtility.addDays(this.fromDate.getValue(),futureDays);
+		Date date = DateUtility.addDays(DateUtility.getAppDate(),futureDays);
 
 		
-		if (DateUtility.compare(this.toDate.getValue(),DateUtility.addDays(this.fromDate.getValue(), futureDays)) > 0) {
+		if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
 			this.toDate.setConstraint(new PTDateValidator("To Date",
-					true, fromDate.getValue() ,date, true));
+					true, null, date, false));
 		} 
 		//doRemoveValidation();
 		this.toDate.getValue();
-	}
+	}*/
 	
 	
 	public void onSelect$sortOperator_FinType(Event event) {
@@ -465,11 +463,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("BranchDesc");
 		searchObject.addField("PARTNERBANKCODE");
 		searchObject.addField("alwFileDownload");
+		searchObject.addField("finReference");
 		searchObject.addTabelName(this.tableName);
-
+		
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(DateUtility.getAppDate(), PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
+		java.util.Date date = DateUtility.getAppDate();
+		date = DateUtil.addDays(date,futureDays);
+		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
 		searchObject.addFilters(filter);
+		
+		
 
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
@@ -532,9 +535,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		try {
 			if (!this.partnerBank.isReadonly())
-				this.partnerBank.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbursementList_PartnerBank.value"),
-						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+				this.partnerBank.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_DisbursementList_PartnerBank.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			this.partnerBank.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -542,10 +545,21 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		try {
 			if (!this.finType.isReadonly())
-				this.finType.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_DisbursementList_LoanType.value"),
-						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+				this.finType
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_LoanType.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			this.finType.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			Date date = DateUtility.addDays(DateUtility.getAppDate(), futureDays);
+			if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
+				throw new WrongValueException(this.toDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
+						new String[] { "To Date", DateUtility.formatToLongDate(date) }));
+			}
+			this.toDate.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
