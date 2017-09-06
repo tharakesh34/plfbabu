@@ -317,6 +317,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				} else {
 					this.taxCode.setValue(taxStateCode);
 				}
+				this.country.setValue(province.getCPCountry(),province.getLovDescCPCountryName());
 			}else{
 				if (taxCodeValue.length() > 10) {
 					String suffix = taxCodeValue.substring(2);
@@ -390,6 +391,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				cityValue = this.cityCode.getValue();
 				String taxCodeValue = this.taxCode.getValue();
 				String citytaxStateCode = city.getTaxStateCode() == null ? "" : city.getTaxStateCode();
+				this.country.setValue(city.getPCCountry(),city.getLovDescPCCountryName());
 				if (taxCodeValue.length() == 10) {
 					this.taxCode.setValue(citytaxStateCode + taxCodeValue);
 				}else if (taxCodeValue.length() > 10) {
@@ -449,6 +451,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				this.cityCode.setDescription(pinCode.getPCCityName());
 				this.stateCode.setValue(pinCode.getPCProvince());
 				this.stateCode.setDescription(pinCode.getLovDescPCProvinceName());
+				this.country.setValue(pinCode.getpCCountry(),pinCode.getLovDescPCCountryName());
 				
 				this.cityCode.setErrorMessage("");
 				this.stateCode.setErrorMessage("");
