@@ -1232,9 +1232,4 @@ and fielddbname='ValueDate';
 			<column name="DIMENSION"type="varchar(20)"/>
 		</createIndex>
 	</changeSet>
-	<changeSet id="60.16" author="murthy.y">
-		<createIndex indexName="IDX_TBH_DIMENSION" tableName="TRIAL_BALANCE_HEADER">
-			<column name="DIMENSION"type="varchar(20)"/>
-		</createIndex>
-	</changeSet>
 </databaseChangeLog>
