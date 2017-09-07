@@ -2419,7 +2419,7 @@ and fielddbname='ValueDate';
 	    </sql>
 	</changeSet>
 	<changeSet id="158" author="Jayant">
-	    <createView viewName="" replaceIfExists="true">
+	    <createView viewName="RPT_VOUCHER_VIEW" replaceIfExists="true">
 	         Select P.finEvent STAGEID,LinkedTranId${call.concatenate}'-'${call.concatenate}transorder LEA_VOUCHERID,PostDate VOUCHERDATE,
        B.BRANCHSWIFTBRNCDE BRANCHID,FM.FInType PRODUCTFLAG,FM.FINREFERENCE,
        FM.FINSTARTDATE AGREEMENTDATE,
