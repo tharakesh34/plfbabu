@@ -63,10 +63,10 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final String ADDR_DELIMITER = " ";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
 
-	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
-		this.fromDate = DateUtility.getMonthStart(appDate);
-		this.toDate = DateUtility.getMonthEnd(appDate);
+		this.fromDate = fromDate;
+		this.toDate = toDate;
 		this.appDate = appDate;
 		this.valuedate = valueDate;
 	}

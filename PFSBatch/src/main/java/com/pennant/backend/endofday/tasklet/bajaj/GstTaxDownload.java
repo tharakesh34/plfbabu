@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -12,9 +13,11 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.app.util.DateUtility;
 import com.pennanttech.bajaj.process.TaxDownlaodProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -88,7 +91,13 @@ public class GstTaxDownload implements Tasklet {
 
 		public void run() {
 			try {
-				TaxDownlaodProcess process = new TaxDownlaodProcess(dataSource, userId, valueDate, appDate);
+				TaxDownlaodProcess process = null;
+
+				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+					process = new TaxDownlaodProcess(dataSource, userId, valueDate, appDate, appDate, appDate);
+				} else {
+					process = new TaxDownlaodProcess(dataSource, userId, valueDate, appDate, DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
+				}
 				process.process("GST_TAXDOWNLOAD_DETAILS");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
