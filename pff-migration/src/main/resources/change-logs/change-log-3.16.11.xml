@@ -1232,4 +1232,12 @@ and fielddbname='ValueDate';
 			<column name="DIMENSION"type="varchar(20)"/>
 		</createIndex>
 	</changeSet>
+	<changeSet id="61" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
