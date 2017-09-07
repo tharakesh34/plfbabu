@@ -391,6 +391,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
 					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
 							: finServiceInstruction.getMargin());
+					curSchd.setActRate(finServiceInstruction.getActualRate());
 
 					// Advised Rates Setting
 					if (i != 0
