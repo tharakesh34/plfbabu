@@ -2418,4 +2418,45 @@ and fielddbname='ValueDate';
 	        end;
 	    </sql>
 	</changeSet>
+	<changeSet id="158" author="Jayant">
+	    <createView viewName="" replaceIfExists="true">
+	         Select P.finEvent STAGEID,LinkedTranId${call.concatenate}'-'${call.concatenate}transorder LEA_VOUCHERID,PostDate VOUCHERDATE,
+       B.BRANCHSWIFTBRNCDE BRANCHID,FM.FInType PRODUCTFLAG,FM.FINREFERENCE,
+       FM.FINSTARTDATE AGREEMENTDATE,
+       CASE WHEN FM.FINCURRASSETVALUE=FM.FINASSETVALUE then 'Fully Disbursed' else 'Partially Disbursed' end DISB_STATUS,
+       CASE WHEN FM.FinIsActive=1 then 'Active' WHEN FM.closingstatus='C' then 'Cancelled' else 'Closed' end CURRENT_STATUS,
+       CASE WHEN FM.closingstatus='W' then 'WRITEOFF' else 'REGULAR ' end NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ActypeDesc GROUPGLDESC,to_char(Coalesce(DRAMT/ccyMinorCcyUnits,0),'99999999999999D00') DRAMT,
+       to_char(Coalesce(CRAMT/ccyMinorCcyUnits,0) ,'99999999999999D00') CRAMT, 
+       AT.TAXAPPLICABLE GST_APPLICABLE,B.BRANCHPROVINCE FROM_STATEID,Case when FT.PROVINCE is not null then FT.PROVINCE else custAddrPRovince end TO_STATEID       
+from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAMT,CRAMT from (
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,P.FINREFERENCE,P.DRORCR,P.PostAmount
+      from postings P inner join Financemain F on F.finreference = P.finreference
+      union all
+      Select P.LinkedTranId,P.PostDate,P.finEvent,P.transorder,P.Account,V.Primarylinkref,P.DRORCR,P.PostAmount
+      from postings P inner join vasrecording V on V.vasreference = P.finreference
+      )PIVOT (sum(PostAmount) for DRORCR in('D' as DRAMT ,'C' as CRAMT))) P inner join
+     FinanceMain FM on FM.Finreference = P.Finreference inner join
+     RMTBranches B on B.BranchCOde = FM.FinBranch INNER JOIN 
+     Accounts AM  ON AM.ACCOUNTID = P.ACCOUNT INNER JOIN 
+     RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACTYPE INNER JOIN 
+     RMTCURRENCIES RC on RC.ccyCode = FM.FINCCY LEFT JOIN
+     FinTaxDetail FT on FT.FINREFERENCE = FM.FINREFERENCE LEFT JOIN
+     CUSTOMERADDRESSES CA on CA.Custid =FM.custid and CustAddrPriority=5
+	    </createView>
+	</changeSet>
+	<changeSet id="159" author="Jayant">
+	    <sql>
+	        update	workflowdetails	set	workflowroles='BASIC_DET_MAINT_MAKER;BASIC_DET_MAINT_APPROVER'	where	workflowtype ='BASIC_DET_MAINT'		;
+update	workflowdetails	set	workflowroles='BULK_RATE_CHANGE_MAKER;BULK_RATE_CHANGE_APPROVER'	where	workflowtype ='CANCEL_DISB'		;
+update	workflowdetails	set	workflowroles='CANCEL_DISB_MAKER;CANCEL_DISB_APPROVER'	where	workflowtype ='BULK_RATE_CHANGE'		;
+update	workflowdetails	set	workflowroles='RECEIPT_BOUNCE_MAKER;RECEIPT_BOUNCE_APPROVER'	where	workflowtype ='RECEIPT_BOUNCE'		;
+
+
+update	workflowdetails	set	firsttaskowner='BASIC_DET_MAINT_MAKER'	where	workflowtype ='BASIC_DET_MAINT'		;
+update	workflowdetails	set	firsttaskowner='BULK_RATE_CHANGE_MAKER'	where	workflowtype ='CANCEL_DISB'		;
+update	workflowdetails	set	firsttaskowner='CANCEL_DISB_MAKER'	where	workflowtype ='BULK_RATE_CHANGE'	;
+update	workflowdetails	set	firsttaskowner='RECEIPT_BOUNCE_MAKER'	where	workflowtype ='RECEIPT_BOUNCE'		;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
