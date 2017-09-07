@@ -1053,6 +1053,14 @@ and fielddbname='ValueDate';
 			
 			
 			</changeSet>
+	<changeSet id="60" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 	<changeSet id="60" author="murthy.y">
 			<dropTable tableName="TRIAL_BALANCE_REPORT_FILE"/>
 			<dropTable tableName="TRIAL_BALANCE_REPORT_LAST_RUN"/>
