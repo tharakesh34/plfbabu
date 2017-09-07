@@ -1287,6 +1287,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0
 						|| closingBal == null) {
+					if(closingBal == null) {
+						closingBal = BigDecimal.ZERO;
+					}
 					closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 					break;
 				}
@@ -1832,8 +1835,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	 */
 	protected AuditHeader getAuditHeader(FinReceiptData finReceiptData, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, finReceiptData);
-		return new AuditHeader(finReceiptData.getFinReference(), null, null, null, auditDetail, finReceiptData.getFinanceDetail()
-				.getFinScheduleData().getFinanceMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+		return new AuditHeader(finReceiptData.getFinReference(), null, null, null, auditDetail, finReceiptData.getReceiptHeader().getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetails>>());
 	}
 
 	/**
@@ -1867,6 +1870,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
 			financeDetail.getFinScheduleData().setSchduleGenerated(true);
+			financeDetail.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
 
 			AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
 			FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
