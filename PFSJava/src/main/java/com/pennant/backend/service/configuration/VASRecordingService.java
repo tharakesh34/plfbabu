@@ -42,14 +42,12 @@
  */
 package com.pennant.backend.service.configuration;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
-import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface VASRecordingService {
 	VASRecording getVASRecording();
