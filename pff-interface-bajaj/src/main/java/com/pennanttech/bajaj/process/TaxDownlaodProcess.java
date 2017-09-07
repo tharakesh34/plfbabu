@@ -1,14 +1,5 @@
 package com.pennanttech.bajaj.process;
 
-import com.pennant.backend.model.finance.TaxDownload;
-import com.pennanttech.app.util.DateUtility;
-import com.pennanttech.bajaj.model.Branch;
-import com.pennanttech.bajaj.model.Province;
-import com.pennanttech.bajaj.model.TaxDetail;
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -29,10 +22,21 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.backend.model.finance.TaxDownload;
+import com.pennanttech.app.util.DateUtility;
+import com.pennanttech.bajaj.model.Branch;
+import com.pennanttech.bajaj.model.Province;
+import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+
 public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
 
+	private Date valuedate;
 	private Date appDate;
 	private Date fromDate;
 	private Date toDate;
@@ -59,20 +63,20 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	private static final String ADDR_DELIMITER = " ";
 	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
 
-	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date fromDate, Date toDate) {
+	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
-		this.fromDate = fromDate;
-		this.toDate = toDate;
-		this.appDate = valueDate;
+		this.fromDate = DateUtility.getMonthStart(appDate);
+		this.toDate = DateUtility.getMonthEnd(appDate);
+		this.appDate = appDate;
+		this.valuedate = valueDate;
 	}
 
 	@Override
 	protected void processData() {
-		boolean isError = false;
 		provinceMap = null;
+		boolean isError = false;
 		try {
 			loadDefaults();
-
 			clearTables();
 			try {
 				preparePosingsData();
@@ -83,32 +87,19 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 				}
 				updateHeader(id, processedCount);
 			} catch (Exception e) {
-				isError = true;
 				logger.error(Literal.EXCEPTION, e);
-				throw e;
+				isError = true;
 			} finally {
-				if (isError) {
+				if (isError || failedCount > 0) {
 					clearTaxDownlaodTables();
+					EXTRACT_STATUS.setStatus("F");
 				}
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 	}
-
-	private void setTotalRecords() {
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
-		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
-
-		parmMap.addValue("FROMDATE", fromDate);
-		parmMap.addValue("TODATE", toDate);
-		parmMap.addValue("TAXAPPLICABLE", true);
-
-		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
-		EXTRACT_STATUS.setTotalRecords(totalRecords);
-	}
+ 
 
 	/**
 	 * Process Tax Download Data
@@ -117,15 +108,15 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	 * @throws SQLException
 	 */
 	private void processTaxDownloadData(final long id) throws SQLException {
+		setTotalRecords();
+		
 		processTrnExtractionTypeData(id);
 		processSumExtractionTypeData(id);
 	}
 
 	private void processTrnExtractionTypeData(final long id) {
 		logger.debug(Literal.ENTERING);
-
-		setTotalRecords();
-
+		 
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
@@ -148,14 +139,27 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 				try {
 					taxDownload = mapTrnExtractionTypeData(rs, id);
 					list.add(taxDownload);
-					saveTrnExtractDetails(list);
-					list.clear();
+					if (list.size() >= batchSize) {
+						saveTrnExtractDetails(list);
+						list.clear();
+					}
 				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
 					saveBatchLog(rs.getString("FINREFERENCE"), "F", e.getMessage());
 					EXTRACT_STATUS.setFailedRecords(failedCount++);
 				}
 			}
 		});
+
+		try {
+			if (!list.isEmpty()) {
+				saveTrnExtractDetails(list);
+				list.clear();
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			EXTRACT_STATUS.setFailedRecords(failedCount++);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -949,8 +953,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FROMDATE", fromDate);
 		source.addValue("TODATE", toDate);
-		parameterJdbcTemplate.update(
-				"INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
+		parameterJdbcTemplate.update("INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
 				source);
 
 		logger.debug(Literal.LEAVING);
@@ -1044,6 +1047,21 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
+	// Get the total records for process monitor displaying
+	private void setTotalRecords() {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("TAXAPPLICABLE", true);
+		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
+		EXTRACT_STATUS.setTotalRecords(totalRecords);
+	}
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		return null;
