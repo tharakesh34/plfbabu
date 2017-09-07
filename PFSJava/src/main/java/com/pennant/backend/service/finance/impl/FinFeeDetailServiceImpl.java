@@ -728,16 +728,29 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					BigDecimal totalPaidAmount = BigDecimal.ZERO;
 					
 					for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
-						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, finFeeReceipt.getRecordType()) && (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId())) {
-							totalPaidAmount = totalPaidAmount.add(finFeeReceipt.getPaidAmount());
+						
+						if (!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, finFeeReceipt.getRecordType())) {
+							if (finFeeDetail.getFeeTypeID() == 0) {
+								if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getVasReference())) {
+									totalPaidAmount = totalPaidAmount.add(finFeeReceipt.getPaidAmount());
+								}
+							} else {
+								if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
+									totalPaidAmount = totalPaidAmount.add(finFeeReceipt.getPaidAmount());
+								}
+							}
 						}
 					}
 					
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) { 
+						String feeTypeDesc = finFeeDetail.getFeeTypeDesc();
+						if (StringUtils.isBlank(feeTypeDesc)) {
+							feeTypeDesc = finFeeDetail.getVasReference();
+						}
 						if (totalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
 							String[] errParm = new String[1];
 							String[] valueParm = new String[1];
-							valueParm[0] = String.valueOf(finFeeDetail.getFeeTypeDesc());
+							valueParm[0] = feeTypeDesc;
 							errParm[0] = valueParm[0];
 							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetails(PennantConstants.KEY_FIELD, "65019", errParm, valueParm), usrLanguage));
@@ -745,7 +758,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 						} else if (finFeeDetail.getPaidAmount().compareTo(totalPaidAmount) != 0) {
 							String[] errParm = new String[2];
 							String[] valueParm = new String[1];
-							valueParm[0] = String.valueOf(finFeeDetail.getFeeTypeDesc());
+							valueParm[0] = feeTypeDesc;
 							errParm[0] = ":" + valueParm[0];
 							errParm[1] = ":" + valueParm[0];
 							auditDetails.get(0).setErrorDetail(ErrorUtil.getErrorDetail(
@@ -846,7 +859,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(finFeeReceipt.getFeeType());
+		valueParm[0] = String.valueOf(finFeeReceipt.getFeeTypeDesc());
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
 		if (finFeeReceipt.isNew()) { // for New record or new record into work flow

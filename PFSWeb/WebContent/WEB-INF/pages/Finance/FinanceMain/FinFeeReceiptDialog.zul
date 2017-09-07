@@ -76,15 +76,15 @@
 						<rows>
 							<row>
 								<label id="label_FinFeeReceiptDialog_FeeType" value = "${c:l('label_FinFeeReceiptDialog_FeeType.value')}" style="font-weight:bold;"/>
-								<label id="feeType" />
+								<label id="label_FeeType" />
 								<label id="label_FinFeeReceiptDialog_FeeAmount" value = "${c:l('label_FinFeeReceiptDialog_FeeAmount.value')}" style="font-weight:bold;"/>
-								<label id="feeAmount" />
+								<label id="label_FeeAmount" />
 							</row>
 							<row>
 								<label id="label_FinFeeReceiptDialog_PaidAmount" value = "${c:l('label_FinFeeReceiptDialog_PaidAmount.value')}" style="font-weight:bold;"/>
-								<label id="paidAmount" />
+								<label id="label_PaidAmount" />
 								<label id="label_FinFeeReceiptDialog_WaiverAmount" value = "${c:l('label_FinFeeReceiptDialog_WaiverAmount.value')}" style="font-weight:bold;"/>
-								<label id="waiverAmount" />
+								<label id="label_WaiverAmount" />
 							</row>
 						</rows>
 					</grid>

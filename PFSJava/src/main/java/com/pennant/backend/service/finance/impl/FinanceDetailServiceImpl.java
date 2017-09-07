@@ -2237,10 +2237,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
 				&& !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 			for(FinFeeReceipt finFeeReceipt : financeDetail.getFinScheduleData().getFinFeeReceipts()) {
-				for(FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					if(finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
-						finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
-						break;
+				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+					
+					if (finFeeReceipt.getFeeTypeId() != 0) {
+						if (finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
+							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
+							break;
+						}
+						
+					} else {
+						if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())) {
+							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
+							break;
+						}
 					}
 				}
 			}

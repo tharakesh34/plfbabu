@@ -62,7 +62,8 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private String receiptReference;
 	private String transactionRef;
 	private String favourNumber;
-	private String feeType;
+	private String feeTypeCode;
+	private String feeTypeDesc;
 	private String receiptType;
 	private BigDecimal receiptAmount = BigDecimal.ZERO;
 	private BigDecimal availableAmount = BigDecimal.ZERO;
@@ -73,6 +74,8 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private boolean exist = true;
 	private FinFeeReceipt befImage;
 	private LoggedInUser userDetails;
+	
+	private String vasReference;
 
 	public FinFeeReceipt() {
 		super();
@@ -88,13 +91,15 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("receiptReference");
 		excludeFields.add("transactionRef");
 		excludeFields.add("favourNumber");
-		excludeFields.add("feeType");
+		excludeFields.add("feeTypeCode");
+		excludeFields.add("feeTypeDesc");
 		excludeFields.add("receiptType");
 		excludeFields.add("feeTypeId");
 		excludeFields.add("receiptAmount");
 		excludeFields.add("availableAmount");
 		excludeFields.add("remainingFee");
 		excludeFields.add("exist");
+		excludeFields.add("vasReference");
 		
 		return excludeFields;
 	}
@@ -177,14 +182,6 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		this.receiptID = receiptID;
 	}
 
-	public String getFeeType() {
-		return feeType;
-	}
-
-	public void setFeeType(String feeType) {
-		this.feeType = feeType;
-	}
-
 	public long getFeeTypeId() {
 		return feeTypeId;
 	}
@@ -239,6 +236,30 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 
 	public void setFavourNumber(String favourNumber) {
 		this.favourNumber = favourNumber;
+	}
+
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
 	}
 }
 
