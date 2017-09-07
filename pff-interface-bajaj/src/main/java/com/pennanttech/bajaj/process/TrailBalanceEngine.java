@@ -626,13 +626,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
-			sql.append(" (SELECT MAX(HEADERID) FROM TRIAL_BALANCE_HEADER");
-			sql.append(" WHERE DIMENSION = :DIMENSION)");
+			sql.append(" (SELECT MAX(ID) FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND ID <> :HEADERID)");
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
 			
 			sql = new StringBuilder();
 			sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_LAST_RUN");
 			sql.append(" SELECT * FROM TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID");
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
 			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -644,7 +644,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		} else {
 			logInFileTable();
 		}
-		
 	}
 
 	private Map<String, String> getStateDescriptions() {
@@ -676,13 +675,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 	
 	private void logInFileTable() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HEADERID", headerId);
+		
 		StringBuilder data = new StringBuilder();
 		data.append("INSERT INTO TRIAL_BALANCE_REPORT_FILE(ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION,");
 		data.append(" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE)");
 		data.append(" select ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION, OPENINGBAL, OPENINGBALTYPE,");
 		data.append(" DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE");
-		data.append(" from TRIAL_BALANCE_REPORT_VIEW");
-		jdbcTemplate.update(data.toString());
+		data.append(" from TRIAL_BALANCE_REPORT_VIEW WHERE HEADERID = :HEADERID");
+		parameterJdbcTemplate.update(data.toString(), paramMap);
 	}
 
 	private void addGroupHeader() {

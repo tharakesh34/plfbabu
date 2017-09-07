@@ -131,7 +131,6 @@ public class SAPGLProcess extends DataEngineExport {
 							key = "";
 							key = key.concat(StringUtils.trimToEmpty(rs.getString("ENTITYCODE")));
 							
-							
 							// FIXME ENTITYCODE is hard coded other than loans.
 							if(StringUtils.equals("", key)) {
 								key = "01";
@@ -232,9 +231,9 @@ public class SAPGLProcess extends DataEngineExport {
 
 			if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
 				item.setTransactionAmount(BigDecimal.ZERO.subtract(item.getTransactionAmount()));
-				item.setTransactionAmountType("50");
-			} else {
 				item.setTransactionAmountType("40");
+			} else {
+				item.setTransactionAmountType("50");
 			}
 
 			transactions = entityMap.get(item.getEntity());
@@ -424,16 +423,11 @@ public class SAPGLProcess extends DataEngineExport {
 					pageItr = pageItr + 1;
 					update(pageItr);
 				}
-
-				/*if (pagesInserted) {
-					saveTransactionSummary(pageItr, rs.getString("ENTITY"));
-				}*/
 			}
 
 		});
 	}
 	
-	@SuppressWarnings("unused")
 	private Map<Integer, BigDecimal> getSummaryAmounts(int pageItr, String entity) {
 		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
 
@@ -450,27 +444,32 @@ public class SAPGLProcess extends DataEngineExport {
 
 		return map;
 	}
-	
-	private BigDecimal getSummaryByLink(int pageItr) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select SUM(CASE WHEN BSCHL= 50 THEN -1*WRBTR ELSE WRBTR END) from TRANSACTION_DETAIL_REPORT");
-		sql.append(" WHERE LINK = ?");
-
-		return jdbcTemplate.queryForObject(sql.toString(), new Object[] { pageItr }, BigDecimal.class);
-	}
-
-	
+		
 	private void saveTransactionSummary(int pageItr, String entity) throws SQLException {
-		BigDecimal summaryAmount = getSummaryByLink(pageItr);
+		Map<Integer, BigDecimal> map = getSummaryAmounts(pageItr, entity);
+
+		BigDecimal summaryAmount = BigDecimal.ZERO;
+		BigDecimal debitAmount = BigDecimal.ZERO;
+		BigDecimal creditAmount = BigDecimal.ZERO;
+
+		if (map.containsKey(40)) {
+			debitAmount = map.get(40);
+		}
+
+		if (map.containsKey(50)) {
+			creditAmount = map.get(50);
+		}
+
+		summaryAmount = debitAmount.subtract(creditAmount);
 
 		String BSCHL = "";
 		BigDecimal WRBTR = summaryAmount;
 
 		if (summaryAmount.compareTo(BigDecimal.ZERO) < 0) {
-			BSCHL = "50";
+			BSCHL = "40";
 			WRBTR = WRBTR.negate();
 		} else {
-			BSCHL = "40";
+			BSCHL = "50";
 		}
 
 		MapSqlParameterSource parameterSource;
