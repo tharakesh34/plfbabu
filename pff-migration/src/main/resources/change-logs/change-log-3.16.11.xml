@@ -1229,7 +1229,7 @@ and fielddbname='ValueDate';
 	</changeSet>
 	<changeSet id="60.16" author="murthy.y">
 		<createIndex indexName="IDX_TBH_DIMENSION" tableName="TRIAL_BALANCE_HEADER">
-			<column name="DIMENSION"type="varchar(20)"/>
+			<column name="DIMENSION" type="varchar(20)"/>
 		</createIndex>
 	</changeSet>
 	<changeSet id="61" author="Jayant">
@@ -1245,6 +1245,70 @@ and fielddbname='ValueDate';
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='SUBHEADRULES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RuleDialog_sqlRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);																	
 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROVISIONRULES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='RuleDialog_sqlRule'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);	
 	</sql>
+	</changeSet>
+		
+	<changeSet id="63" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_AVIEW" replaceIfExists="true">
+			SELECT	    	T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+							T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+							T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+							T3.FEETYPEID, T3.VASREFERENCE ,
+							T4.FeeTypeCode, T4.FeeTypeDesc, 
+							T5.RECEIPTMODE ReceiptType
+			FROM    	  	FinFeeReceipts  T1 
+			Inner Join  	FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			Inner Join  	FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			Left Join   	FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+			Inner Join  	FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="64" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			SELECT	    	T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+							T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+							T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+							T3.FEETYPEID, T3.VASREFERENCE ,
+							T4.FeeTypeCode, T4.FeeTypeDesc, 
+							T5.RECEIPTMODE ReceiptType
+			FROM    	  	FinFeeReceipts_Temp  T1 
+			Inner Join  	FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			Inner Join  	FinFeeDetail_Temp T3 on T1.FeeId = T3.FEEID
+			Left Join   	FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+			Inner Join  	FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="65" author="Kesav">
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+			SELECT	    	T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+							T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+							T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+							T3.FEETYPEID, T3.VASREFERENCE ,
+							T4.FeeTypeCode, T4.FeeTypeDesc, 
+							T5.RECEIPTMODE ReceiptType
+			FROM    	  	FinFeeReceipts_Temp  T1 
+			Inner Join  	FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			Inner Join  	FinFeeDetail_Temp T3 on T1.FeeId = T3.FEEID
+			Left Join   	FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+			Inner Join  	FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+			
+			UNION ALL
+			
+			SELECT	    	T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+							T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+							T2.AMOUNT ReceiptAmount, T2.TRANSACTIONREF, T2.FAVOURNUMBER,
+							T3.FEETYPEID, T3.VASREFERENCE ,
+							T4.FeeTypeCode, T4.FeeTypeDesc, 
+							T5.RECEIPTMODE ReceiptType
+			FROM    	  	FinFeeReceipts  T1 
+			Inner Join  	FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+			Inner Join  	FinFeeDetail T3 on T1.FeeId = T3.FEEID
+			Left Join   	FeeTypes T4  On T3.FeeTypeId = T4.FeeTypeId
+			Inner Join  	FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
+			
+			WHERE     		(NOT EXISTS  (SELECT 1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))		
+		</createView>
 	</changeSet>
 	<changeSet author="Jayant" id="63">
 		<insert tableName="WorkFlowDetails">
