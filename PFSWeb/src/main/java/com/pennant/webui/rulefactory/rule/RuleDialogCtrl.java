@@ -482,7 +482,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		case RuleConstants.MODULE_SCORES:
 			this.label_seqOrder.setValue(Labels.getLabel("label_RuleDialog_metricSeqOrder.value"));
-			this.row_SeqOrder.setVisible(true);
+			//this.row_SeqOrder.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
 			break;
 
