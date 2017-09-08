@@ -375,9 +375,9 @@ public class PennantJavaUtil {
 	private static String facilityCommitWF = "FACILITY_COMMITMENT";
 	//private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
-	private static String realizationWF   = "REALIZATION_PROCESS";
-	private static String receiptBounceWF   = "BOUNCE_PROCESS";
-	private static String receiptCancelWF   = "RECEIPTCANCEL_PROCESS";
+	private static String realizationWF   = "RECEIPT_REALIZATION";
+	private static String receiptBounceWF   = "RECEIPT_BOUNCE";
+	private static String receiptCancelWF   = "RECEIPT_CANCEL";
 	private static String feeReceiptWF = "FEERECEIPT_PROCESS";
 	private static String gstFileUplod = "GST_UPLOAD_PROCESS";
 	private static String customerWF= "CUSTOMER_CREATE";
@@ -1186,15 +1186,15 @@ public class PennantJavaUtil {
 		/************* JV Postings *************/
 
 		ModuleUtil.register("JVPosting", new ModuleMapping("JVPosting", JVPosting.class, new String[] { "JVPostings",
-				"JVPostings_AView" }, masterWF, new String[] { "BatchReference", "Batch" }, null, 300));
+				"JVPostings_AView" }, "MISC_POST", new String[] { "BatchReference", "Batch" }, null, 300));
 
 		ModuleUtil.register("JVPostingEntry", new ModuleMapping("JVPostingEntry", JVPostingEntry.class, new String[] {
-				"JVPostingEntry", "JVPostingEntry_AView" }, masterWF , new String[] { "BatchReference", "Account" }, null,
+				"JVPostingEntry", "JVPostingEntry_AView" }, "MISC_POST" , new String[] { "BatchReference", "Account" }, null,
 				300));
 		/************* FEE Postings *************/
 		
 		ModuleUtil.register("FeePostings", new ModuleMapping("FeePostings", FeePostings.class, new String[] { "FeePostings",
-		"FeePostings_AView" }, masterWF, new String[] { "PostId", "PostAgainst","Reference"}, null, 300));
+		"FeePostings_AView" }, "FEE_POSTING", new String[] { "PostId", "PostAgainst","Reference"}, null, 300));
 		
 		/************* Finance Maintenance Details *************/
 
@@ -1484,11 +1484,11 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BulkRateChangeHeader", new ModuleMapping("BulkRateChangeHeader",
 				BulkRateChangeHeader.class, new String[] { "BulkRateChangeHeader", "BulkRateChangeHeader_AView" },
-				finMaintainWF, new String[] { "BulkRateChangeRef", "FinType" }, null, 300));
+				"BULK_RATE_CHANGE", new String[] { "BulkRateChangeRef", "FinType" }, null, 300));
 
 		ModuleUtil.register("BulkRateChangeDetails", new ModuleMapping("BulkRateChangeDetails",
 				BulkRateChangeDetails.class, new String[] { "BulkRateChangeDetails", "BulkRateChangeDetails_AView" },
-				finMaintainWF, new String[] { "BulkRateChangeRef", "FinReference" }, null, 300));
+				"BULK_RATE_CHANGE", new String[] { "BulkRateChangeRef", "FinReference" }, null, 300));
 
 		/************* Static Parameters *************/
 
@@ -1972,7 +1972,7 @@ public class PennantJavaUtil {
 				new String[] {"BucketCode","BucketDesc"} , null,300));
 		
 		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
-				"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
+				"ManualAdvise_AView" }, "MANUAL_ADVICE", new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {"BounceReasons", "BounceReasons_AView" }, 
 				masterWF, new String[] { "BounceID" , "BounceCode", "Category", "Reason" }, new String[][] { { "Active", "0", "1" } }, 600));
