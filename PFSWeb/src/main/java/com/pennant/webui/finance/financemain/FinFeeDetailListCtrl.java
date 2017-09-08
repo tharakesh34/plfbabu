@@ -415,13 +415,23 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
-
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String wifReference = financeMain.getWifReference();
+		
 		if (financeDetail.isNewRecord()
-				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
+				|| StringUtils.isEmpty(financeMain.getRecordType())) {
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
-				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+				
+				if (StringUtils.isBlank(wifReference)) {
+					finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+				} else {
+					for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+						finFeeDetail.setNewRecord(true);
+						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+					}
+				}
 				
 				boolean receiptFlag = false;
 				if (isReceiptsProcess && this.financeMainDialogCtrl != null && this.financeMainDialogCtrl instanceof ReceiptDialogCtrl) {
@@ -498,7 +508,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
 				finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
 				finFeeReceipt.setReceiptID(receiptid);
-				finFeeReceipt.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
+				finFeeReceipt.setWorkflowId(financeMain.getWorkflowId());
 				finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
 				currentFeeReceipts.add(finFeeReceipt);
 			}
@@ -651,10 +661,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
+		
 		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+			
 			FinFeeDetail finFeeDetail = null;
 			
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
+				
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);
 				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
@@ -674,17 +687,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
 				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
 				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
-
 				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
 				finFeeDetail.setActualAmount(finTypeFee.getAmount());
+				
 				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					finFeeDetail.setPaidAmount(finTypeFee.getAmount());
 				}
+				
 				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 					finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
 				}
-				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
-						.subtract(finFeeDetail.getPaidAmount()));
+				
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
 
 				finFeeDetails.add(finFeeDetail);
 			}
@@ -2089,6 +2103,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		calculateFees(getFinFeeDetailList(), finScheduleData);
+		doFillFinFeeDetailList(getFinFeeDetailList());
 		
 		if(StringUtils.isBlank(moduleDefiner)){
 			fetchFeeDetails(finScheduleData,true);
@@ -2339,9 +2354,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
 	        finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}
-		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 		
-		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
+		finScheduleData.setFinFeeDetailList(getFinFeeDetailUpdateList());
 		
 		logger.debug("Leaving");
 		
