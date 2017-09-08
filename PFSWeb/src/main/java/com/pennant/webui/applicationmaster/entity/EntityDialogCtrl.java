@@ -262,7 +262,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			}
 			if (country != null) {
 				this.stateCode.setErrorMessage("");
-				pcProvince = this.stateCode.getValue();
+				pcProvince = country.getCountryCode();
 				fillProvinceDetails(pcProvince);
 			} else {
 				this.stateCode.setObject("");
