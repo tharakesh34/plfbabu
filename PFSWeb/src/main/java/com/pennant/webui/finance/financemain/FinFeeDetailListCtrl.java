@@ -416,17 +416,21 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String wifReference = financeMain.getWifReference();
 		
-		if (financeDetail.isNewRecord()
-				|| StringUtils.isEmpty(financeMain.getRecordType())) {
+		if (financeDetail.isNewRecord() || StringUtils.isEmpty(financeMain.getRecordType())) {
+			
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
+				
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
+				String wifReference = financeMain.getWifReference();
 				
-				if (StringUtils.isBlank(wifReference)) {
+				if ((StringUtils.isNotBlank(financeDetail.getModuleDefiner())
+						&& !FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))
+						|| StringUtils.isBlank(wifReference)) {
 					finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
 				} else {
+					// for WIF loans in loan origination
 					for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
 						finFeeDetail.setNewRecord(true);
 						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
