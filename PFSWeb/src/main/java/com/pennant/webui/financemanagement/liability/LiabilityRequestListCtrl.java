@@ -237,6 +237,10 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		setPageComponents(window_LiabilityRequestList, borderLayout_LiabilityRequestList, listBoxLiabilityRequest, pagingLiabilityRequestList);
 		setItemRender(new LiabilityRequestListModelItemRenderer());
 
+		boolean accessToCreateNewNOC = getFinanceDetailService().checkFirstTaskOwnerAccess(getUserWorkspace().getUserRoleSet(),
+				workflowCode, PennantConstants.WORFLOW_MODULE_FINANCE);
+		setFirstTask(accessToCreateNewNOC);
+		
 		// Register buttons and fields.
 		registerButton(button_LiabilityRequestList_NewLiabilityRequest, "button_LiabilityRequestList_NewLiabilityRequest", true);
 		registerButton(button_LiabilityRequestList_LiabilityRequestSearch);
@@ -345,7 +349,11 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 				if (StringUtils.isBlank(userRole)) {
 					userRole = workFlowDetails.getFirstTaskOwner();
 				}
+				
 				aLiabilityRequest.setWorkflowId(workFlowDetails.getWorkFlowId());
+				
+				
+				
 			}
 
 			// Fetch Total Finance Details Object
