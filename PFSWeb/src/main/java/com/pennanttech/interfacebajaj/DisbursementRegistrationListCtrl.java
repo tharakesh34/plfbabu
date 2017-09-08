@@ -314,7 +314,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	
 
 	private void doSetFieldProperties() {
-
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
 		listHeader_CheckBox_Comp = new Checkbox();
@@ -661,24 +660,22 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DisbursementProcess process = new DisbursementProcess(getUserWorkspace().getLoggedInUser().getLoginUsrID(),
-					this.finType.getValue(), disbushmentList);
-			Thread thread = new Thread(process);
-			//DisbursementProcess.sleep(2000);
-			thread.start();
+			button_Search.setDisabled(true);
+			disbursementRequestService.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID(), ((PartnerBank)partnerBank.getObject()).getFileName());
+			
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
-
+			
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul",
-					"menu_Item_DisbursementFileDownlaods", args);
-		    DisbursementProcess.sleep(5000);
-
-		} finally {
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_DisbursementFileDownlaods", args);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}  finally {
 			this.disbursementMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);
 			search();
 			btnDownload.setDisabled(false);
+			button_Search.setDisabled(false);
 			logger.debug("Leaving");
 		}
 	}
@@ -712,27 +709,4 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
 	}
-
-	public class DisbursementProcess extends Thread {
-
-		long userId;
-		String finType;
-		List<FinAdvancePayments> disbushmentList;
-
-		public DisbursementProcess(long userId, String finType, List<FinAdvancePayments> disbushmentList) {
-			this.userId = userId;
-			this.finType = finType;
-			this.disbushmentList = disbushmentList;
-		}
-
-		@Override
-		public void run() {
-			try {
-				disbursementRequestService.sendReqest(finType, disbushmentList, userId, ((PartnerBank)partnerBank.getObject()).getFileName());
-			} catch (Exception e) {
-
-			}
-		}
-	}
-
 }

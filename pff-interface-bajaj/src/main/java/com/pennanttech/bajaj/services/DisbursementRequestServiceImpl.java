@@ -1,5 +1,15 @@
 package com.pennanttech.bajaj.services;
 
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.services.DisbursementRequestService;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.QueryUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,24 +18,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-
-import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
-import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.services.DisbursementRequestService;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DisbursementRequestServiceImpl extends BajajService implements DisbursementRequestService {
 	private final Logger	logger	= Logger.getLogger(getClass());
@@ -46,40 +47,14 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		long userId = (long) params[2];
 		String fileNamePrefix = (String) params[3];
 
-		DisbursementProcessThread process = new DisbursementProcessThread(finType, userId, disbusments, fileNamePrefix);
-		Thread thread = new Thread(process);
 		try {
-			DisbursementProcessThread.sleep(5000);
-		} catch (InterruptedException e) {
+			processDisbursements(finType, userId, disbusments, fileNamePrefix);
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
-		thread.start();
 	}
 	
-	public class DisbursementProcessThread extends Thread {
-		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
-
-		private String						finType;
-		private String						fileNamePrefix;
-		private long						userId;
-		private List<FinAdvancePayments>	disbursements;
-
-		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) {
-			this.finType = finType;
-			this.userId = userId;
-			this.disbursements = disbursements;
-			this.fileNamePrefix = fileNamePrefix;
-		}
-
-		@Override
-		public void run() {
-			try {
-				processDisbursements(finType, userId, disbursements, fileNamePrefix);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-	}
 	
 	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -94,11 +69,10 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		}
 
 		generateRequest(finType, userId, disbursements, fileNamePrefix);
-
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments, String fileNamePrefix) {
+	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
 		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
@@ -225,7 +199,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	}
 
 	private void generateFile(String configName, String paymentType, String finType, long userId,
-			List<FinAdvancePayments> disbusments, String fileNamePrefix) {
+			List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
 		Map<String, List<FinAdvancePayments>> map = null;
 		if (!disbusments.isEmpty()) {
 			map = getOtherBankMap(disbusments);
@@ -237,7 +211,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 				try {
 					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","), paymentType);
 				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
+					throw e;
 				}
 				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
 			}
@@ -270,7 +244,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	}
 
 	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
-			String finType, long userId, String fileNamePrefix) {
+			String finType, long userId, String fileNamePrefix) throws Exception {
 		DataEngineStatus status = null;
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
@@ -282,49 +256,71 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
 		parameterMap.put("PAYMENT_TYPE", paymentType);
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
-
-		if ("DISB_HDFC_EXPORT".equals(configName)) {
-			parameterMap.put("CLIENT_CODE", fileNamePrefix);
-			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 3, "0"));
-		}
+		
 		try {
+			if ("DISB_HDFC_EXPORT".equals(configName)) {
+				parameterMap.put("CLIENT_CODE", fileNamePrefix);
+				parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 3, "0"));
+			}
+
 			export.setValueDate(getValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			status = export.exportData(configName);
 			
-			if (!"S".equals(status.getStatus())) {
-				System.out.println("Failed");
+			if(status == null || !"S".equals(status.getStatus())) {
+				if(status != null) {
+					throw new AppException(status.getRemarks());
+				} else {
+					throw new Exception();
+				}
 			}
 			
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);	
+			throw e;
 		} finally {
 			conclude(status, idList);
 		}
 	}
 		
-	private String getSTPFileSequence() {
-		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+	private String getSTPFileSequence() throws Exception {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		
-		Date date = DateUtil.getSysDate();
 
-		sql.append(" select COALESCE(FILESEQUENCENO, 0) +1 from DATA_ENGINE_CONFIG");
+		sql.append(" select LASTPROCESSEDON, FILESEQUENCENO from DATA_ENGINE_CONFIG");
 		sql.append(" where Name = :Name");
-		sql.append(" and LASTPROCESSEDON >= :TODAY and LASTPROCESSEDON <= :NEXTDAY");
+		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
 
-		parmMap.addValue("Name", "DISB_HDFC_EXPORT");
-		parmMap.addValue("TODAY", DateUtil.getDatePart(date));
-		parmMap.addValue("NEXTDAY", DateUtil.getDatePart(DateUtil.addDays(date, 1)));
-		
 		try {
-			return namedJdbcTemplate.queryForObject(sql.toString(), parmMap, String.class);
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<String>() {
+				@Override
+				public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+					rs.next();					
+					Date currentDate = DateUtil.getSysDate();
+					currentDate = DateUtil.getDatePart(currentDate);
+					Date lastProcessedOn = rs.getDate("LASTPROCESSEDON");
+
+					int fileSeqNo = rs.getInt("FILESEQUENCENO");
+
+					if (lastProcessedOn == null) {
+						lastProcessedOn = currentDate;
+					} else {
+						lastProcessedOn = DateUtil.getDatePart(lastProcessedOn);
+					}
+
+					if (lastProcessedOn.compareTo(currentDate) == 0) {
+						return String.valueOf(fileSeqNo + 1);
+					} else {
+						return String.valueOf(1);
+					}
+				}
+			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		return "1";
+		throw new Exception();
 	}
 
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {

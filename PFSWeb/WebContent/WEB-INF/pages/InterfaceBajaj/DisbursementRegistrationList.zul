@@ -17,19 +17,13 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						style="border-style: none;">
-						<button id="button_Search"
-							label="${c:l('label_Filter')}"
-							autodisable="button_Search,print,btnRefresh,help"
+						<button id="button_Search" label="${c:l('label_Filter')}" autodisable="button_Search,btnDownload,print,btnRefresh,help"
 							tooltiptext="${c:l('button_Search.tooltiptext')}" />
-						<button id="btnDownload"
-							label="${c:l('label_DisbursementList_btndownload.value')}" />
+						<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnRefresh" height="24px"
-							label="${c:l('label_Refresh')}"
-							autodisable="button_Search,print,btnRefresh,help"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnRefresh" height="24px" label="${c:l('label_Refresh')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					</toolbar>
 				</hbox>
 			</div>
