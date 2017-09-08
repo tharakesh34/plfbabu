@@ -1315,18 +1315,20 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		
 		if(finServiceInst.getReceiptDetail() != null) {
-			Date finStartDate = DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
-					PennantConstants.DBDateFormat));
-			Date appDate = DateUtility.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(),
-					PennantConstants.DBDateFormat));
-			if (receiDate.compareTo(finStartDate) < 0 || receiDate.compareTo(appDate) > 0) {
+			if (DateUtility.compare(receiDate, financeMain.getFinStartDate()) == 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
+				return response;
+			}
+			if(DateUtility.compare(receiDate, financeMain.getFinStartDate()) < 0 || DateUtility.compare(receiDate, curBussDate) > 0) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[3];
 				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
-				valueParm[1] = DateUtility.formatToShortDate(financeMain.getFinStartDate());
-				valueParm[2] = DateUtility.formatToShortDate(DateUtility.getAppDate());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90282", valueParm));
+				valueParm[1] = "Loan start Date:"+ DateUtility.formatToShortDate(financeMain.getFinStartDate());
+				valueParm[2] = "Application Date:"+ DateUtility.formatToShortDate(DateUtility.getAppDate());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90350", valueParm));
 				return response;
 			}
 		}
