@@ -2819,4 +2819,15 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	       INSERT INTO ErrorDetails VALUES('90350','EN','E','{0} should be after {1} and on/before {2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="189" author="Durga Prasad D">
+    <createView viewName="LIMITLINES_VIEW" replaceIfExists="true">
+	Select T.DetailId, T.LimitHeaderId, T1.RuleCode,T1.RuleValue,T1.CustomerId,T1.CustomerGroup,T.LimitLine,R.SqlRule,R.RuleCodeDesc  LimitLineDesc,T.GroupCode, T.
+	LimitStructureDetailsID,T.LimitChkMethod, T.ExpiryDate, T.LimitSanctioned,  T.ReservedLimit, T.UtilisedLimit,T.LimitCheck,NVL(T.Revolving,0)Revolving ,T1.LimitCcy  Currency,T.Version , T.
+	CreatedBy,T.CreatedOn,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId from 
+	LimitDetails_AView  T INNER JOIN
+	LimitHeader  T1 ON T1.HeaderId=T.LimitHeaderId  Left Outer Join 
+	Rules R ON T.LimitLine= R.RuleCode and RuleModule='LMTLINE' where  T1.Active=1
+    </createView>
+</changeSet>
 </databaseChangeLog>
