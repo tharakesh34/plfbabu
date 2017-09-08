@@ -2791,4 +2791,10 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	        end;
 	    </sql>
 	</changeSet>
+	<changeSet id="185" author="Jayant">
+		<sql>
+			update workflowdetails set firsttaskowner='MANDATE_CREATE_MAKER' where workflowtype='MANDATE_CREATE';
+			update workflowdetails set firsttaskowner='LIMIT_CONFIG_MAKER' where workflowtype='LIMIT_CONFIG';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
