@@ -345,9 +345,6 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			return;
 		}
 
-		// Workflow ID Setup
-		aVASRecording.setWorkflowId(getWorkFlowId());
-
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND ProductCode='" + aVASRecording.getProductCode() + "' AND version="
 				+ aVASRecording.getVersion() + " ";
