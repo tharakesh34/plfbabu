@@ -87,6 +87,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 /**
@@ -280,7 +281,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					if (customerDetails == null) {
 						throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
 					}
-				}//If  prospect customer  is checked
+				}
+				
 			} else  if (this.prospect.isChecked()) {
 				newRecord = true;
 				String ctgType=this.custCtgType.getSelectedItem().getValue().toString();
@@ -418,6 +420,13 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			if (customer != null) {
 				customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
+			}
+			
+			if (StringUtils.isNotEmpty(customerDetails.getCustomer().getNextRoleCode())) {
+				if(!getUserWorkspace().getUserRoles().contains(customerDetails.getCustomer().getNextRoleCode())){
+					throw new AppException(Labels.getLabel("customer_maintainance_otherQueue"));
+				}
+
 			}
 			if (customerDetails != null) {
 				this.customerListCtrl.buildDialogWindow(customerDetails, newRecord);
