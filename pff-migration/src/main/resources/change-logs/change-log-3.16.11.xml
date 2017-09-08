@@ -2458,4 +2458,12 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 			update	workflowdetails	set	firsttaskowner='RECEIPT_BOUNCE_MAKER'	where	workflowtype ='RECEIPT_BOUNCE'		;
 	    </sql>
 	</changeSet>
+	<changeSet id="160" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
