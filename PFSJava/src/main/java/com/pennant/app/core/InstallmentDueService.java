@@ -153,7 +153,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, boolean post) {
+			FinanceProfitDetail profiDetails, Date appDate, boolean post,String postBranch) {
 		logger.debug(" Entering ");
 		
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
@@ -246,6 +246,7 @@ public class InstallmentDueService extends ServiceHelper {
 					curSchd.getSchDate(), curSchd.getSchDate());
 			aeEvent.getAcSetIDList().add(accountingID);
 
+			aeEvent.setPostingUserBranch(postBranch);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			amountCodes.setInstpft(curSchd.getProfitSchd());
 			amountCodes.setInstpri(curSchd.getPrincipalSchd());

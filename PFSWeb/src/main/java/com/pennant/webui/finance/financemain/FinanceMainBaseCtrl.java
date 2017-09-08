@@ -11397,7 +11397,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					!finVasRecordingDialogCtrl.getVasRecordings().isEmpty()){
 				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent, finVasRecordingDialogCtrl.getVasRecordings()));
 			}
-			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(), profitDetail, DateUtility.getAppDate(),false));
+			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(), profitDetail, DateUtility.getAppDate(),false, ""));
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);

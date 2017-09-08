@@ -1523,7 +1523,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
 				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
 			}
-			getInstallmentDueService().processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),true);
+			getInstallmentDueService().processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),true, auditHeader.getAuditBranchCode());
 		}
 
 		doSave_PftDetails(pftDetail, isNew);
