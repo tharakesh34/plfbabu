@@ -2829,5 +2829,12 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	LimitHeader  T1 ON T1.HeaderId=T.LimitHeaderId  Left Outer Join 
 	Rules R ON T.LimitLine= R.RuleCode and RuleModule='LMTLINE' where  T1.Active=1
     </createView>
+    <changeSet id="187" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG set ACTIVE = 0  where Name IN ('ME_BMTPRODUCT', 'ME_RMTBRANCHES');
+			]]>
+		</sql>
+	</changeSet>
 </changeSet>
 </databaseChangeLog>

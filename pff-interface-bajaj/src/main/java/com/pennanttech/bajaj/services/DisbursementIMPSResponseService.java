@@ -32,11 +32,11 @@ public class DisbursementIMPSResponseService extends BajajService {
 		if (disbursements == null || disbursements.isEmpty()) {
 			return;
 		}
-		disbRespProcess = new DisbursemenIMPSResponseProcess(dataSource, new Long(1000), getValueDate(), disbursements);
-		disbRespProcess.process("DISB_IMPS_RESPONSE");
-		DataEngineStatus status = disbRespProcess.getDataEngineStatus();
 
 		try {
+			disbRespProcess = new DisbursemenIMPSResponseProcess(dataSource, new Long(1000), getValueDate(), disbursements);
+			disbRespProcess.process("DISB_IMPS_RESPONSE");
+			DataEngineStatus status = disbRespProcess.getDataEngineStatus();
 			disbursementResponse.receiveResponse(status.getId());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

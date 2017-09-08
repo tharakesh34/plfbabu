@@ -93,11 +93,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		ValueLabel valueLabel = null;
 		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
 		userId = getUserWorkspace().getUserDetails().getLoginId();
-
-		String[] parsers = new String[2];
-		parsers[0] = ParserNames.READER.name();
-		parsers[1] = ParserNames.DBREADER.name();
-		List<Configuration> configList = dataEngineConfig.getMenuList(parsers, true);
+		List<Configuration> configList = dataEngineConfig.getMenuList(true);
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 

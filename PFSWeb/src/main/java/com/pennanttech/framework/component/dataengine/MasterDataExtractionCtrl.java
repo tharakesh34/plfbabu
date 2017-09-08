@@ -1,23 +1,20 @@
 package com.pennanttech.framework.component.dataengine;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Window;
-
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Window;
 
 public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger	logger				= Logger.getLogger(MasterDataExtractionCtrl.class);
@@ -56,11 +53,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		setPageComponents(window);
 
 		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
-
-		String[] parsers = new String[2];
-		parsers[0] = ParserNames.READER.name();
-		parsers[1] = ParserNames.DBREADER.name();
-		List<Configuration> configList = dataEngineConfig.getMenuList(parsers, false);
+		List<Configuration> configList = dataEngineConfig.getMenuList(false);
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
