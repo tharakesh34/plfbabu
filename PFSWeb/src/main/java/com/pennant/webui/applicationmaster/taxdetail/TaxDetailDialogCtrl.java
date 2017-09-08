@@ -363,7 +363,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			}
 			if (country != null) {
 				this.stateCode.setErrorMessage("");
-				pcProvince = this.stateCode.getValue();
+				pcProvince =country.getCountryCode();
 				fillProvinceDetails(pcProvince);
 			} else {
 				this.stateCode.setObject("");
