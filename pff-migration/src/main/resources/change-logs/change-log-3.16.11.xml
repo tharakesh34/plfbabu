@@ -2813,4 +2813,10 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	        end;
 	    </sql>
 	</changeSet>
+	<changeSet id="188" author="Durga Prasad D">
+	    <sql>
+	       Delete from ErrorDetails where ErrorCode = '90350';
+	       INSERT INTO ErrorDetails VALUES('90350','EN','E','{0} should be after {1} and on/before {2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
