@@ -99,7 +99,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append("CollateralType, DepositorCif, DepositorName, CollateralTypeName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = :CollateralRef");
@@ -419,7 +419,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append("collateralType, depositorCif, depositorName, CollateralTypeName, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where DepositorId = :DepositorId");
