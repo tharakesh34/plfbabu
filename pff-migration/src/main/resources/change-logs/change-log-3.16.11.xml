@@ -2829,6 +2829,7 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	LimitHeader  T1 ON T1.HeaderId=T.LimitHeaderId  Left Outer Join 
 	Rules R ON T.LimitLine= R.RuleCode and RuleModule='LMTLINE' where  T1.Active=1
     </createView>
+    </changeSet>
     <changeSet id="187" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -2836,5 +2837,9 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 			]]>
 		</sql>
 	</changeSet>
-</changeSet>
+	<changeSet id="188" author="murthy.y">
+		<createIndex indexName="IDX_DES_NAME" tableName="DATA_ENGINE_STATUS">
+			<column name="NAME" type="varchar(100)"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
