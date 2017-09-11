@@ -2837,4 +2837,12 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="190" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
