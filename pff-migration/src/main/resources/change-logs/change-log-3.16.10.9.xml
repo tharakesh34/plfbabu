@@ -43,5 +43,25 @@
 	Rules R ON T.LimitLine= R.RuleCode and RuleModule='LMTLINE' where  T1.Active=1
     </createView>
     </changeSet>
-	
+	<changeSet id="4" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
+	<changeSet id="5" author="murthy.y">
+		<createIndex indexName="IDX_DES_NAME" tableName="DATA_ENGINE_STATUS">
+			<column name="NAME" type="varchar(100)"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="6" author="Jayant">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
