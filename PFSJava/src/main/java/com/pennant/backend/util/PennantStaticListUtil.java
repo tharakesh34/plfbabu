@@ -204,6 +204,8 @@ public class PennantStaticListUtil {
 	
 	private static ArrayList<ValueLabel> extractionType;
 	private static ArrayList<ValueLabel> accountMapping;
+	private static ArrayList<ValueLabel> gstMapping;
+	private static ArrayList<ValueLabel> monthMapping;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2788,15 +2790,44 @@ public class PennantStaticListUtil {
 		return custCreationFinoneStatus;
 	}
 	
-	public static ArrayList<ValueLabel> getAccountMapping() {
+	public static ArrayList<ValueLabel> getGSTDownload() {
 
 		if(accountMapping == null){
 			accountMapping = new ArrayList<ValueLabel>(3);
-			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
-			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
-			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
+			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_GSTDownload_Select")));
+			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_GSTDownload_Normal")));
+			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_GSTDownload_Discrepancy")));
 		}
 		return accountMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getConfigNames() {
+		
+		if(gstMapping == null){
+			gstMapping = new ArrayList<ValueLabel>(1);
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS", Labels.getLabel("label_DataExtraction_GSTDnld")));
+		}
+		return gstMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getMonthList() {
+		
+		if(monthMapping == null){
+			monthMapping = new ArrayList<ValueLabel>(12);
+			monthMapping.add(new ValueLabel("1", Labels.getLabel("label_DataExtraction_Jan")));
+			monthMapping.add(new ValueLabel("2", Labels.getLabel("label_DataExtraction_Feb")));
+			monthMapping.add(new ValueLabel("3", Labels.getLabel("label_DataExtraction_Mar")));
+			monthMapping.add(new ValueLabel("4", Labels.getLabel("label_DataExtraction_Apr")));
+			monthMapping.add(new ValueLabel("5", Labels.getLabel("label_DataExtraction_May")));
+			monthMapping.add(new ValueLabel("6", Labels.getLabel("label_DataExtraction_Jun")));
+			monthMapping.add(new ValueLabel("7", Labels.getLabel("label_DataExtraction_Jly")));
+			monthMapping.add(new ValueLabel("8", Labels.getLabel("label_DataExtraction_Aug")));
+			monthMapping.add(new ValueLabel("9", Labels.getLabel("label_DataExtraction_Sep")));
+			monthMapping.add(new ValueLabel("10", Labels.getLabel("label_DataExtraction_Oct")));
+			monthMapping.add(new ValueLabel("11", Labels.getLabel("label_DataExtraction_Nov")));
+			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
+		}
+		return monthMapping;
 	}
 	
 }

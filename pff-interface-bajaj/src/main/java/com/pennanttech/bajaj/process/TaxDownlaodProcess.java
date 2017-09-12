@@ -89,6 +89,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				isError = true;
+				throw e;
 			} finally {
 				if (isError || failedCount > 0) {
 					clearTaxDownlaodTables();
@@ -921,7 +922,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	 * Clear the existing records from tax details if already available for the
 	 * same dates
 	 */
-	private void clearTaxdetails() {
+	public void clearTaxdetails() {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -947,7 +948,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	/**
 	 * Duplicate the postings data to a new Table, to avoid any dependencies
 	 */
-	private void preparePosingsData() {
+	public void preparePosingsData() {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -1048,7 +1049,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 	}
 
 	// Get the total records for process monitor displaying
-	private void setTotalRecords() {
+	public long setTotalRecords() {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 		StringBuilder sql = null;
 
@@ -1061,6 +1062,7 @@ public class TaxDownlaodProcess extends DatabaseDataEngine {
 		parmMap.addValue("TAXAPPLICABLE", true);
 		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
 		EXTRACT_STATUS.setTotalRecords(totalRecords);
+		return totalRecords;
 	}
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {

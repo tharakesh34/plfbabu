@@ -692,4 +692,5 @@
 		<menuItem id="menu_Item_PaymentInstructionsEnquiry" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y" rightName="menuItem_payment_PaymentInstructionsEnquiry"/>
    </menu>
 
+	<menuItem id="menu_Item_DataExtraction" zulNavigation="/WEB-INF/pages/DataExtraction/DataExtractionList.zul"  rightName="menuItem_gst_GSTDownload"/>
 </ns2:XMLRootMenu>

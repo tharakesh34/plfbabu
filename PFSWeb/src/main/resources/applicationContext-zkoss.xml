@@ -4910,4 +4910,8 @@
 		<property name="soaReportGenerationService" ref="soaReportGenerationService" />
 	</bean>
 	
+	<!-- GST -->
+	<bean id="dataExtractionListCtrl"
+		class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
 </beans>
