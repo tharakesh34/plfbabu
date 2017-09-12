@@ -44,7 +44,9 @@
 package com.pennanttech.interfacebajaj;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.bajaj.process.SAPGLProcess;
@@ -56,6 +58,7 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -66,6 +69,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
@@ -75,6 +79,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -92,7 +97,6 @@ import org.zkoss.zul.Window;
  * 
  */
 public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
 
@@ -102,6 +106,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
+	protected Combobox months;
+	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds();
 	
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
@@ -136,6 +142,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
+		
+		fillComboBox(months, "", monthsList, "");
 		
 		registerField("Id", SortOrder.DESC);
 		registerField("Name");
@@ -191,15 +199,37 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
 		try {
+			Date valueDate = null;
+			Date appDate = null;
+			String selectedMonth = months.getSelectedItem().getValue();
+			
+			if ("#".equals(selectedMonth)) {
+				appDate = DateUtility.getAppDate();
+				valueDate = DateUtility.getAppValueDate();
+			} else {
+				appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+				valueDate = appDate;
+			}
+			
+			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+			
+			
+			if (trialbal.isBatchExists()) {
+				int conf = MessageUtil
+						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
+
+				if (conf == MessageUtil.NO) {
+					return;
+				}
+			}
+						
+			trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
 			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-					DateUtility.getAppDate()).extractReport(TrailBalanceEngine.Dimention.STATE);
-			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-					DateUtility.getAppDate()).extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate)
+							.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
-					DateUtility.getAppDate()).extractReport();
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
 			refresh();
 		} catch (Exception e) {
 			MessageUtil.showError(e);

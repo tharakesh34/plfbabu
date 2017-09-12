@@ -265,7 +265,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			return openingBal.getLedgerAccount();
 		}
 	}
-
+	
 	private void createNextId() {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("DIMENSION", dimention.name());
@@ -379,7 +379,13 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private void clearTables() {
 		logger.info("Clearing staging tables..");
 		jdbcTemplate.execute("DELETE FROM TRIAL_BALANCE_REPORT_FILE");
-		jdbcTemplate.execute("alter table TRIAL_BALANCE_REPORT_FILE modify ID generated as identity (start with 1)");
+		
+		if (App.DATABASE == App.Database.ORACLE) {
+			jdbcTemplate
+					.execute("alter table TRIAL_BALANCE_REPORT_FILE modify ID generated as identity (start with 1)");
+		} else if(App.DATABASE == App.Database.SQL_SERVER) {
+			jdbcTemplate.execute("dbcc checkident ('TRIAL_BALANCE_REPORT_FILE', reseed, 0)");
+		}
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("START_DATE", startDate);
@@ -392,6 +398,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 			paramMap.addValue("NAME", "TRIAL_BALANCE_EXPORT_CONSOLIDATE");
 		}
 		
+		
+		// delete the data between start and end date if already available
 		StringBuilder sql = new StringBuilder();
 		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID = ");
 		sql.append(" (SELECT HEADERID FROM TRIAL_BALANCE_HEADER");
@@ -407,7 +415,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql = new StringBuilder();
 		sql = sql.append("DELETE FROM TRIAL_BALANCE_HEADER WHERE STARTDATE BETWEEN :START_DATE AND :END_DATE");
 		sql.append(" AND DIMENSION = :DIMENSION");
-
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
@@ -746,6 +753,31 @@ public class TrailBalanceEngine extends DataEngineExport {
 				}
 			}
 		});
+	}
+	
+	
+	public boolean isBatchExists() throws Exception {
+		prepareTrialBalanceDate();
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("STARTDATE", startDate);
+		paramMap.addValue("ENDDATE", endDate);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT count(*) from ");
+		sql.append(" TRIAL_BALANCE_HEADER WHERE STARTDATE = :STARTDATE AND ENDDATE = :ENDDATE");
+
+		int count = 0;
+		try {
+			count = this.parameterJdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		if (count > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

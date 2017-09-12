@@ -1,21 +1,24 @@
 package com.pennant.backend.util;
 
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
-
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 public class PennantStaticListUtil {
 	
@@ -206,6 +209,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
+	private static ArrayList<ValueLabel> monthEndList;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -2828,6 +2832,35 @@ public class PennantStaticListUtil {
 			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
 		}
 		return monthMapping;
+	}
+	
+	public static List<ValueLabel> getMontEnds() {
+
+		if (monthEndList == null) {
+			monthEndList = new ArrayList<ValueLabel>();
+		}
+
+		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
+		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
+
+		GregorianCalendar gc = null;
+
+		int month = DateUtil.getMonth(DateUtility.getAppDate());
+		int year = DateUtil.getYear(DateUtility.getAppDate());
+
+		for (int i = 1; i <= 12; i++) {
+			if (month == 0) {
+				month = 11;
+				year = year - 1;
+			} else {
+				month = month - 1;
+			}
+			gc = new GregorianCalendar();
+			gc.set(year, month - 1, 1);
+			monthEndList.add(new ValueLabel(valueDateFormat.format(DateUtil.getMonthEnd(gc.getTime())),
+					displayDateFormat.format(gc.getTime())));
+		}
+		return monthEndList;
 	}
 	
 }
