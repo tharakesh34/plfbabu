@@ -2982,7 +2982,7 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="193" author="Jayant">
+	<changeSet id="193" author="Jayant" dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
