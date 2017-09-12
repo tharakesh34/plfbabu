@@ -1960,11 +1960,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
-		if (StringUtils.equals(postValue,FinanceConstants.POSTING_CASH_TO_BANK)) {
-			this.reference.setButtonDisabled(true);
-		}else{
-			this.reference.setButtonDisabled(false);
-		}
 	}
 
 	private void addFilters(String modulename,String valuecolumn,String descColumn) {
