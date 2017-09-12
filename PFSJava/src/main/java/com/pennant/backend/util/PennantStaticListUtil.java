@@ -2790,13 +2790,13 @@ public class PennantStaticListUtil {
 		return custCreationFinoneStatus;
 	}
 	
-	public static ArrayList<ValueLabel> getGSTDownload() {
+	public static ArrayList<ValueLabel> getAccountMapping() {
 
 		if(accountMapping == null){
 			accountMapping = new ArrayList<ValueLabel>(3);
-			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_GSTDownload_Select")));
-			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_GSTDownload_Normal")));
-			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_GSTDownload_Discrepancy")));
+			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
+			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
 		return accountMapping;
 	}
