@@ -585,11 +585,7 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
 			returnDataSet.setAccountType(jvPostingEntry.getAcType());
-			if (jvPostingEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO) < 0) {
-				returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount_Ac().multiply(new BigDecimal(-1)));
-			} else {
-				returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount_Ac());
-			}
+			returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount());
 			returnDataSet.setTranOrderId(String.valueOf(jvPostingEntry.getAcEntryRef()));
 			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
 					SysParamUtil.getAppCurrency(), returnDataSet.getPostAmount()));

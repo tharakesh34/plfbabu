@@ -964,14 +964,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
 			getJVPosting().setPostingDate(DateUtility.getSysDate());
-			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), ","+FinanceConstants.POSTING_AGAINST_LIMIT+",");
+			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting
 					.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), ","+FinanceConstants.POSTING_AGAINST_LIMIT+",");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), "");
 		}
 		
 		//Added to map with legal expenses
@@ -1812,7 +1812,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccCCy());
 			lc.setParent(item);					
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount_Ac(),CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
+			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getPostingStatus());
@@ -1959,6 +1959,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
+			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
 		}
 	}
 
