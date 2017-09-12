@@ -1039,6 +1039,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			approveFees(rceiptData, TableType.MAIN_TAB.getSuffix());
 		}
 		
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
+		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
+		
 		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
 			// Save Document Details
 			if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null
@@ -1057,14 +1060,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				auditDetails.addAll(getCheckListDetailService().doApprove(rceiptData.getFinanceDetail(), ""));
 			}
 			
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 			
 			// ScheduleDetails delete
 			//=======================================
 			listDeletion(finReference, TableType.TEMP_TAB.getSuffix());
 			
-			// Fee charges deletion
-			List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
 			
 			//Fin Fee Details Deletion
 			if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
@@ -1097,35 +1097,35 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// Finance Main Deletion from temp
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 			
-			FinReceiptData tempRepayData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
-			FinanceMain tempfinanceMain = tempRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-					tempfinanceMain.getBefImage(), tempfinanceMain));
-			
-			// Receipt Header Audit Details Preparation
-			String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rceiptData.getReceiptHeader().getExcludeFields());
-			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], rceiptData.getReceiptHeader()
-					.getBefImage(), rceiptData.getReceiptHeader()));
-			
-			// Adding audit as deleted from TEMP table
-			auditHeader.setAuditDetails(tempAuditDetailList);
-			auditHeader.setAuditModule("FinanceDetail");
-			getAuditHeaderDAO().addAudit(auditHeader);
-			
-			// Receipt Header Audit Details Preparation
-			auditDetails.add(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], rceiptData.getReceiptHeader()
-					.getBefImage(), rceiptData.getReceiptHeader()));
-
-			auditHeader.setAuditTranType(tranType);
-			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
-					.getBefImage(), financeMain));
-			
-			// Adding audit as Insert/Update/deleted into main table
-			auditHeader.setAuditDetails(auditDetails);
-			auditHeader.setAuditModule("FinanceDetail");
-			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
+		FinReceiptData tempRepayData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinanceMain tempfinanceMain = tempRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				tempfinanceMain.getBefImage(), tempfinanceMain));
+		
+		// Receipt Header Audit Details Preparation
+		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rceiptData.getReceiptHeader().getExcludeFields());
+		tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], rceiptData.getReceiptHeader()
+				.getBefImage(), rceiptData.getReceiptHeader()));
+		
+		// Adding audit as deleted from TEMP table
+		auditHeader.setAuditDetails(tempAuditDetailList);
+		auditHeader.setAuditModule("FinanceDetail");
+		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		// Receipt Header Audit Details Preparation
+		auditDetails.add(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], rceiptData.getReceiptHeader()
+				.getBefImage(), rceiptData.getReceiptHeader()));
+
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
+				.getBefImage(), financeMain));
+		
+		// Adding audit as Insert/Update/deleted into main table
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditModule("FinanceDetail");
+		getAuditHeaderDAO().addAudit(auditHeader);
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(rceiptData);
 

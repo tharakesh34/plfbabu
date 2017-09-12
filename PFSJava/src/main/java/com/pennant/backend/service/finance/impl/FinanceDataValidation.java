@@ -1505,6 +1505,14 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = "accNumber";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					 return errorDetails;
+				}
+				if (mandate.getAccNumber().length() > 50) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "accNumber length";
+					valueParm[1] = "50";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30568", valueParm)));
+					return errorDetails;
 				}
 				if (StringUtils.isBlank(mandate.getAccHolderName())) {
 					String[] valueParm = new String[1];
@@ -1626,12 +1634,14 @@ public class FinanceDataValidation {
 				//validate AccNumber length
 				if(StringUtils.isNotBlank(mandate.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-					if(mandate.getAccNumber().length()!=accNoLength){
-						String[] valueParm = new String[2];
-						valueParm[0] = "AccountNumber(Mandate)";
-						valueParm[1] = String.valueOf(accNoLength)+" characters";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
-						return errorDetails;
+					if (accNoLength != 0) {
+						if (mandate.getAccNumber().length() != accNoLength) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "AccountNumber(Mandate)";
+							valueParm[1] = String.valueOf(accNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
+							return errorDetails;
+						}
 					}
 				}
 				//validate Phone number
