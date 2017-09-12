@@ -2851,4 +2851,11 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 			<column name="PICKUP_FLAG" type="char(1)" defaultValue="N" />
 		</addColumn>
 </changeSet>
+	<changeSet id="192" author="manoj">	
+		<sql>
+			<![CDATA[
+				UPDATE DATAMART_HEADER set PICKUP_FLAG = 'Y';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
