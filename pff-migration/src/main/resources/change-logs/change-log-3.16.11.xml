@@ -2845,4 +2845,10 @@ from (Select LinkedTranId,PostDate,finEvent,transorder,Account,FINREFERENCE,DRAM
 	        end;
 	    </sql>
 	</changeSet>
+	
+	<changeSet author="manoj" id="191">
+		<addColumn tableName="DATAMART_HEADER">
+			<column name="PICKUP_FLAG" type="char(1)" defaultValue="N" />
+		</addColumn>
+</changeSet>
 </databaseChangeLog>
