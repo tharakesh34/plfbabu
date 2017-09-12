@@ -848,6 +848,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			readOnlyComponent(true, this.batchPurpose);
 			readOnlyComponent(true, this.postingAgainst);
 			readOnlyComponent(true, this.reference);
+			readOnlyComponent(true, this.postingDivision);
 			this.btnNewJVPostingEntry.setVisible(false);
 			this.btnValidate.setVisible(false);
 			this.btnNotes.setVisible(false);
@@ -963,14 +964,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
 			getJVPosting().setPostingDate(DateUtility.getSysDate());
-			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
+			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), ","+FinanceConstants.POSTING_AGAINST_LIMIT+",");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting
 					.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), "");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), ","+FinanceConstants.POSTING_AGAINST_LIMIT+",");
 		}
 		
 		//Added to map with legal expenses
@@ -1958,6 +1959,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
+		}
+		if (StringUtils.equals(postValue,FinanceConstants.POSTING_CASH_TO_BANK)) {
+			this.reference.setButtonDisabled(true);
+		}else{
+			this.reference.setButtonDisabled(false);
 		}
 	}
 
