@@ -757,5 +757,21 @@ public final class DateUtility extends DateUtil {
 		
 		return postingDate;
 	}
+	
+	/**
+	 * Returns the date of the month
+	 * 
+	 * @param month
+	 *            (integer)
+	 * @return Date
+	 */
+	public static Date getDate(int month) {
+
+		month = month - 1;
+		int year = getYear(getSysDate());
+		int day = 01;
+
+		return convert(new GregorianCalendar(year, month, day));
+	}
 
 }
