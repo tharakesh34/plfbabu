@@ -774,4 +774,20 @@ public final class DateUtility extends DateUtil {
 		return convert(new GregorianCalendar(year, month, day));
 	}
 
+	/**
+	 * Returns the Previous year date
+	 * 
+	 * @param date
+	 *            (Date)
+	 * @return Date
+	 */
+	public static Date getPreviousYearDate(java.util.Date date) {
+
+		int month = getMonth(date) - 1;
+		int year = getYear(date);
+		int day = getDay(date);
+
+		return convert(new GregorianCalendar(year - 1, month, day));
+
+	}
 }
