@@ -36,6 +36,7 @@ public class DateUtil {
 	public enum DateFormat {
 		SHORT_DATE("dd/MM/yyyy"),
 		LONG_DATE("dd-MMM-yyyy"),
+		LONG_MONTH("MMM-yyyy"),
 		SHORT_TIME("HH:mm"),
 		LONG_TIME("HH:mm:ss"),
 		SHORT_DATE_TIME("dd/MM/yyyy HH:mm"),
@@ -299,7 +300,7 @@ public class DateUtil {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
