@@ -359,7 +359,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getFinStartDate()) < 0
 						|| ((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getMaturityDate()) > 0) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel(
-							"DATE_RANGE",
+							"DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value"),
 									DateUtility.formatToLongDate(finMain.getFinStartDate()),
 									DateUtility.formatToLongDate(finMain.getMaturityDate()) }));

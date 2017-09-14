@@ -84,8 +84,7 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	private static final long serialVersionUID = -5990530952612454146L;
-	private static final Logger logger = Logger
-			.getLogger(BaseRateDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(BaseRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding
@@ -558,12 +557,9 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 
 		if (this.bREffDate.getValue().before(dateBackward)
 				|| this.bREffDate.getValue().after(dateForward)) {
-			throw new WrongValueException(
-					bREffDate,
-					Labels.getLabel(
-							"DATE_RANGE",
-							new String[] {
-									Labels.getLabel("label_BaseRateDialog_BREffDate.value"),
+			throw new WrongValueException(bREffDate,
+					Labels.getLabel("DATE_ALLOWED_RANGE",
+							new String[] { Labels.getLabel("label_BaseRateDialog_BREffDate.value"),
 									DateUtility.formatToShortDate(dateBackward),
 									DateUtility.formatToShortDate(dateForward) }));
 		}

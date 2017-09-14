@@ -213,7 +213,7 @@ public class ExtendedFieldDetailsValidation {
 						valueParm[0] = exdConfigDetail.getFieldName();
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 					}
 				}
 			} catch (Exception e) {
@@ -298,9 +298,9 @@ public class ExtendedFieldDetailsValidation {
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 					valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 				}
-				}
+			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
 			if (StringUtils.isNotBlank(fieldValue)) {
@@ -401,7 +401,7 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 				valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 			}
 			}
 			break;
@@ -417,8 +417,7 @@ public class ExtendedFieldDetailsValidation {
 					valueParm[0] = fieldName;
 					valueParm[1] = "0";
 					valueParm[2] ="100";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 				}
 				if (exdConfigDetail.getFieldMaxValue() > 0 || exdConfigDetail.getFieldMinValue() > 0) {
 					if (Integer.valueOf(fieldValue) > exdConfigDetail.getFieldMaxValue()
@@ -427,7 +426,7 @@ public class ExtendedFieldDetailsValidation {
 						valueParm[0] = fieldName;
 						valueParm[1] = String.valueOf(exdConfigDetail.getFieldMinValue());
 						valueParm[2] = String.valueOf(exdConfigDetail.getFieldMaxValue());
-						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", "", valueParm)));
 					}
 				}
 			break;
@@ -540,7 +539,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1])));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
 			}
 			break;
 		case "PAST_DAYS":
@@ -548,7 +547,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1]))));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
 			}
 			break;
 		case "FUTURE_TODAY":
@@ -556,7 +555,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
 			}
 			break;
 		case "PAST_TODAY":
@@ -564,7 +563,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
 			}
 			break;
 		case "FUTURE":
@@ -572,7 +571,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
 			}
 			break;
 		case "PAST":
@@ -580,7 +579,7 @@ public class ExtendedFieldDetailsValidation {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName()+":"+ DateUtility.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(DateUtility.getAppDate());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm)));
 			}
 			break;
 

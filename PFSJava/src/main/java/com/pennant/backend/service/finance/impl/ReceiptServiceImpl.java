@@ -2377,7 +2377,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				String[] valueParm = new String[2];
 				valueParm[0] = "FromDate " + DateUtility.formatToShortDate(fromDate);
 				valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm)));
 			}
 
 			if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {
@@ -2392,7 +2392,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				String[] valueParm = new String[2];
 				valueParm[0] = "FromDate " + DateUtility.formatToShortDate(fromDate);
 				valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm)));
 			}
 		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
@@ -2400,7 +2400,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				String[] valueParm = new String[2];
 				valueParm[0] = "Amount:" + finServiceInstruction.getAmount();
 				valueParm[1] = "Zero";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
 			}
 
 			// validate Partial Settlement Amount

@@ -2026,7 +2026,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 									PennantConstants.XMLDateFormat);
 							valueParm[1] = DateUtility.formatDate(detail.getCustDocExpDate(),
 									PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm));
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
 						}

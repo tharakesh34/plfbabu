@@ -396,14 +396,14 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			Date appDate = DateUtility.getAppDate();
 			if (DateUtility.compare(this.fromDate.getValue(), appDate) < 0 || DateUtility.compare(this.fromDate.getValue(),maturityDate) >= 0) {
 				isValidDate = false;
-				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_RANGE",
+				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE",
 						new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
 								DateUtility.formatToLongDate(appDate), DateUtility.formatToLongDate(maturityDate) }));
 			}
 			if ((DateUtility.compare(this.fromDate.getValue(), lastPaidDate) <= 0 || DateUtility.compare(this.fromDate.getValue(),maturityDate) >= 0) &&
 					DateUtility.compare(this.fromDate.getValue(), finMain.getFinStartDate()) != 0) {
 				isValidDate = false;
-				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_RANGE",
+				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE",
 						new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
 								DateUtility.formatToLongDate(lastPaidDate), DateUtility.formatToLongDate(maturityDate) }));
 			}

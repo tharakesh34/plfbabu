@@ -187,7 +187,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			valueParm[0] = "Days";
 			valueParm[1] = "1";
 			valueParm[2] = "7";
-			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90318", valueParm));
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("65031", valueParm));
 			return finStatementResponse;
 		}
 		

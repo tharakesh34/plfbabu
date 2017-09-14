@@ -1377,7 +1377,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Received Date  " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
 					valueParm[1] = "Application Date " + DateUtility.formatToShortDate(DateUtility.getAppDate());
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90205", valueParm));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("65030", valueParm));
 					return response;
 				}
 			}

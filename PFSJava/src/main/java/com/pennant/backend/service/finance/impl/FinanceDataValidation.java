@@ -938,7 +938,7 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatDate(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
 				valueParm[1] = DateUtility.formatDate(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("65030", valueParm)));
 			}
 		}
 		if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
@@ -1358,7 +1358,7 @@ public class FinanceDataValidation {
 								PennantConstants.XMLDateFormat);
 						valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(detail.getCustDocIssuedOn(),
 								PennantConstants.XMLDateFormat);
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("65030", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -1553,7 +1553,7 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = "maxLimit";
 					valueParm[1] = "0";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 					return errorDetails;
 				}
 				if(mandate.getExpiryDate() != null){
@@ -2064,7 +2064,7 @@ public class FinanceDataValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Loan Start Date";
 			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(maxReqFinStartDate, 1), PennantConstants.XMLDateFormat);
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("65027", valueParm)));
 		}
 		String IDB = finMain.getProfitDaysBasis();
 		//Validate Interest Days Basis
@@ -2724,7 +2724,7 @@ public class FinanceDataValidation {
 							valueParm[0] = "holidayMonth";
 							valueParm[1] = "1";
 							valueParm[2] = "12";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("65031", valueParm)));
 							return errorDetails;
 						}
 						for(FinPlanEmiHoliday planEmiMnths : finScheduleData.getApiPlanEMIHmonths()){
@@ -2798,7 +2798,7 @@ public class FinanceDataValidation {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Grace Max Rate:"+finMain.getGrcMaxRate();
 			valueParm[1] = "Grace Min Rate:"+finMain.getGrcMinRate();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 		}
 		//Rate Type/Rate Basis
 		if (!StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)

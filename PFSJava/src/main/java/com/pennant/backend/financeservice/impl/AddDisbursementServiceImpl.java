@@ -209,7 +209,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[2];
 				valueParm[0] = "RecalFromDate";
 				valueParm[1] = "from date";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
 				return auditDetail;
 			}
 		}
@@ -239,7 +239,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				valueParm[0] = "terms";
 				valueParm[1] = "1";
 				valueParm[2] = "99";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65031", valueParm)));
 			}
 		} else {
 			if (finServiceInstruction.getTerms() > 0) {

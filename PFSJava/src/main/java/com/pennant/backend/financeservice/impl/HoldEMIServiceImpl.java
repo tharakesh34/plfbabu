@@ -81,7 +81,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 				String[] valueParm = new String[2];
 				valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
 				valueParm[1] = DateUtility.formatToShortDate(nextSchdDate);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65028", "", valueParm), lang));
 
 			}
 		}

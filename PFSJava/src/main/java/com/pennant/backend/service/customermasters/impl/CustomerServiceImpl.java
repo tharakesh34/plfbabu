@@ -706,7 +706,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 							+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 					valueParm[1] = "Cust DOB:"
 							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
@@ -721,7 +721,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "Cust DOB:"
 							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				}

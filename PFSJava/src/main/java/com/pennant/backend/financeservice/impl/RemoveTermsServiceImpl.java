@@ -99,7 +99,7 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 				String[] valueParm = new String[2];
 				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65027", "", valueParm), lang));
 			} 
 		}
 		

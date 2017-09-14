@@ -262,7 +262,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		if(this.hbox_TillDate.isVisible()){
 			try {
 				if(this.tillDate.getValue().before(this.fromDate.getValue()) || this.tillDate.getValue().after(this.toDate.getValue())){
-					throw new WrongValueException(this.tillDate, Labels.getLabel("DATE_RANGE", new String[]{
+					throw new WrongValueException(this.tillDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[]{
 						Labels.getLabel("label_IjaraBulkRateChange_TillDate.value"),
 						DateUtility.formatToLongDate(this.fromDate.getValue()), 
 						DateUtility.formatToLongDate(this.toDate.getValue()) }));

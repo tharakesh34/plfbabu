@@ -282,7 +282,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Amount";
 				valueParm[1] = "0";
-				return APIErrorHandlerService.getFailedStatus("91125", valueParm);
+				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 			}
 		}*/
 		LimitHeader limitheader=null;

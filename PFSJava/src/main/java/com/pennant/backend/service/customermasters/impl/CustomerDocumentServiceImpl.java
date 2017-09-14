@@ -391,7 +391,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
 							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}

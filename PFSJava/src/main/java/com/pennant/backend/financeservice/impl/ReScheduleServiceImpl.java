@@ -637,7 +637,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			String[] valueParm = new String[2];
 			valueParm[0] = "Next RepayDate";
 			valueParm[1] = "From Date:"+DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
 			return auditDetail;
 		}
 
