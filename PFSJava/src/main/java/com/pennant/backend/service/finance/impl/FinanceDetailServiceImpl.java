@@ -5362,6 +5362,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(auditDetailsList);
 
 				if (StringUtils.isNotBlank(financeMain.getWifReference())
+						&& !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 								|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
 					List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
