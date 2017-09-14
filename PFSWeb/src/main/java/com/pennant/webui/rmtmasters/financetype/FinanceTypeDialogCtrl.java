@@ -5337,12 +5337,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finRvwFrq.setDisabled(true);
 			this.cbfinRvwRateApplFor.setDisabled(true);
 			this.cbfinSchCalCodeOnRvw.setDisabled(true);
-			if (this.finGrcIsRvwAlw.isChecked()) {
-				this.row_FinGrcRvwRateApplFor.setVisible(true);
-			} else {
-				this.row_FinGrcRvwRateApplFor.setVisible(false);
-				this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
-			}
+			
 		}
 
 		logger.debug("Leaving");
@@ -5783,9 +5778,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finGrcRvwFrq.setDisabled(false);
 				this.cbfinGrcRvwRateApplFor.setDisabled(false);
 				this.space_FinGrcRvwRateApplFor.setSclass(PennantConstants.mandateSclass);
-			}
-			if (!this.finIsRvwAlw.isChecked()) {
-				this.row_FinGrcRvwRateApplFor.setVisible(true);
 			}
 		} else {
 			this.finGrcRvwFrq.setValue("");
