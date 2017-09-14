@@ -3438,8 +3438,7 @@ union all
 							FROM         FinReceiptHeader_Temp T1 INNER JOIN
 				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
 				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
-				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
-				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
 				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
 				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
 			UNION ALL
@@ -3513,5 +3512,41 @@ SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Referen
 			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
 			values ('65031','EN','E','{0} should greater than {1} and less than {2}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);		
 		</sql>
+	</changeSet>
+<changeSet id="198" author="madhubabu.p">
+		<createView viewName="FINRECEIPTHEADER_FEVIEW" replaceIfExists="true">
+			 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+				 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+				 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain_Temp T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
+			UNION ALL
+      SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+                 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+                 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate,
+                 T1.CancelReason, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T7.RejectDesc CancelReasonDesc, T2.FinIsActive, 
+                 T2.ScheduleMethod, T2.ProfitDaysBasis PftDaysBasis, T1.WaviedAmt, T3.CustID, T1.TotFeeAmount, T1.BounceDate , T1.Remarks , T1.RcdMaintainSts
+				FROM   FinReceiptHeader T1 INNER JOIN
+				       (Select FinReference,FinBranch,FinType,FinCcy,ScheduleMethod,ProfitDaysBasis,FinIsActive,custid  from FinanceMain_Temp union 
+                Select FinReference,FinBranch,FinType,FinCcy,ScheduleMethod,ProfitDaysBasis,FinIsActive,custid from FinanceMain )T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode LEFT JOIN
+				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode				   
+               	WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
 	</changeSet>
 </databaseChangeLog>
