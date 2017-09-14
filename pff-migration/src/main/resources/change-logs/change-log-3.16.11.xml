@@ -3479,4 +3479,39 @@ SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Referen
 				                            WHERE      ReceiptID = T1.ReceiptID)
 		</createView>
 	</changeSet>
+	
+	<changeSet id="197" author="Kesav">
+		<sql>
+			Delete from errorDetails where ERRORCODE = '65027';
+			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
+			values ('65027','EN','E','{0} should before {1}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+			
+			Delete from errorDetails where ERRORCODE = '65028';
+			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
+			values ('65028','EN','W','{0} should on/before {1}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+			
+			Update ErrorDetails set ERRORMESSAGE = '{0} should less than/equal to {1}.' where ERRORCODE = '30551';
+			Update ErrorDetails set ERRORMESSAGE = '{0} should less than/equal to {1}.' where ERRORCODE = '30568';
+			
+			Delete from errorDetails where ERRORCODE = '65029';
+			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
+			values ('65029','EN','E','{0} should on/before {1}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+			
+			Update ErrorDetails set ERRORMESSAGE = '{0} should greater than {1}.' where ERRORCODE = '91121';
+			Update ErrorDetails set ERRORMESSAGE = '{0} should after {1}.' where ERRORCODE = '91125';
+			
+			Delete from errorDetails where ERRORCODE = 'API003';
+			
+			Delete from errorDetails where ERRORCODE = '65030';
+			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
+			values ('65030','EN','E','{0} should on/after  {1}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
+			
+			Update ErrorDetails set ERRORMESSAGE = '{0} should greater than/equal to {1}.' where ERRORCODE = '90205';
+			Update ErrorDetails set ERRORMESSAGE = '{0} should less than {1}.' where ERRORCODE = '30565';
+			
+			Delete from errorDetails where ERRORCODE = '65031';
+			Insert into ERRORDETAILS (ERRORCODE,ERRORLANGUAGE,ERRORSEVERITY,ERRORMESSAGE,ERROREXTENDEDMESSAGE,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,LASTMNTON,LASTMNTBY,VERSION) 
+			values ('65031','EN','E','{0} should greater than {1} and less than {2}.',null, 'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
