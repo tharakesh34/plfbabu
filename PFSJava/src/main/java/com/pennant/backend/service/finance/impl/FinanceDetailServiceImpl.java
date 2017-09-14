@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -5351,11 +5352,60 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Finance Fee details
 		if (!financeDetail.isExtSource()) {
-			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-				auditDetails.addAll(getFinFeeDetailService().validate(
+			List<FinFeeDetail> finFeeDeatailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+
+			if (finFeeDeatailsList != null) {
+				List<AuditDetail> auditDetailsList = getFinFeeDetailService().validate(
 						financeDetail.getFinScheduleData().getFinFeeDetailActualList(), financeMain.getWorkflowId(),
-						method, auditTranType, usrLanguage, isWIF));
+						method, auditTranType, usrLanguage, isWIF);
+
+				auditDetails.addAll(auditDetailsList);
+
+				if (StringUtils.isNotBlank(financeMain.getWifReference())
+						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+								|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+					List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
+					boolean warningMessage = false;
+
+					if (finTypeFeesList != null) {
+						if (finTypeFeesList.isEmpty()) {
+							if (!finFeeDeatailsList.isEmpty()) {
+								warningMessage = true;
+							}
+						} else {
+							if (finFeeDeatailsList.isEmpty()) {
+								warningMessage = true;
+							} else {
+								Set<Long> feeTypeSet = new HashSet<Long>();
+
+								for (FinTypeFees finTypeFees : finTypeFeesList) {
+									feeTypeSet.add(finTypeFees.getFeeTypeID());
+								}
+								
+								for (FinFeeDetail finFeeDet : finFeeDeatailsList) {
+									if (finFeeDet.getFeeTypeID() != 0 && !feeTypeSet.contains(finFeeDet.getFeeTypeID())) {
+										warningMessage = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (warningMessage) {
+						AuditDetail auditDet = new AuditDetail();
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						errParm[0] = "";
+						valueParm[0] = "";
+						auditDet.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65026", errParm, valueParm));
+						auditDet.setErrorDetails(ErrorUtil.getErrorDetails(auditDet.getErrorDetails(), usrLanguage));
+
+						auditDetails.add(auditDet);
+					}
+				}
 			}
+
 		}
 		
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
