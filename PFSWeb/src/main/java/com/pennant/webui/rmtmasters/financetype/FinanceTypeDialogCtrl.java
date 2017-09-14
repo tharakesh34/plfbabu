@@ -2141,7 +2141,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				this.cbfinGrcRvwRateApplFor.setErrorMessage("");
-				if (validate && this.finGrcIsRvwAlw.isChecked() && !this.finIsRvwAlw.isChecked()) {
+				if (this.row_FinGrcRvwRateApplFor.isVisible() && validate && this.finGrcIsRvwAlw.isChecked() && !this.finIsRvwAlw.isChecked()) {
 					isValidComboValue(this.cbfinGrcRvwRateApplFor,
 							Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwRateApplFor.value"));
 				}
