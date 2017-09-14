@@ -3549,4 +3549,11 @@ SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Referen
 				                            WHERE      ReceiptID = T1.ReceiptID)
 		</createView>
 	</changeSet>
+	<changeSet id="199" author="Irfan">
+		<sql>
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMEREMPLOYMENTDETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_CREATE_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 		
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
