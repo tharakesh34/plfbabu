@@ -89,14 +89,9 @@ public class TrailBalance implements Tasklet {
 			try {
 				logger.debug("Trail Balance Request Service started...");
 				new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimention.STATE);
-				new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}
-
-
-
-
 }
