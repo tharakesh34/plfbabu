@@ -3570,4 +3570,32 @@ SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Referen
 			INSERT INTO ErrorDetails VALUES('65026','EN','W','Fee configurations are changed after the WIF creation. Do you want to proceed?','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet author="manoj" id="202">
+	<createTable tableName="ALM_EXTRACT">
+		<column name="SEQID"          	 type="bigint"/>
+		<column name="FINREFERENCE"   	 type="varchar(20)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="FINTYPE"        	 type="varchar(8)">
+			<constraints nullable="false"/>
+		</column>	
+		<column name="FINSTARTDATE"   	 type="datetime"/>
+		<column name="MATURITYDATE"      type="datetime"/>
+		<column name="CLOSINGSTATUS"     type="char(1)"/>
+		<column name="CCYMINORCCYUNITS"  type="smallint"/>
+		<column name="CCYEDITFIELD"      type="smallint"/>
+		<column name="EMIADV"            type="varchar(20)"/>
+	</createTable>
+</changeSet>
+	
+<changeSet author="manoj" id="203">
+	<addPrimaryKey columnNames="SEQID" constraintName="PK_SEQID" tableName="ALM_EXTRACT"/>
+</changeSet>
+	
+<changeSet author="manoj" id="204">
+	<createIndex indexName="IX_ALM_EX_FINREF" tableName="ALM_EXTRACT" unique="true">
+		<column name="FINREFERENCE" type="varchar(20)"/>
+    </createIndex>
+</changeSet>
 </databaseChangeLog>
