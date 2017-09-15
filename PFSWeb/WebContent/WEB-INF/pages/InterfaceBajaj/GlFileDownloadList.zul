@@ -39,8 +39,14 @@
 						</columns>
 						<rows>
 							<row>
+								<label value="Dimention" />
+								<hbox spacing="2px">
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="dimention" width="250px" readonly="true" />
+								</hbox>
 								<label value="Month" />
 								<hbox spacing="2px">
+									<space spacing="2px" sclass="mandatory"/>
 									<combobox id="months" width="250px" readonly="true" />
 								</hbox>
 							</row>

@@ -65,8 +65,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 		String sql = "Select count (*) from Postings where POSTDATE BETWEEN :START_DATE AND :END_DATE and POSTAMOUNT <>0 and account not in(select account from AccountMapping) ";
 
 		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) > 0) {
-			throw new AppException(
-					"Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
+			EXTRACT_STATUS.setStatus("F");
+			EXTRACT_STATUS.setRemarks("Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
+			throw new AppException(EXTRACT_STATUS.getRemarks());
 		}
 	}
 
@@ -83,9 +84,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		BigDecimal debitAmount = parameterJdbcTemplate.queryForObject(sql, paramMap, BigDecimal.class);
 
 		if (creditAmount.compareTo(debitAmount) != 0) {
-			throw new AppException("Credit and Debit amounts not matched for the transactions between "
+			EXTRACT_STATUS.setStatus("F");
+			EXTRACT_STATUS.setRemarks("Credit and Debit amounts not matched for the transactions between "
 					.concat(DateUtil.format(startDate, DateFormat.LONG_DATE)).concat(" and ")
 					.concat(DateUtil.format(endDate, DateFormat.LONG_DATE)));
+			throw new AppException(EXTRACT_STATUS.getRemarks());
 		}
 	}
 
@@ -104,9 +107,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		parameterMap.put("COMPANY_NAME", parameters.get("TRAIL_BALANCE_COMPANY_NAME"));
 		parameterMap.put("REPORT_NAME", "Consolidated Trial Balance - Ledger A/C wise");
 		
+		
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("HEADER_ID", seqNo);
 		filterMap.put("DIMENSION", dimention.name());
+		filterMap.put("ID", headerId);
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("From ");
@@ -498,8 +503,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" INNER JOIN TRIAL_BALANCE_REPORT_LAST_RUN LR ON LR.HOSTACCOUNT = AM.HOSTACCOUNT");
 		sql.append(" INNER JOIN TRIAL_BALANCE_HEADER TH ON TH.ID = LR.HEADERID");
 		sql.append(" WHERE TH.DIMENSION = :DIMENSION");
+		sql.append(" AND TH.STARTDATE =  :STARTDATE_MINUS_1M and TH.ENDDATE = :ENDDATE_MINUS_1M");
 		
 		paramMap.addValue("DIMENSION", dimention.name());
+		paramMap.addValue("STARTDATE_MINUS_1M", DateUtil.addMonths(startDate, -1));
+		paramMap.addValue("ENDDATE_MINUS_1M", DateUtil.addMonths(endDate, -1));
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
 
 		try {
@@ -629,11 +637,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("HEADERID", headerId);
 		paramMap.addValue("DIMENSION", dimention.name());
+		paramMap.addValue("STARTDATE_MINUS_12M", DateUtil.addMonths(startDate, -12));
 
 		try {
 			StringBuilder sql = new StringBuilder();
-			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
-			sql.append(" (SELECT MAX(ID) FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND ID <> :HEADERID)");
+			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN(");
+			sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE > :STARTDATE_MINUS_12M))");
 			parameterJdbcTemplate.update(sql.toString(), paramMap);
 			
 			sql = new StringBuilder();
@@ -756,15 +765,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 	
 	
-	public boolean isBatchExists() throws Exception {
+	public boolean isBatchExists(String dimention) throws Exception {
 		prepareTrialBalanceDate();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("STARTDATE", startDate);
 		paramMap.addValue("ENDDATE", endDate);
+		paramMap.addValue("DIMENSION", dimention);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT count(*) from ");
-		sql.append(" TRIAL_BALANCE_HEADER WHERE STARTDATE = :STARTDATE AND ENDDATE = :ENDDATE");
+		sql.append(" TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE = :STARTDATE AND ENDDATE = :ENDDATE");
 
 		int count = 0;
 		try {

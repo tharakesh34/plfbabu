@@ -106,6 +106,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
+	protected Combobox dimention;
 	protected Combobox months;
 	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds();
 	
@@ -143,6 +144,11 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
 		
+		List<ValueLabel> dimentions = new ArrayList<>();
+		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.STATE.name(), TrailBalanceEngine.Dimention.STATE.name()));
+		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.CONSOLIDATE.name(), TrailBalanceEngine.Dimention.CONSOLIDATE.name()));
+		
+		fillComboBox(dimention, "", dimentions, "");
 		fillComboBox(months, "", monthsList, "");
 		
 		registerField("Id", SortOrder.DESC);
@@ -199,23 +205,28 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
 		try {
+
+			String selectedDimention = dimention.getSelectedItem().getValue();
+			String selectedMonth = months.getSelectedItem().getValue();
+
+			if ("#".equals(selectedDimention)) {
+				MessageUtil.showError("Dimention cannot be blank.");
+				return;
+			} else if ("#".equals(selectedMonth)) {
+				MessageUtil.showError("Month cannot be blank.");
+				return;
+			}
+
 			Date valueDate = null;
 			Date appDate = null;
-			String selectedMonth = months.getSelectedItem().getValue();
-			
-			if ("#".equals(selectedMonth)) {
-				appDate = DateUtility.getAppDate();
-				valueDate = DateUtility.getAppValueDate();
-			} else {
-				appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
-				valueDate = appDate;
-			}
-			
+
+			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+			valueDate = appDate;
+
 			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
 					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
-			
-			
-			if (trialbal.isBatchExists()) {
+
+			if (trialbal.isBatchExists(selectedDimention)) {
 				int conf = MessageUtil
 						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
 
@@ -223,13 +234,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 					return;
 				}
 			}
-						
-			trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-			new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate)
-							.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
-			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+
+			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+			}
+
 			refresh();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
