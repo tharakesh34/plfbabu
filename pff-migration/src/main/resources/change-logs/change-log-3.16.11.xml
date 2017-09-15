@@ -3564,4 +3564,10 @@ SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Referen
 	        end;
 	    </sql>
 	</changeSet>
+	<changeSet id="201" author="Madhubabu">
+		<sql>
+			DELETE FROM ErrorDetails WHERE ERRORCODE = '65026';
+			INSERT INTO ErrorDetails VALUES('65026','EN','W','Fee configurations are changed after the WIF creation. Do you want to proceed?','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
