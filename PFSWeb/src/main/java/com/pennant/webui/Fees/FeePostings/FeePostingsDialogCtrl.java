@@ -757,8 +757,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			if (this.valueDate.getValue().before(minReqPostingDate)
 					|| this.valueDate.getValue().after(DateUtility.getAppDate())) {
 				
-				String minreqPostDate =DateUtility.formatToLongDate(minReqPostingDate);
-				String currentDate = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				String minreqPostDate =DateUtility.formatToShortDate(minReqPostingDate);
+				String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
 				
 				throw new WrongValueException(this.valueDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 						new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
