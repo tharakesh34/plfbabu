@@ -2,7 +2,11 @@ package com.pennanttech.bajaj.model.alm;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.pennant.backend.model.finance.ProjectedAccrual;
 
 public class ALM implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -19,6 +23,14 @@ public class ALM implements Serializable {
 	Date accruedOn;
 	BigDecimal cumulativeAccrualAmt;
 	String advFlag;
+	Date finStartDate;
+	Date maturityDate;
+	BigDecimal ccyMinorCcyUnits;
+	int ccyEditField;
+
+
+	private List<ProjectedAccrual> accrualList = new ArrayList<>();
+
 
 	public long getAgreementId() {
 		return agreementId;
@@ -118,6 +130,47 @@ public class ALM implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+
+	public List<ProjectedAccrual> getAccrualList() {
+		return accrualList;
+	}
+
+	public void setAccrualList(List<ProjectedAccrual> accrualList) {
+		this.accrualList = accrualList;
+	}
+
+	public Date getFinStartDate() {
+		return finStartDate;
+	}
+
+	public void setFinStartDate(Date finStartDate) {
+		this.finStartDate = finStartDate;
+	}
+
+	public Date getMaturityDate() {
+		return maturityDate;
+	}
+
+	public void setMaturityDate(Date maturityDate) {
+		this.maturityDate = maturityDate;
+	}
+
+	public BigDecimal getCcyMinorCcyUnits() {
+		return ccyMinorCcyUnits;
+	}
+
+	public void setCcyMinorCcyUnits(BigDecimal ccyMinorCcyUnits) {
+		this.ccyMinorCcyUnits = ccyMinorCcyUnits;
+	}
+
+	public int getCcyEditField() {
+		return ccyEditField;
+	}
+
+	public void setCcyEditField(int ccyEditField) {
+		this.ccyEditField = ccyEditField;
 	}
 
 }
