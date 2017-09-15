@@ -556,7 +556,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			Date date = DateUtility.addDays(DateUtility.getAppDate(), futureDays);
 			if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
 				throw new WrongValueException(this.toDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-						new String[] { "To Date", DateUtility.formatToLongDate(date) }));
+						new String[] { "To Date", DateUtility.formatToShortDate(date) }));
 			}
 			
 		} catch (WrongValueException we) {
