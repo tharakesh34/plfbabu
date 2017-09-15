@@ -105,6 +105,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
@@ -178,6 +179,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
@@ -240,6 +242,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			throw e;
 		}
 

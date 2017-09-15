@@ -48,7 +48,8 @@ public class FeePostingController {
 				return APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug(Literal.LEAVING);

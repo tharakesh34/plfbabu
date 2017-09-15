@@ -100,7 +100,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails CustomerPhoneNumber = new CustomerDetails();
 			CustomerPhoneNumber.setCustomer(null);
 			CustomerPhoneNumber.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -151,6 +152,7 @@ public class CustomerDetailsController {
 		}
 		} catch (Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -199,6 +201,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -244,6 +247,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		
@@ -280,7 +284,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails CustomerPhoneNumber = new CustomerDetails();
 			CustomerPhoneNumber.setCustomer(null);
 			CustomerPhoneNumber.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -329,6 +334,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -377,6 +383,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -419,6 +426,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -454,7 +462,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails CustomerEmail = new CustomerDetails();
 			CustomerEmail.setCustomer(null);
 			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -503,6 +512,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -549,6 +559,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -591,6 +602,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -625,7 +637,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails CustomerEmail = new CustomerDetails();
 			CustomerEmail.setCustomer(null);
 			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -675,6 +688,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -718,6 +732,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -758,6 +773,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -791,7 +807,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails customerBankInfo = new CustomerDetails();
 			customerBankInfo.setCustomer(null);
 			customerBankInfo.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -848,7 +865,8 @@ public class CustomerDetailsController {
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerBankInfoDetail customerBankInfoDetail = new CustomerBankInfoDetail();
 			customerBankInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -900,6 +918,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -941,6 +960,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -976,7 +996,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails customerBankInfo = new CustomerDetails();
 			customerBankInfo.setCustomer(null);
 			customerBankInfo.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1031,7 +1052,8 @@ public class CustomerDetailsController {
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerChequeInfoDetail customerChequeInfoDetail = new CustomerChequeInfoDetail();
 			customerChequeInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return customerChequeInfoDetail;
@@ -1081,6 +1103,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -1123,6 +1146,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -1173,6 +1197,8 @@ public class CustomerDetailsController {
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
 		}catch(Exception e){
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerExtLiabilityDetail();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
@@ -1225,6 +1251,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -1268,6 +1295,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -1301,7 +1329,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails customerBankInfo = new CustomerDetails();
 			customerBankInfo.setCustomer(null);
 			customerBankInfo.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1342,7 +1371,8 @@ public class CustomerDetailsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails CustomerEmail = new CustomerDetails();
 			CustomerEmail.setCustomer(null);
 			CustomerEmail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1397,6 +1427,7 @@ public class CustomerDetailsController {
 		}
 		} catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -1445,6 +1476,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -1487,6 +1519,7 @@ public class CustomerDetailsController {
 		}
 		}catch(Exception e){
 			logger.error("Exception:"+e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 

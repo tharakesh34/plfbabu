@@ -11,9 +11,11 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.io.CachedOutputStreamCallback;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.APIHeader;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.util.TypeConstants;
@@ -120,6 +122,13 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			apiLogDetail.setReference(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
 			apiLogDetail.setResponseCode(String.valueOf(buffer.getResponseCode()));
 			apiLogDetail.setPayLoad(String.valueOf(buffer.getPayload()));
+			if(PhaseInterceptorChain.getCurrentMessage().getExchange().containsKey(APIHeader.API_EXCEPTION_KEY)) {
+				String exception = (String) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_EXCEPTION_KEY);
+				if(exception.length() > 1990) {
+					exception = exception.substring(0, 1990);
+				}
+				apiLogDetail.setErrorDesc(exception);		
+			}
 			apiLogDetail.setValueDate(DateUtil.getSysDate());
 			apiLogDetail.setType(TypeConstants.RESPONSE.get());
 			aPILogDetailDAO.saveLogDetails(apiLogDetail);

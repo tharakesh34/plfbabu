@@ -84,6 +84,7 @@ public class LimitServiceController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			limitStructure = new LimitStructure();
 			limitStructure.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -152,6 +153,7 @@ public class LimitServiceController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			headerDetail = new LimitHeader();
 			headerDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -201,6 +203,7 @@ public class LimitServiceController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new LimitHeader();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -242,6 +245,7 @@ public class LimitServiceController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			returnStatus = APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -298,6 +302,7 @@ public class LimitServiceController {
 			errorDetails = limitManagement.processLoanLimitOrgination(financeDetail, false, lmtTransType,false);
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		if (errorDetails != null && !errorDetails.isEmpty()) {

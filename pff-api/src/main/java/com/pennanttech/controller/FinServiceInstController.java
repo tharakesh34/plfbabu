@@ -194,6 +194,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -301,6 +302,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -383,6 +385,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -455,6 +458,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -542,6 +546,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -610,6 +615,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -782,6 +788,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -868,6 +875,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -940,6 +948,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1018,6 +1027,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1072,6 +1082,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1128,6 +1139,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_EARLYRPY);
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1168,6 +1180,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1762,6 +1775,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			finODPenaltyRateDAO.update(finODPenaltyRate, "");
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");

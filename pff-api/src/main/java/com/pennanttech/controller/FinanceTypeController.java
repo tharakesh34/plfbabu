@@ -166,33 +166,37 @@ public class FinanceTypeController {
 		logger.debug("Entering");
 
 		// fetch Product details
-		Product product = productDAO.getProductByID(productCode, productCode, "_AView");
-		if (product == null) {
-			ProductType reponse = new ProductType();
-			reponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return reponse;
-		}
 		ProductType response = new ProductType();
-		response = new ProductType();
-		response.setProductCode(productCode);
-		response.setProductDesc(product.getProductDesc());
-		
-		// call the loantypeDetail
-		List<FinanceType> financeTypeList = financeTypeService.getFinanceTypeByProduct(productCode);
-		List<FinanceTypeResponse> financeTypeResponseList = new ArrayList<FinanceTypeResponse>();
+		try {
+			Product product = productDAO.getProductByID(productCode, productCode, "_AView");
+			if (product == null) {
+				ProductType reponse = new ProductType();
+				reponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				return reponse;
+			}
+			response.setProductCode(productCode);
+			response.setProductDesc(product.getProductDesc());
 
-		for (FinanceType detail : financeTypeList) {
-			FinanceTypeResponse financeTypeResponse = new FinanceTypeResponse();
-			financeTypeResponse.setFinType(detail.getFinType());
-			financeTypeResponse.setFinTypeDesc(detail.getFinTypeDesc());
-			financeTypeResponse.setFinTypePartnerBankList(null);
-			financeTypeResponseList.add(financeTypeResponse);
+			// call the loantypeDetail
+			List<FinanceType> financeTypeList = financeTypeService.getFinanceTypeByProduct(productCode);
+			List<FinanceTypeResponse> financeTypeResponseList = new ArrayList<FinanceTypeResponse>();
+
+			for (FinanceType detail : financeTypeList) {
+				FinanceTypeResponse financeTypeResponse = new FinanceTypeResponse();
+				financeTypeResponse.setFinType(detail.getFinType());
+				financeTypeResponse.setFinTypeDesc(detail.getFinTypeDesc());
+				financeTypeResponse.setFinTypePartnerBankList(null);
+				financeTypeResponseList.add(financeTypeResponse);
+			}
+			response.setFinanceTypeList(financeTypeResponseList);
+
+			// add return status
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		response.setFinanceTypeList(financeTypeResponseList);
-		
-		// add return status
-		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
 		logger.debug("Leaving");
 		return response;
 	}
@@ -224,7 +228,8 @@ public class FinanceTypeController {
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 

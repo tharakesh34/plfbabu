@@ -15,6 +15,7 @@ public class APILogDetail {
 	private Date	valueDate;
 	private String	responseCode;
 	private String	payLoad;
+	private String	errorDesc;
 	
 	//header Details
     private String serviceVersion;
@@ -205,5 +206,13 @@ public class APILogDetail {
 
 	public void setReference(int reference) {
 		this.reference = reference;
+	}
+
+	public String getErrorDesc() {
+		return errorDesc;
+	}
+
+	public void setErrorDesc(String errorDesc) {
+		this.errorDesc = errorDesc;
 	}
 }

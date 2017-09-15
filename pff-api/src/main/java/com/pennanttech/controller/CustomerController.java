@@ -85,10 +85,10 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
-			doEmptyResponseObject(response);
+			response.setCustomer(null);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
 		}
 
 		// prepare create customer response object
@@ -107,7 +107,6 @@ public class CustomerController {
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
 		try {
-			
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 			
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
@@ -122,6 +121,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -556,7 +556,6 @@ public class CustomerController {
 
 		try {
 			response = customerDetailsService.getApprovedCustomerById(customerId);
-
 			if (response != null) {
 				response.setCustCIF(response.getCustomer().getCustCIF());
 				response.setCustCoreBank(response.getCustomer().getCustCoreBank());
@@ -578,6 +577,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -613,29 +613,31 @@ public class CustomerController {
 			customer.setUserDetails(userDetails);
 			customer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-			doSetCustomerDeleteData(customerDetails);
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
-			auditHeader.setApiHeader(reqHeaderDetails);
 			try {
+				doSetCustomerDeleteData(customerDetails);
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
+				auditHeader.setApiHeader(reqHeaderDetails);
 				// do customer delete
 				auditHeader = customerDetailsService.delete(auditHeader);
+
+				if (auditHeader.getErrorMessage() != null) {
+					for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+						response = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+								errorDetail.getError());
+					}
+				} else {
+					response = APIErrorHandlerService.getSuccessStatus();
+				}
 			} catch (DataAccessException dae) {
 				response = APIErrorHandlerService.getFailedStatus("90999", dae.getMessage());
 				return response;
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				response = APIErrorHandlerService.getFailedStatus();
 				return response;
-			}
-
-			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					response = APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-							errorDetail.getError());
-				}
-			} else {
-				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		}
 
@@ -762,6 +764,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CustomerDetails();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -846,8 +849,8 @@ public class CustomerController {
 		logger.debug("Entering");
 
 		CustomerDetails response = null;
-		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		try {
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
 			List<CustomerEmploymentDetail> customerEmploymentDetailList = getCustomerEmploymentDetailService()
 					.getApprovedCustomerEmploymentDetailById(customer.getCustID());
 			if (customerEmploymentDetailList != null && !customerEmploymentDetailList.isEmpty()) {
@@ -868,6 +871,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			CustomerDetails customerEmploymentsDetail = new CustomerDetails();
 			customerEmploymentsDetail.setCustomer(null);
 			customerEmploymentsDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -921,6 +925,7 @@ public class CustomerController {
 		}
 		}catch(Exception e){
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new EmploymentDetail();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -972,6 +977,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
 		}
@@ -1013,6 +1019,7 @@ public class CustomerController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
 		}

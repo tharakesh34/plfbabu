@@ -209,6 +209,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				return response;
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinScheduleData response = new FinScheduleData();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -547,6 +548,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 		} catch(Exception e) {
 			logger.debug("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 

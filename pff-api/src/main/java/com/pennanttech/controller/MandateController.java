@@ -81,7 +81,8 @@ public class MandateController {
 			doEmptyResponseObject(response);
 		}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -110,7 +111,8 @@ public class MandateController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90303", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -159,7 +161,8 @@ public class MandateController {
 			response = APIErrorHandlerService.getSuccessStatus();
 		}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		
@@ -203,7 +206,8 @@ public class MandateController {
 			response = APIErrorHandlerService.getSuccessStatus();
 		}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -236,7 +240,8 @@ public class MandateController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -263,7 +268,8 @@ public class MandateController {
 			response = APIErrorHandlerService.getFailedStatus();
 		}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}

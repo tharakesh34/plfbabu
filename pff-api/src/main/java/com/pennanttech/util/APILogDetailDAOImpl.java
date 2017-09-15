@@ -15,35 +15,35 @@ import com.pennanttech.ws.log.model.APILogDetail;
 public class APILogDetailDAOImpl  extends BasisCodeDAO<APILogDetail>  implements APILogDetailDAO {
 	private static Logger logger = Logger.getLogger(APILogDetailDAOImpl.class);
 	// Spring Named JDBC Template
-		private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-		
-		public APILogDetailDAOImpl() {
-			super();
-		}
-		/**
-		 * This method insert new Records into APILoGDetails  
-		 * save aPILogDetail
-		 * 
-		 * @param APILogDetail
-		 *            (aPILogDetail)
-		 *
-		 * @throws DataAccessException
-		 * 
-		 */
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+	public APILogDetailDAOImpl() {
+		super();
+	}
+	/**
+	 * This method insert new Records into APILoGDetails  
+	 * save aPILogDetail
+	 * 
+	 * @param APILogDetail
+	 *            (aPILogDetail)
+	 *
+	 * @throws DataAccessException
+	 * 
+	 */
 	@Override
 	public void saveLogDetails(APILogDetail aPILogDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder insertSql = new StringBuilder("Insert Into APILOGDETAILS");
 
 		insertSql.append("( Reference , EndPoint, Method, Type, ServiceName, Authorization, ClientIP, ValueDate,");
-		insertSql.append("PayLoad, ResponseCode )");
+		insertSql.append("PayLoad, ResponseCode, ErrorDesc )");
 		insertSql.append(" Values(:Reference, :EndPoint, :Method, :Type, :ServiceName, :Authorization, :ClientIP,");
-		insertSql.append(" :ValueDate, :PayLoad, :ResponseCode)");
+		insertSql.append(" :ValueDate, :PayLoad, :ResponseCode, :ErrorDesc)");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPILogDetail);
 		logger.trace(Literal.SQL + insertSql.toString());
-		try{
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(e);
 		}

@@ -345,6 +345,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -856,6 +857,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch(Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("API006", "Test"));
 			return financeDetail;
@@ -920,6 +923,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1073,6 +1078,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			logger.debug("Leaving");
 			return financeInquiry;
 		} catch(Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			FinanceInquiry financeInquiry= new FinanceInquiry();
 			financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return financeInquiry;

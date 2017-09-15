@@ -34,6 +34,7 @@ public class APIHeader {
 	public static final String API_RETURNCODE = "ReturnCode";
 	public static final String API_RETURNDESC = "ReturnText";
 	public static final String API_LOG_KEY = "LogDetails";
+	public static final String API_EXCEPTION_KEY = "Exception";
 
 
 	/***** Setters / Getters ******/

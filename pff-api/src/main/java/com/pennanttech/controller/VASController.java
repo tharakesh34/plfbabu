@@ -132,6 +132,7 @@ public class VASController {
 			}
 		} catch (Exception e) {
 			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
@@ -180,7 +181,8 @@ public class VASController {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -210,6 +212,8 @@ public class VASController {
 			}
 
 		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			vASRecordingDetail = new VASRecordingDetail();
 			vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}

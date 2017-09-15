@@ -48,7 +48,8 @@ public class FinanceFlagsController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90218", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new FinanceFlag();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -71,7 +72,7 @@ public class FinanceFlagsController {
 			detail.setLastMntBy(userDetails.getLoginUsrID());
 			detail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
-		
+
 		financeFlag.setUserDetails(userDetails);
 		financeFlag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		financeFlag.setVersion(1);
@@ -79,23 +80,29 @@ public class FinanceFlagsController {
 		financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		financeFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		financeFlag.setLastMntBy(userDetails.getLoginUsrID());
-		
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		auditHeader = financeFlagsService.doApprove(auditHeader);
-		
-		WSReturnStatus response = null;
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
-			}
-		} else {
-			response = APIErrorHandlerService.getSuccessStatus();
-		}
 
+		WSReturnStatus response = null;
+		try {
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = financeFlagsService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+				}
+			} else {
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
 		logger.debug("Leaving");
 		return response;
 	}
@@ -116,27 +123,32 @@ public class FinanceFlagsController {
 		financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		financeFlag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		financeFlag.setLastMntBy(userDetails.getLoginUsrID());
-		
+
 		for (FinFlagsDetail flagDetail : financeFlag.getFinFlagDetailList()) {
 			flagDetail.setLastMntBy(userDetails.getLoginUsrID());
 			flagDetail.setModuleName(FinanceConstants.MODULE_NAME);
 		}
-		
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		auditHeader = financeFlagsService.deleteFinanceFlag(auditHeader);
-		WSReturnStatus response = new WSReturnStatus();
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-				response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
-			}
-		} else {
-			response = APIErrorHandlerService.getSuccessStatus();
-		}
 
+		WSReturnStatus response = new WSReturnStatus();
+		try {
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(financeFlag,PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = financeFlagsService.deleteFinanceFlag(auditHeader);
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError()));
+				}
+			} else {
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
 		logger.debug("Leaving");
 		return response;
 	}
