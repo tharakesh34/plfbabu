@@ -27,6 +27,9 @@
 	<bean id="disbrsementImpsResponseJob" class="com.pennanttech.pff.bajaj.schedule.jobs.DisbrsementImpsResponseJob"  >
 		<property name="disbursementIMPSResponseService" ref="disbursementIMPSResponseService"/>
 	</bean>
+	<bean id="posidexCustomerUpdateResponseJob" class="com.pennanttech.pff.bajaj.schedule.jobs.PosidexCustomerUpdateResponseJob"  >
+		<property name="posidexResponseService" ref="posidexResponseService"/>
+	</bean>
         
 	<bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestServiceImpl" scope="prototype" parent="bajajService"/>
 	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseServiceImpl" parent="bajajService"/>
@@ -36,7 +39,7 @@
 	<bean id="mandateResponse" class="com.pennanttech.bajaj.services.MandateResponseServiceImpl" parent="bajajService"/>
 	<bean id="mandateResponseFileService" class="com.pennanttech.bajaj.services.MandateResponseFileService" scope="prototype" parent="bajajService"/>
 	
-	<bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/>
+	<bean id="posidexResponseService" class="com.pennanttech.bajaj.services.PosidexResponseServiceImpl" scope="prototype" parent="bajajService"/>
 	<bean id="presentmentRequestService" class="com.pennanttech.bajaj.services.PresentmentRequestServiceImpl" scope="prototype" parent="bajajService"/>
 		
 	<!-- Disbursement Imps Response  -->

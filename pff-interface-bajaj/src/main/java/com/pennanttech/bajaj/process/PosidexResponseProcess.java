@@ -20,10 +20,11 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.App;
 
 public class PosidexResponseProcess extends DatabaseDataEngine {
-	private static final Logger	logger	= Logger.getLogger(PosidexResponseProcess.class);
+	private static final Logger logger = Logger.getLogger(PosidexResponseProcess.class);
 
 	public PosidexResponseProcess(DataSource dataSource, long userId, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, false, valueDate, BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
+		super(dataSource, App.DATABASE.name(), userId, false, valueDate,
+				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS);
 	}
 
 	@Override
@@ -38,23 +39,17 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
 
 		destinationJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
-			TransactionStatus	txnStatus	= null;
+			TransactionStatus txnStatus = null;
 
 			@Override
 			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				while (rs.next()) {
-
-					MapSqlParameterSource custMap = null;
 					MapSqlParameterSource dataMap = null;
 
 					executionStatus.setProcessedRecords(processedCount++);
 					try {
-						custMap = mapCustData(rs);
 						dataMap = mapData(rs);
-
-						updateCustomer(custMap);
-						updateDataStatus(dataMap);
-
+						updateResponse(dataMap);
 						executionStatus.setSuccessRecords(successCount++);
 					} catch (Exception e) {
 						logger.error(Literal.ENTERING);
@@ -81,41 +76,24 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("PROCESSED_FLAG", Status.Y.name());
 		map.addValue("UCIN_NO", rs.getObject("UCIN_NO"));
+		map.addValue("CUSTOMER_NO", rs.getObject("CUSTOMER_NO"));
 		return map;
 	}
 
-	private MapSqlParameterSource mapCustData(ResultSet rs) throws SQLException {
-		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("CUSTADDLVAR1", rs.getObject("UCIN_NO"));
-		map.addValue("CUSTID", rs.getObject("CUSTOMER_NO"));
-		return map;
-	}
-
-	private void updateCustomer(MapSqlParameterSource custMap) throws Exception {
-
+	private void updateResponse(MapSqlParameterSource dataMap) throws Exception {
 		StringBuilder sql;
 		try {
 			sql = new StringBuilder();
-			sql.append("UPDATE CUSTOMERS SET CUSTADDLVAR1 = :CUSTADDLVAR1 WHERE CUSTID = :CUSTID");
+			sql.append("UPDATE CUSTOMERS SET CUSTADDLVAR1 = :UCIN_NO WHERE CUSTCIF = :CUSTOMER_NO");
+			this.parameterJdbcTemplate.update(sql.toString(), dataMap);
 
-			this.parameterJdbcTemplate.update(sql.toString(), custMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		} 
-	}
-
-	private void updateDataStatus(MapSqlParameterSource dataMap) throws Exception {
-		StringBuilder sql = null;
-		try {
 			sql = new StringBuilder();
 			sql.append(" UPDATE PSX_UCIN_REVERSE_FEED SET PROCESSED_FLAG = :PROCESSED_FLAG WHERE UCIN_NO = :UCIN_NO ");
-
 			this.parameterJdbcTemplate.update(sql.toString(), dataMap);
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} 
+		}
 	}
-
 }
