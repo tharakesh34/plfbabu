@@ -5,24 +5,21 @@ import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.services.DisbursementRequestService;
-import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -30,7 +27,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 public class DisbursementRequestServiceImpl extends BajajService implements DisbursementRequestService {
 	private final Logger	logger	= Logger.getLogger(getClass());
-
+		
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I;
 	}
@@ -46,13 +43,8 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		List<FinAdvancePayments> disbusments = (List<FinAdvancePayments>) params[1];
 		long userId = (long) params[2];
 		String fileNamePrefix = (String) params[3];
-
-		try {
-			processDisbursements(finType, userId, disbusments, fileNamePrefix);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
+		
+		processDisbursements(finType, userId, disbusments, fileNamePrefix);
 	}
 	
 	
@@ -210,6 +202,11 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 				List<String> idList = null;
 				try {
 					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","), paymentType);
+					
+					if (idList == null || idList.isEmpty() || (idList.size() !=disbusments.size() )) {
+						throw new ConcurrencyException();
+					}
+					
 				} catch (Exception e) {
 					throw e;
 				}
@@ -260,13 +257,14 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 		try {
 			if ("DISB_HDFC_EXPORT".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
-				parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 3, "0"));
+				parameterMap.put("SEQ_LPAD_SIZE", 3);
+				parameterMap.put("SEQ_LPAD_VALUE", "0");
 			}
 
 			export.setValueDate(getValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
-			status = export.exportData(configName);
+			status = export.exportData(configName, false);
 			
 			if(status == null || !"S".equals(status.getStatus())) {
 				if(status != null) {
@@ -277,52 +275,12 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			}
 			
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);	
 			throw e;
 		} finally {
 			conclude(status, idList);
 		}
 	}
 		
-	private String getSTPFileSequence() throws Exception {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select LASTPROCESSEDON, FILESEQUENCENO from DATA_ENGINE_CONFIG");
-		sql.append(" where Name = :Name");
-		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
-
-		try {
-			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<String>() {
-				@Override
-				public String extractData(ResultSet rs) throws SQLException, DataAccessException {
-					rs.next();					
-					Date currentDate = DateUtil.getSysDate();
-					currentDate = DateUtil.getDatePart(currentDate);
-					Date lastProcessedOn = rs.getDate("LASTPROCESSEDON");
-
-					int fileSeqNo = rs.getInt("FILESEQUENCENO");
-
-					if (lastProcessedOn == null) {
-						lastProcessedOn = currentDate;
-					} else {
-						lastProcessedOn = DateUtil.getDatePart(lastProcessedOn);
-					}
-
-					if (lastProcessedOn.compareTo(currentDate) == 0) {
-						return String.valueOf(fileSeqNo + 1);
-					} else {
-						return String.valueOf(1);
-					}
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		throw new Exception();
-	}
-
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
 		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,getValueDate(),getAppDate());
 
@@ -335,7 +293,7 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 
 	}
 
-	private List<String> prepareRequest(String[] disbursments, final String type) throws Exception {
+	private synchronized List<String> prepareRequest(String[] disbursments, final String type) throws Exception {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap;
 
@@ -454,35 +412,5 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 			namedJdbcTemplate.update("UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS where PAYMENTINSTRUCTIONID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))", paramMap);
 			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
 		}
-	}
-
-	
-	private boolean validateImpsRequest(ResultSet rs) throws Exception {
-
-		String mobileNo = rs.getString("BENFICIARY_MOBILE");
-		if (StringUtils.isEmpty(mobileNo)) {
-			throw new Exception("Customer Mobile Number cannot be blank");
-		}
-
-		String emailId = rs.getString("CUSTOMER_EMAIL");
-		if (StringUtils.isEmpty(emailId)) {
-			throw new Exception("Customer Email cannot be blank");
-		}
-
-		String branchState = rs.getString("BENFICIARY_BRANCH_STATE");
-		if (StringUtils.isEmpty(branchState)) {
-			throw new Exception("Bank State cannot be blank");
-		}
-
-		String branchCity = rs.getString("BENFICIARY_BRANCH_CITY");
-		if (StringUtils.isEmpty(branchCity)) {
-			throw new Exception("Bank City cannot be blank");
-		}
-
-		String remarks = rs.getString("REMARKS");
-		if (StringUtils.isEmpty(remarks)) {
-			throw new Exception("Remarks cannot be blank");
-		}
-		return true;
 	}
 }
