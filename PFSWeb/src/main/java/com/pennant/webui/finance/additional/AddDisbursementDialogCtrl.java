@@ -315,7 +315,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
 			boolean isStepPOS = false;
 			if(aFinSchData.getFinanceMain().isStepFinance() && aFinSchData.getFinanceMain().isAllowGrcPeriod() && 
-					StringUtils.equals(aFinSchData.getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)){
+					(StringUtils.equals(aFinSchData.getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+					StringUtils.equals(aFinSchData.getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
 				isStepPOS = true;
 			}
@@ -924,7 +925,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
 			boolean isStepPOS = false;
 			if(getFinScheduleData().getFinanceMain().isStepFinance() && 
-					StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)){
+					(StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+					StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
 				isStepPOS = true;
 			}

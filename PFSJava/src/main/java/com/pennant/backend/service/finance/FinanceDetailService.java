@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -175,6 +176,7 @@ public interface FinanceDetailService {
 	BigDecimal getFinAssetValue(String finReference);
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
+	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF);
 	
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);

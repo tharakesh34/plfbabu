@@ -1072,6 +1072,43 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 		fillComboBox(this.allocationMethod, RepayConstants.ALLOCATIONTYPE_AUTO, PennantStaticListUtil.getAllocationMethods(), "");
+		
+		Date valueDate = DateUtility.getAppDate();
+		if(this.receivedDate.getValue() != null){
+			valueDate = this.receivedDate.getValue();
+		}
+		
+		// Setting Early Payment Effect Schedule Method
+		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
+		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			String dftEPMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
+
+			List<ValueLabel> epyMethodList = new ArrayList<>();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
+				String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
+				if (epMthds.length > 0) {
+					List<String> list = Arrays.asList(epMthds);
+					for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
+						if (list.contains(epMthd.getValue().trim())) {
+							if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
+								if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+										DateUtility.compare(valueDate, financeMain.getGrcPeriodEndDate()) <= 0 &&
+										(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+										StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+									epyMethodList.add(epMthd);
+								}
+							}else{
+								epyMethodList.add(epMthd);
+							}
+						}
+					}
+				}
+			}
+
+			fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
+		}
 
 		// Check Auto Allocation Process existence
 		setAutoAllocationPayments(true);
@@ -1549,13 +1586,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				List<ValueLabel> epyMethodList = new ArrayList<>();
 				FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
 					String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
 					if (epMthds.length > 0) {
 						List<String> list = Arrays.asList(epMthds);
 						for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
 							if (list.contains(epMthd.getValue().trim())) {
-								epyMethodList.add(epMthd);
+								if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
+									if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+											DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) <= 0 &&
+													(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+															StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+										epyMethodList.add(epMthd);
+									}
+								}else{
+									epyMethodList.add(epMthd);
+								}
 							}
 						}
 					}
@@ -1985,6 +2032,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
 				}
+			}
+			
+			// Step POS Case , setting Step Details to Object
+			if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) && 
+					StringUtils.equals(method, CalculationConstants.RPYCHG_STEPPOS)){
+				finScheduleData.setStepPolicyDetails(getFinanceDetailService().getFinStepPolicyDetails(finScheduleData.getFinReference(),
+						"", false));
 			}
 
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
@@ -3029,13 +3083,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		List<ValueLabel> epyMethodList = new ArrayList<>();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
 			String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
 			if (epMthds.length > 0) {
 				List<String> list = Arrays.asList(epMthds);
 				for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
 					if (list.contains(epMthd.getValue().trim())) {
-						epyMethodList.add(epMthd);
+						if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
+							if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+									DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) <= 0 &&
+											(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+													StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+								epyMethodList.add(epMthd);
+							}
+						}else{
+							epyMethodList.add(epMthd);
+						}
 					}
 				}
 			}

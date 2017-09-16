@@ -178,7 +178,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				
 				// call schedule calculator for Rate change
-				finScheduleData = rateChangeService.getRateChangeDetails(finScheduleData, finServiceInst);
+				finScheduleData = rateChangeService.getRateChangeDetails(finScheduleData, finServiceInst,
+						FinanceConstants.FINSER_EVENT_RATECHG);
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {

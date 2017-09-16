@@ -232,7 +232,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			super.pageRightName = "ReceiptBounceDialog";
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.pageRightName = "ReceiptCancellationDialog";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.pageRightName = "ReceiptCancellationDialog";
 		}
 	}
@@ -275,7 +275,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_ReceiptCancellationDialog.title"));
-			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_FeeReceiptCancellationDialog.title"));
 				this.repaymentDetailsTab.setVisible(false);

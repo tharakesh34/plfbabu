@@ -385,31 +385,17 @@ public class ScheduleCalculator {
 
 			finScheduleData = procChangeRate(finScheduleData, baseRate, splRate, mrgRate, calculatedRate,
 					isCalSchedule);
+			
+			if(StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+				finScheduleData = maintainPOSStep(finScheduleData);
+			}
 
 			// Advised Profit Rate Calculation Process
 			finScheduleData = advPftRateCalculation(finScheduleData,
 					finScheduleData.getFinanceMain().getEventFromDate(),
 					finScheduleData.getFinanceMain().getEventToDate());
 
-			FinanceMain finMain = finScheduleData.getFinanceMain();
-
-			// PV: To be deleted.
-			// Effective Rate Of Return Calculations
-			/*
-			 * Cloner cloner = new Cloner(); FinScheduleData orgFinScheduleData
-			 * = cloner.deepClone(finScheduleData); FinanceMain orgFinMain =
-			 * orgFinScheduleData.getFinanceMain(); orgFinScheduleData =
-			 * calEffectiveRate(orgFinScheduleData,
-			 * CalculationConstants.SCH_SPECIFIER_TOTAL,
-			 * orgFinMain.getTotalProfit().add(orgFinMain.getTotalCpz()),
-			 * orgFinMain.getFinStartDate(), orgFinMain.getMaturityDate(),
-			 * true);
-			 * 
-			 * finMain.setEffectiveRateOfReturn(orgFinScheduleData.
-			 * getFinanceScheduleDetails().get(0).getCalculatedRate( ) );
-			 */
-
-			finMain.setScheduleMaintained(true);
+			finScheduleData.getFinanceMain().setScheduleMaintained(true);
 			setFinScheduleData(finScheduleData);
 
 		}
@@ -551,6 +537,23 @@ public class ScheduleCalculator {
 			// Apply Effective Rate for ReSchedule to get Desired Profit
 			finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					totalDesiredProfit, null, finMain.getMaturityDate(), false);
+			
+		} else if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, method)) {
+			
+			finMain.setRecalToDate(finMain.getMaturityDate());
+
+			// Schedule Repayment Change
+			finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getRecalSchdMethod());
+
+			// Schedule ReCalculations afetr Early Repayment Period based upon
+			// Schedule Method
+			finMain.setEventFromDate(earlyPayOnNextSchdl);
+			finMain.setRecalFromDate(earlyPayOnNextSchdl);
+			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+			
+			finScheduleData = maintainPOSStep(finScheduleData);
+			finScheduleData.getFinanceMain().setScheduleMaintained(true);
+
 		}
 
 		// Insurance recalculation due to changes in Outstandings
@@ -5313,7 +5316,8 @@ public class ScheduleCalculator {
 
 			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
 			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
-				break;
+				logger.debug("Leaving");
+				return finScheduleData;
 			}
 
 			stepDetail = stepPolicyDetails.get(stepPolicyDetails.size() - 1);

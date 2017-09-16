@@ -12,6 +12,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -27,6 +28,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	private static final Logger logger = Logger.getLogger(RateChangeServiceImpl.class);
 	
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 
 	/**
@@ -35,7 +37,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	 * @param finScheduleData
 	 * @param finServiceInst
 	 */
-	public FinScheduleData getRateChangeDetails(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
+	public FinScheduleData getRateChangeDetails(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst, String moduleDefiner) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -48,10 +50,20 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				curSchd.setPftDaysBasis(finServiceInst.getPftDaysBasis());
 			}
 		}
+		
+		// Step POS Case , setting Step Details to Object
+		boolean isCalSchedule = true;
+		if(StringUtils.isNotEmpty(moduleDefiner) && 
+				StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finScheduleData.getFinReference(),
+					"", false));
+			isCalSchedule = false;
+		}
+
 		FinScheduleData finSchData = null;
 		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(), finServiceInst.getSplRate(),
 				finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin(),
-						finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), true);
+						finServiceInst.getActualRate() == null ? BigDecimal.ZERO : finServiceInst.getActualRate(), isCalSchedule);
 
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
@@ -299,4 +311,12 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+	
+	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
+		return financeStepDetailDAO;
+	}
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+	
 }

@@ -66,6 +66,24 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
+		// Plan EMI Holidays Resetting after Add Disbursement
+		if(finSchData.getFinanceMain().isPlanEMIHAlw()){
+			finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
+			finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
+			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+
+			finSchData.getFinanceMain().setEqualRepay(true);
+			finSchData.getFinanceMain().setCalculateRepay(true);
+
+			if(StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+				finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
+			}else{
+				finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+			}
+		}
+
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
 

@@ -136,6 +136,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -8712,6 +8713,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public List<FinTypeFees> getFinTypeFees(String finType, String eventCode, boolean origination, int moduleId) {
 		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, moduleId);
+	}
+	
+	/**
+	 * Method for Fetching List of Step Policy Details using Finance Reference
+	 * @param finReference
+	 * @param type
+	 * @param isWIF
+	 * @return
+	 */
+	@Override
+	public List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF) {
+		return getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finReference, type, isWIF);
 	}
 	
 	@Override

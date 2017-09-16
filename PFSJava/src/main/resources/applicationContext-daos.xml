@@ -8373,6 +8373,7 @@
 	<bean name="rateServiceTarget"
 		class="com.pennant.backend.financeservice.impl.RateChangeServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
