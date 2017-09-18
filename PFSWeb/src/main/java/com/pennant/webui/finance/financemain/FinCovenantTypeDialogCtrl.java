@@ -581,8 +581,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		
 		this.covenantType.setValue(aFinAdvnancePayments.getCovenantType());
 		this.covenantType.setDescription(aFinAdvnancePayments.getCovenantTypeDesc());
-		this.mandRole.setValue(aFinAdvnancePayments.getMandRole());
-		this.mandRole.setDescription(aFinAdvnancePayments.getMandRoleDesc());
+		this.mandRole.setValue(aFinAdvnancePayments.getMandRole(),aFinAdvnancePayments.getMandRoleDesc());
 		this.description.setValue(aFinAdvnancePayments.getDescription());
 		this.alwWaiver.setChecked(aFinAdvnancePayments.isAlwWaiver());
 		this.alwPostpone.setChecked(aFinAdvnancePayments.isAlwPostpone());
@@ -623,6 +622,9 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			if(this.mandRole.isVisible()){
 				aFinCovenantType.setMandRole(this.mandRole.getValidatedValue());
 				aFinCovenantType.setMandRoleDesc(this.mandRole.getDescription());
+			}else{
+				aFinCovenantType.setMandRole("");
+				aFinCovenantType.setMandRoleDesc("");
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -998,6 +1000,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		
 		this.alwPostpone.setChecked(false);
 		this.receivableDate.setValue(null);
+		this.mandRole.setValue("", "");
 		this.space_receivableDate.setSclass("");
 		logger.debug("Leaving" + event.toString());
 	}
