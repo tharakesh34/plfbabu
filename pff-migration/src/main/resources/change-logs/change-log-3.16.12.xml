@@ -26,6 +26,7 @@
 </changeSet>
 
 <changeSet id="1.2" author="murthy.y">
+<comment>The TRIAL_BALANCE_HEADER table holds the trail balance batch details</comment>
 	<createTable tableName="TRIAL_BALANCE_HEADER">
 			<column name="ID" type="bigint">
 				<constraints nullable="false" />
@@ -267,6 +268,7 @@
 	</sql>
 </changeSet>
 <changeSet author="manoj" id="2">
+<comment>The ALM_EXTRACT table holds the staging table for the ALM process</comment>
 	<createTable tableName="ALM_EXTRACT">
 		<column name="SEQID"          	 type="bigint"/>
 		<column name="FINREFERENCE"   	 type="varchar(20)">
