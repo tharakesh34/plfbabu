@@ -293,4 +293,12 @@
 		<column name="FINREFERENCE" type="varchar(20)"/>
     </createIndex>
 </changeSet>
+	<changeSet id="5" author="Jayant" dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
