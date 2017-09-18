@@ -191,11 +191,14 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		Filter[] filter = new Filter[1];
-		java.util.Date date = DateUtility.getAppDate();
-		date = DateUtil.addDays(date,futureDays);
-		filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL);
-		this.searchObject.addFilters(filter);
+		if (toDate.getValue() == null) {
+			Filter[] filter = new Filter[1];
+			java.util.Date date = DateUtility.getAppDate();
+			date = DateUtil.addDays(date, futureDays);
+			filter[0] = new Filter("LLDATE", PennantAppUtil.formateDate(date, PennantConstants.DBDateFormat),
+					Filter.OP_LESS_OR_EQUAL);
+			this.searchObject.addFilters(filter);
+		}
 
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
