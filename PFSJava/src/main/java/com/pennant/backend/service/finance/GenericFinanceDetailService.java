@@ -1332,64 +1332,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return datasetList;
 	}
 
-	protected long getAccountingResults(AuditHeader auditHeader, FinanceDetail financeDetail,
-			List<ReturnDataSet> accountingSetEntries, Date curBDay, AEEvent aeEvent)
-					throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		long linkedTranId = 0;
-
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-
-		// Call Map Build Method
-		List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
-		if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
-
-			// Method for validating Postings with interface program and
-			// return results
-			if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = returnSetEntries.get(0).getLinkedTranId();
-			}
-
-			if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				boolean isFetchFinAc = false;
-				boolean isFetchCistIntAc = false;
-				for (int j = 0; j < returnSetEntries.size(); j++) {
-					ReturnDataSet set = returnSetEntries.get(j);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils
-							.trimToEmpty(set.getErrorId())))) {
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
-								.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-								new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-					}
-
-					if (!isFetchFinAc
-							&& set.getAccountType().equals(
-									financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
-						isFetchFinAc = true;
-						finMain.setFinAccount(set.getAccount());
-					}
-					if (!isFetchCistIntAc
-							&& set.getAccountType().equals(
-									financeDetail.getFinScheduleData().getFinanceType().getPftPayAcType())) {
-						isFetchCistIntAc = true;
-						finMain.setFinCustPftAccount(set.getAccount());
-					}
-				}
-				auditHeader.setErrorList(errorDetails);
-				//FIXME: 050517 Needs to fill return dataset
-				accountingSetEntries.addAll(returnSetEntries);
-			}
-		}
-		return linkedTranId;
-	}
-
 	protected HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
@@ -1482,6 +1424,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
+		
+		// Fee Details Validation
+		/*boolean isFeeConfgMatched = validateAccSetFees(financeDetail.getFinScheduleData().getFinFeeDetailList(), 
+				aeEvent.getAcSetIDList(), financeDetail.getAccountingEventCode());
+		if(!isFeeConfgMatched){
+			auditHeader.setErrorDetails(new ErrorDetails("60212", null));
+			return auditHeader;
+		}*/
+						
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -1491,7 +1442,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setDataMap(dataMap);
 
 		// Prepared Postings execution 
-		//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		//Disbursement Instruction Posting
@@ -2208,6 +2158,28 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 */
 	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(final String id) {
 		return getRecoveryDAO().getFinancePenaltysByFinRef(id, "");
+	}
+	
+	/**
+	 * Method for Validating Fee Details processed in the workflow Event & linking with Accounting Set
+	 */
+	public boolean validateAccSetFees(List<FinFeeDetail> feeList, List<Long> acSetIDList, String event){
+		
+		// Linked Fee Codes against Accounting Set Transactions
+		boolean isFeeMatched = true;
+		List<String> feeCodeList = getTransactionEntryDAO().getFeeCodeList(acSetIDList);
+		for (FinFeeDetail feeDetail : feeList) {
+			
+			if(!StringUtils.equals(event, feeDetail.getFinEvent())){
+				continue;
+			}
+			if(!feeCodeList.contains(feeDetail.getFeeTypeCode())){
+				isFeeMatched = false;
+				break;
+			}
+		}
+		
+		return isFeeMatched;
 	}
 
 	// ******************************************************//
