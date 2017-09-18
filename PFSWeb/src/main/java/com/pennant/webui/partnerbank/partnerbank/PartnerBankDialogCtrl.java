@@ -81,6 +81,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -813,15 +814,19 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		//Profit Centre
 		if (!this.profitCenterID.isDisabled()) {
 			this.profitCenterID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_ProfitCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					.getLabel("label_PartnerBankDialog_ProfitCenter.value"), PennantRegularExpressions.REGEX_UPPER_ALPHANUM_SPACE,
 					false));
 		}
 		
 		//Profit Centre
 		if (!this.costCenterID.isReadonly()) {
 			this.costCenterID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_CostCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					.getLabel("label_PartnerBankDialog_CostCenter.value"), PennantRegularExpressions.REGEX_UPPER_ALPHANUM_SPACE,
 					false));
+		}
+		//Profit Centre
+		if (!this.inFavourLength.isReadonly()) {
+			this.inFavourLength.setConstraint(new PTNumberValidator(Labels.getLabel("label_PartnerBankDialog_FavourLength.value"), false,false,99));
 		}
 		
 		if (!this.btnSearchBranchCode.isDisabled() && !this.alwBankBranchCode.isVisible()) {
