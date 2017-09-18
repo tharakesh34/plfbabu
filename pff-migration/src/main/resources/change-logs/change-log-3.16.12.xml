@@ -303,4 +303,14 @@
 	        end;
 	    </sql>
 	</changeSet>
+	
+<changeSet id="6" author="manoj">
+	<sql>
+		<![CDATA[	
+			update PSX_DEDUP_EOD_CUST_DEMO_DTL set PSX_BATCH_ID = NULL, EOD_BATCH_ID = NULL;
+			update PSX_DEDUP_EOD_CUST_ADDR_DTL set PSX_BATCH_ID = NULL, EOD_BATCH_ID = NULL;
+			update PSX_DEDUP_EOD_CUST_LOAN_DTL set PSX_BATCH_ID = NULL, EOD_BATCH_ID = NULL; 
+		]]>
+	</sql>
+</changeSet>	
 </databaseChangeLog>
