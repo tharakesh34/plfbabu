@@ -14,8 +14,8 @@ public class Posidex implements Serializable {
 	private String errorCode;
 	private String errorDesc;
 	private String sourceSystem;
-	private long psxBatchID;
-	private long eodBatchID;
+	private String psxBatchID;
+	private String eodBatchID;
 	private String segment;
 
 	private PosidexCustomer posidexCustomer;
@@ -96,19 +96,19 @@ public class Posidex implements Serializable {
 		this.sourceSystem = sourceSystem;
 	}
 
-	public long getPsxBatchID() {
+	public String getPsxBatchID() {
 		return psxBatchID;
 	}
 
-	public void setPsxBatchID(long psxBatchID) {
+	public void setPsxBatchID(String psxBatchID) {
 		this.psxBatchID = psxBatchID;
 	}
 
-	public long getEodBatchID() {
+	public String getEodBatchID() {
 		return eodBatchID;
 	}
 
-	public void setEodBatchID(long eodBatchID) {
+	public void setEodBatchID(String eodBatchID) {
 		this.eodBatchID = eodBatchID;
 	}
 
