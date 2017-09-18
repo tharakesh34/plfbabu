@@ -814,14 +814,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		//Profit Centre
 		if (!this.profitCenterID.isDisabled()) {
 			this.profitCenterID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_ProfitCenter.value"), PennantRegularExpressions.REGEX_UPPER_ALPHANUM_SPACE,
+					.getLabel("label_PartnerBankDialog_ProfitCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE,
 					false));
 		}
 		
 		//Profit Centre
 		if (!this.costCenterID.isReadonly()) {
 			this.costCenterID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_CostCenter.value"), PennantRegularExpressions.REGEX_UPPER_ALPHANUM_SPACE,
+					.getLabel("label_PartnerBankDialog_CostCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE,
 					false));
 		}
 		//Profit Centre
