@@ -503,7 +503,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 																								.getValueAsDate("APP_DFT_END_DATE");
 	Date												appStartDate					= DateUtility.getAppDate();
 	protected transient List<FinInsurances>				oldVar_finInsuranceList;
-
+	
+	protected CurrencyBox									finAssetValue;
+	protected CurrencyBox									finCurrentAssetValue;
+	protected Row											row_FinAssetValue;
+	protected transient BigDecimal							oldVar_finAssetValue;
+	protected transient BigDecimal							oldVar_finCurrAssetValue;
+	protected Label											label_FinanceMainDialog_FinAssetValue;
+	protected Label											label_FinanceMainDialog_FinAmount;
+	protected Label											label_FinanceMainDialog_FinCurrentAssetValue;
 	/**
 	 * default constructor.<br>
 	 */
@@ -757,6 +765,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.planEmiHLockPeriod.setMaxlength(3);
 		this.maxPlanEmiPerAnnum.setMaxlength(2);
 		this.maxPlanEmi.setMaxlength(3);
+		
+		this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.finAssetValue.setScale(finFormatter);
+
+		this.finCurrentAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.finCurrentAssetValue.setScale(finFormatter);
+		
+		
+		setFinAssetFieldVisibility(financeType);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -765,6 +782,51 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	
+	private void setFinAssetFieldVisibility(FinanceType financeType) {
+
+		boolean isOverdraft = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
+				.getFinanceMain().getProductCategory())) {
+			isOverdraft = true;
+		}
+
+		if (financeType.isAlwMaxDisbCheckReq()) {
+
+			if (isOverdraft) {
+
+				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
+						.getLabel("label_FinanceMainDialog_FinOverDftLimit.value"));
+				this.label_FinanceMainDialog_FinCurrentAssetValue.setValue("");
+				this.finCurrentAssetValue.setVisible(false);
+			} else {
+				if (!isOverdraft && financeType.isAlwMaxDisbCheckReq()) {
+					readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
+					this.row_FinAssetValue.setVisible(true);
+					this.finAssetValue.setMandatory(true);
+					this.finCurrentAssetValue.setReadonly(true);
+					this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
+							.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+					this.label_FinanceMainDialog_FinCurrentAssetValue.setValue(Labels
+							.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
+				} else {
+					this.label_FinanceMainDialog_FinAssetValue.setVisible(false);
+					this.finAssetValue.setVisible(false);
+					this.label_FinanceMainDialog_FinCurrentAssetValue.setValue(Labels
+							.getLabel("label_FinanceMainDialog_TotalDisbAmt.value"));
+					this.label_FinanceMainDialog_FinCurrentAssetValue.setVisible(true);
+					this.finCurrentAssetValue.setVisible(true);
+				}
+			}
+		} else {
+			this.row_FinAssetValue.setVisible(false);
+			if (this.label_FinanceMainDialog_FinAmount != null) {
+				this.label_FinanceMainDialog_FinAmount
+						.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
+			}
+		}
 	}
 
 	/**
@@ -941,6 +1003,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
 		fillComboBox(this.cbProfitDaysBasis, aFinanceMain.getProfitDaysBasis(), profitDaysBasisList, "");
 		this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), format));
+		
+		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
+		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinDepreciationReq()) {
 			this.depreciationFrq.setVisible(true);
@@ -1455,6 +1520,14 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetLOVValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		
+		boolean isOverDraft = false;
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
+			isOverDraft = true;
+		}
+
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
 
@@ -1937,6 +2010,89 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (isOverDraft) {
+				//validate Overdraft Limit with configured finmin and fin max amounts
+				this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
+						.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
+				validateFinAssetvalue(this.finAssetValue, financeType, formatter);
+			
+			}
+
+			if (this.row_FinAssetValue.isVisible()) {
+				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
+				if (!buildEvent
+						&& ((StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(
+								FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
+					if (this.finCurrentAssetValue.getActualValue() != null
+							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
+							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {
+						throw new WrongValueException(finCurrentAssetValue.getCcyTextBox(), Labels.getLabel(
+								"NUMBER_MAXVALUE_EQ",
+								new String[] { this.label_FinanceMainDialog_FinCurrentAssetValue.getValue(),
+										String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
+					}
+				}
+				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+						this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue() : this.finAssetValue
+								.getValidateValue(), formatter));
+			}
+			//Validation  on finAsset And fin Current Asset value based on field visibility
+
+			if (!isOverDraft) {
+				if (financeType.isAlwMaxDisbCheckReq()) {
+					//If max disbursement amount less than prinicpal amount validate the amount
+					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
+						validateFinAssetvalue(this.finAssetValue, financeType, formatter);
+						if (this.row_FinAssetValue.isVisible() && finAssetValue.getActualValue() != null
+								&& this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
+								&& finAssetValue.getActualValue().compareTo(this.finAmount.getActualValue()) < 0) {
+
+							throw new WrongValueException(finAssetValue.getCcyTextBox(),
+									Labels.getLabel(
+											"NUMBER_MINVALUE_EQ",
+											new String[] {
+													this.label_FinanceMainDialog_FinAssetValue.getValue(),
+													String.valueOf(Labels
+															.getLabel("label_FinanceMainDialog_FinAmount.value")) }));
+						}
+					} else {
+						if (StringUtils.isEmpty(moduleDefiner)) {
+							this.label_FinanceMainDialog_FinAssetValue.setValue(Labels
+									.getLabel("label_FinanceMainDialog_FinAmount.value"));
+							validateFinAssetvalue(this.finAmount, financeType, formatter);
+						}
+					}
+
+					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(),
+							formatter));
+
+				} else {
+					if (StringUtils.isEmpty(moduleDefiner)) {
+						this.label_FinanceMainDialog_FinAssetValue
+								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAmount.value"));
+						validateFinAssetvalue(this.finAmount, financeType, formatter);
+					}
+					aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(
+							this.finCurrentAssetValue.getActualValue(), formatter));
+
+				}
+			}
+
+			aFinanceMain.setFinCurrAssetValue(PennantAppUtil.unFormateAmount(
+					this.finCurrentAssetValue.getActualValue(), formatter));
+
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(),
+					formatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			// Field is foreign key and not a mandatory value so it should be
@@ -2225,16 +2381,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 
-			if (recSave) {
-
-				aFinanceMain
-						.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
-				aFinanceMain
-						.setDownPaySupl(PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
-				aFinanceMain.setDownPayment(PennantAppUtil.unFormateAmount(
-						this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()), formatter));
-
-			} else if (!this.downPayBank.isDisabled() || !this.downPaySupl.isDisabled()) {
+			if (!this.downPayBank.isDisabled() || !this.downPaySupl.isDisabled()) {
 
 				this.downPayBank.clearErrorMessage();
 				this.downPaySupl.clearErrorMessage();
@@ -2243,7 +2390,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
 
-				if (downPayment.compareTo(this.finAmount.getActualValue()) > 0) {
+				if (downPayment.compareTo(this.finAmount.getActualValue()) >= 0) {
 					throw new WrongValueException(this.downPayBank, Labels.getLabel("MAND_FIELD_MIN", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
 							PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter, false) }));
@@ -2325,6 +2472,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setPlanEMIHLockPeriod(0);
 			aFinanceMain.setPlanEMICpz(false);
 		}
+		
+		
 
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
@@ -2420,6 +2569,30 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	/*
+	 * validates finAmount or FinAssetvalue based on the field visibility by Finmax and finmin Amount from loan type
+	 * configuration.
+	 */
+	private void validateFinAssetvalue(CurrencyBox finAllowedAmt, FinanceType financeType, int formatter) {
+		BigDecimal finMinAmount = PennantApplicationUtil.formateAmount(financeType.getFinMinAmount(), formatter);
+		BigDecimal finMaxAmount = PennantApplicationUtil.formateAmount(financeType.getFinMaxAmount(), formatter);
+
+		if (finAllowedAmt.getActualValue() != null && finMinAmount.compareTo(BigDecimal.ZERO) > 0
+				&& finAllowedAmt.getActualValue().compareTo(finMinAmount) < 0) {
+			throw new WrongValueException(finAllowedAmt.getCcyTextBox(), Labels.getLabel(
+					"NUMBER_MINVALUE_EQ",
+					new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
+							PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), formatter) }));
+		}
+		if (finAllowedAmt.getActualValue() != null && finMaxAmount.compareTo(BigDecimal.ZERO) > 0
+				&& finAllowedAmt.getActualValue().compareTo(finMaxAmount) > 0) {
+			throw new WrongValueException(finAllowedAmt.getCcyTextBox(), Labels.getLabel(
+					"NUMBER_MAXVALUE_EQ",
+					new String[] { this.label_FinanceMainDialog_FinAssetValue.getValue(),
+							PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), formatter) }));
+		}
+
+	}
 	/**
 	 * Method to show error details if occurred
 	 * 
@@ -2806,6 +2979,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
 		this.oldVar_noOfSteps = this.noOfSteps.intValue();
 		this.oldVar_stepType = this.stepType.getSelectedIndex();
+		
+		this.oldVar_finAssetValue = this.finAssetValue.getActualValue();
+		this.oldVar_finCurrAssetValue = this.finCurrentAssetValue.getActualValue();
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -3007,6 +3183,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal oldFinAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAmount, formatter);
 		BigDecimal newFinAmount = PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
 		if (oldFinAmount.compareTo(newFinAmount) != 0) {
+			return true;
+		}
+		
+		BigDecimal oldFinAssetAmount = PennantAppUtil.unFormateAmount(this.oldVar_finAssetValue, formatter);
+		BigDecimal newFinAssetAmount = PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter);
+		if (oldFinAssetAmount.compareTo(newFinAssetAmount) != 0) {
 			return true;
 		}
 
@@ -3276,7 +3458,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-
+		boolean isOverdraft = false;
+		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData()
+				.getFinanceMain().getProductCategory())) {
+			isOverdraft = true;
+		}
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (!this.finReference.isReadonly()
@@ -3286,9 +3473,25 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getLabel("label_FinanceMainDialog_FinReference.value"), null, true));
 		}
 
-		if (!this.finAmount.isDisabled()) {
+		if (!this.finAmount.isReadonly()) {
 			this.finAmount.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinanceMainDialog_FinAmount.value"), 0, true, false));
+					.getLabel("label_FinanceMainDialog_FinAmount.value"), format, true, false));
+		}
+		
+		if (isOverdraft && !this.finAssetValue.isReadonly()) {
+			this.finAssetValue.setConstraint(new PTDecimalValidator(Labels
+					.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"), format, true, false));
+		}
+
+		if (this.row_FinAssetValue.isVisible()) {
+			if (this.finAssetValue.isVisible() && !this.finAssetValue.isReadonly()) {
+				this.finAssetValue.setConstraint(new PTDecimalValidator(label_FinanceMainDialog_FinAssetValue
+						.getValue(), format, true, false));
+			}
+			if (this.finCurrentAssetValue.isVisible() && !this.finCurrentAssetValue.isReadonly()) {
+				this.finCurrentAssetValue.setConstraint(new PTDecimalValidator(
+						this.label_FinanceMainDialog_FinCurrentAssetValue.getValue(), format, false, false));
+			}
 		}
 
 		if (this.repayProfitRate.isVisible() && !this.repayProfitRate.isDisabled()) {
@@ -3731,7 +3934,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
@@ -3746,6 +3949,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.space_finReference.setSclass("");
 		} else {
 			this.space_finReference.setSclass(PennantConstants.mandateSclass);
+		}
+		
+		if (StringUtils.equals(financeType.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
 		}
 
 		this.btnSearchFinType.setDisabled(true);
@@ -4228,18 +4435,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
 		aFinanceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-		if (getScheduleDetailDialogCtrl() != null) {
-			if (getScheduleDetailDialogCtrl().getFeeChargesMap() != null
-					&& getScheduleDetailDialogCtrl().getFeeChargesMap().size() > 0) {
-				List<Date> feeRuleKeys = new ArrayList<Date>(getScheduleDetailDialogCtrl().getFeeChargesMap().keySet());
-				List<FeeRule> feeRuleList = new ArrayList<FeeRule>();
-				for (Date date : feeRuleKeys) {
-					feeRuleList.addAll(getScheduleDetailDialogCtrl().getFeeChargesMap().get(date));
-				}
-				aFinanceDetail.getFinScheduleData().setFeeRules(feeRuleList);
-			}
-		}
-
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -4611,6 +4806,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finRepaymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 				this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
+				this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(details.getCcyEditField()));
 
 			}
 		}
@@ -5076,7 +5272,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (finType.isFinIsAlwGrcRepay()) {
 				this.grcRepayRow.setVisible(true);
 			}
-
 		} else {
 			this.gracePeriodEndDate.setValue(this.finStartDate.getValue());
 			this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
@@ -6250,7 +6445,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		int retValue = PennantConstants.porcessOVERIDE;
 		while (retValue == PennantConstants.porcessOVERIDE) {
-			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 			ArrayList<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
 
@@ -6393,7 +6587,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				
 				//both step and EMI holiday not allowed
-				if (financeType.isPlanEMIHAlw()) {
+				if (this.alwPlannedEmiHoliday.isChecked()) {
 					errorList.add(new ErrorDetails("30573", null));
 				}	
 				
@@ -7087,6 +7281,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
 				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
+		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(utilizedAmt, formatter));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCurrAssetValue(utilizedAmt);
 	}
 	

@@ -154,6 +154,7 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -244,6 +245,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private AccountEngineExecution 							engineExecution;
 	private boolean isAccountingExecuted = true;
 	private boolean isCancelProcess = false;
+	protected Row 											row_VASPaid;
+	protected CurrencyBox									paidAmt;
+	protected CurrencyBox									waivedAmt;
 	
 	/**
 	 * default constructor.<br>
@@ -442,6 +446,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnCancel.setVisible(true);
 			this.btnSearchSelection.setDisabled(true);
 		}
+		if(isFinanceVas()){
+			this.row_VASPaid.setVisible(false);
+		}else{
+			this.row_VASPaid.setVisible(true);
+		}
 		this.productCode.setReadonly(true);
 		this.postingAgainst.setDisabled(true);
 		this.primaryLinkRef.setReadonly(true);
@@ -453,7 +462,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dmaId.setReadonly(isReadOnly("VASRecordingDialog_DmaId"));
 		this.fulfilOfficerId.setReadonly(isReadOnly("VASRecordingDialog_FulfilOfficerId"));
 		this.referralId.setReadonly(isReadOnly("VASRecordingDialog_ReferralId"));
-		
+		this.waivedAmt.setReadonly(isReadOnly("VASRecordingDialog_WaivedAmt"));
 		if(isFinanceVas()){
 			this.viewInfo.setVisible(false);
 		}else{
@@ -558,6 +567,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.primaryLinkRef.setErrorMessage("");
 		this.vasReference.setErrorMessage("");
 		this.fee.setErrorMessage("");
+		this.waivedAmt.setErrorMessage("");
+		this.paidAmt.setErrorMessage("");
 		this.renewalFee.setErrorMessage("");
 		this.feePaymentMode.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
@@ -821,6 +832,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		} catch (DataAccessException e) {
 			MessageUtil.showError(e);
+		} catch (AppException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -841,7 +854,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1004,7 +1017,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1075,8 +1088,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
 
-		valueParm[0] = String.valueOf(aVASRecording.getVasReference());
-		errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":"+ valueParm[0];
+		valueParm[0] = String.valueOf(aVASRecording.getProductCode());
+		errParm[0] = PennantJavaUtil.getLabel("label_VASCode") + ":"+ valueParm[0];
 
 		if(getFinVasRecordingDialogCtrl().getVasRecordings() != null && !getFinVasRecordingDialogCtrl().getVasRecordings().isEmpty()){
 			for (int i = 0; i < getFinVasRecordingDialogCtrl().getVasRecordings().size(); i++) {
@@ -1202,6 +1215,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
+		this.paidAmt.setReadonly(true);
+		this.paidAmt.setDisabled(true);
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aVASRecording);
@@ -1258,7 +1273,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (!this.fee.isReadonly()) {
 			this.fee.setConstraint(new PTDecimalValidator(Labels.getLabel("label_VASRecordingDialog_Fee.value"), 2,
-					true, false));
+					false, false));
 		}
 
 		if (!this.renewalFee.isReadonly()) {
@@ -1323,7 +1338,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.valueDate.setValue(DateUtility.getAppDate());
 			this.accrualTillDate.setValue(DateUtility.getAppDate());
 			this.recurringDate.setValue(DateUtility.getAppDate());
-
+			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
 		} else {
 			this.dsaId.setDescription(aVASRecording.getDsaId());
 			this.dmaId.setDescription(aVASRecording.getDmaId());
@@ -1332,6 +1347,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.valueDate.setValue(aVASRecording.getValueDate());
 			this.accrualTillDate.setValue(aVASRecording.getAccrualTillDate());
 			this.recurringDate.setValue(aVASRecording.getRecurringDate());
+			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getPaidAmt(), getCcyFormat()));
 		}
 		
 		// Product Code
@@ -1345,7 +1361,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		//Vas fee
 		if(isFinanceVas()){
-			if(isFeeEditable()){
+			if(isFeeEditable() && vASConfiguration.isAllowFeeToModify()){
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 			}else{
 				this.fee.setReadonly(true);
@@ -1357,7 +1373,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setReadonly(true);
 			}
 		}
+		if(!isFinanceVas()){
+			this.fee.addForward("onFulfill", this.window_VASRecordingDialog, "onFeeAmountChange");
+		}
 		this.fee.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
+		this.waivedAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getWaivedAmt(), getCcyFormat()));
 		
 		// Payment Mode
 		if(isFinanceVas()){
@@ -1448,6 +1468,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// Accounting Details Tab Addition
 			if(!enqiryModule && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())){
 				appendAccountingDetailTab(true);
+			}
+			
+			// Show Posting on Enquiry against Vas Reference
+			if(enqiryModule){
+				 appendPostingsTab();
 			}
 		}
 
@@ -1685,6 +1710,21 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Rendering Document Details Data in finance
+	 */
+	private void appendPostingsTab() {
+		logger.debug("Entering");
+		
+		createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
+		
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("postingDetails", getVASRecording().getReturnDataSetList());
+		map.put("dialogCtrl", this);
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * This method set the check list details to aFinanceDetail
@@ -1916,6 +1956,20 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		// Paid Amount
+		try {
+			aVASRecording.setPaidAmt(PennantAppUtil.unFormateAmount(this.paidAmt.getActualValue(), getCcyFormat()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// Waived Amount
+		try {
+			aVASRecording.setWaivedAmt(PennantAppUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		// Renewal Fee  
 		try {
@@ -2095,6 +2149,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.primaryLinkRef.setConstraint("");
 		this.vasReference.setConstraint("");
 		this.fee.setConstraint("");
+		this.paidAmt.setConstraint("");
+		this.waivedAmt.setConstraint("");
 		this.renewalFee.setConstraint("");
 		this.feePaymentMode.setConstraint("");
 		this.valueDate.setConstraint("");
@@ -2127,6 +2183,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dmaId.setReadonly(true);
 		this.fulfilOfficerId.setReadonly(true);
 		this.referralId.setReadonly(true);
+		this.waivedAmt.setReadonly(true);
 		this.viewInfo.setVisible(false);
 		
 		if (isWorkFlowEnabled() && !isCancelProcess) {
@@ -2229,6 +2286,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.referralId.setTextBoxWidth(145);
 		this.postingAgainst.setDisabled(true);
 		this.fee.setProperties(true, getCcyFormat());
+		this.paidAmt.setProperties(false, getCcyFormat());
+		this.waivedAmt.setProperties(false, getCcyFormat());
 		this.renewalFee.setProperties(false, getCcyFormat());
 		this.renewalFee.setWidth("100px");
 		logger.debug("Leaving");
@@ -2509,6 +2568,39 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for action Event of Changing Waived Amount
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onFulfill$waivedAmt(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		
+		BigDecimal vasFee = PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat());
+		BigDecimal waivedAmt = PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat());
+		if (waivedAmt.compareTo(vasFee) > 0) {
+			this.waivedAmt.setValue(PennantApplicationUtil.formateAmount(vasFee, getCcyFormat()));
+		}
+
+		BigDecimal bal = vasFee
+				.subtract(PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
+		this.paidAmt.setValue(PennantApplicationUtil.formateAmount(bal, getCcyFormat()));
+		
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Method for action Event of Changing VAS FEE Amount
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onFeeAmountChange(ForwardEvent event)throws Exception{
+		logger.debug("Entering");
+		this.paidAmt.setValue(this.fee.getActualValue());
+		this.waivedAmt.setValue(BigDecimal.ZERO);
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Method for fetching Customer Id number for Document Details processing
@@ -2764,5 +2856,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 
 }

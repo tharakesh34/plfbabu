@@ -82,7 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennanttech.pennapps.core.FactoryException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -294,6 +294,9 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		List<FeeRule> feeRules = existFeeList;
+		if(feeRules == null){
+			feeRules = new ArrayList<>();
+		}
 		String ruleEvent = (String) dataMap.get("ae_finEvent");
 		if (ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)) {
 			ruleEvent = AccountEventConstants.ACCEVENT_ADDDBS;
@@ -371,8 +374,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap){
 
 		logger.debug("Entering");
 		//Accounting Set Details
@@ -384,7 +386,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 		aeEvent.setDataMap(dataMap);
 
-		if (transactionEntries != null && transactionEntries.size() > 0) {
+		if (!transactionEntries.isEmpty()) {
 			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
 
@@ -482,7 +484,11 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
 		for (int i = 0; i < acSetIDList.size(); i++) {
-			transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
+			if (aeEvent.isEOD()) {
+				transactionEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(acSetIDList.get(i)));
+			}else{
+				transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
+			}
 		}
 		
 		//FIXME CH To be discussed if this is required here
@@ -513,6 +519,15 @@ public class AccountEngineExecution implements Serializable {
 						dataMap.put(feeCode + "_SCH", BigDecimal.ZERO);
 						dataMap.put(feeCode + "_AF", BigDecimal.ZERO);
 					}
+					String [] payTypes = {"EX_","EA_","PA_","PB_"};
+					String key;
+					for (String payType : payTypes) {
+						key = payType + feeCode + "_P";
+						if(!dataMap.containsKey(key)){
+							dataMap.put(key, BigDecimal.ZERO);
+						}
+					}
+					
 				}
 			}
 		}
@@ -544,6 +559,9 @@ public class AccountEngineExecution implements Serializable {
 		accountsList = null;
 
 		ReturnDataSet returnDataSet;
+		//This is to maintain the multiple transactions with in the same linked train ID. 
+		//Late pay and Repay will be coming separately and will have same linked tranID.
+		int seq = aeEvent.getTransOrder();
 		for (TransactionEntry transactionEntry : transactionEntries) {
 
 			returnDataSet = new ReturnDataSet();
@@ -561,7 +579,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
-			returnDataSet.setTransOrder(transactionEntry.getTransOrder());
+			returnDataSet.setTransOrder(++seq);
 			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 					+ transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
@@ -577,11 +595,10 @@ public class AccountEngineExecution implements Serializable {
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			
-			if ((acc == null ||  StringUtils.isBlank(acc.getAccountId())) && BigDecimal.ZERO.compareTo(postAmt) != 0) {
-				throw new FactoryException("Invalid accounting configuration, please contact administrator");
-			} 
-			
-			if (acc == null) {
+			if (acc == null ||  StringUtils.isBlank(acc.getAccountId())) {
+				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
+					throw new AppException("Invalid accounting configuration, please contact administrator");
+				} 
 				continue;
 			}
 			returnDataSet.setTranOrderId(acc.getTransOrder());
@@ -659,7 +676,8 @@ public class AccountEngineExecution implements Serializable {
 				returnDataSets.addAll(newEntries);
 			}
 		}
-
+		aeEvent.setTransOrder(seq);
+		
 		accountsMap = null;
 		accountCcyMap = null;
 
@@ -772,8 +790,16 @@ public class AccountEngineExecution implements Serializable {
 		newAccount.setAcType(txnEntry.getAccountType());
 		newAccount.setInternalAc(true);
 
-		Rule rule = AccountingConfigCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
-				RuleConstants.MODULE_SUBHEAD);
+		Rule rule =null;
+		if (aeEvent.isEOD()) {
+			rule = AccountingConfigCache.getCacheRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+					RuleConstants.MODULE_SUBHEAD);
+		}else{
+			rule = AccountingConfigCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+					RuleConstants.MODULE_SUBHEAD);
+		}
+		
+		
 		dataMap.put("acType", txnEntry.getAccountType());
 		if (rule != null) {
 			String accountNumber = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,

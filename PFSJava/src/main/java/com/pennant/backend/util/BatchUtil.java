@@ -9,6 +9,7 @@ import org.springframework.batch.core.scope.context.StepContext;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ExecutionStatus;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class BatchUtil {
 	
@@ -74,6 +75,29 @@ public class BatchUtil {
 		if(!"UNKNOWN".equals(stepContext.getStepExecution().getJobExecution().getExitStatus().getExitCode())) {
 			EXECUTING = new ExecutionStatus(); 
 		}
+	}
+	
+	
+	public static void setExecutionStatus(ChunkContext context, DataEngineStatus status) throws Exception {
+		
+		if (status == null) {
+			return;
+		}
+		
+		BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+
+		while ("I".equals(status.getStatus()) || "".equals(status.getStatus())) {
+			BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
+
+			if ("F".equals(status.getStatus())) {
+				throw new Exception(status.getRemarks());
+			}
+		}
+
+		BatchUtil.setExecution(context, "TOTAL", String.valueOf(status.getTotalRecords()));
+		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(status.getProcessedRecords()));
 	}
 	
 }

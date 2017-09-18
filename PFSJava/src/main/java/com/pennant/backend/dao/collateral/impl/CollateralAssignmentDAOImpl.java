@@ -258,14 +258,15 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		collateralAssignment.setCollateralRef(collateralRef);
 		
 		StringBuilder selectSql = new StringBuilder("Select Module, CA.Reference, Coalesce(FM.FinCcy,CM.CmtCcy) Currency, AssignPerc AssignedPerc, ");
-		selectSql.append(" BankValuation CollateralValue, TotAssignedPerc,  Coalesce(TotalPriBal,CmtUtilizedAmount) UtilizedValue, ");
+		selectSql.append(" BankValuation CollateralValue, TotAssignedPerc,  ");
+		selectSql.append("Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount,CmtUtilizedAmount) UtilizedValue, ");
 		selectSql.append(" CmtExpDate , Coalesce(FinIsActive,CmtActive) FinIsActive, TotalUtilized	from CollateralAssignment CA Left Join ");
-		selectSql.append(" FinPftDetails FM on CA.Reference = FM.FinReference left join ");
+		selectSql.append(" FinanceMain FM on CA.Reference = FM.FinReference left join ");
 		selectSql.append(" Commitments CM on CM.CmtReference = CA.Reference ");
 		selectSql.append(" inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");
 		selectSql.append(" Left join ( Select CollateralRef, SUM(AssignPerc) TotAssignedPerc from CollateralAssignment group by CollateralRef) T ");
-		selectSql.append("  on T.CollateralRef = CA.CollateralRef  ");
-		selectSql.append("  LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100) TotalUtilized ");
+		selectSql.append(" on T.CollateralRef = CA.CollateralRef  ");
+		selectSql.append(" LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100) TotalUtilized ");
 		selectSql.append(" from CollateralAssignment CA inner join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef ");
 		selectSql.append(" group by CA.Reference) T1 on CA.Reference = T1.Reference  ");
 		selectSql.append(" Where CA.CollateralRef =:CollateralRef ");

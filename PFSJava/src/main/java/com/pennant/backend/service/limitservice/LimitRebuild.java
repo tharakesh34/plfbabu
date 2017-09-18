@@ -8,7 +8,7 @@ public interface LimitRebuild {
 	 * @param custID
 	 * @throws DatatypeConfigurationException
 	 */
-	void processCustomerRebuild(long custID) throws DatatypeConfigurationException;
+	void processCustomerRebuild(long custID,boolean rebuildOnStrChg);
 
 	/**
 	 * @param custGroupID

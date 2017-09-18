@@ -7,7 +7,9 @@ public class TrailBalance implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long headerId;
-	private long rowNumber;
+	private long seqNo;
+	private String dimention;
+	private int id;
 	private long link;
 	private BigDecimal transactionAmount = BigDecimal.ZERO;
 	private String transactionAmountType;
@@ -29,6 +31,7 @@ public class TrailBalance implements Serializable {
 	private BigDecimal debitAmount = BigDecimal.ZERO;
 	private String countryCode;
 	private String stateCode;
+	private String entity;
 
 	public long getHeaderId() {
 		return headerId;
@@ -37,13 +40,13 @@ public class TrailBalance implements Serializable {
 	public void setHeaderId(long headerId) {
 		this.headerId = headerId;
 	}
-
-	public long getRowNumber() {
-		return rowNumber;
+	
+	public String getDimention() {
+		return dimention;
 	}
 
-	public void setRowNumber(long rowNumber) {
-		this.rowNumber = rowNumber;
+	public void setDimention(String dimention) {
+		this.dimention = dimention;
 	}
 
 	public long getLink() {
@@ -212,6 +215,30 @@ public class TrailBalance implements Serializable {
 
 	public void setBusinessUnit(String businessUnit) {
 		this.businessUnit = businessUnit;
+	}
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public long getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(long seqNo) {
+		this.seqNo = seqNo;
 	}
 
 }

@@ -1557,7 +1557,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 	@Override
 	protected String getReference() {
-		return this.limitStructureCode.getValue();
+		return String.valueOf(getLimitHeader().getHeaderId());
 	}
 
 	// ******************************************************//

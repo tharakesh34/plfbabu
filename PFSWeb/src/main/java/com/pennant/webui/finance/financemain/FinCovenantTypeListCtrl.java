@@ -386,6 +386,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		map.put("roleCode", roleCode);
 		map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 		map.put("allowedRoles", allowedRoles);
+		map.put("financeDetail", getFinancedetail());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -417,6 +418,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				map.put("roleCode", roleCode);
 				map.put("enqModule", isEnquiry);
 				map.put("allowedRoles", allowedRoles);
+				map.put("financeDetail", getFinancedetail());
 
 				// call the ZUL-file with the parameters packed in a map
 				try {

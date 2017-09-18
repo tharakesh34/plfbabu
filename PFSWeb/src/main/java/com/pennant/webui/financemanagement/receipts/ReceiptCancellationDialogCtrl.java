@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.financemanagement.receipts;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -233,7 +232,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			super.pageRightName = "ReceiptBounceDialog";
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.pageRightName = "ReceiptCancellationDialog";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.pageRightName = "ReceiptCancellationDialog";
 		}
 	}
@@ -276,7 +275,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_ReceiptCancellationDialog.title"));
-			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				super.pageRightName = "ReceiptCancellationDialog";
 				this.windowTitle.setValue(Labels.getLabel("window_FeeReceiptCancellationDialog.title"));
 				this.repaymentDetailsTab.setVisible(false);
@@ -553,18 +552,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if(!recReject){
 			doSetValidation();
 		}
-		try {
-			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
-			} else {
-				aReceiptHeader.setBounceDate(null);
-			}
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-
+		
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
+			
+			try {
+				aReceiptHeader.setBounceDate(this.bounceDate.getValue());
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
 
 			// Bounce Details capturing
 			ManualAdvise bounce = aReceiptHeader.getManualAdvise();
@@ -700,6 +697,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 				if (rule != null) {
+					executeMap.put("br_finType", getReceiptHeader().getFinType());
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
 							getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
 					// unFormating BounceAmt
@@ -749,6 +747,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bounceCode.setErrorMessage("");
 		this.bounceRemarks.setErrorMessage("");
 		this.cancelReason.setErrorMessage("");
+		this.bounceDate.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1509,9 +1508,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			logger.error("Exception: ", e);
-		}
+		} 
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");

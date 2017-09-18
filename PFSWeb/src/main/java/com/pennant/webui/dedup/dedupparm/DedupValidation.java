@@ -51,11 +51,13 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.NorkamCheckService;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.webui.util.MessageUtil;
@@ -139,15 +141,18 @@ public class DedupValidation implements Serializable {
 		String corebank = details.getCustomer().getCustCoreBank();
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
-		if (StringUtils.isBlank(corebank)) {
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("POSIDEX_DEDUP_REQD"))) {
+			if (StringUtils.isBlank(corebank)) {
+				details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, finType, ref, details, window,
+						curLoginUser);
 
-			details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role,finType, ref, details, window, curLoginUser);
-
-			if (details.getCustomer().isDedupFound() && !details.getCustomer().isSkipDedup()) {
-				return false;
-			} else {
-				return true;
+				if (details.getCustomer().isDedupFound() && !details.getCustomer().isSkipDedup()) {
+					return false;
+				} else {
+					return true;
+				}
 			}
+
 		}
 		logger.debug("Leaving");
 		return true;

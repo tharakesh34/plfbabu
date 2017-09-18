@@ -58,5 +58,7 @@ public interface FeePostingsDAO {
 	void delete(FeePostings feePostings, String type);
 
 	 void save(FeePostings feePostings, String type);
+	 
+	 int getAssignedPartnerBankCount(long partnerBankId, String type);
 	
 }

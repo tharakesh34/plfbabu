@@ -110,6 +110,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private String 	serviceReqNo;
 	private String	remarks;
+	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
 
 	// Bean validation purpose
 	@SuppressWarnings("unused")
@@ -528,6 +529,14 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	}
 	public void setGrcCpzFrq(String grcCpzFrq) {
 		this.grcCpzFrq = grcCpzFrq;
+	}
+
+	public BigDecimal getRemPartPayAmt() {
+		return remPartPayAmt;
+	}
+
+	public void setRemPartPayAmt(BigDecimal remPartPayAmt) {
+		this.remPartPayAmt = remPartPayAmt;
 	}
 	
 }

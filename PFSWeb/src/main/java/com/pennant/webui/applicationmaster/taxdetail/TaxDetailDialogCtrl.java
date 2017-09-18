@@ -66,6 +66,7 @@ import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -317,6 +318,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				} else {
 					this.taxCode.setValue(taxStateCode);
 				}
+				this.country.setValue(province.getCPCountry(),province.getLovDescCPCountryName());
 			}else{
 				if (taxCodeValue.length() > 10) {
 					String suffix = taxCodeValue.substring(2);
@@ -340,6 +342,62 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		fillCitydetails(pcProvince);
 		
 		logger.debug("Leaving" + event.toString());
+	}
+	
+	public void onFulfill$country(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = country.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			this.stateCode.setValue("");
+			this.stateCode.setDescription("");
+			this.cityCode.setValue("");
+			this.cityCode.setDescription("");
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			fillPindetails(null, null);
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject; 
+			if (country == null) {
+				fillProvinceDetails(null);
+			}
+			if (country != null) {
+				this.stateCode.setErrorMessage("");
+				pcProvince =country.getCountryCode();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.stateCode.setObject("");
+				this.cityCode.setObject("");
+				this.pinCode.setObject("");
+				this.stateCode.setValue("");
+				this.stateCode.setDescription("");
+				this.cityCode.setValue("");
+				this.cityCode.setDescription("");
+				this.pinCode.setValue("");
+				this.pinCode.setDescription("");
+				this.taxCode.setValue("");
+			}
+			fillPindetails(null, null);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	private void fillProvinceDetails(String country){
+		this.stateCode.setMandatoryStyle(true);
+		this.stateCode.setModuleName("Province");
+		this.stateCode.setValueColumn("CPProvince");
+		this.stateCode.setDescColumn("CPProvinceName");
+		this.stateCode.setValidateColumns(new String[] { "CPProvince" });
+		
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null || country.equals("")) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.stateCode.setFilters(filters1);
 	}
 
 	private void fillCitydetails(String state) {
@@ -390,6 +448,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				cityValue = this.cityCode.getValue();
 				String taxCodeValue = this.taxCode.getValue();
 				String citytaxStateCode = city.getTaxStateCode() == null ? "" : city.getTaxStateCode();
+				this.country.setValue(city.getPCCountry(),city.getLovDescPCCountryName());
 				if (taxCodeValue.length() == 10) {
 					this.taxCode.setValue(citytaxStateCode + taxCodeValue);
 				}else if (taxCodeValue.length() > 10) {
@@ -449,6 +508,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				this.cityCode.setDescription(pinCode.getPCCityName());
 				this.stateCode.setValue(pinCode.getPCProvince());
 				this.stateCode.setDescription(pinCode.getLovDescPCProvinceName());
+				this.country.setValue(pinCode.getpCCountry(),pinCode.getLovDescPCCountryName());
 				
 				this.cityCode.setErrorMessage("");
 				this.stateCode.setErrorMessage("");

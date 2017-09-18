@@ -43,6 +43,7 @@
 package com.pennant.backend.service.financemanagement.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -209,8 +210,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		boolean isEmptyRecords = false;
 		Map<Date, Long> map = new HashMap<Date, Long>();
 		long presentmentId = 0;
+		ResultSet rs = null;
+		List<Object> resultList = null;
 		try {
-			ResultSet rs = presentmentHeaderDAO.getPresentmentDetails(header);
+			resultList = presentmentHeaderDAO.getPresentmentDetails(header);
+			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
 
 				PresentmentDetail pDetail = new PresentmentDetail();
@@ -289,6 +293,14 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			PreparedStatement stmt = (PreparedStatement) resultList.get(1);
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 		return PennantJavaUtil.getLabel("label_PresentmentExtractedMessage");
@@ -322,7 +334,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 		BigDecimal emiInAdvanceAmt;
 		String finReference = presentmentDetail.getFinReference();
-
+		
 		// Mandate Rejected
 		if (MandateConstants.STATUS_REJECTED.equals(presentmentDetail.getMandateStatus())) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_REJECTED);
@@ -340,29 +352,29 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_HOLD);
 			return;
 		}
+		
+		boolean isECSMandate = MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType());
+		if(!isECSMandate){
+			if (!MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+				return;
+			}
 
-		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
-				&& !MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-			return;
+			// Mandate Not Approved
+		/*	if ( !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
+					|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus()))
+					|| (MandateConstants.STATUS_NEW.equals(presentmentDetail.getMandateStatus())))) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
+				return;
+			}*/
+
+			// Mandate Expired
+			if (presentmentDetail.getMandateExpiryDate() != null && DateUtility.compare(presentmentDetail.getDefSchdDate(),
+					presentmentDetail.getMandateExpiryDate()) > 0) {
+				presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
+				return;
+			}
 		}
-
-		// Mandate Not Approved
-		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
-				&& !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
-						|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus()))
-						|| (MandateConstants.STATUS_NEW.equals(presentmentDetail.getMandateStatus())))) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
-			return;
-		}
-
-		// Mandate Expired
-		if (presentmentDetail.getMandateExpiryDate() != null && DateUtility.compare(presentmentDetail.getDefSchdDate(),
-				presentmentDetail.getMandateExpiryDate()) > 0) {
-			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
-			return;
-		}
-
 		// EMI IN ADVANCE
 		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
@@ -473,7 +485,19 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			for (PresentmentDetail detail : detailList) {
 				if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
 					try {
-						long receiptId = doCreateReceipts(detail, userDetails, header);
+						AuditHeader auditHeader = doCreateReceipts(detail, userDetails, header);
+
+						FinReceiptData finReceipt = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+						long receiptId = finReceipt.getReceiptHeader().getReceiptID();
+						if (receiptId == 0 || receiptId == Long.MIN_VALUE) {
+							if (!auditHeader.isNextProcess()) {
+								String errMsg = getErrorMsg(auditHeader);
+								throw new Exception(errMsg);
+							} else {
+								throw new Exception(PennantJavaUtil.getLabel("label_FinReceiptHeader_Not_Created"));
+							}
+						}
+
 						presentmentHeaderDAO.updateReceptId(detail.getId(), receiptId);
 						idList.add(detail.getId());
 					} catch (Exception e) {
@@ -498,7 +522,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 	// Creating the receipts If Schedule data is lessthan or equal to Application date.
-	private long doCreateReceipts(PresentmentDetail detail, LoggedInUser userDetails, PresentmentHeader header) throws Exception {
+	private AuditHeader doCreateReceipts(PresentmentDetail detail, LoggedInUser userDetails, PresentmentHeader header) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -545,7 +569,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			receiptHeader.getReceiptDetails().add(finReceiptDetail);
 
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			Date receivedDate = DateUtility.getDBDate(DateUtility.formatDate(detail.getSchDate(), PennantConstants.DBDateFormat));
 
 			finReceiptData.setReceiptHeader(receiptHeader);
 			finReceiptData.setFinanceDetail(financeDetail);
@@ -554,19 +577,40 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 			// calculate allocations
 			Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(
-					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), receivedDate, receiptHeader.getReceiptPurpose(), true);
+					financeDetail.getFinScheduleData(), detail.getPresentmentAmt(), detail.getSchDate(), receiptHeader.getReceiptPurpose(), true);
 			finReceiptData.setAllocationMap(allocationMap);
 
 			finReceiptData = receiptService.calculateRepayments(finReceiptData, true);
 			AuditHeader auditHeader = getAuditHeader(finReceiptData, PennantConstants.TRAN_WF);
 			auditHeader = receiptService.doApprove(auditHeader);
-			FinReceiptData finReceipt = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			logger.debug(Literal.LEAVING);
-			return finReceipt.getReceiptHeader().getReceiptID();
+			
+			return auditHeader;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
+	}
+
+	private String getErrorMsg(AuditHeader auditHeader) {
+		String msg = "";
+		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+			for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+
+		if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+			for (ErrorDetails errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+				return msg = msg.concat(errorDetail.getError());
+			}
+		}
+		return msg;
 	}
 
 	private AuditHeader getAuditHeader(FinReceiptData repayData, String tranType) {

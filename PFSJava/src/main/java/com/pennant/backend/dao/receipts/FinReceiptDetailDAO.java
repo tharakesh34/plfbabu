@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.receipts;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -13,5 +14,6 @@ public interface FinReceiptDetailDAO {
 	void updateReceiptStatus(long receiptID, long receiptSeqID, String status);
 	int getReceiptHeaderByBank(String bankCode, String type);
 	List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference);
+	Date getMaxReceivedDateByReference(String finReference);
 
 }

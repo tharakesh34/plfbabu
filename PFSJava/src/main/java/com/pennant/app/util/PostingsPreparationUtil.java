@@ -33,21 +33,6 @@
  */
 package com.pennant.app.util;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.security.auth.login.AccountNotFoundException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -63,9 +48,19 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.coreinterface.model.FinanceCancellation;
-import com.pennant.coreinterface.process.FinanceCancellationProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import javax.security.auth.login.AccountNotFoundException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 /**
  * @author chaitanya.ch
@@ -85,7 +80,7 @@ public class PostingsPreparationUtil implements Serializable {
 	private AccountProcessUtil			accountProcessUtil;
 	private CommitmentDAO				commitmentDAO;
 	private CommitmentMovementDAO		commitmentMovementDAO;
-	private FinanceCancellationProcess	financeCancellationProcess;
+	//private FinanceCancellationProcess	financeCancellationProcess;
 	private FinanceTypeDAO				financeTypeDAO;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
 
@@ -396,7 +391,7 @@ public class PostingsPreparationUtil implements Serializable {
 		String errorMsg = null;
 
 		List<Object> returnList = new ArrayList<Object>();
-		try {
+		/*try {
 			// Call To Finance Disbursement Cancellation posting  interface 
 			List<FinanceCancellation> list = getFinanceCancellationProcess().fetchCancelledFinancePostings(
 					finReference, linkedTranId);
@@ -421,7 +416,7 @@ public class PostingsPreparationUtil implements Serializable {
 		returnList.add(postingSuccess);
 		returnList.add(errorMsg);
 
-		logger.debug("Leaving");
+		logger.debug("Leaving");*/
 		return returnList;
 	}
 
@@ -430,7 +425,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * IN PostingsPreparationUtil.java
 	 * 
 	 * @param financeCancellations
-	 */
+	 *//*
 	private void updateCancelledPosting(List<FinanceCancellation> financeCancellations) {
 		logger.debug("Entering");
 
@@ -455,7 +450,7 @@ public class PostingsPreparationUtil implements Serializable {
 			getPostingsDAO().updateBatch(returnDataSets, "");
 		}
 		logger.debug("Leaving");
-	}
+	}*/
 
 	/**
 	 * Method to prepare accounting entries for FinancePostings
@@ -590,11 +585,7 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setAccount(jvPostingEntry.getAccount());
 			returnDataSet.setAcCcy(jvPostingEntry.getAccCCy());
 			returnDataSet.setAccountType(jvPostingEntry.getAcType());
-			if (jvPostingEntry.getTxnAmount_Ac().compareTo(BigDecimal.ZERO) < 0) {
-				returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount_Ac().multiply(new BigDecimal(-1)));
-			} else {
-				returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount_Ac());
-			}
+			returnDataSet.setPostAmount(jvPostingEntry.getTxnAmount());
 			returnDataSet.setTranOrderId(String.valueOf(jvPostingEntry.getAcEntryRef()));
 			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
 					SysParamUtil.getAppCurrency(), returnDataSet.getPostAmount()));
@@ -730,7 +721,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference)  {
 		logger.debug("Entering");
 		
 		
@@ -800,11 +791,11 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
 		logger.debug("Entering");
 		
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
-		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference);
+		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference, false);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 
@@ -866,13 +857,13 @@ public class PostingsPreparationUtil implements Serializable {
 		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
-	public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
+	/*public void setFinanceCancellationProcess(FinanceCancellationProcess financeCancellationProcess) {
 		this.financeCancellationProcess = financeCancellationProcess;
 	}
 
 	public FinanceCancellationProcess getFinanceCancellationProcess() {
 		return financeCancellationProcess;
-	}
+	}*/
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;

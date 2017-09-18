@@ -445,18 +445,10 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 		if(phoneType != null){
 			String regex=phoneType.getPhoneTypeRegex();
 			if(regex!=null){			
-				String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
-				int mobilelength=Integer.parseInt(length);
-				if(customerPhoneNumber.getPhoneNumber().length()!=mobilelength){
-					String[] valueParm = new String[2];
-					valueParm[0] = "PhoneNumber";
-					valueParm[1] = String.valueOf(mobilelength) + " characters";;	
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;	
-				}
 				if (!(mobileNumber.matches(regex))){
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+					String[] valueParm = new String[2];
+					valueParm[0] = regex;
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90346", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;	
 				}

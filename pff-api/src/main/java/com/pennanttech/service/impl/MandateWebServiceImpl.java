@@ -470,11 +470,13 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		//validate AccNumber length
 		if (StringUtils.isNotBlank(mandate.getBankCode())) {
 			int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-			if (mandate.getAccNumber().length() != accNoLength) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "AccountNumber";
-				valueParm[1] = String.valueOf(accNoLength) + " characters";
-				return getErrorDetails("30570", valueParm);
+			if (accNoLength != 0) {
+				if (mandate.getAccNumber().length() != accNoLength) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AccountNumber";
+					valueParm[1] = String.valueOf(accNoLength) + " characters";
+					return getErrorDetails("30570", valueParm);
+				}
 			}
 		}
 		if (!mandate.isOpenMandate()) {

@@ -361,7 +361,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "employment endDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpTo(), 
 							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}	
 				if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 ||
@@ -392,7 +392,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 								PennantConstants.XMLDateFormat);
 						valueParm[1] = "Cust DOB:"+ DateUtility.formatDate(customer.getCustDOB(), 
 								PennantConstants.XMLDateFormat);
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
 			}

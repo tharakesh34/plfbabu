@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.financemanagement;
 
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	long getSeqNumber(String tableName);
 
-	ResultSet getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
+	 List<Object> getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
@@ -88,5 +87,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId, String errorDesc);
 
 	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
+	
+	int getAssignedPartnerBankCount(long partnerBankId, String type);
 
 }

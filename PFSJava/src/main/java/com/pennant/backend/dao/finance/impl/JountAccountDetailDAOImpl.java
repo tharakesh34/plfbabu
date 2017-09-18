@@ -532,4 +532,34 @@ public class JountAccountDetailDAOImpl extends BasisNextidDaoImpl<JointAccountDe
 		return exposure;
 	}
 	
+	 public JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type) {
+			logger.debug("Entering");
+			JointAccountDetail jountAccountDetail = new JointAccountDetail();
+			
+			jountAccountDetail.setFinReference(finReference);
+			jountAccountDetail.setCustCIF(custCIF);
+			
+			StringBuilder selectSql = new StringBuilder("Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId");
+			selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+			if(StringUtils.trimToEmpty(type).contains("View")){
+				selectSql.append(",LovDescCIFName, custID ");
+			}
+			selectSql.append(" From FinJointAccountDetails");
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" Where FinReference = :FinReference and CustCIF = :CustCIF ");
+			
+			logger.debug("selectSql: " + selectSql.toString());
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+			RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JointAccountDetail.class);
+			
+			try{
+				jountAccountDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+			}catch (EmptyResultDataAccessException e) {
+				logger.warn("Exception: ", e);
+				jountAccountDetail = null;
+			}
+			logger.debug("Leaving");
+			return jountAccountDetail;
+		}
+	
 }

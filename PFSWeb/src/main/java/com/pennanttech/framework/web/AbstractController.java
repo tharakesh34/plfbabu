@@ -1,8 +1,6 @@
 package com.pennanttech.framework.web;
 
-import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -438,7 +435,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+			throws FactoryConfigurationError {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 
@@ -449,7 +446,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID, String roleCode)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+			throws FactoryConfigurationError {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 
@@ -460,7 +457,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 	}
 
-	public void doLoadWorkFlow(String nextTaskID) throws FileNotFoundException, XMLStreamException {
+	public void doLoadWorkFlow(String nextTaskID) {
 
 		// set the Role
 		boolean firstTaskOwner;
@@ -532,9 +529,9 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		String sequences = "";
 
 		if (this.role.equals(this.workFlow.allFirstTaskOwners())) {
-			sequences = workFlow.getUserActions(workFlow.firstTaskId());
+			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId());
 		} else {
-			sequences = workFlow.getUserActions(getTaskId(getRole()));
+			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()));
 		}
 
 		String[] list = sequences.split("/");
@@ -1210,7 +1207,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	protected String getServiceOperations(String taskId, Object object) {
-		String result = workFlow.getServiceOperations(taskId, object);
+		String result = workFlow.getServiceOperationsAsString(taskId, object);
 		if (StringUtils.isNotBlank(result)) {
 			result += ";";
 		}
@@ -1219,7 +1216,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	}
 
 	protected String getNextTaskIds(String taskId, Object object) {
-		String result = workFlow.getNextTaskIds(taskId, object);
+		String result = workFlow.getNextUserTaskIdsAsString(taskId, object);
 		if (StringUtils.isNotBlank(result)) {
 			result += ";";
 		}
@@ -1227,8 +1224,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		return result;
 	}
 
-	// TODO: Sai to re-factor based on the changes in the workflow engine.
 	protected boolean isNotesMandatory(String taskId, Object object) {
-		return workFlow.getAuditingReq(taskId, object);
+		return workFlow.isNotesMandatory(taskId, object);
 	}
 }

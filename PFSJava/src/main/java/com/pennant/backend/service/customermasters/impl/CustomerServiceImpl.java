@@ -46,16 +46,19 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -63,12 +66,15 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 
 /**
  * Service implementation for methods that depends on <b>Customer</b>.<br>
@@ -83,6 +89,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 	private CustomerDAO customerDAO;
 	private IncomeTypeDAO incomeTypeDAO;
 	private CustomerEmploymentDetailDAO customerEmploymentDetailDAO;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
+
 
 	public CustomerServiceImpl() {
 		super();
@@ -260,9 +269,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			return auditHeader;
 		}
 
-		Customer customer = new Customer();
-		BeanUtils.copyProperties((Customer) auditHeader.getAuditDetail()
-				.getModelData(), customer);
+		Customer customer = (Customer) auditHeader.getAuditDetail().getModelData();
+		/*BeanUtils.copyProperties((Customer) auditHeader.getAuditDetail()
+				.getModelData(), customer);*/
 
 		if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -284,18 +293,23 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 				getCustomerDAO().update(customer, "");
 			}
 		}
+		if (auditHeader.getApiHeader() == null) {
+			getCustomerDAO().delete(customer, "_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			getAuditHeaderDAO().addAudit(auditHeader);
+		}
 
-		getCustomerDAO().delete(customer, "_Temp");
-
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		/*auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(),"proceedToDedup,dedupFound,skipDedup");
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);*/
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,fields[0],fields[1], customer.getBefImage(), customer));
+		auditHeader.getAuditDetail().setModelData(customer);
+
 		getAuditHeaderDAO().addAudit(auditHeader);
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -543,13 +557,6 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 			}
 		}
 
-		Customer customer = customerDetails.getCustomer();
-		customer.setCustCtgCode(customerDetails.getCustCtgCode());
-		customer.setCustDftBranch(customerDetails.getCustDftBranch());
-		customer.setCustCoreBank(customerDetails.getCustCoreBank());
-		customer.setCustBaseCcy(customerDetails.getCustBaseCcy());
-		customer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
-		customer.setCustID(customerDetails.getCustID());
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
@@ -651,6 +658,34 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		if (StringUtils.isNotBlank(customer.getCustEmpSts()))
 			auditDetail.setErrorDetail(validateMasterCode("BMTEmpStsCodes", "EmpStsCode", customer.getCustEmpSts()));
+		
+		if (StringUtils.isNotBlank(customer.getCustDSADept())){
+			auditDetail.setErrorDetail(validateMasterCode("Department", customer.getCustDSADept()));
+		}
+		if (customer.getCustGroupID()>0){
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
+		}
+		
+		if (StringUtils.isNotBlank(customer.getCustDSA())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustDSA());
+			if (matcher.matches() == false) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "saleAgent";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+			}
+		}
+		if (StringUtils.isNotBlank(customer.getCustStaffID())){
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+					PennantRegularExpressions.REGEX_ALPHANUM));
+			Matcher matcher = pattern.matcher(customer.getCustStaffID());
+			if (matcher.matches() == false) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "staffID";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN"));
+			}
+		}
 
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			String[] valueParm = new String[3];
@@ -663,21 +698,71 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 		}
 		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO.
 										getCustomerEmploymentDetailsByID(customer.getCustID(), "");
-		for (CustomerEmploymentDetail custEmpDetails : customerEmploymentDetailList) {
-			if(custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())){
-				String[] valueParm = new String[2];
-				valueParm[0] = "employment startDate:"+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), 
-						PennantConstants.XMLDateFormat);
-				valueParm[1] = "Cust DOB:"+ DateUtility.formatDate(customer.getCustDOB(), 
-						PennantConstants.XMLDateFormat);
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
+		if (customerEmploymentDetailList != null) {
+			for (CustomerEmploymentDetail custEmpDetails : customerEmploymentDetailList) {
+				if (custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "employment startDate:"
+							+ DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+					valueParm[1] = "Cust DOB:"
+							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+			}
+		}
+		List<CustomerDocument> customerDocumentList = customerDocumentDAO.getCustomerDocumentByCustomerId(customer.getCustID());
+		if (customerDocumentList != null) {
+			for (CustomerDocument custDocDetails : customerDocumentList) {
+				if (custDocDetails.getCustDocIssuedOn() != null){
+				if (custDocDetails.getCustDocIssuedOn().before(customer.getCustDOB())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CustDocIssuedOn:" + DateUtility.formatDate(custDocDetails.getCustDocIssuedOn(),
+							PennantConstants.XMLDateFormat);
+					valueParm[1] = "Cust DOB:"
+							+ DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
 
+	/**
+	 * Validate code or Id value with available masters in system.
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param value
+	 * 
+	 * @return WSReturnStatus
+	 */
+	private ErrorDetails validateMasterCode(String moduleName,String fieldValue) {
+		logger.debug("Entering");
+
+		ErrorDetails errorDetail = new ErrorDetails();
+		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
+		if(moduleMapping != null) {
+			String[] lovFields = moduleMapping.getLovFields();
+			String[][] filters = moduleMapping.getLovFilters();
+			int count=0;
+			if(filters !=null){
+			 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
+			} 
+			if(count <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = lovFields[0];
+				valueParm[1] = fieldValue;
+				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
+			}
+		}
+
+		logger.debug("Leaving");
+		return errorDetail;
+	}
 	/**
 	 * Validate code or Id value with available masters in system.
 	 * 
@@ -703,5 +788,11 @@ public class CustomerServiceImpl extends GenericService<Customer> implements
 
 		logger.debug("Leaving");
 		return errorDetail;
+	}
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
 	}
 }

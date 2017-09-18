@@ -425,6 +425,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 				setFinTypeFeesServicingList(finTypeFees);
 				this.listBoxFinTypeFeesListServicing.getItems().clear();
 				String listGroupEvent = "";
+				
 				Listgroup group;
 				Listcell lc;
 				for (FinTypeFees finTypeFee : finTypeFees) {

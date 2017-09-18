@@ -82,7 +82,7 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 		lc.setParent(item);
 	  	lc = new Listcell(String.valueOf(vASRecording.getFee()));
 		lc.setParent(item);
-		lc = new Listcell(vASRecording.getFeePaymentMode());
+		lc = new Listcell(PennantAppUtil.getlabelDesc(vASRecording.getFeePaymentMode(), PennantStaticListUtil.getFeeTypes()));
 	  	lc.setParent(item);
 	  	lc = new Listcell(DateUtility.formatDate(vASRecording.getValueDate(), PennantConstants.dateFormat));
 	  	lc.setParent(item);

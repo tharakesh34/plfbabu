@@ -77,9 +77,9 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		String sequences = "";
 
 		if (this.role.equals(getFirstTaskOwner())) {
-			sequences = workFlow.getUserActions(workFlow.firstTaskId());
+			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId());
 		} else {
-			sequences = workFlow.getUserActions(getTaskId(getRole()));
+			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()));
 		}
 
 		String[] list = sequences.split("/");

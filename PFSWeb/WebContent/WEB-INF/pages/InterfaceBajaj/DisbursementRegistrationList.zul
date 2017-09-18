@@ -17,19 +17,13 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						style="border-style: none;">
-						<button id="button_Search"
-							label="${c:l('label_Filter')}"
-							autodisable="button_Search,print,btnRefresh,help"
+						<button id="button_Search" label="${c:l('label_Filter')}" autodisable="button_Search,btnDownload,print,btnRefresh,help"
 							tooltiptext="${c:l('button_Search.tooltiptext')}" />
-						<button id="btnDownload"
-							label="${c:l('label_DisbursementList_btndownload.value')}" />
+						<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnRefresh" height="24px"
-							label="${c:l('label_Refresh')}"
-							autodisable="button_Search,print,btnRefresh,help"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnRefresh" height="24px" label="${c:l('label_Refresh')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -54,11 +48,10 @@
 									<listbox id="sortOperator_DisbType"
 										width="43px" mold="select" rows="1" />
 									<hbox>
-										<space spacing="2px"></space>
+										<space spacing="3px"></space>
 										<combobox id="disbTypes"
 											width="171px" />
 									</hbox>
-
 									<label
 										value="${c:l('label_DisbursementList_PartnerBank.value')}" />
 									<listbox
@@ -66,15 +59,59 @@
 										rows="1" />
 									<extendedcombobox id="partnerBank" />
 								</row>
-
+								<row>
+									<label
+										value="${c:l('label_DisbursementList_LoanType.value')}" />
+									<listbox id="sortOperator_FinType"
+										width="43px" mold="select" rows="1" />
+									<hbox>
+										<hlayout>
+											<space id="space_finType"
+												spacing="1px">
+											</space>
+											<cell colspan="1">
+												<uppercasebox
+													id="finType" width="132px" />
+												<button
+													id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
+											</cell>
+										</hlayout>
+									</hbox>
+									<label
+										value="${c:l('label_DisbursementList_Branch.value')}" />
+									<listbox id="sortOperator_Branch"
+										width="43px" mold="select" rows="1" />
+									<extendedcombobox id="branch"
+										width="125px" />
+								</row>
+								<row>
+									<label
+										value="${c:l('label_DisbursementList_FinRef.value')}" />
+									<listbox id="sortOperator_FinRef"
+										width="43px" mold="select" rows="1" />
+									<hbox>
+										<space spacing="3px"></space>
+										<textbox id="finRef"
+											width="171px" />
+									</hbox>
+									<label
+										value="${c:l('listheader_Disbursement_Channel.label')}" />
+									<listbox id="sortOperator_Channel"
+										width="43px" mold="select" rows="1" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="channelTypes"
+											width="171px" />
+									</hbox>
+								</row>
 								<row>
 									<label
 										value="${c:l('label_Disbursement_FromDate.value')}" />
 									<listbox id="sortOperator_FromDate"
 										width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
-										<space spacing="2px"></space>
-										<datebox id="fromDate"
+										<space spacing="3px"></space>
+										<datebox id="fromDate" format="dd/MM/yyyy"
 											width="171px" />
 									</hbox>
 									<label
@@ -83,36 +120,18 @@
 										width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
 										<space spacing="2px"></space>
-										<datebox id="toDate"
+										<datebox id="toDate" format="dd/MM/yyyy"
 											width="171px" />
 									</hbox>
 								</row>
-
 								<row>
 									<label
-										value="${c:l('label_DisbursementList_LoanType.value')}" />
-									<listbox id="sortOperator_FinType"
-										width="43px" mold="select" rows="1" />
-									<extendedcombobox id="finType" />
-
-									<label
-										value="${c:l('label_DisbursementList_Branch.value')}" />
-									<listbox id="sortOperator_Branch"
-										width="43px" mold="select" rows="1" />
-									<extendedcombobox id="branch"
-										width="125px" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_DisbursementList_QDP.value')}" />
-									<checkbox id="qdp" width="171px" />
-									<label></label>
-									
-									<label value="${c:l('listheader_Disbursement_Channel.label')}" />
-									<listbox id="sortOperator_Channel" width="43px" mold="select" rows="1" />
+										value="${c:l('label_DisbursementList_QDP.value')}" />
+									<listbox id="sortOperator_QDP"
+										width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
-										<space spacing="2px"/>
-										<combobox id="channelTypes" width="171px" />
+										<space spacing="2px"></space>	
+									<checkbox id="qdp" width="171px" />
 									</hbox>
 								</row>
 							</rows>

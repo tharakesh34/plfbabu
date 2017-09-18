@@ -249,6 +249,23 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from ManualAdvise");
+		sql.append(tableType.getSuffix());
+		sql.append(" where adviseID = :adviseID ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
@@ -688,5 +705,31 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		return schDate;
 	}
 	
+	/**
+	 * Method for Fetch All Bounce ID List using Reference
+	 */
+	@Override
+	public List<Long> getBounceAdvisesListByRef(String finReference , int adviseType, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" Select AdviseId " );
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType AND BounceId > 0 ");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setAdviseType(adviseType);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+
+		List<Long> bounceIDList = namedParameterJdbcTemplate.queryForList(sql.toString(), paramSource, Long.class);
+		logger.debug(Literal.LEAVING);
+		return bounceIDList;
+	}	
 	
 }	

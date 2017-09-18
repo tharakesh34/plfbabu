@@ -27,11 +27,12 @@
 							<tabpanel id="tabpanel_basicDetails"
 								style="overflow:auto">
 								<listbox id="listBoxSchedule"
-									emptyMessage="${c:l('listbox.emptyMessage')}"  
-									width="99%" multiple="false">
-									<listhead sizable="false"
-										style="padding:0px;position:relative;">
-										<listheader width="1%" />
+										emptyMessage="${c:l('listbox.emptyMessage')}"
+										fixedLayout="true"   sizedByContent="true" span="true" width="100%"
+										height="100%" multiple="false">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+										<listheader hflex="min" />
 										<listheader
 											label="${c:l('listheader_ScheduleDate.label')}" hflex="min" />
 										<listheader

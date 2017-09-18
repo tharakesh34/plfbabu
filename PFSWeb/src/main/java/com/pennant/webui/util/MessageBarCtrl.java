@@ -42,12 +42,16 @@
  */
 package com.pennant.webui.util;
 
+import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
+import com.pennant.backend.service.messages.MessagesService;
+import com.pennant.core.EventManager;
+import com.pennanttech.pff.core.App;
 import java.util.List;
 import java.util.Properties;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -58,21 +62,12 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Style;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
-
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.LoggedInUser;
-import com.pennant.backend.model.administration.SecurityRole;
-import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
-import com.pennant.backend.service.messages.MessagesService;
-import com.pennant.core.EventManager;
-import com.pennanttech.pff.core.App;
 
 public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 	private static final long serialVersionUID = 5633232048842356789L;
@@ -175,18 +170,8 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 
 		// Version section
 		statusBarSections.appendChild(new Label(getAppVersion()));
-
-		// Status section
-		String hostStatusReq = SysParamUtil.getValueAsString("HOSTSTATUS_REQUIRED");
-
-		if ("Y".equals(hostStatusReq)) {
-			Image hostStatus = new Image("/images/Pennant/HostUp.png");
-			hostStatus.setTooltiptext(Labels.getLabel("label_HostStatus"));
-			statusBarSections.appendChild(hostStatus);
-		} else {
-			statusBarSections.appendChild(new Label(""));
-		}
-
+		statusBarSections.appendChild(new Label(""));
+		
 		// Show off-line messages at the time of login
 		StringBuilder builder = new StringBuilder();
 		List<OfflineUsersMessagesBackup> offlineMessages = messagesService

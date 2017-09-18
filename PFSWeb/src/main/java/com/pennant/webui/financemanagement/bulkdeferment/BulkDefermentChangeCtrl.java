@@ -140,7 +140,7 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 
 		doRemoveValidation();
 		doClearMessage();
-		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,");
+		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,STEPPOS,");
 
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);

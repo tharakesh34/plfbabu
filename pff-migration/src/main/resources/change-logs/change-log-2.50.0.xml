@@ -90,6 +90,21 @@
 		<renameColumn newColumnName="PFTAMZPD" oldColumnName="TDPFTAMORTIZEDPD"
 			tableName="FinPftDetails" />
 	</changeSet>
+	<changeSet id="13.0" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists customerfinances_iview;
+	    </sql>
+	</changeSet>
+		<changeSet id="13.01" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists int_cf_control_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="13.02" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists fincustinstdetails_iview;
+	    </sql>
+	</changeSet>
 	<changeSet id="13" author="Prasad">
 		<dropColumn columnName="ACRTILLNBD" tableName="FinPftDetails" />
 		<dropColumn columnName="ACRTODAYTONBD" tableName="FinPftDetails" />
@@ -1583,6 +1598,73 @@ FROM FinanceMain_AView T1 INNER JOIN
 			Fee','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	<changeSet id="67.0" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists partnerbanks_aview;
+	        drop view if exists partnerbanks_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.01" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtaccounttypes_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.02" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtaccounttypes_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.03" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtfinancetypes_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.041" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists lmtfinanceworkflowdef_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.042" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists financecreationaccess_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.043" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists systeminternalaccountdef_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.044" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists systeminternalaccountdef_aview
+	    </sql>
+	</changeSet>
+	<changeSet id="67.045" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rpt_emrassetagingoddtl_view;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.046" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmttransactionentry_view
+	    </sql>
+	</changeSet>
+	<changeSet id="67.047" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmttransactionentry_aview
+	    </sql>
+	</changeSet>
+	<changeSet id="67.04" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists rmtfinancetypes_aview;
+	    </sql>
+	</changeSet>
+	<changeSet id="67.05" author="Jayant" dbms="postgresql">
+	    <sql>
+	        drop view if exists accounts_view;
+	        drop view if exists accounts_aview;
+	    </sql>
+	</changeSet>
 	<changeSet id="67" author="Irfan">
 		<modifyDataType tableName="RMTACCOUNTTYPES" columnName="ACTYPE"
 			newDataType="varchar(15)" />
@@ -1765,7 +1847,7 @@ SELECT    StatusId, StatusCode, StatusDesc, Version, LastMntBy, LastMntOn, Recor
 FROM         FINANCESTATUSCODES
     </createView>
 	</changeSet>
-	<changeSet id="77" author="Surekha">
+	<changeSet id="77" author="Surekha" dbms="oracle">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
 			SECRIGHTS);
@@ -2113,6 +2195,75 @@ FROM         FINANCESTATUSCODES
 			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId)
 			FROM PTMenuDetails);
 
+		</sql>
+	</changeSet>
+	<changeSet id="77" author="Surekha" dbms="postgresql">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM	SECROLEGROUPS);
+UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups),'FINANCESTATUSCODES_NEW', 'Allow create new FINANCESTATUSCODES',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups),'FINANCESTATUSCODES_EDIT', 'Allow editing of FINANCESTATUSCODES',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups),'FINANCESTATUSCODES_DELETE','Allow deleting of FINANCESTATUSCODES',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups),	'FINANCESTATUSCODES_MAKER', 'WF Maker for	FINANCESTATUSCODES',	0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM	SeqSecGroups WHERE 0=0;	
+INSERT INTO SecGroups SELECT	(select (SeqNo+6) from SeqSecGroups),	'FinanceStatusCodes_VERIFIER',	'WF Verifier for FINANCESTATUSCODES',	0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM	SeqSecGroups WHERE 0=0;	
+INSERT INTO SecGroups SELECT (select (SeqNo+7)	from SeqSecGroups),	'FINANCESTATUSCODES_APPROVER', 'WF Approver for	FINANCESTATUSCODES',	0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM	SeqSecGroups WHERE 0=0;
+
+	
+INSERT INTO SecRights SELECT	(select (SeqNo+3) from	SeqSecRights),0,'menuItem_applicationmaster_FinanceStatusCodes','MENU',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+4) from	SeqSecRights),0,'menuItem_applicationmaster_FinanceStatusCodesEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+5) from	SeqSecRights),2,'button_FinanceStatusCodesList_PrintList','FinanceStatusCodesList',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+6) from	SeqSecRights),2,'button_FinanceStatusCodesList_NewFinanceStatusCodes','FinanceStatusCodesList',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+7) from	SeqSecRights),2,'button_FinanceStatusCodesDialog_btnNew','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+8) from	SeqSecRights),2,'button_FinanceStatusCodesDialog_btnEdit','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+9) from	SeqSecRights),2,'button_FinanceStatusCodesDialog_btnDelete','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+10) from	SeqSecRights),2,'button_FinanceStatusCodesDialog_btnSave','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+10+1) from	SeqSecRights),3,'FinanceStatusCodesDialog_StatusDesc','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;	
+INSERT INTO SecRights	SELECT (select (SeqNo+10+2) from	SeqSecRights),3,'FinanceStatusCodesDialog_StatusCode','FinanceStatusCodesDialog',0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+	-- for New	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+2) from	SeqSecGroupRights),	(select (SeqNo+2) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+3) from	SeqSecGroupRights),	(select (SeqNo+2) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+4) from	SeqSecGroupRights), (select (SeqNo+2)	from SeqSecGroups), (select	(SeqNo+6) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+5) from	SeqSecGroupRights), (select (SeqNo+2)	from SeqSecGroups), (select	(SeqNo+7) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+6) from	SeqSecGroupRights), (select (SeqNo+2)	from SeqSecGroups), (select	(SeqNo+10) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	-- For Edit	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+7) from	SeqSecGroupRights),	(select (SeqNo+3) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'	',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+8) from	SeqSecGroupRights),	(select (SeqNo+3) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+9) from	SeqSecGroupRights), (select (SeqNo+3)	from SeqSecGroups), (select	(SeqNo+8) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+10) from	SeqSecGroupRights), (select (SeqNo+3)	from SeqSecGroups), (select	(SeqNo+10) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	-- For Delete	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+11) from	SeqSecGroupRights),	(select (SeqNo+4) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'	',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+12) from	SeqSecGroupRights),	(select (SeqNo+4) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+13) from	SeqSecGroupRights), (select (SeqNo+4)	from SeqSecGroups), (select	(SeqNo+5) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+14) from	SeqSecGroupRights), (select (SeqNo+4)	from SeqSecGroups), (select	(SeqNo+9) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;
+	-- For _MAKER	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+15) from	SeqSecGroupRights),	(select (SeqNo+5) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'	',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+16) from	SeqSecGroupRights),	(select (SeqNo+5) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+17) from	SeqSecGroupRights), (select (SeqNo+5)	from SeqSecGroups), (select	(SeqNo+6) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+18) from	SeqSecGroupRights), (select (SeqNo+5)	from SeqSecGroups), (select	(SeqNo+9) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+19) from	SeqSecGroupRights), (select (SeqNo+5)	from SeqSecGroups), (select	(SeqNo+10) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+20) from	SeqSecGroupRights), (select (SeqNo+5)	from SeqSecGroups), (select	(SeqNo+10+1) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+20+1) from	SeqSecGroupRights), (select (SeqNo+5)	from SeqSecGroups), (select	(SeqNo+10+2) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;	-- For _Verifier	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+20+2) from	SeqSecGroupRights),	(select (SeqNo+6) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+20+3) from	SeqSecGroupRights),	(select (SeqNo+6) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+20+4) from	SeqSecGroupRights), (select (SeqNo+6)	from SeqSecGroups), (select	(SeqNo+10) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	-- For _Approver	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+20+5) from	SeqSecGroupRights),	(select (SeqNo+7) from SeqSecGroups), (select	max(RightID) from	SecRights WHERE	RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO	SecGroupRights SELECT (select (SeqNo+20+6) from	SeqSecGroupRights),	(select (SeqNo+7) from SeqSecGroups), (select	(SeqNo+3) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ','	',0 FROM SeqSecGroupRights WHERE 0=0;	
+INSERT INTO SecGroupRights	SELECT (select (SeqNo+20+7) from	SeqSecGroupRights), (select (SeqNo+7)	from SeqSecGroups), (select	(SeqNo+10) from	SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ','	',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	
+INSERT INTO SecRoleGroups	SELECT (select (SeqNo+1) from SeqSecRoleGroups),	(select grpid from	SecGroups where	GrpCode='FINANCESTATUSCODES_MAKER'), (select roleid	from SecRoles	where RoleCd='MSTGRP1_MAKER'),	0,1000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0 FROM	SeqSecRoleGroups WHERE 0=0;	
+INSERT INTO SecRoleGroups SELECT (select	(SeqNo+2) from SeqSecRoleGroups),	(select grpid from SecGroups where	GrpCode='FINANCESTATUSCODES_APPROVER'), (select roleid from SecRoles	where RoleCd='MSTGRP1_APPROVER'),	0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM	SeqSecRoleGroups WHERE 0=0;
+	
+INSERT INTO PTMenuDetails SELECT (select	(SeqNo+1) from	SeqPTMenuDetails),(SELECT AppID FROM	PTApplicationDetails WHERE	AppCode='PFF'),'FinanceStatusCodes','menu_Item_FinanceStatusCodes','/WEB-INF/pages/applicationmaster/FinanceStatusCodes/FinanceStatusCodesList.zul',0,10000,CURRENT_TIMESTAMP,'Approved','	',' ',' ',' ',' ',0,'menuItem_applicationmaster_FinanceStatusCodes'	FROM SeqPTMenuDetails WHERE 0=0;
+	UPDATE SEQSECRIGHTS SET SEQNO=	(SELECT MAX(RIGHTID) FROM SECRIGHTS);	
+	UPDATE SEQSECGROUPRIGHTS SET	SEQNO = (SELECT MAX(GRPRIGHTID) FROM	SECGROUPRIGHTS);	
+	UPDATE	SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);	
+	UPDATE	SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM	SECROLEGROUPS);	UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId)	FROM PTMenuDetails);
 		</sql>
 	</changeSet>
 	<changeSet id="80" author="Satish">
@@ -6286,7 +6437,7 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 	Update seqworkflowdetails Set SeqNo = (Select max(WorkFlowId) + 1 from WorkFlowDetails); 
 	</sql>
 	</changeSet>
-	<changeSet id="132" author="Surekha">
+	<changeSet id="132" author="Surekha" dbms="oracle">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
@@ -6372,7 +6523,93 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 						
 		</sql>
 	</changeSet>
-	<changeSet id="133" author="Surekha">
+	<changeSet id="132" author="Surekha" dbms="postgresql">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'NPABUCKETCONFIGURATION_NEW', 'Allow create new NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'NPABUCKETCONFIGURATION_EDIT', 'Allow editing of NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'NPABUCKETCONFIGURATION_DELETE', 'Allow deleting of NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'NPABUCKETCONFIGURATION_MAKER', 'WF Maker for NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'NPABUCKETCONFIGURATION_VERIFIER', 'WF Verifier for NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'NPABUCKETCONFIGURATION_APPROVER', 'WF Approver for NPABucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuItem_applicationmaster_NPABucketConfiguration','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuItem_applicationmaster_NPABucketConfigurationEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),2,'button_NPABucketConfigurationList_PrintList','NPABucketConfigurationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),2,'button_NPABucketConfigurationList_NewNPABucketConfiguration','NPABucketConfigurationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_NPABucketConfigurationDialog_btnNew','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_NPABucketConfigurationDialog_btnEdit','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_NPABucketConfigurationDialog_btnDelete','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_NPABucketConfigurationDialog_btnSave','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),3,'NPABucketConfigurationDialog_ConfigID','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),3,'NPABucketConfigurationDialog_ProductCode','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'NPABucketConfigurationDialog_BucketID','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'NPABucketConfigurationDialog_DueDays','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'NPABucketConfigurationDialog_SuspendProfit','NPABucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			-- for New
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Edit
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Delete
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _MAKER
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+21) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+22) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+23) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Verifier
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Approver
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+27) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+28) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+29) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='NPABUCKETCONFIGURATION_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='NPABUCKETCONFIGURATION_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'NPABucketConfiguration','menu_Item_NPABucketConfiguration','/WEB-INF/pages/applicationmaster/NPABucketConfiguration/NPABucketConfigurationList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_NPABucketConfiguration' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'NPABucketConfigurationEnquiry','menu_Item_NPABucketConfigurationEnquiry?enqiryModule=Y" ','/WEB-INF/pages/applicationmaster/NPABucketConfiguration/NPABucketConfigurationEnquiryList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_NPABucketConfiguration' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+						
+		</sql>
+	</changeSet>
+	<changeSet id="133" author="Surekha" dbms="oracle">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
@@ -6439,6 +6676,90 @@ FROM         FinODDetails OD LEFT OUTER JOIN
 			
 			-- For _Approver
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_applicationmaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+				
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='DPDBUCKETCONFIGURATION_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,'Approved','',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),(select grpid from SecGroups where GrpCode='DPDBUCKETCONFIGURATION_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'DPDBucketConfiguration','menu_Item_DPDBucketConfiguration','/WEB-INF/pages/applicationmaster/DPDBucketConfiguration/DPDBucketConfigurationList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_DPDBucketConfiguration' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'DPDBucketConfigurationEnquiry','menu_Item_DPDBucketConfigurationEnquiry?enqiryModule=Y" ','/WEB-INF/pages/applicationmaster/DPDBucketConfiguration/DPDBucketConfigurationEnquiryList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_applicationmaster_DPDBucketConfiguration' FROM SeqPTMenuDetails WHERE 0=0;
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+						
+		</sql>
+	</changeSet>
+	<changeSet id="133" author="Surekha" dbms="postgresql">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT MAX(menuId) FROM PTMenuDetails);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_NEW', 'Allow create new DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_EDIT', 'Allow editing of DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+4) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_DELETE', 'Allow deleting of DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+5) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_MAKER', 'WF Maker for DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+6) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_VERIFIER', 'WF Verifier for DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+7) from SeqSecGroups), 'DPDBUCKETCONFIGURATION_APPROVER', 'WF Approver for DPDBucketConfiguration', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_applicationmaster_DPDBucketConfiguration','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_applicationmaster_DPDBucketConfigurationEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_DPDBucketConfigurationList_PrintList','DPDBucketConfigurationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_DPDBucketConfigurationList_NewDPDBucketConfiguration','DPDBucketConfigurationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_DPDBucketConfigurationDialog_btnNew','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_DPDBucketConfigurationDialog_btnEdit','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_DPDBucketConfigurationDialog_btnDelete','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_DPDBucketConfigurationDialog_btnSave','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'DPDBucketConfigurationDialog_ConfigID','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'DPDBucketConfigurationDialog_ProductCode','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'DPDBucketConfigurationDialog_BucketID','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'DPDBucketConfigurationDialog_DueDays','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+5) from SeqSecRights),3,'DPDBucketConfigurationDialog_SuspendProfit','DPDBucketConfigurationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			-- for New
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+7) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Edit
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+10) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+8) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+11) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For Delete
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+12) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+13) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+14) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+5) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+4) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _MAKER
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+5) from SeqSecGroupRights), (select (SeqNo+5) from SeqSecGroups), (select (SeqNo+10+5) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			-- For _Verifier
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+21+5) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+22+5) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+23+5) from SeqSecGroupRights), (select (SeqNo+6) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			-- For _Approver
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+25+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+26+5) from SeqSecGroupRights), (select (SeqNo+7) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 				

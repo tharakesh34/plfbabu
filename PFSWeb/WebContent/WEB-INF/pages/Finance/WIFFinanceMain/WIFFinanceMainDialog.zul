@@ -182,6 +182,18 @@
 															id="allowGrace" checked="false" />
 													</hbox>
 												</row>
+												<row
+													id="row_FinAssetValue" visible="false">
+													<label
+														id="label_FinanceMainDialog_FinAssetValue"
+														value="${c:l('label_FinanceMainDialog_FinAssetValue.value')}" />
+													<currencyBox
+														id="finAssetValue" />
+													<label
+														id="label_FinanceMainDialog_FinCurrentAssetValue"/>
+													<currencyBox
+														id="finCurrentAssetValue" />
+												</row>
 												<row id="row_Discount" visible="false">
 													<label
 														id="label_FinanceMainDialog_faceValue"

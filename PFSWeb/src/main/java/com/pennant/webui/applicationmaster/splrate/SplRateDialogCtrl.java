@@ -404,7 +404,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		
 		if(this.sREffDate.getValue().before(dateBackward) || this.sREffDate.getValue().after(dateForward)){
 			throw new WrongValueException(sREffDate,  Labels.getLabel(
-					"DATE_RANGE",new String[]{Labels.getLabel(
+					"DATE_ALLOWED_RANGE",new String[]{Labels.getLabel(
 					"label_SplRateDialog_SREffDate.value"),
 					DateUtility.formatToShortDate(dateBackward),
 					DateUtility.formatToShortDate(dateForward)}));

@@ -497,6 +497,8 @@ public class FinanceDataDefaulting {
 		finMain.setInitiateUser(userDetails.getLoginUsrID());
 		finMain.setInitiateDate(DateUtility.getAppDate());
 		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
+		finMain.setCalRoundingMode(financeType.getRoundingMode());
+		finMain.setRoundingTarget(financeType.getRoundingTarget());
 	}
 
 	/*

@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -22,7 +21,6 @@ public interface ManualPaymentService {
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef);
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
-	AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method);
 	RepayData doCalcRepayments(RepayData repayData, FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst);
 	RepayData setEarlyRepayEffectOnSchedule(RepayData repayData, FinServiceInstruction finServiceInst);
 }

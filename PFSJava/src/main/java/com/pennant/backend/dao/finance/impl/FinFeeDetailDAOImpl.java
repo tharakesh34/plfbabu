@@ -59,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -357,7 +358,10 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		if (finFeeDetail.getFeeID() == Long.MIN_VALUE) {
 			finFeeDetail.setFeeID(getNextidviewDAO().getNextId("SeqFinFeeDetail"));
 			logger.debug("get NextID:" + finFeeDetail.getFeeID());
-		}	
+		}
+		
+		//Post date is added for the SOA purpose. It will always be replaced with application date at the approval. 
+		finFeeDetail.setPostDate(DateUtility.getAppDate());
 		
 		StringBuilder insertSql = new StringBuilder();
 		if (isWIF) {
@@ -369,11 +373,13 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		insertSql.append(" (FeeID, FinReference, OriginationFee , FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount, ActualAmount, " );
 		insertSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status,");
 		insertSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+		insertSql.append(" PostDate,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values( :FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder, :CalculatedAmount, :ActualAmount,");
 		insertSql.append(" :WaivedAmount, :PaidAmount, :FeeScheduleMethod, :Terms, :RemainingFee, :PaymentRef, :CalculationType,:VasReference,:Status,");
 		insertSql.append(" :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc, :AlwModifyFee, :AlwModifyFeeSchdMthd,");
+		insertSql.append(" :PostDate,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());

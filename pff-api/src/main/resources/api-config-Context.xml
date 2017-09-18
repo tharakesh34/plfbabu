@@ -153,5 +153,9 @@
 	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController"
 		autowire="byName" scope="prototype">
 	</bean>
+	 <bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="secDatasource" />
+	</bean>
 	
 </beans>

@@ -137,7 +137,6 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -4623,18 +4622,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
 		aFinanceDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-		if (getScheduleDetailDialogCtrl() != null) {
-			if (getScheduleDetailDialogCtrl().getFeeChargesMap() != null
-					&& getScheduleDetailDialogCtrl().getFeeChargesMap().size() > 0) {
-				List<Date> feeRuleKeys = new ArrayList<Date>(getScheduleDetailDialogCtrl().getFeeChargesMap().keySet());
-				List<FeeRule> feeRuleList = new ArrayList<FeeRule>();
-				for (Date date : feeRuleKeys) {
-					feeRuleList.addAll(getScheduleDetailDialogCtrl().getFeeChargesMap().get(date));
-				}
-				aFinanceDetail.getFinScheduleData().setFeeRules(feeRuleList);
-			}
-		}
-
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -5409,7 +5396,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 
 		//Fee charge Calculations
-		boolean isFeesModified = false;
 		if (this.finStartDate.getValue() != null) {
 
 			changeFrequencies();
@@ -5422,7 +5408,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
 					isPastDeal = false;
-					isFeesModified = true;
 				}
 			} else if (this.finStartDate.getValue().compareTo(curBussDate) <= 0) {
 				if (!isPastDeal) {
@@ -5431,7 +5416,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									getFinanceDetail().getFinScheduleData().getFinanceType(),
 									this.finStartDate.getValue(), true));
 
-					isFeesModified = true;
 					isPastDeal = true;
 				}
 			}

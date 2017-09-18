@@ -107,7 +107,7 @@ public class FinanceValidationService {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Loan Start Date";
 				valueParm[1] = DateUtility.formatDate(minReqFinStartDate, PennantConstants.XMLDateFormat);
-				return getErrorDetails("90205", valueParm);
+				return getErrorDetails("65030", valueParm);
 			}
 			
 			// validate finance branch

@@ -241,7 +241,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 	private String loadS3Bucket(long configId) {
 
-		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId);
+		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
 
 		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
 				EncryptionUtil.decrypt(eventproperties.getAccessKey()),
@@ -322,19 +322,11 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 			File file = new File(builder.toString());
 
-			if (!file.exists()) {
-				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("File not available.");
-			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			 if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("Mandate request for file generation failed.");
 			}
 
-			
-			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
-				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("File generation failed.");
-			}
 
 			if (!com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
 				if (!file.exists()) {

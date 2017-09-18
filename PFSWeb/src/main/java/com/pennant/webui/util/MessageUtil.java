@@ -44,7 +44,10 @@ package com.pennant.webui.util;
 
 import java.util.HashMap;
 
+import javax.ws.rs.ProcessingException;
+
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -237,7 +240,9 @@ public final class MessageUtil {
 			show((InterfaceException) e);
 		} else if (e instanceof AppException) {
 			show((AppException) e);
-		} else {
+		} else if (e instanceof ProcessingException) {
+			show((ProcessingException) e);
+		}else {
 			show(e);
 		}
 	}
@@ -270,6 +275,25 @@ public final class MessageUtil {
 
 		Messagebox.setTemplate(TEMPLATE);
 		Messagebox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+	
+	
+	/**
+	 * Shows an error message box for application exception and logs the message and cause.
+	 * 
+	 * @param e
+	 *            The exception.
+	 */
+	private static void show(ProcessingException e) {
+		if (e.getCause() != null) {
+			logger.warn(Literal.EXCEPTION, e);
+			
+		} else {
+			logger.info(e.getMessage());
+		}
+
+		Messagebox.setTemplate(TEMPLATE);
+		Messagebox.show(Labels.getLabel("Dedupe_other_system_Process_Error").concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**

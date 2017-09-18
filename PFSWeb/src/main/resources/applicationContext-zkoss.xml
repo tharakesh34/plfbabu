@@ -1845,6 +1845,7 @@
 		<property name="reScheduleService" ref="reScheduleService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="installmentDueService" ref="installmentDueService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"
@@ -1959,6 +1960,12 @@
 		class="com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
 
+	<!--============ Postings Detail ============== -->
+
+	<bean id="postingDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.PostingDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+
 	<!--============ Document Detail ============== -->
 
 	<bean id="documentDetailDialogCtrl"
@@ -2045,6 +2052,8 @@
 		<property name="repaymentCancellationService" ref="repaymentCancellationService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="receiptService" ref="receiptService" />
+		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2637,6 +2646,32 @@
 		class="com.pennant.webui.finance.financemain.FinCovenantTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<!-- <bean id="covenantTypeListCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantTypeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+	</bean>
+	
+	<bean id="covenantTypeDialogCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantTypeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+	</bean> -->
+	
+	<bean id="covenantDetailListCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		
+	</bean>
+	<bean id="covenantDetailDialogCtrl"
+		class="com.pennant.webui.finance.financemain.CovenantDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
 
 
 	<!--============ Payment Order Issue Details ============== -->
@@ -2941,7 +2976,6 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
-
 
 	<!--============ Manual Repayment Cancellation Details ============== -->
 	<bean id="repayCancellationDialogCtrl"
@@ -3540,8 +3574,8 @@
 	<!-- Batch Details Configuration -->
 	<!-- ====================================================== -->
 
-	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="batchAdminCtrl" class="com.pennant.webui.batch.admin.BatchAdminCtrl" parent="basisCtrl" scope="prototype">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 
@@ -4862,4 +4896,22 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	
+	<!-- Finance CovenantS Detail  -->
+	<bean id="finCovenantMaintanceDialogCtrl"
+		class="com.pennant.webui.finance.financemain.FinCovenantMaintanceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
+	</bean>
+	
+	<!-- SOA -->
+	<bean id="soaReportGenerationDialogCtrl"
+		class="com.pennant.webui.reports.SOAReportGenerationDialogCtrl"
+		scope="prototype" parent="basisListCtrl">
+		<property name="soaReportGenerationService" ref="soaReportGenerationService" />
+	</bean>
+	
+	<!-- GST -->
+	<bean id="dataExtractionListCtrl"
+		class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
 </beans>

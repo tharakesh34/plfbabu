@@ -152,7 +152,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
-			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				this.allocationDetailsTab.setVisible(false);
 			}
 			this.south.setHeight("0px");
@@ -391,7 +391,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Allocations Adjustment
-		if (!StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		if (!StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			doFillAllocationDetail(header.getAllocations(), finFormatter);
 		}
 		

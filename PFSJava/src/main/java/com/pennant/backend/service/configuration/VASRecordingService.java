@@ -42,14 +42,12 @@
  */
 package com.pennant.backend.service.configuration;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
-import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface VASRecordingService {
 	VASRecording getVASRecording();
@@ -64,7 +62,7 @@ public interface VASRecordingService {
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 

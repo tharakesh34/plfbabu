@@ -87,6 +87,7 @@ public class CollateralController {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			collateralStructure = new CollateralStructure();
 			collateralStructure.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -130,6 +131,7 @@ public class CollateralController {
 		} catch (BadSqlGrammarException badSqlE) {
 			logger.error(badSqlE);
 			response = new CollateralSetup();
+			APIErrorHandlerService.logUnhandledException(badSqlE);
 			if(badSqlE.getCause() != null) {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", badSqlE.getCause().getMessage()));
 			} else {
@@ -137,19 +139,22 @@ public class CollateralController {
 			}
 		}  catch (NumberFormatException nfe) {
 			logger.error(nfe);
+			APIErrorHandlerService.logUnhandledException(nfe);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90275"));
 		} catch (DataIntegrityViolationException e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90275"));
-		} 
-		catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new CollateralSetup();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -186,12 +191,15 @@ public class CollateralController {
 			}
 		} catch (NumberFormatException nfe) {
 			logger.error(nfe);
+			APIErrorHandlerService.logUnhandledException(nfe);
 			return APIErrorHandlerService.getFailedStatus("90275");
 		} catch (DataIntegrityViolationException e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus("90275");
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -228,6 +236,7 @@ public class CollateralController {
 			}
 		}catch(Exception e) {
 			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -445,6 +454,7 @@ public class CollateralController {
 								unitPriceCmplted = true;
 							}
 						} catch(NumberFormatException nfe) {
+							APIErrorHandlerService.logUnhandledException(nfe);
 							logger.error("Exception", nfe);
 							throw nfe;
 						}
@@ -506,6 +516,7 @@ public class CollateralController {
 					ruleResult = ruleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
 							collateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 				} catch (Exception e) {
+					APIErrorHandlerService.logUnhandledException(e);
 					logger.error("Exception: ", e);
 					ruleResult = "0";
 				}

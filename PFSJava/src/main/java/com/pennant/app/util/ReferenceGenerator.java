@@ -49,10 +49,11 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.ReferenceConstants;
 
 public class ReferenceGenerator implements Serializable {
     private static final long serialVersionUID = -4965488291173350445L;
-	private static Logger logger = Logger.getLogger(ReferenceUtil.class);
+	private static Logger logger = Logger.getLogger(ReferenceGenerator.class);
 	
 	private static NextidviewDAO nextidviewDAO;
 
@@ -85,10 +86,14 @@ public class ReferenceGenerator implements Serializable {
 
 		// Get the sequence number.
 		long referenceSeqNumber = nextidviewDAO.getNextId("SeqFinReference");
-		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 8, '0');
+		String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), 7, '0');
 
 		logger.debug("Leaving");
-		return branch.concat(product).concat(sequence);
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("LOAN_REFERENCE_IDENTIFIER"))) {
+			return ReferenceConstants.DIVISION_IDENTIFIER.concat(branch).concat(product).concat(sequence);
+		} else {
+			return branch.concat(product).concat(sequence);
+		}
 	}
 
 	public static void setNextidviewDAO(NextidviewDAO nextidviewDAO) {

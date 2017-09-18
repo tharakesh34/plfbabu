@@ -30,16 +30,16 @@ public class BulkRateChangeListModelItemRenderer implements ListitemRenderer<Bul
 		lc.setParent(item);
 		lc = new Listcell(bulkRateChangeHeader.getFinType());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(bulkRateChangeHeader.getFromDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtility.formatToLongDate(bulkRateChangeHeader.getFromDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(bulkRateChangeHeader.getToDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtility.formatToLongDate(bulkRateChangeHeader.getToDate()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formatRate(bulkRateChangeHeader.getRateChange().doubleValue(), 
 				PennantConstants.rateFormate));
 		lc.setParent(item);
 		lc = new Listcell(PennantStaticListUtil.getlabelDesc(bulkRateChangeHeader.getReCalType(), PennantStaticListUtil.getSchCalCodes()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(bulkRateChangeHeader.getLastMntOn())); //TODO
+		lc = new Listcell(DateUtility.formatToLongDate(bulkRateChangeHeader.getLastMntOn()));
 		lc.setParent(item);
 		lc = new Listcell(bulkRateChangeHeader.getRecordStatus());
 		lc.setParent(item);

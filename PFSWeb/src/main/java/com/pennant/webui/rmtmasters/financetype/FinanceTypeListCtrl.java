@@ -69,6 +69,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
+import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -301,6 +302,16 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinTypeAccount.setVersion(1);
 					aFinTypeAccount.setRecordType(PennantConstants.RCD_ADD);
 					aFinanceType.getFinTypeAccounts().add(aFinTypeAccount);
+				}
+			}
+			
+			List<FinTypeAccounting> fintypeAccountingList = sourceFin.getFinTypeAccountingList();
+			if (fintypeAccountingList != null && !fintypeAccountingList.isEmpty()) {
+				aFinanceType.setFinTypeAccountingList(new ArrayList<FinTypeAccounting>());
+				for (FinTypeAccounting finTypeAccounting : fintypeAccountingList) {
+					finTypeAccounting.setVersion(1);
+					finTypeAccounting.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceType.getFinTypeAccountingList().add(finTypeAccounting);
 				}
 			}
 		}

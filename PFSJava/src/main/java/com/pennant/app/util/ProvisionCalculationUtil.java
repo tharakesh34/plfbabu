@@ -206,7 +206,6 @@ public class ProvisionCalculationUtil implements Serializable {
 			}
 
 			//Provision Posting Process for Screen Level Process
-			List<Object> returnList = null;
 			boolean isPostingsSuccess = true;
 			if ((isScrnLvlProc || isFromCore) && movement != null) {
 				amountCodes.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement
@@ -282,7 +281,7 @@ public class ProvisionCalculationUtil implements Serializable {
 						movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
 						movement.setProvisionDue(BigDecimal.ZERO);
 						movement.setProvisionPostSts("C");
-						movement.setLinkedTranId((Long) returnList.get(1));
+						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 					}
 
 					getProvisionMovementDAO().save(movement, "");

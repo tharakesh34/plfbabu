@@ -98,7 +98,7 @@
 										value="${c:l('label_FeePostingList_ValueDate.value')}" />
 									<listbox id="sortOperator_ValueDate"
 										width="43px" mold="select" rows="1" />
-									<datebox id="valueDate"
+									<datebox id="valueDate" format="dd/MM/yyyy" 
 										width="150px" maxlength="18" />
 								</row>
 								<row id="row_AlwWorkflow">

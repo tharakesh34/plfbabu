@@ -1212,7 +1212,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			schCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 		}
 		fillComboBox(this.cbfinSchCalCodeOnRvw, schCalRvwOn, PennantStaticListUtil.getSchCalCodes(),
-				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,CURPRD,");
+				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,CURPRD,STEPPOS,");
 		this.applyRpyPricing.setChecked(aFinanceType.isApplyRpyPricing());
 		if (aFinanceType.isApplyRpyPricing()) {
 			this.rpyPricingMethod.setButtonDisabled(isCompReadonly);
@@ -2141,7 +2141,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				this.cbfinGrcRvwRateApplFor.setErrorMessage("");
-				if (validate && this.finGrcIsRvwAlw.isChecked() && !this.finIsRvwAlw.isChecked()) {
+				if (this.row_FinGrcRvwRateApplFor.isVisible() && validate && this.finGrcIsRvwAlw.isChecked() && !this.finIsRvwAlw.isChecked()) {
 					isValidComboValue(this.cbfinGrcRvwRateApplFor,
 							Labels.getLabel("label_FinanceTypeDialog_FinGrcRvwRateApplFor.value"));
 				}
@@ -2187,7 +2187,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			if (!this.financeGrcBaseRate.getMarginComp().isReadonly()
+			if (!this.gracePeriod.isDisabled() && !this.financeGrcBaseRate.getMarginComp().isReadonly()
 					&& StringUtils.trimToNull(this.financeGrcBaseRate.getBaseValue()) == null
 					&& this.financeGrcBaseRate.getMarginValue() != null
 					&& this.financeGrcBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) != 0) {
@@ -2462,7 +2462,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				if (this.finIsRvwAlw.isChecked()) {
 					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_ADJMDT,
-							PennantStaticListUtil.getSchCalCodes(), "");
+							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 				}
 			}
 			aFinanceType.setFinSchCalCodeOnRvw(getComboboxValue(this.cbfinSchCalCodeOnRvw));
@@ -5260,7 +5260,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)) {
 					// Schedule Calculation Codes
 					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
-							PennantStaticListUtil.getSchCalCodes(), "");
+							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 				} else {
 					// Schedule Calculation Codes
@@ -5311,7 +5311,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					if (isOverdraft) {
 						schdCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 					}
-					fillComboBox(this.cbfinSchCalCodeOnRvw, schdCalRvwOn, PennantStaticListUtil.getSchCalCodes(), "");
+					fillComboBox(this.cbfinSchCalCodeOnRvw, schdCalRvwOn, PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 					this.cbfinSchCalCodeOnRvw.setDisabled(true);
 					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
@@ -5337,12 +5337,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finRvwFrq.setDisabled(true);
 			this.cbfinRvwRateApplFor.setDisabled(true);
 			this.cbfinSchCalCodeOnRvw.setDisabled(true);
-			if (this.finGrcIsRvwAlw.isChecked()) {
-				this.row_FinGrcRvwRateApplFor.setVisible(true);
-			} else {
-				this.row_FinGrcRvwRateApplFor.setVisible(false);
-				this.cbfinGrcRvwRateApplFor.setSelectedIndex(0);
-			}
+			
 		}
 
 		logger.debug("Leaving");
@@ -5783,9 +5778,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.finGrcRvwFrq.setDisabled(false);
 				this.cbfinGrcRvwRateApplFor.setDisabled(false);
 				this.space_FinGrcRvwRateApplFor.setSclass(PennantConstants.mandateSclass);
-			}
-			if (!this.finIsRvwAlw.isChecked()) {
-				this.row_FinGrcRvwRateApplFor.setVisible(true);
 			}
 		} else {
 			this.finGrcRvwFrq.setValue("");
@@ -6562,9 +6554,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @throws Exception
 	 */
 	public void onClick$btnAlwVasProducts(Event event) throws Exception {
-		logger.debug("Entering  " + event.toString());
+		logger.debug("Entering");
+		
 		setVasProductDetails(true);
-		logger.debug("Leaving  " + event.toString());
+		
+		if (this.finTypeAccountingListCtrl != null ) {
+			boolean vasFlag = false;
+			if (StringUtils.isNotBlank(this.alwdVasProduct.getValue())) {
+				vasFlag = true;
+			}
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
+		}
+		
+		logger.debug("Leaving");
 	}
 
 	/**

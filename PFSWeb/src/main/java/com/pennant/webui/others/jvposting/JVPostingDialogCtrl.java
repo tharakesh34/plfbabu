@@ -848,6 +848,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			readOnlyComponent(true, this.batchPurpose);
 			readOnlyComponent(true, this.postingAgainst);
 			readOnlyComponent(true, this.reference);
+			readOnlyComponent(true, this.postingDivision);
 			this.btnNewJVPostingEntry.setVisible(false);
 			this.btnValidate.setVisible(false);
 			this.btnNotes.setVisible(false);
@@ -1811,7 +1812,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getAccCCy());
 			lc.setParent(item);					
-			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount_Ac(),CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
+			lc = new Listcell(PennantAppUtil.amountFormate(accountingEntry.getTxnAmount(),CurrencyUtil.getFormat(accountingEntry.getAccCCy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getPostingStatus());
@@ -1958,6 +1959,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
+			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
 		}
 	}
 

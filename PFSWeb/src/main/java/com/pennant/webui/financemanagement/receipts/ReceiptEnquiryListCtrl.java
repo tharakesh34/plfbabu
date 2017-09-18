@@ -96,11 +96,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected void doSetProperties() {
 
 		this.module = getArgument("module");
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FinReceiptHeader_FCView";
-			super.queueTableName = "FinReceiptHeader_FCView";
-			super.enquiryTableName = "FinReceiptHeader_FCView";
+			super.tableName = "FinReceiptHeader_FEView";
+			super.queueTableName = "FinReceiptHeader_FEView";
+			super.enquiryTableName = "FinReceiptHeader_FEView";
 		}else{
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";
@@ -161,7 +161,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			this.searchObject.addWhereClause(" ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL  ");
 		}else{
 			this.searchObject.addWhereClause(" ReceiptPurpose != '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND RecordType IS NULL ");
@@ -217,9 +217,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		
 		boolean isFeePayment = false;
 		String type = "_View";
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			isFeePayment = true;
-			type = "_FCView";
+			type = "_FEView";
 		}
 		FinReceiptHeader header = receiptService.getFinReceiptHeaderById(receiptID, isFeePayment, type);
 

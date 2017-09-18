@@ -58,7 +58,6 @@ public class CustomerDedupService extends BajajService {
 	}
 
 	private DedupeRequest prepareRequest(DedupCustomerDetail dedupCustomerDetail) {
-		boolean mobileSelected = false;
 
 		DedupeRequest request = new DedupeRequest();
 		//request.setDealId(dealId);
@@ -88,90 +87,46 @@ public class CustomerDedupService extends BajajService {
 
 		if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			request.setDateOfIncorporation(dateFormater.format(customer.getCustDOB()));
+			request.setDateOfBirth(dateFormater.format(customer.getCustDOB()));
 			for (CustomerAddres customerAddres : listAddres) {
-				if ("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())) {
-					request.setAddress1(customerAddres.getCustAddrType());
-					request.setAddress2(customerAddres.getCustAddrHNbr());
-					request.setAddress3(customerAddres.getCustAddrStreet());
+				if (customerAddres.getCustAddrPriority() == 5) {
+					request.setAddress1(customerAddres.getCustAddrHNbr());
+					request.setAddress2(customerAddres.getCustAddrStreet());
+					request.setAddress3(customerAddres.getLovDescCustAddrCountryName());
 					request.setCity(customerAddres.getCustAddrCity());
 					request.setPinCode(customerAddres.getCustAddrZIP());
-					//request.setArea(area);
-
 					request.setOfficeAddress1(customerAddres.getCustAddrType());
 					request.setOfficeAddress2(customerAddres.getCustAddrHNbr());
 					request.setOfficeAddress3(customerAddres.getCustAddrStreet());
-					request.setOfficeCity(customerAddres.getCustAddrCity());
+					request.setOfficeCity(customerAddres.getLovDescCustAddrCityName());
 					request.setOfficePinCode(customerAddres.getCustAddrZIP());
-					//request.setOfficeArea(officeArea);
-					//request.setOfficelandMark(officelandMark);
-					break;
 				}
+			}
 
-				for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
-
-					if ("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
-						request.setMobile(phoneNumber.getPhoneNumber());
-						mobileSelected = true;
-					}
-
-					if ("WORK".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
-						request.setOfficeLanLine1(phoneNumber.getPhoneNumber());
-						//request.setOfficeLanLine2(phoneNumber.getPhoneNumber());
-						request.setOfficeStdCode(phoneNumber.getPhoneAreaCode());
-					}
-
+			for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
+				if (phoneNumber.getPhoneTypePriority() == 5) {
+					request.setMobile(phoneNumber.getPhoneNumber());
 				}
 
 			}
-
-			//request.setTanNo(tanNo);
 
 		} else {
 			request.setDateOfBirth(dateFormater.format(customer.getCustDOB()));
 
 			for (CustomerAddres customerAddres : listAddres) {
-				if ("CURRES".equalsIgnoreCase(customer.getCustTypeCode())) {
-					request.setAddress1(customerAddres.getCustAddrType());
-					request.setAddress2(customerAddres.getCustAddrHNbr());
-					request.setAddress3(customerAddres.getCustAddrStreet());
-					request.setCity(customerAddres.getCustAddrCity());
+				if (customerAddres.getCustAddrPriority() == 5) {
+					request.setAddress1(customerAddres.getCustAddrHNbr());
+					request.setAddress2(customerAddres.getCustAddrStreet());
+					request.setAddress3(customerAddres.getLovDescCustAddrCountryName());
+					request.setCity(customerAddres.getLovDescCustAddrCityName());
 					request.setPinCode(customerAddres.getCustAddrZIP());
-					//request.setArea(area);
-					//request.setLandMark(landMark);
-					//request.setStayingSince(customerAddres.);
-
-				}
-
-				if ("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())) {
-					request.setAddress1(customerAddres.getCustAddrType());
-					request.setAddress2(customerAddres.getCustAddrHNbr());
-					request.setAddress3(customerAddres.getCustAddrStreet());
-					request.setCity(customerAddres.getCustAddrCity());
-					request.setPinCode(customerAddres.getCustAddrZIP());
-					//request.setArea(area);
-					//request.setLandMark(landMark);
 				}
 
 			}
 
 			for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
-
-				if ("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
-					request.setOfficeMobile(phoneNumber.getPhoneNumber());
+				if (phoneNumber.getPhoneTypePriority() == 5) {
 					request.setMobile(phoneNumber.getPhoneNumber());
-					mobileSelected = true;
-				}
-
-				if ("HOME".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
-					request.setLandLine1(phoneNumber.getPhoneNumber());
-					//request.setLandLine2(phoneNumber.getPhoneNumber());
-					request.setStdCode(phoneNumber.getPhoneAreaCode());
-				}
-
-				if ("OFFICE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
-					request.setOfficeLanLine1(phoneNumber.getPhoneNumber());
-					//request.setOfficeLanLine2(phoneNumber.getPhoneNumber());
-					request.setOfficeStdCode(phoneNumber.getPhoneAreaCode());
 				}
 			}
 		}
@@ -190,35 +145,17 @@ public class CustomerDedupService extends BajajService {
 
 		if (listCustEmail != null) {
 			for (CustomerEMail email : listCustEmail) {
-				request.setEmail(email.getCustEMail());
-				break;
+				if (email.getCustEMailPriority() == 5) {
+					request.setEmail(email.getCustEMail());
+					break;
+				}
+
 			}
 		}
 
 		request.setAccountNumber(dedupCustomerDetail.getAccountNumber());
-		//request.setCreditCardNumber(creditCardNumber);
 		request.setCustomerNumber((int) dedupCustomerDetail.getCustID());
-		//request.setLanNo(lanNo);
-		//request.setLan2(lan2);
-		//request.setCustomerSrNo(customerSrNo);
-
-		//request.setApplicationNo(dedupCustomerDetail.getApplicationNo());
 		request.setProduct(dedupCustomerDetail.getFinType());
-
-		//request.setBatch(batch);
-		//request.setCityClassification(cityClassification);
-		//request.setEmploymentBusiness(employmentBusiness);
-		//request.setAge(customer.getc);
-		//request.setResidentType(residentType);
-
-		//request.setCreditProgram(creditProgram);
-		//request.setAssetCategory(assetCategory);
-		//request.setFinRequestId(dedupCustomerDetail);
-		//request.setMatchProfile(matchProfile);
-		//request.setSegment(segment);
-		//request.setApplicatntType(applicatntType);
-
-		//request.setOfficeMail(officeMail);
 		request.setLoanApplicationNo(dedupCustomerDetail.getApplicationNo());
 		request.setCustomerStatus("Y");
 		request.setDemoDtl("Y");
@@ -236,9 +173,10 @@ public class CustomerDedupService extends BajajService {
 			customerResponse.setErrorCode(response.getErrorDescription().getErrorCode());
 			customerResponse.setErrorDesc(response.getErrorDescription().getErrorDescription());
 		}
-
-		for (DemographicDetail detail : response.getDemographicDetails()) {
-			details.add(prepareCustomerDetail(detail));
+		if(response.getDemographicDetails()!=null && !response.getDemographicDetails().isEmpty()){
+			for (DemographicDetail detail : response.getDemographicDetails()) {
+				details.add(prepareCustomerDetail(detail));
+			}
 		}
 
 		customerResponse.setDedupCustomerDetails(details);

@@ -317,10 +317,9 @@
 	</bean>
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
 	</bean>
-	<!-- End Of Month Decider -->
+
 	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider" />
-	<!-- End Of Month Decider -->
-	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
+	
 	<!-- Audit data Purging -->
 	<bean id="dataPurgingProcess" class="com.pennant.eod.util.DataPurgingProcess">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -576,13 +575,7 @@
 	 <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestServiceImpl" scope="prototype" parent="bajajService"/>
-	<bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestServiceImpl" scope="prototype" parent="bajajService"/>
-	<bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestServiceImpl" scope="prototype" parent="bajajService"/>
-    <bean id="dataMartRequestService" class="com.pennanttech.bajaj.services.DataMartRequestServiceImpl" scope="prototype" parent="bajajService"/> 
-    <bean id="trailBalanceReportService" class=" com.pennanttech.bajaj.services.TrailBalanceReportServiceImpl" scope="prototype" parent="bajajService"/> 
-    <bean id="taxDownlaodDetailService" class="com.pennanttech.bajaj.services.TaxDownlaodDetailServiceImpl"  scope="prototype" parent="bajajService"/>
+
   
   	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />

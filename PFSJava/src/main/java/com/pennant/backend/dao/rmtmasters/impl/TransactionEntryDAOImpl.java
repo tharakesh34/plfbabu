@@ -376,29 +376,6 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		}
 	}
 	
-	
-	/**
-	 * Fetch the Record  Rule Details by key field
-	 * 
-	 * @param accountSetId (int)
-	 * @param  type (String)
-	 * 			""/_Temp/_View          
-	 * @return Rules
-	 */
-	@Override
-	public List<String> getListFeeCodes(long accountSetId) {
-		logger.debug("Entering");
-		
-		TransactionEntry transactionEntry = new TransactionEntry();
-		transactionEntry.setId(accountSetId);
-		
-		StringBuilder selectSql = new StringBuilder(" Select DISTINCT FeeCode from RMTTransactionEntry_AView");
-		selectSql.append(" Where AccountSetid =:AccountSetid AND  COALESCE(Feecode,' ') <> ' ' " );
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
-	}
-	
 	/**
 	 * Fetch the accounting fee codes list by accountingids
 	 * 

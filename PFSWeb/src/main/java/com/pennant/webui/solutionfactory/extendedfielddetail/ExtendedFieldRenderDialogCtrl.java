@@ -451,10 +451,12 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 								cellValue = PennantApplicationUtil.formatRate(Double.valueOf(String.valueOf(fieldValue)), fieldDetail.getFieldPrec());
 							}
 							lc.setStyle("text-align:right");
-						}else if(StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN)){
+						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN)) {
 							Checkbox checkbox = new Checkbox();
 							checkbox.setDisabled(true);
-							checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+							if (fieldValue != null) {
+								checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+							}
 							lc.appendChild(checkbox);
 						}else if(StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_FRQ)){
 							cellValue = FrequencyUtil.getFrequencyDetail(String.valueOf(fieldValue)).getFrequencyDescription();

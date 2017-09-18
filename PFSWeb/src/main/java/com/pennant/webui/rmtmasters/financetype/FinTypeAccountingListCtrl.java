@@ -174,7 +174,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
-			window_FinTypeAccountingList.onClose();
+			this.window_FinTypeAccountingList.onClose();
 		}
 		
 		logger.debug("Leaving");
@@ -208,7 +208,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		doFillFinTypeAccountingList(this.finTypeAccountingList);
 		
 		if (parent != null) {
-			this.window_FinTypeAccountingList.setHeight(borderLayoutHeight-75+"px");
+			this.window_FinTypeAccountingList.setHeight(borderLayoutHeight - 75 + "px");
 			parent.appendChild(this.window_FinTypeAccountingList);
 		}
 		
@@ -235,10 +235,10 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 
 		if(ImplementationConstants.ALLOW_ADDDBSF) {
-			if (!isOverdraft) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
-			} else {
+			if (isOverdraft) {
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
+			} else {
+				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
 			}
 		}
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
@@ -270,6 +270,13 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		if (financeTypeDialogCtrl.finDepreciationReq.isChecked() && !isOverdraft) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);
 		}
+		
+		boolean vasFlag = false;
+		if (StringUtils.isNotBlank(financeTypeDialogCtrl.alwdVasProduct.getValue())) {
+			vasFlag = true;
+		}
+		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
+		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
 		
 		if (financeTypeDialogCtrl.alwPlanDeferment.isChecked()) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, true);
@@ -321,10 +328,8 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	public void doFillFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
 		logger.debug("Entering");
 
-
 		for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
-			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(finTypeAccountingList,
-					accountEngineEvent.getAEEventCode());
+			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(finTypeAccountingList, accountEngineEvent.getAEEventCode());
 
 			if (finTypeAcc == null) {
 				FinTypeAccounting finTypeAccNew = getNewFinTypeAccounting();

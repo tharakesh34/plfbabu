@@ -19,6 +19,7 @@ import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
@@ -201,7 +202,9 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				extended.setExtendedFieldDataList(extendedFieldDataList);
 				parentextendedDetails.add(extended);
 				response.setExtendedDetails(parentextendedDetails);
-
+				if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, response.getPostingAgainst())) {
+					response.setPostingAgainst("Loan");
+				}
 				boolean validConfig = true;
 				if (StringUtils.isNotBlank(vasRecording.getProductCode())
 						&& !StringUtils.equals(vasRecording.getProductCode(), response.getProductCode())) {

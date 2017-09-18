@@ -1589,7 +1589,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private void doSetLOVValidation() {
 		// Guarantor CIF
 		if (!btnSearchGuarantorCIF.isVisible()) {
-			this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF.value"),null,true));
+			this.guarantorCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"),null,true));
 		}
 		this.addrCountry.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_AddrCountry.value"),null,true,true));
 		

@@ -43,6 +43,23 @@
 
 package com.pennanttech.interfacebajaj;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,14 +69,17 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-
+import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -70,19 +90,6 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.EncryptionUtil;
-import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.reports.cibil.CIBILReport;
-import com.pennanttech.service.AmazonS3Bucket;
-
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul file.<br>
@@ -90,7 +97,6 @@ import com.pennanttech.service.AmazonS3Bucket;
  * 
  */
 public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
 
@@ -100,16 +106,16 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
+	protected Combobox dimention;
+	protected Combobox months;
+	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds();
 	
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 	private Button downlaod;
-	
+ 	
 	protected AmazonS3Bucket bucket;
 	
-	@Autowired
-	private CIBILReport cibilReport;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -123,7 +129,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.pageRightName = "FileDownload";
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
-
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -139,14 +144,21 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
 		
-		registerField("Id");
+		List<ValueLabel> dimentions = new ArrayList<>();
+		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.STATE.name(), TrailBalanceEngine.Dimention.STATE.name()));
+		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.CONSOLIDATE.name(), TrailBalanceEngine.Dimention.CONSOLIDATE.name()));
+		
+		fillComboBox(dimention, "", dimentions, "");
+		fillComboBox(months, "", monthsList, "");
+		
+		registerField("Id", SortOrder.DESC);
 		registerField("Name");
 		registerField("Status");
 		registerField("CONFIGID");
 		registerField("POSTEVENT");
 		registerField("FileName");
 		registerField("FileLocation");
-		registerField("ValueDate");
+		registerField("ValueDate", SortOrder.DESC);
 		
 		doRenderPage();
 		search();
@@ -155,7 +167,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 	
 	public class FileDownloadComparator implements Comparator<Object>, Serializable {
-		
 		private static final long serialVersionUID = -8606975433219761922L;
 
 		public FileDownloadComparator() {
@@ -167,7 +178,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			FileDownlaod data = (FileDownlaod) o1;
 			FileDownlaod data2 = (FileDownlaod) o2;
 			return String.valueOf(data.getValueDate()).compareTo(String.valueOf(data2.getValueDate()));
-
 		}
 	}
 
@@ -175,7 +185,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		list.add("GL_TRAIL_BALANCE_EXPORT");
+		list.add("TRIAL_BALANCE_EXPORT_STATE");
+		list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
 		list.add("GL_TRANSACTION_EXPORT");
 		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
 
@@ -193,7 +204,49 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		cibilReport.generateReport();
+		try {
+
+			String selectedDimention = dimention.getSelectedItem().getValue();
+			String selectedMonth = months.getSelectedItem().getValue();
+
+			if ("#".equals(selectedDimention)) {
+				MessageUtil.showError("Dimention cannot be blank.");
+				return;
+			} else if ("#".equals(selectedMonth)) {
+				MessageUtil.showError("Month cannot be blank.");
+				return;
+			}
+
+			Date valueDate = null;
+			Date appDate = null;
+
+			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+			valueDate = appDate;
+
+			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+
+			if (trialbal.isBatchExists(selectedDimention)) {
+				int conf = MessageUtil
+						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
+
+				if (conf == MessageUtil.NO) {
+					return;
+				}
+			}
+
+			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+			}
+
+			refresh();
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
@@ -220,7 +273,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 	private String loadS3Bucket(long configId) {
 
-		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId);
+		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
 
 		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
 				EncryptionUtil.decrypt(eventproperties.getAccessKey()),

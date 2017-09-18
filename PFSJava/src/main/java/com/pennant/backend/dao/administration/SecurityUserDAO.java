@@ -56,7 +56,7 @@ public interface SecurityUserDAO {
 	void delete(SecurityUser secUser, String type);
 	long save(SecurityUser secUser, String type);
 	void changePassword(SecurityUser secUser);
-	SecurityUser getSecurityUserByLogin(final String id, String type);
+	SecurityUser getSecurityUserByLogin(final long id, String type);
 	long saveDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
 	void updateDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);
 	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch,String type);

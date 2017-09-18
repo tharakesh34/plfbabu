@@ -227,9 +227,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		if (aFinSchData.getFinanceMain() != null) {
 
-			String excldValues = ",CURPRD,ADJMDT,ADDTERM,";
+			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,";
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
-				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,";
+				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
 			}
 			
 			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)){
@@ -359,7 +359,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getFinStartDate()) < 0
 						|| ((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(finMain.getMaturityDate()) > 0) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel(
-							"DATE_RANGE",
+							"DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value"),
 									DateUtility.formatToLongDate(finMain.getFinStartDate()),
 									DateUtility.formatToLongDate(finMain.getMaturityDate()) }));

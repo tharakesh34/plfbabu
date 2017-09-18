@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -84,18 +85,20 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	protected Window window_FinFeeReceiptDialog;
 
 	protected Listbox listBoxReciptFeeDetail;
-	protected Label feeType;
-	protected Label feeAmount;
-	protected Label paidAmount;
-	protected Label waiverAmount;
+	protected Label label_FeeType;
+	protected Label label_FeeAmount;
+	protected Label label_PaidAmount;
+	protected Label label_WaiverAmount;
 
 	// For Dynamically calling of this Controller
 	private String roleCode = "";
-	private String finFeeType = "";
+	private String feeTypeCode = "";
+	private String feeTypeDesc = "";
 	private long feeTypeId;
-	private BigDecimal feeAmountValue = BigDecimal.ZERO;
+	private BigDecimal feeAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmountValue = BigDecimal.ZERO;
-	private BigDecimal waiverAmountValue = BigDecimal.ZERO;
+	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private BigDecimal waiverAmount = BigDecimal.ZERO;
 	private FinFeeDetailListCtrl finFeeDetailListCtrl;
 	private FinanceDetail financeDetail;
 
@@ -137,8 +140,12 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				this.finFeeReceiptMap = (LinkedHashMap<Long, List<FinFeeReceipt>>) arguments.get("finFeeReceiptMap");
 			}
 
-			if (arguments.containsKey("feeType")) {
-				this.finFeeType = (String) arguments.get("feeType");
+			if (arguments.containsKey("feeTypeCode")) {
+				this.feeTypeCode = (String) arguments.get("feeTypeCode");
+			}
+			
+			if (arguments.containsKey("feeTypeDesc")) {
+				this.feeTypeDesc = (String) arguments.get("feeTypeDesc");
 			}
 
 			if (arguments.containsKey("feeTypeId")) {
@@ -146,15 +153,19 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 			}
 
 			if (arguments.containsKey("FeeAmount")) {
-				this.feeAmountValue = (BigDecimal) arguments.get("FeeAmount");
+				this.feeAmount = (BigDecimal) arguments.get("FeeAmount");
 			}
 
 			if (arguments.containsKey("PaidAmount")) {
-				this.paidAmountValue = (BigDecimal) arguments.get("PaidAmount");
+				this.paidAmount = (BigDecimal) arguments.get("PaidAmount");
+			}
+			
+			if (arguments.containsKey("PaidAmountValue")) {
+				this.paidAmountValue = (BigDecimal) arguments.get("PaidAmountValue");
 			}
 
 			if (arguments.containsKey("WaiverAmount")) {
-				this.waiverAmountValue = (BigDecimal) arguments.get("WaiverAmount");
+				this.waiverAmount = (BigDecimal) arguments.get("WaiverAmount");
 			}
 
 			if (arguments.containsKey("finFeeDetailListCtrl")) {
@@ -236,15 +247,17 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				} else {
 					if (BigDecimal.ZERO.compareTo(paidAmount) == 0) {
 						for (int i = 0; i < finFeeReceiptsList.size(); i++) {
-							FinFeeReceipt finFeeReceipt2 = finFeeReceiptsList.get(i);
-							if (finFeeReceipt2.getFeeType().equals(this.finFeeType)) {
+							FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
+							
+							if (StringUtils.equals(finFeeReceiptTemp.getFeeTypeCode(), this.feeTypeCode)) {
 								if (finFeeReceiptsList.size() > 1) {
 									finFeeReceiptsList.remove(i);
 									break;
 								} else {
-									finFeeReceipt2.setFeeTypeId(0);
-									finFeeReceipt2.setFeeType("");
-									finFeeReceipt2.setPaidAmount(BigDecimal.ZERO);
+									finFeeReceiptTemp.setFeeTypeId(0);
+									finFeeReceiptTemp.setFeeTypeCode("");
+									finFeeReceiptTemp.setFeeTypeDesc("");
+									finFeeReceiptTemp.setPaidAmount(BigDecimal.ZERO);
 								}
 							}
 						}
@@ -325,10 +338,16 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	public void doWriteBeanToComponents(FinanceDetail financeDetail) {
 		logger.debug("Entering ");
 
-		this.feeType.setValue(this.finFeeType);
-		this.feeAmount.setValue(String.valueOf(this.feeAmountValue));
-		this.paidAmount.setValue(String.valueOf(this.paidAmountValue));
-		this.waiverAmount.setValue(String.valueOf(this.waiverAmountValue));
+		this.label_FeeType.setValue(this.feeTypeDesc);
+		
+		int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+		String feeAmt  = PennantAppUtil.amountFormate(this.feeAmount, formatter);
+		String paidAmt = PennantAppUtil.amountFormate(paidAmount, formatter);
+		String waiverAmt = PennantAppUtil.amountFormate(waiverAmount, formatter);
+		
+		this.label_FeeAmount.setValue(feeAmt);
+		this.label_PaidAmount.setValue(paidAmt);
+		this.label_WaiverAmount.setValue(waiverAmt);
 		long workFlowId = this.financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId();
 
 		List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
@@ -351,23 +370,24 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 					availableAmt = receiptAmt;
 				}
 
-				if (finFeeReceipt.getFeeTypeId() == this.feeTypeId) {
+				if ((this.feeTypeId != 0 && finFeeReceipt.getFeeTypeId() == this.feeTypeId)
+						|| (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), this.feeTypeCode))) {
 					finFeeReceiptTemp = finFeeReceipt;
 					finFeeReceiptTemp.setExist(true);
 				} else {
 					availableAmt = availableAmt.subtract(finFeeReceipt.getPaidAmount());
 				}
 
-				if (finFeeReceiptList.size() == 1 && finFeeReceipt.getFeeTypeId() <= 0) {
+				if (finFeeReceiptList.size() == 1 && StringUtils.isBlank(finFeeReceipt.getFeeTypeCode())) {
 					finFeeReceiptTemp = finFeeReceipt;
 					finFeeReceiptTemp.setNewRecord(true);
-					finFeeReceiptTemp.setFeeType(this.finFeeType);
+					finFeeReceiptTemp.setFeeTypeCode(this.feeTypeCode);
+					finFeeReceiptTemp.setFeeTypeDesc(this.feeTypeDesc);
 					finFeeReceiptTemp.setFeeTypeId(this.feeTypeId);
 					finFeeReceiptTemp.setWorkflowId(workFlowId);
 					finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
 					finFeeReceiptTemp.setExist(true);
 				}
-
 			}
 
 			if (finFeeReceipt != null && finFeeReceiptTemp == null) {
@@ -376,8 +396,14 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				finFeeReceiptTemp.setReceiptAmount(finFeeReceipt.getReceiptAmount());
 				finFeeReceiptTemp.setReceiptReference(finFeeReceipt.getReceiptReference());
 				finFeeReceiptTemp.setReceiptType(finFeeReceipt.getReceiptType());
-				finFeeReceiptTemp.setFeeType(this.finFeeType);
+				finFeeReceiptTemp.setFeeTypeCode(this.feeTypeCode);
+				finFeeReceiptTemp.setFeeTypeDesc(this.feeTypeDesc);
 				finFeeReceiptTemp.setFeeTypeId(this.feeTypeId);
+				
+				if (this.feeTypeId == 0) {
+					finFeeReceiptTemp.setVasReference(this.feeTypeCode);
+				}
+				
 				finFeeReceiptTemp.setReceiptID(finFeeReceipt.getReceiptID());
 				finFeeReceiptTemp.setWorkflowId(workFlowId);
 				finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
@@ -431,8 +457,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				availableAmountBox.setMaxlength(18);
 				availableAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				availableAmountBox.setDisabled(true);
-				availableAmountBox
-						.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount(), formatter));
+				availableAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(availableAmountBox);
 				lc.setStyle("text-align:right;");
@@ -454,8 +479,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				remReceiptAmountBox.setMaxlength(18);
 				remReceiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remReceiptAmountBox.setDisabled(true);
-				remReceiptAmountBox.setValue(PennantAppUtil.formateAmount(
-						finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
+				remReceiptAmountBox.setValue(PennantAppUtil.formateAmount(finFeeReceipt.getAvailableAmount().subtract(finFeeReceipt.getPaidAmount()), formatter));
 				lc = new Listcell();
 				lc.appendChild(remReceiptAmountBox);
 				lc.setStyle("text-align:right;");
@@ -471,6 +495,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 				amountBoxlist.add(paidBox);
 				amountBoxlist.add(remReceiptAmountBox);
 				amountBoxlist.add(finFeeReceipt);
+				
 				paidBox.addForward("onChange", window_FinFeeReceiptDialog, "onChangePaidAmount", amountBoxlist);
 			}
 		}

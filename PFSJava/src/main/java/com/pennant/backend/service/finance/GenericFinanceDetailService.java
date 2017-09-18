@@ -22,6 +22,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
@@ -214,6 +215,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetTypesValidation			finAssetTypesValidation;
 	private FinAssetTypeDAO					finAssetTypeDAO;
 	private DisbursementPostings			disbursementPostings;
+	private InstallmentDueService 			installmentDueService;
 
 	// EOD Process Checking
 	private CustomerQueuingDAO				customerQueuingDAO;
@@ -1330,64 +1332,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return datasetList;
 	}
 
-	protected long getAccountingResults(AuditHeader auditHeader, FinanceDetail financeDetail,
-			List<ReturnDataSet> accountingSetEntries, Date curBDay, AEEvent aeEvent)
-					throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		long linkedTranId = 0;
-
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-
-		// Call Map Build Method
-		List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
-		if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
-
-			// Method for validating Postings with interface program and
-			// return results
-			if (returnSetEntries.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = returnSetEntries.get(0).getLinkedTranId();
-			}
-
-			if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				boolean isFetchFinAc = false;
-				boolean isFetchCistIntAc = false;
-				for (int j = 0; j < returnSetEntries.size(); j++) {
-					ReturnDataSet set = returnSetEntries.get(j);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils.isEmpty(StringUtils
-							.trimToEmpty(set.getErrorId())))) {
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
-								.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-								new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-					}
-
-					if (!isFetchFinAc
-							&& set.getAccountType().equals(
-									financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
-						isFetchFinAc = true;
-						finMain.setFinAccount(set.getAccount());
-					}
-					if (!isFetchCistIntAc
-							&& set.getAccountType().equals(
-									financeDetail.getFinScheduleData().getFinanceType().getPftPayAcType())) {
-						isFetchCistIntAc = true;
-						finMain.setFinCustPftAccount(set.getAccount());
-					}
-				}
-				auditHeader.setErrorList(errorDetails);
-				//FIXME: 050517 Needs to fill return dataset
-				accountingSetEntries.addAll(returnSetEntries);
-			}
-		}
-		return linkedTranId;
-	}
-
 	protected HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
@@ -1480,6 +1424,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
+		
+		// Fee Details Validation
+		/*boolean isFeeConfgMatched = validateAccSetFees(financeDetail.getFinScheduleData().getFinFeeDetailList(), 
+				aeEvent.getAcSetIDList(), financeDetail.getAccountingEventCode());
+		if(!isFeeConfgMatched){
+			auditHeader.setErrorDetails(new ErrorDetails("60212", null));
+			return auditHeader;
+		}*/
+						
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -1489,14 +1442,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setDataMap(dataMap);
 
 		// Prepared Postings execution 
-		//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		//Disbursement Instruction Posting
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
+		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBS)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSF)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSN)
+				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
 			Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
 					financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());
@@ -1521,6 +1473,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
 				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
 			}
+			getInstallmentDueService().processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),true, auditHeader.getAuditBranchCode());
 		}
 
 		doSave_PftDetails(pftDetail, isNew);
@@ -1809,7 +1762,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	protected void cancelStageAccounting(String finReference, String finEvent) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	protected void cancelStageAccounting(String finReference, String finEvent) {
 
 		List<Long> excdTranIdList = getFinStageAccountingLogDAO().getLinkedTranIdList(finReference, finEvent);
 		if (excdTranIdList != null && !excdTranIdList.isEmpty()) {
@@ -2205,6 +2158,28 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 */
 	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(final String id) {
 		return getRecoveryDAO().getFinancePenaltysByFinRef(id, "");
+	}
+	
+	/**
+	 * Method for Validating Fee Details processed in the workflow Event & linking with Accounting Set
+	 */
+	public boolean validateAccSetFees(List<FinFeeDetail> feeList, List<Long> acSetIDList, String event){
+		
+		// Linked Fee Codes against Accounting Set Transactions
+		boolean isFeeMatched = true;
+		List<String> feeCodeList = getTransactionEntryDAO().getFeeCodeList(acSetIDList);
+		for (FinFeeDetail feeDetail : feeList) {
+			
+			if(!StringUtils.equals(event, feeDetail.getFinEvent())){
+				continue;
+			}
+			if(!feeCodeList.contains(feeDetail.getFeeTypeCode())){
+				isFeeMatched = false;
+				break;
+			}
+		}
+		
+		return isFeeMatched;
 	}
 
 	// ******************************************************//
@@ -2784,6 +2759,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+	
+	public InstallmentDueService getInstallmentDueService() {
+		return installmentDueService;
+	}
+
+	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
+		this.installmentDueService = installmentDueService;
 	}
 
 }

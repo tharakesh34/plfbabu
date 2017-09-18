@@ -14105,7 +14105,7 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 	</changeSet>
 	<changeSet id="675" author="Kesav" dbms="mssql">
 	<sql>
-		create table Promotions_Backup as Select * from Promotions;
+		Select * into Promotions_Backup from Promotions;
 	</sql>
 	</changeSet>
 	<changeSet id="676" author="Kesav">
@@ -14247,7 +14247,7 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 			oldColumnName="Id" tableName="Promotions" />
 	</changeSet>
 	
-	<changeSet id="688" author="Kesav">
+	<changeSet id="688" author="Kesav" dbms="oracle">
 		<createView viewName="ETL_PROMOTIONS" replaceIfExists="true">
 			select P.PromotionId, P.PROMOTIONCODE FinType, LT.FinCategory, P.PROMOTIONDESC FinTypeDesc
 			  ,  UDF_CONVERTCURRENCY(P.FINMAXAMOUNT, LT.FinCcy, LT.FinCcy) FinMaxAmount
@@ -14265,7 +14265,24 @@ Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguratio
 			  inner join RMTFINANCETYPES LT on LT.FinType = P.FinType		
 		</createView>
 	</changeSet>
-	
+	<changeSet id="688" author="Kesav" dbms="mssql">
+		<createView viewName="ETL_PROMOTIONS" replaceIfExists="true">
+			select P.PromotionId, P.PROMOTIONCODE FinType, LT.FinCategory, P.PROMOTIONDESC FinTypeDesc
+			  ,  dbo.UDF_CONVERTCURRENCY(P.FINMAXAMOUNT, LT.FinCcy, LT.FinCcy) FinMaxAmount
+			  ,  dbo.UDF_CONVERTCURRENCY(P.FINMINAMOUNT, LT.FinCcy, LT.FinCcy) FinMinAmount
+			  , LT.FinIsAlwMD, LT.FInIsAlwGrace, LT.FinRateType, P.FinBaseRate, P.FinSplRate
+			  , P.FinMargin, P.ACTUALINTERESTRATE FinIntRate, P.FInMinRate, P.FinMaxRate
+			  , LT.FinSchdMthd, LT.FinGrcRateType, LT.FinGrcBaseRate, LT.FinGrcSplRate
+			  , LT.FinGrcMargin, P.FinMinTerm, P.FinMaxTerm, LT.FInRepayMethod, P.ACTIVE FinIsActive
+			  , LT.StepFinance, LT.SteppingMandatory, LT.AlwManualSteps, LT.AlwdStepPolicies, LT.DftStepPolicy
+			  , P.FINTYPE Product, P.StartDate, P.EndDate, LT.AlwMultiPartyDisb, LT.PlanEMIHAlw
+			  , LT.PlanEMIHMethod, LT.PlanEMIHMaxPerYear, LT.PlanEMIHMax, LT.PlanEMIHLockPeriod
+			  , LT.UnPlanEMIHLockPeriod, LT.UnPlanEMICpz, LT.MaxUnplannedEmi, LT.AlwUnPlanEmiHoliday
+			  , LT.AlwMaxDisbCheckReq
+			from PROMOTIONS P
+			  inner join RMTFINANCETYPES LT on LT.FinType = P.FinType		
+		</createView>
+	</changeSet>
 	<changeSet id="689" author="Kesav">
 		<createView viewName="PROMOTIONS_AVIEW" replaceIfExists="true">
 			SELECT		T1.PromotionId, T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
@@ -14395,13 +14412,21 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 		</createTable>
 </changeSet>
 
-<changeSet id="698" author="Durgaprasad G">
+<changeSet id="698" author="Durgaprasad G" dbms="oracle">
 	<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true"> 
   			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
 			FROM TRANSACTION_DETAIL_REPORT DR
 			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
 			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
 			ORDER BY ID
+ </createView>
+</changeSet>
+<changeSet id="698" author="Durgaprasad G" dbms="mssql">
+	<createView viewName="TRANSACTION_DETAIL_REPORT_VIEW" replaceIfExists="true"> 
+  			SELECT ID,DR.LINK,BSCHL,HKONT,UMSKZ,WRBTR/CCYMINORCCYUNITS WRBTR ,GSBER,BUPLA,KOSTL,PRCTR,ZUONR,SGTXT
+			FROM TRANSACTION_DETAIL_REPORT DR
+			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
+			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
  </createView>
 </changeSet>
 	<changeSet id="699" author="Sai">
@@ -14482,7 +14507,7 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
 						
 		</sql>
   </changeSet>
-  <changeSet id="704" author="Manoj">
+  <changeSet id="704" author="Manoj" dbms="oracle">
   	<createView viewName="INT_POSIDEX_CUST_VIEW" replaceIfExists="true">
   		SELECT C.CUSTID CUSTOMER_NO,
 				  '' SOURCE_SYS_ID,
@@ -14598,7 +14623,122 @@ where reportid=(select reportid from reportconfiguration where menuitemcode='men
         WHERE C.CUSTCOREBANK IS NOT NULL
   	</createView>
   </changeSet>
-  
+  <changeSet id="704" author="Manoj" dbms="mssql">
+  	<createView viewName="INT_POSIDEX_CUST_VIEW" replaceIfExists="true">
+  		SELECT C.CUSTID CUSTOMER_NO,
+				  '' SOURCE_SYS_ID,
+          C.CUSTCOREBANK FILLER_STRING_1,
+				  C.CUSTFNAME FIRST_NAME,
+				  C.CUSTMNAME MIDDLE_NAME,
+				  C.CUSTLNAME LAST_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DOB,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPAN.CUSTDOCTITLE
+				    ELSE ''
+				  END PAN,
+          CBA.ACCOUNTNUMBER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDDLN.CUSTDOCTITLE
+				    ELSE ''
+				  END DRIVING_LICENSE_NUMBER,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDVTR.CUSTDOCTITLE
+				    ELSE ''
+				  END VOTER_ID,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CUSTDOB
+				    ELSE NULL
+				  END DATE_OF_INCORPORATION,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDTAN.CUSTDOCTITLE
+				    ELSE ''
+				  END TAN_NO,
+				  '' PROCESS_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN 'I'
+				    ELSE 'C'
+				  END APPLICANT_TYPE,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CAST(EMPNAME AS VARCHAR(105))
+				    ELSE NULL
+				  END EMPOYER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTMOTHERMAIDEN
+				    ELSE ''
+				  END FATHER_NAME,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CDPPT.CUSTDOCTITLE
+				    ELSE ''
+				  END PASSPORT_NO,
+				 '' ACCOUNT_NUMBER,
+				  '' CREDIT_CARD_NUMBER,
+				  'N' PROCESS_FLAG,
+				  '' ERROR_CODE,
+				  '' ERROR_DESC,
+				  C.CUSTCIF CUSTOMER_ID,
+				  '' SOURCE_SYSTEM,
+				  CAST(NULL AS NUMERIC(18,0)) PSX_BATCH_ID,
+				  '' UCIN_FLAG,
+				  CAST(NULL AS NUMERIC(18,0)) EOD_BATCH_ID,
+				  SYSDATETIME() INSERT_TS,
+				  CASE
+				    WHEN C.CUSTCTGCODE='RETAIL'
+				    THEN CUSTGENDERCODE
+				    ELSE ''
+				  END GENDER,
+				  CDADR.CUSTDOCTITLE
+           AADHAR_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCIN.CUSTDOCTITLE
+				    ELSE ''
+				  END CIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDDIN.CUSTDOCTITLE
+				    ELSE ''
+				  END DIN,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDRGNO.CUSTDOCTITLE
+				    ELSE ''
+				  END REGISTRATION_NO,
+				  CASE
+				    WHEN C.CUSTCTGCODE='CORP'
+				    THEN CDCANO.CUSTDOCTITLE
+				    ELSE ''
+				  END CA_NUMBER,
+				  'CF' SEGMENT,
+				 C.LASTMNTON 
+				FROM CUSTOMERS C
+        LEFT JOIN (select TOP 1 CUSTID, ACCOUNTNUMBER from CUSTOMERBANKINFO ORDER BY BANKID) CBA ON CBA.CUSTID = C.CUSTID
+				LEFT JOIN CUSTOMERDOCUMENTS CDPAN ON CDPAN.CUSTID = C.CUSTID AND CDPAN.CUSTDOCCATEGORY='03'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDLN ON CDDLN.CUSTID = C.CUSTID AND CDDLN.CUSTDOCCATEGORY='04'
+				LEFT JOIN CUSTOMERDOCUMENTS CDVTR ON CDVTR.CUSTID = C.CUSTID AND CDVTR.CUSTDOCCATEGORY='05'
+				LEFT JOIN CUSTOMERDOCUMENTS CDTAN ON CDTAN.CUSTID = C.CUSTID AND CDTAN.CUSTDOCCATEGORY='15'
+				LEFT JOIN CUSTOMERDOCUMENTS CDPPT ON CDPPT.CUSTID = C.CUSTID AND CDPPT.CUSTDOCCATEGORY='02'
+				LEFT JOIN CUSTOMERDOCUMENTS CDADR ON CDADR.CUSTID = C.CUSTID AND CDADR.CUSTDOCCATEGORY='01'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCIN ON CDCIN.CUSTID = C.CUSTID AND CDCIN.CUSTDOCCATEGORY='16'
+				LEFT JOIN CUSTOMERDOCUMENTS CDDIN ON CDDIN.CUSTID = C.CUSTID AND CDDIN.CUSTDOCCATEGORY='17'
+				LEFT JOIN CUSTOMERDOCUMENTS CDRGNO ON CDRGNO.CUSTID = C.CUSTID AND CDRGNO.CUSTDOCCATEGORY='18'
+				LEFT JOIN CUSTOMERDOCUMENTS CDCANO ON CDCANO.CUSTID  = C.CUSTID AND CDCANO.CUSTDOCCATEGORY='19'
+				LEFT JOIN CUSTEMPLOYEEDETAIL CE ON CE.CUSTID = C.CUSTID LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = C.CUSTID AND CUSTADDRPRIORITY=5
+        WHERE C.CUSTCOREBANK IS NOT NULL
+  	</createView>
+  </changeSet>
   <changeSet id="705" author="Durgaprasad G">
 		<createTable tableName="TRANSACTIN_DETAIL_REPORT_STAGE">
 			<column name="ID" autoIncrement="true" type="decimal(10,0)" startWith="1">
@@ -15156,4 +15296,1158 @@ update Customers_temp set CUSTADDLDEC1 = null;
 <modifyDataType tableName="Customers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 <modifyDataType tableName="Customers_Temp" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 </changeSet>
+<changeSet id="744" author="Irfan">
+  	<createTable tableName="FinWaiverHeader">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+  
+  <changeSet id="745" author="Irfan" dbms="oracle">
+  	<createTable tableName="FinWaiverHeader_Temp">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+    <changeSet id="745" author="Irfan" dbms="mssql">
+  	<createTable tableName="FinWaiverHeader_Temp">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+  <changeSet id="745.1" author="Jayant" dbms="mssql">
+      <sql>
+         ALTER TABLE FinWaiverHeader_Temp ADD CONSTRAINT DF_FINWAVRHDR_TMP_VER DEFAULT 0 FOR Version;
+      </sql>
+  </changeSet>
+  <changeSet id="746" author="Irfan">
+		<createTable tableName="FinWaiverDetail">
+			<column name="WaiverID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="WaiverSeqID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="WaiverType" type="char(1)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="number(18,0)">
+			<constraints nullable="false" />
+			</column>
+		</createTable>
+</changeSet>
+
+<changeSet id="747" author="Irfan" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqFinWaiverDetail START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ </changeSet>
+ 
+ <changeSet id="748" author="Irfan" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+   execute 'CREATE SEQUENCE SeqFinWaiverDetail START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ </changeSet>
+ 
+ 	<changeSet id="749" author="Irfan" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SeqFinWaivertDetail(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+	</changeSet>
+
+	<changeSet id="750" author="Irfan" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqFinWaiverHeader START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="751" author="Irfan" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 begin
+  		 execute 'CREATE SEQUENCE SeqFinWaiverHeader START  1 INCREMENT BY 1 ';  
+			 end;  
+			$$;
+	    </sql>
+ 	</changeSet>
+ 
+ 	<changeSet id="752" author="Irfan" dbms="mssql">
+		<sql splitStatements="false">
+			CREATE TABLE SeqFinWaiverHeader(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		</sql>
+	</changeSet>
+ 	 <changeSet id="753" author="Siva" >
+		<sql>
+			<![CDATA[Update FinanceMain set FinrepaymentAmount =  (select Sum(SchdPriPaid) as paidpri from FinScheduleDetails 
+			where FinScheduleDetails.FinReference =  FinanceMain.FinReference group by Finreference)
+			Where Finreference IN (
+			select FinanceMain.FinReference from FinanceMain 
+			Inner Join (select FinReference, Sum(SchdPriPaid)  as paidpri from FinScheduleDetails group by Finreference ) t
+			on FinanceMain.FinReference = t.FinReference 
+			Where FInanceMain.FinRepaymentAmount <> paidpri )]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="754" author="Irfan">
+		<createView viewName="FinWaiverHeader_View" replaceIfExists="true">
+			SELECT     T1.WaiverID, T1.FinReference, T1.TotalWaiver, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T2.FinIsActive
+							FROM         FinWaiverHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode 
+				UNION ALL
+				SELECT     T1.WaiverID, T1.FinReference, T1.TotalWaiver, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T4.FinTypeDesc,  T6.BranchDesc FinBranchDesc, T5.CcyDesc FinCcyDesc, T2.FinIsActive
+							FROM         FinWaiverHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId INNER JOIN
+				       RMTFinanceTypes T4 ON T2.FinType = T4.FinType INNER JOIN
+				       RMTCurrencies T5 ON T2.FinCcy = T5.CcyCode INNER JOIN
+				       RMTBranches T6 ON T2.FinBranch = T6.BranchCode 
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinWaiverHeader_TEMP 
+				                            WHERE      WaiverID = T1.WaiverID)
+		</createView>
+	</changeSet>
+	<changeSet id="754" author="Durgaprasad.g">
+	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+	   SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
+        T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
+        T1.POSTAMOUNT, T1.ACCOUNTTYPE, 
+        T2.FINTYPE, T2.FINBRANCH, T2.FINAPPROVEDDATE, T2.CUSTID CUSTID,
+        T4.ENTITYCODE, 
+        T5.CUSTSHRTNAME, T5.CUSTCIF, T5.CUSTCRCPR,
+        T6.CUSTADDRHNBR, T6.CUSTFLATNBR, T6.CUSTADDRSTREET, T6.CUSTADDRLINE1,
+        T6.CUSTADDRLINE2, T6.CUSTADDRCITY, T6.CUSTADDRPROVINCE, T6.CUSTADDRCOUNTRY, 
+        T6.CUSTADDRZIP CUSTADDRZIP, T6.LASTMNTON CUSTADDRLASTMNTON, T6.CUSTPOBOX, 
+        T7.TAXNUMBER CUSTOMERGSTIN, T7.ADDRLINE1 TAXADDRLINE1, T7.ADDRLINE2 TAXADDRLINE2,
+        T7.ADDRLINE3 TAXADDRLINE3, T7.ADDRLINE4 TAXADDRLINE4, T7.COUNTRY TAXCOUNTRY, 
+        T7.PROVINCE TAXPROVINCE, T7.CITY TAXCITY, T7.PINCODE TAXPINCODE, T7.LASTMNTON TAXLASTMNTON,
+        T8.CUSTCIF TAXCUSTCIF, T8.CUSTSHRTNAME TAXCUSTSHRTNAME, T8.CUSTCRCPR TAXCUSTCRCPR, 
+        T9.ACCADDLVAR1 HSNSACCODE, T9.ACCADDLVAR2 NATUREOFSERVICE, T9.ACCADDLCHAR1 REVERSECHARGEAPPLICABLE,
+        T9.TAXAPPLICABLE, T9.EXTRACTIONTYPE, '' ORIGINALINVOICENO, T10.CCYMINORCCYUNITS
+        FROM POSTINGS_TAXDOWNLOAD T1 
+        INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+        INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+        INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+        INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID
+        INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5
+        LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE 
+        LEFT JOIN CUSTOMERS T8 ON T8.CUSTID = T7.TAXCUSTID
+        INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+        INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
+	</createView>
+	
+	</changeSet>
+	
+	<changeSet id="755" author="Manoj">
+		<dropForeignKeyConstraint baseTableName="POSIDEX_CUSTOMER_LOANS"
+			constraintName="FK_PCL_CID" />
+	</changeSet>
+	<changeSet id="756" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90346','EN','E','Phone Number is invalid. Allowed Characters are {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="757" author="Durgaprasad g">
+	<dropTable tableName="TAXDOWNLOADDETAIL"/>
+	</changeSet>
+	<changeSet  id="758" author="Durgaprasad G">
+		<createTable tableName="TAXDOWNLOADDETAIL">
+		    <column name="HEADERID" 				type="NUMBER(19)" />
+		 	<column name="TRANSACTION_DATE" 				type="datetime" />
+			<column name="HOST_SYSTEM_TRANSACTION_ID" 		type="varchar(20)" />
+			<column name="TRANSACTION_TYPE" 				type="varchar(50)" />
+			<column name="BUSINESS_AREA" 					type="varchar(2)" />
+			<column name="SOURCE_SYSTEM" 					type="varchar(20)" />
+			<column name="COMPANY_CODE" 					type="varchar(50)" />
+			<column name="CUSTOMER_NAME" 					type="varchar(300)" />
+			<column name="REGISTERED_CUSTOMER" 				type="varchar(1)" />
+			<column name="CUSTOMER_ID" 						type="number(8)" />
+			<column name="CUSTOMER_GSTIN" 					type="varchar(30)" />
+			<column name="CUSTOMER_ADDRESS" 				type="varchar(500)" />
+			<column name="CUSTOMER_STATE_CODE" 				type="varchar(2)" />
+			<column name="ADDRESS_CHANGE_DATE" 				type="datetime" />
+			<column name="PAN_NO" 							type="varchar(30)" />
+			<column name="LEDGER_CODE" 						type="varchar(20)" />
+			<column name="HSN_SAC_CODE" 					type="varchar(50)" />
+			<column name="NATURE_OF_SERVICE" 				type="varchar(200)" />
+			<column name="LOAN_ACCOUNT_NO" 					type="varchar(20)" />
+			<column name="PRODUCT_CODE" 					type="varchar(8)" />
+			<column name="CHARGE_CODE" 						type="number(8)" />
+			<column name="LOAN_BRANCH" 						type="number(8)" />
+			<column name="LOAN_BRANCH_STATE" 				type="varchar(2)" />
+			<column name="LOAN_SERVICING_BRANCH" 			type="varchar(200)" />
+			<column name="TXN_BRANCH_ADDRESS" 				type="varchar(500)" />
+			<column name="TXN_BRANCH_STATE_CODE" 			type="varchar(2)" />
+			<column name="TRANSACTION_AMOUNT" 				type="number(25,2)" />
+			<column name="REVERSE_CHARGE_APPLICABLE" 		type="varchar(1)" />
+			<column name="INVOICE_TYPE" 					type="varchar(1)" />
+			<column name="ORIGINAL_INVOICE_NO" 				type="varchar(16)" />
+			<column name="BFL_GSTIN_NO" 					type="varchar(30)"/>
+			<column name="INVOICE_NO"                 		type="varchar(16)" />
+			<column name="SFDC_DEALID"                		type="varchar(20)" />
+			<column name="TAXABLE_AMOUNT"             		type="number(20,2)" />
+			<column name="CGST_RATE"                  		type="number(10,7)" />
+			<column name="CGST_AMOUNT"                		type="number(25,2)" />
+			<column name="CGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="CGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="CGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="CGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="SGST_RATE"                  		type="number(10,7)" />
+			<column name="SGST_AMOUNT"                		type="number(25,2)" />
+			<column name="SGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="SGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="SGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="SGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="IGST_RATE"                  		type="number(10,7)" />
+			<column name="IGST_AMOUNT"                		type="number(25,2)" />
+			<column name="IGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="IGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="IGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="IGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="UTGST_RATE"                 		type="number(10,7)" />
+			<column name="UTGST_AMOUNT"               		type="number(25,2)" />
+			<column name="UTGST_SURCHARGE_RATE"       		type="number(10,7)" />
+			<column name="UTGST_SURCHARGE_AMOUNT"     		type="number(25,2)" />
+			<column name="UTGST_CESS_RATE"            		type="number(10,7)" />
+			<column name="UTGST_CESS_AMOUNT"          		type="number(25,2)" />
+			<column name="TXNADVICEID"                		type="number(16)" />
+			<column name="TO_STATE"                   		type="varchar(2)" />
+			<column name="FROM_STATE"                 		type="varchar(2)" />
+			<column name="CHEQUEID"                   		type="number" />
+			<column name="EXEMPTED"                   		type="varchar(1)" />
+			<column name="BUSINESSdatetime"               	type="datetime" />
+			<column name="PROCESSdatetime"                	type="datetime" />
+			<column name="PROCESSED_FLAG"             		type="varchar(1)" />
+			<column name="REVERSE_CHARGECODEID"       		type="number(16)" />
+			<column name="AGREEMENTID"                		type="number(8)" />
+			<column name="CONSIDER_FOR_GST"           		type="varchar(1)" />
+			<column name="EXEMPTED_STATE"             		type="varchar(1)" />
+			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
+			<column name="LOAN_BRANCH_ADDRESS"             type="varchar(500)" />
+		</createTable>
+</changeSet>
+
+<changeSet id="759" author="chaitanya.ch">
+	<createView viewName="TAXDOWNLOADDETAIL_VIEW" replaceIfExists="true">
+		SELECT T1.POSTDATE, T1.LINKEDTRANID, T1.OLDLINKEDTRANID, T1.TRANSORDER, T1.FINEVENT, 
+        T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, T1.POSTSTATUS STATUS,
+        T1.POSTAMOUNT, T1.ACCOUNTTYPE, 
+        T2.FINTYPE, T2.FINBRANCH, T2.FINAPPROVEDDATE, T2.CUSTID CUSTID,
+        T4.ENTITYCODE, 
+        T5.CUSTSHRTNAME, T5.CUSTCIF, T5.CUSTCRCPR,
+        T6.CUSTADDRHNBR, T6.CUSTFLATNBR, T6.CUSTADDRSTREET, T6.CUSTADDRLINE1,
+        T6.CUSTADDRLINE2, T6.CUSTADDRCITY, T6.CUSTADDRPROVINCE, T6.CUSTADDRCOUNTRY, 
+        T6.CUSTADDRZIP CUSTADDRZIP, T6.LASTMNTON CUSTADDRLASTMNTON, T6.CUSTPOBOX, 
+        T7.TAXNUMBER CUSTOMERGSTIN, T7.ADDRLINE1 TAXADDRLINE1, T7.ADDRLINE2 TAXADDRLINE2,
+        T7.ADDRLINE3 TAXADDRLINE3, T7.ADDRLINE4 TAXADDRLINE4, T7.COUNTRY TAXCOUNTRY, 
+        T7.PROVINCE TAXPROVINCE, T7.CITY TAXCITY, T7.PINCODE TAXPINCODE, T7.LASTMNTON TAXLASTMNTON,
+        T7.TAXEXEMPTED,
+        T8.CUSTCIF TAXCUSTCIF, T8.CUSTSHRTNAME TAXCUSTSHRTNAME, T8.CUSTCRCPR TAXCUSTCRCPR, 
+        T9.ACCADDLVAR1 HSNSACCODE, T9.ACCADDLVAR2 NATUREOFSERVICE, T9.ACCADDLCHAR1 REVERSECHARGEAPPLICABLE,
+        T9.TAXAPPLICABLE, T9.EXTRACTIONTYPE, '' ORIGINALINVOICENO, T9.ACCADDLCHAR1, T10.CCYMINORCCYUNITS
+        FROM POSTINGS_TAXDOWNLOAD T1 
+        INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE 
+        INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE 
+        INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+        INNER JOIN CUSTOMERS T5 ON T5.CUSTID = T2.CUSTID
+        INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5
+        LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE 
+        LEFT JOIN CUSTOMERS T8 ON T8.CUSTID = T7.TAXCUSTID
+        INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE 
+        INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T1.ACCCY
+	
+	</createView> 
+
+</changeSet>
+<changeSet id="760" author="Prasad" dbms="oracle">
+    <createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+        Select substr(T1.FinReference,7,length(T1.FinReference)) APPLID,FavourNumber CHEQUEID,T1.FinReference AGREEMENTNO,
+        T3.Postdate BOUNCE_DATE,T4.Reason BOUNCE_REASON,T3.ADVISEAMOUNT BOUNCE_AMT,
+        (select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+        'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1 inner join 
+   		FINRECEIPTHEADER T on t.Reference = T1.FinReference inner join 
+    	FINRECEIPTDETAIL T2 on T.RECEIPTID =T2.RECEIPTID And T.ReceiptMode = T2.PaymentType  inner join
+     	ManualAdvise T3 on T3.RECEIPTID = T.RECEIPTID inner join
+     	Bouncereasons T4 on T4.Bounceid =T3.Bounceid
+   		Where T.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
+	</createView>
+</changeSet>
+<changeSet id="760" author="Prasad" dbms="mssql">
+    <createView viewName="DM_BOUNCE_DETAILS_VIEW" replaceIfExists="true">
+        Select substring(T1.FinReference,7,len(T1.FinReference)) APPLID,FavourNumber CHEQUEID,T1.FinReference AGREEMENTNO,
+        T3.Postdate BOUNCE_DATE,T4.Reason BOUNCE_REASON,T3.ADVISEAMOUNT BOUNCE_AMT,
+        (select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+        'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE, null BATCH_ID
+		from finpftdetails T1 inner join 
+   		FINRECEIPTHEADER T on t.Reference = T1.FinReference inner join 
+    	FINRECEIPTDETAIL T2 on T.RECEIPTID =T2.RECEIPTID And T.ReceiptMode = T2.PaymentType  inner join
+     	ManualAdvise T3 on T3.RECEIPTID = T.RECEIPTID inner join
+     	Bouncereasons T4 on T4.Bounceid =T3.Bounceid
+   		Where T.ReceiptModeStatus  IN ('B') and T3.Advisetype=1 and T3.Bounceid>0
+	</createView>
+</changeSet>
+<changeSet id="761" author="Prasad" dbms="oracle">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+       SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTR(FM.FinReference,7,
+       LENGTH(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       Case when P.Drorcr='D' then P.postamount else 0 end DRAMT,Case when P.Drorcr='C' then 0 else P.postamount end CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+	</createView>
+</changeSet>
+<changeSet id="761" author="Prasad" dbms="mssql">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+       SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId + '-'+TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTRING(FM.FinReference,7,
+       LEN(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       Case when P.Drorcr='D' then P.postamount else 0 end DRAMT,Case when P.Drorcr='C' then 0 else P.postamount end CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+	</createView>
+</changeSet>
+<changeSet id="762" author="Jayant">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1274,"properties":{"process_id":"RECEIPT_PROCESS","name":"Receipt Workflow Process","documentation":"Receipt Workflow Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-1A2E482C-719D-41EA-B0FE-E65632AF6E1E"}],"bounds":{"lowerRight":{"x":45,"y":293},"upperLeft":{"x":15,"y":263}},"dockers":[]},{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE","properties":{"overrideid":"","name":"Receipt Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPT_MAKER","firstName":"RECEIPT_MAKER","fullName":"RECEIPT_MAKER","id":"RECEIPT_MAKER","roledesc":"Receipt Maker","$$hashKey":"object:1619"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-FE23F595-73C2-47DB-A31B-CD758E49AA68"},{"resourceId":"sid-6C41A0AB-DBE3-4EDB-B674-AFF127DB0548"}],"bounds":{"lowerRight":{"x":175,"y":318},"upperLeft":{"x":75,"y":238}},"dockers":[]},{"resourceId":"sid-1A2E482C-719D-41EA-B0FE-E65632AF6E1E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}],"bounds":{"lowerRight":{"x":74.2734375,"y":278},"upperLeft":{"x":45.84375,"y":278}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}},{"resourceId":"sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-6BF26389-B381-4950-9B81-6B52AB90EA18"},{"resourceId":"sid-6CCDF610-430F-4A2F-8A50-FB551150F050"}],"bounds":{"lowerRight":{"x":385,"y":298},"upperLeft":{"x":345,"y":258}},"dockers":[]},{"resourceId":"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421","properties":{"overrideid":"","name":"Receipt Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPT_APPROVER","firstName":"RECEIPT_APPROVER","fullName":"RECEIPT_APPROVER","id":"RECEIPT_APPROVER","roledesc":"Receipt Approver","$$hashKey":"object:7717"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-729F80E4-7F36-4EA2-BB13-6DA473946766"}],"bounds":{"lowerRight":{"x":640,"y":318},"upperLeft":{"x":540,"y":238}},"dockers":[]},{"resourceId":"sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-5282CF49-8005-4720-8393-3A287EE7B387"},{"resourceId":"sid-1D5BDDF0-B122-424E-95CD-A80D394BE48E"},{"resourceId":"sid-5BB54BDC-C45D-419B-BDB6-65AD7E027278"}],"bounds":{"lowerRight":{"x":725,"y":298},"upperLeft":{"x":685,"y":258}},"dockers":[]},{"resourceId":"sid-729F80E4-7F36-4EA2-BB13-6DA473946766","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28"}],"bounds":{"lowerRight":{"x":684.6484468700075,"y":278.4097335362338},"upperLeft":{"x":640.6288968799925,"y":278.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28"}},{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-571AC00A-AA66-4680-8DF5-6CC2D14BEC9D"}],"bounds":{"lowerRight":{"x":1043.1376227529158,"y":318},"upperLeft":{"x":943.1376227529157,"y":238}},"dockers":[]},{"resourceId":"sid-06C0D840-5E36-431B-9A20-FAC8068B9576","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1213.1851816966646,"y":292},"upperLeft":{"x":1185.1851816966646,"y":264}},"dockers":[]},{"resourceId":"sid-571AC00A-AA66-4680-8DF5-6CC2D14BEC9D","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-06C0D840-5E36-431B-9A20-FAC8068B9576"}],"bounds":{"lowerRight":{"x":1184.7373091737568,"y":277.4898191090789},"upperLeft":{"x":1043.2466411017235,"y":276.0492433909211}},"dockers":[{"x":50.00000000000006,"y":40},{"x":4.3887217579338085,"y":12}],"target":{"resourceId":"sid-06C0D840-5E36-431B-9A20-FAC8068B9576"}},{"resourceId":"sid-97820128-FC8F-4757-A019-23AAA4496CFF","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-00270A51-C826-47EC-9DB6-3815E62928A8"}],"bounds":{"lowerRight":{"x":145,"y":459},"upperLeft":{"x":45,"y":379}},"dockers":[]},{"resourceId":"sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":109,"y":518},"upperLeft":{"x":81,"y":490}},"dockers":[]},{"resourceId":"sid-00270A51-C826-47EC-9DB6-3815E62928A8","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976"}],"bounds":{"lowerRight":{"x":95,"y":489.71875},"upperLeft":{"x":95,"y":459.84375}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976"}},{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA","properties":{"overrideid":"","name":"Deposit Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"DEPOSIT_MAKER","firstName":"DEPOSIT_MAKER","fullName":"DEPOSIT_MAKER","id":"DEPOSIT_MAKER","roledesc":"Deposit Maker","$$hashKey":"object:3427"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-251622D5-60CD-4462-853B-0CA76F1C00CA"},{"resourceId":"sid-9FA14375-6043-4220-859D-D7CBB5886D3A"},{"resourceId":"sid-BBA89B8A-1B46-488F-B974-9F4CE854FD54"}],"bounds":{"lowerRight":{"x":530.671875,"y":555},"upperLeft":{"x":430.671875,"y":475}},"dockers":[]},{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-96E10B61-C512-4616-B570-2BB07CF50B42"}],"bounds":{"lowerRight":{"x":755,"y":435},"upperLeft":{"x":655,"y":355}},"dockers":[]},{"resourceId":"sid-5BB54BDC-C45D-419B-BDB6-65AD7E027278","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}],"bounds":{"lowerRight":{"x":705.4136769440337,"y":354.86329045984166},"upperLeft":{"x":705.1722605559663,"y":298.61327204015834}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}},{"resourceId":"sid-BC619109-F403-407C-8835-898ECFE6A89D","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":628,"y":458},"upperLeft":{"x":600,"y":430}},"dockers":[]},{"resourceId":"sid-96E10B61-C512-4616-B570-2BB07CF50B42","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-BC619109-F403-407C-8835-898ECFE6A89D"}],"bounds":{"lowerRight":{"x":705,"y":444},"upperLeft":{"x":628.5078125,"y":435.8125}},"dockers":[{"x":50,"y":40},{"x":705,"y":444},{"x":14,"y":14}],"target":{"resourceId":"sid-BC619109-F403-407C-8835-898ECFE6A89D"}},{"resourceId":"sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD","properties":{"overrideid":"","name":"Deposit Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"DEPOSIT_APPROVER","firstName":"DEPOSIT_APPROVER","fullName":"DEPOSIT_APPROVER","id":"DEPOSIT_APPROVER","roledesc":"Deposit Approver","$$hashKey":"object:5410"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-16DEB222-85FD-493B-8758-58D7F30F52B2"}],"bounds":{"lowerRight":{"x":755,"y":555},"upperLeft":{"x":655,"y":475}},"dockers":[]},{"resourceId":"sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-AA6AD459-714D-4BFC-BA5E-5B5002D8172E"},{"resourceId":"sid-9275378A-8131-43D4-9205-BD3B1A46F2CF"},{"resourceId":"sid-89BE2B42-2EEB-40D8-8CD9-C9517338BADE"}],"bounds":{"lowerRight":{"x":895,"y":545},"upperLeft":{"x":855,"y":505}},"dockers":[]},{"resourceId":"sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-7F9D8CED-2E48-4F8D-9283-AD648885B833"},{"resourceId":"sid-51C50D8C-C174-4198-8DB1-6D9BBDDCA844"}],"bounds":{"lowerRight":{"x":290.6666717529297,"y":298},"upperLeft":{"x":250.6666717529297,"y":258}},"dockers":[]},{"resourceId":"sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402","properties":{"overrideid":"","name":"Waiver Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTWAIVER_APPROVER","firstName":"RECEIPTWAIVER_APPROVER","fullName":"RECEIPTWAIVER_APPROVER","id":"RECEIPTWAIVER_APPROVER","roledesc":"Receipt Waiver Approver","$$hashKey":"object:2924"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-560E618D-D129-4705-AD65-AD003A9CA870"},{"resourceId":"sid-1676255A-494A-420A-8BC5-E6B3A8451849"}],"bounds":{"lowerRight":{"x":320.6666717529297,"y":420},"upperLeft":{"x":220.6666717529297,"y":340}},"dockers":[]},{"resourceId":"sid-D8223364-DA35-46E9-BE6C-688046F7F567","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-EB9E7BC6-EA26-4BFF-8F12-9E5365C0FDFD"},{"resourceId":"sid-21AFF249-08A5-4D8B-BBC8-D12F7B751D6D"}],"bounds":{"lowerRight":{"x":290.6666717529297,"y":500},"upperLeft":{"x":250.6666717529297,"y":460}},"dockers":[]},{"resourceId":"sid-B6CD1606-BB13-4E94-971D-F008B8448629","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-E2929D98-E337-49AD-9C31-600AA8997881"},{"resourceId":"sid-08D5A85F-4ED4-443D-B100-3E28FD4A43DC"}],"bounds":{"lowerRight":{"x":1004,"y":545},"upperLeft":{"x":964,"y":505}},"dockers":[]},{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B","properties":{"overrideid":"","name":"Realization/ Bounce/Cancel Receipt Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTREALIZE_MAKER","firstName":"RECEIPTREALIZE_MAKER","fullName":"RECEIPTREALIZE_MAKER","id":"RECEIPTREALIZE_MAKER","roledesc":"Receipt Realization Maker","$$hashKey":"object:655"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-63B8F0F0-A369-4605-9BF2-BEAE3B3D2196"},{"resourceId":"sid-9C89F34F-DFA5-4DB7-8B04-1EB9204C8CC6"}],"bounds":{"lowerRight":{"x":1165,"y":565},"upperLeft":{"x":1065,"y":485}},"dockers":[]},{"resourceId":"sid-372D9265-9B9D-4DE6-8169-A9CA3778968C","properties":{"overrideid":"","name":"Realization Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTREALIZE_APPROVER","firstName":"RECEIPTREALIZE_APPROVER","fullName":"RECEIPTREALIZE_APPROVER","id":"RECEIPTREALIZE_APPROVER","roledesc":"Receipt Realization Approver","$$hashKey":"object:1168"}}}},"additionalforms":"Accounting","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CECF6549-BA65-4173-BB8E-5706FE136149"}],"bounds":{"lowerRight":{"x":1405,"y":565},"upperLeft":{"x":1305,"y":485}},"dockers":[]},{"resourceId":"sid-9081FCDB-0586-406B-B44D-DE7AD3A46435","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-F49B92A5-3575-4A72-A355-501DC1A0C4E4"},{"resourceId":"sid-9527C98C-8FAE-47D4-9191-D53C79591985"}],"bounds":{"lowerRight":{"x":1490,"y":545},"upperLeft":{"x":1450,"y":505}},"dockers":[]},{"resourceId":"sid-08D5A85F-4ED4-443D-B100-3E28FD4A43DC","properties":{"overrideid":"","name":"Schedule Payment only","repruseaction":false,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptPurpose == 'SchdlRepayment'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}],"bounds":{"lowerRight":{"x":984.5,"y":504.87774142902094},"upperLeft":{"x":984.5,"y":318.68244331644854}},"dockers":[{"x":20.5,"y":20.5},{"x":41.36237724708428,"y":59.16826390133403}],"target":{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}},{"resourceId":"sid-1676255A-494A-420A-8BC5-E6B3A8451849","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}],"bounds":{"lowerRight":{"x":220.2045450537156,"y":363},"upperLeft":{"x":141.6666717529297,"y":318.57194503092103}},"dockers":[{"x":28.1668187631642,"y":23},{"x":141.6666717529297,"y":363},{"x":66.66667175292969,"y":78.85086479331659}],"target":{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}},{"resourceId":"sid-BBA89B8A-1B46-488F-B974-9F4CE854FD54","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}],"bounds":{"lowerRight":{"x":430.4514778530788,"y":551},"upperLeft":{"x":159.38545568337187,"y":318.3753871764626}},"dockers":[{"x":12.99481201171875,"y":76},{"x":159.38545568337187,"y":551},{"x":84.38545568337187,"y":60.64598783617899}],"target":{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}},{"resourceId":"sid-EB9E7BC6-EA26-4BFF-8F12-9E5365C0FDFD","properties":{"overrideid":"","name":"Cheque / DD","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}],"bounds":{"lowerRight":{"x":430.5754801817418,"y":525.5},"upperLeft":{"x":271.1666717529297,"y":500.484375}},"dockers":[{"x":20.5,"y":20.5},{"x":271.1666717529297,"y":525.5},{"x":27.15231928827467,"y":50.5}],"target":{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}},{"resourceId":"sid-560E618D-D129-4705-AD65-AD003A9CA870","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D8223364-DA35-46E9-BE6C-688046F7F567"}],"bounds":{"lowerRight":{"x":271.06404044012226,"y":459.87110612570154},"upperLeft":{"x":270.8669593157371,"y":420.25780012429846}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-D8223364-DA35-46E9-BE6C-688046F7F567"}},{"resourceId":"sid-21AFF249-08A5-4D8B-BBC8-D12F7B751D6D","properties":{"overrideid":"","name":"Others than Cheque && DD","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptMode != 'DD' && vo.receiptMode != 'CHEQUE'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"}],"bounds":{"lowerRight":{"x":539.6979370117188,"y":482.4492186299195},"upperLeft":{"x":288.84251086015075,"y":300}},"dockers":[{"x":38.175839107221066,"y":22.449218629919528},{"x":395.66668701171875,"y":482.4492186299195},{"x":395.66668701171875,"y":300},{"x":37.66668701171875,"y":62}],"target":{"resourceId":"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"}},{"resourceId":"sid-251622D5-60CD-4462-853B-0CA76F1C00CA","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}],"bounds":{"lowerRight":{"x":654.92822265625,"y":474.625},"upperLeft":{"x":480.671875,"y":395}},"dockers":[{"x":50,"y":40},{"x":480.671875,"y":395},{"x":50,"y":40}],"target":{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}},{"resourceId":"sid-9FA14375-6043-4220-859D-D7CBB5886D3A","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD"}],"bounds":{"lowerRight":{"x":654.1585079485584,"y":528},"upperLeft":{"x":531.2098805856933,"y":528}},"dockers":[{"x":45.073219299316406,"y":53},{"x":25.78899561273579,"y":53}],"target":{"resourceId":"sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD"}},{"resourceId":"sid-9C89F34F-DFA5-4DB7-8B04-1EB9204C8CC6","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}],"bounds":{"lowerRight":{"x":1104.0370607070854,"y":642},"upperLeft":{"x":480.671875,"y":555.6875}},"dockers":[{"x":39.0370607070854,"y":71.30032632017367},{"x":1104.0370607070854,"y":642},{"x":480.671875,"y":642},{"x":50,"y":40}],"target":{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}},{"resourceId":"sid-FE23F595-73C2-47DB-A31B-CD758E49AA68","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8"}],"bounds":{"lowerRight":{"x":250.18295294993115,"y":278.42821989256737},"upperLeft":{"x":175.1028604412775,"y":278.17138948243263}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8"}},{"resourceId":"sid-5282CF49-8005-4720-8393-3A287EE7B387","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}],"bounds":{"lowerRight":{"x":705.5,"y":257.34375},"upperLeft":{"x":125,"y":171}},"dockers":[{"x":20.5,"y":20.5},{"x":705.5,"y":171},{"x":125,"y":171},{"x":50,"y":40}],"target":{"resourceId":"sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"}},{"resourceId":"sid-1D5BDDF0-B122-424E-95CD-A80D394BE48E","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}],"bounds":{"lowerRight":{"x":942.6999078530955,"y":278.4650585792938},"upperLeft":{"x":725.6009343750986,"y":278.0876757957062}},"dockers":[{"x":20.5,"y":20.5},{"x":50.00000000000006,"y":40}],"target":{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}},{"resourceId":"sid-6C41A0AB-DBE3-4EDB-B674-AFF127DB0548","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-97820128-FC8F-4757-A019-23AAA4496CFF"}],"bounds":{"lowerRight":{"x":95,"y":378.685909786906},"upperLeft":{"x":95,"y":318.5147903801528}},"dockers":[{"x":20,"y":63.972010528464466},{"x":50,"y":40}],"target":{"resourceId":"sid-97820128-FC8F-4757-A019-23AAA4496CFF"}},{"resourceId":"sid-6CCDF610-430F-4A2F-8A50-FB551150F050","properties":{"overrideid":"","name":"Cheque / DD","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}],"bounds":{"lowerRight":{"x":430.26761409256005,"y":500},"upperLeft":{"x":365.5,"y":298.53515625}},"dockers":[{"x":20.5,"y":20.5},{"x":365.5,"y":500},{"x":7.399285377997273,"y":25}],"target":{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}},{"resourceId":"sid-6BF26389-B381-4950-9B81-6B52AB90EA18","properties":{"overrideid":"","name":"Other than Cheque & DD","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptMode != 'DD' && vo.receiptMode != 'CHEQUE'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"}],"bounds":{"lowerRight":{"x":539.8906274801373,"y":278.4548040840315},"upperLeft":{"x":385.7929662698628,"y":278.1116021659685}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"}},{"resourceId":"sid-51C50D8C-C174-4198-8DB1-6D9BBDDCA844","properties":{"overrideid":"","name":"Amounts Waived","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.waivedAmt > 0"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402"}],"bounds":{"lowerRight":{"x":271.067995704324,"y":339.35157463305103},"upperLeft":{"x":270.86691030153537,"y":298.53123786694897}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402"}},{"resourceId":"sid-7F9D8CED-2E48-4F8D-9283-AD648885B833","properties":{"overrideid":"","name":"No waiver","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.waivedAmt == 0"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A"}],"bounds":{"lowerRight":{"x":344.940119396485,"y":278.39310897855665},"upperLeft":{"x":291.2265523564447,"y":278.10689102144335}},"dockers":[{"x":20.5,"y":20.5},{"x":20,"y":20}],"target":{"resourceId":"sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A"}},{"resourceId":"sid-84AD111F-248D-40CF-BF33-71CA329D9446","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-256EB6D8-254D-49A7-B456-75BF9F58090E"},{"resourceId":"sid-766656D7-CBD9-4CC3-9220-AFEB8EF14CDC"}],"bounds":{"lowerRight":{"x":1255,"y":545},"upperLeft":{"x":1215,"y":505}},"dockers":[]},{"resourceId":"sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0","properties":{"overrideid":"","name":"Bounce/Cancel Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTBOUNCE_APPROVER","firstName":"RECEIPTBOUNCE_APPROVER","fullName":"RECEIPTBOUNCE_APPROVER","id":"RECEIPTBOUNCE_APPROVER","roledesc":"Receipt Bounce/Cancel Approver","$$hashKey":"object:1396"}}}},"additionalforms":null,"formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-8465FA87-EFD7-49C8-A17A-AD0027AA9150"}],"bounds":{"lowerRight":{"x":1420,"y":665},"upperLeft":{"x":1320,"y":585}},"dockers":[]},{"resourceId":"sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-67DC4762-602F-443F-89A3-68BEE8BCC7B4"},{"resourceId":"sid-C2CDE407-DA1C-4114-B3BB-D160F2A78009"}],"bounds":{"lowerRight":{"x":1490,"y":645},"upperLeft":{"x":1450,"y":605}},"dockers":[]},{"resourceId":"sid-CECF6549-BA65-4173-BB8E-5706FE136149","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9081FCDB-0586-406B-B44D-DE7AD3A46435"}],"bounds":{"lowerRight":{"x":1449.6484468700075,"y":525.4097335362338},"upperLeft":{"x":1405.6288968799925,"y":525.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-9081FCDB-0586-406B-B44D-DE7AD3A46435"}},{"resourceId":"sid-8465FA87-EFD7-49C8-A17A-AD0027AA9150","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7"}],"bounds":{"lowerRight":{"x":1449.9442668318063,"y":625.0278164131031},"upperLeft":{"x":1420.484092199871,"y":624.3510898368969}},"dockers":[{"x":41.6666259765625,"y":38},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7"}},{"resourceId":"sid-9527C98C-8FAE-47D4-9191-D53C79591985","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}],"bounds":{"lowerRight":{"x":1470.5,"y":504.23828125},"upperLeft":{"x":1115,"y":389}},"dockers":[{"x":20.5,"y":20.5},{"x":1470.5,"y":389},{"x":1115,"y":389},{"x":50,"y":40}],"target":{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}},{"resourceId":"sid-F49B92A5-3575-4A72-A355-501DC1A0C4E4","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}],"bounds":{"lowerRight":{"x":1553.9158889899584,"y":525.5},"upperLeft":{"x":1020.8042487294783,"y":318.59375}},"dockers":[{"x":20.5,"y":20.5},{"x":1553.9158889899584,"y":525.5},{"x":1553.9158889899584,"y":362},{"x":1020.8042487294783,"y":362},{"x":77.66662597656259,"y":66}],"target":{"resourceId":"sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"}},{"resourceId":"sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB","properties":{"overrideid":"","name":"Reversal Process","servicetaskexpression":"doReversal","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"preApproveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-4C585F77-A3BA-4776-80C9-3B82F86C5760"}],"bounds":{"lowerRight":{"x":1635.6666564941406,"y":665},"upperLeft":{"x":1535.6666564941406,"y":585}},"dockers":[]},{"resourceId":"sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7","properties":{"overrideid":"","name":"Bounced / Cancelled"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1708.6666564941406,"y":639},"upperLeft":{"x":1680.6666564941406,"y":611}},"dockers":[]},{"resourceId":"sid-4C585F77-A3BA-4776-80C9-3B82F86C5760","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7"}],"bounds":{"lowerRight":{"x":1680.0416564941406,"y":625},"upperLeft":{"x":1636.0572814941406,"y":625}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7"}},{"resourceId":"sid-C2CDE407-DA1C-4114-B3BB-D160F2A78009","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB"}],"bounds":{"lowerRight":{"x":1535.1809932061417,"y":625.4136272565239},"upperLeft":{"x":1490.3945201567428,"y":625.2191852434761}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB"}},{"resourceId":"sid-67DC4762-602F-443F-89A3-68BEE8BCC7B4","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}],"bounds":{"lowerRight":{"x":1470.5,"y":690},"upperLeft":{"x":1115,"y":565.9609375}},"dockers":[{"x":20.5,"y":20.5},{"x":1470.5,"y":690},{"x":1115,"y":690},{"x":50,"y":40}],"target":{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}},{"resourceId":"sid-63B8F0F0-A369-4605-9BF2-BEAE3B3D2196","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-84AD111F-248D-40CF-BF33-71CA329D9446"}],"bounds":{"lowerRight":{"x":1214.730477358556,"y":525.4138194081268},"upperLeft":{"x":1165.894522641444,"y":525.2111805918732}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-84AD111F-248D-40CF-BF33-71CA329D9446"}},{"resourceId":"sid-256EB6D8-254D-49A7-B456-75BF9F58090E","properties":{"overrideid":"","name":"Realization","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptModeStatus == 'R'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-372D9265-9B9D-4DE6-8169-A9CA3778968C"}],"bounds":{"lowerRight":{"x":1304.5195400032333,"y":525.417690936206},"upperLeft":{"x":1255.1718662467667,"y":525.211215313794}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-372D9265-9B9D-4DE6-8169-A9CA3778968C"}},{"resourceId":"sid-16DEB222-85FD-493B-8758-58D7F30F52B2","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A"}],"bounds":{"lowerRight":{"x":854.07421875,"y":525.5},"upperLeft":{"x":755.890625,"y":525.5}},"dockers":[{"x":96,"y":50.5},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A"}},{"resourceId":"sid-9275378A-8131-43D4-9205-BD3B1A46F2CF","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}],"bounds":{"lowerRight":{"x":875.5,"y":504.89236109680274},"upperLeft":{"x":755.6248224183369,"y":420.92592584961454}},"dockers":[{"x":20.5,"y":20.5},{"x":875.5,"y":420.92592584961454},{"x":88.26048948330856,"y":65.92592584961454}],"target":{"resourceId":"sid-C956496B-C436-4D38-83B0-83BD6FE03B79"}},{"resourceId":"sid-89BE2B42-2EEB-40D8-8CD9-C9517338BADE","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}],"bounds":{"lowerRight":{"x":875.5,"y":622},"upperLeft":{"x":480.671875,"y":545.34765625}},"dockers":[{"x":20.5,"y":20.5},{"x":875.5,"y":622},{"x":480.671875,"y":622},{"x":50,"y":40}],"target":{"resourceId":"sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"}},{"resourceId":"sid-766656D7-CBD9-4CC3-9220-AFEB8EF14CDC","properties":{"overrideid":"","name":"Bounce/Cancel","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptModeStatus == 'B' || vo.receiptModeStatus == 'C'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0"}],"bounds":{"lowerRight":{"x":1319.61328125,"y":625},"upperLeft":{"x":1235.5,"y":545.15625}},"dockers":[{"x":20.5,"y":20.5},{"x":1235.5,"y":625},{"x":50,"y":40}],"target":{"resourceId":"sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0"}},{"resourceId":"sid-AA6AD459-714D-4BFC-BA5E-5B5002D8172E","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B6CD1606-BB13-4E94-971D-F008B8448629"}],"bounds":{"lowerRight":{"x":963.0625,"y":525.5},"upperLeft":{"x":895.234375,"y":525.5}},"dockers":[{"x":20.5,"y":20.5},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-B6CD1606-BB13-4E94-971D-F008B8448629"}},{"resourceId":"sid-E2929D98-E337-49AD-9C31-600AA8997881","properties":{"overrideid":"","name":"Partial Settlement or Early settlement","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.receiptPurpose != 'SchdlRepayment'"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}],"bounds":{"lowerRight":{"x":1064.072883605957,"y":525.5},"upperLeft":{"x":1004.0937423706055,"y":525.5}},"dockers":[{"x":20.5,"y":20.5},{"x":18.6666259765625,"y":40.5}],"target":{"resourceId":"sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"}}],"bounds":{"lowerRight":{"x":1808.6666564941406,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="RECEIPT_PROCESS" name="Receipt Workflow Process" isExecutable="true"><documentation>Receipt Workflow Process</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" name="Receipt Maker" activiti:actor="RECEIPT_MAKER" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-1A2E482C-719D-41EA-B0FE-E65632AF6E1E" sourceRef="startEvent1" targetRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" representsUserAction="false" mandateNotes="false" /><exclusiveGateway id="sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A" /><userTask id="sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421" name="Receipt Approver" activiti:actor="RECEIPT_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" /><sequenceFlow id="sid-729F80E4-7F36-4EA2-BB13-6DA473946766" sourceRef="sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421" targetRef="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" name="Complete Process" activiti:operation="doApprove" /><endEvent id="sid-06C0D840-5E36-431B-9A20-FAC8068B9576" name="Approved" /><sequenceFlow id="sid-571AC00A-AA66-4680-8DF5-6CC2D14BEC9D" sourceRef="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" targetRef="sid-06C0D840-5E36-431B-9A20-FAC8068B9576" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-97820128-FC8F-4757-A019-23AAA4496CFF" name="Cancel Process" activiti:operation="doReject" /><endEvent id="sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976" name="Rejected" /><sequenceFlow id="sid-00270A51-C826-47EC-9DB6-3815E62928A8" sourceRef="sid-97820128-FC8F-4757-A019-23AAA4496CFF" targetRef="sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976" representsUserAction="false" mandateNotes="false" /><userTask id="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" name="Deposit Maker" activiti:actor="DEPOSIT_MAKER" activiti:assignmentLevel="Role Queue" /><serviceTask id="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" name="Cancel Process" activiti:operation="doReject" /><sequenceFlow id="sid-5BB54BDC-C45D-419B-BDB6-65AD7E027278" name="Reject" sourceRef="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" targetRef="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><endEvent id="sid-BC619109-F403-407C-8835-898ECFE6A89D" name="Rejected" /><sequenceFlow id="sid-96E10B61-C512-4616-B570-2BB07CF50B42" sourceRef="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" targetRef="sid-BC619109-F403-407C-8835-898ECFE6A89D" representsUserAction="false" mandateNotes="false" /><userTask id="sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD" name="Deposit Approver" activiti:actor="DEPOSIT_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" /><exclusiveGateway id="sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8" /><userTask id="sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402" name="Waiver Approver" activiti:actor="RECEIPTWAIVER_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-D8223364-DA35-46E9-BE6C-688046F7F567" /><exclusiveGateway id="sid-B6CD1606-BB13-4E94-971D-F008B8448629" /><userTask id="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" name="Realization/ Bounce/Cancel Receipt Maker" activiti:actor="RECEIPTREALIZE_MAKER" activiti:assignmentLevel="Role Queue" /><userTask id="sid-372D9265-9B9D-4DE6-8169-A9CA3778968C" name="Realization Approver" activiti:actor="RECEIPTREALIZE_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-9081FCDB-0586-406B-B44D-DE7AD3A46435" /><sequenceFlow id="sid-08D5A85F-4ED4-443D-B100-3E28FD4A43DC" name="Schedule Payment only" sourceRef="sid-B6CD1606-BB13-4E94-971D-F008B8448629" targetRef="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptPurpose == 'SchdlRepayment'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1676255A-494A-420A-8BC5-E6B3A8451849" name="Resubmit" sourceRef="sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402" targetRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-BBA89B8A-1B46-488F-B974-9F4CE854FD54" name="Resubmit" sourceRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" targetRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-EB9E7BC6-EA26-4BFF-8F12-9E5365C0FDFD" name="Cheque / DD" sourceRef="sid-D8223364-DA35-46E9-BE6C-688046F7F567" targetRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'</conditionExpression></sequenceFlow><sequenceFlow id="sid-560E618D-D129-4705-AD65-AD003A9CA870" name="Submit" sourceRef="sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402" targetRef="sid-D8223364-DA35-46E9-BE6C-688046F7F567" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-21AFF249-08A5-4D8B-BBC8-D12F7B751D6D" name="Others than Cheque &amp;&amp; DD" sourceRef="sid-D8223364-DA35-46E9-BE6C-688046F7F567" targetRef="sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptMode != 'DD' &amp;&amp; vo.receiptMode != 'CHEQUE'</conditionExpression></sequenceFlow><sequenceFlow id="sid-251622D5-60CD-4462-853B-0CA76F1C00CA" name="Reject" sourceRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" targetRef="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-9FA14375-6043-4220-859D-D7CBB5886D3A" name="Submit" sourceRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" targetRef="sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-9C89F34F-DFA5-4DB7-8B04-1EB9204C8CC6" name="Resubmit" sourceRef="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" targetRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-FE23F595-73C2-47DB-A31B-CD758E49AA68" name="Submit" sourceRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" targetRef="sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-5282CF49-8005-4720-8393-3A287EE7B387" name="Resubmit" sourceRef="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" targetRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1D5BDDF0-B122-424E-95CD-A80D394BE48E" name="Approve" sourceRef="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" targetRef="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-6C41A0AB-DBE3-4EDB-B674-AFF127DB0548" name="Cancel" sourceRef="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" targetRef="sid-97820128-FC8F-4757-A019-23AAA4496CFF" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression></sequenceFlow><sequenceFlow id="sid-6CCDF610-430F-4A2F-8A50-FB551150F050" name="Cheque / DD" sourceRef="sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A" targetRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptMode == 'DD' || vo.receiptMode == 'CHEQUE'</conditionExpression></sequenceFlow><sequenceFlow id="sid-6BF26389-B381-4950-9B81-6B52AB90EA18" name="Other than Cheque &amp; DD" sourceRef="sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A" targetRef="sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptMode != 'DD' &amp;&amp; vo.receiptMode != 'CHEQUE'</conditionExpression></sequenceFlow><sequenceFlow id="sid-51C50D8C-C174-4198-8DB1-6D9BBDDCA844" name="Amounts Waived" sourceRef="sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8" targetRef="sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.waivedAmt &gt; 0</conditionExpression></sequenceFlow><sequenceFlow id="sid-7F9D8CED-2E48-4F8D-9283-AD648885B833" name="No waiver" sourceRef="sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8" targetRef="sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.waivedAmt == 0</conditionExpression></sequenceFlow><exclusiveGateway id="sid-84AD111F-248D-40CF-BF33-71CA329D9446" /><userTask id="sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0" name="Bounce/Cancel Approver" activiti:actor="RECEIPTBOUNCE_APPROVER" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7" /><sequenceFlow id="sid-CECF6549-BA65-4173-BB8E-5706FE136149" sourceRef="sid-372D9265-9B9D-4DE6-8169-A9CA3778968C" targetRef="sid-9081FCDB-0586-406B-B44D-DE7AD3A46435" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-8465FA87-EFD7-49C8-A17A-AD0027AA9150" sourceRef="sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0" targetRef="sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-9527C98C-8FAE-47D4-9191-D53C79591985" name="Resubmit" sourceRef="sid-9081FCDB-0586-406B-B44D-DE7AD3A46435" targetRef="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-F49B92A5-3575-4A72-A355-501DC1A0C4E4" name="Approve" sourceRef="sid-9081FCDB-0586-406B-B44D-DE7AD3A46435" targetRef="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><serviceTask id="sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB" name="Reversal Process" activiti:operation="doReversal" /><endEvent id="sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7" name="Bounced / Cancelled" /><sequenceFlow id="sid-4C585F77-A3BA-4776-80C9-3B82F86C5760" sourceRef="sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB" targetRef="sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-C2CDE407-DA1C-4114-B3BB-D160F2A78009" name="Approve" sourceRef="sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7" targetRef="sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-67DC4762-602F-443F-89A3-68BEE8BCC7B4" name="Resubmit" sourceRef="sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7" targetRef="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-63B8F0F0-A369-4605-9BF2-BEAE3B3D2196" name="Submit" sourceRef="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" targetRef="sid-84AD111F-248D-40CF-BF33-71CA329D9446" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-256EB6D8-254D-49A7-B456-75BF9F58090E" name="Realization" sourceRef="sid-84AD111F-248D-40CF-BF33-71CA329D9446" targetRef="sid-372D9265-9B9D-4DE6-8169-A9CA3778968C" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptModeStatus == 'R'</conditionExpression></sequenceFlow><sequenceFlow id="sid-16DEB222-85FD-493B-8758-58D7F30F52B2" sourceRef="sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD" targetRef="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-9275378A-8131-43D4-9205-BD3B1A46F2CF" name="Reject" sourceRef="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" targetRef="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-89BE2B42-2EEB-40D8-8CD9-C9517338BADE" name="Resubmit" sourceRef="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" targetRef="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-766656D7-CBD9-4CC3-9220-AFEB8EF14CDC" name="Bounce/Cancel" sourceRef="sid-84AD111F-248D-40CF-BF33-71CA329D9446" targetRef="sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptModeStatus == 'B' || vo.receiptModeStatus == 'C'</conditionExpression></sequenceFlow><sequenceFlow id="sid-AA6AD459-714D-4BFC-BA5E-5B5002D8172E" name="Approve" sourceRef="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" targetRef="sid-B6CD1606-BB13-4E94-971D-F008B8448629" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-E2929D98-E337-49AD-9C31-600AA8997881" name="Partial Settlement or Early settlement" sourceRef="sid-B6CD1606-BB13-4E94-971D-F008B8448629" targetRef="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.receiptPurpose != 'SchdlRepayment'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_RECEIPT_PROCESS"><bpmndi:BPMNPlane bpmnElement="RECEIPT_PROCESS" id="BPMNPlane_RECEIPT_PROCESS"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="15.0" y="263.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE" id="BPMNShape_sid-43C4D486-53F4-43EE-8890-6E0B39D9FBEE"><omgdc:Bounds height="80.0" width="100.0" x="75.0" y="238.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A" id="BPMNShape_sid-5C4B46F9-6C61-4C8C-98C8-CC81C72B618A"><omgdc:Bounds height="40.0" width="40.0" x="345.0" y="258.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421" id="BPMNShape_sid-0B14EAF0-64A0-4C4E-9F83-A658A77B1421"><omgdc:Bounds height="80.0" width="100.0" x="540.0" y="238.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28" id="BPMNShape_sid-BD6333A4-9B0F-4A69-8EAD-041C9D122A28"><omgdc:Bounds height="40.0" width="40.0" x="685.0" y="258.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-5835B827-EFE9-4A09-953F-2B5BF785F70D" id="BPMNShape_sid-5835B827-EFE9-4A09-953F-2B5BF785F70D"><omgdc:Bounds height="80.0" width="100.00000000000011" x="943.1376227529157" y="238.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-06C0D840-5E36-431B-9A20-FAC8068B9576" id="BPMNShape_sid-06C0D840-5E36-431B-9A20-FAC8068B9576"><omgdc:Bounds height="28.0" width="28.0" x="1185.1851816966646" y="264.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-97820128-FC8F-4757-A019-23AAA4496CFF" id="BPMNShape_sid-97820128-FC8F-4757-A019-23AAA4496CFF"><omgdc:Bounds height="80.0" width="100.0" x="45.0" y="379.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976" id="BPMNShape_sid-B9D7A4B0-9C41-4279-847D-0A4E2DF3C976"><omgdc:Bounds height="28.0" width="28.0" x="81.0" y="490.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA" id="BPMNShape_sid-9C3D9CD0-BD69-4240-BBF7-1E4CF9E303AA"><omgdc:Bounds height="80.0" width="100.0" x="430.671875" y="475.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-C956496B-C436-4D38-83B0-83BD6FE03B79" id="BPMNShape_sid-C956496B-C436-4D38-83B0-83BD6FE03B79"><omgdc:Bounds height="80.0" width="100.0" x="655.0" y="355.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-BC619109-F403-407C-8835-898ECFE6A89D" id="BPMNShape_sid-BC619109-F403-407C-8835-898ECFE6A89D"><omgdc:Bounds height="28.0" width="28.0" x="600.0" y="430.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD" id="BPMNShape_sid-A1774BE8-3BC9-4249-91CC-70326C5A97FD"><omgdc:Bounds height="80.0" width="100.0" x="655.0" y="475.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A" id="BPMNShape_sid-4AF375DC-C759-4D43-9D3D-90D9AE341C9A"><omgdc:Bounds height="40.0" width="40.0" x="855.0" y="505.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8" id="BPMNShape_sid-48838E66-EAAE-4AE3-A7D1-51790A9ED3C8"><omgdc:Bounds height="40.0" width="40.0" x="250.6666717529297" y="258.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402" id="BPMNShape_sid-888F5A2E-3E41-49B5-9530-77AA7FC8D402"><omgdc:Bounds height="80.0" width="100.0" x="220.6666717529297" y="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-D8223364-DA35-46E9-BE6C-688046F7F567" id="BPMNShape_sid-D8223364-DA35-46E9-BE6C-688046F7F567"><omgdc:Bounds height="40.0" width="40.0" x="250.6666717529297" y="460.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B6CD1606-BB13-4E94-971D-F008B8448629" id="BPMNShape_sid-B6CD1606-BB13-4E94-971D-F008B8448629"><omgdc:Bounds height="40.0" width="40.0" x="964.0" y="505.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B" id="BPMNShape_sid-DEB8C0BE-00D7-4F42-BB01-F8B7C348860B"><omgdc:Bounds height="80.0" width="100.0" x="1065.0" y="485.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-372D9265-9B9D-4DE6-8169-A9CA3778968C" id="BPMNShape_sid-372D9265-9B9D-4DE6-8169-A9CA3778968C"><omgdc:Bounds height="80.0" width="100.0" x="1305.0" y="485.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-9081FCDB-0586-406B-B44D-DE7AD3A46435" id="BPMNShape_sid-9081FCDB-0586-406B-B44D-DE7AD3A46435"><omgdc:Bounds height="40.0" width="40.0" x="1450.0" y="505.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-84AD111F-248D-40CF-BF33-71CA329D9446" id="BPMNShape_sid-84AD111F-248D-40CF-BF33-71CA329D9446"><omgdc:Bounds height="40.0" width="40.0" x="1215.0" y="505.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0" id="BPMNShape_sid-DF133CCB-0734-47DF-B5CD-B240CFAF93C0"><omgdc:Bounds height="80.0" width="100.0" x="1320.0" y="585.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7" id="BPMNShape_sid-9C0967FD-43DD-4A5F-A299-6EFC4DC15DA7"><omgdc:Bounds height="40.0" width="40.0" x="1450.0" y="605.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB" id="BPMNShape_sid-3BADB59C-97A4-4E52-BBB4-17E39FF66EFB"><omgdc:Bounds height="80.0" width="100.0" x="1535.6666564941406" y="585.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7" id="BPMNShape_sid-6C9DC7C4-7CB7-46A5-B025-824B6E74BCE7"><omgdc:Bounds height="28.0" width="28.0" x="1680.6666564941406" y="611.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-96E10B61-C512-4616-B570-2BB07CF50B42" id="BPMNEdge_sid-96E10B61-C512-4616-B570-2BB07CF50B42"><omgdi:waypoint x="705.0" y="435.0" /><omgdi:waypoint x="705.0" y="444.0" /><omgdi:waypoint x="628.0" y="444.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-5282CF49-8005-4720-8393-3A287EE7B387" id="BPMNEdge_sid-5282CF49-8005-4720-8393-3A287EE7B387"><omgdi:waypoint x="705.5" y="258.5" /><omgdi:waypoint x="705.5" y="171.0" /><omgdi:waypoint x="125.0" y="171.0" /><omgdi:waypoint x="125.0" y="238.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-FE23F595-73C2-47DB-A31B-CD758E49AA68" id="BPMNEdge_sid-FE23F595-73C2-47DB-A31B-CD758E49AA68"><omgdi:waypoint x="175.0" y="278.1710376223265" /><omgdi:waypoint x="251.0980218697432" y="278.4313501168135" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-7F9D8CED-2E48-4F8D-9283-AD648885B833" id="BPMNEdge_sid-7F9D8CED-2E48-4F8D-9283-AD648885B833"><omgdi:waypoint x="290.2684574727623" y="278.3982142801674" /><omgdi:waypoint x="345.1060070728535" y="278.1060070728535" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-89BE2B42-2EEB-40D8-8CD9-C9517338BADE" id="BPMNEdge_sid-89BE2B42-2EEB-40D8-8CD9-C9517338BADE"><omgdi:waypoint x="875.5" y="544.5" /><omgdi:waypoint x="875.5" y="622.0" /><omgdi:waypoint x="480.671875" y="622.0" /><omgdi:waypoint x="480.671875" y="555.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1D5BDDF0-B122-424E-95CD-A80D394BE48E" id="BPMNEdge_sid-1D5BDDF0-B122-424E-95CD-A80D394BE48E"><omgdi:waypoint x="724.5330851802314" y="278.4669148197686" /><omgdi:waypoint x="943.1376227529157" y="278.08691491662574" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-251622D5-60CD-4462-853B-0CA76F1C00CA" id="BPMNEdge_sid-251622D5-60CD-4462-853B-0CA76F1C00CA"><omgdi:waypoint x="480.671875" y="475.0" /><omgdi:waypoint x="480.671875" y="395.0" /><omgdi:waypoint x="655.0" y="395.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-5BB54BDC-C45D-419B-BDB6-65AD7E027278" id="BPMNEdge_sid-5BB54BDC-C45D-419B-BDB6-65AD7E027278"><omgdi:waypoint x="705.4181034482758" y="297.5818965517241" /><omgdi:waypoint x="705.1716738197425" y="355.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-08D5A85F-4ED4-443D-B100-3E28FD4A43DC" id="BPMNEdge_sid-08D5A85F-4ED4-443D-B100-3E28FD4A43DC"><omgdi:waypoint x="984.5" y="505.5" /><omgdi:waypoint x="984.5" y="318.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-6C41A0AB-DBE3-4EDB-B674-AFF127DB0548" id="BPMNEdge_sid-6C41A0AB-DBE3-4EDB-B674-AFF127DB0548"><omgdi:waypoint x="95.0" y="318.0" /><omgdi:waypoint x="95.0" y="379.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-6BF26389-B381-4950-9B81-6B52AB90EA18" id="BPMNEdge_sid-6BF26389-B381-4950-9B81-6B52AB90EA18"><omgdi:waypoint x="384.5424107142857" y="278.4575892857143" /><omgdi:waypoint x="540.0" y="278.1113585746102" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-21AFF249-08A5-4D8B-BBC8-D12F7B751D6D" id="BPMNEdge_sid-21AFF249-08A5-4D8B-BBC8-D12F7B751D6D"><omgdi:waypoint x="288.84251086015075" y="482.4492186299195" /><omgdi:waypoint x="395.66668701171875" y="482.4492186299195" /><omgdi:waypoint x="395.66668701171875" y="300.0" /><omgdi:waypoint x="540.0" y="300.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-766656D7-CBD9-4CC3-9220-AFEB8EF14CDC" id="BPMNEdge_sid-766656D7-CBD9-4CC3-9220-AFEB8EF14CDC"><omgdi:waypoint x="1235.5" y="544.5" /><omgdi:waypoint x="1235.5" y="625.0" /><omgdi:waypoint x="1320.0" y="625.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-51C50D8C-C174-4198-8DB1-6D9BBDDCA844" id="BPMNEdge_sid-51C50D8C-C174-4198-8DB1-6D9BBDDCA844"><omgdi:waypoint x="271.0726123469891" y="297.5940594059406" /><omgdi:waypoint x="270.86371608790506" y="340.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-EB9E7BC6-EA26-4BFF-8F12-9E5365C0FDFD" id="BPMNEdge_sid-EB9E7BC6-EA26-4BFF-8F12-9E5365C0FDFD"><omgdi:waypoint x="271.1666717529297" y="499.5" /><omgdi:waypoint x="271.1666717529297" y="525.5" /><omgdi:waypoint x="430.671875" y="525.5" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9C89F34F-DFA5-4DB7-8B04-1EB9204C8CC6" id="BPMNEdge_sid-9C89F34F-DFA5-4DB7-8B04-1EB9204C8CC6"><omgdi:waypoint x="1104.0370607070854" y="565.0" /><omgdi:waypoint x="1104.0370607070854" y="642.0" /><omgdi:waypoint x="480.671875" y="642.0" /><omgdi:waypoint x="480.671875" y="555.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-8465FA87-EFD7-49C8-A17A-AD0027AA9150" id="BPMNEdge_sid-8465FA87-EFD7-49C8-A17A-AD0027AA9150"><omgdi:waypoint x="1420.0" y="624.3399698058354" /><omgdi:waypoint x="1450.0297807442" y="625.0297807442" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-4C585F77-A3BA-4776-80C9-3B82F86C5760" id="BPMNEdge_sid-4C585F77-A3BA-4776-80C9-3B82F86C5760"><omgdi:waypoint x="1635.6666564941406" y="625.0" /><omgdi:waypoint x="1680.6666564941406" y="625.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-729F80E4-7F36-4EA2-BB13-6DA473946766" id="BPMNEdge_sid-729F80E4-7F36-4EA2-BB13-6DA473946766"><omgdi:waypoint x="640.0" y="278.2164502164502" /><omgdi:waypoint x="685.4130434782609" y="278.4130434782609" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-00270A51-C826-47EC-9DB6-3815E62928A8" id="BPMNEdge_sid-00270A51-C826-47EC-9DB6-3815E62928A8"><omgdi:waypoint x="95.0" y="459.0" /><omgdi:waypoint x="95.0" y="490.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-63B8F0F0-A369-4605-9BF2-BEAE3B3D2196" id="BPMNEdge_sid-63B8F0F0-A369-4605-9BF2-BEAE3B3D2196"><omgdi:waypoint x="1165.0" y="525.207468879668" /><omgdi:waypoint x="1215.4166666666667" y="525.4166666666666" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-560E618D-D129-4705-AD65-AD003A9CA870" id="BPMNEdge_sid-560E618D-D129-4705-AD65-AD003A9CA870"><omgdi:waypoint x="270.86567672805404" y="420.0" /><omgdi:waypoint x="271.06667175292966" y="460.4" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9275378A-8131-43D4-9205-BD3B1A46F2CF" id="BPMNEdge_sid-9275378A-8131-43D4-9205-BD3B1A46F2CF"><omgdi:waypoint x="875.5" y="505.5" /><omgdi:waypoint x="875.5" y="420.92592584961454" /><omgdi:waypoint x="755.0" y="420.92592584961454" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-E2929D98-E337-49AD-9C31-600AA8997881" id="BPMNEdge_sid-E2929D98-E337-49AD-9C31-600AA8997881"><omgdi:waypoint x="1003.5" y="525.5" /><omgdi:waypoint x="1065.0" y="525.5" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1A2E482C-719D-41EA-B0FE-E65632AF6E1E" id="BPMNEdge_sid-1A2E482C-719D-41EA-B0FE-E65632AF6E1E"><omgdi:waypoint x="45.0" y="278.0" /><omgdi:waypoint x="75.0" y="278.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-CECF6549-BA65-4173-BB8E-5706FE136149" id="BPMNEdge_sid-CECF6549-BA65-4173-BB8E-5706FE136149"><omgdi:waypoint x="1405.0" y="525.2164502164502" /><omgdi:waypoint x="1450.4130434782608" y="525.4130434782609" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1676255A-494A-420A-8BC5-E6B3A8451849" id="BPMNEdge_sid-1676255A-494A-420A-8BC5-E6B3A8451849"><omgdi:waypoint x="220.6666717529297" y="363.0" /><omgdi:waypoint x="141.6666717529297" y="363.0" /><omgdi:waypoint x="141.6666717529297" y="318.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9FA14375-6043-4220-859D-D7CBB5886D3A" id="BPMNEdge_sid-9FA14375-6043-4220-859D-D7CBB5886D3A"><omgdi:waypoint x="530.671875" y="528.0" /><omgdi:waypoint x="655.0" y="528.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-AA6AD459-714D-4BFC-BA5E-5B5002D8172E" id="BPMNEdge_sid-AA6AD459-714D-4BFC-BA5E-5B5002D8172E"><omgdi:waypoint x="894.5" y="525.5" /><omgdi:waypoint x="964.5" y="525.5" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-6CCDF610-430F-4A2F-8A50-FB551150F050" id="BPMNEdge_sid-6CCDF610-430F-4A2F-8A50-FB551150F050"><omgdi:waypoint x="365.5" y="297.5" /><omgdi:waypoint x="365.5" y="500.0" /><omgdi:waypoint x="430.671875" y="500.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-571AC00A-AA66-4680-8DF5-6CC2D14BEC9D" id="BPMNEdge_sid-571AC00A-AA66-4680-8DF5-6CC2D14BEC9D"><omgdi:waypoint x="1043.1376227529158" y="277.49092907052204" /><omgdi:waypoint x="1185.1854091492485" y="276.04468109750064" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-16DEB222-85FD-493B-8758-58D7F30F52B2" id="BPMNEdge_sid-16DEB222-85FD-493B-8758-58D7F30F52B2"><omgdi:waypoint x="755.0" y="525.5" /><omgdi:waypoint x="855.5" y="525.5" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-BBA89B8A-1B46-488F-B974-9F4CE854FD54" id="BPMNEdge_sid-BBA89B8A-1B46-488F-B974-9F4CE854FD54"><omgdi:waypoint x="430.671875" y="551.0" /><omgdi:waypoint x="159.38545568337187" y="551.0" /><omgdi:waypoint x="159.38545568337187" y="318.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9527C98C-8FAE-47D4-9191-D53C79591985" id="BPMNEdge_sid-9527C98C-8FAE-47D4-9191-D53C79591985"><omgdi:waypoint x="1470.5" y="505.5" /><omgdi:waypoint x="1470.5" y="389.0" /><omgdi:waypoint x="1115.0" y="389.0" /><omgdi:waypoint x="1115.0" y="485.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-256EB6D8-254D-49A7-B456-75BF9F58090E" id="BPMNEdge_sid-256EB6D8-254D-49A7-B456-75BF9F58090E"><omgdi:waypoint x="1254.579831932773" y="525.4201680672269" /><omgdi:waypoint x="1305.0" y="525.2092050209205" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-F49B92A5-3575-4A72-A355-501DC1A0C4E4" id="BPMNEdge_sid-F49B92A5-3575-4A72-A355-501DC1A0C4E4"><omgdi:waypoint x="1489.5" y="525.5" /><omgdi:waypoint x="1553.9158889899584" y="525.5" /><omgdi:waypoint x="1553.9158889899584" y="362.0" /><omgdi:waypoint x="1020.8042487294783" y="362.0" /><omgdi:waypoint x="1020.8042487294783" y="318.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-C2CDE407-DA1C-4114-B3BB-D160F2A78009" id="BPMNEdge_sid-C2CDE407-DA1C-4114-B3BB-D160F2A78009"><omgdi:waypoint x="1489.582848844559" y="625.4171511554408" /><omgdi:waypoint x="1535.6666564941406" y="625.2170767196083" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-67DC4762-602F-443F-89A3-68BEE8BCC7B4" id="BPMNEdge_sid-67DC4762-602F-443F-89A3-68BEE8BCC7B4"><omgdi:waypoint x="1470.5" y="644.5" /><omgdi:waypoint x="1470.5" y="690.0" /><omgdi:waypoint x="1115.0" y="690.0" /><omgdi:waypoint x="1115.0" y="565.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='RECEIPT_PROCESS'and workflowactive=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="763" author="Manoj">
+		<dropView viewName="INT_POSIDEX_CUST_ADDR_VIEW"/>
+		<dropView viewName="INT_POSIDEX_CUST_LOAN_VIEW"/>
+		<dropView viewName="INT_POSIDEX_CUST_VIEW"/>
+	</changeSet>
+	
+	<changeSet id="764" author="Manoj">
+		<dropTable tableName="POSIDEX_CUSTOMER_LOANS"/>
+	</changeSet>
+	
+	<changeSet id="764.1" author="Manoj">
+	<sql>
+		delete from PSX_DEDUP_EOD_CUST_DEMO_DTL;
+		delete from PSX_DEDUP_EOD_CUST_ADDR_DTL;
+		delete from PSX_DEDUP_EOD_CUST_LOAN_DTL;
+		delete from PUSH_PULL_CONTROL_T;
+		delete from DEDUP_EOD_CUST_REP_DTL;
+	</sql>
+	</changeSet>
+	
+	<changeSet id="765" author="Manoj">
+    	<addPrimaryKey columnNames="CUSTOMER_NO, ADDRESS_TYPE" constraintName="PK_CN_AT" tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL"/>
+	</changeSet>
+	
+	<changeSet id="766" author="Manoj">
+    	<addPrimaryKey columnNames="CUSTOMER_NO" constraintName="PK_CN" tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL"/>
+	</changeSet>
+	<changeSet id="767" author="Prasad" dbms="oracle">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+	SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId || '-'||TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTR(FM.FinReference,7,
+       LENGTH(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       coalesce(Case when P.Drorcr='D' then P.postamount end,0) DRAMT,
+       coalesce(Case when P.Drorcr='C' then P.postamount end,0) CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+       </createView>
+       </changeSet>
+       	<changeSet id="767" author="Prasad" dbms="mssql">
+    <createView viewName="DM_LOAN_VOUCHER_DETAILS_VIEW" replaceIfExists="true">
+	SELECT NULL MODULEID,P.FinEvent STAGEID,P.LinkedTranId + '-'+TransOrder LEA_VOUCHERID,NULL FA_VOUCHERID,
+       P.finevent VOUCHERTYPE,P.postdate VOUCHERDATE,P.valuedate VALUEDATE,RB.BankRefNo BRANCHID,RB.branchcode BRANCH_CODE,
+       RB.branchdesc BRANCHDESC,RCP.Businessarea BUSINESS_AREA,AM.Profitcenterid PROFIT_CENTRE,FM.fintype PRODUCT_FLAG,
+       PM.PROMOTIONCODE SCHEMEID,PM.PROMOTIONDESC SCHEMEDESC,NULL ASSIGNMENT,SUBSTRING(FM.FinReference,7,
+       LEN(FM.FinReference)) AGREEMENTID,FM.Finreference AGREEMENTNO,FM.FINAPPROVEDDATE AGREEMENTDATE,
+       FP.FIRSTDISBDATE DISBURSALDATE,FM.FinIsActive LOAN_STATUS,FPR.NPABUCKETID NPA_STAGEID,
+       P.Account FINNONE_GLID,AT.ACTYPEDESC GROUPGLDESC,AM.HostAccount SAPGL_CODE,
+       AM.CostCenterid COST_CENTRE,
+       coalesce(Case when P.Drorcr='D' then P.postamount end,0) DRAMT,
+       coalesce(Case when P.Drorcr='C' then P.postamount end,0) CRAMT,
+       P.Drorcr DRCR_FLAG,P.PostAmount DRCR_AMT,P.TranDesc NARRATION,
+       NULL CHEQUEID,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='APP_DATE') BUSINESSDATE,
+       (SELECT sysparmvalue sysparmvalue FROM smtparameters WHERE SYSPARMCODE='VALUE_DATE') PROCESSDATE,
+       NULL SEGMENT,'N' PROCESSED_FLAG,null BATCH_ID
+	   FROM Postings P 
+       Inner join FINANCEMAIN FM on FM.finreference=P.finreference
+       Inner join FinPftDetails FP on FM.finreference=FP.finreference
+       Inner join rmtbranches RB on RB.Branchcode = FM.FInBranch
+       Left Join RMTCOUNTRYVSPROVINCE RCP on RCP.CPPROVINCE = rb.BranchProvince
+       INNER JOIN ACCOUNTMAPPING AM  ON AM.ACCOUNT = P.ACCOUNT
+       INNER JOIN RMTACCOUNTTYPES AT   ON AT.ACTYPE = AM.ACCOUNTTYPE
+       Left JOIN PROMOTIONS PM ON PM.PROMOTIONCODE = FM.PROMOTIONCODE
+       Left JOIN FINPROVISIONS FPR ON FPR.finreference = FM.PROMOTIONCODE
+       </createView>
+       </changeSet>
+       <changeSet id="768" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90347','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	     <changeSet id="769" author="Pruthvi">
+	<sql>
+	delete from reportconfiguration where menuitemcode='menu_Item_PresentationDetails';
+
+Insert into REPORTCONFIGURATION 
+values ((select max(reportid)+1 from reportconfiguration),'Excel:PresentationDetails','Presentation Details',1,'PresentationDetails','pfsDatasource',1,'menu_Item_PresentationDetails',4,1000,null,null,null,null,null,null,0,current_timestamp,0);
+
+delete from  REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails');
+
+Insert into REPORTFILTERFIELDS 
+values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PresentationDetails'),1,'FinReference','LOVSEARCH','Loan Reference','AGREEMENTNO',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+	</sql>
+	</changeSet>
+	  
+	   <changeSet id="770" author="Pruthvi">
+	 <addColumn tableName="REPORTCONFIGURATION">
+        <column name="WHERECONDITION" type="Boolean"/>
+    </addColumn>
+    </changeSet>
+    
+    <changeSet id="771" author="Pruthvi">
+    <sql>
+    update REPORTCONFIGURATION set WHERECONDITION=0;
+    </sql>
+    </changeSet>
+    	<changeSet id="772" author="pruthvi">
+    <createView viewName="REPORTCONFIGURATION_VIEW" replaceIfExists="true">
+    SELECT     T1.ReportId, T1.ReportName, T1.ReportHeading, T1.PromptRequired, T1.ReportJasperName, T1.DataSourceName, T1.ShowTempLibrary, 
+                      T1.MenuItemCode, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+                      T1.RecordType, T1.WorkflowId, T1.ALWMULTIFORMAT, T1.WhereCondition
+FROM          ReportConfiguration T1
+    </createView>
+    </changeSet>
+      <changeSet id="773" author="Pruthvi">
+    <sql>
+    update reportconfiguration set wherecondition=1;
+    </sql>
+    </changeSet>
+    <changeSet  id="774" author="Durgaprasad G">
+		<createTable tableName="TAXDOWNLOADDETAIL">
+		    <column name="HEADERID" 				type="NUMBER(19)" />
+		 	<column name="TRANSACTION_DATE" 				type="datetime" />
+			<column name="HOST_SYSTEM_TRANSACTION_ID" 		type="varchar(20)" />
+			<column name="TRANSACTION_TYPE" 				type="varchar(50)" />
+			<column name="BUSINESS_AREA" 					type="varchar(2)" />
+			<column name="SOURCE_SYSTEM" 					type="varchar(20)" />
+			<column name="COMPANY_CODE" 					type="varchar(50)" />
+			<column name="CUSTOMER_NAME" 					type="varchar(300)" />
+			<column name="REGISTERED_CUSTOMER" 				type="varchar(1)" />
+			<column name="CUSTOMER_ID" 						type="number(8)" />
+			<column name="CUSTOMER_GSTIN" 					type="varchar(30)" />
+			<column name="CUSTOMER_ADDRESS" 				type="varchar(500)" />
+			<column name="CUSTOMER_STATE_CODE" 				type="varchar(2)" />
+			<column name="ADDRESS_CHANGE_DATE" 				type="datetime" />
+			<column name="PAN_NO" 							type="varchar(30)" />
+			<column name="LEDGER_CODE" 						type="varchar(20)" />
+			<column name="HSN_SAC_CODE" 					type="varchar(50)" />
+			<column name="NATURE_OF_SERVICE" 				type="varchar(200)" />
+			<column name="LOAN_ACCOUNT_NO" 					type="varchar(20)" />
+			<column name="PRODUCT_CODE" 					type="varchar(8)" />
+			<column name="CHARGE_CODE" 						type="number(8)" />
+			<column name="LOAN_BRANCH" 						type="number(8)" />
+			<column name="LOAN_BRANCH_STATE" 				type="varchar(2)" />
+			<column name="LOAN_SERVICING_BRANCH" 			type="varchar(200)" />
+			<column name="TXN_BRANCH_ADDRESS" 				type="varchar(500)" />
+			<column name="TXN_BRANCH_STATE_CODE" 			type="varchar(2)" />
+			<column name="TRANSACTION_AMOUNT" 				type="number(25,2)" />
+			<column name="REVERSE_CHARGE_APPLICABLE" 		type="varchar(1)" />
+			<column name="INVOICE_TYPE" 					type="varchar(1)" />
+			<column name="ORIGINAL_INVOICE_NO" 				type="varchar(16)" />
+			<column name="BFL_GSTIN_NO" 					type="varchar(30)"/>
+			<column name="INVOICE_NO"                 		type="varchar(16)" />
+			<column name="SFDC_DEALID"                		type="varchar(20)" />
+			<column name="TAXABLE_AMOUNT"             		type="number(20,2)" />
+			<column name="CGST_RATE"                  		type="number(10,7)" />
+			<column name="CGST_AMOUNT"                		type="number(25,2)" />
+			<column name="CGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="CGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="CGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="CGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="SGST_RATE"                  		type="number(10,7)" />
+			<column name="SGST_AMOUNT"                		type="number(25,2)" />
+			<column name="SGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="SGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="SGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="SGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="IGST_RATE"                  		type="number(10,7)" />
+			<column name="IGST_AMOUNT"                		type="number(25,2)" />
+			<column name="IGST_SURCHARGE_RATE"        		type="number(10,7)" />
+			<column name="IGST_SURCHARGE_AMOUNT"      		type="number(25,2)" />
+			<column name="IGST_CESS_RATE"             		type="number(10,7)" />
+			<column name="IGST_CESS_AMOUNT"           		type="number(25,2)" />
+			<column name="UTGST_RATE"                 		type="number(10,7)" />
+			<column name="UTGST_AMOUNT"               		type="number(25,2)" />
+			<column name="UTGST_SURCHARGE_RATE"       		type="number(10,7)" />
+			<column name="UTGST_SURCHARGE_AMOUNT"     		type="number(25,2)" />
+			<column name="UTGST_CESS_RATE"            		type="number(10,7)" />
+			<column name="UTGST_CESS_AMOUNT"          		type="number(25,2)" />
+			<column name="TXNADVICEID"                		type="number(16)" />
+			<column name="TO_STATE"                   		type="varchar(2)" />
+			<column name="FROM_STATE"                 		type="varchar(2)" />
+			<column name="CHEQUEID"                   		type="number" />
+			<column name="EXEMPTED"                   		type="varchar(1)" />
+			<column name="BUSINESSdatetime"               	type="datetime" />
+			<column name="PROCESSdatetime"                	type="datetime" />
+			<column name="PROCESSED_FLAG"             		type="varchar(1)" />
+			<column name="REVERSE_CHARGECODEID"       		type="number(16)" />
+			<column name="AGREEMENTID"                		type="number(8)" />
+			<column name="CONSIDER_FOR_GST"           		type="varchar(1)" />
+			<column name="EXEMPTED_STATE"             		type="varchar(1)" />
+			<column name="EXEMPTED_CUSTOMER"          		type="varchar(1)" />
+			<column name="LOAN_BRANCH_ADDRESS"             type="varchar(500)" />
+		</createTable>
+</changeSet>
+  <changeSet id="775" author="Pruthvi">
+    <sql>
+delete from reportfilterfields where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail');
+
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),1,'Post Date','DATERANGE','Post Date','PostDate',null,'---Select----',null,null,0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),3,'Branch','LOVSEARCH','Branch','Branch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),4,'Loan Status','STATICLIST','Loan Status','FinIsActive','getFinanceStatusList',null,null,null,0,0,0,0,4,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail'),5,'Product','LOVSEARCH','product','FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,5,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp);
+</sql>
+</changeSet>
+
+  <changeSet id="776" author="Pruthvi">
+    <sql>
+update reportfilterfields set multiselectsearch=1 where
+reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Presentment') and fieldid=1;
+
+update reportfilterfields set multiselectsearch=1 where
+reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PresentationDetails') and fieldid=1;
+</sql>
+</changeSet>
+<changeSet id="777" author="Irfan">
+<sql>
+
+UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+
+INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINCOVENANTDETAIL_SER', 'Covenant Details in Servicing', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeList_NewFinCovenantTypeDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinCovenantTypeDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinCovenantTypeDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_covenantType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_mandRole'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_description'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwWaiver'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_alwPostpone'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_postponeDays'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINCOVENANTDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinCovenantTypeDialog_receivableDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+
+UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+
+</sql>
+</changeSet>
+
+
+<changeSet id="778" author="Irfan">
+<sql>
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FINCOVENANTDETAIL_SER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+</sql>
+</changeSet>
+<changeSet id="779" author="Irfan">
+<sql>
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FinCovenantType_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='BFSD_DISB_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+
+UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+</sql>
+</changeSet>
+	<changeSet id="781" author="murthy.y">
+		<sql>
+				<![CDATA[
+					update DATA_ENGINE_EVENT_PROPERTIES set 
+					BUCKET_NAME = 'bfl-npd-etl-masterdata', 
+					ACCESS_KEY = NULL, 
+					SECRET_KEY = NULL, 
+					SSE_ALGORITHM = 'AES_256'
+					WHERE CONFIG_ID IN (select ID from data_engine_config where NAME LIKE 'ME_%');
+
+					update DATA_ENGINE_EVENT_PROPERTIES set 
+					BUCKET_NAME = 'bfl-npu-plf-download-bucket', 
+					ACCESS_KEY = NULL, 
+					SECRET_KEY = NULL, 
+					SSE_ALGORITHM = 'AES_256'
+					WHERE CONFIG_ID NOT IN (select ID from data_engine_config where NAME LIKE 'ME_%');
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="782" author="Manoj">
+		<sql>
+			<![CDATA[
+				delete from SMTparameters where sysparmcode='NO_FUTURE_DAYS_DISB_DOWNLOAD';
+	      		insert into SMTparameters values('NO_FUTURE_DAYS_DISB_DOWNLOAD','Disbursement future days to allow for downlaod','int ',1,10,3,0,null,null,'Disbursement future days to allow for downlaod',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	      	]]>
+		</sql>
+	</changeSet>
+	<changeSet id="783" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update SMTPARAMETERS  set SYSPARMCODE = 'TRAIL_BALANCE_COMPANY_NAME' where SYSPARMCODE = 'SAPGL_TBR_COMPANY';
+	      	]]>
+		</sql>
+	</changeSet>
+	<changeSet id="784" author="Siva">
+		<sql>
+			Update FinreceiptHeader_Temp SET rcdmaintainsts = 'R' WHERE Recordtype = 'NEW';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="784" author="Durgaprasad G" dbms="oracle">
+	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true"> 
+  					SELECT   
+				   FA. PAYMENTID,
+				   FA.FINREFERENCE,
+				   'D' CHANNEL, 
+				   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   FA.DISBDATE,
+	               FA.LLDATE,
+				   FA.PAYABLELOC,
+				   FA.PRINTINGLOC,
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+	              BD.BANKNAME BANKNAME,
+	              BB.BRANCHCODE,
+	              BB.BRANCHDESC BRANCHDESC,
+				  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR             MICR_CODE,
+				   BB.IFSC             IFSC_CODE,
+				   FA.BENEFICIARYACCNO,
+				   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+				   FA.PHONECOUNTRYCODE||FA.PHONEAREACODE||FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+				   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   FA.STATUS           STATUS,
+				   FA.DESCRIPTION      REMARKS,
+				     FA.PAYMENTTYPE      PAYMENTTYPE,
+				     FM.FINTYPE,
+				     PB.PARTNERBANKID,
+				     PB.PARTNERBANKCODE,
+				     FA.INPUTDATE,
+				     PB.ALWFILEDOWNLOAD,
+	                PB.FILENAME,
+				     FM.FINISACTIVE
+				   FROM FINADVANCEPAYMENTS FA
+				   INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = FA.FINREFERENCE INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = FA.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+        		   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+	         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+				   
+				   UNION ALL
+				   
+				   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+				   PH.FINREFERENCE,
+				   PH.PAYMENTTYPE CHANNEL, 
+				   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   PI.POSTDATE DISBDATE, 
+				   PI.POSTDATE LLDATE, 
+				   PI.PAYABLELOC, 
+				   PI.PRINTINGLOC, 
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+				   BD.BANKNAME,
+				   BB.BRANCHCODE,
+				   BB.BRANCHDESC,
+				   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR              MICR_CODE,
+				   BB.IFSC              IFSC_CODE,
+				   PI.ACCOUNTNO BENEFICIARYACCNO,
+				   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+				   PI.PHONECOUNTRYCODE||PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+				   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   PI.STATUS           STATUS, 
+				   PI.REMARKS          REMARKS,
+				   PI.PAYMENTTYPE      PAYMENTTYPE,
+				   FM.FINTYPE,
+				   PB.PARTNERBANKID,
+				   PB.PARTNERBANKCODE,
+				   PI.POSTDATE INPUTDATE, 
+				   PB.ALWFILEDOWNLOAD,
+				   PB.FILENAME,
+				   FM.FINISACTIVE
+				   FROM PAYMENTINSTRUCTIONS PI 
+				   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				   INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = PH.FINREFERENCE INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = PH.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+	 </createView>
+	</changeSet>
+	<changeSet id="784" author="Durgaprasad G" dbms="mssql">
+	 <createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true"> 
+  					SELECT   
+				   FA. PAYMENTID,
+				   FA.FINREFERENCE,
+				   'D' CHANNEL, 
+				   CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   FA.DISBDATE,
+	               FA.LLDATE,
+				   FA.PAYABLELOC,
+				   FA.PRINTINGLOC,
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+	              BD.BANKNAME BANKNAME,
+	              BB.BRANCHCODE,
+	              BB.BRANCHDESC BRANCHDESC,
+				  PBD.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				  PBD.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR             MICR_CODE,
+				   BB.IFSC             IFSC_CODE,
+				   FA.BENEFICIARYACCNO,
+				   CASE WHEN FA.PAYMENTTYPE = 'CHEQUE' OR  FA.PAYMENTTYPE = 'DD' THEN FA.LIABILITYHOLDNAME ELSE FA.BENEFICIARYNAME END BENEFICIARYNAME,
+				   FA.PHONECOUNTRYCODE+FA.PHONEAREACODE+FA.PHONENUMBER AS BENEFICIARY_MOBILE, 
+				   BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   FA.STATUS           STATUS,
+				   FA.DESCRIPTION      REMARKS,
+				     FA.PAYMENTTYPE      PAYMENTTYPE,
+				     FM.FINTYPE,
+				     PB.PARTNERBANKID,
+				     PB.PARTNERBANKCODE,
+				     FA.INPUTDATE,
+				     PB.ALWFILEDOWNLOAD,
+	                PB.FILENAME,
+				     FM.FINISACTIVE
+				   FROM FINADVANCEPAYMENTS FA
+				   INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = FA.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+        		   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+	         	   LEFT JOIN  (select PB.PARTNERBANKID, PBD.BANKNAME, PBB.BRANCHDESC, PBBRC.PCCITYNAME, PBBRS.CPPROVINCENAME from PARTNERBANKS PB INNER JOIN BANKBRANCHES PBB ON PBB.BANKBRANCHID = PB.BANKBRANCHCODE INNER JOIN BMTBANKDETAIL PBD ON PBD.BANKCODE = PBB.BANKCODE LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+				   
+				   UNION ALL
+				   
+				   SELECT PI. PAYMENTINSTRUCTIONID PAYMENTID,
+				   PH.FINREFERENCE,
+				   PH.PAYMENTTYPE CHANNEL, 
+				   CASE WHEN PI.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN PI.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN PI.PAYMENTTYPE = 'DD' THEN 'D' WHEN PI.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  PI.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+				   PI.PAYMENTAMOUNT/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+				   PI.POSTDATE DISBDATE, 
+				   PI.POSTDATE LLDATE, 
+				   PI.PAYABLELOC, 
+				   PI.PRINTINGLOC, 
+				   CU.CUSTCIF,            
+				   CU.CUSTSHRTNAME,     
+				   '' AS CUSTOMER_MOBILE,
+				   CE.CUSTEMAIL       CUSTOMER_EMAIL,
+				   CS.CPPROVINCENAME  CUSTOMER_STATE,
+				   CC.PCCITYNAME      CUSTOMER_CITY,
+				   ''                 CUSTOMER_ADDRESS1,
+				   ''                 CUSTOMER_ADDRESS2,
+				   ''                 CUSTOMER_ADDRESS3,
+				   ''                 CUSTOMER_ADDRESS4,
+				   ''                 CUSTOMER_ADDRESS5,
+				   BD.BANKNAME,
+				   BB.BRANCHCODE,
+				   BB.BRANCHDESC,
+				   BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+				   BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+				   BB.MICR              MICR_CODE,
+				   BB.IFSC              IFSC_CODE,
+				   PI.ACCOUNTNO BENEFICIARYACCNO,
+				   CASE WHEN PI.PAYMENTTYPE = 'CHEQUE' OR  PI.PAYMENTTYPE = 'DD' THEN PI.FAVOURNAME ELSE PI.ACCTHOLDERNAME END BENEFICIARYNAME,
+				   PI.PHONECOUNTRYCODE+PI.PHONENUMBER AS BENEFICIARY_MOBILE,
+				   BCE.CUSTEMAIL       BENFICIRY_EMAIL,
+				   BRS.CPPROVINCENAME  BENFICIARY_STATE,
+				   BRC.PCCITYNAME      BENFICIARY_CITY,
+				   ''                  BENFICIARY_ADDRESS1,
+				   ''                  BENFICIARY_ADDRESS2,
+				   ''                  BENFICIARY_ADDRESS3,
+				   ''                  BENFICIARY_ADDRESS4,
+				   ''                  BENFICIARY_ADDRESS5,
+				   ''				   PAYMENT_DETAIL1,
+				   ''                  PAYMENT_DETAIL2,
+				   ''                  PAYMENT_DETAIL3,
+				   ''                  PAYMENT_DETAIL4,
+				   ''                  PAYMENT_DETAIL5,
+				   ''                  PAYMENT_DETAIL6,
+				   ''                  PAYMENT_DETAIL7,     
+				   PI.STATUS           STATUS, 
+				   PI.REMARKS          REMARKS,
+				   PI.PAYMENTTYPE      PAYMENTTYPE,
+				   FM.FINTYPE,
+				   PB.PARTNERBANKID,
+				   PB.PARTNERBANKCODE,
+				   PI.POSTDATE INPUTDATE, 
+				   PB.ALWFILEDOWNLOAD,
+				   PB.FILENAME,
+				   FM.FINISACTIVE
+				   FROM PAYMENTINSTRUCTIONS PI 
+				   INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				   INNER JOIN (select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain union all select CUSTID, FINREFERENCE, FINTYPE,  FINISACTIVE from financemain_temp where QUICKDISB=1) FM on FM.FINREFERENCE = PH.FINREFERENCE
+				   INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				   INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				   INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				   LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				   LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+				   LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				   LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				   LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				   LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID AND BR.ACCNUMBER = PI.ACCOUNTNO
+				   LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				   LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				   LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+				   LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				   LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				   WHERE PI.STATUS='APPROVED' AND PI.PAYMENTINSTRUCTIONID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+	 </createView>
+	</changeSet>
+	<changeSet id="785" author="Irfan">
+		<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_FinanceManagement_Covenants','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MAINTAINBASIC_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_Covenants'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MAINTAINBASIC_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_Covenants'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+</changeSet>
+<changeSet id="786" author="Irfan">
+	    <sql>
+	        Insert into REPORTLIST values ('FinCovenantTypes','FinCovenantTypes','listheader_CovenantReference.label,listheader_CovenantType.label,listheader_ALwWaiver.label,listheader_PostDoc.label','finReference,covenantType,alwWaiver,alwPostpone','String,String,boolean,boolean',' ','ReportList04','Covenant Details','Loan Management',2,1001,current_timestamp,'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+</changeSet>
+
+
+<changeSet author="Manoj" id="787">
+	<dropPrimaryKey tableName="DM_ADDRESS_DETAILS" constraintName="PK_DM_ADD_CUSTID"/>
+</changeSet>
+<changeSet author="Manoj" id="788">
+	<dropPrimaryKey tableName="DM_APPLICANT_DETAILS" constraintName="PK_DM_APP_CUSTID"/>
+</changeSet>	
+
+<changeSet author="Manoj" id="789">
+	<dropPrimaryKey tableName="DM_APPLICATION_DETAILS" constraintName="PK_DM_APD_APPID"/>
+</changeSet>
+	
+	
+<changeSet author="Manoj" id="790">
+	<dropPrimaryKey tableName="DM_COAPPLICANT_DETAILS" constraintName="PK_DM_COAPP_APPID"/>
+</changeSet>
+
+
+<changeSet author="Manoj" id="791">
+	<dropPrimaryKey tableName="DM_DISB_DETAILS_DAILY" constraintName="PK_DM_AGN_DBN"/>
+</changeSet>
+
+<changeSet author="Manoj" id="792">
+	<dropPrimaryKey tableName="DM_HTS_UNADJUSTED_AMT" constraintName="PK_DM_HTS_UNA"/>
+</changeSet>
+ <changeSet id="793" author="Madhubabu">
+    <sql>
+    	 delete from errordetails where errorcode='99017';
+   		 INSERT INTO ErrorDetails VALUES('99017','EN','E','For Agreement No :{0} the {1} length Should be :{2}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+   		 </sql>
+    </changeSet>
+    
+ <changeSet author="Manoj" id="793">
+	<dropPrimaryKey tableName="DM_INSURANCE_DETAILS" constraintName="PK_DM_ID_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="794">
+	<dropPrimaryKey tableName="DM_IVR_GATEWAY_FLEXI" constraintName="PK_DM_IVR_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="795">
+	<dropPrimaryKey tableName="DM_LEA_DOC_DTL" constraintName="PK_DM_LEA_AGID" />
+</changeSet>  
+
+<changeSet author="Manoj" id="796">
+	<dropPrimaryKey tableName="DM_LOAN_DETAILS_DAILY" constraintName="PK_DM_LD_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="797">
+	<dropPrimaryKey tableName="DM_LOAN_VOUCHER_DETAILS" constraintName="PK_DM_LOV_AGGNO"/>
+</changeSet>		
+
+ <changeSet author="Manoj" id="798">
+		<dropPrimaryKey tableName="DM_LOANWISE_CHARGE_DETAILS" constraintName="PK_DM_LOC_AGGID"/>
+</changeSet>
+
+<changeSet author="Manoj" id="799">
+		<dropPrimaryKey tableName="DM_LOANWISE_REPAYSCHD_DTLS" constraintName="PK_DM_LWR_AGGIDDT"/>
+</changeSet>
+
+
+<changeSet author="Manoj" id="800">
+		<dropPrimaryKey tableName="DM_NOC_ELIGIBLE_LOANS" constraintName="PK_DM_NOC_AGGNO"/>
+</changeSet> 
+
+<changeSet author="Manoj" id="801">
+		<dropPrimaryKey tableName="DM_OPENECS_DETAILS" constraintName="PK_DM_OPECS_ECSID"/>
+</changeSet>		
+		
+
+<changeSet author="Manoj" id="802">
+		<dropPrimaryKey tableName="DM_PREPAYMENT_DETAILS" constraintName="PK_DM_PPD_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="803">
+		<dropPrimaryKey tableName="DM_PRESENTATION_DETAILS" constraintName="PK_DM_PD_AGGNO"/>
+</changeSet>
+
+
+<changeSet author="Manoj" id="804">
+		<dropPrimaryKey tableName="DM_RESCH_DETAILS_DAILY" constraintName="PK_DM_RES_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="805">
+		<dropPrimaryKey tableName="DM_SEND_SOA_EMAIL" constraintName="PK_DM_SOA_AGGNO"/>
+</changeSet>
+
+<changeSet author="Manoj" id="806">
+		<dropPrimaryKey tableName="DM_SUBQ_DISB_DETAILS" constraintName="PK_DM_AGG_DID"/>
+</changeSet>	
 </databaseChangeLog>

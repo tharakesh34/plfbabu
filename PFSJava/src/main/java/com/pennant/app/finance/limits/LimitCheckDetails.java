@@ -1,15 +1,5 @@
 package com.pennant.app.finance.limits;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jaxen.JaxenException;
-import org.zkoss.util.resource.Labels;
-
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.util.MailUtil;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -24,8 +14,15 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jaxen.JaxenException;
+import org.zkoss.util.resource.Labels;
 
 public class LimitCheckDetails {
 
@@ -36,6 +33,8 @@ public class LimitCheckDetails {
 	private LimitInterfaceDAO 				limitInterfaceDAO;
 	private MailUtil 						mailUtil;
 	private NotificationsDAO 				notificationsDAO;
+	
+	public static final String SUCCESS_CODE = "0000"; // FIXME
 
 	public LimitCheckDetails() {
 		super();
@@ -264,7 +263,7 @@ public class LimitCheckDetails {
 
 				limitUtilRply = doPredealCheck(limitUtilReq);
 
-				if(!StringUtils.equals(limitUtilRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+				if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 					sendMailNotification(limitUtilRply);
 				}
 
@@ -280,7 +279,7 @@ public class LimitCheckDetails {
 				if(limitUtilReq != null) {
 					limitUtilRply = doConfirmReservation(limitUtilReq);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
@@ -296,7 +295,7 @@ public class LimitCheckDetails {
 				if(limitUtilReq != null) {
 					limitUtilRply = doCancelReservation(limitUtilReq);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
@@ -311,7 +310,7 @@ public class LimitCheckDetails {
 					limitUtilRply = doCancelUtilization(limitUtilReq);
 					limitUtilRply.setDealType(FinanceConstants.CANCEL_UTILIZATION);
 
-					if(!StringUtils.equals(limitUtilRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+					if(!StringUtils.equals(limitUtilRply.getReturnCode(), SUCCESS_CODE)) {
 						sendMailNotification(limitUtilRply);
 					}
 
@@ -356,7 +355,7 @@ public class LimitCheckDetails {
 		try {
 			limitUtilization = getCustomerLimitIntefaceService().doReserveUtilization(limitUtilReq);
 			
-			if(!StringUtils.equals(limitUtilization.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+			if(!StringUtils.equals(limitUtilization.getReturnCode(), SUCCESS_CODE)) {
 				sendMailNotification(limitUtilization);
 			}
 			

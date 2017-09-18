@@ -300,4 +300,33 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 			return 0;
 		}
 	}
+	
+	/**
+	 * Method for Fetching Count for Assigned PartnerBank
+	 */
+	@Override
+	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
+		logger.debug("Entering");
+
+		int assignedCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
+		selectSql.append(" From FinTypePartnerBanks");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try{
+			assignedCount	= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			assignedCount = 0;
+		}
+		logger.debug("Leaving");
+		return assignedCount;
+	}
+	
 }	

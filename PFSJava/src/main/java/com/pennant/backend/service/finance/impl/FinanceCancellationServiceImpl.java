@@ -160,7 +160,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
     @Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader){
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -271,7 +271,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -342,7 +342,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
     @Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		String tranType = "";

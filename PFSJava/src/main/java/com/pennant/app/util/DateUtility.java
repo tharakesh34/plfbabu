@@ -176,6 +176,9 @@ public final class DateUtility extends DateUtil {
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
 		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
+		}
 		return new Date(uDate.getTime());
 	}
 
@@ -186,6 +189,9 @@ public final class DateUtility extends DateUtil {
 			uDate = df.parse(date);
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
+		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
 	}
@@ -240,6 +246,9 @@ public final class DateUtility extends DateUtil {
 			uDate = df.parse(temp);
 		} catch (ParseException e) {
 			logger.error("Exception: ", e);
+		}
+		if(uDate == null){
+			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
 	}
@@ -748,5 +757,37 @@ public final class DateUtility extends DateUtil {
 		
 		return postingDate;
 	}
+	
+	/**
+	 * Returns the date of the month
+	 * 
+	 * @param month
+	 *            (integer)
+	 * @return Date
+	 */
+	public static Date getDate(int month) {
 
+		month = month - 1;
+		int year = getYear(getSysDate());
+		int day = 01;
+
+		return convert(new GregorianCalendar(year, month, day));
+	}
+
+	/**
+	 * Returns the Previous year date
+	 * 
+	 * @param date
+	 *            (Date)
+	 * @return Date
+	 */
+	public static Date getPreviousYearDate(java.util.Date date) {
+
+		int month = getMonth(date) - 1;
+		int year = getYear(date);
+		int day = getDay(date);
+
+		return convert(new GregorianCalendar(year - 1, month, day));
+
+	}
 }

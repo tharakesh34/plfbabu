@@ -33,7 +33,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 	protected PostingsPreparationUtil	postingsPreparationUtil;
 	
 	@Override
-	public void process(PaymentInstruction paymentInstruction) throws Exception {
+	public void process(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = null;

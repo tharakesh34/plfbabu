@@ -67,6 +67,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Notes;
@@ -327,13 +328,19 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		long diffInMilliseconds = 0;
 		Listitem item;
 		AuditTransaction auditTransaction = null;
-		
+		String prvUsrName = null;
+		String prvRoleCode = null;
 		for (int i = 0; i < auditTransactionsList.size(); i++) {
 			auditTransaction = auditTransactionsList.get(i);
-			if("Saved".equals(auditTransaction.getRecordStatus()) 
-					&& i < auditTransactionsList.size()-1){
-				continue;
-			} 
+			
+			if(auditTransaction.getUsrName().equals(prvUsrName) && 
+					auditTransaction.getRoleCode().equals(prvRoleCode)) {
+				continue; 
+			}
+			prvUsrName = auditTransaction.getUsrName();
+			prvRoleCode = auditTransaction.getRoleCode();
+			
+			
 			item = new Listitem();
 			Listcell lc;
 			date1 = auditTransaction.getAuditDate().toString();
@@ -432,9 +439,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			btn_Notes.setAttribute("data", auditTransaction);
 			ComponentsCtrl.applyForward(btn_Notes, "onClick=onNotesItemClicked");
-			this.listBoxFinApprovalStsInquiry.appendChild(item);
-
-			
+			if(!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				this.listBoxFinApprovalStsInquiry.appendChild(item);
+			}
 		}
 	}
  

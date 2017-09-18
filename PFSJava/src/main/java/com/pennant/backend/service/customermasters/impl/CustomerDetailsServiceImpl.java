@@ -96,7 +96,6 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.GCDCustomerService;
@@ -185,7 +184,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerChequeInfoValidation customerChequeInfoValidation;
 	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
 	private LovFieldDetailService lovFieldDetailService;
-	private BankDetailService	bankDetailService;
 	private ExtendedFieldRenderDAO	extendedFieldRenderDAO;
 	private LimitRebuild limitRebuild;
 	private GCDCustomerService gCDCustomerService;
@@ -647,6 +645,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return getCustomerDAO().checkCustomerByCIF(cif, type);
 	}
 
+	/**
+	 * Get Customer and Customer Documents
+	 */
+	@Override
+	public CustomerDetails getCustomerAndCustomerDocsById(long id, String type) {
+
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustID(id);
+
+		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+
+		return customerDetails;
+	}
+	
 	/**
 	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Customers.
@@ -1542,7 +1555,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = "employment startDate:"+DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:" +DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}	
 						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
@@ -1659,6 +1672,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
+		} else {
+			ErrorDetails errorDetail = new ErrorDetails();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Address Details";
+			valueParm[1] = "Address";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 
 		// customer Phone details
@@ -1673,18 +1694,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if(custPhoneType != null){
 					String regex=custPhoneType.getPhoneTypeRegex();
 					if(regex!=null){			
-						String length=regex.substring(regex.lastIndexOf("}")-2,regex.lastIndexOf("}"));
-						int mobilelength=Integer.parseInt(length);
-						if(mobileNumber.length()!=mobilelength){
-							String[] valueParm = new String[2];
-							valueParm[0] = "PhoneNumber";
-							valueParm[1] = String.valueOf(mobilelength) + " characters";;	
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;	
-						}
 						if (!(mobileNumber.matches(regex))){
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+							String[] valueParm = new String[1];
+							valueParm[0] = regex;
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90346", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;	
 						}
@@ -1736,6 +1749,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			}
+		} else {
+			ErrorDetails errorDetail = new ErrorDetails();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Phone Details";
+			valueParm[1] = "Phone";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 
 		// customer Email details
@@ -1856,7 +1877,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				//validate AccNumber length
-				if(StringUtils.isNotBlank(custBankInfo.getBankName())){
+				/*if(StringUtils.isNotBlank(custBankInfo.getBankName())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(custBankInfo.getBankName());
 					if(custBankInfo.getAccountNumber().length()!=accNoLength){
 						String[] valueParm = new String[2];
@@ -1866,7 +1887,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 					}
-				}
+				}*/
 			}
 			
 		}
@@ -2058,11 +2079,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustDSA());
 			if (matcher.matches() == false) {
-				/*ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[1];
 				valueParm[0] = "saleAgent";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);*/
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
 		if (customer.getCustGroupID()>0){
@@ -2073,11 +2094,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					PennantRegularExpressions.REGEX_ALPHANUM));
 			Matcher matcher = pattern.matcher(customer.getCustStaffID());
 			if (matcher.matches() == false) {
-				/*ErrorDetails errorDetail = new ErrorDetails();
+				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[1];
-				valueParm[0] = "saleAgent";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);*/
+				valueParm[0] = "staffID";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90347", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
 			}
 		}
 		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
@@ -2123,14 +2144,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				errorDetail=ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm));
 			}
 		}
-		// validate Master code with PLF system masters
-		/*int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
-		if (count <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = columnName;
-			valueParm[1] = value;
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-		}*/
 
 		logger.debug("Leaving");
 		return errorDetail;
@@ -2253,6 +2266,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customer.setRecordType("");
+				//Version increased to fix the issue when version got increased while creating the loan with the customer
+				Customer mainCustomer=getCustomerDAO().getCustomerByCIF(customer.getCustCIF(),"");
+				if(mainCustomer!=null){					
+					customer.setVersion(mainCustomer.getVersion()+1);
+				}
 				getCustomerDAO().update(customer, "");
 			}
 
@@ -2388,32 +2406,38 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Customer";
-		if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
-			// call the finone procedure to update a customer in Finone 
-			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
-			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
-				auditDetail.setErrorDetails(
-						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-				auditHeader.setAuditDetail(auditDetail);
-				auditHeader.setErrorList(auditDetail.getErrorDetails());
-				return auditHeader;
-			}
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("GCD_FINONE_PROC_REQD"))) {
+			if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
+				// call the finone procedure to update a customer in Finone 
+				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+							auditHeader.getUsrLanguage()));
+					auditDetail.setErrorDetails(
+							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+					auditHeader.setAuditDetail(auditDetail);
+					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					return auditHeader;
+				}
 
-		} else {
-			// call the finone procedure to create a customer in Finone 
-			getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
-			if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(), PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-				errorParm[1]=customerDetails.getGcdCustomer().getRejectionReason();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null), auditHeader.getUsrLanguage()));
-				auditDetail.setErrorDetails(
-						ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-				auditHeader.setAuditDetail(auditDetail);
-				auditHeader.setErrorList(auditDetail.getErrorDetails());
-				return auditHeader;
+			} else {
+				// call the finone procedure to create a customer in Finone 
+				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+							auditHeader.getUsrLanguage()));
+					auditDetail.setErrorDetails(
+							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+					auditHeader.setAuditDetail(auditDetail);
+					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					return auditHeader;
+				}
 			}
 		}
 
@@ -5121,7 +5145,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR) {
 		return customerDAO.isDuplicateCrcpr(custId, custCRCPR);
 	}
-
+	@Override
+	public int updateCustCRCPR(String custDocTitle,long custID) {
+		return customerDAO.updateCustCRCPR(custDocTitle,custID);
+	}
 	@Override
 	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
 		logger.debug("Entering");
@@ -5174,9 +5201,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
 	}
-	public void setBankDetailService(BankDetailService bankDetailService) {
-		this.bankDetailService = bankDetailService;
-	}
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
@@ -5199,6 +5223,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
 		this.phoneTypeDAO = phoneTypeDAO;
+	}
+
+	@Override
+	public Customer getCustomerShrtName(long id) {
+		return getCustomerDAO().getCustomerByID(id);
 	}
 
 

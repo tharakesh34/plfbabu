@@ -126,7 +126,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 
 		sql = new StringBuilder("Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,");
 		sql.append(" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
-		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess");
+		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
 			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc ");
@@ -171,7 +171,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 
 		sql = new StringBuilder("Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,");
 		sql.append(" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
-		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess");
+		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
 			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc, FeeAccounting ");
@@ -283,10 +283,10 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate,");
 		insertSql.append("  DsaId, DmaId, FulfilOfficerId, ReferralId, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess)");
+		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt)");
 		insertSql.append("  Values(:ProductCode, :PostingAgainst, :PrimaryLinkRef, :VasReference, :Fee, :RenewalFee, :FeePaymentMode, :ValueDate, :AccrualTillDate,");
 		insertSql.append("  :RecurringDate, :DsaId, :DmaId, :FulfilOfficerId, :ReferralId,");
-		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess)");
+		insertSql.append("  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -317,7 +317,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		updateSql.append(" Set ProductCode = :ProductCode, PostingAgainst = :PostingAgainst, PrimaryLinkRef = :PrimaryLinkRef, Fee = :Fee, RenewalFee = :RenewalFee, FeePaymentMode = :FeePaymentMode, ");
 		updateSql.append(" ValueDate = :ValueDate, AccrualTillDate = :AccrualTillDate, RecurringDate = :RecurringDate, DsaId = :DsaId, DmaId = :DmaId, FulfilOfficerId = :FulfilOfficerId, ReferralId = :ReferralId,");
 		updateSql.append(" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,VasStatus = :VasStatus,FinanceProcess =:FinanceProcess");
+		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,VasStatus = :VasStatus,FinanceProcess =:FinanceProcess, PaidAmt =:PaidAmt, WaivedAmt =:WaivedAmt");
 		updateSql.append(" Where VasReference = :VasReference");
 		
 		if (!type.endsWith("_Temp")){

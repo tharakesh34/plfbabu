@@ -112,12 +112,12 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			super.moduleCode = "ReceiptCancellation";
 			super.pageRightName = "ReceiptCancellationList";
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "ReceiptCancellation";
 			super.pageRightName = "ReceiptCancellationList";
 		}
 	
-		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.tableName = "FinReceiptHeader_FCView";
 			super.queueTableName = "FinReceiptHeader_FCView";
 			super.enquiryTableName = "FinReceiptHeader_FCView";
@@ -180,7 +180,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' "
 					+ " AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' "
 					+ " AND RecordType IS NULL ) OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL) ) ");
-		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEECANCEL)) {
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_FEEPAYMENT+"' AND "
 					+ " ((ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_FEES+"'  AND RecordType IS NULL) "
 					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL) ) ");

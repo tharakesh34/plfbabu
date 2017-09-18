@@ -128,6 +128,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_ALPHANUM="REGEX_ALPHANUM";
 	public static final String REGEX_ALPHANUM_CODE="REGEX_ALPHANUM_CODE";
 	public static final String REGEX_ALPHANUM_SPACE="REGEX_ALPHANUM_SPACE";
+	
 	public static final String REGEX_ALPHANUM_SPACE_SPL="REGEX_ALPHANUM_SPACE_SPL";
 	public static final String REGEX_FIELDLABEL="REGEX_FIELDLABEL";
 	public static final String REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN="REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN";
@@ -160,6 +161,8 @@ public class PennantRegularExpressions {
 	public static final String REGEX_TRADELICENSE="REGEX_TRADELICENSE";
 	public static final String REGEX_UPP_BOX_ALPHA="REGEX_UPP_BOX_ALPHA";
 	public static final String REGEX_UPP_BOX_ALPHANUM="REGEX_UPP_BOX_ALPHANUM";
+	public static final String REGEX_UPPER_ALPHANUM_SPACE="REGEX_UPPER_ALPHANUM_SPACE";
+	public static final String REGEX_ALPHANUM_FSLASH_SPACE="REGEX_ALPHANUM_FSLASH_SPACE";//Expression Accepts Alpha numerics and /,space,-
 	public static final String REGEX_CUSTCIF="REGEX_CUSTCIF";
 	public static final String REGEX_UPPBOX_ALPHA_CODE="REGEX_UPPBOX_ALPHA_CODE";
 	public static final String REGEX_UPPBOX_ALPHANUM_UNDERSCORE="REGEX_UPPBOX_ALPHANUM_UNDERSCORE";
@@ -201,6 +204,8 @@ public class PennantRegularExpressions {
 			put(REGEX_COMPANY_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\s]*");
 			put(REGEX_NAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPERCASENAME, "^[A-Za-z]+[A-Za-z.\\s]*");
+			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s\\/\\-]*");
+			put(REGEX_ALPHANUM_FSLASH_SPACE, "^[A-Za-z0-9\\/]+[A-Za-z0-9.\\s\\/\\-]*");
 			put(REGEX_CUST_NAME, "^[A-Za-z]+[A-Za-z.\\-\\'\\_\\/\\s]*");
 			put(REGEX_DESCRIPTION, "^[A-Za-z0-9]+[A-Za-z0-9\\.\\-\\s\\(\\)]*");
 			put(REGEX_ADDRESS, "[a-zA-Z0-9.\\>\\<\\,\\-\\/\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]*");

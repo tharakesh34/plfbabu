@@ -67,7 +67,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			String[] valueParm = new String[2];
 			valueParm[0] = "Terms";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm)));
 			return auditDetail;
 		}
 		

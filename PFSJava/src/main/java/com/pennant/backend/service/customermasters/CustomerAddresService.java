@@ -60,7 +60,7 @@ public interface CustomerAddresService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<CustomerAddres> getApprovedCustomerAddresById(long  id);
-	AuditDetail doValidations(CustomerAddres customerAddres);
+	AuditDetail doValidations(CustomerAddres customerAddres,String method);
 	int getVersion(long id, String addtype);
 
 

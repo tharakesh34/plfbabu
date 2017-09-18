@@ -12,6 +12,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -31,6 +32,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
 
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceStepDetailDAO		financeStepDetailDAO;
 	private FinanceDataValidation		financeDataValidation;
 
 	/**
@@ -44,7 +46,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	 *@return FinScheduleData 
 	 */
 	public FinScheduleData getAddDisbDetails(FinScheduleData finScheduleData, BigDecimal amount,
-			BigDecimal addFeeFinance, boolean alwAssetUtilize) {
+			BigDecimal addFeeFinance, boolean alwAssetUtilize, String moduleDefiner) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = null;
@@ -55,7 +57,32 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 		
+		// Step POS Case , setting Step Details to Object
+		if(StringUtils.isNotEmpty(moduleDefiner) && 
+				StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)){
+			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finScheduleData.getFinReference(),
+					"", false));
+		}
+		
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
+
+		// Plan EMI Holidays Resetting after Add Disbursement
+		if(finSchData.getFinanceMain().isPlanEMIHAlw()){
+			finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
+			finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
+			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+
+			finSchData.getFinanceMain().setEqualRepay(true);
+			finSchData.getFinanceMain().setCalculateRepay(true);
+
+			if(StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+				finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
+			}else{
+				finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+			}
+		}
 
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
@@ -200,7 +227,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[2];
 				valueParm[0] = "RecalFromDate";
 				valueParm[1] = "from date";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
 				return auditDetail;
 			}
 		}
@@ -230,7 +257,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				valueParm[0] = "terms";
 				valueParm[1] = "1";
 				valueParm[2] = "99";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65031", valueParm)));
 			}
 		} else {
 			if (finServiceInstruction.getTerms() > 0) {
@@ -355,6 +382,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
+	}
+
+	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
+		return financeStepDetailDAO;
+	}
+
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
 	}
 
 }

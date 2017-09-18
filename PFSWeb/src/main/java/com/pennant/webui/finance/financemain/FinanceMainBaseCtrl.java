@@ -131,6 +131,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
@@ -761,6 +762,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private NotificationsService							notificationsService;
 	private DedupValidation									dedupValidation;
 	private DisbursementPostings 							disbursementPostings;
+	private InstallmentDueService							installmentDueService;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -1435,7 +1437,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 */
 	@SuppressWarnings("unused")
-	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad) throws ParseException, InterruptedException {
+	protected void doFillTabs(FinanceDetail aFinanceDetail, boolean onLoad, boolean isReqToLoad) throws ParseException, InterruptedException {
 		logger.debug("Entering");
 
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
@@ -1573,7 +1575,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
-		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
+		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && isReqToLoad && 
+				!StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(onLoad);
 		}
@@ -2603,16 +2606,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accountingDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			}
 			break;
-		case AssetConstants.UNIQUE_ID_DOCUMENTDETAIL:
-			documentDetailDialogCtrl.doSetLabels(getFinBasicDetails());
-			String finReference = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference();
-			List<DocumentDetails> documentDetails = getFinanceDetailService().getDocumentDetails(finReference,
-					FinanceConstants.FINSER_EVENT_ORG);
-			if (documentDetails != null && !documentDetails.isEmpty()) {
-				documentDetailDialogCtrl.doFillDocumentDetails(documentDetails);
-			}
-
-			break;
 		case AssetConstants.UNIQUE_ID_AGREEMENT:
 			this.doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 			if (customerDialogCtrl != null && customerDialogCtrl.getCustomerDetails() != null) {
@@ -3628,7 +3621,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Filling Child Window Details Tabs
 		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
 				: moduleDefiner);
-		doFillTabs(aFinanceDetail, true);
+		doFillTabs(aFinanceDetail, true, true);
 
 		// Setting Utilized Amoun for Collateral Assignment purpose calculations
 		this.oldVar_utilizedAmount = this.finAmount.getActualValue();
@@ -3916,7 +3909,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onPostWinCreation(Event event) throws ParseException, InterruptedException {
-		doFillTabs(getFinanceDetail(), false);
+		doFillTabs(getFinanceDetail(), false, false);
 	}
 
 	private void doVisibleODFacilityFields() {
@@ -4695,9 +4688,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							continue;
 						}
 					}
+					validFrom = DateUtility.addDays(validFrom, 1);
 					this.gracePeriodEndDate.setConstraint(new PTDateValidator(Labels
 							.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"), true, validFrom, appEndDate,
-							false));
+							true));
 				}
 			}
 
@@ -5828,11 +5822,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			List<VASRecording> vasRecordings = finVasRecordingDialogCtrl.getVasRecordings();
 			for (VASRecording recording : vasRecordings) {
-				if(StringUtils.isEmpty(recording.getVasReference())){
+				if (StringUtils.isEmpty(recording.getVasReference())) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_MandatoryVAS_Update"));
 					return;
 				}
+
+				if (aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList() != null
+						&& !aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
+
+					for (FinFeeDetail feeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+
+						if (StringUtils.equals(feeDetail.getVasReference(), recording.getVasReference())) {
+
+							recording.setFee(feeDetail.getActualAmount());
+							recording.setPaidAmt(feeDetail.getPaidAmount());
+							recording.setWaivedAmt(feeDetail.getWaivedAmount());
+						}
+					}
+				}
 			}
+			
 			aFinanceDetail.getFinScheduleData().setVasRecordingList(vasRecordings);
 		}
 
@@ -5995,8 +6004,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-			} catch (InterfaceException pfe) {
-				MessageUtil.showError(pfe);
+			} catch (Exception ex) {
+				MessageUtil.showError(ex);
 				return;
 			}
 		}
@@ -7476,10 +7485,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.hbox_planEmiMethod.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
 			this.row_PlanEmiHLockPeriod.setVisible(true);
-			this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
-			this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
-			this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
-			this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			if(isAction){
+				this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
+				this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
+				this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
+				this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			}
 			
 			if (planEmiHMType == null) {
 				setComboboxSelectedItem(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ);
@@ -11386,6 +11397,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					!finVasRecordingDialogCtrl.getVasRecordings().isEmpty()){
 				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent, finVasRecordingDialogCtrl.getVasRecordings()));
 			}
+			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(), profitDetail, DateUtility.getAppDate(),false, ""));
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
@@ -14863,12 +14875,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 
 				//Setting Finance Step Policy Details to Finance Schedule Data Object
-				if (getStepDetailDialogCtrl() != null) {
-					validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
-					this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
-				}
-
-				//Setting Finance Step Policy Details to Finance Schedule Data Object
 				if (stepDetailDialogCtrl != null) {
 					validFinScheduleData.setStepPolicyDetails(stepDetailDialogCtrl.getFinStepPoliciesList());
 					this.oldVar_finStepPolicyList = stepDetailDialogCtrl.getFinStepPoliciesList();
@@ -16127,6 +16133,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceTaxDetailDialogCtrl(FinanceTaxDetailDialogCtrl financeTaxDetailDialogCtrl) {
 		this.financeTaxDetailDialogCtrl = financeTaxDetailDialogCtrl;
+	}
+
+	public InstallmentDueService getInstallmentDueService() {
+		return installmentDueService;
+	}
+
+	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
+		this.installmentDueService = installmentDueService;
 	}
 
 }

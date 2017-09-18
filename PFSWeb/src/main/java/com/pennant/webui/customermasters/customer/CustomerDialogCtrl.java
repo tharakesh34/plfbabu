@@ -2808,16 +2808,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		String corebank = customerDetails.getCustomer().getCustCoreBank();
 
 		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("POSIDEX_DEDUP_REQD"))) {
+			if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())
+					&& StringUtils.isBlank(corebank)) {
+				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+				customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),
+						SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
+						this.window_CustomerDialog, curLoginUser);
 
-		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel()) && StringUtils.isBlank(corebank)) {
-			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			customerDetails = FetchFinCustomerDedupDetails.getFinCustomerDedup(getRole(),SysParamUtil.getValueAsString("FINONE_DEF_FINTYPE"), "", customerDetails,
-					this.window_CustomerDialog, curLoginUser);
-
-			if (customerDetails.getCustomer().isDedupFound() && !customerDetails.getCustomer().isSkipDedup()) {
-				return false;
-			} else {
-				return true;
+				if (customerDetails.getCustomer().isDedupFound() && !customerDetails.getCustomer().isSkipDedup()) {
+					return false;
+				} else {
+					return true;
+				}
 			}
 		}
 
@@ -5123,18 +5126,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
 
-				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
+						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-
-				BigDecimal instAmt = BigDecimal.ZERO;
-				if (finEnquiry.getNumberOfTerms() > 0) {
-					instAmt = totAmt.divide(new BigDecimal(finEnquiry.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
-				}
-				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(instAmt, format));
+			
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finEnquiry.getMaxInstAmount(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()),

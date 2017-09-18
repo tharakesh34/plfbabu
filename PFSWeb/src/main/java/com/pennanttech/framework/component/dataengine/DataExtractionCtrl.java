@@ -1,7 +1,21 @@
 package com.pennanttech.framework.component.dataengine;
 
+import com.pennant.backend.service.cibil.CIBILService;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.bajaj.process.ALMProcess;
+import com.pennanttech.bajaj.process.ControlDumpProcess;
+import com.pennanttech.bajaj.process.DataMartProcess;
+import com.pennanttech.bajaj.process.PosidexRequestProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.reports.cibil.CIBILReport;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
@@ -10,16 +24,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
-
-import com.pennant.backend.service.cibil.CIBILService;
-import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
-import com.pennanttech.dataengine.excecution.ProcessExecution;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.baja.BajajInterfaceConstants;
 
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
@@ -34,9 +38,10 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 	protected Timer timer;
 
 	protected DataEngineConfig dataEngineConfig;
-	
+
 	@Autowired
 	private CIBILService cibilService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -73,26 +78,26 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		for (Configuration config : configList) {
 			String configName = config.getName();
 			if (!("ALM_REQUEST".equals(configName) || "CONTROL_DUMP_REQUEST".equals(configName)
-					|| "POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName) || "DATA_MART_REQUEST".equals(configName) || "POSIDEX_CUSTOMER_UPDATE_RESPONSE"
-						.equals(configName) || "GL_TRAIL_BALANCE_EXPORT".equals(configName))) {
+					|| "POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName) || "DATA_MART_REQUEST".equals(configName)
+					|| "POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)
+					|| "GL_TRAIL_BALANCE_EXPORT".equals(configName))) {
 				continue;
 			}
 			if ("ALM_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.ALM_EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.ALM_EXTRACT_STATUS);
+				ALMProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("ALM_REQUEST");
+				doFillPanel(config, ALMProcess.EXTRACT_STATUS);
 			}
 			if ("CONTROL_DUMP_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS = dataEngineConfig
-						.getLatestExecution("CONTROL_DUMP_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.CONTROL_DUMP_REQUEST_STATUS);
+				ControlDumpProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("CONTROL_DUMP_REQUEST");
+				doFillPanel(config, ControlDumpProcess.EXTRACT_STATUS);
 			}
 
 			if ("POSIDEX_CUSTOMER_UPDATE_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.POSIDEX_REQUEST_STATUS = dataEngineConfig
+				PosidexRequestProcess.EXTRACT_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.POSIDEX_REQUEST_STATUS);
+				doFillPanel(config, PosidexRequestProcess.EXTRACT_STATUS);
 			}
-			
+
 			if ("POSIDEX_CUSTOMER_UPDATE_RESPONSE".equals(configName)) {
 				BajajInterfaceConstants.POSIDEX_RESPONSE_STATUS = dataEngineConfig
 						.getLatestExecution("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
@@ -100,20 +105,20 @@ public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 			}
 
 			if ("DATA_MART_REQUEST".equals(configName)) {
-				BajajInterfaceConstants.DATA_MART_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
-				doFillPanel(config, BajajInterfaceConstants.DATA_MART_STATUS);
+				DataMartProcess.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("DATA_MART_REQUEST");
+				doFillPanel(config, DataMartProcess.EXTRACT_STATUS);
 			}
-			
+
 			if ("GL_TRAIL_BALANCE_EXPORT".equals(configName)) {
-				BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
-				doFillPanel(config, BajajInterfaceConstants.TRAIL_BALANCE_EXPORT_STATUS);
+				TrailBalanceEngine.EXTRACT_STATUS = dataEngineConfig.getLatestExecution("GL_TRAIL_BALANCE_EXPORT");
+				doFillPanel(config, TrailBalanceEngine.EXTRACT_STATUS);
 			}
-			
+
 		}
-		
-		BajajInterfaceConstants.CIBIL_EXPORT_STATUS=cibilService.getLatestExecution();
-		BajajInterfaceConstants.CIBIL_EXPORT_STATUS.setName("CIBIL_EXPORT_STATUS");
-		doFillPanel(null, BajajInterfaceConstants.CIBIL_EXPORT_STATUS);
+
+		CIBILReport.EXTRACT_STATUS = cibilService.getLatestExecution();
+		CIBILReport.EXTRACT_STATUS.setName("CIBIL_EXPORT_STATUS");
+		doFillPanel(null, CIBILReport.EXTRACT_STATUS);
 		timer.start();
 		logger.debug(Literal.LEAVING);
 	}

@@ -161,8 +161,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
 		// customer validations
+		Customer customer = null;
 		if (StringUtils.isNotBlank(customerDetails.getCustCIF())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
+			customer = customerDetailsService.getCustomerByCIF(customerDetails.getCustCIF());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDetails.getCustCIF();
@@ -310,7 +311,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-		customerDetails.setCustID(customer.getCustID());
+		customerDetails.getCustomer().setCustID(customer.getCustID());
+		customerDetails.getCustomer().setCustCtgCode(customer.getCustCtgCode());
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 
 		AuditDetail auditDetail = customerService.doCustomerValidations(auditHeader);
@@ -704,6 +706,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerPhoneNumber prvCustomerPhoneNumber = customerPhoneNumberService.getApprovedCustomerPhoneNumberById(
 				customerPhoneNumber.getPhoneCustID(), customerPhoneNumber.getPhoneTypeCode());
 		if (prvCustomerPhoneNumber != null) {
+			if (prvCustomerPhoneNumber.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "cannot delete";
+				valueParm[1] = "Phone";
+				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerPhoneNumber(customerPhoneNumber);
 		} else {
@@ -733,8 +742,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "address";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(custAddress.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(custAddress.getCif());
+			customer = customerDetailsService.getCustomerByCIF(custAddress.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custAddress.getCif();
@@ -742,10 +752,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
-
+		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres());
+		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres(),APIConstants.SERVICE_TYPE_CREATE);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -791,9 +801,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		custAddress.getCustomerAddres().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custAddress.getCustomerAddres(), PennantConstants.TRAN_WF);
-		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres());
+		AuditDetail auditDetail = customerAddresService.doValidations(custAddress.getCustomerAddres(),APIConstants.SERVICE_TYPE_UPDATE);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
@@ -884,6 +894,13 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		CustomerAddres prvCustomerAddres = customerAddresService.getApprovedCustomerAddresById(
 				customerAddres.getCustID(), customerAddres.getCustAddrType());
 		if (prvCustomerAddres != null) {
+			if (prvCustomerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)) {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "cannot delete";
+				valueParm[1] = "Address";
+				return APIErrorHandlerService.getFailedStatus("90270", valueParm);
+			}
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerAddress(customerAddres);
 		} else {
@@ -913,8 +930,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "email";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(custEMail.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(custEMail.getCif());
+			customer = customerDetailsService.getCustomerByCIF(custEMail.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = custEMail.getCif();
@@ -922,10 +940,10 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 			}
 		}
-
+		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail());
+		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail(),APIConstants.SERVICE_TYPE_CREATE);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -970,9 +988,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-
+		custEMail.getCustomerEMail().setCustID(customer.getCustID());
 		AuditHeader auditHeader = getAuditHeader(custEMail.getCustomerEMail(), PennantConstants.TRAN_WF);
-		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail());
+		AuditDetail auditDetail = customerEMailService.doValidations(custEMail.getCustomerEMail(),APIConstants.SERVICE_TYPE_UPDATE);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 

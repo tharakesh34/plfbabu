@@ -114,7 +114,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 	}		
 	
 	@Override
-	public boolean isDuplicateKey(long bounceID,String bounceCode, TableType tableType) {
+	public boolean isDuplicateKey(long bounceID, String bounceCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -138,7 +138,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("bounceID", bounceID);
 		paramSource.addValue("bounceCode", bounceCode);
-		
+
 		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -147,6 +147,7 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		}
 
 		logger.debug(Literal.LEAVING);
+
 		return exists;
 	}
 	
@@ -304,5 +305,42 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
+	@Override
+	public boolean isDuplicateReturnCode(long bounceID, String returnCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "returnCode = :returnCode AND bounceID != :bounceID";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BounceReasons", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BounceReasons_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BounceReasons_Temp", "BounceReasons" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("bounceID", bounceID);
+		paramSource.addValue("returnCode", returnCode);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return exists;
+	}
 }	

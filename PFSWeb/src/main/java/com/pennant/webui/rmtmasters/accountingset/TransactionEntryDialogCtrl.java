@@ -1553,6 +1553,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			String feeTypeDesc = feeRulesList.get(i).getFeeTypeDesc();
 
 			group = new Listgroup(feeTypeCode);
+			group.setOpen(false);
 			this.feeCodeListbox.appendChild(group);
 
 			for (int j = 0; j < 5; j++) {

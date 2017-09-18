@@ -1,19 +1,15 @@
 package com.pennanttech.bajaj.process;
 
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionStatus;
-
-import com.pennanttech.dataengine.DatabaseDataEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.App;
 
 public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponseProcess.class);
@@ -30,8 +26,6 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		TransactionStatus txnStatus = null;
-		txnStatus = transManager.getTransaction(transDef);
 		try {
 			int count = updateDisbursements(disbIdList, executionStatus.getId());
 			if (count > 0) {
@@ -42,16 +36,11 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 				throw new Exception("Unable to process the imps responce");
 			}
 
-			transManager.commit(txnStatus);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			transManager.rollback(txnStatus);
 			failedCount++;
 			saveBatchLog(String.valueOf(executionStatus.getId()), "F", e.getMessage());
-		} finally {
-			txnStatus.flush();
-			txnStatus = null;
-		}
+		} 
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -72,7 +61,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 			source.addValue("E", "E");
 			source.addValue("R", "R");
 
-			return this.jdbcTemplate.update(sql.toString(), source);
+			return this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -92,7 +81,7 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 			source.addValue("PROCESSFLAG", "Y");
 			source.addValue("RESP_BATCH_ID", batchId);
 
-			return this.jdbcTemplate.update(sql.toString(), source);
+			return this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

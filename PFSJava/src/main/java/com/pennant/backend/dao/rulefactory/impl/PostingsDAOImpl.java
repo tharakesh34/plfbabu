@@ -426,7 +426,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(String finReference) {
+	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -441,6 +441,9 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" FROM Postings T1");
 		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
+		if(!reqReversals){
+			selectSql.append(" and OldLinkedTranID = 0 ");
+		}
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 
 		logger.debug("selectSql: " + selectSql.toString());

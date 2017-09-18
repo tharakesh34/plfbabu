@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +115,7 @@ import com.pennant.backend.model.finance.BundledProductsDetail;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -134,6 +136,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -1692,7 +1695,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -1710,8 +1713,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processFinOneCreation(aAuditHeader);
 		}
 
-		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
-				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
 			return aAuditHeader;
 		}
 		/*
@@ -2132,7 +2135,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			//Quick disbursement
 			if (financeMain.isQuickDisb()) {
-				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) ||!financeDetail.isStp()){
+				if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || auditHeader.getApiHeader()==null){
 					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
 							tableType.getSuffix(), auditTranType));	
 				} else {
@@ -2150,6 +2153,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Covenant Type Details
 			//=======================================
 			if (financeDetail.getCovenantTypeList() != null && !financeDetail.getCovenantTypeList().isEmpty()) {
+				for (FinCovenantType finCovenantType : financeDetail.getCovenantTypeList()) {
+					finCovenantType.setFinReference(finReference);
+					finCovenantType.setTaskId(financeMain.getTaskId());
+					finCovenantType.setNextTaskId(financeMain.getNextTaskId());
+					finCovenantType.setRoleCode(financeMain.getRoleCode());
+					finCovenantType.setNextRoleCode(financeMain.getNextRoleCode());
+					finCovenantType.setRecordStatus(financeMain.getRecordStatus());
+					finCovenantType.setWorkflowId(financeMain.getWorkflowId());
+					finCovenantType.setLastMntOn(financeMain.getLastMntOn());
+				}
 				auditDetails.addAll(getFinCovenantTypeService().saveOrUpdate(financeDetail.getCovenantTypeList(),
 						tableType.getSuffix(), auditTranType));
 			}
@@ -2226,10 +2239,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
 				&& !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 			for(FinFeeReceipt finFeeReceipt : financeDetail.getFinScheduleData().getFinFeeReceipts()) {
-				for(FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					if(finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
-						finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
-						break;
+				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+					
+					if (finFeeReceipt.getFeeTypeId() != 0) {
+						if (finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
+							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
+							break;
+						}
+						
+					} else {
+						if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())) {
+							finFeeReceipt.setFeeID(finFeeDetail.getFeeID());
+							break;
+						}
 					}
 				}
 			}
@@ -2950,8 +2972,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processFinOneCreation(aAuditHeader);
 		}
 
-		if (aAuditHeader.getAuditDetail().getErrorDetails() != null
-				&& !aAuditHeader.getAuditDetail().getErrorDetails().isEmpty()) {
+		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("Leaving");
 			return aAuditHeader;
 		}
 
@@ -3150,7 +3172,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			getFinanceStepDetailDAO().deleteList(financeMain.getFinReference(), isWIF, "");
 
-			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null))) {
 				//Additional Field Details Deletion
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "");
@@ -3725,7 +3747,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			
 			// ScheduleDetails delete
 			//=======================================
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null)) {
 				listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), "_Temp", isWIF);
 			}
 
@@ -3740,7 +3762,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp()))) {
+			if (!isWIF && (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (auditHeader.getApiHeader()==null))) {
 				//Additional Field Details Deletion in _Temp Table
 				//=======================================
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
@@ -3871,7 +3893,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || (financeMain.isQuickDisb()|| !financeDetail.isStp())) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API) || auditHeader.getApiHeader()==null) {
 
 				//Fin Fee Details Deletion
 				if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
@@ -3960,39 +3982,43 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String[] errorParm = new String[2];
 		errorParm[0] = "Loan";
-		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-			if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
-				// call the finone procedure to update a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					return auditHeader;
-				}
+		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("GCD_FINONE_PROC_REQD"))) {
+			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+				if (!StringUtils.isEmpty(customerDetails.getCustomer().getCustCoreBank())) {
+					// call the finone procedure to update a customer in Finone 
+					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_UPDATE);
+					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+								auditHeader.getUsrLanguage()));
+						auditDetail.setErrorDetails(
+								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
+						auditHeader = nextProcess(auditHeader);
+						return auditHeader;
+					}
 
-			} else {
-				// call the finone procedure to create a customer in Finone 
-				getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
-				if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
-						PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
-					errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
-							auditHeader.getUsrLanguage()));
-					auditDetail.setErrorDetails(
-							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
-					return auditHeader;
+				} else {
+					// call the finone procedure to create a customer in Finone 
+					getgCDCustomerService().processGcdCustomer(customerDetails, PennantConstants.CUSTOMER_DEDUP_INSERT);
+					if (StringUtils.equals(customerDetails.getGcdCustomer().getStatusFromFinnOne(),
+							PennantConstants.CUSTOMER_DEDUP_REJECTED)) {
+						errorParm[1] = customerDetails.getGcdCustomer().getRejectionReason();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99014", errorParm, null),
+								auditHeader.getUsrLanguage()));
+						auditDetail.setErrorDetails(
+								ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
+						auditHeader = nextProcess(auditHeader);
+						return auditHeader;
+					}
 				}
-			} 
+			}
 		}
 		logger.debug("Leaving");
 		return auditHeader;
@@ -4627,7 +4653,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -4915,6 +4941,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					tableName.append("_");
 					tableName.append(asset.getTypeCode());
 					tableName.append("_ED");
+					asset.setTableName(tableName.toString());
 
 					// Records Deletion from Table
 					getExtendedFieldRenderDAO()
@@ -4947,6 +4974,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					tableName.append("_");
 					tableName.append(vas.getTypeCode());
 					tableName.append("_ED");
+					vas.setTableName(tableName.toString());
 
 					// Records Deletion from Table
 					getExtendedFieldRenderDAO().deleteList(vas.getReference(), tableName.toString(), "_Temp");
@@ -5325,11 +5353,61 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Finance Fee details
 		if (!financeDetail.isExtSource()) {
-			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-				auditDetails.addAll(getFinFeeDetailService().validate(
+			List<FinFeeDetail> finFeeDeatailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+
+			if (finFeeDeatailsList != null) {
+				List<AuditDetail> auditDetailsList = getFinFeeDetailService().validate(
 						financeDetail.getFinScheduleData().getFinFeeDetailActualList(), financeMain.getWorkflowId(),
-						method, auditTranType, usrLanguage, isWIF));
+						method, auditTranType, usrLanguage, isWIF);
+
+				auditDetails.addAll(auditDetailsList);
+
+				if (StringUtils.isNotBlank(financeMain.getWifReference())
+						&& !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
+								|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
+					List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
+					boolean warningMessage = false;
+
+					if (finTypeFeesList != null) {
+						if (finTypeFeesList.isEmpty()) {
+							if (!finFeeDeatailsList.isEmpty()) {
+								warningMessage = true;
+							}
+						} else {
+							if (finFeeDeatailsList.isEmpty()) {
+								warningMessage = true;
+							} else {
+								Set<Long> feeTypeSet = new HashSet<Long>();
+
+								for (FinTypeFees finTypeFees : finTypeFeesList) {
+									feeTypeSet.add(finTypeFees.getFeeTypeID());
+								}
+								
+								for (FinFeeDetail finFeeDet : finFeeDeatailsList) {
+									if (finFeeDet.getFeeTypeID() != 0 && !feeTypeSet.contains(finFeeDet.getFeeTypeID())) {
+										warningMessage = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (warningMessage) {
+						AuditDetail auditDet = new AuditDetail();
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						errParm[0] = "";
+						valueParm[0] = "";
+						auditDet.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65026", errParm, valueParm));
+						auditDet.setErrorDetails(ErrorUtil.getErrorDetails(auditDet.getErrorDetails(), usrLanguage));
+
+						auditDetails.add(auditDet);
+					}
+				}
 			}
+
 		}
 		
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
@@ -8367,6 +8445,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public int getProgressCountByCust(long custID) {
 		return getCustomerQueuingDAO().getProgressCountByCust(custID);
 	}
+	
+	@Override
+	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain) {
+
+		//Finance Details
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(financeMain.getFinReference());
+		scheduleData.setFinanceMain(financeMain);	// FIXME
+
+		// Covenants List
+		financeDetail.setCovenantTypeList(getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
+
+		// Customer and Customer Document Details
+		financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
+
+		// Document details
+		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
+				financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
+
+		return financeDetail;
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -8613,6 +8713,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public List<FinTypeFees> getFinTypeFees(String finType, String eventCode, boolean origination, int moduleId) {
 		return getFinTypeFeesDAO().getFinTypeFeesList(finType, eventCode, "_AView", origination, moduleId);
+	}
+	
+	/**
+	 * Method for Fetching List of Step Policy Details using Finance Reference
+	 * @param finReference
+	 * @param type
+	 * @param isWIF
+	 * @return
+	 */
+	@Override
+	public List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF) {
+		return getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finReference, type, isWIF);
 	}
 	
 	@Override

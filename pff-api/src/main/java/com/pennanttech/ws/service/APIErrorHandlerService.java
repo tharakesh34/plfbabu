@@ -1,9 +1,14 @@
 package com.pennanttech.ws.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.APIHeader;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
@@ -113,6 +118,18 @@ public class APIErrorHandlerService {
 		return error;
 	}
 
+	/**
+	 * Method for logging un-handled exceptions
+	 * 
+	 * @param e
+	 */
+	public static void logUnhandledException(Exception exception) {
+		StringWriter writer = new StringWriter();
+		exception.printStackTrace(new PrintWriter(writer));
+		String errorMessage = writer.toString();
+		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_EXCEPTION_KEY, errorMessage);
+	}
+	
 	@Autowired
 	public void setErrorDetailService(ErrorDetailService errorDetailService) {
 		APIErrorHandlerService.errorDetailService = errorDetailService;

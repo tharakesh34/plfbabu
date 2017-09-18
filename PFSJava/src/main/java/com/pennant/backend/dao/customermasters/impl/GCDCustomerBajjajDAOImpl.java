@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import com.pennant.backend.dao.finance.GCDCustomerBajjajDAO;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.gcd.GcdCustomer;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -75,7 +76,7 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 	}
 
 	@Override
-	public void callStoredProcedure(GcdCustomer gcdCustomer) {
+	public void callStoredProcedure(CustomerDetails details,GcdCustomer gcdCustomer) {
 		logger.debug(Literal.ENTERING);
 		
 		MapSqlParameterSource inParam = new MapSqlParameterSource();
@@ -233,7 +234,7 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 				+ " :P_ECONOMIC_SEC_ID, :P_FRAUD_FLAG, :P_FRAUD_SCORE, :P_EMI_CARD_ELIG, :P_ADDRESS_DTL, :P_BANK_DTL, :P_N_NAME, :P_N_ADDRESS, :P_N_RELATION, :P_N_FIELD9,"
 				+ " :P_N_FIELD10, :P_INS_UPD_FLAG, :P_SUCCESS_REJECT, :P_REJECTION_REASON, :P_FINN_CUST_ID, :P_SFDC_CUSTOMERID, :P_BRANCHID)}"; // not
 
-		logger.trace(Literal.SQL + procedure.toString());
+		logger.debug(Literal.SQL + procedure.toString());
 		try {
 			this.simpleJdbcCall = new SimpleJdbcCall(getFinOneDatasource()).withProcedureName(PennantConstants.CUSTOMER_DEDUP_PROCNAME);
 			Map<String, Object> outParam = simpleJdbcCall.execute(inParam);
@@ -242,6 +243,7 @@ public class GCDCustomerBajjajDAOImpl implements GCDCustomerBajjajDAO {
 				gcdCustomer.setStatusFromFinnOne(String.valueOf(outParam.get("P_SUCCESS_REJECT")));
 				gcdCustomer.setRejectionReason(String.valueOf(outParam.get("P_REJECTION_REASON")));
 				gcdCustomer.setFinnCustId(String.valueOf(outParam.get("P_FINN_CUST_ID")));
+				details.getCustomer().setCustCoreBank(String.valueOf(outParam.get("P_FINN_CUST_ID")));
 				updateSuccessStatus(gcdCustomer);// updating success flag;
 			}
 		} catch (Exception e) {

@@ -100,7 +100,7 @@ public class FinFeeReceiptDAOImpl extends BasisNextidDaoImpl<FinFeeReceipt> impl
 				.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",ReceiptAmount, FeeTypeCode, FeeType, FEETYPEID, ReceiptType, ReceiptReference, transactionRef, favourNumber");
+			selectSql.append(",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FEETYPEID, ReceiptType, ReceiptReference, transactionRef, favourNumber, vasReference ");
 		}
 
 		selectSql.append(" From FinFeeReceipts");
@@ -160,7 +160,7 @@ public class FinFeeReceiptDAOImpl extends BasisNextidDaoImpl<FinFeeReceipt> impl
 		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",ReceiptAmount, FeeTypeCode, FeeType, FEETYPEID, ReceiptType, transactionRef, favourNumber");
+			selectSql.append(",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID, ReceiptType, transactionRef, favourNumber, vasReference ");
 		}
 		selectSql.append(" From FinFeeReceipts");
 		selectSql.append(StringUtils.trimToEmpty(type));

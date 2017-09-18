@@ -108,7 +108,6 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -254,7 +253,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private FinanceDetailService financeDetailService;
 
 	private String moduleDefiner = "";
-	private Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
 	private boolean isWIF = false;
 	private String roleCode = "";
 	private String menuItemRightName = null;
@@ -789,99 +787,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.schdl_odfutureDisb.setValue(PennantAppUtil.formateAmount(futTotDisbAmt, ccyFormatter));
 		}
 		
-		// Get Finance Fee Details For Schedule Render Purpose In maintenance
-		// Stage
-		List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
-		boolean isMaintainRcd = false;
-		if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
-				&& !isWIF) {
-			approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "", isWIF);
-			isMaintainRcd = true;
-		}
-
 		// Check Rights Based on Condition is EITHER WIF or MAIN
 		String dialogName = "FinanceMainDialog";
 		if (isWIF) {
 			dialogName = "WIFFinanceMainDialog";
 		}
 
-		// New Fee Rules for Schedule Maintenance/New
-		feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-		List<FeeRule> feeRuleList = aFinSchData.getFeeRules();
-		Map<Date, ArrayList<FeeRule>> tempFeeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-		for (FeeRule fee : feeRuleList) {
-			if (feeChargesMap.containsKey(fee.getSchDate())) {
-				ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-				int seqNo = 0;
-				for (FeeRule feeRule : feeChargeList) {
-					if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
-						if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
-							seqNo = feeRule.getSeqNo();
-						}
-					}
-				}
-				fee.setSeqNo(seqNo + 1);
-				feeChargeList.add(fee);
-				feeChargesMap.put(fee.getSchDate(), feeChargeList);
-				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-
-			} else {
-				ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-				feeChargeList.add(fee);
-				feeChargesMap.put(fee.getSchDate(), feeChargeList);
-				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-			}
-		}
-
-		// For Approved Fee Rule Details
-		for (FeeRule fee : approvedFeeRules) {
-			if (tempFeeChargesMap.containsKey(fee.getSchDate())) {
-				ArrayList<FeeRule> feeChargeList = tempFeeChargesMap.get(fee.getSchDate());
-				int seqNo = 0;
-				for (FeeRule feeRule : feeChargeList) {
-					if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
-						if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
-							seqNo = feeRule.getSeqNo();
-						}
-					}
-				}
-				fee.setSeqNo(seqNo + 1);
-				feeChargeList.add(fee);
-				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-
-			} else {
-				ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-				feeChargeList.add(fee);
-				tempFeeChargesMap.put(fee.getSchDate(), feeChargeList);
-			}
-		}
-
 		// To set Expenses Amount not based on Remaining Fee Schedule method.
-		List<FeeRule> feesList = null;
-		if (isMaintainRcd) {
-			feesList = approvedFeeRules;
-		} else {
-			feesList = feeRuleList;
-		}
 		BigDecimal totalExpAmt = BigDecimal.ZERO;
 		BigDecimal feeToFinAmt = BigDecimal.ZERO;
-		if (feesList != null && !feesList.isEmpty()) {
-			for (FeeRule fee : feesList) {
-				totalExpAmt = totalExpAmt.add(fee.getFeeAmount().subtract(fee.getWaiverAmount())
-						.subtract(fee.getPaidAmount()));
-				
-				if(StringUtils.equals(fee.getFeeMethod(),CalculationConstants.REMFEE_PART_OF_SALE_PRICE) || 
-						StringUtils.equals(fee.getFeeToFinance(),RuleConstants.DFT_FEE_FINANCE)){
-					feeToFinAmt = feeToFinAmt.add(fee.getFeeAmount().subtract(fee.getWaiverAmount())
-							.subtract(fee.getPaidAmount()));
-				}
-			}
-			this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(totalExpAmt, ccyFormatter));
-			this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(finAmount.subtract(
-					financeMain.getDownPayment()).add(feeToFinAmt).add(financeMain.getTotalGrossPft()), ccyFormatter));
-			totalCost = PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment()).add(feeToFinAmt), ccyFormatter);
-			this.schdl_totalCost.setValue(totalCost);
-		}else if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
+		if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
 			for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
 				totalExpAmt = totalExpAmt.add(finFeeDetail.getRemainingFee());
 				
@@ -1059,22 +974,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("isEMIHEditable", !getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 				map.put("moduleDefiner", moduleDefiner);
 				
-				if(curSchd.getFeeChargeAmt().compareTo(BigDecimal.ZERO) >= 0  && 
-						aFinSchData.getFinFeeDetailList() != null && !aFinSchData.getFinFeeDetailList().isEmpty()){
-					finRender.renderOrg(map, prvSchDetail, false, allowRvwRate, true, aFinSchData.getFinFeeDetailList(), showRate,
-							StringUtils.isEmpty(moduleDefiner));
-				}else{
-					finRender.render(map, prvSchDetail, false, allowRvwRate, true, tempFeeChargesMap, showRate,
-							StringUtils.isEmpty(moduleDefiner));
-				}
-				
+				finRender.render(map, prvSchDetail, false, allowRvwRate, true, aFinSchData.getFinFeeDetailList(), showRate,
+						StringUtils.isEmpty(moduleDefiner));
+
 				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
 				if(!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
 					lastRecord = true;
 				}
 
 				if (i == sdSize - 1 || lastRecord) {
-					finRender.render(map, prvSchDetail, true, allowRvwRate, true, tempFeeChargesMap, showRate,
+					finRender.render(map, prvSchDetail, true, allowRvwRate, true, aFinSchData.getFinFeeDetailList(), showRate,
 							StringUtils.isEmpty(moduleDefiner));
 					break;
 				}
@@ -1777,6 +1686,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("appDateValidationReq", isAppDateValidationReq());
+		map.put("moduleDefiner", moduleDefiner);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/RateChangeDialog.zul",
@@ -1923,6 +1833,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("isWIF", isWIF);
+		map.put("moduleDefiner", moduleDefiner);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDisbursementDialog.zul",
@@ -2324,11 +2235,23 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinScheduleData().getFinanceMain().getScheduleMethod());
 			
+			// Re-check Event From Date in Case of Servicing
+			if(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)){
+				List<FinanceScheduleDetail> schList = getFinScheduleData().getFinanceScheduleDetails();
+				Date curBussDate = DateUtility.getAppDate();
+				for (FinanceScheduleDetail curSchd : schList) {
+					if(curSchd.getSchDate().compareTo(curBussDate) <= 0){
+						getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
+						continue;
+					}
+					getFinScheduleData().getFinanceMain().setRecalFromDate(curSchd.getSchDate());
+					break;
+				}
+			}
+			
 			if(this.grid_monthDetails.isVisible()){
 				getFinScheduleData().setPlanEMIHmonths(getPlanEMIHMonths());
 				getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
-				
-				
 				setFinScheduleData(ScheduleCalculator.getFrqEMIHoliday(getFinScheduleData()));
 			}else{
 				getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
@@ -2609,14 +2532,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
-	}
-
-	public Map<Date, ArrayList<FeeRule>> getFeeChargesMap() {
-		return feeChargesMap;
-	}
-
-	public void setFeeChargesMap(Map<Date, ArrayList<FeeRule>> feeChargesMap) {
-		this.feeChargesMap = feeChargesMap;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

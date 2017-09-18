@@ -41,11 +41,12 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.finance;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.gcd.GcdCustomer;
 
 
 public interface GCDCustomerBajjajDAO {
 
-	void callStoredProcedure(GcdCustomer gcdCustomer);
+	void callStoredProcedure(CustomerDetails details,GcdCustomer gcdCustomer);
 	
 }

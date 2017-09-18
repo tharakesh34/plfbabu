@@ -415,17 +415,40 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
-
-		if (financeDetail.isNewRecord()
-				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		if (financeDetail.isNewRecord() || StringUtils.isEmpty(financeMain.getRecordType())) {
+			
 			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
+				
 				List<FinFeeDetail> originationFeeList = new ArrayList<>();
 				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
-				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
-
+				String wifReference = financeMain.getWifReference();
+				
+				if ((StringUtils.isNotBlank(financeDetail.getModuleDefiner())
+						&& !FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))
+						|| StringUtils.isBlank(wifReference)) {
+					finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+				} else {
+					// for WIF loans in loan origination
+					for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
+						finFeeDetail.setNewRecord(true);
+						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+					}
+				}
+				
+				boolean receiptFlag = false;
+				if (isReceiptsProcess && this.financeMainDialogCtrl != null && this.financeMainDialogCtrl instanceof ReceiptDialogCtrl) {
+					isReceiptsProcess = false;
+					receiptFlag = true;
+				}
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
 				financeDetail.getFinScheduleData().getFinFeeDetailList().addAll(originationFeeList);
 
+				if (receiptFlag) {
+					isReceiptsProcess = true;
+				}
+				
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 			} else {
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
@@ -489,7 +512,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
 				finFeeReceipt.setAvailableAmount(finReceiptDetail.getAmount());
 				finFeeReceipt.setReceiptID(receiptid);
-				finFeeReceipt.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
+				finFeeReceipt.setWorkflowId(financeMain.getWorkflowId());
 				finFeeReceipt.setRecordType(PennantConstants.RCD_ADD);
 				currentFeeReceipts.add(finFeeReceipt);
 			}
@@ -564,7 +587,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 
 				// Fee Type
-				lc = new Listcell(finFeeReceipt.getFeeType());
+				if (StringUtils.isBlank(finFeeReceipt.getVasReference())) {
+					lc = new Listcell(finFeeReceipt.getFeeTypeDesc());
+				} else {
+					lc = new Listcell(finFeeReceipt.getVasReference());
+					finFeeReceipt.setFeeTypeCode(finFeeReceipt.getVasReference());
+					finFeeReceipt.setFeeTypeDesc(finFeeReceipt.getVasReference());
+				}
 				lc.setParent(item);
 
 				// Paid Amount
@@ -636,10 +665,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
+		
 		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+			
 			FinFeeDetail finFeeDetail = null;
 			
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
+				
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);
 				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
@@ -659,17 +691,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
 				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
 				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
-
 				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
 				finFeeDetail.setActualAmount(finTypeFee.getAmount());
+				
 				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					finFeeDetail.setPaidAmount(finTypeFee.getAmount());
 				}
+				
 				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 					finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
 				}
-				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
-						.subtract(finFeeDetail.getPaidAmount()));
+				
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
 
 				finFeeDetails.add(finFeeDetail);
 			}
@@ -690,17 +723,24 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering" + event.toString());
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), true);
-		LinkedHashMap<Long, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<Long, FinFeeDetail>();
-		LinkedHashMap<Long, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<Long, FinFeeDetail>();
-		LinkedHashMap<Long, BigDecimal> availableFeeAmount = new LinkedHashMap<Long, BigDecimal>();
+		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<String, FinFeeDetail>();
+		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<String, FinFeeDetail>();
+		LinkedHashMap<String, BigDecimal> availableFeeAmount = new LinkedHashMap<String, BigDecimal>();
 		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
 
 		BigDecimal totFeesPaidAmount  = BigDecimal.ZERO;
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 			if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
-				finFeeDetailsMapTemp.put(finFeeDetail.getFeeTypeID(), finFeeDetail);
-				finFeeDetailsMap.put(finFeeDetail.getFeeTypeID(), finFeeDetail);
-				availableFeeAmount.put(finFeeDetail.getFeeTypeID(), finFeeDetail.getPaidAmount());
+				
+				if (StringUtils.isBlank(finFeeDetail.getVasReference())) {
+					finFeeDetailsMapTemp.put(String.valueOf(finFeeDetail.getFeeTypeID()), finFeeDetail);
+					finFeeDetailsMap.put(String.valueOf(finFeeDetail.getFeeTypeID()), finFeeDetail);
+					availableFeeAmount.put(String.valueOf(finFeeDetail.getFeeTypeID()), finFeeDetail.getPaidAmount());
+				} else {
+					finFeeDetailsMapTemp.put(finFeeDetail.getVasReference(), finFeeDetail);
+					finFeeDetailsMap.put(finFeeDetail.getVasReference(), finFeeDetail);
+					availableFeeAmount.put(finFeeDetail.getVasReference(), finFeeDetail.getPaidAmount());
+				}
 				totFeesPaidAmount = totFeesPaidAmount.add(finFeeDetail.getPaidAmount());
 			}
 		}
@@ -732,16 +772,23 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					reference = finReceiptDetail.getFavourNumber();
 				}
 				
-				for (long feeTypeID : finFeeDetailsMap.keySet()) {
-					if (!finFeeDetailsMapTemp.containsKey(feeTypeID)) {
+				for (String key : finFeeDetailsMap.keySet()) {
+					if (!finFeeDetailsMapTemp.containsKey(key)) {
 						continue;
 					}
 					receiptFound = true;
-					FinFeeDetail finFeeDetail = finFeeDetailsMap.get(feeTypeID);
+					FinFeeDetail finFeeDetail = finFeeDetailsMap.get(key);
 					
 					FinFeeReceipt finFeeReceipt = new FinFeeReceipt();
-					finFeeReceipt.setFeeTypeId(finFeeDetail.getFeeTypeID());
-					finFeeReceipt.setFeeType(finFeeDetail.getFeeTypeDesc());
+					if (StringUtils.isBlank(finFeeDetail.getVasReference())) {
+						finFeeReceipt.setFeeTypeId(finFeeDetail.getFeeTypeID());
+						finFeeReceipt.setFeeTypeCode(finFeeDetail.getFeeTypeCode());
+						finFeeReceipt.setFeeTypeDesc(finFeeDetail.getFeeTypeDesc());
+					} else {
+						finFeeReceipt.setVasReference(finFeeDetail.getVasReference());
+						finFeeReceipt.setFeeTypeCode(finFeeDetail.getVasReference());
+						finFeeReceipt.setFeeTypeDesc(finFeeDetail.getVasReference());
+					}
 					finFeeReceipt.setReceiptReference(reference);
 					finFeeReceipt.setReceiptType(finReceiptDetail.getPaymentType());
 					finFeeReceipt.setRemainingFee(finReceiptDetail.getAmount());
@@ -751,13 +798,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeReceipt.setReceiptAmount(finReceiptDetail.getAmount());
 					currentFeeReceipts.add(finFeeReceipt);
 					
-					BigDecimal feepaidAmount = availableFeeAmount.get(feeTypeID);
+					BigDecimal feepaidAmount = availableFeeAmount.get(key);
 					if (receiptAmount.compareTo(feepaidAmount) >= 0) {
 						finFeeReceipt.setPaidAmount(feepaidAmount);
-						finFeeDetailsMapTemp.remove(feeTypeID);
+						finFeeDetailsMapTemp.remove(key);
 					} else {
 						finFeeReceipt.setPaidAmount(receiptAmount);
-						availableFeeAmount.put(feeTypeID, feepaidAmount.subtract(receiptAmount));
+						availableFeeAmount.put(key, feepaidAmount.subtract(receiptAmount));
 					}
 					receiptAmount = receiptAmount.subtract(finFeeReceipt.getPaidAmount());
 					
@@ -908,10 +955,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			List<FinFeeReceipt> finFeeReceipts = null;
 			for (FinFeeReceipt oldFinFeeReceipt : aFinScheduleData.getFinFeeReceipts()) {
+				
 				finFeeReceipts = this.finFeeReceiptMap.get(oldFinFeeReceipt.getReceiptID());
 				boolean receiptFound = false;
+				
 				for (FinFeeReceipt feeReceipt : finFeeReceipts) {
+					
 					if (oldFinFeeReceipt.getFeeID() == feeReceipt.getFeeID()) {
+						
 						if(StringUtils.isBlank(feeReceipt.getRecordType())) {
 							FinFeeReceipt befImage = new FinFeeReceipt();
 							BeanUtils.copyProperties(oldFinFeeReceipt, befImage);
@@ -921,6 +972,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							BeanUtils.copyProperties(oldFinFeeReceipt, feeReceipt);
 							feeReceipt.setPaidAmount(paidAmt);
 						}
+						
 						receiptFound = true;
 					}
 				}
@@ -933,18 +985,22 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			finFeeReceipts = new ArrayList<FinFeeReceipt>();
 			for (Long key : this.finFeeReceiptMap.keySet()) {
+				
 				List<FinFeeReceipt> finFeeReceiptsList = this.finFeeReceiptMap.get(key);
+				
 				for (int i = 0; i < finFeeReceiptsList.size(); i++) {
+					
 					FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
 					
 					if(StringUtils.isBlank(finFeeReceiptTemp.getRecordType())) {
 						finFeeReceiptTemp.setNewRecord(true);
 						finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
-					} else if ((finFeeReceiptTemp.getFeeTypeId() == 0) && StringUtils.equals(finFeeReceiptTemp.getRecordType(),
+					} else if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode()) && StringUtils.equals(finFeeReceiptTemp.getRecordType(),
 							PennantConstants.RECORD_TYPE_CAN)) {
 						finFeeReceiptsList.add(finFeeReceiptTemp);
 					}
-					if (finFeeReceiptTemp.getFeeTypeId() == 0 || StringUtils.isBlank(finFeeReceiptTemp.getFeeType())) {
+					
+					if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode())) {
 						finFeeReceiptsList.remove(i);
 						i = 0;
 					}
@@ -1346,6 +1402,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				String feeType = finFeeDetail.getFeeTypeDesc();
 				if (StringUtils.isNotEmpty(finFeeDetail.getVasReference())) {
 					feeType = finFeeDetail.getVasReference();
+					finFeeDetail.setFeeTypeCode(feeType);
+					finFeeDetail.setFeeTypeDesc(feeType);
 				}
 				
 				//Fee Type
@@ -1516,7 +1574,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		// To Reset Totals
 		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
-				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts").invoke(getFinanceMainDialogCtrl());
+				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts",Boolean.class).invoke(getFinanceMainDialogCtrl(), true);
 			} catch (Exception e) {
 				logger.info(e);
 			}
@@ -1580,29 +1638,38 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			if (!this.finFeeReceiptMap.isEmpty()) {
 				boolean receiptFound = false;
+				
 				for (Long key : this.finFeeReceiptMap.keySet()) {
 					List<FinFeeReceipt> finFeeReceipts = this.finFeeReceiptMap.get(key);
+					
 					for (int i = 0; i < finFeeReceipts.size(); i++) {
 						FinFeeReceipt finFeeReceipt = finFeeReceipts.get(i);
-						if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
-							FinFeeReceipt finFeeReceipt2 = null;
+						
+						if ((finFeeDetail.getFeeTypeID() != 0
+								&& finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId())
+								|| (StringUtils.isNotBlank(finFeeDetail.getVasReference()) 
+										&& StringUtils.equals(finFeeDetail.getVasReference(), finFeeReceipt.getFeeTypeCode()))) {	
+							
+							FinFeeReceipt finFeeReceiptTemp = null;
 							if (finFeeReceipts.size() == 1) {
-								finFeeReceipt2 = new FinFeeReceipt();
-								finFeeReceipt2.setNewRecord(true);
-								finFeeReceipt2.setReceiptAmount(finFeeReceipt.getReceiptAmount());
-								finFeeReceipt2.setReceiptReference(finFeeReceipt.getReceiptReference());
-								finFeeReceipt2.setReceiptType(finFeeReceipt.getReceiptType());
-								finFeeReceipt2.setRemainingFee(finFeeReceipt.getReceiptAmount());
-								finFeeReceipt2.setAvailableAmount(finFeeReceipt.getReceiptAmount());
-								finFeeReceipt2.setReceiptID(finFeeReceipt.getReceiptID());
-								finFeeReceipt2.setWorkflowId(
-										getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
-								finFeeReceipt2.setRecordType(PennantConstants.RCD_ADD);
+								finFeeReceiptTemp = new FinFeeReceipt();
+								finFeeReceiptTemp.setNewRecord(true);
+								finFeeReceiptTemp.setReceiptAmount(finFeeReceipt.getReceiptAmount());
+								finFeeReceiptTemp.setReceiptReference(finFeeReceipt.getReceiptReference());
+								finFeeReceiptTemp.setReceiptType(finFeeReceipt.getReceiptType());
+								finFeeReceiptTemp.setRemainingFee(finFeeReceipt.getReceiptAmount());
+								finFeeReceiptTemp.setAvailableAmount(finFeeReceipt.getReceiptAmount());
+								finFeeReceiptTemp.setReceiptID(finFeeReceipt.getReceiptID());
+								finFeeReceiptTemp.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
+								finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
 							}
+							
 							finFeeReceipts.remove(i);
-							if (finFeeReceipt2 != null) {
-								finFeeReceipts.add(finFeeReceipt2);
+							
+							if (finFeeReceiptTemp != null) {
+								finFeeReceipts.add(finFeeReceiptTemp);
 							}
+							
 							receiptFound = true;
 							break;
 						}
@@ -1613,6 +1680,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					doFillFinFeeReceipts(this.finFeeReceiptMap);
 				}
 			}
+		} else if (BigDecimal.valueOf(paidBox.doubleValue()).compareTo(BigDecimal.ZERO) < 0) {
+			adjustButton.setDisabled(true);
 		} else {
 			if (getFinanceDetail().getFinScheduleData().getFinReceiptDetails().isEmpty()) {
 				adjustButton.setDisabled(true);
@@ -1778,17 +1847,24 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Decimalbox actualBox = (Decimalbox) list.get(0);
 		Decimalbox paidBox = (Decimalbox) list.get(1);
 		Decimalbox waiverBox = (Decimalbox) list.get(2);
-		String feeType = (String) list.get(8);
-		long feeTypeId = (long) list.get(9);
+		FinFeeDetail finFeeDetail = (FinFeeDetail) list.get(6);
+		
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		
+		BigDecimal feeAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter);
+		BigDecimal waivedAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(waiverBox.doubleValue()), formatter);
+		BigDecimal paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
 		
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("FeeAmount", BigDecimal.valueOf(actualBox.doubleValue()));
-		map.put("PaidAmount", BigDecimal.valueOf(paidBox.doubleValue()));
-		map.put("WaiverAmount", BigDecimal.valueOf(waiverBox.doubleValue()));
+		map.put("FeeAmount", feeAmount);
+		map.put("PaidAmount", paidAmount);
+		map.put("PaidAmountValue", BigDecimal.valueOf(paidBox.doubleValue()));
+		map.put("WaiverAmount", waivedAmount);
 		map.put("finFeeDetailListCtrl", this);
 		map.put("role", getRole());
-		map.put("feeType", feeType);
-		map.put("feeTypeId", feeTypeId);
+		map.put("feeTypeCode", finFeeDetail.getFeeTypeCode());
+		map.put("feeTypeDesc", finFeeDetail.getFeeTypeDesc());
+		map.put("feeTypeId", finFeeDetail.getFeeTypeID());
 		map.put("financeDetail", getFinanceDetail());
 		map.put("finFeeReceiptMap", this.finFeeReceiptMap);
 		
@@ -1803,17 +1879,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	private String getComponentId(String feeField,FinFeeDetail finFeeDetail){
-		if(StringUtils.isEmpty(finFeeDetail.getVasReference())){
-			return  feeField+finFeeDetail.getFinEvent()+"_"+finFeeDetail.getFeeTypeCode();
-		}else {
-			return  feeField+finFeeDetail.getFinEvent()+"_"+finFeeDetail.getVasReference();
+	private String getComponentId(String feeField, FinFeeDetail finFeeDetail) {
+		if (StringUtils.isEmpty(finFeeDetail.getVasReference())) {
+			return feeField + finFeeDetail.getFinEvent() + "_" + finFeeDetail.getFeeTypeCode();
+		} else {
+			return feeField + finFeeDetail.getFinEvent() + "_" + finFeeDetail.getVasReference();
 		}
 	}
 	
-	private boolean isDeleteRecord(String rcdType){
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_CAN,rcdType) || 
-				StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)){
+	private boolean isDeleteRecord(String rcdType) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, rcdType)) {
 			return true;
 		}
 		return false;
@@ -2031,6 +2107,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		calculateFees(getFinFeeDetailList(), finScheduleData);
+		doFillFinFeeDetailList(getFinFeeDetailList());
 		
 		if(StringUtils.isBlank(moduleDefiner)){
 			fetchFeeDetails(finScheduleData,true);
@@ -2281,9 +2358,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
 	        finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}
-		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 		
-		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
+		finScheduleData.setFinFeeDetailList(getFinFeeDetailUpdateList());
 		
 		logger.debug("Leaving");
 		
@@ -2581,4 +2657,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public void setFeeRuleDetailsMap(Map<String, FeeRule> feeRuleDetailsMap) {
 		this.feeRuleDetailsMap = feeRuleDetailsMap;
 	}
+	
+	public boolean isReceiptsProcess() {
+		return isReceiptsProcess;
+	}
+
+	public void setReceiptsProcess(boolean isReceiptsProcess) {
+		this.isReceiptsProcess = isReceiptsProcess;
+	}
+
 }

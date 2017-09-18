@@ -35,6 +35,8 @@ public class SecRolesController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", "No data available"));
 			}
 		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			SecurityRoleDetail secRoles = new SecurityRoleDetail();
 			secRoles.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}

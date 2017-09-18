@@ -391,7 +391,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 							PennantConstants.XMLDateFormat);
 					valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
 							PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("65030", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
@@ -425,7 +425,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 
 			DocumentType docType = documentTypeService.getDocumentTypeById(customerDocument.getCustDocCategory());
-			if (docType == null) {
+			if (docType == null || !docType.isDocIsCustDoc()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocument.getCustDocCategory();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");

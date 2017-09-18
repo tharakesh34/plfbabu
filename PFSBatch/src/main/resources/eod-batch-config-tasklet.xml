@@ -33,9 +33,6 @@
 	</bean>
 	
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="dateService" ref="dateService" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
@@ -46,10 +43,43 @@
 	<bean id="accountsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.AccountsUpdate">
 		<property name="customerAccountService" ref="customerAccountService" />
 	</bean>
-	
-	<bean id="dataExtractTaskLet" class="com.pennant.backend.endofday.tasklet.DataExtract">
+		
+	<bean id="almTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ALM">
 		<property name="dataSource" ref="pfsDatasource"/>
 	</bean>
+	
+	<bean id="controlDumpTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.ControlDump">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="posidexTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Posidex">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="dataMartTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.DataMart">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="trailBalanceTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.TrailBalance">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="sapGLTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.SAPGL">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="cibilTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Cibil">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+	<bean id="gstTaxDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.GstTaxDownload">
+		<property name="dataSource" ref="pfsDatasource"/>
+	</bean>
+
+	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dateService" ref="dateService" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+	<!-- Start of the month Decider -->
+	<bean id="startOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.StartOfMonthDecider"/>
+	<!-- End Of Month Decider -->
+	<bean id="endOfMonthDecider" class="com.pennant.backend.endofday.limitdecider.EndOfMonthDecider" />
 
 
 	<!-- To be deleted -->

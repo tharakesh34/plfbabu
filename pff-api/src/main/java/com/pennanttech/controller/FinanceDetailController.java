@@ -209,6 +209,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				return response;
 			} catch (Exception e) {
 				logger.error("Exception", e);
+				APIErrorHandlerService.logUnhandledException(e);
 				FinScheduleData response = new FinScheduleData();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -301,7 +302,8 @@ public class FinanceDetailController extends SummaryDetailService {
 		// Set VAS reference as feeCode for VAS related fees
 		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
 			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
-				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE) &&
+					StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());
 					feeDetail.setCalculatedAmount(vasRecording.getFee());
@@ -311,12 +313,15 @@ public class FinanceDetailController extends SummaryDetailService {
 					//feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					//Fee Details set to the VasRecording
+					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
+					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
 			}
 		}
 		// fetch finType fees details
 		String finEvent = "";
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null);
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {
@@ -344,7 +349,12 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			} else {
 				List<FinanceStepPolicyDetail> finStepDetails = finScheduleData.getStepPolicyDetails();
-				
+				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
+					@Override
+					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
+						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+					}
+				});
 				// method for prepare step installments
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
 			}
@@ -538,6 +548,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 		} catch(Exception e) {
 			logger.debug("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 

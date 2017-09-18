@@ -956,4 +956,36 @@ update ADtCustomers set CUSTADDLDEC1 = null;
 </sql>
 <modifyDataType tableName="ADTCustomers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
 </changeSet>
+<changeSet id="54" author="Irfan">
+  	<createTable tableName="AdtFinWaiverHeader">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+   <changeSet id="54" author="Pruthvi">
+	 <addColumn tableName="ADTREPORTCONFIGURATION">
+        <column name="WHERECONDITION" type="Boolean"/>
+    </addColumn>
+    </changeSet>
+    
+    <changeSet id="55" author="Pruthvi">
+    <sql>
+    update ADTREPORTCONFIGURATION set WHERECONDITION=0;
+    </sql>
+    </changeSet>
 </databaseChangeLog>

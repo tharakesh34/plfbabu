@@ -282,7 +282,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Amount";
 				valueParm[1] = "0";
-				return APIErrorHandlerService.getFailedStatus("91125", valueParm);
+				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 			}
 		}*/
 		LimitHeader limitheader=null;
@@ -323,7 +323,16 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 				return getErrorDetails("90107", valueParm);
 			}
 		}
-
+		// validate currency code
+		if (StringUtils.isNotBlank(limitTransDetail.getLimitCurrency())) {
+			Currency currency = currencyService.getCurrencyById(limitTransDetail.getLimitCurrency());
+			if (currency == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Limit Currency";
+				valueParm[1] = limitTransDetail.getLimitCurrency();
+				return APIErrorHandlerService.getFailedStatus("90701", valueParm);
+			}
+		}
 		// validate referenceCode
 		String referenceCode = limitTransDetail.getReferenceCode();
 		switch (referenceCode) {
@@ -370,17 +379,6 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			String[] valueParm = new String[1];
 			valueParm[0] = referenceCode;
 			return APIErrorHandlerService.getFailedStatus("90804", valueParm);
-		}
-
-		// validate currency code
-		if (StringUtils.isNotBlank(limitTransDetail.getLimitCurrency())) {
-			Currency currency = currencyService.getCurrencyById(limitTransDetail.getLimitCurrency());
-			if (currency == null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Limit Currency";
-				valueParm[1] = limitTransDetail.getLimitCurrency();
-				return APIErrorHandlerService.getFailedStatus("90701", valueParm);
-			}
 		}
 
 		logger.debug("Enrtering");

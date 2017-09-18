@@ -46,7 +46,8 @@ public class BeneficiaryController {
 	public Beneficiary createBeneficiary(Beneficiary beneficiary){
 		logger.debug("Entering");
 		Beneficiary response = null;
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
 		try {
 			// setting required values which are not received from API
 			prepareRequiredData(beneficiary);
@@ -75,12 +76,13 @@ public class BeneficiaryController {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new Beneficiary();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
 		logger.debug("Leaving");
-		PhaseInterceptorChain.getCurrentMessage().getExchange().put("APIHeader.API_HEADER_KEY",reqHeaderDetails);
+		PhaseInterceptorChain.getCurrentMessage().getExchange().put(APIHeader.API_HEADER_KEY,reqHeaderDetails);
 		return response;
 	}
 
@@ -105,6 +107,7 @@ public class BeneficiaryController {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			response = new Beneficiary();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -136,7 +139,8 @@ public class BeneficiaryController {
 			BeanUtils.copyProperties(beneficiary, prevBeneficiary);
 			
 			// call update service method
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader= getAuditHeader(prevBeneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			 auditHeader = beneficiaryService.doApprove(auditHeader);
@@ -151,6 +155,7 @@ public class BeneficiaryController {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug("Leaving");
@@ -176,7 +181,8 @@ public class BeneficiaryController {
 			beneficiary.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			beneficiary.setNewRecord(false);
 			beneficiary.setVersion(beneficiary.getVersion() + 1);
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(beneficiary, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = beneficiaryService.doApprove(auditHeader);
@@ -187,11 +193,11 @@ public class BeneficiaryController {
 							errorDetail.getError()));
 				}
 			} else {
-
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
@@ -226,6 +232,7 @@ public class BeneficiaryController {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
@@ -284,7 +291,6 @@ public class BeneficiaryController {
 	 * @param response
 	 */
 	private void doEmptyResponseObject(Beneficiary response) {
-
 		response.setCustCIF(null);
 		response.setBankCode(null);
 		response.setBranchCode(null);

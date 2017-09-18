@@ -37,7 +37,6 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.ChequeDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -506,24 +505,6 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			// Clear all the list items in list box
 			this.listBoxSchedule.getItems().clear();
 
-			Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
-
-			if (finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0) {
-				feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-
-				for (FeeRule fee : finScheduleData.getFeeRules()) {
-					if (feeChargesMap.containsKey(fee.getSchDate())) {
-						ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					} else {
-						ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-						feeChargeList.add(fee);
-						feeChargesMap.put(fee.getSchDate(), feeChargeList);
-					}
-				}
-			}
-
 			// Find Out Finance Repayment Details on Schedule
 			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
 			if (finScheduleData.getRepayDetails() != null && finScheduleData.getRepayDetails().size() > 0) {
@@ -561,10 +542,10 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("window", this.window_ChequePrintingDialog);
-				finRender.render(map, prvSchDetail, false, false, true, feeChargesMap, showRate, false);
+				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate, false);
 
 				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, false, true, feeChargesMap, showRate, false);
+					finRender.render(map, prvSchDetail, true, false, true,  finScheduleData.getFinFeeDetailList(), showRate, false);
 					break;
 				}
 			}

@@ -481,7 +481,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		customer.setCustCIF(cifId);
 		
 		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
-		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId");
+		selectSql.append(" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
 		if(type.contains("View")){
 			selectSql.append(" ,LovDescCustStsName");
 		}
@@ -1234,7 +1234,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		Customer customer = new Customer();
 		customer.setId(id);		
 		
-		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR ");
+		StringBuilder selectSql = new StringBuilder("SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR,CustDftBranch ");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");
 		
@@ -1265,10 +1265,10 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustID", custId);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, FinStatus, FinStartDate,FinCcy, ");
-		selectSql.append(" FinAmount, DownPayment,FeeChargeAmt, InsuranceAmt, FinRepaymentAmount, NumberOfTerms "); 
-		//selectSql.append(" from FinanceEnquiry_View ");
-		selectSql.append(" from FinanceMain ");
+		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference, FM.FinType, FM.FinStatus, FM.FinStartDate,FM.FinCcy, FM.FinAmount, FM.DownPayment,FM.FeeChargeAmt,FM.FinCurrAssetValue,");
+		selectSql.append("FM.InsuranceAmt, FM.FinRepaymentAmount, FM.NumberOfTerms, FT.FintypeDesc As lovDescFinTypeName , T6.MaxinstAmount from FinanceMain FM "); 
+		selectSql.append("INNER JOIN RMTfinanceTypes FT ON FT.Fintype=FM.FinType "); 
+		selectSql.append("LEFT JOIN (select FinReference,(NSchdPri+NSchdPft) MaxInstAmount from FinPftdetails)T6 on T6.FinReference=FM.Finreference"); 
  		selectSql.append(" Where CustId = :CustID");
  		
 		logger.debug("selectSql: " + selectSql.toString());
@@ -1874,6 +1874,27 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		List<Customer> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
+	}
+
+	@Override
+	public int updateCustCRCPR(String custDocTitle, long custID) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustCRCPR(custDocTitle);
+		customer.setCustID(custID);
+		StringBuilder updateSql = new StringBuilder("Update Customers");
+		updateSql.append(" Set CustCRCPR=:CustCRCPR");
+		updateSql.append(" Where CustID =:CustID");
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+		return recordCount;
+
 	}
 	
 }	

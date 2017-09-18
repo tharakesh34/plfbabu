@@ -11,7 +11,7 @@ public class FileDownlaod {
 	private String fileName;
 	private String fileLocation;
 	private String partnerBankName;
-	private boolean alwFileDownload;
+	private String alwFileDownload;
 	private String status;
 	private Date endTime;
 	private Date valueDate;
@@ -51,11 +51,12 @@ public class FileDownlaod {
 		this.partnerBankName = partnerBankName;
 	}
 
-	public boolean isAlwFileDownload() {
+	
+	public String getAlwFileDownload() {
 		return alwFileDownload;
 	}
 
-	public void setAlwFileDownload(boolean alwFileDownload) {
+	public void setAlwFileDownload(String alwFileDownload) {
 		this.alwFileDownload = alwFileDownload;
 	}
 

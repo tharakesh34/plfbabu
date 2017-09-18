@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennant.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>3.15.21</version>
+		<version>3.16.12</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-core</artifactId>
-			<version>0.2.0</version>
+			<version>0.2.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pennant.pff</groupId>
@@ -109,6 +109,16 @@
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-dbcp</artifactId>
+		    <version>8.5.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-spring3</artifactId>
+			<version>1.9.0</version>
 		</dependency>
 	</dependencies>
 

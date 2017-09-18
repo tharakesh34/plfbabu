@@ -311,7 +311,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 		// Set Workflow Details
 		String userRole = vasRecording.getNextRoleCode();
-		if (StringUtils.isEmpty(vasRecording.getRecordType())) {
+		if (StringUtils.isEmpty(vasRecording.getRecordType()) && !enqiryModule) {
 			setWorkflowDetails(vasRecording.getProductCode());
 			if (workFlowDetails == null) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
@@ -344,9 +344,6 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			logger.debug("Leaving");
 			return;
 		}
-
-		// Workflow ID Setup
-		aVASRecording.setWorkflowId(getWorkFlowId());
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND ProductCode='" + aVASRecording.getProductCode() + "' AND version="

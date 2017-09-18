@@ -7,8 +7,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_FinCovenantTypeDialog"
-			border="normal" apply="${finCovenantTypeDialogCtrl}"
-			width="80%" height="20%" sizable="false">
+			border="normal" apply="${finCovenantTypeDialogCtrl}" sizable="false">
 			<borderlayout id="borderlayoutFinCovenantType">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
@@ -60,12 +59,12 @@
 					<groupbox id="gb_basicDetails" mold="3d">
 						<grid sclass="GridLayoutNoBorder"
 							fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="150px" />
-								<column />
-								<column width="150px" />
-								<column />
-							</columns>
+								<columns>
+									<column width="20%" />
+									<column width="30%" />
+									<column width="20%" />
+									<column width="30%" />
+								</columns>
 							<rows>
 								<row>
 									<label value="${c:l('label_FinCovenantTypeDialog_CovenantType.value')}" />

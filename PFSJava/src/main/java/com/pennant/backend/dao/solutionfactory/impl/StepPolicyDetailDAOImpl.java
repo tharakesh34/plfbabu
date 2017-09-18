@@ -128,7 +128,7 @@ public class StepPolicyDetailDAOImpl extends BasisCodeDAO<StepPolicyDetail> impl
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM StepPolicyDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PolicyCode = :PolicyCode");
+		selectSql.append(" Where PolicyCode = :PolicyCode ORDER BY StepNumber");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyDetail);

@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -162,6 +163,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 		for (int i = 0; i < repayments.size(); i++) {
 			FinanceRepayments repayment = repayments.get(i);
 
+			//check the payment made against the actual schedule date 
+			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
+				continue;
+			}
+
 			//MAx OD amounts is same as repayments balance amounts
 			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
 				continue;
@@ -235,15 +241,15 @@ public class LatePayPenaltyService extends ServiceHelper {
 		int terms = 0;
 		for (FinanceScheduleDetail finSchd : finScheduleDetails) {
 
-			if (finSchd.getSchDate().before(fod.getFinODSchdDate())) {
+			if (DateUtility.compare(finSchd.getSchDate(),fod.getFinODSchdDate()) < 0) {
 				continue;
 			}
 
-			if (finSchd.getSchDate().compareTo(valueDate) > 0) {
+			if (DateUtility.compare(finSchd.getSchDate(),valueDate) > 0) {
 				break;
 			}
 
-			if (finSchd.isRepayOnSchDate() || finSchd.isPftOnSchDate()) {
+			if ((finSchd.isRepayOnSchDate() || finSchd.isPftOnSchDate()) && finSchd.isFrqDate()) {
 				terms++;
 			}
 		}

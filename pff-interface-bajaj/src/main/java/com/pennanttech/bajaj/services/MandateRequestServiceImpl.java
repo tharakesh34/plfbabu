@@ -126,7 +126,7 @@ public class MandateRequestServiceImpl extends BajajService implements MandateRe
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
 					if (finReference != null) {
-						appId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
+						appId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
 						appId = StringUtils.trim(appId);
 						rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
 					} else {

@@ -20,6 +20,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.WorkFlowDetailsService;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.WorkFlowRESTService;
 import com.pennanttech.pffws.WorkFlowSOAPService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -105,6 +106,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService,WorkFlowSOAPS
 			response.setWorkFlowDesignId(((WorkFlowDetails) auditHeader.getAuditDetail().getModelData()).getId());
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("112121", "Something Went Wrong"));
 		}
 		logger.debug("Leaving");

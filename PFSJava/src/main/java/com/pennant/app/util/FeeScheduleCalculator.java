@@ -376,6 +376,10 @@ public class FeeScheduleCalculator {
 			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()) {
 				continue;
 			}
+			
+			if(curSchd.getPartialPaidAmt().equals(curSchd.getRepayAmount())){
+				continue;
+			}
 
 			if (i > 0) {
 				if (finSchdDetails.get(i - 1).getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {

@@ -92,6 +92,11 @@ public class LatePayInterestService extends ServiceHelper {
 		for (int i = 0; i < repayments.size(); i++) {
 			FinanceRepayments repayment = repayments.get(i);
 
+			//check the payment made against the actual schedule date 
+			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
+				continue;
+			}
+			
 			//MAx OD amounts is same as repayment balance amounts
 			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
 				continue;

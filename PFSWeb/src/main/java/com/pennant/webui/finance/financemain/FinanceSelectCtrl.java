@@ -83,6 +83,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -93,6 +94,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
+import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
@@ -101,6 +103,7 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -198,6 +201,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinanceMaintenanceService financeMaintenanceService;
 	private transient RepaymentCancellationService repaymentCancellationService;
 	private transient FinanceWorkFlowService  financeWorkFlowService;
+	private transient FinanceTypeService financeTypeService;
+	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -1114,7 +1119,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY) &&
 				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL) &&
-				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY) &&
+				!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			
 			openFinanceMainDialog(item);
 			
@@ -1151,6 +1157,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			openTakafulPremiumExcludeDialog(item); 
 			
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+
+			openFinCovenantMaintanceDialog(item);
+
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
 				final Listitem li = this.getListBoxFinance().getSelectedItem();
@@ -1198,7 +1208,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 	}
-	
+ 
 	private void openFinanceMainDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
@@ -2230,6 +2240,131 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * 
+	 * @param item
+	 * @throws Exception
+	 */
+	private void openFinCovenantMaintanceDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Set WorkFlow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+
+			// FinMaintainInstruction
+			FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
+			if (StringUtils.equals(aFinanceMain.getRcdMaintainSts(), moduleDefiner)) {
+				finMaintainInstruction = finCovenantMaintanceService.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+			} else {
+				finMaintainInstruction.setNewRecord(true);
+			}
+			// FinanceDetails
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
+
+			// Covenants List
+			finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
+
+			// Role Code State Checking
+			String userRole = finMaintainInstruction.getNextRoleCode();
+			if (StringUtils.isEmpty(userRole)) {
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			String nextroleCode = finMaintainInstruction.getNextRoleCode();
+			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+
+			String maintainSts = "";
+			if (finMaintainInstruction != null) {
+				maintainSts = StringUtils.trimToEmpty(finMaintainInstruction.getEvent());
+			}
+
+			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+			} else {
+
+				if (isWorkFlowEnabled()) {
+					String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
+							+ aFinanceMain.getVersion() + " ";
+
+					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+							getUserWorkspace().getLoggedInUser().getLoginUsrID(), workflowCode, whereCond,
+							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+					if (userAcces) {
+						showFinCovenantMaintanceView(finMaintainInstruction, financeDetail);
+					} else {
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+					}
+				} else {
+					showFinCovenantMaintanceView(finMaintainInstruction, financeDetail);
+				}
+			}
+		}
+		logger.debug("Leaving ");
+	}
+	
+	/**
+	 * 
+	 * @param finMaintainInstruction
+	 * @param aFinanceMain
+	 * @throws Exception
+	 */
+	private void showFinCovenantMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceDetail financeDetail)
+			throws Exception {
+		logger.debug("Entering");
+
+		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		map.put("finMaintainInstruction", finMaintainInstruction);
+		map.put("financeSelectCtrl", this);
+		map.put("financeDetail", financeDetail);
+		map.put("moduleCode", moduleDefiner);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName", menuItemRightName);
+		map.put("eventCode", eventCodeRef);
+		map.put("isEnquiry", false);
+		map.put("roleCode", getRole());
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantMaintanceDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+	
 	public void onClick$btnClear(Event event){
 		logger.debug("Entering" + event.toString());
 
@@ -2432,7 +2567,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_HOLDEMI;
 					eventCodeRef  = AccountEventConstants.ACCEVENT_ROLLOVER;
 					workflowCode =  FinanceConstants.FINSER_EVENT_HOLDEMI;
+				} else if ("tab_FinCovenants".equals(tab.getId())) {
+					eventCodeRef	= "";
+					moduleDefiner	= FinanceConstants.FINSER_EVENT_COVENANTS;
+					workflowCode	= FinanceConstants.FINSER_EVENT_COVENANTS;
 				}
+				
 				return;
 			}
 		}else{
@@ -2491,7 +2631,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		this.searchObject.addTabelName("FinanceMaintenance_View");
+		
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+			this.searchObject.addTabelName("CovenantsMaintenance_View");
+		} else {
+			this.searchObject.addTabelName("FinanceMaintenance_View");
+		}
+		
 		if(isDashboard){
 			this.searchObject.addFilterEqual("RcdMaintainSts", moduleDefiner);
 		}
@@ -2524,7 +2670,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)){
+		if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)){
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 		
@@ -2628,6 +2774,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
 	}
+
+	public FinanceTypeService getFinanceTypeService() {
+		return financeTypeService;
+	}
+
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
+	}
+	public FinCovenantMaintanceService getFinCovenantMaintanceService() {
+		return finCovenantMaintanceService;
+	}
+
+	public void setFinCovenantMaintanceService(FinCovenantMaintanceService finCovenantMaintanceService) {
+		this.finCovenantMaintanceService = finCovenantMaintanceService;
+	}	
 	
 	
 }

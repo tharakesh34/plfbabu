@@ -1959,6 +1959,53 @@ public class PennantAppUtil {
 		return accountEngineEventsList;
 	}
 	
+	/**
+	 * Get the BMTAEevents Servicing events list for Loan Type
+	 * 
+	 * @return
+	 */
+	public static List<AccountEngineEvent> getServicingAccountingEvents() {
+		
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(AccountEngineEvent.class);
+		
+		Filter[] filters = null;
+		
+		if (ImplementationConstants.ALLOW_DEPRECIATION) {
+			if(ImplementationConstants.ALLOW_ADDDBSF) {
+				filters = new Filter[1];
+				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			} else {
+				List<String> list = new ArrayList<String>();
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+				filters = new Filter[2];
+				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
+			}
+		} else {
+			List<String> list = new ArrayList<String>();
+			list.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+			list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+			
+			if(!ImplementationConstants.ALLOW_ADDDBSF) {
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			}
+			
+			filters = new Filter[2];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
+		}
+		
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+		
+		return accountEngineEventsList;
+	}
+	
 	public static List<AccountEngineEvent> getOriginationAccountingEvents() {
 
 		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();

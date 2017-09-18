@@ -12,6 +12,11 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.util.APIHeader;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.util.TypeConstants;
+import com.pennanttech.ws.log.model.APILogDetail;
+
 /**
  * A simple logging handler to log incoming request details.
  */
@@ -96,7 +101,14 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 				throw new Fault(e);
 			}
 		}
-		
+		APILogDetail apiLogDetail= new APILogDetail();
+		apiLogDetail.setReference(Integer.parseInt(buffer.getId().replaceAll(", ", "")));
+		apiLogDetail.setEndPoint(String.valueOf(buffer.getAddress()));
+		apiLogDetail.setMethod(String.valueOf(buffer.getHttpMethod()));
+		apiLogDetail.setPayLoad(String.valueOf(buffer.getPayload()));
+		apiLogDetail.setValueDate(DateUtil.getSysDate());
+		apiLogDetail.setType(TypeConstants.REQUEST.get());
+		message.getExchange().put(APIHeader.API_LOG_KEY, apiLogDetail);
 		log.info(buffer.toString());
 	}
 

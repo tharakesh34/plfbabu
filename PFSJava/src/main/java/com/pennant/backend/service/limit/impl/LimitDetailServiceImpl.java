@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -69,6 +70,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
@@ -118,6 +120,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	private LimitReferenceMappingDAO limitReferenceMappingDAO; 
 	private LimitGroupLinesDAO limitGroupLinesDAO;
 	private LimitRebuild limitRebuild;
+	private FinanceMainDAO financeMainDAO; 
 
 	protected long userID;
 	private String userLangauge;
@@ -396,6 +399,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (rebuild) {
 			if (limitHeader.getCustomerGroup() != 0 && limitHeader.getCustomerGroup() != Long.MIN_VALUE) {
 				limitRebuild.processCustomerGroupRebuild(limitHeader.getCustomerGroup(), false, true);
+			}
+			
+			if (limitHeader.getCustomerId() != 0 && limitHeader.getCustomerId() != Long.MIN_VALUE) {
+				//check customer active finance before calling the rebuild
+			
+				int count = getFinanceMainDAO().getFinCountByCustId(limitHeader.getCustomerId());
+				if (count >0 ) {
+					limitRebuild.processCustomerRebuild(limitHeader.getCustomerId(), false);
+				}
 			}
 		}
 		
@@ -1279,7 +1291,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[2];
 				valueParm[0] = "Review date(" + DateUtility.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
 				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())+ ")";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30568", "", valueParm)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("65029", "", valueParm)));
 			}
 		}
 		Calendar cal = Calendar.getInstance();
@@ -1348,6 +1360,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm)));
 				return auditDetail;
 			} else {
+				if (!limitHeader.isNew()) {
+					int count = getLimitHeaderDAO().getLimitHeaderAndCustGrpCountById(limitHeader.getHeaderId(),
+							customerGroup.getCustGrpID());
+					if (count <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "customerGroup :" + custGrpCode + " And LimitId: " + limitHeader.getHeaderId();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm)));
+					}
+				}
 				if (limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(
 							customerGroup.getCustGrpID(), "_AView");
@@ -1356,7 +1377,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						valueParm[0] = custGrpCode;
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90805", "", valueParm)));
 					}
-				}
+				} 
 			}
 		}
 
@@ -1382,11 +1403,19 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		List<LimitDetails> limitDetails = limitHeader.getCustomerLimitDetailsList();
 		Date lineMaxExpDate = DateUtility.getAppDate();
+		Map<Long, Long> structureMap = new HashMap<Long, Long>();
 		if (limitDetails != null) {
 			for (LimitDetails detail : limitDetails) {
-
-				// validate structureDetailId from LimitDetails
 				long structureId = detail.getLimitStructureDetailsID();
+				if(!structureMap.containsKey(structureId)) {
+					structureMap.put(structureId, structureId);
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = limitHeader.getLimitStructureCode();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90811", "", valueParm)));
+					return auditDetail;
+				}
+				// validate structureDetailId from LimitDetails
 				int count = getLimitDetailDAO().getLimitDetailByStructureId(structureId, "");
 				if (count <= 0) {
 					String[] valueParm = new String[1];
@@ -1433,6 +1462,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			}
 		}
+		
+		// For Garbage collection
+		structureMap = null;
 
 		// validate Limit Structure details
 		List<LimitStructureDetail> extgStructDetails = getLimitStructureDetailDAO().getLimitStructureDetailById(
@@ -1612,6 +1644,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	public void setLimitRebuild(LimitRebuild limitRebuild) {
 		this.limitRebuild = limitRebuild;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 

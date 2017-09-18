@@ -23,8 +23,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -53,7 +55,8 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee) throws IllegalAccessException, InvocationTargetException {
+	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee, FinServiceInstruction finServiceInst) 
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -110,6 +113,28 @@ public class FeeDetailService {
 					}
 					ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 				}
+				
+				int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+				FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())
+						&& StringUtils.isNotBlank(finMain.getRcdMaintainSts())) {
+					FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finMain.getFinReference());
+					if (finProfitDetail != null) {
+						BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finMain.getFinReference());
+						executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
+						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+						executionMap.put("totOSExcludeFees",finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
+						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
+						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
+					}
+				}
+
+				if (finServiceInst != null) {
+					executionMap.put("totalPayment", finServiceInst.getAmount());
+					BigDecimal remPartPaymentAmt = PennantApplicationUtil.formateAmount(finServiceInst.getRemPartPayAmt(), formatter);
+					executionMap.put("partialPaymentAmount", remPartPaymentAmt);
+				}
+				
 				for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 					if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
 						continue;
@@ -118,7 +143,6 @@ public class FeeDetailService {
 							finScheduleData.getFinanceMain().getFinCcy());
 					
 					//unFormating feeResult
-					int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 					feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 					
 					finFeeDetail.setCalculatedAmount(feeResult);
@@ -285,7 +309,7 @@ public class FeeDetailService {
 				finScheduleData.setErrorDetails(errorDetails);
 			}
 			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
-			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100));
+			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 			//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
 			if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
 				String[] valueParm = new String[3];
@@ -368,7 +392,7 @@ public class FeeDetailService {
 		default:
 			break;
 		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100));
+		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
 		return calculatedAmt;
 	}
 	
@@ -521,7 +545,8 @@ public class FeeDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent) throws IllegalAccessException, InvocationTargetException {
+	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst) 
+			throws IllegalAccessException, InvocationTargetException {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean isOriginationFee = false;
 		if (StringUtils.isBlank(finEvent)) {
@@ -553,7 +578,7 @@ public class FeeDetailService {
 				}
 			}
 		}
-		executeFeeCharges(financeDetail, isOriginationFee);
+		executeFeeCharges(financeDetail, isOriginationFee, finServiceInst);
 	}
 	
 	private String getUniqueID(FinFeeDetail finFeeDetail) {

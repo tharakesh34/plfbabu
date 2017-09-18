@@ -53,7 +53,8 @@ public class PennantConstants {
 		SeqCollateral, SeqPostings, SeqFinanceScoreHeader, SeqDocumentDetails, SeqSecLoginLog,SeqAdvpayment,
 		SeqCollateralMovement,SEQPartnerBank, seqFinLogEntryDetail, SeqFinReceiptHeader, SeqFinReceiptDetail, 
 		SeqFinTypePartnerBanks,SeqFinRepayHeader,SeqFinODPenaltyRates,SeqFinExcessAmount,SeqManualAdviseMovements,
-		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail
+		SeqBuilderGroup,SeqFeePostings,SeqBuilderProjcet,SeqBuilderCompany,SeqFinFeeReceipts,SeqTaxDetail,
+		SeqFinMaintainInstructions
 	}
 
 	public static boolean CITY_FREETEXT = false;
@@ -154,6 +155,7 @@ public class PennantConstants {
 
 	// WorkFlow Service Method Types
 	public static final String method_doApprove = "doApprove";
+	public static final String method_doReversal = "doReversal";
 	public static final String method_doPreApprove = "doPreApprove";
 	public static final String method_doReject = "doReject";
 	public static final String method_doDedup = "doDedup";

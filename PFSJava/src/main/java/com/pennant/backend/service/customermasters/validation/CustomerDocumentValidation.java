@@ -187,16 +187,6 @@ public class CustomerDocumentValidation {
 	public ErrorDetails  screenValidations(CustomerDocument customerDocument ){
        //Customer Document Details Validation
 
-	
-		if(StringUtils.isBlank(customerDocument.getCustDocName())){
-			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
-					new String[] {Labels.getLabel("DocumentDetails"),
-					Labels.getLabel("label_FinDocumentDetailDialog_DocumnetName.value"),
-					Labels.getLabel("listheader_CustDocType.label"),
-					customerDocument.getCustDocType()},
-					new String[] {});	
-		}
-		
 		if( customerDocument.isDocIdNumMand() && StringUtils.isBlank(customerDocument.getCustDocTitle())){
 			return	new ErrorDetails(PennantConstants.KEY_FIELD,"30535", 
 					new String[] {Labels.getLabel("DocumentDetails"),

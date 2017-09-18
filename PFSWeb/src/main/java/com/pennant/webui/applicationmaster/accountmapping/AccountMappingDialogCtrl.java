@@ -836,13 +836,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			costCenterId = (ExtendedCombobox) listItem.getFellow("costCenter_" + count);
 			profitCenterId.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+							null, true));
 			costCenterId
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+							null, true));
 			accountType.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_AccountType.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, false));
+							null, false));
 			//GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());

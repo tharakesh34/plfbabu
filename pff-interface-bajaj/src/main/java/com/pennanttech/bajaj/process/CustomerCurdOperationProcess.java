@@ -43,7 +43,7 @@ public class CustomerCurdOperationProcess extends DatabaseDataEngine {
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("IsSuccess", 0);
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 
 			@Override
 			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -164,7 +164,7 @@ public class CustomerCurdOperationProcess extends DatabaseDataEngine {
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("ConstId", constId);
-		jdbcTemplate.update(updateSql.toString(), parameterSource);
+		parameterJdbcTemplate.update(updateSql.toString(), parameterSource);
 		logger.debug("Leaving");
 	}
 
@@ -176,7 +176,7 @@ public class CustomerCurdOperationProcess extends DatabaseDataEngine {
 		updateSql.append(" Where ConstId = :ConstId");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gcdCustomer);
-		jdbcTemplate.update(updateSql.toString(), beanParameters);
+		parameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

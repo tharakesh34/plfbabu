@@ -402,51 +402,38 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			if (StringUtils.isEmpty(taxuploadDetail.getAggrementNo())) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("99015", null), usrLanguage));
 			} else {
-				if (taxuploadDetail.getAggrementNo().length() > 20) {
+				if (taxuploadDetail.getAggrementNo().length() > 20) {					
+					errParm[0] = taxuploadDetail.getAggrementNo();
 					errParm[1] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
 					errParm[2] = 20 + "";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 				}
-				//commented As confirmed by chaitanya Dt:24.07.2017
-				/* else {
-					FinanceTaxDetail fintaxDetail = getFinanceTaxDetailDAO()
-							.getFinanceTaxDetail(taxuploadDetail.getAggrementNo(), "_View");
-					if (fintaxDetail != null) {
-						String[] errParams = new String[1];
-						errParams[0] = taxuploadDetail.getAggrementNo();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "99016", errParams, valueParm),
-								usrLanguage));
-					}
-				}*/
 			}
 
-			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() > 20) {
-				errParm[1] = PennantJavaUtil.getLabel("label_Gstin");
-				errParm[2] = 20 + "";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
-			}
 			if (taxuploadDetail.getApplicableFor() != null && taxuploadDetail.getApplicableFor().length() > 1) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_ApplicableFor.label");
 				errParm[2] = 1 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getApplicant() != null && taxuploadDetail.getApplicant().length() > 20) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Applicant.label");
 				errParm[2] = 20 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine1() != null && taxuploadDetail.getAddrLine1().length() > 100) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine1.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getAddrLine2() != null && taxuploadDetail.getAddrLine2().length() > 100) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine2.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -460,35 +447,41 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			}
 			if (taxuploadDetail.getAddrLine4() != null && taxuploadDetail.getAddrLine1() != null
 					&& taxuploadDetail.getAddrLine4().length() > 100) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_AddressLine4.label");
 				errParm[2] = 100 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getCountry().length() > 2) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Country.label");
 				errParm[2] = 2 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getProvince().length() > 8) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_Province.label");
 				errParm[2] = 8 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getCity().length() > 50) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_City.label");
 				errParm[2] = 50 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 			if (taxuploadDetail.getPinCode().length() > 10) {
+				errParm[0] = taxuploadDetail.getAggrementNo();
 				errParm[1] = PennantJavaUtil.getLabel("listheader_PinCode.label");
 				errParm[2] = 10 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
+			
 
 			//Validate the GST number
 			if (StringUtils.isNotBlank(taxuploadDetail.getAggrementNo())) {
@@ -640,24 +633,33 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			if (province != null) {
 				gstStateCode = province.getTaxStateCode();
 			}
-
-			if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
-				if (!StringUtils.equalsIgnoreCase(gstStateCode, taxuploadDetail.getTaxCode().substring(0, 2))) {
-					String[] errParams = new String[2];
-					errParams[0] = taxuploadDetail.getApplicant();
-					errParams[1] = taxuploadDetail.getAggrementNo();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "99010", errParams, valueParm)));
+			
+			if (!StringUtils.isEmpty(taxuploadDetail.getTaxCode()) && taxuploadDetail.getTaxCode().length() <15) {
+				String[] errParm = new String[3];
+				errParm[0] = taxuploadDetail.getAggrementNo();
+				errParm[1] = PennantJavaUtil.getLabel("label_Gstin");
+				errParm[2] = 15 + "";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "99017", errParm, valueParm), usrLanguage));
+			}else{
+				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
+					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxuploadDetail.getTaxCode().substring(0, 2))) {
+						String[] errParams = new String[2];
+						errParams[0] = taxuploadDetail.getApplicant();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "99010", errParams, valueParm)));
+					}
 				}
-			}
 
-			if (StringUtils.isNotBlank(panNumber)) { //if PAN number is not available in GST Number
-				if (!StringUtils.equalsIgnoreCase(panNumber, taxuploadDetail.getTaxCode().substring(2, 12))) {
-					String[] errParams = new String[2];
-					errParams[0] = taxuploadDetail.getApplicant();
-					errParams[1] = taxuploadDetail.getAggrementNo();
-					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99011", errParams, null)));
+				if (StringUtils.isNotBlank(panNumber)) { //if PAN number is not available in GST Number
+					if (!StringUtils.equalsIgnoreCase(panNumber, taxuploadDetail.getTaxCode().substring(2, 12))) {
+						String[] errParams = new String[2];
+						errParams[0] = taxuploadDetail.getApplicant();
+						errParams[1] = taxuploadDetail.getAggrementNo();
+						auditDetail.setErrorDetail(ErrorUtil
+								.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "99011", errParams, null)));
+					}
 				}
 			}
 		}

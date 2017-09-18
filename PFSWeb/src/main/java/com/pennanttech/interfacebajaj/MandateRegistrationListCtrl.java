@@ -229,7 +229,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 				Operators.STRING);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("maxLimit", listheader_Amount);
-		registerField("custshrtName", listheader_CustName);
+		registerField("custShrtName", listheader_CustName, SortOrder.NONE);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -562,7 +562,17 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.listBoxMandateRegistration.getItems().clear();
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);
-		
+
+		this.listheader_AccNumber.setSort("none");
+		this.listheader_AccType.setSort("none");
+		this.listheader_Amount.setSort("none");
+		this.listheader_BankName.setSort("none");
+		this.listheader_CustCIF.setSort("none");
+		this.listheader_MandateType.setSort("none");
+		this.listheader_CustName.setSort("none");
+		this.listheader_ExpiryDate.setSort("none");
+		this.listheader_Status.setSort("none");
+		this.listheader_InputDate.setSort("none");
 
 		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
@@ -572,7 +582,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 		}
 		this.pagingMandateList.setTotalSize(0);
-		
+
 	}
 
 	/**

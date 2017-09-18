@@ -97,6 +97,7 @@ public class RepayConstants {
 	public static final String	ALLOCATION_FEE			= "FEE";
 	public static final String	ALLOCATION_INS			= "INS";
 	public static final String	ALLOCATION_MANADV		= "MANADV";
+	public static final String	ALLOCATION_BOUNCE		= "BOUNCE";
 	
 	// Receipt Types
 	public static final String	RECEIPTTYPE_RECIPT		= "R";
@@ -152,7 +153,7 @@ public class RepayConstants {
 	// Receipt Payment Statuses
 	public static final String	MODULETYPE_BOUNCE		= "B";
 	public static final String	MODULETYPE_CANCEL		= "C";
-	public static final String	MODULETYPE_FEECANCEL	= "F";
+	public static final String	MODULETYPE_FEE			= "F";
 	
 	// Payment Statuses
 	public static final String PAYMENT_INTIATED = "I";

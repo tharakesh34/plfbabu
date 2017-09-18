@@ -111,6 +111,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
 	private FinanceWorkFlowService		financeWorkFlowService;
 	private FinPlanEmiHolidayDAO		finPlanEmiHolidayDAO;
+	protected transient WorkflowEngine	workFlow		= null;
 
 	
 	/**
@@ -144,6 +145,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			WorkFlowDetails workFlowDetails = null;
 			String roleCode = null;
 			String taskid = null;
+			boolean stp= financeDetail.isStp();
 			long  workFlowId = 0;
 			if (financeMain.isQuickDisb()) {
 				String finType = financeMain.getFinType();
@@ -177,24 +179,40 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 
 			}
+			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),financeDetail.isStp()));
+			if (!stp) {
+				String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+				String processStage = financeDetail.getProcessStage();
+				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+						financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+				if (financeWorkFlow != null) {
+					workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+					if (workFlowDetails != null) {
+						workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+						taskid = workFlow.getUserTaskId(processStage);
+						workFlowId = workFlowDetails.getWorkFlowId();
+						roleCode = financeDetail.getProcessStage();
+					}
+				}
+			}
 
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeMain.setWorkflowId(workFlowId);
 			financeMain.setRoleCode(roleCode);
 			financeMain.setNextRoleCode(roleCode);
 			financeMain.setTaskId(taskid);
-			financeMain.setNextTaskId(getNextTaskId(taskid));
+			financeMain.setNextTaskId(getNextTaskId(taskid,financeMain.isQuickDisb(),stp));
 			financeMain.setNewRecord(true);
 			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(),userDetails));
-			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 
 	
 			finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
-			doSetRequiredDetails(financeDetail, loanWithWIF,roleCode,taskid,workFlowId,userDetails);
+			doSetRequiredDetails(financeDetail, loanWithWIF,userDetails,stp);
 			
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
@@ -256,12 +274,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set LastMntBy , LastMntOn and status fields to schedule details
 			for (FinanceScheduleDetail schdDetail : finScheduleData.getFinanceScheduleDetails()) {
 				schdDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				schdDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				schdDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 				schdDetail.setWorkflowId(workFlowId);
 				schdDetail.setRoleCode(roleCode);
 				schdDetail.setNextRoleCode(roleCode);
 				schdDetail.setTaskId(taskid);
-				schdDetail.setNextTaskId(getNextTaskId(taskid));
+				schdDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 
 			// Finance detail object
@@ -279,9 +297,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			auditHeader.setApiHeader(reqHeaderDetails);
 			
 			// save the finance details into main table
-			if(!financeMain.isQuickDisb()){
+			if(stp && !financeMain.isQuickDisb()){
 			auditHeader = financeDetailService.doApprove(auditHeader, false);
-			} else {
+			} else if(financeMain.isQuickDisb() || !stp) {
 				auditHeader = financeDetailService.saveOrUpdate(auditHeader, false);
 
 			}
@@ -327,6 +345,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -335,21 +354,19 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		return null;
 	}
-
 	private long getLastMntBy(boolean quickDisb, LoggedInUser userDetails) {
 		if (!quickDisb) {
-
 			return userDetails.getLoginUsrID();
 		} else {
 			return 0;
 		}
 	}
-	private String getRecordStatus(boolean quickDisb) {
-		if(!quickDisb) {
+	private String getRecordStatus(boolean quickDisb,boolean stp) {
+		if(stp && !quickDisb) {
 			return PennantConstants.RCD_STATUS_APPROVED;
 		} else {
 			return PennantConstants.RCD_STATUS_SAVED;
-		}
+		} 
 	}
 
 	/**
@@ -360,7 +377,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF,String roleCode,String taksId,long workflowId,LoggedInUser userDetails) throws IllegalAccessException, InvocationTargetException {
+	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF,LoggedInUser userDetails,boolean stp) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
@@ -411,11 +428,19 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setLastMntBy(userDetails.getLoginUsrID());
 				advPayment.setVersion(1);
 				advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if(stp){
+					advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					} 
 				advPayment.setUserDetails(financeMain.getUserDetails());
 				advPayment.setPaymentSeq(paymentSeq);
 				advPayment.setDisbCCy(financeMain.getFinCcy());
 				paymentSeq++;
+				//workflow related
+				/*advPayment.setWorkflowId(financeMain.getWorkflowId());
+				advPayment.setRoleCode(financeMain.getRoleCode());
+				advPayment.setNextRoleCode(financeMain.getNextRoleCode());
+				advPayment.setTaskId(financeMain.getTaskId());
+				advPayment.setNextTaskId(financeMain.getNextTaskId());*/
 
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)
@@ -444,16 +469,16 @@ public class CreateFinanceController extends SummaryDetailService {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
 			vasRecording.setVersion(1);
-			vasRecording.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			vasRecording.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
 			//workflow related
-			vasRecording.setWorkflowId(workflowId);
-			vasRecording.setRoleCode(roleCode);
-			vasRecording.setNextRoleCode(roleCode);
-			vasRecording.setTaskId(taksId);
-			vasRecording.setNextTaskId(getNextTaskId(taksId));
+			vasRecording.setWorkflowId(financeMain.getWorkflowId());
+			vasRecording.setRoleCode(financeMain.getRoleCode());
+			vasRecording.setNextRoleCode(financeMain.getNextRoleCode());
+			vasRecording.setTaskId(financeMain.getTaskId());
+			vasRecording.setNextTaskId(financeMain.getNextTaskId());
 			// process Extended field details
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
 			if (extendedFields != null) {
@@ -461,18 +486,18 @@ public class CreateFinanceController extends SummaryDetailService {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 				exdFieldRender.setSeqNo(++seqNo);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				exdFieldRender.setVersion(1);
 				//workflow related
-				exdFieldRender.setWorkflowId(workflowId);
-				exdFieldRender.setRoleCode(roleCode);
-				exdFieldRender.setNextRoleCode(roleCode);
-				exdFieldRender.setTaskId(taksId);
-				exdFieldRender.setNextTaskId(getNextTaskId(taksId));
+				exdFieldRender.setWorkflowId(financeMain.getWorkflowId());
+				exdFieldRender.setRoleCode(financeMain.getRoleCode());
+				exdFieldRender.setNextRoleCode(financeMain.getNextRoleCode());
+				exdFieldRender.setTaskId(financeMain.getTaskId());
+				exdFieldRender.setNextTaskId(financeMain.getNextTaskId());
 				for (ExtendedField extendedField : extendedFields) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
@@ -491,7 +516,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				exdFieldRender.setReference(vasRecording.getVasReference());
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 				exdFieldRender.setLastMntBy(userDetails.getLoginUsrID());
 				exdFieldRender.setSeqNo(0);
 				exdFieldRender.setNewRecord(true);
@@ -513,14 +538,14 @@ public class CreateFinanceController extends SummaryDetailService {
 				flagDetail.setVersion(1);
 				flagDetail.setLastMntBy(userDetails.getLoginUsrID());
 				flagDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				flagDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				flagDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 				flagDetail.setUserDetails(financeMain.getUserDetails());
 				//workflow related
-				flagDetail.setWorkflowId(workflowId);
-				flagDetail.setRoleCode(roleCode);
-				flagDetail.setNextRoleCode(roleCode);
-				flagDetail.setTaskId(taksId);
-				flagDetail.setNextTaskId(getNextTaskId(taksId));
+				flagDetail.setWorkflowId(financeMain.getWorkflowId());
+				flagDetail.setRoleCode(financeMain.getRoleCode());
+				flagDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				flagDetail.setTaskId(financeMain.getTaskId());
+				flagDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 		}
 
@@ -538,16 +563,16 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeDetail.getMandate().setLastMntBy(userDetails.getLoginUsrID());
 			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeDetail.getMandate().setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			financeDetail.getMandate().setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
 			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 			financeDetail.getMandate().setVersion(1);
 			//workflow
-			financeDetail.getMandate().setWorkflowId(workflowId);
-			financeDetail.getMandate().setRoleCode(roleCode);
-			financeDetail.getMandate().setNextRoleCode(roleCode);
-			financeDetail.getMandate().setTaskId(taksId);
-			financeDetail.getMandate().setNextTaskId(getNextTaskId(taksId));
+			financeDetail.getMandate().setWorkflowId(financeMain.getWorkflowId());
+			financeDetail.getMandate().setRoleCode(financeMain.getRoleCode());
+			financeDetail.getMandate().setNextRoleCode(financeMain.getNextRoleCode());
+			financeDetail.getMandate().setTaskId(financeMain.getTaskId());
+			financeDetail.getMandate().setNextTaskId(financeMain.getNextTaskId());
 			
 			// mandate details
 			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
@@ -557,6 +582,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
 			financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+			financeDetail.getMandate().setActive(true);
 			financeDetail.getMandate().setInputDate(DateUtility.getAppDate());
 		}
 
@@ -567,15 +593,15 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setNewRecord(true);
 			jointAccDetail.setLastMntBy(userDetails.getLoginUsrID());
 			jointAccDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			jointAccDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			jointAccDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			jointAccDetail.setUserDetails(financeMain.getUserDetails());
 			jointAccDetail.setVersion(1);
 			//workflow
-			jointAccDetail.setWorkflowId(workflowId);
-			jointAccDetail.setRoleCode(roleCode);
-			jointAccDetail.setNextRoleCode(roleCode);
-			jointAccDetail.setTaskId(taksId);
-			jointAccDetail.setNextTaskId(getNextTaskId(taksId));
+			jointAccDetail.setWorkflowId(financeMain.getWorkflowId());
+			jointAccDetail.setRoleCode(financeMain.getRoleCode());
+			jointAccDetail.setNextRoleCode(financeMain.getNextRoleCode());
+			jointAccDetail.setTaskId(financeMain.getTaskId());
+			jointAccDetail.setNextTaskId(financeMain.getNextTaskId());
 		}
 
 		// guarantor details
@@ -601,15 +627,15 @@ public class CreateFinanceController extends SummaryDetailService {
 			guarantorDetail.setNewRecord(true);
 			guarantorDetail.setLastMntBy(userDetails.getLoginUsrID());
 			guarantorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			guarantorDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			guarantorDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			guarantorDetail.setUserDetails(financeMain.getUserDetails());
 			guarantorDetail.setVersion(1);
 			//workflow
-			guarantorDetail.setWorkflowId(workflowId);
-			guarantorDetail.setRoleCode(roleCode);
-			guarantorDetail.setNextRoleCode(roleCode);
-			guarantorDetail.setTaskId(taksId);
-			guarantorDetail.setNextTaskId(getNextTaskId(taksId));
+			guarantorDetail.setWorkflowId(financeMain.getWorkflowId());
+			guarantorDetail.setRoleCode(financeMain.getRoleCode());
+			guarantorDetail.setNextRoleCode(financeMain.getNextRoleCode());
+			guarantorDetail.setTaskId(financeMain.getTaskId());
+			guarantorDetail.setNextTaskId(financeMain.getNextTaskId());
 		}
 
 		// document details
@@ -619,13 +645,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setVersion(1);
-			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			//workflow relates
-			detail.setWorkflowId(workflowId);
-			detail.setRoleCode(roleCode);
-			detail.setNextRoleCode(roleCode);
-			detail.setTaskId(taksId);
-			detail.setNextTaskId(getNextTaskId(taksId));
+			detail.setWorkflowId(financeMain.getWorkflowId());
+			detail.setRoleCode(financeMain.getRoleCode());
+			detail.setNextRoleCode(financeMain.getNextRoleCode());
+			detail.setTaskId(financeMain.getTaskId());
+			detail.setNextTaskId(financeMain.getNextTaskId());
 		}
 
 		financeDetail.setFinScheduleData(finScheduleData);
@@ -646,20 +672,21 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setLastMntBy(userDetails.getLoginUsrID());
 			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(),stp));
 			detail.setVersion(1);
 			//workflow relates
-			detail.setWorkflowId(workflowId);
-			detail.setRoleCode(roleCode);
-			detail.setNextRoleCode(roleCode);
-			detail.setTaskId(taksId);
-			detail.setNextTaskId(getNextTaskId(taksId));
+			detail.setWorkflowId(financeMain.getWorkflowId());
+			detail.setRoleCode(financeMain.getRoleCode());
+			detail.setNextRoleCode(financeMain.getNextRoleCode());
+			detail.setTaskId(financeMain.getTaskId());
+			detail.setNextTaskId(financeMain.getNextTaskId());
 		}
 
 		// Set VAS reference as feeCode for VAS related fees
 		for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
 			for(VASRecording vasRecording:finScheduleData.getVasRecordingList()) {
-				if(StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if (StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE) &&
+						StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())	) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());
 					feeDetail.setCalculatedAmount(vasRecording.getFee());
@@ -669,24 +696,28 @@ public class CreateFinanceController extends SummaryDetailService {
 					//feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					//Fee Details set to the VasRecording
+					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
+					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
 			}
 		}
 		// execute fee charges
 		String finEvent = "";
-		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent, null);
 		
-		if(financeMain.isQuickDisb() && financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+		if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 			for(FinFeeDetail feeDetail: financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 				feeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				feeDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb()));
+				if(!stp || financeMain.isQuickDisb())
+				feeDetail.setRecordStatus("");
 				feeDetail.setRcdVisible(false);
 				feeDetail.setVersion(1);
-				feeDetail.setWorkflowId(workflowId);
-				feeDetail.setRoleCode(roleCode);
-				feeDetail.setNextRoleCode(roleCode);
-				feeDetail.setTaskId(taksId);
-				feeDetail.setNextTaskId(getNextTaskId(taksId));
+				feeDetail.setWorkflowId(financeMain.getWorkflowId());
+				//feeDetail.setRoleCode(financeMain.getRoleCode());
+				//feeDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				//feeDetail.setTaskId(financeMain.getTaskId());
+				//feeDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 		}
 
@@ -740,6 +771,12 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			} else {
 				List<FinanceStepPolicyDetail> finStepDetails = finScheduleData.getStepPolicyDetails();
+				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
+					@Override
+					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
+						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+					}
+				});
 				
 				// method for prepare step installments
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
@@ -750,14 +787,15 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	}
 
-	private String getNextTaskId(String taksId) {
-		if(StringUtils.isBlank(taksId)){
+	private String getNextTaskId(String taksId,boolean qdp,boolean stp) {
+		if(stp && !qdp){
 			return null;
-		} else {
+		} else  {
 			return taksId+";";
 		}
 		
 	}
+	
 	/**
 	 * Method for prepare API response object
 	 * 
@@ -819,6 +857,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch(Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("API006", "Test"));
 			return financeDetail;
@@ -883,6 +923,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1036,6 +1078,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			logger.debug("Leaving");
 			return financeInquiry;
 		} catch(Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			FinanceInquiry financeInquiry= new FinanceInquiry();
 			financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return financeInquiry;
@@ -1166,6 +1210,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		detail.setGurantorsDetailList(null);
 		detail.setCollateralAssignmentList(null);
 		detail.setFinFlagsDetails(null);
+	}
+	
+	protected String getTaskAssignmentMethod(String taskId) {
+		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

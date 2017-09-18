@@ -13,13 +13,15 @@
 
 				<!-- COMMON BUTTONS -->
 				<label value="" />
+				<toolbar align="center" sclass="toolbar-center">
+					<button id="btnexecute" label="execute" sclass="z-toolbarbutton" autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"/>
+				</toolbar>
 
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
+					<button id="btnRefresh" label="${c:l('label_Refresh')}" autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
 						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />
-					<button id="btnexecute" label="execute"  visible = "false" sclass="z-toolbarbutton" />
 				</toolbar>
 			</hbox>
 		</div>
@@ -28,6 +30,30 @@
 			<north border="none" />
 			<center border="none">
 				<div>
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+						<columns>
+							<column width="150px" />
+							<column/>
+							<column width="150px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								<label value="Dimention" />
+								<hbox spacing="2px">
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="dimention" width="250px" readonly="true" />
+								</hbox>
+								<label value="Month" />
+								<hbox spacing="2px">
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="months" width="250px" readonly="true" />
+								</hbox>
+							</row>
+							
+							<row id="stmtSourceRow"/>
+						</rows>
+					</grid>
 					<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">

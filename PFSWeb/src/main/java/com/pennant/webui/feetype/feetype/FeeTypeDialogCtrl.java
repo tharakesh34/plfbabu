@@ -430,6 +430,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
+		
 		//Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
 		this.feeTypeDesc.setMaxlength(35);
@@ -443,12 +444,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		
 		Filter filters[] = new Filter[1];
 		filters[0] = new Filter("AccountSetCode", AccountEventConstants.ACCEVENT_MANFEE,Filter.OP_EQUAL);
-		
 		this.accountingSetID.setFilters(filters);
 		
-		if (isWorkFlowEnabled()){
+		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
-		}else{
+		} else {
 			this.groupboxWf.setVisible(false);
 		}
 
@@ -515,18 +515,19 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Host Fee Type Code
-				try {
-					aFeeType.setHostFeeTypeCode(this.hostFeeTypeCode.getValue());
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
+		// Host Fee Type Code
+		try {
+			aFeeType.setHostFeeTypeCode(this.hostFeeTypeCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		//Accounting Set ID
 		try {
-			
 			AccountingSet accountingSet = (AccountingSet) this.accountingSetID.getObject();
-			if(accountingSet != null){
+			if (accountingSet != null && accountingSet.getAccountSetid() != 0) {
 				aFeeType.setAccountSetId(accountingSet.getAccountSetid());
+			} else {
+				aFeeType.setAccountSetId(null);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -593,7 +594,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//Description
 		if (!this.hostFeeTypeCode.isReadonly()) {
 			this.hostFeeTypeCode.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
+					.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"), PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 		if (!this.accountingSetID.isReadonly()) {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels

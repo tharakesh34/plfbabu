@@ -1,13 +1,5 @@
 package com.pennanttech.bajaj.services;
 
-import java.io.File;
-
-import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.media.Media;
-
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -15,6 +7,14 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.file.service.FileService;
 import com.pennanttech.pff.core.services.DisbursementResponseService;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.log4j.Logger;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.media.Media;
 
 public class DisbursementResponseFileService extends BajajService implements FileService{
 	private static final Logger		logger				= Logger.getLogger(DisbursementResponseFileService.class);
@@ -53,7 +53,7 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 				}
 
 				BajajInterfaceConstants.autoDisbResFileJob = true;
-				processFile(new Long(1000), BajajInterfaceConstants.DISB_STP_IMPORT_STATUS, file, null, true);
+				processFile(new Long(1000), new DataEngineStatus("DISB_HDFC_IMPORT"), file, null, true);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -95,6 +95,11 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());
+		
+		Map<String, Object> filterMap = new HashMap<>();
+		filterMap.put("AC", "AC");
+		dataEngine.setFilterMap(filterMap);
+		
 		dataEngine.importData(configName);
 
 		do {

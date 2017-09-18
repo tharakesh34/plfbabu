@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinCovenantTypeService {
 	List<FinCovenantType> getFinCovenantTypeById(String id,String type,boolean isEnquiry);
@@ -54,4 +55,7 @@ public interface FinCovenantTypeService {
 	List<AuditDetail> doApprove(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> delete(List<FinCovenantType> finCovenantTypeDetails, String tableType, String auditTranType);
 	List<AuditDetail> validate(List<FinCovenantType> finCovenantTypeDetails, long workflowId, String method, String auditTranType, String  usrLanguage);
+	FinCovenantType getFinCovenantTypeById(String reference,String covenType,String type);
+	FinanceDetail getFinanceDetailById(String id, String type, String userRole, String moduleDefiner,
+			String eventCodeRef);
 }

@@ -1,0 +1,1072 @@
+package com.pennanttech.bajaj.process;
+
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.backend.model.finance.TaxDownload;
+import com.pennanttech.app.util.DateUtility;
+import com.pennanttech.bajaj.model.Branch;
+import com.pennanttech.bajaj.model.Province;
+import com.pennanttech.bajaj.model.TaxDetail;
+import com.pennanttech.dataengine.DatabaseDataEngine;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.App;
+
+public class TaxDownlaodProcess extends DatabaseDataEngine {
+	private static final Logger logger = Logger.getLogger(TaxDownlaodProcess.class);
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("GST_TAXDOWNLOAD_DETAILS");
+
+	private Date valuedate;
+	private Date appDate;
+	private Date fromDate;
+	private Date toDate;
+	private Map<String, Province> provinceMap = null;
+	private Map<String, Branch> branchMap = null;
+	private Map<String, TaxDetail> entityDetailMap = null;
+	private Map<String, String> cityMap = null;
+	private Map<String, String> countryMap = null;
+	private int batchSize = 500;
+
+	// Constant values used in the interface
+	private static final String CON_BUSINESS_AREA = "CF";
+	private static final String CON_SOURCE_SYSTEM = "PLF";
+	private static final String CON_YES = "Y";
+	private static final String CON_NO = "N";
+	private static final String CON_C = "C";
+	private static final String CON_I = "I";
+	private static final String CON_BLANK = " ";
+	private static final String EXTRACTION_TYPE_SUMMARY = "SUM";
+	private static final String CON_REGISTERED = "REGISTERED";
+	private static final String CON_UNREGISTERED = "UNREGISTERED";
+	private static final String CON_INTER = "INTER";
+	private static final String CON_INTRA = "INTRA";
+	private static final String ADDR_DELIMITER = " ";
+	private static final String CON_EOD = "EOD"; // FIXME CH To be discussed  with Pradeep and Satish and remove this if not Required
+
+	public TaxDownlaodProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate, Date toDate) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate, EXTRACT_STATUS);
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.appDate = appDate;
+		this.valuedate = valueDate;
+	}
+
+	@Override
+	protected void processData() {
+		provinceMap = null;
+		boolean isError = false;
+		try {
+			loadDefaults();
+			clearTables();
+			try {
+				preparePosingsData();
+				long id = saveHeader();
+				processTaxDownloadData(id);
+				if (processedCount <= 0) {
+					throw new Exception("No records are available for the PostDates, FromDate: " + fromDate + ", ToDate: " + toDate + ", ApplicationDate: " + appDate);
+				}
+				updateHeader(id, processedCount);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				isError = true;
+				throw e;
+			} finally {
+				if (isError || failedCount > 0) {
+					clearTaxDownlaodTables();
+					EXTRACT_STATUS.setStatus("F");
+				}
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+ 
+
+	/**
+	 * Process Tax Download Data
+	 * 
+	 * @param id
+	 * @throws SQLException
+	 */
+	private void processTaxDownloadData(final long id) throws SQLException {
+		setTotalRecords();
+		
+		processTrnExtractionTypeData(id);
+		processSumExtractionTypeData(id);
+	}
+
+	private void processTrnExtractionTypeData(final long id) {
+		logger.debug(Literal.ENTERING);
+		 
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT * FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("TAXAPPLICABLE", true);
+
+		List<TaxDownload> list = new ArrayList<TaxDownload>();
+
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				TaxDownload taxDownload = null;
+
+				EXTRACT_STATUS.setProcessedRecords(processedCount++);
+				EXTRACT_STATUS.setSuccessRecords(successCount++);
+
+				try {
+					taxDownload = mapTrnExtractionTypeData(rs, id);
+					list.add(taxDownload);
+					if (list.size() >= batchSize) {
+						saveTrnExtractDetails(list);
+						list.clear();
+					}
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					saveBatchLog(rs.getString("FINREFERENCE"), "F", e.getMessage());
+					EXTRACT_STATUS.setFailedRecords(failedCount++);
+				}
+			}
+		});
+
+		try {
+			if (!list.isEmpty()) {
+				saveTrnExtractDetails(list);
+				list.clear();
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			EXTRACT_STATUS.setFailedRecords(failedCount++);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processSumExtractionTypeData(long id) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" SELECT  T1.POSTDATE, T1.ACCOUNT, T1.FINREFERENCE, T1.USERBRANCH, ");
+		sql.append(" T1.POSTAMOUNT, T1.ACCOUNTTYPE, T2.FINTYPE, T2.FINBRANCH, T4.ENTITYCODE, T5.ENTITYDESC, ");
+		sql.append(" T6.CUSTADDRPROVINCE, T7.PROVINCE TAXPROVINCE, T9.EXTRACTIONTYPE, T10.BRANCHPROVINCE");
+		sql.append(" FROM POSTINGS_TAXDOWNLOAD T1 ");
+		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE  ");
+		sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE ");
+		sql.append(" INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE ");
+		sql.append(" INNER JOIN ENTITIES T5 ON T4.ENTITYCODE = T5.ENTITYCODE ");
+		sql.append(" INNER JOIN CUSTOMERAddresses T6 ON T6.CUSTID = T2.CUSTID And CustAddrPriority = 5 ");
+		sql.append(" LEFT JOIN FINTAXDETAIL T7 ON T7.FINREFERENCE = T1.FINREFERENCE  ");
+		sql.append(" INNER JOIN RMTACCOUNTTYPES T9 ON T9.ACTYPE = T1.ACCOUNTTYPE  ");
+		sql.append(" INNER JOIN RMTBranches T10 ON T10.BranchCode = T2.FinBranch  ");
+		sql.append(" WHERE T9.ExtractionType = :EXTRACTIONTYPE AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("EXTRACTIONTYPE", EXTRACTION_TYPE_SUMMARY);
+
+		List<TaxDownload> list = new ArrayList<TaxDownload>();
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
+			@SuppressWarnings("unused")
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				TaxDownload taxDownload = null;
+				Map<String, TaxDownload> map = new HashMap<String, TaxDownload>();
+
+				String loanProvince = null;
+				String custAddressProvince = null;
+				String entityName = null;
+				String bflGSTIN = null;
+				String ledgerCode = null;
+
+				entityName = rs.getString("ENTITYDESC");// 1
+				
+				String entityCode = rs.getString("ENTITYCODE");
+				// loan branch state
+				
+				loanProvince = rs.getString("BRANCHPROVINCE");
+				// Customer GSTIN State
+				
+				String gstinProvince = rs.getString("TAXPROVINCE");
+				
+				// Customer Very High Priority address state
+				custAddressProvince = rs.getString("CUSTADDRPROVINCE");
+
+				Branch loanBranch = branchMap.get(rs.getString("FINBRANCH"));
+
+				TaxDetail entityDetail = entityDetailMap.get(loanProvince + "_" + entityCode);
+				if (entityDetail != null) {
+					bflGSTIN = entityDetail.getTaxCode();// 2
+				}
+				ledgerCode = rs.getString("ACCOUNT");// 3
+				String finBranch = rs.getString("FINBRANCH");// 4
+				BigDecimal postAmount = rs.getBigDecimal("POSTAMOUNT");// 6
+				String finReference = rs.getString("FINREFERENCE");
+
+				boolean registered = false;
+				boolean intra = false;
+
+				if (StringUtils.equals(loanProvince, gstinProvince) || StringUtils.equals(loanProvince, custAddressProvince)) {
+					intra = true;
+				}
+
+				if (StringUtils.trimToNull(gstinProvince) != null) {
+					registered = true;
+				}
+
+				// data setting
+				taxDownload = new TaxDownload();
+				taxDownload.setHeaderId(id);
+				taxDownload.setTransactionDate(rs.getDate("POSTDATE"));
+				taxDownload.setEntityCode(entityCode);
+				taxDownload.setFinReference(finReference);
+
+				taxDownload.setEntityName(entityName);
+				taxDownload.setEntityGSTIN(bflGSTIN);
+				taxDownload.setLedgerCode(ledgerCode);
+				taxDownload.setFinBranchId(finBranch);
+				taxDownload.setAmount(postAmount);
+
+				if (registered) {
+					taxDownload.setRegisteredCustomer(CON_REGISTERED);
+				} else {
+					taxDownload.setRegisteredCustomer(CON_UNREGISTERED);
+				}
+
+				if (intra) {
+					taxDownload.setInterIntraState(CON_INTER);
+				} else {
+					taxDownload.setInterIntraState(CON_INTRA);
+				}
+
+				TaxDownload taxDwl = isExists(list, taxDownload);
+				if (taxDwl != null) {
+					taxDwl.getAmount().add(taxDownload.getAmount());
+				} else {
+					list.add(taxDownload);
+				}
+			}
+		});
+
+		if (!list.isEmpty()) {
+			saveSumExtractDetails(list);
+			list.clear();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private TaxDownload isExists(List<TaxDownload> list, TaxDownload taxDownload) {
+		for (TaxDownload txDownload : list) {
+			if (StringUtils.equals(taxDownload.getEntityCode(), txDownload.getEntityCode())
+					&& StringUtils.equals(taxDownload.getEntityGSTIN(), txDownload.getEntityGSTIN())
+					&& StringUtils.equals(taxDownload.getLedgerCode(), txDownload.getLedgerCode())
+					&& StringUtils.equals(taxDownload.getFinBranchId(), txDownload.getFinBranchId())
+					&& StringUtils.equals(taxDownload.getRegisteredCustomer(), txDownload.getRegisteredCustomer())
+					&& StringUtils.equals(taxDownload.getInterIntraState(), txDownload.getInterIntraState())) {
+				return txDownload;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * TaxDownload
+	 * 
+	 * @param ResultSet
+	 * @param Id
+	 * @return
+	 * @throws SQLException
+	 */
+	private TaxDownload mapTrnExtractionTypeData(ResultSet rs, long id) throws SQLException {
+		logger.debug(Literal.ENTERING);
+
+		TaxDownload taxDownload = new TaxDownload();
+
+		String entityCode;
+		String hostSystemTransactionID;
+		StringBuilder customerAddress;
+		Date lastMntOn;
+		String province;
+		String customerGSTIN;
+		String taxStateCode;
+		Date finApprovalDate;
+		Branch loanBranch;
+		Branch userBranch;
+		String loanBranchState;
+		String userBranchCode;
+		TaxDetail entityDetail;
+		String txnBranchAddress;
+		String txnBranchStateCode;
+
+		taxDownload.setHeaderId(id);
+		taxDownload.setTransactionDate(rs.getDate("POSTDATE"));
+		taxDownload.setBusinessDatetime(taxDownload.getTransactionDate());
+		taxDownload.setProcessDatetime(new Timestamp(System.currentTimeMillis()));
+		taxDownload.setProcessedFlag(CON_NO);
+
+		hostSystemTransactionID = rs.getString("LINKEDTRANID").concat("-").concat(rs.getString("TRANSORDER"));
+		taxDownload.setHostSystemTransactionId(hostSystemTransactionID);
+		taxDownload.setTransactionType(rs.getString("FINEVENT"));
+		taxDownload.setBusinessArea(CON_BUSINESS_AREA);
+		taxDownload.setSourceSystem(CON_SOURCE_SYSTEM);
+		entityCode = rs.getString("ENTITYCODE");
+		taxDownload.setCompanyCode(entityCode);
+
+		customerGSTIN = rs.getString("CUSTOMERGSTIN");
+		if (StringUtils.trimToNull(customerGSTIN) != null) {
+			taxDownload.setRegisteredCustomer(CON_YES);
+			taxDownload.setCustomerId(rs.getLong("TAXCUSTCIF"));
+			taxDownload.setCustomerName(rs.getString("TAXCUSTSHRTNAME"));
+			taxDownload.setCustomerGstin(customerGSTIN);
+			boolean taxExempted = rs.getBoolean("TAXEXEMPTED");
+			taxDownload.setExemptedCustomer(taxExempted ? CON_YES : CON_NO);
+			taxDownload.setPanNo(rs.getString("TAXCUSTCRCPR"));
+			// Address Details
+			customerAddress = new StringBuilder();
+			String addrLine1 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE1"));
+			if (!addrLine1.isEmpty()) {
+				customerAddress.append(addrLine1);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String addrLine2 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE2"));
+			if (!addrLine2.isEmpty()) {
+				customerAddress.append(addrLine2);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String addrLine3 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE3"));
+			if (!addrLine3.isEmpty()) {
+				customerAddress.append(addrLine3);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String addrLine4 = StringUtils.trimToEmpty(rs.getString("TAXADDRLINE4"));
+			if (!addrLine4.isEmpty()) {
+				customerAddress.append(addrLine4);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String pincode = StringUtils.trimToEmpty(rs.getString("TAXPINCODE"));
+			if (!pincode.isEmpty()) {
+				customerAddress.append(pincode);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String city = StringUtils.trimToEmpty(rs.getString("TAXCITY"));
+			if (!city.isEmpty()) {
+				customerAddress.append(cityMap.get(city));
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			province = StringUtils.trimToEmpty(rs.getString("TAXPROVINCE"));
+			if (!province.isEmpty()) {
+				customerAddress.append(provinceMap.get(province).getCPProvinceName());
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String country = StringUtils.trimToEmpty(rs.getString("TAXCOUNTRY"));
+			if (!country.isEmpty()) {
+				customerAddress.append(countryMap.get(country));
+			}
+			lastMntOn = rs.getDate("TAXLASTMNTON");
+
+		} else {
+			taxDownload.setRegisteredCustomer(CON_NO);
+			taxDownload.setExemptedCustomer(CON_NO);
+			try {
+				taxDownload.setCustomerId(rs.getLong("CUSTCIF"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			taxDownload.setCustomerName(rs.getString("CUSTSHRTNAME"));
+			taxDownload.setCustomerGstin(CON_BLANK);
+			taxDownload.setPanNo(rs.getString("CUSTCRCPR"));
+
+			// Address Details
+			customerAddress = new StringBuilder();
+
+			String custAddRhnbr = StringUtils.trimToEmpty(rs.getString("CUSTADDRHNBR"));
+			if (!custAddRhnbr.isEmpty()) {
+				customerAddress.append(custAddRhnbr);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custFlatNbr = StringUtils.trimToEmpty(rs.getString("CUSTFLATNBR"));
+			if (!custFlatNbr.isEmpty()) {
+				customerAddress.append(custFlatNbr);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrStreet = StringUtils.trimToEmpty(rs.getString("CUSTADDRSTREET"));
+			if (!custAddrStreet.isEmpty()) {
+				customerAddress.append(custAddrStreet);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrLine1 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE1"));
+			if (!custAddrLine1.isEmpty()) {
+				customerAddress.append(custAddrLine1);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrLine2 = StringUtils.trimToEmpty(rs.getString("CUSTADDRLINE2"));
+			if (!custAddrLine2.isEmpty()) {
+				customerAddress.append(custAddrLine2);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custPoBox = StringUtils.trimToEmpty(rs.getString("CUSTPOBOX"));
+			if (!custPoBox.isEmpty()) {
+				customerAddress.append(custPoBox);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrZip = StringUtils.trimToEmpty(rs.getString("CUSTADDRZIP"));
+			if (!custAddrZip.isEmpty()) {
+				customerAddress.append(custAddrZip);
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrCity = StringUtils.trimToEmpty(rs.getString("CUSTADDRCITY"));
+			if (!custAddrCity.isEmpty()) {
+				customerAddress.append(cityMap.get(custAddrCity));
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			province = rs.getString("CUSTADDRPROVINCE");
+			if (!StringUtils.trimToEmpty(province).isEmpty()) {
+				customerAddress.append(provinceMap.get(province).getCPProvinceName());
+				customerAddress.append(ADDR_DELIMITER);
+			}
+
+			String custAddrCtry = StringUtils.trimToEmpty(rs.getString("CUSTADDRCOUNTRY"));
+			if (!custAddrCtry.isEmpty()) {
+				customerAddress.append(countryMap.get(custAddrCtry));
+			}
+			lastMntOn = rs.getDate("CUSTADDRLASTMNTON");
+		}
+
+		taxDownload.setCustomerAddress(customerAddress.toString());
+		taxStateCode = getProvince(province).getTaxStateCode();
+		taxDownload.setCustomerStateCode(taxStateCode);
+		finApprovalDate = rs.getDate("FINAPPROVEDDATE");
+
+		taxDownload.setToState(taxStateCode);
+
+		// Only changes after the loan approval should be shown in the Address
+		// Change Date
+		if (DateUtility.compare(lastMntOn, finApprovalDate) > 0) {
+			lastMntOn = DateUtility.getDBDate(DateUtility.formatDate(lastMntOn, "yyyy-MM-dd"));
+			taxDownload.setAddressChangeDate(lastMntOn);
+		} else {
+			taxDownload.setAddressChangeDate(null);
+		}
+
+		taxDownload.setLedgerCode(rs.getString("ACCOUNT"));
+		taxDownload.setHsnSacCode(rs.getString("HSNSACCODE"));
+		taxDownload.setNatureOfService(rs.getString("NATUREOFSERVICE"));
+		taxDownload.setLoanAccountNo(rs.getString("FINREFERENCE"));
+		taxDownload.setAgreementId(Long.parseLong(StringUtils.substring(taxDownload.getLoanAccountNo(),
+				taxDownload.getLoanAccountNo().length() - 7, taxDownload.getLoanAccountNo().length())));
+		taxDownload.setConsiderForGst(CON_YES);
+
+		taxDownload.setProductCode(rs.getString("FINTYPE"));
+		taxDownload.setChargeCode(0);
+
+		loanBranch = branchMap.get(rs.getObject("FINBRANCH"));
+		taxDownload.setLoanBranch(Long.valueOf(loanBranch.getBankRefNo()));
+		taxDownload.setLoanBranchAddress(getBranchAddress(loanBranch));
+
+		Province loanProvince = getProvince(loanBranch.getBranchProvince());
+		taxDownload.setExemptedState(loanProvince.isTaxExempted() ? CON_YES : CON_NO);
+
+		loanBranchState = loanProvince.getTaxStateCode();
+		taxDownload.setLoanBranchState(loanBranchState);
+		taxDownload.setFromState(loanBranchState);
+		userBranchCode = rs.getString("USERBRANCH");
+		if (userBranchCode == null || userBranchCode.equals(CON_EOD)) {
+			userBranch = loanBranch;
+		} else {
+			userBranch = branchMap.get(userBranchCode);
+		}
+		taxDownload.setLoanServicingBranch(userBranch.getBranchCode());
+
+		entityDetail = entityDetailMap.get(loanBranch.getBranchProvince() + "_" + entityCode);
+		if (entityDetail != null) {
+			taxDownload.setBflGstinNo(entityDetail.getTaxCode());
+
+			StringBuilder gstAddress = new StringBuilder();
+
+			String addLine1 = StringUtils.trimToEmpty(entityDetail.getAddressLine1());
+			if (!addLine1.isEmpty()) {
+				gstAddress.append(addLine1);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String addLine2 = StringUtils.trimToEmpty(entityDetail.getAddressLine2());
+			if (!addLine2.isEmpty()) {
+				gstAddress.append(addLine2);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String addLine3 = StringUtils.trimToEmpty(entityDetail.getAddressLine3());
+			if (!addLine3.isEmpty()) {
+				gstAddress.append(addLine3);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String addLine4 = StringUtils.trimToEmpty(entityDetail.getAddressLine4());
+			if (!addLine4.isEmpty()) {
+				gstAddress.append(addLine4);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String pinCode = StringUtils.trimToEmpty(entityDetail.getPinCode());
+			if (!pinCode.isEmpty()) {
+				gstAddress.append(pinCode);
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String cityCode = StringUtils.trimToEmpty(entityDetail.getCityCode());
+			if (!cityCode.isEmpty()) {
+				gstAddress.append(cityMap.get(cityCode));
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String stateCode = StringUtils.trimToEmpty(entityDetail.getStateCode());
+			if (!stateCode.isEmpty()) {
+				gstAddress.append(provinceMap.get(stateCode).getCPProvinceName());
+				gstAddress.append(ADDR_DELIMITER);
+			}
+
+			String country = StringUtils.trimToEmpty(entityDetail.getCountry());
+			if (!country.isEmpty()) {
+				gstAddress.append(countryMap.get(country));
+			}
+
+			txnBranchAddress = gstAddress.toString();
+			txnBranchStateCode = entityDetail.getStateCode();
+		} else {
+			taxDownload.setBflGstinNo(CON_BLANK);
+			txnBranchAddress = getBranchAddress(userBranch);
+			txnBranchStateCode = userBranch.getBranchProvince();
+		}
+		taxDownload.setTxnBranchAddress(txnBranchAddress);
+		taxDownload.setTxnBranchStateCode(getProvince(txnBranchStateCode).getTaxStateCode());
+
+		// PostAmount amount convention using currency minor units..
+		BigDecimal postAmount = rs.getBigDecimal("PostAmount");
+		int ccyMinorUnits = rs.getInt("CCYMINORCCYUNITS");
+		BigDecimal transactionAmt = postAmount.divide(new BigDecimal(ccyMinorUnits));
+		taxDownload.setTransactionAmount(transactionAmt);
+		boolean revChargeApplicable = rs.getBoolean("REVERSECHARGEAPPLICABLE");
+
+		taxDownload.setReverseChargeApplicable(revChargeApplicable ? CON_YES : CON_NO);
+		// InvoiceType
+		long oldTransactionID = rs.getLong("OLDLINKEDTRANID");
+		if (oldTransactionID != 0) {
+			taxDownload.setInvoiceType(CON_C);
+			taxDownload.setOriginalInvoiceNo(
+					String.valueOf(oldTransactionID).concat("-").concat(rs.getString("TRANORDERID")));
+		} else {
+			taxDownload.setInvoiceType(CON_I);
+			taxDownload.setOriginalInvoiceNo(null);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return taxDownload;
+	}
+
+	/**
+	 * Loading the default values in to map to reduce the db iterations while
+	 * processing
+	 */
+	private void loadDefaults() {
+		logger.debug(Literal.ENTERING);
+		provinceMap = getProvinceDetails();
+		branchMap = getBranchDetails();
+		entityDetailMap = setEntityDetails();
+		cityMap = setCityMap();
+		countryMap = setCountryMap();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Get Branch Address
+	 * 
+	 * @param branch
+	 * @return
+	 */
+	private String getBranchAddress(Branch branch) {
+		StringBuilder branchAddress = new StringBuilder();// 1
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(StringUtils.trimToEmpty(branch.getBranchPOBox()));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(cityMap.get(StringUtils.trimToEmpty(branch.getBranchCity())));
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(provinceMap.get(StringUtils.trimToEmpty(branch.getBranchProvince())).getCPProvinceName());
+		branchAddress.append(ADDR_DELIMITER);
+		branchAddress.append(countryMap.get(StringUtils.trimToEmpty(branch.getBranchCountry())));
+		return branchAddress.toString();
+	}
+
+	/**
+	 * Get Tax State Code details from the existing Map
+	 * 
+	 * @param key
+	 * @return
+	 */
+	private Province getProvince(String key) {
+		if (StringUtils.trimToNull(key) == null) {
+			return null;
+		}
+		return provinceMap.get(key);
+	}
+
+	/**
+	 * Get Branch Address, Branch State and Host Branch code
+	 * 
+	 * @return
+	 */
+	private Map<String, Branch> getBranchDetails() {
+		logger.debug(Literal.ENTERING);
+		if (branchMap != null) {
+			branchMap.clear();
+		}
+		final Map<String, Branch> map = new HashMap<String, Branch>();
+		StringBuilder sql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1,");
+		sql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
+		sql.append(" BranchFax, BranchTel, BranchSwiftBrnCde, BranchIsActive,");
+		sql.append(" BankRefNo, BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode ");
+		sql.append(" From RMTBranches ");
+
+		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+
+		List<Branch> branches = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
+		for (Branch branch : branches) {
+			map.put(branch.getBranchCode(), branch);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get Branch Address, Branch State and Host Branch code
+	 * 
+	 * @return
+	 */
+	private Map<String, Province> getProvinceDetails() {
+		logger.debug(Literal.ENTERING);
+		if (provinceMap != null) {
+			provinceMap.clear();
+		}
+		final Map<String, Province> map = new HashMap<String, Province>();
+		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,");
+		selectSql.append(" BankRefNo,CPIsActive,");
+		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea ");
+		selectSql.append(" FROM  RMTCountryVsProvince");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
+
+		List<Province> provinces = this.parameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
+		for (Province province : provinces) {
+			map.put(province.getCPProvince(), province);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get Entity Address and Entity GSTIN Number
+	 * 
+	 * @return
+	 */
+	private Map<String, TaxDetail> setEntityDetails() {
+		logger.debug(Literal.ENTERING);
+		if (entityDetailMap != null) {
+			entityDetailMap.clear();
+		}
+		final Map<String, TaxDetail> map = new HashMap<String, TaxDetail>();
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, country, stateCode, entityCode, taxCode, addressLine1, ");
+		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode ");
+		sql.append(" From TaxDetail ");
+
+		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+
+		List<TaxDetail> taxDetails = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
+		for (TaxDetail taxDetail : taxDetails) {
+			map.put(taxDetail.getStateCode() + "_" + taxDetail.getEntityCode(), taxDetail);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get the Countrycode and CountryDescription
+	 * 
+	 * @return
+	 */
+	private Map<String, String> setCountryMap() {
+		logger.debug(Literal.ENTERING);
+
+		final Map<String, String> map = new HashMap<String, String>();
+		String sql = "SELECT COUNTRYCODE, COUNTRYDESC FROM BMTCOUNTRIES";
+
+		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
+			public Map<String, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getString("COUNTRYCODE"), rs.getString("COUNTRYDESC"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Get the Citycode and CityDescription
+	 * 
+	 * @return
+	 */
+	private Map<String, String> setCityMap() {
+		logger.debug(Literal.ENTERING);
+
+		final Map<String, String> map = new HashMap<String, String>();
+		String sql = "SELECT PCCITY, PCCITYNAME FROM RMTPROVINCEVSCITY";
+
+		jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, String>>() {
+			public Map<String, String> extractData(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					map.put(rs.getString("PCCITY"), rs.getString("PCCITYNAME"));
+				}
+				return map;
+			};
+		});
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	/**
+	 * Save Tax Download Details to PFF Table and then Bajaj Table
+	 * 
+	 * @param list
+	 */
+	private void saveTrnExtractDetails(List<TaxDownload> list) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+
+		try {
+			sql = getTaxDownLoadDetailSql();
+			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			throw e;
+		} finally {
+			sql = null;
+		}
+
+		try {
+			sql = getGSTSql();
+			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			throw e;
+		} finally {
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+	}
+
+	private void saveSumExtractDetails(List<TaxDownload> list) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO TAXDOWNLOADSUMMARYDETAILS");
+			sql.append(" (HEADERID,  TRANSACTION_DATE, ENTITYNAME,  ENTITYGSTIN,  LEDGERCODE,  FINNONEBRANCHID,");
+			sql.append(" REGISTEREDUNREGISTERED,  INTERINTRASTATE,  AMOUNT)");
+			sql.append(" values(");
+			sql.append(" :HeaderId, :TransactionDate, :EntityName, :EntityGSTIN, :LedgerCode, :FinBranchId,");
+			sql.append(" :RegisteredCustomer, :InterIntraState, :Amount)");
+
+			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			throw e;
+		} finally {
+			sql = null;
+		}
+
+		try {
+			sql = new StringBuilder();
+			sql.append(" INSERT INTO GSTSUMMARYDETAILS	");
+			sql.append(" (TRANSACTION_DATE, ENTITYNAME,  ENTITYGSTIN,  LEDGERCODE,  FINNONEBRANCHID,");
+			sql.append(" REGISTEREDUNREGISTERED,  INTERINTRASTATE,  AMOUNT)");
+			sql.append(" values(");
+			sql.append(" :TransactionDate, :EntityName, :EntityGSTIN, :LedgerCode, :FinBranchId,");
+			sql.append(" :RegisteredCustomer, :InterIntraState, :Amount)");
+			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
+			this.parameterJdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			throw e;
+		} finally {
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
+	/**
+	 * Save Header Details for Tax Details Download
+	 * 
+	 * @return
+	 */
+	private long saveHeader() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource map = new MapSqlParameterSource();
+		long id = getNextId("SEQTAXDOWNLOADHAEDER", false);
+		map.addValue("Id", id);
+		map.addValue("ProcessDate", appDate);
+		map.addValue("StartDate", appDate);
+		map.addValue("EndDate", appDate);
+		map.addValue("RecordCount", 0);
+		map.addValue("Export", 0);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO TAXDOWNLOADHAEDER (Id, ProcessDate, StartDate, EndDate, RecordCount, Export)");
+		sql.append(" VALUES (:Id, :ProcessDate, :StartDate, :EndDate, :RecordCount, :Export)");
+
+		try {
+			parameterJdbcTemplate.update(sql.toString(), map);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return id;
+	}
+
+	/**
+	 * Clear the Taxdetails and Taxheader table if error occurred during the
+	 */
+	private void clearTaxDownlaodTables() {
+		logger.debug(Literal.ENTERING);
+		clearTaxdetails();
+		clearTaxHeader();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clear the existing records from tax header if already available for the
+	 * same dates
+	 */
+	private void clearTaxHeader() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PROCESSDATE_FROM", fromDate);
+		source.addValue("PROCESSDATE_TO", toDate);
+
+		parameterJdbcTemplate.update(
+				"DELETE FROM TAXDOWNLOADHAEDER WHERE PROCESSDATE >= :PROCESSDATE_FROM AND PROCESSDATE <= :PROCESSDATE_TO",
+				source);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clear the existing records from tax details if already available for the
+	 * same dates
+	 */
+	public void clearTaxdetails() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("TRANSACTION_DATE_FROM", fromDate);
+		source.addValue("TRANSACTION_DATE_TO", toDate);
+		parameterJdbcTemplate.update(
+				"DELETE FROM LEA_GST_TMP_DTL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
+				source);
+		parameterJdbcTemplate.update(
+				"DELETE FROM TAXDOWNLOADDETAIL WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
+				source);
+		parameterJdbcTemplate.update(
+				"DELETE FROM TAXDOWNLOADSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
+				source);
+		parameterJdbcTemplate.update(
+				"DELETE FROM GSTSUMMARYDETAILS WHERE TRANSACTION_DATE >= :TRANSACTION_DATE_FROM AND TRANSACTION_DATE <= :TRANSACTION_DATE_TO",
+				source);
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * Duplicate the postings data to a new Table, to avoid any dependencies
+	 */
+	public void preparePosingsData() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FROMDATE", fromDate);
+		source.addValue("TODATE", toDate);
+		parameterJdbcTemplate.update("INSERT INTO POSTINGS_TAXDOWNLOAD SELECT * FROM  POSTINGS WHERE POSTDATE >= :FROMDATE AND POSTDATE <= :TODATE",
+				source);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Update the Total Count in Tax Downloader Header
+	 * 
+	 * @param id
+	 * @param recordCnt
+	 */
+	private void updateHeader(long id, long recordCnt) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RECORDCOUNT", recordCnt);
+		source.addValue("ID", id);
+		parameterJdbcTemplate.update("UPDATE TAXDOWNLOADHAEDER SET RECORDCOUNT = :RECORDCOUNT WHERE ID = :ID", source);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Prepare SQL Query for Tax Download Details
+	 * 
+	 * @return
+	 */
+	private StringBuilder getTaxDownLoadDetailSql() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO TAXDOWNLOADDETAIL");
+		sql.append(" (HEADERID,  TRANSACTION_DATE,  HOST_SYSTEM_TRANSACTION_ID,  TRANSACTION_TYPE,  BUSINESS_AREA,");
+		sql.append(" SOURCE_SYSTEM,  COMPANY_CODE,  REGISTERED_CUSTOMER,  CUSTOMER_ID,  CUSTOMER_NAME,");
+		sql.append(" CUSTOMER_GSTIN,  CUSTOMER_ADDRESS,  CUSTOMER_STATE_CODE,  ADDRESS_CHANGE_DATE,  PAN_NO,");
+		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
+		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
+		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE,");
+		sql.append(
+				" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
+		sql.append(" PROCESSED_FLAG, AGREEMENTID, CONSIDER_FOR_GST, EXEMPTED_STATE, EXEMPTED_CUSTOMER )");
+		sql.append(" values(");
+		sql.append(" :HeaderId, :TransactionDate, :HostSystemTransactionId, :TransactionType, :BusinessArea,");
+		sql.append(" :SourceSystem, :CompanyCode, :RegisteredCustomer, :CustomerId, :CustomerName,");
+		sql.append(" :CustomerGstin, :CustomerAddress, :CustomerStateCode, :AddressChangeDate, :PanNo,");
+		sql.append(" :LedgerCode, :HsnSacCode, :NatureOfService, :LoanAccountNo, :ProductCode, :ChargeCode,");
+		sql.append(" :LoanBranch, :LoanBranchState, :LoanServicingBranch, :BflGstinNo, :TxnBranchAddress,");
+		sql.append(" :TxnBranchStateCode, :TransactionAmount, :ReverseChargeApplicable, :InvoiceType,");
+		sql.append(
+				" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
+		sql.append(" :ProcessedFlag, :AgreementId, :ConsiderForGst, :ExemptedState, :ExemptedCustomer )");
+		return sql;
+	}
+
+	/**
+	 * Prepare the query for GST Download details
+	 * 
+	 * @return
+	 */
+	private StringBuilder getGSTSql() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO LEA_GST_TMP_DTL");
+		sql.append(" (TRANSACTION_DATE,  HOST_SYSTEM_TRANSACTION_ID,  TRANSACTION_TYPE,  BUSINESS_AREA,");
+		sql.append(" SOURCE_SYSTEM,  COMPANY_CODE,  REGISTERED_CUSTOMER,  CUSTOMER_ID,  CUSTOMER_NAME,");
+		sql.append(" CUSTOMER_GSTIN,  CUSTOMER_ADDRESS,  CUSTOMER_STATE_CODE,  ADDRESS_CHANGE_DATE,  PAN_NO,");
+		sql.append(" LEDGER_CODE,  HSN_SAC_CODE,  NATURE_OF_SERVICE,  LOAN_ACCOUNT_NO,  PRODUCT_CODE, CHARGE_CODE,");
+		sql.append(" LOAN_BRANCH,  LOAN_BRANCH_STATE,  LOAN_SERVICING_BRANCH,  BFL_GSTIN_NO,  TXN_BRANCH_ADDRESS,");
+		sql.append(" TXN_BRANCH_STATE_CODE,  TRANSACTION_AMOUNT,  REVERSE_CHARGE_APPLICABLE,  INVOICE_TYPE,");
+		sql.append(
+				" ORIGINAL_INVOICE_NO, LOAN_BRANCH_ADDRESS, TO_STATE, FROM_STATE, BUSINESSDATETIME, PROCESSDATETIME,");
+		sql.append(" PROCESSED_FLAG, AGREEMENTID, CONSIDER_FOR_GST, EXEMPTED_STATE, EXEMPTED_CUSTOMER )");
+		sql.append(" values(");
+		sql.append(" :TransactionDate, :HostSystemTransactionId, :TransactionType, :BusinessArea,");
+		sql.append(" :SourceSystem, :CompanyCode, :RegisteredCustomer, :CustomerId, :CustomerName,");
+		sql.append(" :CustomerGstin, :CustomerAddress, :CustomerStateCode, :AddressChangeDate, :PanNo,");
+		sql.append(" :LedgerCode, :HsnSacCode, :NatureOfService, :LoanAccountNo, :ProductCode, :ChargeCode,");
+		sql.append(" :LoanBranch, :LoanBranchState, :LoanServicingBranch, :BflGstinNo, :TxnBranchAddress,");
+		sql.append(" :TxnBranchStateCode, :TransactionAmount, :ReverseChargeApplicable, :InvoiceType,");
+		sql.append(
+				" :OriginalInvoiceNo, :LoanBranchAddress, :ToState, :FromState, :BusinessDatetime, :ProcessDatetime,");
+		sql.append(" :ProcessedFlag, :AgreementId, :ConsiderForGst, :ExemptedState, :ExemptedCustomer )");
+		return sql;
+	}
+
+	/**
+	 * Clear the stageing table
+	 */
+	private void clearTables() {
+		logger.debug(Literal.ENTERING);
+
+		parameterJdbcTemplate.update("TRUNCATE TABLE POSTINGS_TAXDOWNLOAD", new MapSqlParameterSource());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	// Get the total records for process monitor displaying
+	public long setTotalRecords() {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT count(*) FROM TAXDOWNLOADDETAIL_VIEW WHERE TAXAPPLICABLE = :TAXAPPLICABLE");
+		sql.append(" AND POSTAMOUNT != 0 AND POSTDATE >= :FROMDATE AND  POSTDATE <= :TODATE ");
+
+		parmMap.addValue("FROMDATE", fromDate);
+		parmMap.addValue("TODATE", toDate);
+		parmMap.addValue("TAXAPPLICABLE", true);
+		totalRecords = parameterJdbcTemplate.queryForObject(sql.toString(), parmMap, Long.class);
+		EXTRACT_STATUS.setTotalRecords(totalRecords);
+		return totalRecords;
+	}
+	@Override
+	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
+		return null;
+	}
+
+}

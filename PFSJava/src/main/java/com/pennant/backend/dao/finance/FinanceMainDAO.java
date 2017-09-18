@@ -268,4 +268,6 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getBYCustIdForLimitRebuild(long id, boolean orgination);
 	
 	FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF);
+
+	int getFinCountByCustId(long custID);
 }

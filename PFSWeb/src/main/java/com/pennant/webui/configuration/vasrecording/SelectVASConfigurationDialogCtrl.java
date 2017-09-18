@@ -126,6 +126,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 	private List<String>					userRoleCodeList	= new ArrayList<String>();
 	private boolean 						isFinanceProcess = false;
+	private boolean 						waivedFlag = false;
 	private boolean 						newRecord = false;
 	private String							finType;
 
@@ -162,6 +163,9 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
+			}
+			if (arguments.containsKey("waivedFlag")) {
+				this.waivedFlag = (boolean) arguments.get("waivedFlag");
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
@@ -374,6 +378,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			arguments.put("finVasRecordingDialogCtrl", this.finVasRecordingDialogCtrl);
 		}
 		arguments.put("newRecord", this.newRecord);
+		arguments.put("waivedFlag", this.waivedFlag);
 		if(userRoleCodeList != null && !userRoleCodeList.isEmpty()){
 			arguments.put("roleCode", userRoleCodeList.get(0));
 		}

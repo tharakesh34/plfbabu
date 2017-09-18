@@ -401,9 +401,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		String excldMthds = "";
 		if("D".equals(this.bulkProcessHeader.getBulkProcessFor())){
-			excldMthds = ",ADDTERM,CURPRD,ADDLAST,";
+			excldMthds = ",ADDTERM,CURPRD,ADDLAST,STEPPOS,";
 		} else {
-			excldMthds = ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,";
+			excldMthds = ",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,";
 		}
 		fillComboBox(this.cbReCalType, StringUtils.trimToEmpty(aBulkProcessHeader.getReCalType()), PennantStaticListUtil.getSchCalCodes(), excldMthds);
 		this.calFromDate.setValue(aBulkProcessHeader.getReCalFromDate());

@@ -119,7 +119,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private FinFeeDetail befImage;
 	private LoggedInUser userDetails;
-	
+	private Date postDate;
+
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
 	
@@ -437,6 +438,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setSchdDate(Date schdDate) {
 		this.schdDate = schdDate;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

@@ -466,11 +466,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onClick$btnSearchCustCIF(Event event) {
 		customer = null;
 		this.row1.setVisible(false);
+		Object dataObject=null;
+		
 		if (cif != null) {
 			Filter filter[] = new Filter[1];
+			if(cif[0] != null){
 			filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
 			//filter[1] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
-			Object dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData",filter);
+			 dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData",filter);
+			}else{
+			 dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData");	
+			}
 			if (dataObject instanceof String) {
 				this.custCIF.setValue(dataObject.toString());
 				this.custCIFName.setValue("");

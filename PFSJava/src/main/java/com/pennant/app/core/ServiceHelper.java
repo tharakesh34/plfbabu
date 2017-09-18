@@ -138,10 +138,10 @@ abstract public class ServiceHelper implements Serializable {
 
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		if (StringUtils.isNotBlank(main.getPromotionCode())) {
-			return AccountingConfigCache.getAccountSetID(main.getPromotionCode(), eventCode,
+			return AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), eventCode,
 					FinanceConstants.MODULEID_PROMOTION);
 		} else {
-			return AccountingConfigCache.getAccountSetID(main.getFinType(), eventCode,
+			return AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode,
 					FinanceConstants.MODULEID_FINTYPE);
 		}
 	}
@@ -161,12 +161,12 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 */
 	public final FinanceType getFinanceType(String fintype) {
-		return FinanceConfigCache.getFinanceType(StringUtils.trimToEmpty(fintype));
+		return FinanceConfigCache.getCacheFinanceType(StringUtils.trimToEmpty(fintype));
 
 	}
 
 	public String getBucket(long bucketID) {
-		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucket(bucketID);
+		DPDBucket dpdBucket = FinanceConfigCache.getCacheDPDBucket(bucketID);
 		if (dpdBucket != null) {
 			return dpdBucket.getBucketCode();
 		}
@@ -174,7 +174,7 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public Long getBucketID(String finStatus) {
-		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucketCode(StringUtils.trimToEmpty(finStatus));
+		DPDBucket dpdBucket = FinanceConfigCache.getCacheDPDBucketCode(StringUtils.trimToEmpty(finStatus));
 		if (dpdBucket != null) {
 			return dpdBucket.getBucketID();
 		}
@@ -182,11 +182,11 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
-		return FinanceConfigCache.getDPDBucketConfiguration(StringUtils.trimToEmpty(productCode));
+		return FinanceConfigCache.getCacheDPDBucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
 
 	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode) {
-		return FinanceConfigCache.getNPABucketConfiguration(StringUtils.trimToEmpty(productCode));
+		return FinanceConfigCache.getCacheNPABucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
 
 	public void sortBucketConfig(List<DPDBucketConfiguration> list) {

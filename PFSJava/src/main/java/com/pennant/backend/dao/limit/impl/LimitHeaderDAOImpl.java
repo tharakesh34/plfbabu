@@ -494,4 +494,33 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	/**
+	 * Method for fetch number of records from limitHeader
+	 * 
+	 * @param headerId
+	 * @param customer group
+	 * 
+	 * @return Integer
+	 */
+	@Override
+	public int getLimitHeaderAndCustGrpCountById(long headerId, long CustGrpID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("HeaderId", headerId);
+		source.addValue("CustomerGroup", CustGrpID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From LimitHeader");
+		selectSql.append(" Where HeaderId = :HeaderId AND CustomerGroup = :CustomerGroup");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			return 0;
+		}
+	}
 }

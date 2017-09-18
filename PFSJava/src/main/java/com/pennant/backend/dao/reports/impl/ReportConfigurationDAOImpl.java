@@ -130,7 +130,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 
 		StringBuilder selectSql = new StringBuilder("SELECT ReportID, ReportName, ReportHeading, PromptRequired," );
 		selectSql.append(" ReportJasperName, DataSourceName," );
-		selectSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat," );
+		selectSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition," );
 		if(type.contains("View")){
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
@@ -219,12 +219,12 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		insertSql.append(StringUtils.trimToEmpty(type) );
 		insertSql.append(" (ReportID, ReportName, ReportHeading, PromptRequired, ReportJasperName," );
 		insertSql.append(" DataSourceName," );
-		insertSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat," );
+		insertSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ReportID, :ReportName, :ReportHeading, :PromptRequired, :ReportJasperName," );
 		insertSql.append(" :DataSourceName," );
-		insertSql.append(" :ShowTempLibrary, :MenuItemCode,  :AlwMultiFormat," );
+		insertSql.append(" :ShowTempLibrary, :MenuItemCode,  :AlwMultiFormat, :WhereCondition," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -259,7 +259,7 @@ public class ReportConfigurationDAOImpl extends BasisNextidDaoImpl<ReportConfigu
 		updateSql.append(" PromptRequired = :PromptRequired, ReportJasperName = :ReportJasperName," );
 		updateSql.append(" DataSourceName =:DataSourceName,");
 		updateSql.append(" ShowTempLibrary = :ShowTempLibrary, MenuItemCode = :MenuItemCode, AlwMultiFormat = :AlwMultiFormat," );
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
+		updateSql.append("  WhereCondition = :WhereCondition, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );

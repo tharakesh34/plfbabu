@@ -409,7 +409,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 					|| StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
 				calOnExcludeFields = "";
 			}
-			this.finEvent.setList(PennantAppUtil.getAccountingEvents());
+			this.finEvent.setList(PennantAppUtil.getServicingAccountingEvents());
 		}
 		
 		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);

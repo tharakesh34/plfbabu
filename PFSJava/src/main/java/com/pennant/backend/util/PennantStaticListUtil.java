@@ -1,21 +1,24 @@
 package com.pennant.backend.util;
 
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
-
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 
 public class PennantStaticListUtil {
 	
@@ -183,6 +186,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> receiptPurposes;
 	private static ArrayList<ValueLabel> excessAdjustTo;
 	private static ArrayList<ValueLabel> receiptModes;
+	private static ArrayList<ValueLabel> receiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
 	private static ArrayList<ValueLabel> ManualAdviseTypes;
 	private static ArrayList<ValueLabel> reasonTypeList;
@@ -202,6 +206,10 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> custCreationFinoneStatus;
 	
 	private static ArrayList<ValueLabel> extractionType;
+	private static ArrayList<ValueLabel> accountMapping;
+	private static ArrayList<ValueLabel> gstMapping;
+	private static ArrayList<ValueLabel> monthMapping;
+	private static ArrayList<ValueLabel> monthEndList;
 	
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -725,6 +733,7 @@ public class PennantStaticListUtil {
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_TILLDATE, Labels.getLabel("label_Till_Date")));
 			//schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDTERM, Labels.getLabel("label_Add_Terms")));
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDRECAL, Labels.getLabel("label_Add_Recal")));
+			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 			/*schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADDLAST, Labels.getLabel("label_Add_Last")));
 			schCalCodesList.add(new ValueLabel(CalculationConstants.RPYCHG_ADJTERMS, Labels.getLabel("label_Adj_Terms")));*/
 		}
@@ -794,6 +803,7 @@ public class PennantStaticListUtil {
 			//schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_NOEFCT, Labels.getLabel("lable_No_Effect")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("lable_Adjust_To_Maturity")));
 			schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECRPY, Labels.getLabel("lable_Recalculate_Schedule")));
+			schCalOnList.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_ADMPFI, Labels.getLabel("lable_Profit_Intact")));
 				schCalOnList.add(new ValueLabel(CalculationConstants.EARLYPAY_RECPFI, Labels.getLabel("lable_Recalculate_Intact")));
@@ -1687,6 +1697,7 @@ public class PennantStaticListUtil {
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_PLANNEDEMI,Labels.getLabel("label_FinSerEvent_PlannedEMI")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_REAGING,Labels.getLabel("label_FinSerEvent_ReAging")));
 			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_HOLDEMI,Labels.getLabel("label_FinSerEvent_HoldEMI")));
+			finServiceEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COVENANTS,Labels.getLabel("label_FinSerEvent_Covenants")));
 		}
 		return finServiceEvents;
 	}
@@ -2576,6 +2587,16 @@ public class PennantStaticListUtil {
 		return receiptModes;
 	}
 	
+	public static ArrayList<ValueLabel> getReceiptModeStatus(){
+		if(receiptModeStatus == null){
+			receiptModeStatus = new ArrayList<ValueLabel>(3);
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_REALIZED, Labels.getLabel("label_ReceiptModeStatus_Realize")));
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_BOUNCE, Labels.getLabel("label_ReceiptModeStatus_Bounce")));
+			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_CANCEL, Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+		}
+		return receiptModeStatus;
+	}
+	
 	public static ArrayList<ValueLabel> getAllocationMethods(){
 		if(allocationMethods == null){
 			allocationMethods = new ArrayList<ValueLabel>(2);
@@ -2773,6 +2794,75 @@ public class PennantStaticListUtil {
 		}
 		return custCreationFinoneStatus;
 	}
+	
+	public static ArrayList<ValueLabel> getAccountMapping() {
 
+		if(accountMapping == null){
+			accountMapping = new ArrayList<ValueLabel>(3);
+			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
+			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
+		}
+		return accountMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getConfigNames() {
+		
+		if(gstMapping == null){
+			gstMapping = new ArrayList<ValueLabel>(1);
+			gstMapping.add(new ValueLabel("GST_TAXDOWNLOAD_DETAILS", Labels.getLabel("label_DataExtraction_GSTDnld")));
+		}
+		return gstMapping;
+	}
+	
+	public static ArrayList<ValueLabel> getMonthList() {
+		
+		if(monthMapping == null){
+			monthMapping = new ArrayList<ValueLabel>(12);
+			monthMapping.add(new ValueLabel("1", Labels.getLabel("label_DataExtraction_Jan")));
+			monthMapping.add(new ValueLabel("2", Labels.getLabel("label_DataExtraction_Feb")));
+			monthMapping.add(new ValueLabel("3", Labels.getLabel("label_DataExtraction_Mar")));
+			monthMapping.add(new ValueLabel("4", Labels.getLabel("label_DataExtraction_Apr")));
+			monthMapping.add(new ValueLabel("5", Labels.getLabel("label_DataExtraction_May")));
+			monthMapping.add(new ValueLabel("6", Labels.getLabel("label_DataExtraction_Jun")));
+			monthMapping.add(new ValueLabel("7", Labels.getLabel("label_DataExtraction_Jly")));
+			monthMapping.add(new ValueLabel("8", Labels.getLabel("label_DataExtraction_Aug")));
+			monthMapping.add(new ValueLabel("9", Labels.getLabel("label_DataExtraction_Sep")));
+			monthMapping.add(new ValueLabel("10", Labels.getLabel("label_DataExtraction_Oct")));
+			monthMapping.add(new ValueLabel("11", Labels.getLabel("label_DataExtraction_Nov")));
+			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
+		}
+		return monthMapping;
+	}
+	
+	public static List<ValueLabel> getMontEnds() {
+
+		if (monthEndList == null) {
+			monthEndList = new ArrayList<ValueLabel>();
+		}
+
+		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
+		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
+
+		GregorianCalendar gc = null;
+
+		int month = DateUtil.getMonth(DateUtility.getAppDate());
+		int year = DateUtil.getYear(DateUtility.getAppDate());
+
+		for (int i = 1; i <= 12; i++) {
+			if (month == 0) {
+				month = 11;
+				year = year - 1;
+			} else {
+				month = month - 1;
+			}
+			gc = new GregorianCalendar();
+			gc.set(year, month - 1, 1);
+			monthEndList.add(new ValueLabel(valueDateFormat.format(DateUtil.getMonthEnd(gc.getTime())),
+					displayDateFormat.format(gc.getTime())));
+		}
+		return monthEndList;
+	}
+	
 }
 

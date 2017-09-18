@@ -65,4 +65,6 @@ public interface PaymentInstructionDAO extends BasicCrudDao<PaymentInstruction> 
 
 	void updatePaymentInstrucionStatus(PaymentInstruction paymentInstruction, TableType mainTab);
 
+	int getAssignedPartnerBankCount(long partnerBankId, String type);
+
 }

@@ -396,10 +396,13 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 					aeEvent.setCcy(customer.getCustBaseCcy());
 				}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, feePostings.getPostAgainst())) {
 					CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getReference(),"");
+					Customer customer = customerDAO.getCustomerByID(collateralSetup.getDepositorId(), "");
 					aeEvent.setCustID(collateralSetup.getDepositorId());
+					aeEvent.setBranch(customer.getCustDftBranch());
 					aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, feePostings.getPostAgainst())) {
-					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),"");
+					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),"_View");
+					aeEvent.setBranch(header.getCustDftBranch());
 					aeEvent.setCustID(header.getCustomerId());
 					aeEvent.setCcy(header.getLimitCcy());
 				}

@@ -253,7 +253,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 		logger.debug("Entering");
 		StringBuilder insertSql = new StringBuilder();
 
-		if(bulkRateChangeDetails!= null && type.equalsIgnoreCase("_Temp")){
+		if(type.equalsIgnoreCase("_Temp")){
 			deleteBulkRateChangeDetailsByRef(bulkRateChangeDetails.get(0).getBulkRateChangeRef(), type);
 		}
 

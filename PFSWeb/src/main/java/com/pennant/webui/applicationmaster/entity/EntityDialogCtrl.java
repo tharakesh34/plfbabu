@@ -262,7 +262,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 			}
 			if (country != null) {
 				this.stateCode.setErrorMessage("");
-				pcProvince = this.stateCode.getValue();
+				pcProvince = country.getCountryCode();
 				fillProvinceDetails(pcProvince);
 			} else {
 				this.stateCode.setObject("");
@@ -288,7 +288,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		
 		Filter[] filters1 = new Filter[1];
 
-		if (country == null) {
+		if (country == null || country.equals("")) {
 			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
 		} else {
 			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);

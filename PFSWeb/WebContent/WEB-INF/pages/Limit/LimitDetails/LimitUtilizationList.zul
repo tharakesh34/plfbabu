@@ -57,10 +57,10 @@
 								<row>
 									<label id="label_LimitDetailsList_ExpiryDate" value="${c:l('label_LimitDetailsList_ExpiryDate.value')}" />
 									<listbox id="sortOperator_ExpiryDate" width="43px" mold="select" rows="1" />
-									<datebox id="expiryDate" width="180px" />
+									<datebox id="expiryDate"  format="dd/MM/yyyy"  width="180px" />
 									<label id="label_LimitDetailsList_ReviewDate" value="${c:l('label_LimitDetailsList_ReviewDate.value')}" />
 									<listbox id="sortOperator_ReviewDate" width="43px" mold="select" rows="1" />
-									<datebox id="reviewDate" width="180px" />
+									<datebox id="reviewDate" format="dd/MM/yyyy"  width="180px" />
 								</row>
 								<row>
 									<label id="label_LimitDetailsList_LimitStructureCode" value="${c:l('label_LimitDetailsList_LimitStructureCode.value')}" />

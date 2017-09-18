@@ -205,7 +205,9 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 				if(StringUtils.equals(currAccount, returnDataSet.getAccount()) && 
 						StringUtils.equals(finReference, returnDataSet.getFinReference()) && 
 						StringUtils.equals(tranCode, returnDataSet.getTranCode())){
-					revDataSet.setPostAmount(revDataSet.getPostAmount().add(returnDataSet.getPostAmount()));
+					if(revDataSet != null){
+						revDataSet.setPostAmount(revDataSet.getPostAmount().add(returnDataSet.getPostAmount()));
+					}
 				}else{
 					revDataSet = new ReturnDataSet();
 					revDataSet.setAccount(returnDataSet.getAccount());

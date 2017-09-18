@@ -45,7 +45,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("IdList", idList);
 		parmMap.addValue("EXCLUDEREASON", "0");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
 
 			@Override
@@ -161,7 +161,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		if (StringUtils.equals(mnadteType, "ECS")) {
 			map.addValue("INSTRUMENT_MODE", "E");
 		} else if (StringUtils.equals(mnadteType, "DDM")) {
-			map.addValue("INSTRUMENT_MODE", "D");
+			map.addValue("INSTRUMENT_MODE", "A");
 		} else if (StringUtils.equals(mnadteType, "NACH")) {
 			map.addValue("INSTRUMENT_MODE", "Z");
 		}
@@ -194,7 +194,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		source.addValue("TOTALRECORDS", totalRecords);
 
 		try {
-			this.jdbcTemplate.update(sql.toString(), source);
+			this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -219,7 +219,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		source.addValue("EXCLUDEREASON", 0);
 
 		try {
-			this.jdbcTemplate.update(sql.toString(), source);
+			this.parameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;

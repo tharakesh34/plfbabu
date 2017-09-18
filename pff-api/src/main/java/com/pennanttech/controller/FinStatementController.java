@@ -83,7 +83,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
 					financeDetail.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
@@ -105,6 +105,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
@@ -136,7 +137,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
 					financeDetail.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
@@ -178,6 +179,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return stmtResponse;
@@ -240,6 +242,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
 			throw e;
 		}
 
@@ -429,7 +432,7 @@ public class FinStatementController extends SummaryDetailService {
 		// foreclosure fees
 		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
 		finScheduleData.getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
-		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL);
+		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, null);
 		if (finScheduleData.getFinFeeDetailList() != null) {
 			for (FinFeeDetail fee : finScheduleData.getFinFeeDetailList()) {
 				if (StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {

@@ -63,25 +63,69 @@
 				</north>
 				<center border="none" autoscroll="true">
 					<div>
-						<groupbox width="91%">
-							<caption label="Pre EOD"></caption>
-							<grid sclass="GridLayoutNoBorder">
-								<columns>
-									<column width="100%" />
-								</columns>
-								<rows>
-									<row>
-										<hbox pack="stretch" width="100%">
-											<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="prepareCustomerQueue" border="normal" title="${c:l('label_prepareCustomerQueue')}" imgSrc="/images/icons/send.gif" />
-											<hbox></hbox>
-											<hbox></hbox>
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-						<groupbox width="91%">
+						<hbox width="100%" widths="25%,75%">
+							<hbox>
+								<groupbox width="100%">
+									<caption label="Pre EOD"></caption>
+									<grid sclass="GridLayoutNoBorder">
+										<columns>
+											<column width="100%" />
+										</columns>
+										<rows>
+											<row>
+												<hbox pack="stretch" width="100%"><!-- widths="25%,25%,25%,25%" -->
+													<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+													<exePannel id="prepareCustomerQueue" border="normal" title="${c:l('label_prepareCustomerQueue')}" imgSrc="/images/icons/send.gif" />
+													<hbox></hbox>
+													<hbox></hbox>
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</hbox>
+							<hbox>
+								<groupbox width="100%">
+									<caption label="Micro EOD"></caption>
+									<grid sclass="GridLayoutNoBorder">
+										<columns>
+											<column width="100%" />
+										</columns>
+										<rows>
+											<row>
+												<hbox pack="stretch" width="100%">
+													<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" visible="false" />
+													<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+													<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+												</hbox>
+											</row>
+											<row>
+												<hbox pack="stretch" width="100%">
+													<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
+													<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+													<label value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
+													<longbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+												</hbox>
+											</row>
+											<row>
+												<hbox pack="stretch" width="100%">
+													<listbox id="listBoxThread" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="true">
+														<listhead sizable="true">
+															<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
+															<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
+															<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+															<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+															<listheader id="threadCompletedTime" label="${c:l('label_Time_Taken_MicroEod.value')}" sort="auto" hflex="min" />
+														</listhead>
+													</listbox>
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</hbox>
+						</hbox>
+						<groupbox width="100%">
 							<caption label="Post EOD"></caption>
 							<grid sclass="GridLayoutNoBorder">
 								<columns>
@@ -89,65 +133,32 @@
 								</columns>
 								<rows>
 									<row>
-										<hbox pack="stretch" width="100%">
-											<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="true" />
-											<hbox></hbox>
+										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
+											<exePannel id="posidex" border="normal" title="${c:l('label_posidex')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="trailBalance" border="normal" title="${c:l('label_trailBalance')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="sapGL" border="normal" title="${c:l('label_sapGL')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<space/>
 										</hbox>
 									</row>
 									<row>
-										<hbox>
-											<space></space>
+										<hbox pack="stretch" width="100%" widths="25%,25%,25%,25%">
+											<exePannel id="controlDump" border="normal" title="${c:l('label_controlDump')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif" visible="true" />
+											<exePannel id="dataMart" border="normal" title="${c:l('label_dataMart')}" imgSrc="/images/icons/send.gif" visible="true" />
 										</hbox>
+									</row>
+									<row visible="false">
+										<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="false" />
+										<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="false" />
 									</row>
 								</rows>
 							</grid>
 						</groupbox>
 					</div>
 				</center>
-				<east border="none" autoscroll="true" style="position:absolute;top:15%;right:43%;">
-					<div>
-						<groupbox width="100%">
-							<caption label="Micro EOD"></caption>
-							<grid sclass="GridLayoutNoBorder">
-								<columns>
-									<column width="100%" />
-								</columns>
-								<rows>
-									<row>
-										<hbox pack="stretch" width="100%">
-											<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-										</hbox>
-									</row>
-									<row>
-										<hbox pack="stretch" width="100%">
-											<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
-											<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
-											<label value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
-											<longbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
-										</hbox>
-									</row>
-									<row>
-										<hbox pack="stretch" width="100%">
-											<listbox id="listBoxThread" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="true">
-												<listhead sizable="true">
-													<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min"/>
-													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="threadCompletedTime" label="${c:l('label_Time_Taken_MicroEod.value')}" sort="auto" hflex="min" />
-												</listhead>
-											</listbox>
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-					</div>
-				</east>
 			</borderlayout>
 		</window>
 	</window>

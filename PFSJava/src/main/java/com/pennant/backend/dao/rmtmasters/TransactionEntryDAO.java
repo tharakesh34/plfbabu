@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.rmtmasters;
 import java.util.List;
@@ -50,26 +50,25 @@ import com.pennant.backend.model.rulefactory.Rule;
 
 public interface TransactionEntryDAO {
 
-	 TransactionEntry getTransactionEntry();
-	 TransactionEntry getNewTransactionEntry();
-	 TransactionEntry getTransactionEntryById(long id,int transOrder,String type);
-	 void update(TransactionEntry transactionEntry,String type);
-	 void delete(TransactionEntry transactionEntry,String type);
-	 long save(TransactionEntry transactionEntry,String type);
-	 List<TransactionEntry> getListTransactionEntryById(final long id, String type,boolean postingProcess);
-	 List<Rule> getListFeeChargeRules(List<Long> accSetIdList, String ruleEvent, String type, int seqOrder);
-	 void deleteByAccountingSetId(long accountSetid, String tableType);
-	 List<TransactionEntry> getListFeeTransEntryById(long id, String type);
-	 List<TransactionEntry> getODTransactionEntries();
-	 List<TransactionEntry> getTransactionEntryList(String oDRuleCode);
-	 void updateTransactionEntryList(List<TransactionEntry> entries);
-	 List<TransactionEntry> getListTransactionEntryByRefType(String finType, String finEvent, int refType, String roleCode, 
+	TransactionEntry getTransactionEntry();
+	TransactionEntry getNewTransactionEntry();
+	TransactionEntry getTransactionEntryById(long id,int transOrder,String type);
+	void update(TransactionEntry transactionEntry,String type);
+	void delete(TransactionEntry transactionEntry,String type);
+	long save(TransactionEntry transactionEntry,String type);
+	List<TransactionEntry> getListTransactionEntryById(final long id, String type,boolean postingProcess);
+	List<Rule> getListFeeChargeRules(List<Long> accSetIdList, String ruleEvent, String type, int seqOrder);
+	void deleteByAccountingSetId(long accountSetid, String tableType);
+	List<TransactionEntry> getListFeeTransEntryById(long id, String type);
+	List<TransactionEntry> getODTransactionEntries();
+	List<TransactionEntry> getTransactionEntryList(String oDRuleCode);
+	void updateTransactionEntryList(List<TransactionEntry> entries);
+	List<TransactionEntry> getListTransactionEntryByRefType(String finType, String finEvent, int refType, String roleCode, 
 			String type,boolean postingProcess);
-	 List<TransactionEntry> getListTranEntryForBatch(long accSetid, String type);
-	 List<Long> getAccountSetIds();
-	 List<String> getListFeeCodes(long accountSetId);
-	 List<String> getFeeCodeList(List<Long> accountSetId);
-	 Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
+	List<TransactionEntry> getListTranEntryForBatch(long accSetid, String type);
+	List<Long> getAccountSetIds();
+	List<String> getFeeCodeList(List<Long> accountSetId);
+	Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
 	List<TransactionEntry> getTransactionEntriesbyFinType(String fintype, String type);
 	List<Rule> getSubheadRules(List<String> subHeadRules, String string);
 	int getTransactionEntryByRuleCode(String ruleCode, String type);

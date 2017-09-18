@@ -391,16 +391,19 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
 					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
 							: finServiceInstruction.getMargin());
+					curSchd.setActRate(finServiceInstruction.getActualRate());
 
 					// Advised Rates Setting
 					if (i != 0
 							&& StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR, scheduleData.getFinanceType()
 									.getFinCategory())) {
-						curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? prvSchd
-								.getAdvPftRate() : BigDecimal.ZERO);
-						curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
-						curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? BigDecimal.ZERO
-								: prvSchd.getAdvMargin());
+						if(prvSchd != null){
+							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? prvSchd
+									.getAdvPftRate() : BigDecimal.ZERO);
+							curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
+							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null ? BigDecimal.ZERO
+									: prvSchd.getAdvMargin());
+						}
 					}
 
 				}
@@ -634,7 +637,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			String[] valueParm = new String[2];
 			valueParm[0] = "Next RepayDate";
 			valueParm[1] = "From Date:"+DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm), lang));
 			return auditDetail;
 		}
 
