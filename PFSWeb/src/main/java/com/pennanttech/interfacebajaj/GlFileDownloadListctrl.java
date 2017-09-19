@@ -43,23 +43,6 @@
 
 package com.pennanttech.interfacebajaj;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.bajaj.process.SAPGLProcess;
-import com.pennanttech.bajaj.process.TrailBalanceEngine;
-import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.EncryptionUtil;
-import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.interfacebajaj.model.FileDownlaod;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.service.AmazonS3Bucket;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,10 +54,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
 import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -89,6 +77,25 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
+
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.bajaj.process.SAPGLProcess;
+import com.pennanttech.bajaj.process.TrailBalanceEngine;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -108,7 +115,9 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Button btnexecute;
 	protected Combobox dimention;
 	protected Combobox months;
+	private List<ValueLabel> dimentionsList = new ArrayList<>();
 	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds();
+
 	
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
@@ -144,11 +153,10 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		setItemRender(new FileDownloadListModelItemRenderer());
 		setComparator(new FileDownloadComparator());
 		
-		List<ValueLabel> dimentions = new ArrayList<>();
-		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.STATE.name(), TrailBalanceEngine.Dimention.STATE.name()));
-		dimentions.add(new ValueLabel(TrailBalanceEngine.Dimention.CONSOLIDATE.name(), TrailBalanceEngine.Dimention.CONSOLIDATE.name()));
+		dimentionsList.add(new ValueLabel(TrailBalanceEngine.Dimention.STATE.name(), TrailBalanceEngine.Dimention.STATE.name()));
+		dimentionsList.add(new ValueLabel(TrailBalanceEngine.Dimention.CONSOLIDATE.name(), TrailBalanceEngine.Dimention.CONSOLIDATE.name()));
 		
-		fillComboBox(dimention, "", dimentions, "");
+		fillComboBox(dimention, "", dimentionsList, "");
 		fillComboBox(months, "", monthsList, "");
 		
 		registerField("Id", SortOrder.DESC);
@@ -204,51 +212,90 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		try {
 
-			String selectedDimention = dimention.getSelectedItem().getValue();
-			String selectedMonth = months.getSelectedItem().getValue();
+		doSetValidations();
+		String selectedDimention = dimention.getSelectedItem().getValue();
+		String selectedMonth = months.getSelectedItem().getValue();
 
-			if ("#".equals(selectedDimention)) {
-				MessageUtil.showError("Dimention cannot be blank.");
+		Date valueDate = null;
+		Date appDate = null;
+
+		appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+		valueDate = appDate;
+
+		TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+				getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+
+		if (trialbal.isBatchExists(selectedDimention)) {
+			int conf = MessageUtil
+					.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
+
+			if (conf == MessageUtil.NO) {
 				return;
-			} else if ("#".equals(selectedMonth)) {
-				MessageUtil.showError("Month cannot be blank.");
-				return;
 			}
-
-			Date valueDate = null;
-			Date appDate = null;
-
-			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
-			valueDate = appDate;
-
-			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
-
-			if (trialbal.isBatchExists(selectedDimention)) {
-				int conf = MessageUtil
-						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
-
-				if (conf == MessageUtil.NO) {
-					return;
-				}
-			}
-
-			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
-			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
-			}
-
-			refresh();
-		} catch (Exception e) {
-			MessageUtil.showError(e);
 		}
+
+		if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+		} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+		}
+
+		refresh();
+
 	}
 
+	
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidations() {
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		try {
+			if (!this.dimention.isDisabled()) {
+				this.dimention.setConstraint(new StaticListValidator(dimentionsList,
+						Labels.getLabel("label_GLFileList_Dimention.value")));
+			}
+			this.dimention.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.months.isDisabled() && PennantConstants.List_Select.equals(this.months.getSelectedItem().getValue()))
+				this.months.setConstraint(new StaticListValidator(monthsList,
+						Labels.getLabel("label_GLFileList_Months.value")));
+			this.months.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	}
+	
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug("Entering ");
+		this.dimention.setConstraint("");
+		this.months.setConstraint("");
+
+		logger.debug("Leaving ");
+	}
+	
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {

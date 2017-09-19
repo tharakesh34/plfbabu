@@ -32,9 +32,9 @@
 				<div>
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
 						<columns>
-							<column width="150px" />
+							<column width="90px" />
 							<column/>
-							<column width="150px"/>
+							<column width="90px"/>
 							<column/>
 						</columns>
 						<rows>
@@ -42,16 +42,15 @@
 								<label value="Dimention" />
 								<hbox spacing="2px">
 									<space spacing="2px" sclass="mandatory"/>
-									<combobox id="dimention" width="250px" readonly="true" />
+									<combobox id="dimention" width="200px" readonly="true" />
 								</hbox>
 								<label value="Month" />
 								<hbox spacing="2px">
 									<space spacing="2px" sclass="mandatory"/>
-									<combobox id="months" width="250px" readonly="true" />
+									<combobox id="months" width="200px" readonly="true" />
 								</hbox>
 							</row>
 							
-							<row id="stmtSourceRow"/>
 						</rows>
 					</grid>
 					<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"

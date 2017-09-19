@@ -2839,6 +2839,8 @@ public class PennantStaticListUtil {
 
 		if (monthEndList == null) {
 			monthEndList = new ArrayList<ValueLabel>();
+		} else {
+			return monthEndList;
 		}
 
 		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
