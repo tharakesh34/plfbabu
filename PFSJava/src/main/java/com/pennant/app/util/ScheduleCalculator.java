@@ -3255,8 +3255,11 @@ public class ScheduleCalculator {
 				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 		calint = calint.add(prvSchd.getProfitFraction());
-		BigDecimal calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
-				finMain.getRoundingTarget());
+		BigDecimal calIntRounded = BigDecimal.ZERO;
+		if(calint.compareTo(BigDecimal.ZERO) > 0){
+			calIntRounded = CalculationUtil.roundAmount(calint, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
+		}
 
 		curSchd.setProfitFraction(calint.subtract(calIntRounded));
 		calint = calIntRounded;
@@ -3385,8 +3388,11 @@ public class ScheduleCalculator {
 						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
-				BigDecimal calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
+				BigDecimal calIntRounded = BigDecimal.ZERO;
+				if(calInt.compareTo(BigDecimal.ZERO) > 0){
+					calIntRounded = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
+				}
 				calIntFraction = calInt.subtract(calIntRounded);
 				calInt = calIntRounded;
 				curSchd.setRepayComplete(false);
