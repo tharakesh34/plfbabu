@@ -207,10 +207,12 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 						throw new ConcurrencyException();
 					}
 					
+					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+					
 				} catch (Exception e) {
+					conclude(null, idList);
 					throw e;
-				}
-				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+				} 
 			}
 		}
 	}
@@ -403,6 +405,11 @@ public class DisbursementRequestServiceImpl extends BajajService implements Disb
 	}
 	
 	private void conclude(DataEngineStatus status, List<String> idList) {
+		
+		if (idList == null || idList.isEmpty()) {
+			return;
+		}
+		
 		if (status == null || !"S".equals(status.getStatus())) {
 			MapSqlParameterSource paramMap = new MapSqlParameterSource();
 			paramMap.addValue("ID", idList);
