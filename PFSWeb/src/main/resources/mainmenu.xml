@@ -433,8 +433,8 @@
 	<!-- Finance Inquiry Details -->
 	<menu id="menu_Category_Enquiry"  rightName="menuCat_FinanceEnquiry">
 		
-		<!--<menuItem id="menu_Item_CollateralEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"  rightName="menuItem_Enquiry_CollateralSetup"/>
-		 <menuItem id="menu_Item_PaymentOrderAuthEnquiry" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul?enqiryModule=Y" rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
+		<menuItem id="menu_Item_CollateralEnquiry" zulNavigation="/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupList.zul?module=E"  rightName="menuItem_Enquiry_CollateralSetup"/>
+		 <!--<menuItem id="menu_Item_PaymentOrderAuthEnquiry" zulNavigation="/WEB-INF/pages/Finance/PaymentOrderAuth/PaymentOrderAuthList.zul?enqiryModule=Y" rightName="menu_Item_PaymentOrderAuthEnquiry"/> -->
 		<menuItem id="menu_Item_PayOrderIssueEnquiry" zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul?enqiryModule=Y" rightName="menu_Item_PayOrderIssueEnquiry"/>
 		<menuItem id="menu_Item_FinanceApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FinApprovalStsInquiryList.zul?enqiryModule=Y" rightName="menuItem_Enquiry_FinApproval"/>
 		<!--<menuItem id="menu_Item_FacilityApprovalStsInquiry" zulNavigation="/WEB-INF/pages/FinanceEnquiry/FinApprovalStsInquiry/FacilityApprovalStsInquiryList.zul" rightName="menuItem_Enquiry_FacilityApproval"/>-->
