@@ -305,10 +305,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			BeanUtils.copyProperties(this.collateralSetup, collateralSetup);
 			this.collateralSetup.setBefImage(collateralSetup);
 
-			// Render the page and display the data.
-			doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(),
-					this.collateralSetup.getNextTaskId());
-
+			if (!"E".equals(module)) {
+				// Render the page and display the data.
+				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(),
+						this.collateralSetup.getNextTaskId());
+			}
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
@@ -535,7 +536,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			this.window_CollateralSetupDialog.setWidth("90%");
 			this.groupboxWf.setVisible(false);
 			this.window_CollateralSetupDialog.doModal();
-		} else {
+		}else if("E".equals(module)){
+			this.window_CollateralSetupDialog.setWidth("100%");
+			this.window_CollateralSetupDialog.setHeight("100%");
+			this.groupboxWf.setVisible(false);
+			setDialog(DialogType.EMBEDDED);
+		}else {
 			this.window_CollateralSetupDialog.setWidth("100%");
 			this.window_CollateralSetupDialog.setHeight("100%");
 			setDialog(DialogType.EMBEDDED);
