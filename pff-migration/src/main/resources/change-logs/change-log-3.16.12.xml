@@ -77,7 +77,6 @@
 <changeSet id="1.6" author="murthy.y">
 	<addForeignKeyConstraint constraintName="FK_TBR_HID" referencedTableName="TRIAL_BALANCE_HEADER" baseColumnNames="HEADERID" baseTableName="TRIAL_BALANCE_REPORT" referencedColumnNames="ID"/>
 	<addForeignKeyConstraint constraintName="FK_TBRLR_HID" referencedTableName="TRIAL_BALANCE_HEADER" baseColumnNames="HEADERID" baseTableName="TRIAL_BALANCE_REPORT_LAST_RUN" referencedColumnNames="ID"/>
-	<addUniqueConstraint columnNames="SEQNO, DIMENSION" constraintName="UK_TBH_SEQ_DIMENSION" tableName="TRIAL_BALANCE_HEADER"/>
 </changeSet>
 <changeSet id="1.7" author="murthy.y">
 	<createIndex indexName="IDX_TBR_HID" tableName="TRIAL_BALANCE_REPORT">
@@ -313,4 +312,13 @@
 		]]>
 	</sql>
 </changeSet>	
+<changeSet id="7" author="madhubabu">
+	<sql>
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuItem_Enquiry_CollateralSetup','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode ='CL_LOAN_ENQUIRY'), (Select RightID from SecRights where RightName = 'menuItem_Enquiry_CollateralSetup'), 1, 1, 1000,CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+
+	</sql>
+</changeSet>
 </databaseChangeLog>
