@@ -2199,7 +2199,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getCollateralHeaderDialogCtrl() != null) {
 
 			// Validate Assigned Collateral Value
-			if (!recSave
+			if (!recSave && !StringUtils.equals(FinanceConstants.CLOSE_STATUS_CANCELLED, aFinanceMain.getClosingStatus())
 					&& (getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq() || !getCollateralHeaderDialogCtrl()
 							.getCollateralAssignments().isEmpty())) {
 
