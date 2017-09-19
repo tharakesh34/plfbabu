@@ -129,6 +129,7 @@ public class ExtendedFieldCaptureDialogCtrl extends	GFCBaseCtrl<ExtendedFieldHea
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 			this.btnSave.setVisible(false);
+			this.btnDelete.setVisible(false);
 
 			generator.setReadOnly(true);
 		} else {
