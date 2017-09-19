@@ -14886,10 +14886,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				//Prepare Finance Schedule Generator Details List
 				getFinanceDetail().getFinScheduleData().setRepayInstructions(new ArrayList<RepayInstruction>());
-				getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
-				getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
 
 				if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					getFinanceDetail().getFinScheduleData().setPlanEMIHmonths(new ArrayList<Integer>());
+					getFinanceDetail().getFinScheduleData().setPlanEMIHDates(new ArrayList<Date>());
 					getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
 				}
 
@@ -14913,6 +14913,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.changeGraceEnd(getFinanceDetail().getFinScheduleData()));
+						
+						// Plan EMI Holidays Resetting after Change Grace Period End Date
+						if(getFinanceDetail().getFinScheduleData().getFinanceMain().isPlanEMIHAlw()){
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEventFromDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecalFromDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEventToDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalFromDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecalFromDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalToDate(getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate());
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod());
+
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setEqualRepay(true);
+							getFinanceDetail().getFinScheduleData().getFinanceMain().setCalculateRepay(true);
+
+							if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+								getFinanceDetail().setFinScheduleData(ScheduleCalculator.getFrqEMIHoliday(getFinanceDetail().getFinScheduleData()));
+							}else{
+								getFinanceDetail().setFinScheduleData(ScheduleCalculator.getAdhocEMIHoliday(getFinanceDetail().getFinScheduleData()));
+							}
+						}
+						
 					} else {
 						getFinanceDetail().setFinScheduleData(
 								ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));
