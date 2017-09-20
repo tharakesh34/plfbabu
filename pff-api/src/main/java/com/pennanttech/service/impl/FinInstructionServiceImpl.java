@@ -1,6 +1,7 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -138,8 +139,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -203,8 +203,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -268,8 +267,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_DEFRPY;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -336,8 +334,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -411,8 +408,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -478,8 +474,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -544,8 +539,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -628,10 +622,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		financeDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_ADDDBSN);
-		List<ErrorDetails> errorList = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
-		if (!errorList.isEmpty()) {
-			for (ErrorDetails errorDetails : errorList) {
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
 				doEmptyResponseObject(financeDetail);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
@@ -693,8 +686,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -759,8 +751,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				financeDetail = new FinanceDetail();
@@ -1050,8 +1041,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 		// validate fees
-		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
-				finServiceInstruction, eventCode);
+		List<ErrorDetails> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetails errorDetails : errors) {
 				status = APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(), errorDetails.getError());
@@ -1228,6 +1218,27 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		logger.debug("Leaving");
 		return returnStatus;
+	}
+
+	/**
+	 * Method for process servicing fees
+	 * 
+	 * @param finSrvcInst
+	 * @param eventCode
+	 * @return
+	 */
+	private List<ErrorDetails> doProcessServiceFees(FinServiceInstruction finSrvcInst, String eventCode) {
+		logger.debug("Entering");
+		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		if(StringUtils.equals(finSrvcInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
+			if(finSrvcInst.getFinFeeDetails() != null && !finSrvcInst.getFinFeeDetails().isEmpty()) {
+				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
+			}
+		} else {
+			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
+		}
+		logger.debug("Leaving");
+		return errors;
 	}
 
 	/**

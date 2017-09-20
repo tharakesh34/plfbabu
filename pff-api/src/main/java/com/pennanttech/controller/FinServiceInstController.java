@@ -96,6 +96,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -212,20 +213,22 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	private void executeFeeCharges(FinanceDetail financeDetail, FinServiceInstruction finServiceInst, String eventCode)
 			throws IllegalAccessException, InvocationTargetException {
-		if (finServiceInst.getFinFeeDetails() != null) {
+		if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY) 
+				&& (finServiceInst.getFinFeeDetails() == null || finServiceInst.getFinFeeDetails().isEmpty())) {
+			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, finServiceInst);
+		} else {
 			for (FinFeeDetail finFeeDetail : finServiceInst.getFinFeeDetails()) {
 				finFeeDetail.setFinEvent(eventCode);
-				financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
 				finFeeDetail.setFeeScheduleMethod(PennantConstants.List_Select);
+				financeDetail.getFinScheduleData().getFinFeeDetailList().add(finFeeDetail);
 			}
 			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, finServiceInst);
-
-			if(financeDetail.isStp()) {
-				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-					feeDetail.setWorkflowId(0);
-				}
+		}
+		if(financeDetail.isStp()) {
+			for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				feeDetail.setWorkflowId(0);
 			}
-		}	
+		}
 	}
 
 	/**
@@ -1081,6 +1084,12 @@ public class FinServiceInstController extends SummaryDetailService {
 				FinanceSummary summary = response.getFinScheduleData().getFinanceSummary();
 				summary.setFinStatus("M");
 			}
+		} catch (AppException appEx) {
+			logger.error("AppException", appEx);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			return response;
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1138,6 +1147,12 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_EARLYRPY);
+		} catch (AppException appEx) {
+			logger.error("AppException", appEx);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			return response;
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1179,6 +1194,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_SCHDRPY);
 			
+		} catch (AppException appEx) {
+			logger.error("AppException", appEx);
+			response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			return response;
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1268,6 +1289,28 @@ public class FinServiceInstController extends SummaryDetailService {
 		Date receiDate = DateUtility.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(),
 				PennantConstants.DBDateFormat));
 		finReceiptDetail.setReceivedDate(receiDate);
+		
+		Date curBussDate = DateUtility.getAppDate();
+		if(finServiceInst.getReceiptDetail() != null) {
+			if(DateUtility.compare(receiDate, financeMain.getFinStartDate()) <= 0 || DateUtility.compare(receiDate, curBussDate) > 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[3];
+				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+				valueParm[1] = "Loan start Date:"+ DateUtility.formatToShortDate(financeMain.getFinStartDate());
+				valueParm[2] = "Application Date:"+ DateUtility.formatToShortDate(DateUtility.getAppDate());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90350", valueParm));
+				return response;
+			}
+		}
+		
+		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
+			return response;
+		}
+		
 		// calculate total fee amount
 		BigDecimal totFeeAmount = getTotalFeePaid(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		receiptHeader.setTotFeeAmount(totFeeAmount);
@@ -1318,32 +1361,6 @@ public class FinServiceInstController extends SummaryDetailService {
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
 					return response;
 				}
-			}
-		}
-		Date curBussDate = DateUtility.getAppDate();
-		if (curBussDate.compareTo(financeMain.getFinStartDate()) == 0) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
-			return response;
-		}
-		
-		if(finServiceInst.getReceiptDetail() != null) {
-			if (DateUtility.compare(receiDate, financeMain.getFinStartDate()) == 0) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90286"));
-				return response;
-			}
-			if(DateUtility.compare(receiDate, financeMain.getFinStartDate()) < 0 || DateUtility.compare(receiDate, curBussDate) > 0) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				String[] valueParm = new String[3];
-				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
-				valueParm[1] = "Loan start Date:"+ DateUtility.formatToShortDate(financeMain.getFinStartDate());
-				valueParm[2] = "Application Date:"+ DateUtility.formatToShortDate(DateUtility.getAppDate());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90350", valueParm));
-				return response;
 			}
 		}
 		
