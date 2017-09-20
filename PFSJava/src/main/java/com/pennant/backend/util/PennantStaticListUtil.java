@@ -209,9 +209,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountMapping;
 	private static ArrayList<ValueLabel> gstMapping;
 	private static ArrayList<ValueLabel> monthMapping;
-	private static ArrayList<ValueLabel> monthEndList;
 	
-
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getValue().equalsIgnoreCase(value)) {
@@ -2836,12 +2834,7 @@ public class PennantStaticListUtil {
 	}
 	
 	public static List<ValueLabel> getMontEnds() {
-
-		if (monthEndList == null) {
-			monthEndList = new ArrayList<ValueLabel>();
-		} else {
-			return monthEndList;
-		}
+		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
 
 		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
 		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
