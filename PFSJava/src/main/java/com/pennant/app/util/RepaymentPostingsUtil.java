@@ -570,7 +570,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		
 		// Profit Change Amount Setting
 		if(rpyQueueHeader.isPftChgAccReq()){
-			amountCodes.setPftChg(amountCodes.getPft().subtract(totPftSchdOld));
+			BigDecimal pftchg = amountCodes.getPft().subtract(totPftSchdOld);
+			if(pftchg.compareTo(BigDecimal.ZERO) < 0){
+				pftchg = pftchg.negate();
+			}
+			amountCodes.setPftChg(pftchg);
 		}else{
 			amountCodes.setPftChg(BigDecimal.ZERO);
 		}

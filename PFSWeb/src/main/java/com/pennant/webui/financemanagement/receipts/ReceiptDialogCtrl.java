@@ -4599,7 +4599,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		accrualService.calProfitDetails(finMain, receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), newProfitDetail, dateValueDate);
 		amountCodes.setBpi(finMain.getBpiAmount());
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
-		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		
+		// For Bajaj, It should be always positive
+		BigDecimal pftchg = totalPftSchdNew.subtract(totalPftSchdOld);
+		if(pftchg.compareTo(BigDecimal.ZERO) < 0){
+			pftchg = pftchg.negate();
+		}
+		amountCodes.setPftChg(pftchg);
 
 		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
 		BigDecimal totRpyPri = BigDecimal.ZERO;
