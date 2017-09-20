@@ -2226,6 +2226,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
+		
+		//process to send finone request and create or update the data.
+		processFinOneCheck(aAuditHeader);
+		
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
@@ -2276,8 +2280,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			customerDetails.setCustID(customer.getCustID());
 			
-			//process to send finone request and create or update the data.
-				processFinOneCheck(aAuditHeader);
 
 			if (customerDetails.getCustEmployeeDetail() != null) {
 				CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
@@ -2420,6 +2422,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
 					auditHeader.setAuditDetail(auditDetail);
 					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					auditHeader = nextProcess(auditHeader);
 					return auditHeader;
 				}
 
@@ -2436,6 +2439,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), auditHeader.getUsrLanguage()));
 					auditHeader.setAuditDetail(auditDetail);
 					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					auditHeader = nextProcess(auditHeader);
 					return auditHeader;
 				}
 			}
