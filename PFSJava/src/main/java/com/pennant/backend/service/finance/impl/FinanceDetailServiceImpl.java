@@ -2236,7 +2236,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Fee Receipts
 		//=======================================
-		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null
+		if (!isWIF && financeDetail.getFinScheduleData().getFinFeeReceipts() != null
 				&& !financeDetail.getFinScheduleData().getFinFeeReceipts().isEmpty()) {
 			for(FinFeeReceipt finFeeReceipt : financeDetail.getFinScheduleData().getFinFeeReceipts()) {
 				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
@@ -5410,7 +5410,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		}
 		
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (!isWIF && StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			// Finance Fee Receipts
 			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
 				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
