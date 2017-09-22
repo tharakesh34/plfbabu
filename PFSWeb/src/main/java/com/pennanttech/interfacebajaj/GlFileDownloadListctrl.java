@@ -214,6 +214,35 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	public void onClick$btnexecute(Event event) throws Exception {
 		try {
 			doSetValidations();
+			ArrayList<WrongValueException> wve = new ArrayList<>();
+
+			try {
+				this.dimention.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				this.months.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			doRemoveValidation();
+
+			if (!wve.isEmpty()) {
+				WrongValueException[] wvea = new WrongValueException[wve.size()];
+				for (int i = 0; i < wve.size(); i++) {
+					wvea[i] = wve.get(i);
+				}
+				throw new WrongValuesException(wvea);
+
+			}
+		} catch (WrongValuesException wvea) {
+			throw wvea;
+		}
+
+		try {
 			String selectedDimention = dimention.getSelectedItem().getValue();
 			String selectedMonth = months.getSelectedItem().getValue();
 
@@ -244,8 +273,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 			refresh();
-		} catch (WrongValuesException wvea) {
-			throw wvea;
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -258,36 +285,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 */
 	private void doSetValidations() throws Exception {
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-
-		try {
-			if (!this.dimention.isDisabled()) {
-				this.dimention.setConstraint(new StaticListValidator(dimentionsList,
-						Labels.getLabel("label_GLFileList_Dimention.value")));
-			}
-			this.dimention.getValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
+		if (!this.dimention.isDisabled()) {
+			this.dimention.setConstraint(
+					new StaticListValidator(dimentionsList, Labels.getLabel("label_GLFileList_Dimention.value")));
 		}
 
-		try {
-			if (!this.months.isDisabled() && PennantConstants.List_Select.equals(this.months.getSelectedItem().getValue()))
-				this.months.setConstraint(new StaticListValidator(monthsList,
-						Labels.getLabel("label_GLFileList_Months.value")));
-			this.months.getValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+		if (!this.months.isDisabled() && PennantConstants.List_Select.equals(this.months.getSelectedItem().getValue()))
+			this.months.setConstraint(
+					new StaticListValidator(monthsList, Labels.getLabel("label_GLFileList_Months.value")));
 
-		doRemoveValidation();
-
-		if (wve.size() > 0) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
-			}
-			throw new WrongValuesException(wvea);
-		}
 	}
 	
 	/**
