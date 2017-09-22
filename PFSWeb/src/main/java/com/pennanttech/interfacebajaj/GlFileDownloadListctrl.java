@@ -211,73 +211,66 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnexecute(Event event) throws Exception {
-		try {
-			doSetValidations();
-			ArrayList<WrongValueException> wve = new ArrayList<>();
+	public void onClick$btnexecute(Event event) throws Exception {doSetValidations();
+	ArrayList<WrongValueException> wve = new ArrayList<>();
 
-			try {
-				this.dimention.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				this.months.getValue();
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			doRemoveValidation();
-
-			if (!wve.isEmpty()) {
-				WrongValueException[] wvea = new WrongValueException[wve.size()];
-				for (int i = 0; i < wve.size(); i++) {
-					wvea[i] = wve.get(i);
-				}
-				throw new WrongValuesException(wvea);
-
-			}
-		} catch (WrongValuesException wvea) {
-			throw wvea;
-		}
-
-		try {
-			String selectedDimention = dimention.getSelectedItem().getValue();
-			String selectedMonth = months.getSelectedItem().getValue();
-
-			Date valueDate = null;
-			Date appDate = null;
-
-			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
-			valueDate = appDate;
-
-			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
-
-			if (trialbal.isBatchExists(selectedDimention)) {
-				int conf = MessageUtil
-						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
-
-				if (conf == MessageUtil.NO) {
-					return;
-				}
-			}
-
-			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
-			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
-			}
-
-			refresh();
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-
+	try {
+		this.dimention.getValue();
+	} catch (WrongValueException we) {
+		wve.add(we);
 	}
+
+	try {
+		this.months.getValue();
+	} catch (WrongValueException we) {
+		wve.add(we);
+	}
+
+	doRemoveValidation();
+
+	if (!wve.isEmpty()) {
+		WrongValueException[] wvea = new WrongValueException[wve.size()];
+		for (int i = 0; i < wve.size(); i++) {
+			wvea[i] = wve.get(i);
+		}
+		throw new WrongValuesException(wvea);
+	}
+
+	try {
+		String selectedDimention = dimention.getSelectedItem().getValue();
+		String selectedMonth = months.getSelectedItem().getValue();
+
+		Date valueDate = null;
+		Date appDate = null;
+
+		appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+		valueDate = appDate;
+
+		TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+				getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+
+		if (trialbal.isBatchExists(selectedDimention)) {
+			int conf = MessageUtil
+					.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
+
+			if (conf == MessageUtil.NO) {
+				return;
+			}
+		}
+
+		if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+		} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+		}
+
+		refresh();
+	} catch (Exception e) {
+		MessageUtil.showError(e);
+	}
+}
 
 	
 	/**
