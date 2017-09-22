@@ -212,38 +212,43 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
+		try {
+			doSetValidations();
+			String selectedDimention = dimention.getSelectedItem().getValue();
+			String selectedMonth = months.getSelectedItem().getValue();
 
-		doSetValidations();
-		String selectedDimention = dimention.getSelectedItem().getValue();
-		String selectedMonth = months.getSelectedItem().getValue();
+			Date valueDate = null;
+			Date appDate = null;
 
-		Date valueDate = null;
-		Date appDate = null;
+			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+			valueDate = appDate;
 
-		appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
-		valueDate = appDate;
+			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
+					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
 
-		TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("pfsDatasource"),
-				getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+			if (trialbal.isBatchExists(selectedDimention)) {
+				int conf = MessageUtil
+						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
 
-		if (trialbal.isBatchExists(selectedDimention)) {
-			int conf = MessageUtil
-					.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
-
-			if (conf == MessageUtil.NO) {
-				return;
+				if (conf == MessageUtil.NO) {
+					return;
+				}
 			}
-		}
 
-		if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
-			trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
-			new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
-		} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
-			trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
-		}
+			if (selectedDimention.equals(TrailBalanceEngine.Dimention.STATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.STATE);
+				new SAPGLProcess((DataSource) SpringUtil.getBean("pfsDatasource"),
+						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport();
+			} else if (selectedDimention.equals(TrailBalanceEngine.Dimention.CONSOLIDATE.name())) {
+				trialbal.extractReport(TrailBalanceEngine.Dimention.CONSOLIDATE);
+			}
 
-		refresh();
+			refresh();
+		} catch (WrongValuesException wvea) {
+			throw wvea;
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 
 	}
 
@@ -251,7 +256,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
-	private void doSetValidations() {
+	private void doSetValidations() throws Exception {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
