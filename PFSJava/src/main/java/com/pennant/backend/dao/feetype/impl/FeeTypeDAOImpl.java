@@ -287,7 +287,35 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 		}
 
 		logger.debug("Leaving");
-		return feeType;
 
+		return feeType;
 	}
+	
+	@Override
+	public int getAccountingSetIdCount(long accountSetId, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) From FeeTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AccountSetId = :AccountSetId");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("AccountSetId", accountSetId);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
+	
 }

@@ -58,4 +58,6 @@ public interface VASConfigurationDAO {
 	String save(VASConfiguration vasConfiguration, String type);
 
 	boolean isVASTypeExists(String productType);
+
+	int getFeeAccountingCount(long feeAccountId, String type);
 }

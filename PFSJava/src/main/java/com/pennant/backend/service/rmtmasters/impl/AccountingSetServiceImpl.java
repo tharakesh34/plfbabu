@@ -52,6 +52,8 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -82,6 +84,9 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	private TransactionEntryValidation transactionEntryValidation;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
+	
+	private VASConfigurationDAO vASConfigurationDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public AccountingSetServiceImpl() {
 		super();
@@ -436,8 +441,8 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(accountingSet.getId());
-		errParm[0] = PennantJavaUtil.getLabel("label_AccountSetid") + ":" + valueParm[0];
+		valueParm[0] = accountingSet.getAccountSetCode();
+		errParm[0] = PennantJavaUtil.getLabel("label_AccountSetCode") + " : " + valueParm[0];
 
 		if (accountingSet.isNew()) {
 			// for New record or new record into work flow
@@ -490,6 +495,25 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				}
 			}
 		}
+		
+		//if we have used in any other depended tables or not?
+		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(accountingSet.getRecordType()))) {
+
+			int count = this.finTypeAccountingDAO.getAccountingSetIdCount(accountingSet.getAccountSetid(), "_View");
+
+			if (count == 0) {
+				count = this.vASConfigurationDAO.getFeeAccountingCount(accountingSet.getAccountSetid(), "_View");
+
+				if (count == 0) {
+					count = this.feeTypeDAO.getAccountingSetIdCount(accountingSet.getAccountSetid(), "_View");
+				}
+			}
+
+			if (count > 0) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+			}
+		}
+		
 		AccountingSet accountset = getAccountingSetDAO().getAccountingSetbyEventCode(accountingSet, "_View");
 		if(accountset != null){
 			String[] errParm1= new String[1];
@@ -830,6 +854,14 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			}
 			return feeList;
 		}
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 	
 }

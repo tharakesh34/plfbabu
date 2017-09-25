@@ -3321,6 +3321,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!-- Transaction Entry -->
