@@ -159,12 +159,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	protected Button button_Search;
 	protected Button btnDownload;
-	protected Button btnbranchDetails;
+	protected Button btnFinType;
 	protected int oldVar_sortOperator_finType;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	private ArrayList<ValueLabel> channelTypesList =  PennantStaticListUtil.getChannelTypes();
-	private int futureDays =  0;;
+	private int futureDays =  0;
 
 	@Autowired
 	private DisbursementRequestService disbursementRequestService;
@@ -262,21 +262,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 	
 	
-	/*public void onChange$toDate(Event event) {
-		
-		
-		Date date = DateUtility.addDays(DateUtility.getAppDate(),futureDays);
-
-		
-		if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
-			this.toDate.setConstraint(new PTDateValidator("To Date",
-					true, null, date, false));
-		} 
-		//doRemoveValidation();
-		this.toDate.getValue();
-	}*/
-	
-	
 	public void onSelect$sortOperator_FinType(Event event) {
 		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_FinType, oldVar_sortOperator_finType,
 				this.finType);
@@ -308,13 +293,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	}
 	
-	public void onClick$btnbranchDetails(Event event) {
+	public void onClick$btnFinType(Event event) {
 		logger.debug("Entering  " + event.toString());
 		setSearchValue(sortOperator_FinType, this.finType, "FinanceType");
 		logger.debug("Leaving" + event.toString());
 		
 	}
-	
 
 	private void doSetFieldProperties() {
 		listItem_Checkbox = new Listitem();
