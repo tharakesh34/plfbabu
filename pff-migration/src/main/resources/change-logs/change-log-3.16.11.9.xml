@@ -312,4 +312,9 @@
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="7" author="Prasad">
+	<sql>
+		 Update secRoles set RecordStatus = null, RoleCode= null, NextRoleCode = null, TaskID = null, NextTaskID = null, RecordType = null;
+	</sql>
+</changeSet>
 </databaseChangeLog>
