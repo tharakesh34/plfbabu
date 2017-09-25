@@ -37,4 +37,10 @@
 <changeSet id="9" author="Manoj">
 	<modifyDataType tableName="FINADVANCEPAYMENTS_TEMP" columnName="TRANSACTIONREF" newDataType="VARCHAR2(50)"/>
 </changeSet>
+<changeSet id="10" author="Manoj">
+	<modifyDataType tableName="PAYMENTINSTRUCTIONS" columnName="TRANSACTIONREF" newDataType="VARCHAR2(50)"/>
+</changeSet>
+<changeSet id="11" author="Manoj">
+	<modifyDataType tableName="PAYMENTINSTRUCTIONS_TEMP" columnName="TRANSACTIONREF" newDataType="VARCHAR2(50)"/>
+</changeSet>
 </databaseChangeLog>
