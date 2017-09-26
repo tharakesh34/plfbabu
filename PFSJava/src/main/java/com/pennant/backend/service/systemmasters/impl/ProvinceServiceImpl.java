@@ -707,7 +707,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				valueParm[0] = province.getCPProvince();
 				errParm[0] = PennantJavaUtil.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + valueParm[0];
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
 			}
 		}
 		
