@@ -78,7 +78,7 @@
 			0, 1000, Current_timestamp, null,null,null,null,null,null,0);
 		</sql>
 	</changeSet>
-	<changeSet id="5" author="Jayant" dbms="oracle">
+	<changeSet id="6" author="Jayant" dbms="oracle">
 	    <sql splitStatements="false">
 	        begin
 	        	SP_INVALIDVIEWS;
