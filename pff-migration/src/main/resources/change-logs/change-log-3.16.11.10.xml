@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+<changeSet id="1" author="Prasad">
+	<sql>
+		 Update secRoles set RecordStatus = null, RoleCode= null, NextRoleCode = null, TaskID = null, NextTaskID = null, RecordType = null;
+	</sql>
+</changeSet>
+<changeSet id="2" author="Chaitanya">
+	<sql>
+		Delete from SecRoleGroups where RoleID IN (select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER');
+		Insert into SecRoleGroups Value s((Select max(RoleGrpID)+1 from secRoleGroups),
+		(Select GrpID from secGroups where GrpCode = 'MANDATE_MAKER'),
+		(select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER'),0, 1000, Current_TimeStamp, null,null,null,null,
+		null,null,0);
+	</sql>
+</changeSet>
+<changeSet id="3" author="Chaitanya">
+	<sql>
+		 Delete from secGroupRights where GRPID IN (Select GrpID from secGroups where GrpCode = 'MANDATE_MAKER')
+		 And RightID IN (Select RightID from secRights where RightName = 'menuItem_CustomerMasters_Customer');
+	</sql>
+</changeSet>
+<changeSet id="4" author="Chaitanya">
+	<sql>
+		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights), (select GrpID from secGroups where GrpCode = 'BENEFICIARY_APPROVER'),
+		(Select RightID from secRights where RightName = 'menuCat_CustomerMasters'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null,0);
+
+ 		Delete from secGroupRights where GrpID IN (select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER');
+		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
+		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),(Select RightID from secRights where RightName = 'menuCat_CustomerMasters'), 1,
+		0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
+
+ 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
+ 		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),(Select RightID from secRights where RightName = 'menuItem_Mandate'), 1,
+		0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
+
+ 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
+ 		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
+ 		(Select RightID from secRights where RightName = 'button_MandateDialog_btnSave'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
+
+		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
+		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
+		(Select RightID from secRights where RightName = 'menuCat_CustomerEnquiry'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
+
+ 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
+ 		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
+ 		(Select RightID from secRights where RightName = 'menuItem_MandateEnquiry'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
+
+ 		Insert into SecRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),
+ 		(SElect GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),(select RoleID from secRoles where RoleCd='MANDATEAPPROVER'),
+		0, 1000, SysDate, null,null,null,null,null,null,0);
+	</sql>
+</changeSet>
+	<changeSet id="5" author="Chaitanya">
+		<sql>
+			
+		</sql>
+	</changeSet>
+	<changeSet id="5" author="Jayant" dbms="oracle">
+	    <sql splitStatements="false">
+	        begin
+	        	SP_INVALIDVIEWS;
+	        	RESEED_SEQUENCE_TABLES;
+	        end;
+	    </sql>
+	</changeSet> 
+</databaseChangeLog>
