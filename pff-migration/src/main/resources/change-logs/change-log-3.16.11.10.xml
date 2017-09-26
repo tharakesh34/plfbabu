@@ -73,7 +73,9 @@
 </changeSet>
 	<changeSet id="5" author="Chaitanya">
 		<sql>
-			
+			Insert into SecRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),
+			(SElect GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),(select RoleID from secRoles where RoleCd='MANDATE_CREATE_APPROVER'),
+			0, 1000, Current_timestamp, null,null,null,null,null,null,0);
 		</sql>
 	</changeSet>
 	<changeSet id="5" author="Jayant" dbms="oracle">
