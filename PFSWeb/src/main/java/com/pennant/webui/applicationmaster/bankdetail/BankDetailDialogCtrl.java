@@ -352,6 +352,11 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		try {
 			this.accNoLength.setConstraint("");
 			this.accNoLength.setErrorMessage("");
+			
+			if (this.accNoLength.getValue() == null) {
+				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_RANGE_EQ", new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "0",  String.valueOf(PennantConstants.accNo_maxValue)}));
+			}
+			
 			int accNoLegthValue = this.accNoLength.getValue();
 			
 			if (!this.accNoLength.isReadonly()) {
