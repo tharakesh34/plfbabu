@@ -69,4 +69,6 @@ public interface CityDAO extends BasicCrudDao<City> {
 	 * @return
 	 */
 	boolean isDuplicateKey(String country, String state, String city, TableType tableType);
+
+	int getPCProvinceCount(String pcProvince, String type);
 }

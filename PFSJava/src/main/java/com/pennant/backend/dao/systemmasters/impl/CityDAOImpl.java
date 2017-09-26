@@ -283,5 +283,32 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public int getPCProvinceCount(String pcProvince, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) from RMTProvinceVsCity");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PCProvince = :PCProvince");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PCProvince", pcProvince);
+
+		try {
+			count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
 
 }
