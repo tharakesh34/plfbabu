@@ -1050,7 +1050,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	private void validateDocumentExistance(DocumentType dcoType) {
 		logger.debug("Entering");
 		//validate the document selected exists with the customer/Finance
-
+		boolean  isDocNotfound=false; 
 		if (getFinancedetail().getCustomerDetails() != null
 				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
 
@@ -1059,6 +1059,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					this.covenantType.setValue("");
 					this.covenantType.setDescription("");
 					this.covenantType.setObject("");
+					isDocNotfound=true;
 					MessageUtil.showError(
 							dcoType.getDocTypeDesc() + " : is Already Captured.Please Check in Customer Documents");
 				}
@@ -1066,7 +1067,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 
 		}
 
-		if (getFinancedetail().getDocumentDetailsList() != null
+		if (!isDocNotfound && getFinancedetail().getDocumentDetailsList() != null
 				&& !getFinancedetail().getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentdetail : getFinancedetail().getDocumentDetailsList()) {
 				if (StringUtils.equals(documentdetail.getDocCategory(), dcoType.getDocTypeCode())) {
