@@ -322,7 +322,7 @@
 		Delete from SecRoleGroups where RoleID IN (select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER');
 		Insert into SecRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),
 		(Select GrpID from secGroups where GrpCode = 'MANDATE_MAKER'),
-		(select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER'),0, 1000, SysDate, null,null,null,null,
+		(select RoleID from secRoles where RoleCd='MANDATE_CREATE_MAKER'),0, 1000, Current_TimeStamp, null,null,null,null,
 		null,null,0);
 	</sql>
 </changeSet>
@@ -335,7 +335,7 @@
 <changeSet id="10" author="Chaitanya">
 	<sql>
 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights), (select GrpID from secGroups where GrpCode = 'BENEFICIARY_APPROVER'),
-		(Select RightID from secRights where RightName = 'menuCat_CustomerMasters'), 1,0, 1000, SysDate, null, null, null, null, null, null,0);
+		(Select RightID from secRights where RightName = 'menuCat_CustomerMasters'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null,0);
 
  		Delete from secGroupRights where GrpID IN (select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER');
 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
@@ -348,15 +348,15 @@
 
  		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
  		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
- 		(Select RightID from secRights where RightName = 'button_MandateDialog_btnSave'), 1,0, 1000, SysDate, null, null, null, null, null, null, 0 );
+ 		(Select RightID from secRights where RightName = 'button_MandateDialog_btnSave'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
 
 		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
 		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
-		(Select RightID from secRights where RightName = 'menuCat_CustomerEnquiry'), 1,0, 1000, SysDate, null, null, null, null, null, null, 0 );
+		(Select RightID from secRights where RightName = 'menuCat_CustomerEnquiry'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
 
  		Insert into SecGroupRights Values((select MAX(GrpRightID) + 1 from SecGroupRights),
  		(select GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),
- 		(Select RightID from secRights where RightName = 'menuItem_MandateEnquiry'), 1,0, 1000, SysDate, null, null, null, null, null, null, 0 );
+ 		(Select RightID from secRights where RightName = 'menuItem_MandateEnquiry'), 1,0, 1000, Current_TimeStamp, null, null, null, null, null, null, 0 );
 
  		Insert into SecRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),
  		(SElect GrpID from secGroups where GrpCode = 'MANDATE_APPROVER'),(select RoleID from secRoles where RoleCd='MANDATEAPPROVER'),
@@ -370,5 +370,5 @@
 	        	RESEED_SEQUENCE_TABLES;
 	        end;
 	    </sql>
-	</changeSet>
+	</changeSet> 
 </databaseChangeLog>
