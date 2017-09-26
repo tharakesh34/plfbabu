@@ -754,8 +754,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		try {
 			if(!enqModule){
-			if (this.valueDate.getValue().before(minReqPostingDate)
-					|| this.valueDate.getValue().after(DateUtility.getAppDate())) {
+			if ((this.valueDate.getValue().before(minReqPostingDate)
+					|| this.valueDate.getValue().after(DateUtility.getAppDate())) && !this.valueDate.isReadonly()) {
 				
 				String minreqPostDate =DateUtility.formatToShortDate(minReqPostingDate);
 				String currentDate = DateUtility.formatToShortDate(DateUtility.getAppDate());
