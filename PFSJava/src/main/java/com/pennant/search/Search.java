@@ -511,7 +511,7 @@ public class Search implements IMutableSearch, Serializable {
 				values[cnt + i] = listValues.get(i);
 			}
 
-			if (App.DATABASE == Database.ORACLE) {
+			if (App.DATABASE == Database.ORACLE ) {
 				Filter[] filters = null;
 
 				if (emptyEqual) {
@@ -524,7 +524,23 @@ public class Search implements IMutableSearch, Serializable {
 				}
 
 				this.addFilterOr(filters);
-			} else {
+			}	if ( App.DATABASE == Database.PSQL) {
+				Filter[] filters = null;
+
+				if (emptyEqual) {
+					filters = new Filter[3];
+					filters[0] = Filter.isNull(field);
+					filters[1] = Filter.equalTo(field, "");
+					filters[2] = Filter.in(field, listValues);
+				} else {
+					filters = new Filter[1];
+					filters[0] = Filter.in(field, listValues);
+				}
+
+				this.addFilterOr(filters);
+			}  
+			
+			else {
 				this.addFilterIn(field, values);
 			}
 		}

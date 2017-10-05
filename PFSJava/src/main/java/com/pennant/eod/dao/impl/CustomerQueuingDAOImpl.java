@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pff.core.App;
@@ -56,10 +57,18 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setEodDate(date);
 		customerQueuing.setActive(true);
 
-		StringBuilder insertSql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
-		insertSql.append(
-				" SELECT  DISTINCT CustID, :EodDate, :ThreadId, :Progress FROM FinanceMain where FinIsActive = :Active");
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
+		insertSql.append("SELECT  DISTINCT CustID, ");
+		
+		if (App.DATABASE.name() == Database.PSQL.name()) {
+			insertSql.append(" to_date(:EodDate, '");
+			insertSql.append(PennantConstants.DBDateFormat);
+			insertSql.append("'),   ");
+		}else{
+			insertSql.append(":EodDate,   ");
+		}
+		
+		insertSql.append(" :ThreadId, :Progress FROM FinanceMain where FinIsActive = :Active");
 
 		logger.debug("updateSql: " + insertSql.toString());
 

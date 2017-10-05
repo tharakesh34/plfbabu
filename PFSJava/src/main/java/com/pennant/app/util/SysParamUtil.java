@@ -271,7 +271,7 @@ public class SysParamUtil {
 	}
 	
 	private static void dbQueryConstants() {
-		if (App.DATABASE == Database.ORACLE) {
+		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.PSQL) {
 			dbQueryConcat = "||";
 		} else {
 			dbQueryConcat = "+";
